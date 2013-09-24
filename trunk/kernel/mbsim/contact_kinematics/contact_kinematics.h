@@ -100,6 +100,8 @@ namespace MBSim {
        */
       int getNumberOfPotentialContactPoints() const { return numberOfPotentialContactPoints; }
 
+      virtual ContactKinematics* getContactKinematics(int i=0) const { return 0; }
+
       /**
        * \return compute the radii in contact points
        */
