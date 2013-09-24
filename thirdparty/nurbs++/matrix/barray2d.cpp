@@ -53,7 +53,7 @@ initBasic2DArray(Basic2DArray<T> &a, const int r,const int c)
 
   a.m = new T [a.rz*a.cz];
   a.created = 1 ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   a.vm = new T*[a.cz] ;
 #else
   a.vm = new T*[a.rz] ;
@@ -66,7 +66,7 @@ initBasic2DArray(Basic2DArray<T> &a, const int r,const int c)
   int i ;
   for(i = sze; i > 0; --i)
       *(++p1) = T() ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   for(i=a.cz-1;i>=0;--i)
     a.vm[i] = &a.m[i*a.rz] ;
 #else
@@ -142,7 +142,7 @@ Basic2DArray<T>::Basic2DArray(T* p, const int r, const int c) {
   m = p ;
   by_columns = 0 ;
   width = 2 ; 
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   vm = new T* [cz] ;
   for(int i=cz-1;i>=0;--i)
     vm[i] = &m[i*rz] ;
@@ -301,7 +301,7 @@ resizeKeepBasic2DArray(Basic2DArray<T> &a,const int nr,const int nc)
   int i,j ;
 
 
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   for(j=0;j<minimum(nc,a.cz);j++){
     p = &a.m[j*a.rz] -1;
     pn = &mn[j*nr] -1 ; 
@@ -344,7 +344,7 @@ resizeKeepBasic2DArray(Basic2DArray<T> &a,const int nr,const int nc)
   a.m = mn ;
   if(a.vm)
     delete []a.vm ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   a.vm = new T* [a.cz] ;
   for(i=0;i<a.cz;++i)
     a.vm[i] = &a.m[i*a.rz] ;
@@ -410,7 +410,7 @@ T& Basic2DArray<T>::elem(const int i,const int j)
       error.fatal() ;
 #endif
     }
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   return vm[j][i] ;
 #else
   return vm[i][j] ;
@@ -450,7 +450,7 @@ T Basic2DArray<T>::elem(const int i,const int j) const
       error.fatal() ;
 #endif
     }
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   return vm[j][i] ;
 #else
   return vm[i][j] ;

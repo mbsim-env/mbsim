@@ -44,7 +44,7 @@ void initBasic2DArrayHPoint(Basic2DArray<HPoint_nD<T,D> >& a, const int r,const 
   a.rz = r;	a.cz = c;
 
   a.created = 1 ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   a.vm = new HPoint_nD<T,D>* [a.cz] ;
 #else
   a.vm = new HPoint_nD<T,D>* [a.rz] ;
@@ -61,7 +61,7 @@ void initBasic2DArrayHPoint(Basic2DArray<HPoint_nD<T,D> >& a, const int r,const 
   // their proper place inside the consecutive memory
   // array allocated inside dn.
 
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   const int sze = a.rz*a.cz ;
   for(i=sze-1;i>=0;--i){
     a.m[i].data = dn+i*(D+1) ;  
@@ -82,7 +82,7 @@ void initBasic2DArrayHPoint(Basic2DArray<HPoint_nD<T,D> >& a, const int r,const 
   if((a.rz*a.cz)>0)
     a.m[0].created = 1;
 
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   for(i=a.cz-1;i>=0;--i)
     a.vm[i] = &a.m[i*a.rz] ;
 #else
@@ -115,7 +115,7 @@ void resizeKeepBasic2DArrayHPoint(Basic2DArray<HPoint_nD<T,D> > &a, const int nr
   memset((void*)dn,0,(nr*nc*(D+1))*sizeof(T)) ;
 
   int i,j ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   for(i=0;i<nr*nc;++i){
     mn[i].created = 0 ; 
     mn[i].data = &dn[i*(D+1)] ;
@@ -172,7 +172,7 @@ void resizeKeepBasic2DArrayHPoint(Basic2DArray<HPoint_nD<T,D> > &a, const int nr
     a.m[0].created = 1 ;
   if(a.vm)
     delete []a.vm ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   a.vm = new HPoint_nD<T,D>* [a.cz] ;
   for(i=0;i<a.cz;++i)
     a.vm[i] = &a.m[i*a.rz] ;

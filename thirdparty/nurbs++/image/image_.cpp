@@ -30,7 +30,7 @@ namespace PLib {
 #if defined(WITH_IMAGE_MAGICK)
 
   void IM_ImageT<Color>::setMatrix(){
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
     for(int i=0;i<rows();++i)
       for(int j=0;j<cols();++j){
 	vm[j][i].r = image->pixels[i*cols()+j].red ;
@@ -48,7 +48,7 @@ namespace PLib {
   }
   
   void IM_ImageT<unsigned char>::setMatrix(){
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
     for(int i=0;i<rows();++i)
       for(int j=0;j<cols();++j)
 	vm[j][i] = image->pixels[i*cols()+j].red ;
@@ -71,7 +71,7 @@ namespace PLib {
       image->pixels = (RunlengthPacket*)malloc(sizeof(RunlengthPacket)*image->packets) ;
     }
     
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
     for(int i=0;i<rows();++i)
       for(int j=0;j<cols();++j){
 	image->pixels[i*cols()+j].red = vm[j][i].r ;
@@ -102,7 +102,7 @@ namespace PLib {
       image->pixels = (RunlengthPacket*)malloc(sizeof(RunlengthPacket)*image->packets) ;
     }
     
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
     for(int i=0;i<rows();++i)
       for(int j=0;j<cols();++j){
 	image->pixels[i*cols()+j].red = vm[j][i] ;
