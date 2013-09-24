@@ -58,8 +58,8 @@ namespace MBSim {
         return q;
       }
       void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
-        M = M_;
-        q = q_;
+        M.resize() = M_;
+        q.resize() = q_;
         assert(M.rows() == q.rows());
         NumberOfContacts = q.rows();
       }

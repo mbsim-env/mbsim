@@ -30,16 +30,16 @@ using namespace std;
 
 namespace fmatvec {
   bool operator<(const Index & i1, const Index & i2) {
-      if(i1.start() < i2.start())
+    if (i1.start() < i2.start())
+      return true;
+    else if (i1.start() > i2.start())
+      return false;
+    else {
+      if (i1.end() < i2.end())
         return true;
-      else if(i1.start() > i2.start())
+      else
         return false;
-      else {
-        if(i1.end() < i2.end())
-          return true;
-        else
-          return false;
-      }
+    }
   }
 }
 
@@ -47,7 +47,7 @@ namespace fmatvec {
 namespace MBSim {
 
   MultiDimensionalNewtonMethod::MultiDimensionalNewtonMethod() :
-    function(0), jacobian(0), damping(0), criteria(0), itermax(300), iter(0), info(1){
+      function(0), jacobian(0), damping(0), criteria(0), itermax(300), iter(0), info(1) {
   }
 
   Vec MultiDimensionalNewtonMethod::solve(const Vec & initialValue) {
@@ -55,10 +55,10 @@ namespace MBSim {
     criteria->clear();
     criteria->setFunction(function);
     info = (*criteria)(initialValue);
-    if(info == 0)
+    if (info == 0)
       return initialValue;
 
-    if(damping) {
+    if (damping) {
       damping->setCriteriaFunction(criteria);
       damping->setFunction(function);
     }
@@ -82,8 +82,8 @@ namespace MBSim {
     Vec dx = slvLU(J, f, info);
 
     //Damp the solution
-    if(damping)
-      x -=  (*damping)(x, dx) * dx;
+    if (damping)
+      x -= (*damping)(x, dx) * dx;
     else
       x -= dx;
 
@@ -96,8 +96,9 @@ namespace MBSim {
 
       //Criteria with info = 1 means: go on  (else there might be a solution found (=0) or something else)
       if (info != 1) {
-        if(info == -1) //new solution is worse than solution before --> return solution before
+        if (info == -1) { //new solution is worse than solution before --> return solution before
           return x + dx;
+        }
         else
           return x;
       }
@@ -114,8 +115,8 @@ namespace MBSim {
       //cout << "dxn[" << iter << "] = " << dx << endl;
 
       //Damp the solution
-      if(damping)
-        x -=  (*damping)(x, dx) * dx;
+      if (damping)
+        x -= (*damping)(x, dx) * dx;
       else
         x -= dx;
 

@@ -127,13 +127,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		balls[i]->setInertiaTensor(Theta);
 		this->addObject(balls[i]);
 
-                MBSim::Point *pt = new MBSim::Point("COG");
+		MBSim::Point *pt = new MBSim::Point("COG");
 		balls[i]->addContour(pt,Vec(3,INIT,0.),SqrMat(3,EYE),balls[i]->getFrame("C"));
 
-                MBSim::Point *tP = new MBSim::Point("topPoint");
+		MBSim::Point *tP = new MBSim::Point("topPoint");
 		balls[i]->addContour(tP,d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
 
-                MBSim::Point *bP = new MBSim::Point("bottomPoint");
+		MBSim::Point *bP = new MBSim::Point("bottomPoint");
 		balls[i]->addContour(bP,d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
 
 		Plane *plane = new Plane("Plane");

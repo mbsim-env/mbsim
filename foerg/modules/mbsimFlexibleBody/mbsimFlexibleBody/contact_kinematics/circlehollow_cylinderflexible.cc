@@ -81,7 +81,7 @@ namespace MBSimFlexibleBody {
     double cos_alpha = WtB.T() * WbK;
 
     if( nrm2(WrD) > 0 ) { // conic section theory
-      double a = abs(r/cos_alpha);
+      double a = fabs(r/cos_alpha);
 
       Vec be1, be2;
       if( -0.99750 < cos_alpha && cos_alpha < 0.99750) { // until 1 degree tilting
@@ -137,7 +137,7 @@ namespace MBSimFlexibleBody {
       cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[icylinder].getFrameOfReference().getOrientation().col(1));
       cpData[icircle].getFrameOfReference().getOrientation().set(2, cpData[icylinder].getFrameOfReference().getOrientation().col(2));
 
-      g(0) = R*abs(cos_alpha) - r ;
+      g(0) = R*fabs(cos_alpha) - r ;
     }
   }
 

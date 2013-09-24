@@ -234,7 +234,7 @@ namespace MBSim {
 
   class ContactPolyfun : public fmatvec::Function<double(double)> {
     public:
-      ContactPolyfun(double, const fmatvec::Vec &);
+      ContactPolyfun(const double & rhs, const PolynomialFrustum * frustum);
       virtual ~ContactPolyfun() {
       }
 
@@ -244,7 +244,7 @@ namespace MBSim {
 
     protected:
       double rhs;
-      fmatvec::Vec para;
+      const PolynomialFrustum * frustum;
 
   };
 

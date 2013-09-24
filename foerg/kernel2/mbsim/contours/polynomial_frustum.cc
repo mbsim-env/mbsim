@@ -374,19 +374,13 @@ namespace MBSim {
 
     ivFile.close();
   }
-  ContactPolyfun::ContactPolyfun(double rhs_, const Vec & para_) {
-    rhs = rhs_;
-    para = para_;
+  ContactPolyfun::ContactPolyfun(const double & rhs, const PolynomialFrustum * frustum) :
+    rhs(rhs), frustum(frustum){
   }
 
   double ContactPolyfun::operator()(const double & x) {
-    int n = para.size();
-    double f = 0.;
-    for (int i = 0; i < n; i++) {
-      f = f + para(i) * pow(x, i);
-    }
-    f = f - rhs;
-    return f;
+    const double d1 = frustum->getValueD1(x);
+    return d1 * d1 - rhs;
   }
 #endif
 

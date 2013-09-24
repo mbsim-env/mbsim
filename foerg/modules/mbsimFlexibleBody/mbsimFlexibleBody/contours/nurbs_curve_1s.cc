@@ -144,7 +144,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, velocity);
       Nodelist.set(i, trans(cp.getFrameOfReference().getVelocity()));
     }
 
@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, angularVelocity);
       Nodelist.set(i, trans(cp.getFrameOfReference().getAngularVelocity()));
     }
 

@@ -504,8 +504,8 @@ namespace MBSim {
       maxdevi_u = 1e-18;
 
       for(int i=0; i<dev_u.size(); i++) {
-        if(abs(dev_u(i))>maxdevi_u) {
-          maxdevi_u = abs(dev_u(i)); 
+        if(fabs(dev_u(i))>maxdevi_u) {
+          maxdevi_u = fabs(dev_u(i));
         }       
       }
       
@@ -1483,7 +1483,7 @@ namespace MBSim {
           //exit(StepFinished);
         }
       }
-      if (abs(dt-dtOld)>epsroot() && itMax==1 && expInt==false) {
+      if (fabs(dt-dtOld)>epsroot() && itMax==1 && expInt==false) {
         upgedated_T1=false;
         upgedated_T2=false;
         upgedated_T2=false;

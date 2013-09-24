@@ -84,7 +84,7 @@ namespace MBSimHydraulics {
       c*=rho/2./A/A;
       initialized=true;
     }
-    return c*Q*abs(Q);
+    return c*Q*fabs(Q);
   }
 
   void ZetaLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -105,7 +105,7 @@ namespace MBSimHydraulics {
       cNeg*=rho/2./A/A;
       initialized=true;
     }
-    return (Q>=0?cPos:cNeg)*Q*abs(Q);
+    return (Q>=0?cPos:cNeg)*Q*fabs(Q);
   }
 
   void ZetaPosNegLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -266,9 +266,9 @@ namespace MBSimHydraulics {
     }
     const double areaRel=((const ClosableRigidLine*)(line))->getRegularizedValue();
     if (Q<0)
-      return cNeg*Q*abs(Q)/areaRel/areaRel;
+      return cNeg*Q*fabs(Q)/areaRel/areaRel;
     else
-      return c*Q*abs(Q)/areaRel/areaRel;
+      return c*Q*fabs(Q)/areaRel/areaRel;
   }
 
   void RelativeAreaZetaClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -374,7 +374,7 @@ namespace MBSimHydraulics {
     }
     const double x=((const ClosableRigidLine*)(line))->getRegularizedValue();
     const double fx=x*(2.*rBall*siga/coga + x*siga/coga/coga );
-    return c/fx/fx*abs(Q)*Q;
+    return c/fx/fx*fabs(Q)*Q;
   }
 
   void GammaCheckvalveClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -569,7 +569,7 @@ namespace MBSimHydraulics {
       c*=rho/2./A/A;
       initialized=true;
     }
-    const double pressureLoss=c*Q*abs(Q);
+    const double pressureLoss=c*Q*fabs(Q);
     const double pressureLossMin=((const UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
     return pressureLoss<pressureLossMin?pressureLoss:0;
   }
