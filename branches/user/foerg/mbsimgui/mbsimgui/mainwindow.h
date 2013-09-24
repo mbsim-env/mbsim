@@ -143,6 +143,7 @@ class MainWindow : public QMainWindow {
     void timeout2();
   protected:
     void closeEvent ( QCloseEvent * event );
+    MBXMLUtils::TiXmlElement* writeParameterList();
 };
 
 class Process : public QTabWidget {
