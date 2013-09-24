@@ -50,7 +50,7 @@ MatrixRT<T>::MatrixRT(T ax, T ay, T az, T x, T y, T z): Matrix<T>(4,4) {
   // the following is the same as
   // *this = C.translate(x,y,z)*B.rotate(ax,ay,az) ;
   rotate(ax,ay,az) ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   this->m[12] = x ;
   this->m[13] = y ;
   this->m[14] = z ;  
@@ -145,7 +145,7 @@ MatrixRT<T>& MatrixRT<T>::rotate(T ax,T ay, T az){
   t8 = sin(ax);
   t10 = cos(ax);
   t13 = t4*t6;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   this->m[0] = t1*t2;
   this->m[4] = -t4*t2;
   this->m[8] = t6;
@@ -204,7 +204,7 @@ MatrixRT<T>& MatrixRT<T>::rotateXYZ(T ax,T ay, T az){
   t8 = t1*t7;
   t9 = (T)sin((double)ax);
   t17 = t4*t7;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   this->m[0] = t1*t2;
   this->m[4] = -t4*t5+t8*t9;
   this->m[8] = t4*t9+t8*t5;
@@ -249,7 +249,7 @@ template <class T>
 MatrixRT<T>& MatrixRT<T>::translate(T x, T y, T z){
   this->reset(0) ;
   this->diag(1.0) ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   this->m[12] = x ;
   this->m[13] = y ;
   this->m[14] = z ;
@@ -350,7 +350,7 @@ MatrixRT<T> operator*(const MatrixRT<T>& M1, const MatrixRT<T>& M2){
   m1 = M1.m ;
   m2 = M2.m ;
   m = M.m ;
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   m[0] = m1[0]*m2[0] + m1[4]*m2[1] + m1[8]*m2[2] + m1[12]*m2[3] ;
   m[4] = m1[0]*m2[4] + m1[4]*m2[5] + m1[8]*m2[6] + m1[12]*m2[7] ;
   m[8] = m1[0]*m2[8] + m1[4]*m2[9] + m1[8]*m2[10] + m1[12]*m2[11] ;

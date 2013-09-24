@@ -109,7 +109,7 @@ public:
   T& elem(const int i,const int j);  // returns an error message if the index is out of range
   T  elem(const int i,const int j) const;   // returns an error message if the index is out of range
 #else
-#ifdef COLUMN_ORDER
+#if COLUMN_ORDER
   T& elem(const int i,const int j) 
     { return vm[j][i] ; }  // no error message are generated if the index are out of range
   T  elem(const int i,const int j) const
