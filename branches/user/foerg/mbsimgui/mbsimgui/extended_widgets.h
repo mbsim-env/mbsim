@@ -93,7 +93,6 @@ class ChoiceWidget : public Widget {
     QString getName(int i) const;
     QString getName() const;
     void updateWidget();
-
   protected slots:
     void defineWidget(int);
 

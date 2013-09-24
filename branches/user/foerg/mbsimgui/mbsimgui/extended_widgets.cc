@@ -118,13 +118,17 @@ ChoiceWidget::ChoiceWidget(const std::vector<QWidget*> &widget, const std::vecto
 }
 
 void ChoiceWidget::resize_(int m, int n) {
-  for(int i=0; i<stackedWidget->count(); i++)
-    dynamic_cast<WidgetInterface*>(getWidget(i))->resize_(m,n);
+//  for(int i=0; i<stackedWidget->count(); i++)
+//    dynamic_cast<WidgetInterface*>(getWidget(i))->resize_(m,n);
+  
+  dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
 }
 
 void ChoiceWidget::updateWidget() {
-  for(int i=0; i<stackedWidget->count(); i++)
-    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+//  for(int i=0; i<stackedWidget->count(); i++)
+//    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+
+  dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
 }
 
 QWidget* ChoiceWidget::getWidget() const {
