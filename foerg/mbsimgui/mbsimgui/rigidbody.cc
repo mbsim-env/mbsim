@@ -57,10 +57,17 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new LinearTranslationProperty("V",3,1));
 
+  vector<string> var;
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
+
   vector<Property*> property_;
   property_.push_back(new TranslationAlongXAxisProperty("V"));
   property_.push_back(new TranslationAlongYAxisProperty("V"));
   property_.push_back(new TranslationAlongZAxisProperty("V"));
+  property_.push_back(new TranslationAlongAxesXYProperty("V"));
+  property_.push_back(new TranslationAlongAxesYZProperty("V"));
+  property_.push_back(new TranslationAlongAxesXZProperty("V"));
   property_.push_back(new TranslationAlongAxesXYZProperty("V"));
   property_.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("VVV",property_));
@@ -72,10 +79,24 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongFixedAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("VSV",property_));
 
+  property.push_back(new ConstantFunctionProperty("V",3));
+  property.push_back(new LinearFunctionProperty("V",3));
+  property.push_back(new QuadraticFunctionProperty("V",3));
+  property.push_back(new SinusFunctionProperty("V",3));
+
+  var.clear();
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+  property.push_back(new VectorValuedFunctionProperty("V",3));
+  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
+
   property_.clear();
   property_.push_back(new TranslationAlongXAxisProperty("V"));
   property_.push_back(new TranslationAlongYAxisProperty("V"));
   property_.push_back(new TranslationAlongZAxisProperty("V"));
+  property_.push_back(new TranslationAlongAxesXYProperty("V"));
+  property_.push_back(new TranslationAlongAxesYZProperty("V"));
+  property_.push_back(new TranslationAlongAxesXZProperty("V"));
   property_.push_back(new TranslationAlongAxesXYZProperty("V"));
   property_.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("VVS",property_));
@@ -87,24 +108,11 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongFixedAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("VSS",property_));
 
-  vector<string> var;
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-
-  property.push_back(new ConstantFunctionProperty("V",3));
-  property.push_back(new LinearFunctionProperty("V",3));
-  property.push_back(new QuadraticFunctionProperty("V",3));
-  property.push_back(new SinusFunctionProperty("V",3));
-  var.clear();
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  property.push_back(new VectorValuedFunctionProperty("V",3));
-  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
-
   var.clear();
   var.push_back("q");
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VVS",var));
+
   translation.setProperty(new ChoiceProperty("",property));
 
   rotation.setXMLName(MBSIMNS"rotation");
@@ -122,6 +130,9 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutXAxisProperty("V"));
   property_.push_back(new RotationAboutYAxisProperty("V"));
   property_.push_back(new RotationAboutZAxisProperty("V"));
+  property_.push_back(new RotationAboutAxesXYProperty("V"));
+  property_.push_back(new RotationAboutAxesYZProperty("V"));
+  property_.push_back(new RotationAboutAxesXZProperty("V"));
   property_.push_back(new RotationAboutAxesXYZProperty("V"));
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVV",property_));
@@ -133,12 +144,13 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("MSV",property_));
 
-//  property.push_back(new RotationAboutFixedAxisProperty("S"));
-
   property_.clear();
   property_.push_back(new RotationAboutXAxisProperty("V"));
   property_.push_back(new RotationAboutYAxisProperty("V"));
   property_.push_back(new RotationAboutZAxisProperty("V"));
+  property_.push_back(new RotationAboutAxesXYProperty("V"));
+  property_.push_back(new RotationAboutAxesYZProperty("V"));
+  property_.push_back(new RotationAboutAxesXZProperty("V"));
   property_.push_back(new RotationAboutAxesXYZProperty("V"));
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVS",property_));
