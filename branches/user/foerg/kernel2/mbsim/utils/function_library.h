@@ -949,7 +949,7 @@ namespace MBSim {
       double xMin, xMax, xDelta;
       void init() {
         xMin=TabularFunction<Ret>::x(0);
-        xMax=x(TabularFunction<Ret>::x.size()-1);
+        xMax=this->x(TabularFunction<Ret>::x.size()-1);
         xDelta=xMax-xMin;
       }
   };
