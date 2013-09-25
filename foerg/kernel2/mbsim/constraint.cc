@@ -296,7 +296,7 @@ namespace MBSim {
 
   void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement* element) {
     KinematicConstraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialState");
     if (e)
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
@@ -348,7 +348,7 @@ namespace MBSim {
 
   void GeneralizedAccelerationConstraint::updatexd(double t) {
     xd(0,bd->getqRelSize()-1) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(x(0,bd->getqRelSize()-1),t);
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(x,t);
   }
 
   void GeneralizedAccelerationConstraint::updateStateDependentVariables(double t) {
@@ -357,12 +357,15 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updateJacobians(double t, int jj) {
-    bd->getjRel() = (*f)(x(0,bd->getqRelSize()-1),t);
+    bd->getjRel() = (*f)(x,t);
   }
 
   void GeneralizedAccelerationConstraint::initializeUsingXML(TiXmlElement* element) {
     KinematicConstraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"constraintFunction");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialState");
+    if(e)
+      x0 = getVec(e);
+    e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
       Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement(),false);
       if(f) {
@@ -605,9 +608,8 @@ namespace MBSim {
   void JointConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e, *ee;
     Constraint::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
-    if (e)
-      setq0(getVec(e));
+    e=element->FirstChildElement(MBSIMNS"initialGuess");
+    if (e) q0=getVec(e);
     e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesFirstSide");
     ee=e->FirstChildElement();
     while(ee) {

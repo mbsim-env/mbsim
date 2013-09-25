@@ -301,23 +301,11 @@ namespace MBSim {
   }
 
   void Object::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
     Element::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
-    if (e)
-      setInitialGeneralizedPosition(getVec(e));
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
-    if (e)
-      setInitialGeneralizedVelocity(getVec(e));
   }
 
   TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Element::writeXMLFile(parent);
-    if(q0.size())
-    addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
-    if(u0.size())
-    addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
-    return ele0;
+    return Element::writeXMLFile(parent);
   }
 
   Element * Object::getByPathSearch(string path) {

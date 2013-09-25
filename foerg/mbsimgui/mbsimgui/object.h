@@ -34,9 +34,6 @@ class Object : public Element {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
-  protected:
-    ExtProperty q0, u0;
-
 };
 
 #endif
