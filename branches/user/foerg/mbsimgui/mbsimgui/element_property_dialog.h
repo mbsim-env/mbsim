@@ -171,29 +171,27 @@ class SolverPropertyDialog : public GroupPropertyDialog {
 };
 
 class ObjectPropertyDialog : public ElementPropertyDialog {
-  Q_OBJECT;
 
   public:
     ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    virtual void resizeGeneralizedPosition() {}
-    virtual void resizeGeneralizedVelocity() {}
-  protected:
-    ExtWidget *q0, *u0;
-    VecWidget *q0_, *u0_;
-  public slots:
-    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
 };
 
 class BodyPropertyDialog : public ObjectPropertyDialog {
+  Q_OBJECT;
 
   public:
     BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
+    virtual void resizeGeneralizedPosition() {}
+    virtual void resizeGeneralizedVelocity() {}
   protected:
-    ExtWidget *R;
+    ExtWidget *q0, *u0, *R;
+    VecWidget *q0_, *u0_;
+  public slots:
+    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
 };
 
 class RigidBodyPropertyDialog : public BodyPropertyDialog {
@@ -259,9 +257,9 @@ class GeneralizedVelocityConstraintPropertyDialog : public KinematicConstraintPr
     GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    void resizeGeneralizedPosition();
   protected:
-    ExtWidget *constraintFunction;
+    ExtWidget *constraintFunction, *x0;
+    VecWidget *x0_;
   protected slots:
     void resizeVariables();
 };
@@ -273,22 +271,25 @@ class GeneralizedAccelerationConstraintPropertyDialog : public KinematicConstrai
     GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    void resizeGeneralizedPosition();
   protected:
-    ExtWidget *constraintFunction;
+    ExtWidget *constraintFunction, *x0;
+    VecWidget *x0_;
   protected slots:
     void resizeVariables();
 };
 
 class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
+  Q_OBJECT
 
   public:
     JointConstraintPropertyDialog(JointConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    void resizeGeneralizedPosition();
   protected:
-    ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *jointForceArrow, *jointMomentArrow;
+    ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *jointForceArrow, *jointMomentArrow, *q0;
+    VecWidget *q0_;
+  protected slots:
+    void resizeVariables();
 };
 
 class LinkPropertyDialog : public ElementPropertyDialog {

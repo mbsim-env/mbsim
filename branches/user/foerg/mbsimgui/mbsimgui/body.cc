@@ -26,7 +26,15 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-Body::Body(const string &str, Element *parent) : Object(str,parent), R(0,false) {
+Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false), u0(0,false), R(0,false) {
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
+  q0.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
+  u0.setProperty(new ExtPhysicalVarProperty(input));
+
   R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
 }
 
@@ -118,11 +126,15 @@ Contour* Body::getContour(const string &name) {
 
 void Body::initializeUsingXML(TiXmlElement *element) {
   Object::initializeUsingXML(element);
+  q0.initializeUsingXML(element);
+  u0.initializeUsingXML(element);
   R.initializeUsingXML(element);
 }
 
 TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Object::writeXMLFile(parent);
+  q0.writeXMLFile(ele0);
+  u0.writeXMLFile(ele0);
   R.writeXMLFile(ele0);
   return ele0;
 }

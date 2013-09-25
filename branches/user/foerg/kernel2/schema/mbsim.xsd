@@ -835,24 +835,6 @@
   <xs:complexType name="ObjectType">
     <xs:complexContent>
       <xs:extension base="ElementType">
-        <xs:sequence>
-          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Inertiale Lage in den generalisierten Freiheitsgraden.
-                <p>An dieser Stelle werden die Anfangslagen von zustandsbehafteten Objekten angegeben. Bei Starrkörpern muss die Länge dieses Vektors der Anzahl der angegebenen Translations- und Rotationsrichtungen entsprechen, wobei zunächst die translatorischen Lagen und danach die rotatorischen Lagen anzugeben sind.</p>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
-                <p>vgl. <i>initialGeneralizedPosition</i> für die Zuordnung.</p>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence> 
         <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
@@ -900,6 +882,22 @@
     <xs:complexContent>
       <xs:extension base="ObjectType">
         <xs:sequence>
+          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Inertiale Lage in den generalisierten Freiheitsgraden.
+                <p>An dieser Stelle werden die Anfangslagen von zustandsbehafteten Objekten angegeben. Bei Starrkörpern muss die Länge dieses Vektors der Anzahl der angegebenen Translations- und Rotationsrichtungen entsprechen, wobei zunächst die translatorischen Lagen und danach die rotatorischen Lagen anzugeben sind.</p>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
+                <p>vgl. <i>initialGeneralizedPosition</i> für die Zuordnung.</p>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1242,6 +1240,13 @@
     <xs:complexContent>
       <xs:extension base="KinematicConstraintType">
         <xs:sequence>
+          <xs:element name="initialState" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
@@ -1272,6 +1277,13 @@
     <xs:complexContent>
       <xs:extension base="KinematicConstraintType">
         <xs:sequence>
+          <xs:element name="initialState" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
@@ -1375,7 +1387,7 @@
     <xs:complexContent>
       <xs:extension base="ConstraintType">
         <xs:sequence>
-          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:unknownVector">
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Anfangswerte für Newton-Löser.

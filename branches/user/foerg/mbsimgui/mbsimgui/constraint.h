@@ -82,7 +82,7 @@ class GeneralizedVelocityConstraint : public KinematicConstraint {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   protected:
-    ExtProperty constraintFunction;
+    ExtProperty constraintFunction, x0;
 };
 
 class GeneralizedAccelerationConstraint : public KinematicConstraint {
@@ -95,7 +95,7 @@ class GeneralizedAccelerationConstraint : public KinematicConstraint {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
   protected:
-    ExtProperty constraintFunction;
+    ExtProperty constraintFunction, x0;
 };
 
 class JointConstraint : public Constraint {
@@ -110,7 +110,7 @@ class JointConstraint : public Constraint {
     void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
-    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, jointForceArrow, jointMomentArrow;
+    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, jointForceArrow, jointMomentArrow, q0;
 
 };
 

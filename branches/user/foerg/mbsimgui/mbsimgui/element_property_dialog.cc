@@ -270,7 +270,20 @@ void SolverPropertyDialog::fromWidget(Element *element) {
 }
 
 ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
-  addTab("Initial conditions",1);
+}
+
+void ObjectPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+}
+
+void ObjectPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+}
+
+BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
+  addTab("Kinematics");
+  addTab("Initial conditions");
+
   vector<PhysicalVariableWidget*> input;
   q0_ = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
@@ -286,39 +299,28 @@ ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::
   addToTab("Initial conditions", u0);
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
-}
 
-void ObjectPropertyDialog::toWidget(Element *element) {
-  ElementPropertyDialog::toWidget(element);
-  static_cast<Object*>(element)->q0.toWidget(q0);
-  static_cast<Object*>(element)->u0.toWidget(u0);
-}
-
-void ObjectPropertyDialog::fromWidget(Element *element) {
-  ElementPropertyDialog::fromWidget(element);
-  static_cast<Object*>(element)->q0.fromWidget(q0);
-  static_cast<Object*>(element)->u0.fromWidget(u0);
-}
-
-BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-  addTab("Kinematics",2);
   R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",R);
 }
 
 void BodyPropertyDialog::toWidget(Element *element) {
   ObjectPropertyDialog::toWidget(element);
+  static_cast<Body*>(element)->q0.toWidget(q0);
+  static_cast<Body*>(element)->u0.toWidget(u0);
   static_cast<Body*>(element)->R.toWidget(R);
 }
 
 void BodyPropertyDialog::fromWidget(Element *element) {
   ObjectPropertyDialog::fromWidget(element);
+  static_cast<Body*>(element)->q0.fromWidget(q0);
+  static_cast<Body*>(element)->u0.fromWidget(u0);
   static_cast<Body*>(element)->R.fromWidget(R);
 }
 
 RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
-  addTab("Visualisation",3);
-  addTab("Extra",4);
+  addTab("Visualisation");
+  addTab("Extra");
 
   K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",K);
@@ -661,6 +663,7 @@ void GeneralizedPositionConstraintPropertyDialog::fromWidget(Element *element) {
 }
 
 GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+  addTab("Initial conditions");
 
   vector<QWidget*> widget;
   vector<QString> name;
@@ -671,31 +674,37 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
   addToTab("General", constraintFunction);
   connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
-}
+  vector<PhysicalVariableWidget*> input;
+  x0_ = new VecWidget(0);
+  input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  x0 = new ExtWidget("Initial state",var,true);
+  addToTab("Initial conditions", x0);
 
-void GeneralizedVelocityConstraintPropertyDialog::resizeGeneralizedPosition() {
-  int size = refBody->getqRelSize();
-  if(q0_ && q0_->size() != size)
-    q0_->resize_(size);
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
   int size = refBody?refBody->getqRelSize():0;
   ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
+  if(x0_ && x0_->size() != size)
+    x0_->resize_(size);
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::toWidget(Element *element) {
   KinematicConstraintPropertyDialog::toWidget(element);
   static_cast<GeneralizedVelocityConstraint*>(element)->constraintFunction.toWidget(constraintFunction);
+  static_cast<GeneralizedVelocityConstraint*>(element)->x0.toWidget(x0);
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::fromWidget(Element *element) {
   KinematicConstraintPropertyDialog::fromWidget(element);
   static_cast<GeneralizedVelocityConstraint*>(element)->constraintFunction.fromWidget(constraintFunction);
+  static_cast<GeneralizedVelocityConstraint*>(element)->x0.fromWidget(x0);
 }
 
 GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+  addTab("Initial conditions");
 
   vector<QWidget*> widget;
   vector<QString> name;
@@ -706,34 +715,40 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
   addToTab("General", constraintFunction);
   connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
+  vector<PhysicalVariableWidget*> input;
+  x0_ = new VecWidget(0);
+  input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  x0 = new ExtWidget("Initial state",var,true);
+  addToTab("Initial conditions", x0);
+
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void GeneralizedAccelerationConstraintPropertyDialog::resizeGeneralizedPosition() {
-  int size = refBody->getqRelSize();
-  if(q0_ && q0_->size() != size)
-    q0_->resize_(size);
-}
-
 void GeneralizedAccelerationConstraintPropertyDialog::resizeVariables() {
-  int size = refBody?refBody->getqRelSize():0;
+  int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
   ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
+  if(x0_ && x0_->size() != size)
+    x0_->resize_(size);
 }
 
 void GeneralizedAccelerationConstraintPropertyDialog::toWidget(Element *element) {
   KinematicConstraintPropertyDialog::toWidget(element);
   static_cast<GeneralizedAccelerationConstraint*>(element)->constraintFunction.toWidget(constraintFunction);
+  static_cast<GeneralizedAccelerationConstraint*>(element)->x0.toWidget(x0);
 }
 
 void GeneralizedAccelerationConstraintPropertyDialog::fromWidget(Element *element) {
   KinematicConstraintPropertyDialog::fromWidget(element);
   static_cast<GeneralizedAccelerationConstraint*>(element)->constraintFunction.fromWidget(constraintFunction);
+  static_cast<GeneralizedAccelerationConstraint*>(element)->x0.fromWidget(x0);
 }
 
 JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
 
   addTab("Kinetics",1);
   addTab("Visualisation");
+  addTab("Initial conditions");
 
   independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
   addToTab("General", independentBody);
@@ -762,9 +777,18 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
 
   jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",jointMomentArrow);
+
+  vector<PhysicalVariableWidget*> input;
+  q0_ = new VecWidget(0);
+  input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  q0 = new ExtWidget("Initial guess",var,true);
+  addToTab("Initial conditions", q0);
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
+void JointConstraintPropertyDialog::resizeVariables() {
   int size = 0;
   for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSize(); i++)
     if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i))
@@ -772,6 +796,8 @@ void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
   for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
     if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i))
       size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i)->getqRelSize();
+  cout << "JointConstraintPropertyDialog ";
+  cout << size << endl;
   if(q0_->size() != size)
     q0_->resize_(size);
 }
@@ -786,6 +812,7 @@ void JointConstraintPropertyDialog::toWidget(Element *element) {
   static_cast<JointConstraint*>(element)->moment.toWidget(moment);
   static_cast<JointConstraint*>(element)->jointForceArrow.toWidget(jointForceArrow);
   static_cast<JointConstraint*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
+  static_cast<JointConstraint*>(element)->q0.toWidget(q0);
 }
 
 void JointConstraintPropertyDialog::fromWidget(Element *element) {
@@ -817,6 +844,7 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
     if(body)
       body->setConstrained(true);
   }
+  static_cast<JointConstraint*>(element)->q0.fromWidget(q0);
 }
 
 SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {

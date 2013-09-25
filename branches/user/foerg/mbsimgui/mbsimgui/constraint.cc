@@ -157,17 +157,23 @@ GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, 
   property.push_back(new SymbolicFunctionProperty("VS",var));
 
   constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialState"));
+  x0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   KinematicConstraint::initializeUsingXML(element);
+  x0.initializeUsingXML(element);
   constraintFunction.initializeUsingXML(element);
 }
 
 TiXmlElement* GeneralizedVelocityConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
 
+  x0.writeXMLFile(ele0);
   constraintFunction.writeXMLFile(ele0);
 
   return ele0;
@@ -184,23 +190,29 @@ GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const strin
   property.push_back(new SymbolicFunctionProperty("VS",var));
 
   constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialState"));
+  x0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 void GeneralizedAccelerationConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   KinematicConstraint::initializeUsingXML(element);
+  x0.initializeUsingXML(element);
   constraintFunction.initializeUsingXML(element);
 }
 
 TiXmlElement* GeneralizedAccelerationConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
 
+  x0.writeXMLFile(ele0);
   constraintFunction.writeXMLFile(ele0);
 
   return ele0;
 }
 
-JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
+JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), q0(0,false) {
 
   independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"independentRigidBody"));
 
@@ -221,6 +233,10 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
 
   jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGuess"));
+  q0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 void JointConstraint::initialize() {
@@ -258,6 +274,8 @@ void JointConstraint::deinitialize() {
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {
   Constraint::initializeUsingXML(element);
 
+  q0.initializeUsingXML(element);
+
   dependentBodiesFirstSide.initializeUsingXML(element);
   dependentBodiesSecondSide.initializeUsingXML(element);
 
@@ -274,6 +292,8 @@ void JointConstraint::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
+
+  q0.writeXMLFile(ele0);
 
   dependentBodiesFirstSide.writeXMLFile(ele0);
   dependentBodiesSecondSide.writeXMLFile(ele0);
