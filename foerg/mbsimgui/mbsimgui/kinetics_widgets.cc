@@ -308,20 +308,14 @@ ForceChoiceWidget::ForceChoiceWidget() {
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("V",1));
-  name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget("V",1));
-  name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1));
-  name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(1));
-  name.push_back("Tabular function");
-  widget.push_back(new SummationFunctionWidget(1));
-  name.push_back("Summation function");
-  widget.push_back(new PiecewiseDefinedFunctionWidget("V",1));
-  name.push_back("Piecewise defined function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
-  name.push_back("Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget(1)); name.push_back("Tabular function");
+  widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
+  widget.push_back(new PiecewiseDefinedFunctionWidget("V",1)); name.push_back("Piecewise defined function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
   forceLaw = new ExtWidget("Function",new ChoiceWidget(widget,name));
   layout->addWidget(forceLaw);
 

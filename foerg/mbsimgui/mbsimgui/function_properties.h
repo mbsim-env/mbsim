@@ -338,12 +338,12 @@ class TabularFunctionProperty : public FunctionProperty {
     ChoiceProperty choice;
 };
 
-class SummationFunctionProperty : public FunctionProperty {
+class LinearCombinationFunctionProperty : public FunctionProperty {
 
   public:
-    SummationFunctionProperty() {}
-    virtual Property* clone() const {return new SummationFunctionProperty(*this);}
-    inline std::string getType() const { return "SummationFunction_VS"; }
+    LinearCombinationFunctionProperty(const std::string &ext) : FunctionProperty(ext) {}
+    virtual Property* clone() const {return new LinearCombinationFunctionProperty(*this);}
+    inline std::string getType() const { return "LinearCombinationFunction_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
