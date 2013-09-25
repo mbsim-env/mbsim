@@ -60,8 +60,10 @@ namespace MBSim {
   }
 
   void Graph::updatezd(double t) {
-    for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i) 
+    for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i) {
       (**i).updateqd(t);
+      (**i).updatexd(t);
+    }
     ud[0] = slvLLFac(LLM[0], h[0]+r[0]);
   }
 

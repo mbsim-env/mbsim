@@ -63,7 +63,7 @@ namespace MBSim {
       virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]); }
       virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(LLM[i], h[i] + r[i]); }
       virtual void updateqd(double t) { qd = T * u; }
-      virtual void updatezd(double t) { updateqd(t); updateud(t); }
+      virtual void updatezd(double t) { updateqd(t); updateud(t); updatexd(t); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -93,6 +93,16 @@ namespace MBSim {
       virtual std::string getType() const { return "Object"; }
       //virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
+
+      virtual void updatedx(double t, double dt) {}
+      virtual void updatexd(double t) {}
+      virtual void calcxSize() { xSize = 0; }
+      virtual const fmatvec::Vec& getx() const { return x; }
+      virtual fmatvec::Vec& getx() { return x; }
+      virtual void setxInd(int xInd_) { xInd = xInd_; };
+      virtual int getxSize() const { return xSize; }
+      virtual void updatexRef(const fmatvec::Vec& ref);
+      virtual void updatexdRef(const fmatvec::Vec& ref);
 
       /**
        * \brief references to positions of dynamic system parent
@@ -318,20 +328,25 @@ namespace MBSim {
        */
       int qInd, uInd[2], hInd[2];
 
+      /**
+       * \brief size  and local index of order one parameters
+       */
+      int xSize, xInd;
+
       /** 
        * \brief positions, velocities
        */
-      fmatvec::Vec q, u, uall;
+      fmatvec::Vec q, u, uall, x;
 
       /**
        * \brief initial position, velocity
        */
-      fmatvec::Vec q0, u0;
+      fmatvec::Vec q0, u0, x0;
 
       /**
        * \brief differentiated positions, velocities
        */
-      fmatvec::Vec qd, ud[2], udall[2];
+      fmatvec::Vec qd, ud[2], udall[2], xd;
 
       /** 
        * \brief complete and object smooth and nonsmooth right hand side

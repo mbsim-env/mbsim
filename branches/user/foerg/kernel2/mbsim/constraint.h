@@ -152,7 +152,7 @@ namespace MBSim {
 
       void init(InitStage stage);
 
-      void calcqSize();
+      void calcxSize();
 
       void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
       void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
@@ -160,7 +160,7 @@ namespace MBSim {
 
       virtual void setUpInverseKinetics();
 
-      void updateqd(double t);
+      void updatexd(double t);
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
@@ -180,10 +180,7 @@ namespace MBSim {
 
       void init(InitStage stage);
 
-//      int getuSize(int j=0) const {return 0;}
-
-      void calcqSize();
-//      void calcuSize(int j);
+      void calcxSize();
 
       void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
       void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
@@ -191,8 +188,7 @@ namespace MBSim {
 
       virtual void setUpInverseKinetics();
 
-      void updateqd(double t);
-//      void updateud(double t, int i=0);
+      void updatexd(double t);
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 

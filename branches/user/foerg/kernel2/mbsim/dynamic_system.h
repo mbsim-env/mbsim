@@ -361,12 +361,6 @@ namespace MBSim {
       void updatehRef(const fmatvec::Vec &hRef, int i=0);
 
       /**
-       * \brief references to order one right hand side of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatefRef(const fmatvec::Vec &ref);
-
-      /**
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
