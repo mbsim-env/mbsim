@@ -167,8 +167,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<Vec3>, MBSIMNS"SinusFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<double>, MBSIMNS"SinusFunction_S")
 
-  // TODO remove PositiveSinusFunction and implement AbsoluteValueFunction
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveSinusFunction<VecV>, MBSIMNS"PositiveSinusFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<VecV>, MBSIMNS"PositiveFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<Vec3>, MBSIMNS"PositiveFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<double>, MBSIMNS"PositiveFunction_S")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<VecV>, MBSIMNS"StepFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<Vec3>, MBSIMNS"StepFunction_V")
@@ -220,7 +221,7 @@ namespace MBSim {
         x=xy.col(0);
         y=xy.col(1);
       }
-      check();
+      init();
     }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<VecV>, MBSIMNS"PeriodicTabularFunction_V")
@@ -266,11 +267,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV(double))>, MBSIMNS"NestedFunction_MVS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV(VecV))>, MBSIMNS"NestedFunction_MVV")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV(VecV)>, MBSIMNS"SummationFunction_VV")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(VecV)>, MBSIMNS"SummationFunction_VV")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV(double)>, MBSIMNS"SummationFunction_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(double)>, MBSIMNS"SummationFunction_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<double(double)>, MBSIMNS"SummationFunction_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearCombinationFunction<VecV>, MBSIMNS"LinearCombinationFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearCombinationFunction<Vec3>, MBSIMNS"LinearCombinationFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearCombinationFunction<double>, MBSIMNS"LinearCombinationFunction_S")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, VectorValuedFunction<VecV>, MBSIMNS"VectorValuedFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, VectorValuedFunction<Vec3>, MBSIMNS"VectorValuedFunction_V")

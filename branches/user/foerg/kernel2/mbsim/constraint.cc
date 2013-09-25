@@ -296,7 +296,10 @@ namespace MBSim {
 
   void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement* element) {
     KinematicConstraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"constraintFunction");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+    if (e)
+      x0 = getVec(e);
+    e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
       Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement(),false);
       if(f) {

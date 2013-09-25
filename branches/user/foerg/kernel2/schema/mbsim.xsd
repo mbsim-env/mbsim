@@ -3373,39 +3373,46 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PositiveSinusFunction_V" substitutionGroup="Function_VS" type="PositiveSinusFunction_VType">
+  <xs:element name="PositiveFunction_V" substitutionGroup="Function_VS" type="PositiveFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Funktion der Gestalt
-        <object class="inlineeqn">\boldsymbol{y}= \boldsymbol{f}(x)</object> mit 
-        <object class="inlineeqn">y_i= \begin{cases} A_i \, \sin \left( 2 \, \pi \, f_i \, t + \varphi_i \right) \\ 0 \end{cases}</object>.
+      tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PositiveSinusFunction_VType">
+  <xs:complexType name="PositiveFunction_VType">
     <xs:complexContent>
       <xs:extension base="Function_VSType">
         <xs:sequence>
-          <xs:element name="amplitude" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Amplituden <object class="inlineeqn">\boldsymbol{A}</object>.
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function_VS"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
-          <xs:element name="frequency" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Frequenzen <object class="inlineeqn">\boldsymbol{f}</object>.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="phase" type="pv:angleVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Phasenwinkel <object class="inlineeqn">\boldsymbol{\varphi}</object>.
-              </xs:documentation>
-            </xs:annotation>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="PositiveFunction_S" substitutionGroup="Function_SS" type="PositiveFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PositiveFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function_SS"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -3556,10 +3563,23 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="PeriodicTabularFunction_S" substitutionGroup="TabularFunction_S" type="PeriodicTabularFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction_S"><tt>&lt;TabularFunction_S&gt;</tt></a>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PeriodicTabularFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="TabularFunction_SType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="PeriodicTabularFunction_V" substitutionGroup="TabularFunction_V" type="PeriodicTabularFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction_V"><tt>&lt;TabularFunction_VS&gt;</tt></a>.
+        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction_V"><tt>&lt;TabularFunction_V&gt;</tt></a>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3569,14 +3589,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SummationFunction_SS" substitutionGroup="Function_SS" type="SummationFunction_SSType">
+  <xs:element name="LinearCombinationFunction_S" substitutionGroup="Function_SS" type="LinearCombinationFunction_SType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SummationFunction_SSType">
+  <xs:complexType name="LinearCombinationFunction_SType">
     <xs:complexContent>
       <xs:extension base="Function_SSType">
         <xs:sequence>
@@ -3584,7 +3604,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="mbsim:Function_SS"/>
-                <xs:element name="factor" type="pv:nounitScalar">
+                <xs:element name="factor" type="pv:nounitScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Factor <object class="inlineeqn">c_i</object> 
@@ -3599,14 +3619,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SummationFunction_VS" substitutionGroup="Function_VS" type="SummationFunction_VSType">
+  <xs:element name="LinearCombinationFunction_V" substitutionGroup="Function_VS" type="LinearCombinationFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SummationFunction_VSType">
+  <xs:complexType name="LinearCombinationFunction_VType">
     <xs:complexContent>
       <xs:extension base="Function_VSType">
         <xs:sequence>
@@ -3614,37 +3634,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="mbsim:Function_VS"/>
-                <xs:element name="factor" type="pv:nounitScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Factor <object class="inlineeqn">c_i</object> 
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="SummationFunction_VV" substitutionGroup="Function_VV" type="SummationFunction_VVType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="SummationFunction_VVType">
-    <xs:complexContent>
-      <xs:extension base="Function_VVType">
-        <xs:sequence>
-          <xs:element name="function" maxOccurs="unbounded">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="mbsim:Function_VV"/>
-                <xs:element name="factor" type="pv:nounitScalar">
+                <xs:element name="factor" type="pv:nounitScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Factor <object class="inlineeqn">c_i</object> 

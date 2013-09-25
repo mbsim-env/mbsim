@@ -36,6 +36,7 @@ namespace MBSim {
         fmatvec::Function<Ret(fmatvec::VecV)> *f;
       public:
         StateDependentFunction(fmatvec::Function<Ret(fmatvec::VecV)> *f_) : f(f_) { }
+        ~StateDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
         typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
         Ret operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg1); }
@@ -57,6 +58,7 @@ namespace MBSim {
         fmatvec::Function<Ret(double)> *f;
       public:
         TimeDependentFunction(fmatvec::Function<Ret(double)> *f_) : f(f_) { }
+        ~TimeDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
         typename fmatvec::Size<double>::type getArg2Size() const { return 1; }
         Ret operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
@@ -76,6 +78,7 @@ namespace MBSim {
     class NestedFunction<Ret(Argo(Argi))> : public fmatvec::Function<Ret(Argi)> {
       public:
        NestedFunction(fmatvec::Function<Ret(Argo)> *fo_=0, fmatvec::Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
+        ~NestedFunction() { delete fo; delete fi; }
        typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
@@ -136,7 +139,7 @@ namespace MBSim {
    * \brief function describing a nonlinear relationship between the input relative distance / velocity and the output for a spring
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
-   * \todo put in function_library TODO
+   * \todo delete function pointers
    */
   class NonlinearSpringDamperForce : public fmatvec::Function<double(double,double)> {
     public:
@@ -300,7 +303,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \date 2010-01-09 beauty correction (Thorsten Schindler)
-   * \todo put in function_library TODO
+   * \todo delete function pointer
    */
   class LinearRegularizedStribeckFriction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> {
     public:
@@ -599,18 +602,28 @@ namespace MBSim {
     inline double SinusFunction<double>::zeros(const double &x) { return 0; } 
 
   template<class Ret>
-  class PositiveSinusFunction : public SinusFunction<Ret> {
+  class PositiveFunction : public fmatvec::Function<Ret(double)> {
+    private:
+      fmatvec::Function<Ret(double)> *f;
     public:
-      PositiveSinusFunction() { }
-      PositiveSinusFunction(const Ret &A, const Ret &f, const Ret &phi0, const Ret &y0) : SinusFunction<Ret>(A, f, phi0, y0) { }
+      PositiveFunction(fmatvec::Function<Ret(double)> *f_=0) : f(f_) { }
+      ~PositiveFunction() { delete f; }
       Ret operator()(const double &x) {
-        Ret y=SinusFunction<Ret>::operator()(x);
-        for (int i=0; i<SinusFunction<Ret>::A.size(); i++)
-          if (y(i)<0)
+        Ret y=(*f)(x);
+        for (int i=0; i<y.size(); i++)
+          if(y(i)<0)
             y(i)=0;
         return y;
       }
   };
+
+  template<>
+    inline double PositiveFunction<double>::operator()(const double &x) {  
+      double y=(*f)(x);
+      if(y<0) y=0;
+      return y;
+    }
+
 
   template<class Ret>
   class StepFunction : public fmatvec::Function<Ret(double)> {
@@ -639,36 +652,50 @@ namespace MBSim {
       return (x>=stepTime)?stepSize:0;
     }
 
-  template<typename Sig> class SummationFunction;
-
-  template<class Ret, class Arg>
-    class SummationFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  template<class Ret>
+    class LinearCombinationFunction : public fmatvec::Function<Ret(double)> {
       public:
-        SummationFunction() { }
-        void addFunction(fmatvec::Function<Ret(Arg)> *function, double factor=1.) {
+        LinearCombinationFunction() { }
+        ~LinearCombinationFunction() { 
+          for (unsigned int i=1; i<functions.size(); i++)
+            delete functions[i]; 
+        }
+        void addFunction(fmatvec::Function<Ret(double)> *function, double factor=1.) {
           functions.push_back(function);
           factors.push_back(factor);
         }
-        Ret operator()(const Arg &x) {
+        Ret operator()(const double &x) {
           Ret y=factors[0]*(*(functions[0]))(x);
           for (unsigned int i=1; i<functions.size(); i++)
             y+=factors[i]*(*(functions[i]))(x);
+          return y;
+        }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+          typename fmatvec::Der<Ret, double>::type y=factors[0]*functions[0]->parDer(x);
+          for (unsigned int i=0; i<functions.size(); i++)
+            y+=factors[i]*functions[i]->parDer(x);
+          return y;
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y=factors[0]*functions[0]->parDerParDer(x);
+          for (unsigned int i=0; i<functions.size(); i++)
+            y+=factors[i]*functions[i]->parDerParDer(x);
           return y;
         }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
           while (e && e->ValueStr()==MBSIMNS"function") {
             MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<Ret(Arg)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Arg)> >(ee);
+            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(ee);
             f->initializeUsingXML(ee);
             ee=e->FirstChildElement(MBSIMNS"factor");
-            double factor=Element::getDouble(ee);
+            double factor=ee?Element::getDouble(ee):1;
             addFunction(f, factor);
             e=e->NextSiblingElement();
           }
         }
       private:
-        std::vector<fmatvec::Function<Ret(Arg)> *> functions;
+        std::vector<fmatvec::Function<Ret(double)> *> functions;
         std::vector<double> factors;
     };
 
@@ -676,7 +703,11 @@ namespace MBSim {
     class VectorValuedFunction : public fmatvec::Function<Ret(double)> {
       public:
         VectorValuedFunction() { }
-        VectorValuedFunction(const std::vector<fmatvec::Function<double(double)> *> functions_) : functions(functions_) { }
+        VectorValuedFunction(const std::vector<fmatvec::Function<double(double)> *> &functions_) : functions(functions_) { }
+        ~VectorValuedFunction() { 
+          for (unsigned int i=1; i<functions.size(); i++)
+            delete functions[i]; 
+        }
         Ret operator()(const double &x) {
           Ret y(functions.size(),fmatvec::NONINIT);
           for (unsigned int i=0; i<functions.size(); i++)
@@ -715,12 +746,11 @@ namespace MBSim {
       public:
         PiecewiseDefinedFunction() : contDiff(0) { }
         PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_, int contDiff_=0) : functions(functions_), a(a_), contDiff(contDiff_) { 
-          yEnd = (*functions[functions.size()-1])(a[a.size()-1]); 
-          if(contDiff>0) {
-            ysEnd = functions[functions.size()-1]->parDer(a[a.size()-1]); 
-            if(contDiff>1)
-              yssEnd = functions[functions.size()-1]->parDerParDer(a[a.size()-1]); 
-          }
+          init();
+        }
+        ~PiecewiseDefinedFunction() { 
+          for (unsigned int i=1; i<functions.size(); i++)
+            delete functions[i]; 
         }
         Ret zeros(const Ret &x) { return Ret(x.size()); }
         Ret operator()(const double &x) {
@@ -770,6 +800,14 @@ namespace MBSim {
           }
           e=element->FirstChildElement(MBSIMNS"continouslyDifferentiable");
           if(e) contDiff=Element::getDouble(e);
+          init();
+        }
+      private:
+        std::vector<fmatvec::Function<Ret(double)> *> functions;
+        std::vector<double> a;
+        int contDiff;
+        Ret yEnd, ysEnd, yssEnd;
+        void init() {
           yEnd = (*functions[functions.size()-1])(a[a.size()-1]); 
           if(contDiff>0) {
             ysEnd = functions[functions.size()-1]->parDer(a[a.size()-1]); 
@@ -777,11 +815,6 @@ namespace MBSim {
               yssEnd = functions[functions.size()-1]->parDerParDer(a[a.size()-1]); 
           }
         }
-      private:
-        std::vector<fmatvec::Function<Ret(double)> *> functions;
-        std::vector<double> a;
-        int contDiff;
-        Ret yEnd, ysEnd, yssEnd;
     };
 
   template<>
@@ -832,7 +865,7 @@ namespace MBSim {
     public:
       TabularFunction() : xIndexOld(0) {}
       TabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : x(x_), y(y_), xIndexOld(0) {
-        check();
+        init();
       }
       Ret operator()(const double& xVal) {
         int i=xIndexOld;
@@ -873,14 +906,14 @@ namespace MBSim {
           x=xy.col(0);
           y=xy(fmatvec::Range<fmatvec::Var,fmatvec::Var>(0, xy.rows()-1), fmatvec::Range<fmatvec::Var,fmatvec::Var>(1, xy.cols()-1));
         }
-        check();
+        init();
       }
     protected:
       fmatvec::VecV x;
       typename Tab<Ret>::type y;
     private:
       int xIndexOld, xSize;
-      void check() {
+      void init() {
         for (int i=1; i<x.size(); i++)
           assert(x(i)>x(i-1));
         assert(x.size()==y.rows());
@@ -898,7 +931,7 @@ namespace MBSim {
     public:
       PeriodicTabularFunction() {}
       PeriodicTabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : TabularFunction<Ret>(x_, y_) {
-        check();
+        init();
       }
       Ret operator()(const double& xVal) {
         double xValTmp=xVal;
@@ -910,11 +943,11 @@ namespace MBSim {
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
         TabularFunction<Ret>::initializeUsingXML(element);
-        check();
+        init();
       }
     private:
       double xMin, xMax, xDelta;
-      void check() {
+      void init() {
         xMin=TabularFunction<Ret>::x(0);
         xMax=x(TabularFunction<Ret>::x.size()-1);
         xDelta=xMax-xMin;
