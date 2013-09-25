@@ -30,6 +30,7 @@ class VariableWidget;
 class PhysicalVariableWidget;
 class EvalDialog;
 class QVBoxLayout;
+class QListWidget;
 
 class ExtPhysicalVarWidget : public Widget {
   Q_OBJECT
@@ -118,6 +119,31 @@ class ContainerWidget : public Widget {
   protected:
     QVBoxLayout *layout;
     std::vector<QWidget*> widget;
+};
+
+class ListWidget : public Widget {
+  Q_OBJECT
+
+  friend class ListProperty;
+
+  public:
+    ListWidget(const std::vector<Widget*> &widgets, int n);
+    void resize_(int m, int n);
+
+  protected:
+    QStackedWidget *stackedWidget; 
+    QListWidget *list; 
+    std::vector<Widget*> widgets;
+    int n;
+
+  protected slots:
+    void updateList();
+    void addElement(bool emitSignals=true);
+    void removeFunction();
+    void openContextMenu(const QPoint &pos);
+    void changeCurrent(int idx);
+  signals:
+    void resize_();
 };
 
 #endif

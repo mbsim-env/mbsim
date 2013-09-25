@@ -182,3 +182,86 @@ void ContainerWidget::addWidget(QWidget *widget_) {
   layout->addWidget(widget_); 
   widget.push_back(widget_);
 }
+
+
+ListWidget::ListWidget(const std::vector<Widget*> &widgets_, int n_) : widgets(widgets_), n(n_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  list = new QListWidget;
+  list->setContextMenuPolicy (Qt::CustomContextMenu);
+  list->setMinimumWidth(list->sizeHint().width()/3);
+  list->setMaximumWidth(list->sizeHint().width()/3);
+  layout->addWidget(list);
+  stackedWidget = new QStackedWidget;
+  connect(list,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(list,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
+  layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void ListWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
+}
+
+void ListWidget::openContextMenu(const QPoint &pos) {
+  if(list->itemAt(pos)) {
+    QMenu menu(this);
+    QAction *add = new QAction(tr("Remove"), this);
+    connect(add, SIGNAL(triggered()), this, SLOT(removeFunction()));
+    menu.addAction(add);
+    menu.exec(QCursor::pos());
+  }
+  else {
+    QMenu menu(this);
+    QAction *add = new QAction(tr("Add"), this);
+    connect(add, SIGNAL(triggered()), this, SLOT(addElement()));
+    menu.addAction(add);
+    menu.exec(QCursor::pos());
+  }
+}
+
+void ListWidget::resize_(int m, int n) {
+  for(int i=0; i<stackedWidget->count(); i++)
+    widgets[i]->resize_(m,n);
+}
+
+void ListWidget::updateList() {
+//  for(int i=0; i<list->count(); i++)
+//    list->item(i)->setText(widgets[i]->getName());
+}
+
+void ListWidget::addElement(bool emitSignals) {
+
+  int i = stackedWidget->count();
+//  ContainerWidget *widgetContainer = new ContainerWidget;
+//  widgetContainer->addWidget(new ChoiceWidget(widgets,names));
+
+//  vector<PhysicalVariableWidget*> input;
+//  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+//  widgetContainer->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
+
+  list->addItem("Undefined");
+
+  //stackedWidget->addWidget(widgetContainer);
+  stackedWidget->addWidget(widgets[i]);
+  if(i>0)
+    widgets[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+  if(emitSignals) {
+    emit resize_();
+    updateList();
+  }
+}
+
+void ListWidget::removeFunction() {
+  int i = list->currentRow();
+  delete stackedWidget->widget(i);
+  stackedWidget->removeWidget(stackedWidget->widget(i));
+  delete list->takeItem(i);
+}
+

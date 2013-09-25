@@ -109,7 +109,7 @@ class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
   protected slots:
     void updateList();
-    void addFunction();
+    void addFunction(bool emitSignals=true);
     void removeFunction();
     void openContextMenu(const QPoint &pos);
     void changeCurrent(int idx);
@@ -291,13 +291,13 @@ class TabularFunctionWidget : public FunctionWidget {
     ChoiceWidget* choice;
 };
 
-class SummationFunctionWidget : public FunctionWidget {
+class LinearCombinationFunctionWidget : public FunctionWidget {
   Q_OBJECT
 
-  friend class SummationFunctionProperty;
+  friend class LinearCombinationFunctionProperty;
 
   public:
-    SummationFunctionWidget(int n);
+    LinearCombinationFunctionWidget(const QString &ext, int n);
     void resize_(int m, int n);
 
   protected:
@@ -307,7 +307,7 @@ class SummationFunctionWidget : public FunctionWidget {
 
   protected slots:
     void updateList();
-    void addFunction();
+    void addFunction(bool emitSignals=true);
     void removeFunction();
     void openContextMenu(const QPoint &pos);
     void changeCurrent(int idx);

@@ -204,11 +204,12 @@ void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
 }
 
 void PiecewiseDefinedFunctionWidget::updateList() {
-  for(int i=0; i<functionList->count(); i++)
+  for(int i=0; i<functionList->count(); i++) {
     functionList->item(i)->setText(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->getName());
+  }
 }
 
-void PiecewiseDefinedFunctionWidget::addFunction() {
+void PiecewiseDefinedFunctionWidget::addFunction(bool emitSignals) {
   int i = stackedWidget->count();
 
   ContainerWidget *widgetContainer = new ContainerWidget;
@@ -225,7 +226,7 @@ void PiecewiseDefinedFunctionWidget::addFunction() {
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(2),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   widgetContainer->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
 
   functionList->addItem("Undefined");
@@ -237,8 +238,10 @@ void PiecewiseDefinedFunctionWidget::addFunction() {
   connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
   connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
 
-  emit resize_();
-  emit updateList();
+  if(emitSignals) {
+    emit resize_();
+    emit updateList();
+  }
 }
 
 void PiecewiseDefinedFunctionWidget::removeFunction() {
@@ -433,7 +436,7 @@ TabularFunctionWidget::TabularFunctionWidget(int n) {
   layout->addWidget(choice);
 }
 
-SummationFunctionWidget::SummationFunctionWidget(int n_) : n(n_) {
+LinearCombinationFunctionWidget::LinearCombinationFunctionWidget(const QString &ext, int n_) : FunctionWidget(ext), n(n_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -449,7 +452,7 @@ SummationFunctionWidget::SummationFunctionWidget(int n_) : n(n_) {
   layout->addWidget(stackedWidget,0,Qt::AlignTop);
 }
 
-void SummationFunctionWidget::changeCurrent(int idx) {
+void LinearCombinationFunctionWidget::changeCurrent(int idx) {
   if (stackedWidget->currentWidget() !=0)
     stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->setCurrentIndex(idx);
@@ -457,7 +460,7 @@ void SummationFunctionWidget::changeCurrent(int idx) {
   adjustSize();
 }
 
-void SummationFunctionWidget::openContextMenu(const QPoint &pos) {
+void LinearCombinationFunctionWidget::openContextMenu(const QPoint &pos) {
   if(functionList->itemAt(pos)) {
     QMenu menu(this);
     QAction *add = new QAction(tr("Remove"), this);
@@ -474,39 +477,33 @@ void SummationFunctionWidget::openContextMenu(const QPoint &pos) {
   }
 }
 
-void SummationFunctionWidget::resize_(int m, int n) {
+void LinearCombinationFunctionWidget::resize_(int m, int n) {
   for(int i=0; i<stackedWidget->count(); i++)
    static_cast<Widget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
 }
 
-void SummationFunctionWidget::updateList() {
+void LinearCombinationFunctionWidget::updateList() {
   for(int i=0; i<functionList->count(); i++)
     functionList->item(i)->setText(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->getName());
 }
 
-void SummationFunctionWidget::addFunction() {
+void LinearCombinationFunctionWidget::addFunction(bool emitSignals) {
   int i = stackedWidget->count();
 
   ContainerWidget *widgetContainer = new ContainerWidget;
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("V",n));
-  name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget("V",n));
-  name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",n));
-  name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(n));
-  name.push_back("Tabular function");
-  widget.push_back(new SummationFunctionWidget(n));
-  name.push_back("Summation function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
-  name.push_back("Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",n)); name.push_back("Constant function");
+  widget.push_back(new QuadraticFunctionWidget("V",n)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",n)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget(n)); name.push_back("Tabular function");
+  widget.push_back(new LinearCombinationFunctionWidget("V",n)); name.push_back("LinearCombination function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-  widgetContainer->addWidget(new ExtWidget("Factor",new ExtPhysicalVarWidget(input)));
+  widgetContainer->addWidget(new ExtWidget("Factor",new ExtPhysicalVarWidget(input),false));
 
   functionList->addItem("Undefined");
 
@@ -517,11 +514,13 @@ void SummationFunctionWidget::addFunction() {
   connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
   connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
 
-  emit resize_();
-  emit updateList();
+  if(emitSignals) {
+    emit resize_();
+    emit updateList();
+  }
 }
 
-void SummationFunctionWidget::removeFunction() {
+void LinearCombinationFunctionWidget::removeFunction() {
   int i = functionList->currentRow();
   delete stackedWidget->widget(i);
   stackedWidget->removeWidget(stackedWidget->widget(i));

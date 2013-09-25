@@ -955,6 +955,18 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   FrameOfReferenceWidget* ref = new FrameOfReferenceWidget(kineticExcitation,0);
   frameOfReference = new ExtWidget("Frame of reference",ref,true);
   addToTab("Kinetics",frameOfReference);
+
+//  vector<Widget*> widgets;
+//  for(int i=0; i<2; i++) {
+//  widget.clear();
+//  name.clear();
+//  widget.push_back(new ConstantFunctionWidget("V",3)); name.push_back("r=r(t), Constant function");
+//  widget.push_back(new LinearFunctionWidget("V",3)); name.push_back("r=r(t), Linear function");
+//  widgets.push_back(new ChoiceWidget(widget,name));
+//  }
+//
+//  ListWidget* test = new ListWidget(widgets,1);
+//  addToTab("Kinetics",test);
 }
 
 void KineticExcitationPropertyDialog::toWidget(Element *element) {
@@ -1330,18 +1342,13 @@ AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(Absol
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("V",1));
-  name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget("V",1));
-  name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1));
-  name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(1));
-  name.push_back("Tabular function");
-  widget.push_back(new SummationFunctionWidget(1));
-  name.push_back("Summation function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
-  name.push_back("Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget(1)); name.push_back("Tabular function");
+  widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
   function = new ExtWidget("Function",new ChoiceWidget(widget,name));
   addToTab("General", function);
 }

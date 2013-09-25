@@ -610,10 +610,11 @@ ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string 
 
   vector<Property*> property;
   property.push_back(new ConstantFunctionProperty("V"));
+  property.push_back(new LinearFunctionProperty("V"));
   property.push_back(new QuadraticFunctionProperty("V"));
   property.push_back(new SinusFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty);
-  property.push_back(new SummationFunctionProperty);
+  property.push_back(new LinearCombinationFunctionProperty("V"));
   property.push_back(new PiecewiseDefinedFunctionProperty("V"));
   vector<string> var;
   var.push_back("t");
