@@ -277,21 +277,21 @@ namespace MBSim {
       KinematicConstraint::init(stage);
   }
 
-  void GeneralizedVelocityConstraint::calcqSize() {
-    qSize = bd->getqRelSize();
+  void GeneralizedVelocityConstraint::calcxSize() {
+    xSize = bd->getqRelSize();
   }
 
-  void GeneralizedVelocityConstraint::updateqd(double t) {
-    qd = (*f)(q,t);
+  void GeneralizedVelocityConstraint::updatexd(double t) {
+    xd = (*f)(x,t);
   }
 
   void GeneralizedVelocityConstraint::updateStateDependentVariables(double t) {
-    bd->getqRel() = q;
-    bd->getuRel() = (*f)(q,t);
+    bd->getqRel() = x;
+    bd->getuRel() = (*f)(x,t);
   }
 
   void GeneralizedVelocityConstraint::updateJacobians(double t, int jj) {
-    bd->getjRel() = f->parDer1(q,t)*qd + f->parDer2(q,t);
+    bd->getjRel() = f->parDer1(x,t)*xd + f->parDer2(x,t);
   }
 
   void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement* element) {
@@ -338,32 +338,23 @@ namespace MBSim {
     else
       KinematicConstraint::init(stage);
   }
-
-  void GeneralizedAccelerationConstraint::calcqSize() {
-    qSize = bd->getqRelSize()+bd->getuRelSize();
+  
+  void GeneralizedAccelerationConstraint::calcxSize() {
+    xSize = bd->getqRelSize()+bd->getuRelSize();
   }
 
-//  void GeneralizedAccelerationConstraint::calcuSize(int i) {
-//    uSize[0] = bd->getuRelSize();
-//  }
-
-  void GeneralizedAccelerationConstraint::updateqd(double t) {
-    qd(0,bd->getqRelSize()-1) = q(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
-    qd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(q,t);
-    //qd = u;
+  void GeneralizedAccelerationConstraint::updatexd(double t) {
+    xd(0,bd->getqRelSize()-1) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(x(0,bd->getqRelSize()-1),t);
   }
-
-//  void GeneralizedAccelerationConstraint::updateud(double t, int i) {
-//    ud[0] = (*f)(t);
-//  }
 
   void GeneralizedAccelerationConstraint::updateStateDependentVariables(double t) {
-    bd->getqRel() = q(0,bd->getqRelSize()-1);
-    bd->getuRel() = q(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
+    bd->getqRel() = x(0,bd->getqRelSize()-1);
+    bd->getuRel() = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
   }
 
   void GeneralizedAccelerationConstraint::updateJacobians(double t, int jj) {
-    bd->getjRel() = (*f)(q,t);
+    bd->getjRel() = (*f)(x(0,bd->getqRelSize()-1),t);
   }
 
   void GeneralizedAccelerationConstraint::initializeUsingXML(TiXmlElement* element) {
