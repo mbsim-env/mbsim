@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidBody, MBSIMNS"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(false), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
 
     C=new FixedRelativeFrame("C");
     Body::addFrame(C);
@@ -190,14 +190,6 @@ namespace MBSim {
     else if(stage==resize) {
       Body::init(stage);
 
-      if(fPrPK) {
-//        fPrPK->init();
-      }
-      if(fAPK) {
-//        fAPK->setKOSY(cb);
-//        fAPK->init();
-      }
-
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
 
@@ -232,19 +224,33 @@ namespace MBSim {
       C->getJacobianOfTranslation(1) = PJT[1];
       C->getJacobianOfRotation(1) = PJR[1];
 
-      if(dynamic_cast<TCardanAngles<VecV>*>(fTR)) {
+      bool cb = false;
+      StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
+      if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
+        fTR = new RotationAboutAxesXYZMapping<VecV>;
         constJR = true;
         constjR = true;
         PJRR = SqrMat3(EYE);
         PJR[0].set(i02,iuR,PJRR);
       }
-      else if(dynamic_cast<TCardanAngles2<VecV>*>(fTR)) {
-        constJR = true;
-        constjR = true;
-        PJRR = SqrMat3(EYE);
-        PJR[0].set(i02,iuR,PJRR);
+      else if(Atmp and dynamic_cast<RotationAboutAxesXYZ2<VecV>*>(Atmp->getFunction())) {
         cb = true;
+        if(coordinateTransformation) {
+          fTR = new RotationAboutAxesXYZMapping2<VecV>;
+          constJR = true;
+          constjR = true;
+          PJRR = SqrMat3(EYE);
+          PJR[0].set(i02,iuR,PJRR);
+        }
       }
+      else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZXZ<VecV>*>(Atmp->getFunction())) {
+        fTR = new RotationAboutAxesZXZMapping<VecV>;
+        constJR = true;
+        constjR = true;
+        PJRR = SqrMat3(EYE);
+        PJR[0].set(i02,iuR,PJRR);
+      }
+
       if(fPrPK) {
         if(fPrPK->constParDer1()) {
           constJT = true;
@@ -812,41 +818,28 @@ namespace MBSim {
     Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV,double)> >(e->FirstChildElement(),false);
     if(rot) {
       rot->initializeUsingXML(e->FirstChildElement());
-      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
-      bool dep = false;
-      if(ee) dep = getBool(ee);
-      setRotation(rot,dep);
+      setRotation(rot);
     } else {
       Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV)> >(e->FirstChildElement(),false);
       if(rot) {
         rot->initializeUsingXML(e->FirstChildElement());
-        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
-        bool dep = false;
-        if(ee) dep = getBool(ee);
-        setRotation(rot,dep);
+        setRotation(rot);
       }
       else {
         Function<RotMat3(double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(double)> >(e->FirstChildElement(),false);
         if(rot) {
           rot->initializeUsingXML(e->FirstChildElement());
-          TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
-          bool dep = false;
-          if(ee) dep = getBool(ee);
-          setRotation(rot,dep);
+          setRotation(rot);
         }
       }
-    }
-    e=element->FirstChildElement(MBSIMNS"rotationMapping");
-    if(e) {
-      Function<MatV(VecV)> *TR=ObjectFactory<FunctionBase>::create<Function<MatV(VecV)> >(e->FirstChildElement());
-      if(TR) {
-        TR->initializeUsingXML(e->FirstChildElement());
-        setRotationMapping(TR);
+      if(fAPK) {
+        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"translationDependent");
+        if(ee) translationDependentRotation = getBool(ee);
+        ee=e->FirstChildElement(MBSIMNS"coordinateTransformation");
+        if(ee) coordinateTransformation = getBool(ee);
       }
     }
 
-    e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");
-    if(e) isFrameOfBodyForRotation(getBool(e));
 
     // END
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -77,7 +77,6 @@ System::System(const string &projectName) :
 
     rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
-    rectangleBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom
     rectangleBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
     rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
@@ -160,7 +159,6 @@ System::System(const string &projectName) :
 
     rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
-    rectangleBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom
     rectangleBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
     rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));

@@ -28,9 +28,6 @@
       <rotation>
         <RotationAboutAxesXYZ_V/>
       </rotation>
-      <rotationMapping>
-        <TCardanAngles_V/>
-      </rotationMapping>
       <frames/>
       <contours>
         <contour>

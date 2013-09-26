@@ -144,7 +144,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   karosserie->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   karosserie->setRotation(new RotationAboutAxesXYZ<VecV>);
-  karosserie->setRotationMapping(new TCardanAngles<VecV>);
   karosserie->setFrameOfReference(getFrame("I"));
   karosserie->setFrameForKinematics(karosserie->getFrame("C"));
   karosserie->setPlotFeature(stateDerivative,enabled);

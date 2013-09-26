@@ -38,6 +38,7 @@ class FunctionWidget : public Widget {
     virtual ~FunctionWidget() {}
     virtual int getArg1Size() const {return 0;}
     virtual int getArg2Size() const {return 0;}
+    virtual void setArg1Size(int i) {}
   protected:
     QString ext;
   public slots:
@@ -323,6 +324,7 @@ class SymbolicFunctionWidget : public FunctionWidget {
     SymbolicFunctionWidget(const QString &ext, const QStringList &var, int max=99);
     int getArg1Size() const;
     int getArg2Size() const;
+    void setArg1Size(int i);
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;

@@ -41,7 +41,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   body->setRotation(new RotationAboutAxesXYZ<VecV>);
-  body->setRotationMapping(new TCardanAngles<VecV>);
   double m = 0.1;
   double r = 0.1;
   Vec q0(6);

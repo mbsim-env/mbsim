@@ -146,15 +146,19 @@ TiXmlElement* GeneralizedPositionConstraint::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
+GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
   vector<Property*> property;
+  property.push_back(new ConstantFunctionProperty("V",1));
+  property.push_back(new LinearFunctionProperty("V",1));
+  property.push_back(new QuadraticFunctionProperty("V",1));
+  property.push_back(new SinusFunctionProperty("V",1));
   vector<string> var;
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-  var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
+  var.clear();
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
 
   constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 
@@ -179,15 +183,19 @@ TiXmlElement* GeneralizedVelocityConstraint::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
+GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
   vector<Property*> property;
+  property.push_back(new ConstantFunctionProperty("V",1));
+  property.push_back(new LinearFunctionProperty("V",1));
+  property.push_back(new QuadraticFunctionProperty("V",1));
+  property.push_back(new SinusFunctionProperty("V",1));
   vector<string> var;
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-  var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
+  var.clear();
+  var.push_back("z");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
 
   constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 

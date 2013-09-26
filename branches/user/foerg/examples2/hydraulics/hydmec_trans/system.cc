@@ -86,7 +86,6 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setInertiaTensor(0.001*SymMat(3, EYE));
   traeger->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   traeger->setRotation(new RotationAboutAxesXYZ<VecV>);
-  traeger->setRotationMapping(new TCardanAngles<VecV>);
   traeger->setInitialGeneralizedVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum * traegerVisu = new OpenMBV::Frustum();
