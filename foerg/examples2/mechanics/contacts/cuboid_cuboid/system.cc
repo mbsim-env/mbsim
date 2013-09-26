@@ -49,7 +49,6 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     body[i] = new RigidBody(nameBody.str());
     body[i]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     body[i]->setRotation(new RotationAboutAxesXYZ<VecV>);
-    body[i]->setRotationMapping(new TCardanAngles<VecV>);
     addObject(body[i]);
     body[i]->setMass(m);
     SymMat Theta(3);

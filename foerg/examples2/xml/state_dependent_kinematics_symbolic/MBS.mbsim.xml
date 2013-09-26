@@ -45,7 +45,7 @@
                   <SymbolicFunction_SV arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction_SV>
                 </innerFunction>
               </NestedFunction_MSV>
-              <isDependent>true</isDependent>
+              <translationDependent>true</translationDependent>
             </rotation>
             <frames />
             <contours />

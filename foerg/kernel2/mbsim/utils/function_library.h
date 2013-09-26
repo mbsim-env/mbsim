@@ -28,10 +28,8 @@
 
 namespace MBSim {
 
-  template<typename Sig> class StateDependentFunction;
-
   template <class Ret>
-    class StateDependentFunction<Ret(fmatvec::VecV,double)> : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
+    class StateDependentFunction : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
       private:
         fmatvec::Function<Ret(fmatvec::VecV)> *f;
       public:
@@ -48,12 +46,11 @@ namespace MBSim {
         typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
         bool constParDer1() const { return f->constParDer(); }
         bool constParDer2() const { return true; }
+        fmatvec::Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
     };
 
-  template<typename Sig> class TimeDependentFunction;
-
   template <class Ret>
-    class TimeDependentFunction<Ret(fmatvec::VecV,double)> : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
+    class TimeDependentFunction : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
       private:
         fmatvec::Function<Ret(double)> *f;
       public:
@@ -1377,7 +1374,7 @@ namespace MBSim {
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
       public:
-        RotationAboutAxesXYZ() : J(3), Jd(3) { }
+        RotationAboutAxesXYZ() : J(3), Jd(3) { J.e(0,0) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
         fmatvec::RotMat3 operator()(const Arg &q) {
           double a=q.e(0);
@@ -1406,7 +1403,7 @@ namespace MBSim {
           double cosa = cos(a);
           double sina = sin(a);
           double cosb = cos(b);
-          J.e(0,0) = 1;
+          //J.e(0,0) = 1;
           //J.e(0,1) = 0;
           J.e(0,2) = sin(b);
           //J.e(1,0) = 0;
@@ -1435,6 +1432,67 @@ namespace MBSim {
           //Jd.e(2,0) = 0;
           Jd.e(2,1) = cosa*ad;
           Jd.e(2,2) = -sina*cosb*ad - cosa*sinb*bd;
+          return Jd;
+        }
+    };
+
+    template<class Arg> 
+    class RotationAboutAxesXYZ2 : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        RotationAboutAxesXYZ2() : J(3), Jd(3) { J.e(2,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double a=q.e(0);
+          double b=q.e(1);
+          double g=q.e(2);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          double cosg = cos(g);
+          double sing = sin(g);
+          A.e(0,0) = cosb*cosg;
+          A.e(1,0) = sina*sinb*cosg+cosa*sing;
+          A.e(2,0) = -cosa*sinb*cosg+sina*sing;
+          A.e(0,1) = -cosb*sing;
+          A.e(1,1) = -sing*sinb*sina+cosa*cosg;
+          A.e(2,1) = cosa*sinb*sing+sina*cosg;
+          A.e(0,2) = sinb;
+          A.e(1,2) = -sina*cosb;
+          A.e(2,2) = cosa*cosb;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          double b = q.e(1);
+          double g = q.e(2);
+          J.e(0,0) = cos(b)*cos(g);
+          J.e(0,1) = sin(g);
+          //J.e(0,2) = 0;
+          J.e(1,0) = -cos(b)*sin(g);
+          J.e(1,1) = cos(g);
+          //J.e(1,2) = 0;
+          J.e(2,0) = sin(b);
+          //J.e(2,1) = 0;
+          //J.e(2,2) = 1;
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double b = q.e(1);
+          double g = q.e(2);
+          double bd = qd.e(1);
+          double gd = qd.e(2);
+          Jd.e(0,0) = -sin(b)*cos(g)*bd - cos(b)*sin(g)*gd;
+          Jd.e(0,1) = cos(g)*gd;
+          //Jd.e(0,2) = 0;
+          Jd.e(1,0) = sin(b)*sin(g)*bd - cos(b)*cos(g)*gd;
+          Jd.e(1,1) = -sin(g)*gd;
+          //Jd.e(1,2) = 0; 
+          Jd.e(2,0) = cos(b)*bd;
+          //Jd.e(2,1) = 0;
+          //Jd.e(2,2) = 0;
           return Jd;
         }
     };
@@ -1479,11 +1537,11 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TCardanAngles : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesXYZMapping : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
-        TCardanAngles() : T(3,3,fmatvec::Eye()) { }
+        RotationAboutAxesXYZMapping() : T(3,3,fmatvec::Eye()) { }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
         fmatvec::MatV operator()(const Arg &q) {
           double alpha = q.e(0);
@@ -1504,11 +1562,11 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TCardanAngles2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesXYZMapping2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
-        TCardanAngles2() : T(3,3,fmatvec::Eye()) { }
+        RotationAboutAxesXYZMapping2() : T(3,3,fmatvec::Eye()) { }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
         fmatvec::MatV operator()(const Arg &q) {
           double beta = q.e(1);
@@ -1529,11 +1587,11 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TEulerAngles : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesZXZMapping : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
-        TEulerAngles() : T(3,3) { T.e(0,2) = 1; }
+        RotationAboutAxesZXZMapping() : T(3,3) { T.e(0,2) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
         fmatvec::MatV operator()(const Arg &q) {
           double psi = q.e(0);
@@ -1556,11 +1614,11 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TEulerAngles2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesZXZMapping2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
-        TEulerAngles2() : T(3,3,fmatvec::Eye()) { }
+        RotationAboutAxesZXZMapping2() : T(3,3,fmatvec::Eye()) { }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
         fmatvec::MatV operator()(const Arg &q) {
           double theta = q.e(1);

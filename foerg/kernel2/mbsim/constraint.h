@@ -155,8 +155,8 @@ namespace MBSim {
       void calcxSize();
 
       void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV>(f_);}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV>(f_);}
 
       virtual void setUpInverseKinetics();
 
@@ -183,8 +183,8 @@ namespace MBSim {
       void calcxSize();
 
       void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV>(f_);}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV>(f_);}
 
       virtual void setUpInverseKinetics();
 

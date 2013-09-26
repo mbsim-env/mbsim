@@ -78,7 +78,6 @@ System::System(const string &projectName) :
 
     sphereBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     sphereBody->setRotation(new RotationAboutAxesXYZ<VecV>);
-    sphereBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom
     Vec q0(6, INIT, 0);
     q0(1) = 0.5;

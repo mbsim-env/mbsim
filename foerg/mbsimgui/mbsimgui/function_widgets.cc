@@ -554,6 +554,10 @@ int SymbolicFunctionWidget::getArg2Size() const {
   return (ext[2]=='V')?static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getValue():0;
 }
 
+void SymbolicFunctionWidget::setArg1Size(int i) {
+  static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->setValue(i);
+}
+
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);

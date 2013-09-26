@@ -70,10 +70,10 @@ namespace MBSim {
        * forceDir*func(t) is the applied force vector in space.
        * This force vector is given in the frame set by setFrameOfReference.
        */
-      void setForce(fmatvec::Mat dir, fmatvec::Function<fmatvec::VecV(double)> *func);
+      void setForce(const fmatvec::Mat3xV &dir, fmatvec::Function<fmatvec::VecV(double)> *func);
 
       /** \brief see setForce */
-      void setMoment(fmatvec::Mat dir, fmatvec::Function<fmatvec::VecV(double)> *func);
+      void setMoment(const fmatvec::Mat3xV &dir, fmatvec::Function<fmatvec::VecV(double)> *func);
 
       /** \brief The frame of reference for the force/moment direction vectors.
        * If not given, the frame the excitation is connected to is used.

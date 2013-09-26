@@ -91,7 +91,6 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   b->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   if (considerRotation) {
     b->setRotation(new RotationAboutAxesXYZ<VecV>);
-    b->setRotationMapping(new TCardanAngles<VecV>);
   }
   for (int i=0; i<5; i++)
     b->addContour(new Point("Point"+numtostr(i)), Vec(3), SqrMat(3), b->getFrame("Top"+numtostr(i)));

@@ -45,7 +45,7 @@
                   <SymbolicFunction_SV arg1name="x" arg1dim="1">atan(-c*2*x)</SymbolicFunction_SV>
                 </innerFunction>
               </NestedFunction_MSV>
-              <isDependent>true</isDependent>
+              <translationDependent>true</translationDependent>
             </rotation>
             <frames />
             <contours />

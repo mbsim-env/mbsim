@@ -205,7 +205,7 @@ class RigidBodyPropertyDialog : public BodyPropertyDialog {
     int getqRelSize() const; 
     int getuRelSize() const; 
   protected:
-    ExtWidget *K, *mass, *inertia, *translation, *rotation, *rotationMapping, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow, *isFrameOfBodyForRotation;
+    ExtWidget *K, *mass, *inertia, *translation, *rotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
     RigidBody *body;
 };
 
@@ -223,7 +223,6 @@ class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
-    RigidBody *refBody;
 };
 
 class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
@@ -234,7 +233,6 @@ class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *dependentBody, *constraintForceArrow, *constraintMomentArrow;
-    RigidBody *refBody;
 };
 
 class GeneralizedPositionConstraintPropertyDialog : public KinematicConstraintPropertyDialog {

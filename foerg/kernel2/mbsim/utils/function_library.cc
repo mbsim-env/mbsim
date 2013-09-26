@@ -256,7 +256,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXZ<VecV>, MBSIMNS"RotationAboutAxesXZ_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZ<VecV>, MBSIMNS"RotationAboutAxesXYZ_V")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TCardanAngles<VecV>, MBSIMNS"TCardanAngles_V")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZMapping<VecV>, MBSIMNS"RotationAboutAxesXYZMapping_V")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(VecV))>, MBSIMNS"NestedFunction_VSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(double))>, MBSIMNS"NestedFunction_VSS")

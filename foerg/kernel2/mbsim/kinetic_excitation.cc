@@ -126,7 +126,7 @@ namespace MBSim {
     }
   }
 
-  void KineticExcitation::setForce(fmatvec::Mat dir, Function<VecV(double)> *func) {
+  void KineticExcitation::setForce(const fmatvec::Mat3xV &dir, Function<VecV(double)> *func) {
     forceDir << dir;
 
     for(int i=0; i<dir.cols(); i++)
@@ -136,7 +136,7 @@ namespace MBSim {
     assert((*F)(0).size()==forceDir.cols());
   }
 
-  void KineticExcitation::setMoment(fmatvec::Mat dir, Function<VecV(double)> *func) {
+  void KineticExcitation::setMoment(const fmatvec::Mat3xV &dir, Function<VecV(double)> *func) {
     momentDir << dir;
 
     for(int i=0; i<dir.cols(); i++)

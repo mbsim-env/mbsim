@@ -468,15 +468,12 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
   input.clear();
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-  widgetContainer->addWidget(new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true)); 
+  widgetContainer->addWidget(new ExtWidget("Translation dependent",new ExtPhysicalVarWidget(input),true)); 
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  widgetContainer->addWidget(new ExtWidget("Coordinate Transformation",new ExtPhysicalVarWidget(input),true)); 
   rotation = new ExtWidget("Rotation",widgetContainer,true);
   addToTab("Kinematics", rotation);
-
-  widget.clear();
-  name.clear();
-  widget.push_back(new TCardanAnglesWidget("V")); name.push_back("Cardan angles T=T(q)");
-  rotationMapping = new ExtWidget("Rotation mapping",new ChoiceWidget(widget,name),true);
-  addToTab("Kinematics", rotationMapping);
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditor);
@@ -490,10 +487,6 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",jointMomentArrow);
 
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-  isFrameOfBodyForRotation = new ExtWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
-  addToTab("Extra", isFrameOfBodyForRotation);
 }
 
 void RigidBodyPropertyDialog::toWidget(Element *element) {
@@ -503,12 +496,10 @@ void RigidBodyPropertyDialog::toWidget(Element *element) {
   static_cast<RigidBody*>(element)->inertia.toWidget(inertia);
   static_cast<RigidBody*>(element)->translation.toWidget(translation);
   static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
-  static_cast<RigidBody*>(element)->rotationMapping.toWidget(rotationMapping);
   static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
   static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
   static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
   static_cast<RigidBody*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
-  static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.toWidget(isFrameOfBodyForRotation);
   resizeVariables();
 }
 
@@ -519,12 +510,10 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
   static_cast<RigidBody*>(element)->inertia.fromWidget(inertia);
   static_cast<RigidBody*>(element)->translation.fromWidget(translation);
   static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
-  static_cast<RigidBody*>(element)->rotationMapping.fromWidget(rotationMapping);
   static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
   static_cast<RigidBody*>(element)->weightArrow.fromWidget(weightArrow);
   static_cast<RigidBody*>(element)->jointForceArrow.fromWidget(jointForceArrow);
   static_cast<RigidBody*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
-  static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.fromWidget(isFrameOfBodyForRotation);
 }
 
 int RigidBodyPropertyDialog::getqRelSize() const {
@@ -560,7 +549,7 @@ void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
 ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {
 }
 
-GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
+GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
   addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -601,7 +590,7 @@ void GearConstraintPropertyDialog::fromWidget(Element *element) {
     body->setConstrained(true);
 }
 
-KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
+KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
   addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -616,7 +605,9 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
 void KinematicConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
+  dependentBody->getWidget()->blockSignals(true);
   static_cast<KinematicConstraint*>(element)->dependentBody.toWidget(dependentBody);
+  dependentBody->getWidget()->blockSignals(false);
   static_cast<KinematicConstraint*>(element)->constraintForceArrow.toWidget(constraintForceArrow);
   static_cast<KinematicConstraint*>(element)->constraintMomentArrow.toWidget(constraintMomentArrow);
 }
@@ -648,6 +639,7 @@ GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintProper
 }
 
 void GeneralizedPositionConstraintPropertyDialog::resizeVariables() {
+  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
   int size = refBody?refBody->getqRelSize():0;
   ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
 }
@@ -667,8 +659,12 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("u=u(q), Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("u=u(t), Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("u=u(t), Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("u=u(t), Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("u=u(t), Sinus function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("u=u(t), Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("u=u(q), Symbolic function");
 
   constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
   addToTab("General", constraintFunction);
@@ -681,14 +677,17 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
   x0 = new ExtWidget("Initial state",var,true);
   addToTab("Initial conditions", x0);
 
+  connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
+  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
   int size = refBody?refBody->getqRelSize():0;
   ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
   if(x0_ && x0_->size() != size)
     x0_->resize_(size);
+  static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::toWidget(Element *element) {
@@ -708,8 +707,12 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("ud=ud(q), ud=ud(u), Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("ud=ud(t), Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("ud=ud(t), Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("ud=ud(t), Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("ud=ud(t), Sinus function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("ud=ud(t), Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("z"))); name.push_back("ud=ud(z), Symbolic function");
 
   constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
   addToTab("General", constraintFunction);
@@ -722,20 +725,24 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
   x0 = new ExtWidget("Initial state",var,true);
   addToTab("Initial conditions", x0);
 
+  connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void GeneralizedAccelerationConstraintPropertyDialog::resizeVariables() {
+  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
   int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
   ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
   if(x0_ && x0_->size() != size)
     x0_->resize_(size);
+  static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
 }
 
 void GeneralizedAccelerationConstraintPropertyDialog::toWidget(Element *element) {
   KinematicConstraintPropertyDialog::toWidget(element);
   static_cast<GeneralizedAccelerationConstraint*>(element)->constraintFunction.toWidget(constraintFunction);
   static_cast<GeneralizedAccelerationConstraint*>(element)->x0.toWidget(x0);
+  resizeVariables();
 }
 
 void GeneralizedAccelerationConstraintPropertyDialog::fromWidget(Element *element) {
@@ -796,8 +803,6 @@ void JointConstraintPropertyDialog::resizeVariables() {
   for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
     if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i))
       size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i)->getqRelSize();
-  cout << "JointConstraintPropertyDialog ";
-  cout << size << endl;
   if(q0_->size() != size)
     q0_->resize_(size);
 }
@@ -805,14 +810,19 @@ void JointConstraintPropertyDialog::resizeVariables() {
 void JointConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<JointConstraint*>(element)->independentBody.toWidget(independentBody);
+  dependentBodiesFirstSide->getWidget()->blockSignals(true);
   static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.toWidget(dependentBodiesFirstSide);
+  dependentBodiesFirstSide->getWidget()->blockSignals(false);
+  dependentBodiesSecondSide->getWidget()->blockSignals(true);
   static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.toWidget(dependentBodiesSecondSide);
+  dependentBodiesSecondSide->getWidget()->blockSignals(false);
   static_cast<JointConstraint*>(element)->connections.toWidget(connections);
   static_cast<JointConstraint*>(element)->force.toWidget(force);
   static_cast<JointConstraint*>(element)->moment.toWidget(moment);
   static_cast<JointConstraint*>(element)->jointForceArrow.toWidget(jointForceArrow);
   static_cast<JointConstraint*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
   static_cast<JointConstraint*>(element)->q0.toWidget(q0);
+  resizeVariables();
 }
 
 void JointConstraintPropertyDialog::fromWidget(Element *element) {
