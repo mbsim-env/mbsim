@@ -306,7 +306,7 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   Vec r(angleYZ.rows(), NONINIT);
   for (int i=0; i<r.size(); i++)
     r(i)=nrm2(angleYZ(Index(i,i), Index(1,2)));
-  pp_r=new PPolynom<VecV>();
+  pp_r=new PiecewisePolynomFunction<VecV>();
   pp_r->setXF(angleYZ.col(0), r, "csplinePer");
   updateData(1.);
 }   
