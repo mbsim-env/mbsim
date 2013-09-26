@@ -3316,26 +3316,48 @@
     </xs:complexContent>
   </xs:complexType>
 
-
-  <xs:element name="Polynom_SS" substitutionGroup="Function_SS" type="Polynom_SSType">
+  <xs:element name="PolynomFunction_S" substitutionGroup="Function_SS" type="PolynomFunction_SType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Polynomfunktion <object class="inlineeqn">y=\sum_{i=0}^n a_i \, x^i</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Polynom_SSType">
+  <xs:complexType name="PolynomFunction_SType">
     <xs:complexContent>
       <xs:extension base="Function_SSType">
-     <xs:sequence>
-       <xs:element name="coefficients" type="pv:unknownVector">
-         <xs:annotation>
-           <xs:documentation xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
-                Vektor der Koeffizienten des Polynoms <object class="inlineeqn">\left[ a_0; a_1; \ldots; a_n \right]</object>
+        <xs:sequence>
+          <xs:element name="coefficient" type="pv:unknownScalar" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+                tbd
               </xs:documentation>
-         </xs:annotation>
-       </xs:element>
-     </xs:sequence>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PolynomFunction_V" substitutionGroup="Function_VS" type="PolynomFunction_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Polynomfunktion <object class="inlineeqn">y=\sum_{i=0}^n a_i \, x^i</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PolynomFunction_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VSType">
+        <xs:sequence>
+          <xs:element name="coefficient" type="pv:unknownVector" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3902,7 +3924,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PiecewisePolynom_VS" substitutionGroup="Function_VS" type="PiecewisePolynom_VSType">
+  <xs:element name="PiecewisePolynomFunction_V" substitutionGroup="Function_VS" type="PiecewisePolynomFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Klasse zur Definition von vektorwertigen, univariaten Funktionen über Spline-Interpolation.<br/>
@@ -3911,7 +3933,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PiecewisePolynom_VSType">
+  <xs:complexType name="PiecewisePolynomFunction_VType">
     <xs:complexContent>
       <xs:extension base="Function_VSType">
         <xs:sequence>

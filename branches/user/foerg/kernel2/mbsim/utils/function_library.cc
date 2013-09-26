@@ -278,7 +278,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<Vec3>, MBSIMNS"PiecewiseDefinedFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<double>, MBSIMNS"PiecewiseDefinedFunction_S")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, Polynom, MBSIMNS"Polynom_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<VecV>, MBSIMNS"PolynomFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<Vec3>, MBSIMNS"PolynomFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<double>, MBSIMNS"PolynomFunction_S")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction_SSS, MBSIMNS"TabularFunction_SSS")
 

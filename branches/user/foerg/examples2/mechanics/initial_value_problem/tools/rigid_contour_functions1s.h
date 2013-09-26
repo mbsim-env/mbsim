@@ -47,8 +47,8 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
   private:
     fmatvec::Vec3 Cb;
-    MBSim::PPolynom<fmatvec::VecV> pp_y;
-    MBSim::PPolynom<fmatvec::VecV> pp_z;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_y;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_z;
     MBSim::TabularFunction<fmatvec::Vec3> * tab_operator;
     MBSim::TabularFunction<fmatvec::Vec3> * tab_T;
     MBSim::TabularFunction<fmatvec::Vec3> * tab_B;

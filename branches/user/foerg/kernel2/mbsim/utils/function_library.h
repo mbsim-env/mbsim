@@ -817,43 +817,52 @@ namespace MBSim {
   template<>
     inline double PiecewiseDefinedFunction<double>::zeros(const double &x) { return 0; } 
 
-  class Polynom : public fmatvec::Function<double(double)> {
-    protected:
-      std::vector<Function<double(double)>* > derivatives;
-      void addDerivative(Function<double(double)>* diff) { derivatives.push_back(diff); }
+  template<class Ret>
+  class PolynomFunction : public fmatvec::Function<Ret(double)> {
     public:
-      Polynom() { }
+      PolynomFunction() { }
+      PolynomFunction(const std::vector<Ret> &a_) : a(a_) { init(); }
+      void init() {
+        for(unsigned int i=1; i<a.size(); i++)
+          ad.push_back(double(i)*a[i]);
+        for(unsigned int i=1; i<ad.size(); i++)
+          add.push_back(double(i)*ad[i]);
+      }
 
-      double operator()(const double &x) { return (*derivatives[0])(x); }
-      class Polynom_Evaluation : public Function<double(double)> {
-        public:
-          Polynom_Evaluation(const fmatvec::Vec &a_) : a(a_) {}
-          double operator()(const double &x) {
-            double value=a(a.size()-1);
-            for (int i=a.size()-2; i>-1; i--)
-              value=value*x+a(i);
-            return value;
-          }
-        private:
-          fmatvec::Vec a;
-      };
+      Ret operator()(const double &x) {
+        Ret value=a[a.size()-1];
+        for (int i=int(a.size())-2; i>-1; i--)
+          value=value*x+a[i];
+        return value;
+      }
+      typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+        typename fmatvec::Der<Ret, double>::type value=ad[ad.size()-1];
+        for (int i=int(ad.size())-2; i>-1; i--)
+          value=value*x+ad[i];
+        return value;
+      }
+      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type value=add[add.size()-1];
+        for (int i=int(add.size())-2; i>-1; i--)
+          value=value*x+add[i];
+        return value;
+      }
 
-      void setCoefficients(fmatvec::Vec a) {
-        for (int i=0; i<a.size(); i++) {
-          addDerivative(new Polynom::Polynom_Evaluation(a.copy()));
-          fmatvec::Vec b(a.size()-1);
-          for (int j=0; j<b.size(); j++)
-            b(j)=a(j+1)*(j+1.);
-          a.resize(a.size()-1);
-          a=b;
-        }
-        addDerivative(new Polynom::Polynom_Evaluation(a.copy()));
+      void addCoefficient(const Ret &c) {
+        a.push_back(c);
       }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"coefficients");
-        setCoefficients(MBSim::Element::getVec(e));
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"coefficient");
+        while (e && e->ValueStr()==MBSIMNS"coefficient") {
+          addCoefficient(FromMatStr<Ret>::cast(e->GetText()));
+          e=e->NextSiblingElement();
+        }
+        init();
       }
+
+    private:
+      std::vector<Ret> a, ad, add;
   };
 
   template<class Ret>
