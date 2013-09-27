@@ -316,8 +316,6 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      std::cerr<<"MFMF1 "<<element->Attribute("arg1name")<<std::endl;
-      std::cerr<<"MFMF2 "<<element->Attribute("arg2name")<<std::endl;
       if(f.getNumInputs()!=2) throw std::runtime_error("Function has must have exact 2 arguments.");
       if(f.getNumOutputs()!=1) throw std::runtime_error("Function has must have only 1 output.");
       if(f.inputExpr(0).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");

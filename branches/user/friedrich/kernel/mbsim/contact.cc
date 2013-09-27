@@ -794,24 +794,24 @@ namespace MBSim {
 
     //Get Impact law
     e = e->NextSiblingElement();
-    GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(e->FirstChildElement());
-    if (gifl) {
+    if (e->FirstChildElement()) {
+      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(e->FirstChildElement());
       setContactImpactLaw(gifl);
       gifl->initializeUsingXML(e->FirstChildElement());
       e = e->NextSiblingElement();
     }
 
     //Get Friction Force Law
-    FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::create<FrictionForceLaw>(e->FirstChildElement());
-    if (ffl) {
+    if (e->FirstChildElement()) {
+      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::create<FrictionForceLaw>(e->FirstChildElement());
       setFrictionForceLaw(ffl);
       ffl->initializeUsingXML(e->FirstChildElement());
       e = e->NextSiblingElement();
     }
 
     //Get Friction Impact Law
-    FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::create<FrictionImpactLaw>(e->FirstChildElement());
-    if (fil) {
+    if (e->FirstChildElement()) {
+      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::create<FrictionImpactLaw>(e->FirstChildElement());
       setFrictionImpactLaw(fil);
       fil->initializeUsingXML(e->FirstChildElement());
     }
