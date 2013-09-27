@@ -143,9 +143,9 @@
       <mass>33e-3</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
-        <LinearTranslation_V>
+        <LinearTranslation>
           <translationVectors>[0;1;0]</translationVectors>
-        </LinearTranslation_V>
+        </LinearTranslation>
       </translation>
       <rotation/>
       <frames>
@@ -243,9 +243,9 @@
         <h:size>.001</h:size>
       </h:enableOpenMBVArrows>
       <h:function>
-        <ConstantFunction_S>
+        <ConstantFunction>
           <value convertUnit="value*1e5">3.0</value>
-        </ConstantFunction_S>
+        </ConstantFunction>
       </h:function>
     </h:ConstrainedNodeMec>
     <h:ElasticNodeMec name="HighPressureChamber">

@@ -13,9 +13,9 @@
       <inertiaTensor>1e-4*eye(3)</inertiaTensor>
       <translation/>
       <rotation>
-        <RotationAboutFixedAxis_V>
+        <RotationAboutFixedAxis>
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis_V>
+        </RotationAboutFixedAxis>
       </rotation>
       <frames>
         <frame>
@@ -87,9 +87,9 @@
       <mass>1.</mass>
       <inertiaTensor>1e-4*eye(3)</inertiaTensor>
       <translation>
-        <LinearTranslation_V>
+        <LinearTranslation>
           <translationVectors>[0;1;0]</translationVectors>
-        </LinearTranslation_V>
+        </LinearTranslation>
       </translation>
       <rotation/>
       <frames>

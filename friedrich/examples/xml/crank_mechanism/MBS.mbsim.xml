@@ -32,9 +32,9 @@
       <inertiaTensor>J2*eye(3)</inertiaTensor>
       <translation/>
       <rotation>
-        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
-        </RotationAboutFixedAxis_V>
+        </RotationAboutFixedAxis>
       </rotation>
       <frames>
         <frame>
@@ -97,9 +97,9 @@
       <inertiaTensor>J4*eye(3)</inertiaTensor>
       <translation/>
       <rotation>
-        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
-        </RotationAboutFixedAxis_V>
+        </RotationAboutFixedAxis>
       </rotation>
       <frames>
         <frame>
@@ -147,9 +147,9 @@
       <inertiaTensor>J3*eye(3)</inertiaTensor>
       <translation/>
       <rotation>
-        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
-        </RotationAboutFixedAxis_V>
+        </RotationAboutFixedAxis>
       </rotation>
       <frames>
         <frame>

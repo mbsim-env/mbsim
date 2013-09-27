@@ -36,14 +36,14 @@
       <mass>1</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <LinearTranslation_V>
+        <LinearTranslation>
           <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-        </LinearTranslation_V>
+        </LinearTranslation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis_V>
+        <RotationAboutFixedAxis>
           <axisOfRotation>[0;0;1]</axisOfRotation>
-        </RotationAboutFixedAxis_V>
+        </RotationAboutFixedAxis>
       </rotation>
       <frames/>
       <contours/>
@@ -67,9 +67,9 @@
       <force>
         <directionVectors>[1;0;0]</directionVectors>
         <function>
-          <ConstantFunction_V>
+          <ConstantFunction>
             <value>[10]</value>
-          </ConstantFunction_V>
+          </ConstantFunction>
         </function>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>
@@ -82,9 +82,9 @@
       <moment>
         <directionVectors>[0;0;1]</directionVectors>
         <function>
-          <ConstantFunction_V>
+          <ConstantFunction>
             <value>[10]</value>
-          </ConstantFunction_V>
+          </ConstantFunction>
         </function>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>

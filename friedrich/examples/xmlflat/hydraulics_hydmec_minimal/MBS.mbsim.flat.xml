@@ -14,9 +14,9 @@
       <mass>2</mass>
       <inertiaTensor>[0.001,0,0 ; 0,0.001,0 ; 0,0,0.001]</inertiaTensor>
       <translation>
-        <LinearTranslation_V>
+        <LinearTranslation>
           <translationVectors>[1; 0; 0]</translationVectors>
-        </LinearTranslation_V>
+        </LinearTranslation>
       </translation>
       <rotation/>
       <frames/>

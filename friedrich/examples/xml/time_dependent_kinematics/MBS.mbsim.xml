@@ -12,21 +12,21 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
-              <SymbolicFunction_VS arg1name="t">
+              <SymbolicFunction arg1name="t">
                 [sin(freq1*t + pi/2); v0y*t; 0]
-              </SymbolicFunction_VS>
+              </SymbolicFunction>
             </translation>
             <rotation>
               <NestedFunction_MSS>
                 <outerFunction>
-                  <RotationAboutFixedAxis_S>
+                  <RotationAboutFixedAxis>
                     <axisOfRotation>[0;0;1]</axisOfRotation>
-                  </RotationAboutFixedAxis_S>
+                  </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction_SS arg1name="t">
+                  <SymbolicFunction arg1name="t">
                     5*sin(freq2*t)
-                  </SymbolicFunction_SS>
+                  </SymbolicFunction>
                 </innerFunction>
               </NestedFunction_MSS>
             </rotation>
@@ -49,9 +49,9 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
-              <SymbolicFunction_VV arg1name="q" arg1dim="1">
+              <SymbolicFunction arg1name="q" arg1dim="1">
                 [5+cos(freq1*q); sin(freq1*q(1)); 0]
-              </SymbolicFunction_VV>
+              </SymbolicFunction>
             </translation>
             <rotation/>
             <frames />
@@ -74,9 +74,9 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
-              <SymbolicFunction_VVS arg1name="q" arg1dim="2" arg2name="t">
+              <SymbolicFunction arg1name="q" arg1dim="2" arg2name="t">
                [10+t+cos(freq1*q(1)); sin(freq1*q(1)); q(2)]
-              </SymbolicFunction_VVS>
+              </SymbolicFunction>
             </translation>
             <rotation/>
             <frames />
