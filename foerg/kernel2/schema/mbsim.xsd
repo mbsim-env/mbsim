@@ -3924,6 +3924,72 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="PiecewisePolynomFunction_S" substitutionGroup="Function_SS" type="PiecewisePolynomFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Klasse zur Definition von vektorwertigen, univariaten Funktionen über Spline-Interpolation.<br/>
+        Die zu interpolierenden Punkte <object class="inlineeqn">\mathbf{Y}_i</object> werden dabei bez. des Spline mit der skalaren Größe <object class="inlineeqn">x_i</object> parametrisiert.<br/>
+        Zum einen ist es möglich, die Parameter <object class="inlineeqn">\mathbf{x}</object> als (Spalten-)Vektor und die Punkte <object class="inlineeqn">\mathbf{Y}</object> -zeilenweise in einer Matrix angeordnet- in getrennten Matrizen vorzugeben, zum anderen ist deren Angabe auch in einer Matrix möglich.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PiecewisePolynomFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:sequence>
+              <xs:element name="x" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="y" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="xy" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="cSplinePeriodic">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="cSplineNatural">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="piecewiseLinear">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Interpolation mit stückweise linearem Spline.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="PiecewisePolynomFunction_V" substitutionGroup="Function_VS" type="PiecewisePolynomFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -4008,14 +4074,14 @@
   </xs:element>
   <xs:complexType name="Function_SSSType"/>
 
-  <xs:element name="TabularFunction_SSS" substitutionGroup="Function_SSS" type="TabularFunction_SSSType">
+  <xs:element name="TwoDimensionalTabularFunction" substitutionGroup="Function_SSS" type="TwoDimensionalTabularFunctionType">
     <xs:annotation>
       <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
         Lineare Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld hinterlegt ist.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="TabularFunction_SSSType">
+  <xs:complexType name="TwoDimensionalTabularFunctionType">
     <xs:complexContent>
       <xs:extension base="Function_SSSType">
         <xs:sequence>

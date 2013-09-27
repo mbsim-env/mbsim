@@ -176,30 +176,21 @@ namespace MBSim {
       }
   };
 
-  template<typename Dep>
-    struct Row {
-      typedef fmatvec::ErrorType type;
-    };
+  template <class Ret>
+  class FromVecV {
+    public:
+      static Ret cast(const fmatvec::VecV &x) {
+        return x;
+      }
+  };
 
-  template<typename DepVecShape>
-    struct Row<fmatvec::Vector<DepVecShape, double> > {
-      typedef fmatvec::RowVector<DepVecShape, double> type;
-    };
-
-  template<typename Dep>
-    struct Tab {
-      typedef fmatvec::ErrorType type;
-    };
-
-  template<>
-    struct Tab<double> {
-      typedef fmatvec::Vector<fmatvec::Var, double> type;
-    };
-
-  template<typename DepVecShape>
-    struct Tab<fmatvec::Vector<DepVecShape, double> > {
-      typedef fmatvec::Matrix<fmatvec::General, fmatvec::Var, DepVecShape, double> type;
-    };
+  template <>
+  class FromVecV<double> {
+    public:
+      static double cast(const fmatvec::VecV &x) {
+        return x(0);
+      }
+  };
 
 }
 
