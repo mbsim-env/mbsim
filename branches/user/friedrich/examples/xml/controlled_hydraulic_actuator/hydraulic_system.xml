@@ -102,9 +102,9 @@
     <ConstrainedNode name="sourceP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <outflow ref="../HLine[lineP]"/>
       <function>
-        <ConstantFunction_S xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
           <value>40e5</value>
-        </ConstantFunction_S>
+        </ConstantFunction>
       </function>
     </ConstrainedNode>
     <EnvironmentNode name="sourceT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">

@@ -187,9 +187,13 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
+      if(f.getNumInputs()!=1) throw std::runtime_error("Function must have only 1 argument.");
+      if(f.getNumOutputs()!=1) throw std::runtime_error("Function must have only 1 output.");
+      if(f.inputExpr(0).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");
+      if(f.outputExpr(0).size2()!=1) throw std::runtime_error("Matrix outputs are not allowed.");
+      //MFMFif(f.inputExpr(0).size1()!=Arg.size()) throw std::runtime_error("The dimension of a parameter does not match.");
+      //MFMFif(f.outputExpr(0).size1()!=Ret.size()) throw std::runtime_error("The output dimension does not match.");
       init();
-      assert(f.getNumInputs()==1);
-      assert(f.getNumOutputs()==1);
     }
   };
 
@@ -312,9 +316,17 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
+      std::cerr<<"MFMF1 "<<element->Attribute("arg1name")<<std::endl;
+      std::cerr<<"MFMF2 "<<element->Attribute("arg2name")<<std::endl;
+      if(f.getNumInputs()!=2) throw std::runtime_error("Function has must have exact 2 arguments.");
+      if(f.getNumOutputs()!=1) throw std::runtime_error("Function has must have only 1 output.");
+      if(f.inputExpr(0).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");
+      if(f.inputExpr(1).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");
+      if(f.outputExpr(0).size2()!=1) throw std::runtime_error("Matrix outputs are not allowed.");
+      //MFMFif(f.inputExpr(0).size1()!=Arg2.size()) throw std::runtime_error("The dimension of a parameter does not match.");
+      //MFMFif(f.inputExpr(1).size1()!=Arg2.size()) throw std::runtime_error("The dimension of a parameter does not match.");
+      //MFMFif(f.outputExpr(0).size1()!=Ret.size()) throw std::runtime_error("The output dimension does not match.");
       init();
-      assert(f.getNumInputs()==2);
-      assert(f.getNumOutputs()==1);
     }
   };
 

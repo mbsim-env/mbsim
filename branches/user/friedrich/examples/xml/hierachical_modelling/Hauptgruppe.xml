@@ -25,7 +25,7 @@
       <mass>m</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <TranslationAlongYAxis_V/>
+        <TranslationAlongYAxis/>
       </translation>
       <rotation/>
       <frames/>
