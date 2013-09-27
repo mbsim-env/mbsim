@@ -80,7 +80,7 @@ template<class Ret>
        *                                                                                        S''(x1) = S''(xN) = 0
        *                                'plinear'    -> piecewise linear function (weak differentiable)
        */
-      void setXF(const fmatvec::VecV &x, const typename Tab<Ret>::type &f, std::string InterpolationMethod) {
+      void setXF(const fmatvec::VecV &x, const fmatvec::MatV &f, std::string InterpolationMethod) {
         assert(x.size() == f.rows());
 
         if(InterpolationMethod == "csplinePer") {
@@ -102,7 +102,7 @@ template<class Ret>
       /*! 
        * \return polynomial coefficients
        */
-      std::vector<typename Tab<Ret>::type> getCoefs() { return coefs; }
+      std::vector<fmatvec::MatV> getCoefs() { return coefs; }
 
       /*! 
        * \return interval boundaries
@@ -114,7 +114,7 @@ template<class Ret>
        * \param polynomial coefficients
        * \param interval boundaries
        */
-      void setPP(const std::vector<typename Tab<Ret>::type> &coefs_u, const fmatvec::Vec &breaks_u) {
+      void setPP(const std::vector<fmatvec::MatV> &coefs_u, const fmatvec::Vec &breaks_u) {
         coefs = coefs_u; 
         breaks = breaks_u;
         index = 0;
@@ -132,7 +132,7 @@ template<class Ret>
       /** 
        * \brief vector of polynomial coefficents
        */
-      std::vector<typename Tab<Ret>::type> coefs;
+      std::vector<fmatvec::MatV> coefs;
 
       /**
        * \brief vector of breaks (interval boundaries)
@@ -159,14 +159,14 @@ template<class Ret>
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplinePeriodic(const fmatvec::VecV &x, const typename Tab<Ret>::type &f);
+      void calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f);
 
       /*! 
        * \brief calculation of natural spline by interpolation
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplineNatural(const fmatvec::VecV &x, const typename Tab<Ret>::type &f);
+      void calculateSplineNatural(const fmatvec::VecV &x, const fmatvec::MatV &f);
 
       /* 
        * \brief calculation of piecewise linear interpolation
@@ -175,7 +175,7 @@ template<class Ret>
        *
        * the first derivative is weak and the second derivative is zero elsewhere although it should be distributionally at the corners
        */
-      void calculatePLinear(const fmatvec::VecV &x, const typename Tab<Ret>::type &f);
+      void calculatePLinear(const fmatvec::VecV &x, const fmatvec::MatV &f);
 
      /**
        * piecewise polynomial interpolation - zeroth derivative
@@ -192,7 +192,7 @@ template<class Ret>
         private:
           PiecewisePolynomFunction<Ret> *parent;
           double xSave;
-          Ret ySave;
+          fmatvec::VecV ySave;
           bool firstCall;
       };
 
@@ -211,7 +211,7 @@ template<class Ret>
         private:
           PiecewisePolynomFunction<Ret> *parent;
           double xSave;
-          Ret ySave;
+          fmatvec::VecV ySave;
           bool firstCall;
       };
 
@@ -230,7 +230,7 @@ template<class Ret>
         private:
           PiecewisePolynomFunction<Ret> *parent;
           double xSave;
-          Ret ySave;
+          fmatvec::VecV ySave;
           bool firstCall;
       };
 
@@ -241,7 +241,7 @@ template<class Ret>
   };
 
   template<class Ret>
-  void PiecewisePolynomFunction<Ret>::calculateSplinePeriodic(const fmatvec::VecV &x, const typename Tab<Ret>::type &f) {
+  void PiecewisePolynomFunction<Ret>::calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     double hi, hii;
     int N = x.size();
     if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw MBSimError("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
@@ -301,7 +301,7 @@ template<class Ret>
   }
 
   template<class Ret>
-  void PiecewisePolynomFunction<Ret>::calculateSplineNatural(const fmatvec::VecV &x, const typename Tab<Ret>::type &f) {
+  void PiecewisePolynomFunction<Ret>::calculateSplineNatural(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     // first row
     int i=0;
     int N = x.size();
@@ -339,7 +339,7 @@ template<class Ret>
     fmatvec::Mat C1 = C_rs(0,0,N-3,N-3);
     fmatvec::Mat c(N-2,f.cols(),fmatvec::INIT,0.0);
     for(i=N-3;i>=0 ;i--) { // backward substitution
-      typename Row<Ret>::type sum_ciCi(f.cols(),fmatvec::NONINIT); 
+      fmatvec::RowVecV sum_ciCi(f.cols(),fmatvec::NONINIT); 
       sum_ciCi.init(0.);
       for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
       c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
@@ -368,7 +368,7 @@ template<class Ret>
   }
 
   template<class Ret>
-  void PiecewisePolynomFunction<Ret>::calculatePLinear(const fmatvec::VecV &x, const typename Tab<Ret>::type &f) {
+  void PiecewisePolynomFunction<Ret>::calculatePLinear(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     int N = x.size(); // number of supporting points
 
     breaks.resize(N);
@@ -392,7 +392,7 @@ template<class Ret>
       throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps()) && !firstCall)
-      return ySave;
+      return FromVecV<Ret>::cast(ySave);
     else {
       firstCall = false;
       if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
@@ -410,7 +410,7 @@ template<class Ret>
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
       xSave=x;
       ySave=yi;
-      return yi;
+      return FromVecV<Ret>::cast(yi);
     }
   }
 
@@ -420,7 +420,7 @@ template<class Ret>
     if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps()) && !firstCall)
-      return ySave;
+      return FromVecV<Ret>::cast(ySave);
     else {
       firstCall = false;
       if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
@@ -438,7 +438,7 @@ template<class Ret>
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i);
       xSave=x;
       ySave=yi;
-      return yi;
+      return FromVecV<Ret>::cast(yi);
     }
   }
 
@@ -448,7 +448,7 @@ template<class Ret>
     if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps()) && !firstCall)
-      return ySave;
+      return FromVecV<Ret>::cast(ySave);
     else {
       firstCall = false;
       if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
@@ -466,7 +466,7 @@ template<class Ret>
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i)*double((parent->order)-i-1);
       xSave=x;
       ySave=yi;
-      return yi;
+      return FromVecV<Ret>::cast(yi);
     }
   }
 
@@ -474,7 +474,7 @@ template<class Ret>
   void PiecewisePolynomFunction<Ret>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     MBXMLUtils::TiXmlElement *e;
     fmatvec::VecV x;
-    typename Tab<Ret>::type y;
+    fmatvec::MatV y;
     e=element->FirstChildElement(MBSIMNS"x");
     if (e) {
       x=Element::getVec(e);
@@ -483,7 +483,7 @@ template<class Ret>
     }
     else {
       e=element->FirstChildElement(MBSIMNS"xy");
-      typename Tab<Ret>::type xy=Element::getMat(e);
+      fmatvec::MatV xy=Element::getMat(e);
       assert(xy.cols()>1);
       x=xy.col(0);
       y=xy(fmatvec::Index(0, xy.rows()-1), fmatvec::Index(1, xy.cols()-1));

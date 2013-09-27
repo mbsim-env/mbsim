@@ -179,51 +179,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<Vec3>, MBSIMNS"TabularFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<double>, MBSIMNS"TabularFunction_S")
 
-  template<>
-  double TabularFunction<double>::operator()(const double& xVal) {
-    int i=xIndexOld;
-    if (xVal<=x(0)) {
-      xIndexOld=0;
-      return y(0);
-    }
-    else if (xVal>=x(xSize-1)) {
-      xIndexOld=xSize-1;
-      return y(xSize-1);
-    }
-    else if (xVal<=x(i)) {
-      while (xVal<x(i))
-        i--;
-    }
-    else {
-      do
-        i++;
-      while (xVal>x(i));
-      i--;
-    }
-    xIndexOld=i;
-    return y(i)+(xVal-x(i))*(y(i+1)-y(i))/(x(i+1)-x(i));
-  }
-
-  template<>
-    void TabularFunction<double>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-      MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-      if (e) {
-        fmatvec::VecV x_=Element::getVec(e);
-        x=x_;
-        e=element->FirstChildElement(MBSIMNS"y");
-        fmatvec::VecV y_=Element::getVec(e, x.size());
-        y=y_;
-      }
-      e=element->FirstChildElement(MBSIMNS"xy");
-      if (e) {
-        fmatvec::MatV xy=Element::getMat(e);
-        assert(xy.cols()>1);
-        x=xy.col(0);
-        y=xy.col(1);
-      }
-      init();
-    }
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<VecV>, MBSIMNS"PeriodicTabularFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<Vec3>, MBSIMNS"PeriodicTabularFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<double>, MBSIMNS"PeriodicTabularFunction_S")
@@ -256,8 +211,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXZ<VecV>, MBSIMNS"RotationAboutAxesXZ_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZ<VecV>, MBSIMNS"RotationAboutAxesXYZ_V")
 
-  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZMapping<VecV>, MBSIMNS"RotationAboutAxesXYZMapping_V")
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(VecV))>, MBSIMNS"NestedFunction_VSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(double))>, MBSIMNS"NestedFunction_VSS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(VecV(double))>, MBSIMNS"NestedFunction_VVS")
@@ -282,21 +235,21 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<Vec3>, MBSIMNS"PolynomFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<double>, MBSIMNS"PolynomFunction_S")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction_SSS, MBSIMNS"TabularFunction_SSS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction, MBSIMNS"TwoDimensionalTabularFunction")
 
-  TabularFunction_SSS::TabularFunction_SSS() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
+  TwoDimensionalTabularFunction::TwoDimensionalTabularFunction() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
   }
 
-  void TabularFunction_SSS::calcIndex(const double * x, Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus) {
+  void TwoDimensionalTabularFunction::calcIndex(const double * x, Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus) {
     if (*x<=X(0)) {
       *xIndexPlus=1;
       *xIndexMinus=0;
-      cerr << "TabularFunction_SSS: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << endl;
+      cerr << "TwoDimensionalTabularFunction: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << endl;
     }
     else if (*x>=X(*xSize-1)) {
       *xIndexPlus=*xSize-1;
       *xIndexMinus=*xSize-2;
-      cerr << "TabularFunction_SSS: Value (" << *x << ") is greater than the greatest table value(" << X(*xSize-1) << ")!" << endl;
+      cerr << "TwoDimensionalTabularFunction: Value (" << *x << ") is greater than the greatest table value(" << X(*xSize-1) << ")!" << endl;
     }
     else {
       if (*x<X(*xIndexPlus))
@@ -309,7 +262,7 @@ namespace MBSim {
     }
   }
 
-  void TabularFunction_SSS::setXValues(Vec xVec_) {
+  void TwoDimensionalTabularFunction::setXValues(Vec xVec_) {
     xVec << xVec_;
     xSize=xVec.size();
 
@@ -319,7 +272,7 @@ namespace MBSim {
     xSize=xVec.size();
   }
 
-  void TabularFunction_SSS::setYValues(Vec yVec_) {
+  void TwoDimensionalTabularFunction::setYValues(Vec yVec_) {
     yVec << yVec_;
     ySize=yVec.size();
 
@@ -328,7 +281,7 @@ namespace MBSim {
         throw MBSimError("yVec must be strictly monotonic increasing!");
   }
 
-  void TabularFunction_SSS::setXYMat(Mat XY_) {
+  void TwoDimensionalTabularFunction::setXYMat(Mat XY_) {
     XY << XY_;
 
     if(xSize==0)
@@ -343,7 +296,7 @@ namespace MBSim {
     }
   }
 
-  double TabularFunction_SSS::operator()(const double& x, const double& y) {
+  double TwoDimensionalTabularFunction::operator()(const double& x, const double& y) {
     calcIndex(&x, xVec, &xSize, &x0Index, &x1Index);
     calcIndex(&y, yVec, &ySize, &y0Index, &y1Index);
 
@@ -379,7 +332,7 @@ namespace MBSim {
     return trans(1./nenner*XYfac*XYval)*xy;
   }
 
-  void TabularFunction_SSS::initializeUsingXML(TiXmlElement * element) {
+  void TwoDimensionalTabularFunction::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement * e = element->FirstChildElement(MBSIMNS"xValues");
     Vec x_=Element::getVec(e);
     setXValues(x_);

@@ -397,9 +397,9 @@ namespace MBSim {
       double couplingValue;
   };
 
-  class TabularFunction_SSS: public fmatvec::Function<double(double,double)> {
+  class TwoDimensionalTabularFunction : public fmatvec::Function<double(double,double)> {
     public:
-      TabularFunction_SSS();
+      TwoDimensionalTabularFunction();
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual double operator()(const double& x, const double& y);
@@ -870,18 +870,18 @@ namespace MBSim {
 
     public:
       TabularFunction() : xIndexOld(0) {}
-      TabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : x(x_), y(y_), xIndexOld(0) {
+      TabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : x(x_), y(y_), xIndexOld(0) {
         init();
       }
       Ret operator()(const double& xVal) {
         int i=xIndexOld;
         if (xVal<=x(0)) {
           xIndexOld=0;
-          return trans(y.row(0));
+          return FromVecV<Ret>::cast(trans(y.row(0)));
         }
         else if (xVal>=x(xSize-1)) {
           xIndexOld=xSize-1;
-          return trans(y.row(xSize-1));
+          return FromVecV<Ret>::cast(trans(y.row(xSize-1)));
         }
         else if (xVal<=x(i)) {
           while (xVal<x(i))
@@ -894,16 +894,14 @@ namespace MBSim {
           i--;
         }
         xIndexOld=i;
-        return trans(y.row(i)+(xVal-x(i))*(y.row(i+1)-y.row(i))/(x(i+1)-x(i)));
+        return FromVecV<Ret>::cast(trans(y.row(i)+(xVal-x(i))*(y.row(i+1)-y.row(i))/(x(i+1)-x(i))));
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
         MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
         if (e) {
-          fmatvec::VecV x_=Element::getVec(e);
-          x=x_;
+          x=Element::getVec(e);
           e=element->FirstChildElement(MBSIMNS"y");
-          typename Tab<Ret>::type y_=Element::getMat(e, x.size(), 0);
-          y=y_;
+          y=Element::getMat(e, x.size(), 0);
         }
         e=element->FirstChildElement(MBSIMNS"xy");
         if (e) {
@@ -916,7 +914,7 @@ namespace MBSim {
       }
     protected:
       fmatvec::VecV x;
-      typename Tab<Ret>::type y;
+      fmatvec::MatV y;
     private:
       int xIndexOld, xSize;
       void init() {
@@ -927,16 +925,11 @@ namespace MBSim {
       }
   };
 
-  template<>
-  double TabularFunction<double>::operator()(const double& xVal);
-  template<>
-  void TabularFunction<double>::initializeUsingXML(MBXMLUtils::TiXmlElement * element);
-
   template<class Ret>
   class PeriodicTabularFunction : public TabularFunction<Ret> {
     public:
       PeriodicTabularFunction() {}
-      PeriodicTabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : TabularFunction<Ret>(x_, y_) {
+      PeriodicTabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : TabularFunction<Ret>(x_, y_) {
         init();
       }
       Ret operator()(const double& xVal) {
