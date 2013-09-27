@@ -301,21 +301,35 @@ namespace MBSim {
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement(),false);
-      if(f) {
-        f->initializeUsingXML(e->FirstChildElement());
-        setConstraintFunction(f);
-      } else {
-        Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement(),false);
-        if(f) {
-          f->initializeUsingXML(e->FirstChildElement());
-          setConstraintFunction(f);
+      // first try a Function<VecV(VecV,double)>
+      Function<VecV(VecV,double)> *f1=NULL;
+      try {
+        f1=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
+        f1->initializeUsingXML(e->FirstChildElement());
+        setConstraintFunction(f1);
+      }
+      catch(...) {
+        delete f1;
+        // if this fails try a Function<VecV(VecV)>
+        Function<VecV(VecV)> *f2=NULL;
+        try {
+          f2=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement());
+          f2->initializeUsingXML(e->FirstChildElement());
+          setConstraintFunction(f2);
         }
-        else {
-          Function<VecV(double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement(),false);
-          if(f) {
-            f->initializeUsingXML(e->FirstChildElement());
-            setConstraintFunction(f);
+        catch(...) {
+          delete f2;
+          // if this fails try a Function<VecV(double)>
+          Function<VecV(double)> *f3=NULL;
+          try {
+            f3=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement());
+            f3->initializeUsingXML(e->FirstChildElement());
+            setConstraintFunction(f3);
+          }
+          catch(...) {
+            delete f3;
+            // if this fails throw exception
+            throw;
           }
         }
       }
@@ -367,21 +381,35 @@ namespace MBSim {
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement(),false);
-      if(f) {
-        f->initializeUsingXML(e->FirstChildElement());
-        setConstraintFunction(f);
-      } else {
-        Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement(),false);
-        if(f) {
-          f->initializeUsingXML(e->FirstChildElement());
-          setConstraintFunction(f);
+      // first try a Function<VecV(VecV,double)>
+      Function<VecV(VecV,double)> *f1=NULL;
+      try {
+        f1=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
+        f1->initializeUsingXML(e->FirstChildElement());
+        setConstraintFunction(f1);
+      }
+      catch(...) {
+        delete f1;
+        // if this fails try a Function<VecV(VecV)>
+        Function<VecV(VecV)> *f2=NULL;
+        try {
+          f2=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement());
+          f2->initializeUsingXML(e->FirstChildElement());
+          setConstraintFunction(f2);
         }
-        else {
-          Function<VecV(double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement(),false);
-          if(f) {
-            f->initializeUsingXML(e->FirstChildElement());
-            setConstraintFunction(f);
+        catch(...) {
+          delete f2;
+          // if this fails try a Function<VecV(double)>
+          Function<VecV(double)> *f3=NULL;
+          try {
+            f3=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement());
+            f3->initializeUsingXML(e->FirstChildElement());
+            setConstraintFunction(f3);
+          }
+          catch(...) {
+            delete f3;
+            // if this fails throw exception
+            throw;
           }
         }
       }

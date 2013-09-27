@@ -796,50 +796,82 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
-    Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV,double)> >(e->FirstChildElement(),false);
-    if(trans) {
-      trans->initializeUsingXML(e->FirstChildElement());
-      setTranslation(trans);
-    } else {
-      Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV)> >(e->FirstChildElement(),false);
-      if(trans) {
-        trans->initializeUsingXML(e->FirstChildElement());
-        setTranslation(trans);
+    if(e->FirstChildElement()) {
+      // first try a Function<Vec3(VecV,double)>
+      Function<Vec3(VecV,double)> *trans1=NULL;
+      try {
+        trans1=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV,double)> >(e->FirstChildElement());
+        trans1->initializeUsingXML(e->FirstChildElement());
+        setTranslation(trans1);
       }
-      else {
-        Function<Vec3(double)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(double)> >(e->FirstChildElement(),false);
-        if(trans) {
-          trans->initializeUsingXML(e->FirstChildElement());
-          setTranslation(trans);
+      catch(...) {
+        delete trans1;
+        // if this fails try a Function<Vec3(VecV)>
+        Function<Vec3(VecV)> *trans2=NULL;
+        try {
+          trans2=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV)> >(e->FirstChildElement());
+          trans2->initializeUsingXML(e->FirstChildElement());
+          setTranslation(trans2);
+        }
+        catch(...) {
+          delete trans2;
+          // if this fails try a Function<Vec3(double)>
+          Function<Vec3(double)> *trans3=NULL;
+          try {
+            trans3=ObjectFactory<FunctionBase>::create<Function<Vec3(double)> >(e->FirstChildElement());
+            trans3->initializeUsingXML(e->FirstChildElement());
+            setTranslation(trans3);
+          }
+          catch(...) {
+            delete trans3;
+            // if this fails throw exception
+            throw;
+          }
         }
       }
     }
+    ////////////////////////////
     e=element->FirstChildElement(MBSIMNS"rotation");
-    Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV,double)> >(e->FirstChildElement(),false);
-    if(rot) {
-      rot->initializeUsingXML(e->FirstChildElement());
-      setRotation(rot);
-    } else {
-      Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV)> >(e->FirstChildElement(),false);
-      if(rot) {
-        rot->initializeUsingXML(e->FirstChildElement());
-        setRotation(rot);
+    if(e->FirstChildElement()) {
+      // first try a Function<RotMat3(VecV,double)>
+      Function<RotMat3(VecV,double)> *rot1=NULL;
+      try {
+        rot1=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV,double)> >(e->FirstChildElement());
+        rot1->initializeUsingXML(e->FirstChildElement());
+        setRotation(rot1);
       }
-      else {
-        Function<RotMat3(double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(double)> >(e->FirstChildElement(),false);
-        if(rot) {
-          rot->initializeUsingXML(e->FirstChildElement());
-          setRotation(rot);
+      catch(...) {
+        delete rot1;
+        // if this fails try a Function<RotMat3(VecV)>
+        Function<RotMat3(VecV)> *rot2=NULL;
+        try {
+          rot2=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV)> >(e->FirstChildElement());
+          rot2->initializeUsingXML(e->FirstChildElement());
+          setRotation(rot2);
+        }
+        catch(...) {
+          delete rot2;
+          // if this fails try a Function<RotMat3(double)>
+          Function<RotMat3(double)> *rot3=NULL;
+          try {
+            rot3=ObjectFactory<FunctionBase>::create<Function<RotMat3(double)> >(e->FirstChildElement());
+            rot3->initializeUsingXML(e->FirstChildElement());
+            setRotation(rot3);
+          }
+          catch(...) {
+            delete rot3;
+            // if this fails throw exception
+            throw;
+          }
+        }
+        if(fAPK) {
+          TiXmlElement *ee=e->FirstChildElement(MBSIMNS"translationDependent");
+          if(ee) translationDependentRotation = getBool(ee);
+          ee=e->FirstChildElement(MBSIMNS"coordinateTransformation");
+          if(ee) coordinateTransformation = getBool(ee);
         }
       }
-      if(fAPK) {
-        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"translationDependent");
-        if(ee) translationDependentRotation = getBool(ee);
-        ee=e->FirstChildElement(MBSIMNS"coordinateTransformation");
-        if(ee) coordinateTransformation = getBool(ee);
-      }
     }
-
 
     // END
 #ifdef HAVE_OPENMBVCPPINTERFACE

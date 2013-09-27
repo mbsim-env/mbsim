@@ -575,15 +575,15 @@ namespace MBSim {
       setForceLaw(gfl);
       gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
-      GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
-      if(gifl) {
+      if(ee->FirstChildElement()) {
+        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
         setImpactForceLaw(gifl);
         gifl->initializeUsingXML(ee->FirstChildElement());
       }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
+      if(ee) {
+        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
         arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
         setOpenMBVForceArrow(arrow);
         ee=ee->NextSiblingElement();
@@ -599,15 +599,15 @@ namespace MBSim {
       setMomentLaw(gfl);
       gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
-      GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
-      if(gifl) {
+      if(ee->FirstChildElement()) {
+        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
         setImpactMomentLaw(gifl);
         gifl->initializeUsingXML(ee->FirstChildElement());
       }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
+      if(ee) {
+        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
         arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
         setOpenMBVMomentArrow(arrow);
         ee=ee->NextSiblingElement();

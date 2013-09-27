@@ -162,8 +162,8 @@ namespace MBSim {
       setForce(dir, func);
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
+      if(ee) {
+        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
         arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
         setOpenMBVForceArrow(arrow);
         ee=ee->NextSiblingElement();
@@ -180,8 +180,8 @@ namespace MBSim {
       setMoment(dir, func);
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
+      if(ee) {
+        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
         arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVMomentArrow calls the copy constructor on arrow
         setOpenMBVMomentArrow(arrow);
         ee=ee->NextSiblingElement();
