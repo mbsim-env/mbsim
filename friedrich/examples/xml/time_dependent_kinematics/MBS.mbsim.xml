@@ -47,6 +47,45 @@
                 <frameOfReference ref="Frame[C]" />
             </openMBVRigidBody>
         </RigidBody>
+        <RigidBody name="Box1a">
+            <frameOfReference ref="../Frame[I]" />
+            <frameForKinematics ref="Frame[C]" />
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+            <translation>
+              <TimeDependentFunction>
+                <SymbolicFunction arg1name="t">
+                  [sin(freq1*t + pi/2); v0y*t; 0]
+                </SymbolicFunction>
+              </TimeDependentFunction>
+            </translation>
+            <rotation>
+              <TimeDependentFunction>
+                <NestedFunction>
+                  <outerFunction>
+                    <RotationAboutAxesXY/>
+                  </outerFunction>
+                  <innerFunction>
+                    <SymbolicFunction arg1name="t">
+                      [t;2*t]
+                    </SymbolicFunction>
+                  </innerFunction>
+                </NestedFunction>
+              </TimeDependentFunction>
+            </rotation>
+            <frames />
+            <contours />
+            <openMBVRigidBody>
+                <ombv:Cube name="Box1a">
+                    <ombv:staticColor>0</ombv:staticColor>
+                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>2</ombv:length>
+                </ombv:Cube>
+                <frameOfReference ref="Frame[C]" />
+            </openMBVRigidBody>
+        </RigidBody>
         <RigidBody name="Box2">
             <frameOfReference ref="../Frame[I]" />
             <frameForKinematics ref="Frame[C]" />
