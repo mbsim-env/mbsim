@@ -490,16 +490,17 @@ def runExample(resultQueue, example):
         resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
 
     # check for deprecated features
-    nrDeprecated=0
-    for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
-      match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
-      if match!=None:
-        nrDeprecated=match.expand("\\1")
-        break
-    if nrDeprecated==0:
-      resultStr+='<td><span style="color:green">none</span></td>'
-    else:
-      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:orange">'+str(nrDeprecated)+' found</span></a></td>'
+    if(not args.disableRun):
+      nrDeprecated=0
+      for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
+        match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
+        if match!=None:
+          nrDeprecated=match.expand("\\1")
+          break
+      if nrDeprecated==0:
+        resultStr+='<td><span style="color:green">none</span></td>'
+      else:
+        resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:orange">'+str(nrDeprecated)+' found</span></a></td>'
 
     # validate XML
     if not args.disableValidate:
