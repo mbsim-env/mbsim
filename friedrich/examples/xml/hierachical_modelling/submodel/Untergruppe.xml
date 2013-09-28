@@ -30,11 +30,13 @@
       </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>
-            [0; myMFunction(1); 0]
-          </translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation>
+            <translationVectors>
+              [0; myMFunction(1); 0]
+            </translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation/>
       <frames>
@@ -71,7 +73,9 @@
       <mass>m2</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <TranslationAlongYAxis/>
+        <StateDependentFunction>
+          <TranslationAlongYAxis/>
+        </StateDependentFunction>
       </translation>
       <rotation/>
       <frames>

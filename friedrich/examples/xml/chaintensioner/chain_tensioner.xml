@@ -143,9 +143,11 @@
       <mass>33e-3</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[0;1;0]</translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation>
+            <translationVectors>[0;1;0]</translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation/>
       <frames>

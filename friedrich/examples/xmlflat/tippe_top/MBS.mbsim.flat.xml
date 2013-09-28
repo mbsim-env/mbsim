@@ -21,12 +21,16 @@
       <mass>6e-3</mass>
       <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation>
+            <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation>
-        <RotationAboutAxesXYZ/>
+        <StateDependentFunction>
+          <RotationAboutAxesXYZ/>
+        </StateDependentFunction>
       </rotation>
       <frames/>
       <contours>

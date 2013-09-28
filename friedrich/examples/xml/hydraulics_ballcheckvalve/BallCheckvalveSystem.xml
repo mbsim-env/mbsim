@@ -89,7 +89,9 @@
       <mass>pistonMass</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
-        <TranslationAlongYAxis_V/>
+        <StateDependentFunction>
+          <TranslationAlongYAxis_V/>
+        </StateDependentFunction>
       </translation>
       <rotation/>
       <frames>

@@ -801,20 +801,21 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       # if if curObj[:,column] does not exitst
       if column>=curObjCols:
         printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
-      # compare
-      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
-          delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
-        else:
-          delta=float("inf") # very large => error
+      else:
+        # compare
+        if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+          if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
+            delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
+          else:
+            delta=float("inf") # very large => error
       print('<tr>', file=compareFD)
       print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
       print('<td>'+datasetName+'</td>', file=compareFD)
-      if refLabels[column]==curLabels[column]:
+      if column<curObjCols and refLabels[column]==curLabels[column]:
         print('<td>'+printLabel+'</td>', file=compareFD)
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
-      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+      if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         #check for NaN/Inf # check for NaN and Inf
         #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
         #check for NaN/Inf   print('<td><span style="color:red">cur. contains NaN or +/-Inf</span></td>', file=compareFD)

@@ -17,9 +17,11 @@
       <mass>1.</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
-        <SymbolicFunction_VS arg1name="t">
-          [0; 2e-4*sin(2*pi*100*t); 0]
-        </SymbolicFunction_VS>
+        <TimeDependentFunction>
+          <SymbolicFunction arg1name="t">
+            [0; 2e-4*sin(2*pi*100*t); 0]
+          </SymbolicFunction>
+        </TimeDependentFunction>
       </translation>
       <rotation/>
       <frames/>

@@ -21,14 +21,18 @@
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation>
+            <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis>
-          <axisOfRotation>[0;0;1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        <StateDependentFunction>
+          <RotationAboutFixedAxis>
+            <axisOfRotation>[0;0;1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <frame>
@@ -64,14 +68,18 @@
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation>
+            <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis>
-          <axisOfRotation>[0;0;1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        <StateDependentFunction>
+          <RotationAboutFixedAxis>
+            <axisOfRotation>[0;0;1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <frame>
