@@ -12,23 +12,27 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
-              <SymbolicFunction arg1name="t">
-                [sin(freq1*t + pi/2); v0y*t; 0]
-              </SymbolicFunction>
+              <TimeDependentFunction>
+                <SymbolicFunction arg1name="t">
+                  [sin(freq1*t + pi/2); v0y*t; 0]
+                </SymbolicFunction>
+              </TimeDependentFunction>
             </translation>
             <rotation>
-              <NestedFunction_MSS>
-                <outerFunction>
-                  <RotationAboutFixedAxis>
-                    <axisOfRotation>[0;0;1]</axisOfRotation>
-                  </RotationAboutFixedAxis>
-                </outerFunction>
-                <innerFunction>
-                  <SymbolicFunction arg1name="t">
-                    5*sin(freq2*t)
-                  </SymbolicFunction>
-                </innerFunction>
-              </NestedFunction_MSS>
+              <TimeDependentFunction>
+                <NestedFunction>
+                  <outerFunction>
+                    <RotationAboutFixedAxis>
+                      <axisOfRotation>[0;0;1]</axisOfRotation>
+                    </RotationAboutFixedAxis>
+                  </outerFunction>
+                  <innerFunction>
+                    <SymbolicFunction arg1name="t">
+                      5*sin(freq2*t)
+                    </SymbolicFunction>
+                  </innerFunction>
+                </NestedFunction>
+              </TimeDependentFunction>
             </rotation>
             <frames />
             <contours />
@@ -49,9 +53,11 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
-              <SymbolicFunction arg1name="q" arg1dim="1">
-                [5+cos(freq1*q); sin(freq1*q(1)); 0]
-              </SymbolicFunction>
+              <StateDependentFunction>
+                <SymbolicFunction arg1name="q" arg1dim="1">
+                  [5+cos(freq1*q); sin(freq1*q(1)); 0]
+                </SymbolicFunction>
+              </StateDependentFunction>
             </translation>
             <rotation/>
             <frames />

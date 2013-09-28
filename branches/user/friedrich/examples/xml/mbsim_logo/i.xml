@@ -15,9 +15,11 @@
       <translation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-          <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        <StateDependentFunction>
+          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+            <axisOfRotation>[0; 0; 1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <frame>
@@ -77,9 +79,11 @@
       <mass>4/3*pi*(2*r)^3*rho</mass>
       <inertiaTensor>2/5*4/3*pi*(2*r)^3*rho*eye(3)</inertiaTensor>
       <translation>
-        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-          <translationVectors>[1; 0; 0]</translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+            <translationVectors>[1; 0; 0]</translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation>
       </rotation>

@@ -15,9 +15,11 @@
       <translation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-          <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        <StateDependentFunction>
+          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+            <axisOfRotation>[0; 0; 1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <frame>
@@ -74,9 +76,11 @@
         <translation>
         </translation>
         <rotation>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
+          <StateDependentFunction>
+            <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+              <axisOfRotation>[0; 0; 1]</axisOfRotation>
+            </RotationAboutFixedAxis>
+          </StateDependentFunction>
         </rotation>
         <frames>
           <frame>
@@ -134,9 +138,11 @@
         <translation>
         </translation>
         <rotation>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
+          <StateDependentFunction>
+            <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+              <axisOfRotation>[0; 0; 1]</axisOfRotation>
+            </RotationAboutFixedAxis>
+          </StateDependentFunction>
         </rotation>
         <frames>
           <frame>
@@ -194,9 +200,11 @@
         <translation>
         </translation>
         <rotation>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
+          <StateDependentFunction>
+            <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+              <axisOfRotation>[0; 0; 1]</axisOfRotation>
+            </RotationAboutFixedAxis>
+          </StateDependentFunction>
         </rotation>
         <frames>
           <frame>
@@ -254,9 +262,11 @@
         <translation>
         </translation>
         <rotation>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
+          <StateDependentFunction>
+            <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+              <axisOfRotation>[0; 0; 1]</axisOfRotation>
+            </RotationAboutFixedAxis>
+          </StateDependentFunction>
         </rotation>
         <frames>
           <frame>

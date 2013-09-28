@@ -7,12 +7,16 @@
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
       <translation>
-        <TranslationAlongAxesXY/>
+        <StateDependentFunction>
+          <TranslationAlongAxesXY/>
+        </StateDependentFunction>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis>
-          <axisOfRotation>[0;0;1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        <StateDependentFunction>
+          <RotationAboutFixedAxis>
+            <axisOfRotation>[0;0;1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <frame>

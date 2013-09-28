@@ -9,10 +9,10 @@
       <diameter>.003</diameter>
       <alpha>.7</alpha>
       <relativeAlphaPA>
-        <TabularFunction_S xmlns="http://mbsim.berlios.de/MBSim">
+        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
           <x>[0; .4; .45; 1]</x>
           <y>[1;  1;  0; 0]</y>
-        </TabularFunction_S>
+        </TabularFunction>
       </relativeAlphaPA>
       <minimalRelativeAlpha>.05</minimalRelativeAlpha>
       <bilateralConstrained/>

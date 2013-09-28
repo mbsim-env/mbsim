@@ -11,19 +11,21 @@
       <inertiaTensor>0*eye(3)</inertiaTensor>
       <translation/>
       <rotation>
-        <TimeDependentRotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-          <axisOfRotation>[0 0 1]'</axisOfRotation>
-          <rotationalFunction>
-            <Function1_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
-              <QuadraticFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
-                <orderOfDerivative>0</orderOfDerivative>
-                <a0>[0 0 0]'</a0>
-                <a1>.25*2*pi*[1 1 1]'</a1>
-                <a2>[0 0 0]'</a2>
-              </QuadraticFunction1_VS>
-            </Function1_SS_from_VS>
-          </rotationalFunction>
-        </TimeDependentRotationAboutFixedAxis>
+        <TimeDependentFunction>
+          <TimeDependentRotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+            <axisOfRotation>[0 0 1]'</axisOfRotation>
+            <rotationalFunction>
+              <Function1_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
+                <QuadraticFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+                  <orderOfDerivative>0</orderOfDerivative>
+                  <a0>[0 0 0]'</a0>
+                  <a1>.25*2*pi*[1 1 1]'</a1>
+                  <a2>[0 0 0]'</a2>
+                </QuadraticFunction1_VS>
+              </Function1_SS_from_VS>
+            </rotationalFunction>
+          </TimeDependentRotationAboutFixedAxis>
+        </TimeDependentFunction>
       </rotation>
       <guidingVelocityOfRotation>
         <TimeDependentGuidingVelocity xmlns="http://mbsim.berlios.de/MBSim">
@@ -99,12 +101,16 @@
       <mass>3.25</mass>
       <inertiaTensor>1e-3*eye(3)</inertiaTensor>
       <translation>
-        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-          <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
-        </LinearTranslation>
+        <StateDependentFunction>
+          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+            <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
+          </LinearTranslation>
+        </StateDependentFunction>
       </translation>
       <rotation>
-        <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
+        <StateDependentFunction>
+          <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <FixedRelativeFrame name="fA">
@@ -152,7 +158,9 @@
       <inertiaTensor>1e-3*eye(3)</inertiaTensor>
       <translation/>
       <rotation>
-        <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
+        <StateDependentFunction>
+          <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
+        </StateDependentFunction>
       </rotation>
       <frames>
         <FixedRelativeFrame name="fA">
