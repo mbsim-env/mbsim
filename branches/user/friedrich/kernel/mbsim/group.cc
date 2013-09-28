@@ -162,8 +162,7 @@ namespace MBSim {
     while(E && E->ValueStr()==MBSIMNS"contour") {
       Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", E);
       TiXmlElement *ec=E->FirstChildElement();
-      Contour *c=ObjectFactory<Element>::create<Contour>(ec);
-      c->initializeUsingXML(ec);
+      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(ec);
       ec=ec->NextSiblingElement();
       string refF;
       if(ec) {
@@ -194,9 +193,8 @@ namespace MBSim {
       addContour(c);
     }
     while(E) {
-      Contour *c=ObjectFactory<Element>::create<Contour>(E);
+      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(E);
       addContour(c);
-      c->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
@@ -205,9 +203,8 @@ namespace MBSim {
     E=e->FirstChildElement();
     Group *g;
     while(E) {
-      g=ObjectFactory<Element>::create<Group>(E);
+      g=ObjectFactory<Element>::createAndInit<Group>(E);
       addGroup(g);
-      g->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
@@ -216,9 +213,8 @@ namespace MBSim {
     E=e->FirstChildElement();
     Object *o;
     while(E) {
-      o=ObjectFactory<Element>::create<Object>(E);
+      o=ObjectFactory<Element>::createAndInit<Object>(E);
       addObject(o);
-      o->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
@@ -227,9 +223,8 @@ namespace MBSim {
     E=e->FirstChildElement();
     Link *l;
     while(E) {
-      l=ObjectFactory<Element>::create<Link>(E);
+      l=ObjectFactory<Element>::createAndInit<Link>(E);
       addLink(l);
-      l->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
@@ -239,9 +234,8 @@ namespace MBSim {
       E=e->FirstChildElement();
       Observer *obsrv;
       while(E) {
-        obsrv=ObjectFactory<Element>::create<Observer>(E);
+        obsrv=ObjectFactory<Element>::createAndInit<Observer>(E);
         addObserver(obsrv);
-        obsrv->initializeUsingXML(E);
         E=E->NextSiblingElement();
       }
     }

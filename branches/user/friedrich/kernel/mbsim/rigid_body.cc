@@ -753,8 +753,7 @@ namespace MBSim {
       Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", e);
       TiXmlElement *ec=e->FirstChildElement();
 
-      Contour *c=ObjectFactory<Element>::create<Contour>(ec);
-      c->initializeUsingXML(ec);
+      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(ec);
       ec=ec->NextSiblingElement();
       string refF;
       if(ec) {
@@ -784,9 +783,8 @@ namespace MBSim {
       addContour(c);
     }
     while(e) {
-      Contour *c=ObjectFactory<Element>::create<Contour>(e);
+      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(e);
       addContour(c);
-      c->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
 
@@ -798,14 +796,12 @@ namespace MBSim {
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
     if(e->FirstChildElement()) {
-      Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV,double)> >(e->FirstChildElement());
-      trans->initializeUsingXML(e->FirstChildElement());
+      Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV,double)> >(e->FirstChildElement());
       setTranslation(trans);
     }
     e=element->FirstChildElement(MBSIMNS"rotation");
     if(e->FirstChildElement()) {
-      Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV,double)> >(e->FirstChildElement());
-      rot->initializeUsingXML(e->FirstChildElement());
+      Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV,double)> >(e->FirstChildElement());
       setRotation(rot);
 
       if(fAPK) {

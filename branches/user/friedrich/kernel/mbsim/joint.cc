@@ -571,14 +571,12 @@ namespace MBSim {
       ee=e->FirstChildElement(MBSIMNS"direction");
       setForceDirection(getMat3xV(ee,0));
       ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
+      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
       setForceLaw(gfl);
-      gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
       if(ee->FirstChildElement()) {
-        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
+        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
         setImpactForceLaw(gifl);
-        gifl->initializeUsingXML(ee->FirstChildElement());
       }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -595,14 +593,12 @@ namespace MBSim {
       ee=e->FirstChildElement(MBSIMNS"direction");
       setMomentDirection(getMat3xV(ee,0));
       ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
+      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
       setMomentLaw(gfl);
-      gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
       if(ee->FirstChildElement()) {
-        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
+        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
         setImpactMomentLaw(gifl);
-        gifl->initializeUsingXML(ee->FirstChildElement());
       }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE

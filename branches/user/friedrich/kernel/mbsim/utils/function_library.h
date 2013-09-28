@@ -48,8 +48,7 @@ namespace MBSim {
         bool constParDer2() const { return true; }
         fmatvec::Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(fmatvec::VecV)> >(element->FirstChildElement());
-          f->initializeUsingXML(element->FirstChildElement());
+          f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(fmatvec::VecV)> >(element->FirstChildElement());
         }
     };
 
@@ -72,8 +71,7 @@ namespace MBSim {
         bool constParDer1() const { return true; }
         bool constParDer2() const { return f->constParDer(); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(element->FirstChildElement());
-          f->initializeUsingXML(element->FirstChildElement());
+          f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(element->FirstChildElement());
         }
     };
 
@@ -91,11 +89,9 @@ namespace MBSim {
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
-          fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
-          fo->initializeUsingXML(e->FirstChildElement());
+          fo=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
           e=element->FirstChildElement(MBSIMNS"innerFunction");
-          fi=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Argo(Argi)> >(e->FirstChildElement());
-          fi->initializeUsingXML(e->FirstChildElement());
+          fi=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Argo(Argi)> >(e->FirstChildElement());
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
       private:
@@ -691,8 +687,7 @@ namespace MBSim {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
           while (e && e->ValueStr()==MBSIMNS"function") {
             MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(ee);
-            f->initializeUsingXML(ee);
+            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(ee);
             ee=e->FirstChildElement(MBSIMNS"factor");
             double factor=ee?Element::getDouble(ee):1;
             addFunction(f, factor);
@@ -736,8 +731,7 @@ namespace MBSim {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
           while (e && e->ValueStr()==MBSIMNS"function") {
             MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<double(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double)> >(ee);
-            f->initializeUsingXML(ee);
+            fmatvec::Function<double(double)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(ee);
             functions.push_back(f);
             e=e->NextSiblingElement();
           }
@@ -796,8 +790,7 @@ namespace MBSim {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
           while (e && e->ValueStr()==MBSIMNS"function") {
             MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(ee);
-            f->initializeUsingXML(ee);
+            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(ee);
             functions.push_back(f);
             ee=e->FirstChildElement(MBSIMNS"limit");
             a.push_back(Element::getDouble(ee));

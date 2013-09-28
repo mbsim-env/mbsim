@@ -64,7 +64,30 @@ class ObjectFactory {
      * Throws if the created object is not of type ContainerType.
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
     template<class ContainerType>
-    static ContainerType* create(const MBXMLUtils::TiXmlElement *element) {
+    static ContainerType* createAndInit(const MBXMLUtils::TiXmlElement *element) {
+      int useMatchNr=1;
+      do {
+        try {
+          ContainerType *f=create<ContainerType>(element, useMatchNr++);
+          f->initializeUsingXML(const_cast<MBXMLUtils::TiXmlElement*>(element));
+          return f;
+        }
+        catch(...) {
+          // break if useMatchNr number is larger then the factory size: nothing found which can be initialized.
+          if(useMatchNr>instance().registeredType.size())
+            throw;
+        }
+      }
+      while(true);
+    }
+
+  private:
+
+    /** Create an object corresponding to the XML element element and return a pointer of type ContainerType.
+     * Throws if the created object is not of type ContainerType.
+     * This function returns a new object or a singleton object dependent on the registration of the created object. */
+    template<class ContainerType>
+    static ContainerType* create(const MBXMLUtils::TiXmlElement *element, int useMatchNr=1) {
 #ifdef HAVE_BOOST_TYPE_TRAITS_HPP
       // just check if ContainerType is derived from BaseType if not throw a compile error if boost is avaliable
       // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
@@ -74,15 +97,17 @@ class ObjectFactory {
       // return NULL if no input is supplied
       if(element==NULL) throw std::runtime_error("Internal error: NULL argument specified.");
       // loop over all all registred types corresponding to element->ValueStr()
+      int matchNr=1;
       for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
+        // skip type with wrong key value get<0>()
         if(it->template get<0>()!=element->ValueStr()) continue;
 
         // allocate a new object OR get singleton object using the allocate function pointer
         BaseType *ele=it->template get<1>()();
         // try to cast ele up to ContainerType
         ContainerType *ret=dynamic_cast<ContainerType*>(ele);
-        // if possible, return it
-        if(ret)
+        // if possible (and it is the useMatchNr'st element, return it
+        if(ret && (matchNr++)==useMatchNr)
           return ret;
         // if not possible, deallocate newly created (wrong) object OR do nothing for
         // singleton objects (is maybe reused later) and continue searching
@@ -93,8 +118,6 @@ class ObjectFactory {
       throw std::runtime_error("No class named "+element->ValueStr()+" found which is of type "+
           MBXMLUtils::demangleSymbolName(typeid(ContainerType).name())+".");
     }
-
-  private:
 
     // a pointer to a function allocating an object
     typedef BaseType* (*allocateFkt)();
@@ -112,6 +135,7 @@ class ObjectFactory {
     static void registerXMLName(const std::string &name, allocateFkt alloc, deallocateFkt dealloc) {
       // check if name was already registred with the same &allocate<CreateType>: if yes return and do not add it twice
       for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
+        // skip type with wrong key value get<0>()
         if(it->template get<0>()!=name) continue;
 
         if(it->template get<1>()==alloc)
