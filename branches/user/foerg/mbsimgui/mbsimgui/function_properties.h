@@ -109,15 +109,15 @@ class NestedFunctionProperty : public FunctionProperty {
 
 class VectorValuedFunctionProperty : public FunctionProperty {
   public:
-    VectorValuedFunctionProperty(const std::string &ext, int m=0);
+    VectorValuedFunctionProperty(int m=0);
     virtual Property* clone() const {return new VectorValuedFunctionProperty(*this);}
-    inline std::string getType() const { return "VectorValuedFunction_"+ext; }
+    inline std::string getType() const { return "VectorValuedFunction_V"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    std::vector<ExtProperty> f;
+    ListProperty functions;
 };
 
 class PiecewiseDefinedFunctionProperty : public FunctionProperty {
@@ -130,7 +130,7 @@ class PiecewiseDefinedFunctionProperty : public FunctionProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    std::vector<ContainerProperty> function;
+    ListProperty functions;
     ExtProperty contDiff;
 };
 
@@ -326,7 +326,7 @@ class SinusFunctionProperty : public FunctionProperty {
 
 class TabularFunctionProperty : public FunctionProperty {
   public:
-    TabularFunctionProperty();
+    TabularFunctionProperty(const std::string &ext);
     virtual Property* clone() const {return new TabularFunctionProperty(*this);}
     inline std::string getType() const { return "TabularFunction_V"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -341,7 +341,7 @@ class TabularFunctionProperty : public FunctionProperty {
 class LinearCombinationFunctionProperty : public FunctionProperty {
 
   public:
-    LinearCombinationFunctionProperty(const std::string &ext) : FunctionProperty(ext) {}
+    LinearCombinationFunctionProperty(const std::string &ext);
     virtual Property* clone() const {return new LinearCombinationFunctionProperty(*this);}
     inline std::string getType() const { return "LinearCombinationFunction_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -350,7 +350,7 @@ class LinearCombinationFunctionProperty : public FunctionProperty {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<ContainerProperty> function;
+    ListProperty functions;
 };
 
 class SymbolicFunctionProperty : public FunctionProperty {

@@ -114,5 +114,21 @@ class ContainerProperty : public Property {
     std::string xmlName;
 };
 
+class ListProperty : public Property {
+  public:
+    ListProperty(PropertyFactory *factory, const std::string &xmlName="", int m=0);
+    ~ListProperty() { delete factory; }
+    virtual Property* clone() const {return new ListProperty(*this);}
+    Property* getProperty(int i) const { return property[i]; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    std::vector<Property*> property;
+    PropertyFactory *factory;
+    std::string xmlName;
+};
+
 #endif
 

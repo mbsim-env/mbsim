@@ -51,4 +51,9 @@ class Property : public PropertyInterface {
     virtual Property* clone() const {return 0;}
 };
 
+class PropertyFactory {
+  public:
+    virtual Property* createProperty() const = 0;
+};
+
 #endif

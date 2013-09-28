@@ -40,4 +40,9 @@ class Widget : public QWidget, public WidgetInterface {
     Widget() {}
 };
 
+class WidgetFactory {
+  public:
+    virtual Widget* createWidget() const = 0;
+};
+
 #endif

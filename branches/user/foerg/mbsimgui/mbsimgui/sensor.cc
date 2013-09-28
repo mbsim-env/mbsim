@@ -89,7 +89,7 @@ FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str,
   property.push_back(new LinearFunctionProperty("V"));
   property.push_back(new QuadraticFunctionProperty("V"));
   property.push_back(new SinusFunctionProperty("V"));
-  property.push_back(new TabularFunctionProperty);
+  property.push_back(new TabularFunctionProperty("V"));
   property.push_back(new LinearCombinationFunctionProperty("V"));
   vector<string> var;
   var.push_back("t");

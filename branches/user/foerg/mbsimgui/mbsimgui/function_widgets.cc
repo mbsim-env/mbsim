@@ -28,6 +28,72 @@
 
 using namespace std;
 
+class FunctionWidgetFactory : public WidgetFactory {
+  public:
+    FunctionWidgetFactory(const QString &ext_, int n_) : ext(ext_), n(n_) { }
+    Widget* createWidget() const;
+  protected:
+    QString ext;
+    int n;
+};
+
+Widget* FunctionWidgetFactory::createWidget() const {
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new ConstantFunctionWidget(ext[0],n)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget(ext[0],n)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget(ext[0],n)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget(ext[0],n)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget(ext[0],n)); name.push_back("Tabular function");
+  widget.push_back(new LinearCombinationFunctionWidget(ext,n)); name.push_back("LinearCombination function");
+  widget.push_back(new PiecewiseDefinedFunctionWidget(ext[0],n)); name.push_back("Piecewise defined function");
+  widget.push_back(new SymbolicFunctionWidget(ext,QStringList("t"))); name.push_back("Symbolic function");
+
+  return new ChoiceWidget(widget,name);
+}
+
+class LinearCombinationWidgetFactory : public WidgetFactory {
+  public:
+    LinearCombinationWidgetFactory(int n_) : n(n_) { }
+    Widget* createWidget() const;
+  protected:
+    int n;
+};
+
+Widget* LinearCombinationWidgetFactory::createWidget() const {
+  FunctionWidgetFactory factory("VS",n);
+
+  ContainerWidget *widget = new ContainerWidget;
+  widget->addWidget(new ExtWidget("Function",factory.createWidget()));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  widget->addWidget(new ExtWidget("Factor",new ExtPhysicalVarWidget(input),true));
+
+  return widget;
+}
+
+class PiecewiseDefinedFunctionWidgetFactory : public WidgetFactory {
+  public:
+    PiecewiseDefinedFunctionWidgetFactory(int n_) : n(n_) { }
+    Widget* createWidget() const;
+  protected:
+    int n;
+};
+
+Widget* PiecewiseDefinedFunctionWidgetFactory::createWidget() const {
+  FunctionWidgetFactory factory("VS",n);
+
+  ContainerWidget *widget = new ContainerWidget;
+  widget->addWidget(new ExtWidget("Function",factory.createWidget()));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  widget->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
+
+  return widget;
+}
+
 ConstantFunctionWidget::ConstantFunctionWidget(const QString &ext, int m) : FunctionWidget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -132,27 +198,23 @@ void NestedFunctionWidget::resizeVariables() {
   static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
 }
 
-VectorValuedFunctionWidget::VectorValuedFunctionWidget(const QString &ext, int m) : FunctionWidget(ext), f(m) {
+VectorValuedFunctionWidget::VectorValuedFunctionWidget(int m) : FunctionWidget("V") {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
-  for(int i=0; i<f.size(); i++) {
-    vector<QWidget*> widget;
-    vector<QString> name;
-    QStringList var;
-    var << "t";
-    widget.push_back(new ConstantFunctionWidget("S")); name.push_back("Constant function f=f(t)");
-    widget.push_back(new LinearFunctionWidget("S")); name.push_back("Linear function f=f(t)");
-    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function f=f(t)");
-    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function f=f(t)");
-    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
-    f[i] = new ExtWidget(QString("f(")+QString::number(i+1)+")",new ChoiceWidget(widget,name));
-    layout->addWidget(f[i]);
+
+  functions = new ListWidget(new FunctionWidgetFactory("SS",1),"Function",m);
+  layout->addWidget(functions);
+}
+
+void VectorValuedFunctionWidget::resize_(int m, int n) {
+  if(ext[0]=='V') {
+    functions->resize_(m,n);
   }
 }
 
-PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(const QString &ext, int n_) : FunctionWidget(ext), n(n_) {
+PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(const QString &ext, int n) : FunctionWidget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -162,96 +224,14 @@ PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(const QString &ex
   contDiff = new ExtWidget("Continously differentiable",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(contDiff);
 
-  functionList = new QListWidget;
-  functionList->setContextMenuPolicy (Qt::CustomContextMenu);
-  functionList->setMinimumWidth(functionList->sizeHint().width()/3);
-  functionList->setMaximumWidth(functionList->sizeHint().width()/3);
-  layout->addWidget(functionList);
-  stackedWidget = new QStackedWidget;
-  connect(functionList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
-  connect(functionList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  layout->addWidget(stackedWidget,0,Qt::AlignTop);
-}
-
-void PiecewiseDefinedFunctionWidget::changeCurrent(int idx) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(idx);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-}
-
-void PiecewiseDefinedFunctionWidget::openContextMenu(const QPoint &pos) {
-  if(functionList->itemAt(pos)) {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Remove"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(removeFunction()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-  else {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Add"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(addFunction()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-}
+  functions = new ListWidget(new PiecewiseDefinedFunctionWidgetFactory(n),"Function");
+  layout->addWidget(functions);
+ }
 
 void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
-  for(int i=0; i<stackedWidget->count(); i++)
-   static_cast<Widget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
-}
-
-void PiecewiseDefinedFunctionWidget::updateList() {
-  for(int i=0; i<functionList->count(); i++) {
-    functionList->item(i)->setText(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->getName());
+  if(ext[0]=='V') {
+    functions->resize_(m,n);
   }
-}
-
-void PiecewiseDefinedFunctionWidget::addFunction(bool emitSignals) {
-  int i = stackedWidget->count();
-
-  ContainerWidget *widgetContainer = new ContainerWidget;
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget(ext,n));
-  name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget(ext,n));
-  name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget(ext,n));
-  name.push_back("Sinus function");
-  widget.push_back(new SymbolicFunctionWidget(ext+"S",QStringList("t")));
-  name.push_back("Symbolic function");
-  widgetContainer->addWidget(new ChoiceWidget(widget,name));
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  widgetContainer->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
-
-  functionList->addItem("Undefined");
-
-  stackedWidget->addWidget(widgetContainer);
-  if(i>0)
-    widgetContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-
-  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
-  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
-
-  if(emitSignals) {
-    emit resize_();
-    emit updateList();
-  }
-}
-
-void PiecewiseDefinedFunctionWidget::removeFunction() {
-  int i = functionList->currentRow();
-  delete stackedWidget->widget(i);
-  stackedWidget->removeWidget(stackedWidget->widget(i));
-  //functionChoice.erase(functionChoice.begin()+i);
-  //delete factor[i];
-  //factor.erase(factor.begin()+i);
-  delete functionList->takeItem(i);
 }
 
 TranslationAlongFixedAxisWidget::TranslationAlongFixedAxisWidget(const QString &ext) : FunctionWidget(ext) {
@@ -408,7 +388,7 @@ void SinusFunctionWidget::resize_(int m, int n) {
   }
 }
 
-TabularFunctionWidget::TabularFunctionWidget(int n) {
+TabularFunctionWidget::TabularFunctionWidget(const QString &ext, int n) : FunctionWidget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -432,102 +412,23 @@ TabularFunctionWidget::TabularFunctionWidget(int n) {
   input.push_back(new PhysicalVariableWidget(new MatFromFileWidget,QStringList(),0));
   choiceWidget.push_back(new ExtWidget("xy",new ExtPhysicalVarWidget(input)));
 
-  choice = new ChoiceWidget(choiceWidget,name,QBoxLayout::LeftToRight);
+  choice = new ChoiceWidget(choiceWidget,name);
   layout->addWidget(choice);
 }
 
-LinearCombinationFunctionWidget::LinearCombinationFunctionWidget(const QString &ext, int n_) : FunctionWidget(ext), n(n_) {
+LinearCombinationFunctionWidget::LinearCombinationFunctionWidget(const QString &ext, int n) : FunctionWidget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  functionList = new QListWidget;
-  functionList->setContextMenuPolicy (Qt::CustomContextMenu);
-  functionList->setMinimumWidth(functionList->sizeHint().width()/3);
-  functionList->setMaximumWidth(functionList->sizeHint().width()/3);
-  layout->addWidget(functionList);
-  stackedWidget = new QStackedWidget;
-  connect(functionList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
-  connect(functionList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  layout->addWidget(stackedWidget,0,Qt::AlignTop);
-}
-
-void LinearCombinationFunctionWidget::changeCurrent(int idx) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(idx);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-}
-
-void LinearCombinationFunctionWidget::openContextMenu(const QPoint &pos) {
-  if(functionList->itemAt(pos)) {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Remove"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(removeFunction()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-  else {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Add"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(addFunction()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-}
+  functions = new ListWidget(new LinearCombinationWidgetFactory(n),"Function");
+  layout->addWidget(functions);
+ }
 
 void LinearCombinationFunctionWidget::resize_(int m, int n) {
-  for(int i=0; i<stackedWidget->count(); i++)
-   static_cast<Widget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
-}
-
-void LinearCombinationFunctionWidget::updateList() {
-  for(int i=0; i<functionList->count(); i++)
-    functionList->item(i)->setText(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->getName());
-}
-
-void LinearCombinationFunctionWidget::addFunction(bool emitSignals) {
-  int i = stackedWidget->count();
-
-  ContainerWidget *widgetContainer = new ContainerWidget;
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("V",n)); name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget("V",n)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",n)); name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(n)); name.push_back("Tabular function");
-  widget.push_back(new LinearCombinationFunctionWidget("V",n)); name.push_back("LinearCombination function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
-  widgetContainer->addWidget(new ChoiceWidget(widget,name));
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-  widgetContainer->addWidget(new ExtWidget("Factor",new ExtPhysicalVarWidget(input),false));
-
-  functionList->addItem("Undefined");
-
-  stackedWidget->addWidget(widgetContainer);
-  if(i>0)
-    widgetContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-
-  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
-  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
-
-  if(emitSignals) {
-    emit resize_();
-    emit updateList();
+  if(ext[0]=='V') {
+    functions->resize_(m,n);
   }
-}
-
-void LinearCombinationFunctionWidget::removeFunction() {
-  int i = functionList->currentRow();
-  delete stackedWidget->widget(i);
-  stackedWidget->removeWidget(stackedWidget->widget(i));
-  //functionChoice.erase(functionChoice.begin()+i);
-  //delete factor[i];
-  //factor.erase(factor.begin()+i);
-  delete functionList->takeItem(i);
 }
 
 SymbolicFunctionWidget::SymbolicFunctionWidget(const QString &ext, const QStringList &var, int max) : FunctionWidget(ext) {

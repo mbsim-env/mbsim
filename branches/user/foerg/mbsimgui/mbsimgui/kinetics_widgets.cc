@@ -312,7 +312,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
   widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(1)); name.push_back("Tabular function");
+  widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
   widget.push_back(new PiecewiseDefinedFunctionWidget("V",1)); name.push_back("Piecewise defined function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
