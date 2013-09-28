@@ -26,6 +26,7 @@
 #include <QBoxLayout>
 
 class QStackedWidget;
+class QSpinBox;
 class VariableWidget;
 class PhysicalVariableWidget;
 class EvalDialog;
@@ -66,16 +67,17 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
   friend class ExtProperty;
 
   public:
-    ExtWidget(const QString &name, Widget *widget, bool deactivatable=false, bool active=false);
-    Widget* getWidget() {return widget;}
-    virtual void updateWidget() {widget->updateWidget();}
-    virtual void resizeVariables() {widget->resizeVariables();}
+    ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false);
+    QWidget* getWidget() {return widget;}
+    virtual void updateWidget() {dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
+    virtual void resizeVariables() {dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
+    void resize_(int m, int n) {dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
     void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
     void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
 
   protected:
-    Widget *widget;
+    QWidget *widget;
   signals:
     void resize_();
 };
@@ -113,6 +115,7 @@ class ContainerWidget : public Widget {
   public:
     ContainerWidget();
 
+    void resize_(int m, int n);
     void addWidget(QWidget *widget_);
     QWidget* getWidget(int i) const {return widget[i];}
 
@@ -127,21 +130,24 @@ class ListWidget : public Widget {
   friend class ListProperty;
 
   public:
-    ListWidget(const std::vector<Widget*> &widgets, int n);
+    ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int n=1);
+    ~ListWidget();
+
     void resize_(int m, int n);
 
   protected:
     QStackedWidget *stackedWidget; 
+    QSpinBox* spinBox;
     QListWidget *list; 
-    std::vector<Widget*> widgets;
+    WidgetFactory *factory;
+    QString name;
     int n;
+    void addElements(int n=1, bool emitSignals=true);
 
   protected slots:
-    void updateList();
-    void addElement(bool emitSignals=true);
-    void removeFunction();
-    void openContextMenu(const QPoint &pos);
+    void removeElements(int n=1);
     void changeCurrent(int idx);
+    void currentIndexChanged(int idx);
   signals:
     void resize_();
 };

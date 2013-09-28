@@ -87,7 +87,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
-  property.push_back(new VectorValuedFunctionProperty("V",3));
+  property.push_back(new VectorValuedFunctionProperty(0));
   property.push_back(new PiecewiseDefinedFunctionProperty("V"));
 
   property_.clear();
@@ -113,7 +113,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VVS",var));
 
-  translation.setProperty(new ChoiceProperty("",property));
+  translation.setProperty(new ExtProperty(new ChoiceProperty("",property)));
 
   rotation.setXMLName(MBSIMNS"rotation");
   property.clear();
@@ -163,7 +163,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new NestedFunctionProperty("MSS",property_));
 
   ContainerProperty *propertyContainer = new ContainerProperty;
-  propertyContainer->addProperty(new ChoiceProperty("",property));
+  propertyContainer->addProperty(new ExtProperty(new ChoiceProperty("",property)));
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
@@ -188,11 +188,11 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 int RigidBody::getqRelSize() const {
   int nqT=0, nqR=0;
   if(translation.isActive()) {
-    const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(translation.getProperty());
+    const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(static_cast<const ExtProperty*>(translation.getProperty())->getProperty());
     nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
   }
   if(rotation.isActive()) {
-    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<const ContainerProperty*>(rotation.getProperty())->getProperty(0));
+    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<ExtProperty*>(static_cast<const ContainerProperty*>(rotation.getProperty())->getProperty(0))->getProperty());
     nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
   }
   int nq = nqT + nqR;

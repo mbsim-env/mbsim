@@ -266,4 +266,66 @@ void ContainerProperty::toWidget(QWidget *widget) {
     property[i]->toWidget(static_cast<ContainerWidget*>(widget)->widget[i]);
 }
 
+ListProperty::ListProperty(PropertyFactory *factory_, const string &xmlName_, int m) : factory(factory_), xmlName(xmlName_) {
+  for(int i=0; i<m; i++)
+    property.push_back(factory->createProperty());
+  cout << property.size() << endl;
+}
 
+TiXmlElement* ListProperty::initializeUsingXML(TiXmlElement *element) {
+  
+  property.clear();
+  TiXmlElement *e = element->FirstChildElement(xmlName);
+  while(e and e->ValueStr()==xmlName) {
+    property.push_back(factory->createProperty());
+    property[property.size()-1]->initializeUsingXML(e);
+
+    e=e->NextSiblingElement();
+  }
+
+  return element;
+}
+
+TiXmlElement* ListProperty::writeXMLFile(TiXmlNode *parent) {
+  for(unsigned int i=0; i<property.size(); i++) {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    property[i]->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+  }
+  return 0;
+}
+
+void ListProperty::fromWidget(QWidget *widget) {
+  if(property.size()!=static_cast<ListWidget*>(widget)->stackedWidget->count()) {
+    property.clear();
+    for(unsigned int i=0; i<static_cast<ListWidget*>(widget)->stackedWidget->count(); i++) {
+      property.push_back(factory->createProperty());
+      property[i]->fromWidget(static_cast<ListWidget*>(widget)->stackedWidget->widget(i));
+    }
+  }
+  else {
+    for(unsigned int i=0; i<static_cast<ListWidget*>(widget)->stackedWidget->count(); i++) {
+      property[i]->fromWidget(static_cast<ListWidget*>(widget)->stackedWidget->widget(i));
+    }
+  }
+}
+
+void ListProperty::toWidget(QWidget *widget) {
+  static_cast<ListWidget*>(widget)->blockSignals(true);
+  if(property.size()!=static_cast<ListWidget*>(widget)->stackedWidget->count()) {
+    static_cast<ListWidget*>(widget)->removeElements(static_cast<ListWidget*>(widget)->stackedWidget->count());
+
+    static_cast<ListWidget*>(widget)->spinBox->blockSignals(true);
+    static_cast<ListWidget*>(widget)->spinBox->setValue(property.size());
+    static_cast<ListWidget*>(widget)->spinBox->blockSignals(false);
+
+    static_cast<ListWidget*>(widget)->addElements(property.size(),false);
+    for(unsigned int i=0; i<property.size(); i++)
+      property[i]->toWidget(static_cast<ListWidget*>(widget)->stackedWidget->widget(i));
+  }
+  else {
+    for(unsigned int i=0; i<property.size(); i++)
+      property[i]->toWidget(static_cast<ListWidget*>(widget)->stackedWidget->widget(i));
+  }
+  static_cast<ListWidget*>(widget)->blockSignals(false);
+}

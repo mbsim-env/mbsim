@@ -24,6 +24,7 @@
 
 class ExtPhysicalVarWidget;
 class ExtWidget;
+class ListWidget;
 class QVBoxLayout;
 class QComboBox;
 class ChoiceWidget;
@@ -88,9 +89,11 @@ class VectorValuedFunctionWidget : public FunctionWidget {
   friend class VectorValuedFunctionProperty;
 
   public:
-    VectorValuedFunctionWidget(const QString &ext, int m);
+    VectorValuedFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
   protected:
-    std::vector<ExtWidget*> f;
+    ListWidget *functions;
 };
 
 class PiecewiseDefinedFunctionWidget : public FunctionWidget {
@@ -99,23 +102,12 @@ class PiecewiseDefinedFunctionWidget : public FunctionWidget {
   friend class PiecewiseDefinedFunctionProperty;
 
   public:
-    PiecewiseDefinedFunctionWidget(const QString &ext, int n);
+    PiecewiseDefinedFunctionWidget(const QString &ext, int n=1);
     void resize_(int m, int n);
 
   protected:
-    QStackedWidget *stackedWidget; 
-    QListWidget *functionList; 
-    int n;
+    ListWidget *functions;
     ExtWidget *contDiff;
-
-  protected slots:
-    void updateList();
-    void addFunction(bool emitSignals=true);
-    void removeFunction();
-    void openContextMenu(const QPoint &pos);
-    void changeCurrent(int idx);
-  signals:
-    void resize_();
 };
 
 class TranslationAlongXAxisWidget : public FunctionWidget {
@@ -286,14 +278,13 @@ class TabularFunctionWidget : public FunctionWidget {
   friend class TabularFunctionProperty;
 
   public:
-    TabularFunctionWidget(int n);
+    TabularFunctionWidget(const QString &ext, int n);
 
   protected:
     ChoiceWidget* choice;
 };
 
 class LinearCombinationFunctionWidget : public FunctionWidget {
-  Q_OBJECT
 
   friend class LinearCombinationFunctionProperty;
 
@@ -302,18 +293,7 @@ class LinearCombinationFunctionWidget : public FunctionWidget {
     void resize_(int m, int n);
 
   protected:
-    QStackedWidget *stackedWidget; 
-    QListWidget *functionList; 
-    int n;
-
-  protected slots:
-    void updateList();
-    void addFunction(bool emitSignals=true);
-    void removeFunction();
-    void openContextMenu(const QPoint &pos);
-    void changeCurrent(int idx);
-  signals:
-    void resize_();
+    ListWidget *functions;
 };
 
 class SymbolicFunctionWidget : public FunctionWidget {

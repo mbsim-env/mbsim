@@ -381,7 +381,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   var.clear();
   var << "t";
   widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("r=r(t), Symbolic function");
-  widget.push_back(new VectorValuedFunctionWidget("V",3)); name.push_back("r=r(t), Vector valued function");
+  widget.push_back(new VectorValuedFunctionWidget(3)); name.push_back("r=r(t), Vector valued function");
   widget.push_back(new PiecewiseDefinedFunctionWidget("V",3)); name.push_back("r=r(t), Piecewise defined function");
 
   widget_.clear();
@@ -409,9 +409,9 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new SymbolicFunctionWidget("VVS",var)); name.push_back("r=r(q,t), Symbolic function");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
 
-  translation = new ExtWidget("Translation",new ChoiceWidget(widget,name),true);
+  translation = new ExtWidget("Translation",new ExtWidget("Function",new ChoiceWidget(widget,name)),true);
   addToTab("Kinematics", translation);
-  connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  connect(static_cast<ExtWidget*>(translation->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
 
   widget.clear();
   name.clear();
@@ -465,7 +465,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new NestedFunctionWidget("MSS",widget_,name_)); name.push_back("A=A(f(t)), Nested function (scalar inner function)");
 
   ContainerWidget *widgetContainer = new ContainerWidget;
-  widgetContainer->addWidget(new ChoiceWidget(widget,name));
+  widgetContainer->addWidget(new ExtWidget("Function",new ChoiceWidget(widget,name)));
   input.clear();
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   widgetContainer->addWidget(new ExtWidget("Translation dependent",new ExtPhysicalVarWidget(input),true)); 
@@ -519,11 +519,11 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
 int RigidBodyPropertyDialog::getqRelSize() const {
   int nqT=0, nqR=0;
   if(translation->isActive()) {
-    ChoiceWidget *trans = static_cast<ChoiceWidget*>(translation->getWidget());
+    ChoiceWidget *trans = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(translation->getWidget())->getWidget());
     nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
   }
   if(rotation->isActive()) {
-    ChoiceWidget *rot = static_cast<ChoiceWidget*>(static_cast<const ContainerWidget*>(rotation->getWidget())->getWidget(0));
+    ChoiceWidget *rot = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<const ContainerWidget*>(rotation->getWidget())->getWidget(0))->getWidget());
     nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
   }
   int nq = nqT + nqR;
@@ -994,16 +994,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   frameOfReference = new ExtWidget("Frame of reference",ref,true);
   addToTab("Kinetics",frameOfReference);
 
-//  vector<Widget*> widgets;
-//  for(int i=0; i<2; i++) {
-//  widget.clear();
-//  name.clear();
-//  widget.push_back(new ConstantFunctionWidget("V",3)); name.push_back("r=r(t), Constant function");
-//  widget.push_back(new LinearFunctionWidget("V",3)); name.push_back("r=r(t), Linear function");
-//  widgets.push_back(new ChoiceWidget(widget,name));
-//  }
-//
-//  ListWidget* test = new ListWidget(widgets,1);
+//  ListWidget* test = new ListWidget(new LinCombFactory(1),"Function");
 //  addToTab("Kinetics",test);
 }
 
@@ -1384,7 +1375,7 @@ FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *senso
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
   widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(1)); name.push_back("Tabular function");
+  widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
   function = new ExtWidget("Function",new ChoiceWidget(widget,name));
