@@ -1432,8 +1432,7 @@ namespace MBSim {
 
     Environment *env;
     while (e) {
-      env = ObjectFactory<Environment>::create<Environment>(e);
-      env->initializeUsingXML(e);
+      env = ObjectFactory<Environment>::createAndInit<Environment>(e);
       e = e->NextSiblingElement();
     }
 
@@ -1566,8 +1565,7 @@ namespace MBSim {
     TiXml_setLineNrFromProcessingInstruction(e);
     map<string, string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
-    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::create<Group>(e));
-    dss->initializeUsingXML(doc.FirstChildElement());
+    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::createAndInit<Group>(e));
     return dss;
   }
 

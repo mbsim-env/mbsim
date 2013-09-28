@@ -1390,32 +1390,28 @@ namespace MBSim {
 
     //Set contact law
     e = element->FirstChildElement(MBSIMNS"contactForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(e->FirstChildElement());
+    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
     setContactForceLaw(gfl);
-    gfl->initializeUsingXML(e->FirstChildElement());
 
     //Set impact law (if given)
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
-      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(e->FirstChildElement());
+      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
       setContactImpactLaw(gifl);
-      gifl->initializeUsingXML(e->FirstChildElement());
     }
 
     //Set friction law (if given)
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
-      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::create<FrictionForceLaw>(e->FirstChildElement());
+      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
       setFrictionForceLaw(ffl);
-      ffl->initializeUsingXML(e->FirstChildElement());
     }
 
     //Set friction impact law (if given)
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
-      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::create<FrictionImpactLaw>(e->FirstChildElement());
+      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
       setFrictionImpactLaw(fil);
-      fil->initializeUsingXML(e->FirstChildElement());
     }
 
     //Save contour names for initialization

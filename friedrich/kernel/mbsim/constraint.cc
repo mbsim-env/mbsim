@@ -252,9 +252,8 @@ namespace MBSim {
     KinematicConstraint::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement());
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement());
       setConstraintFunction(f);
-      f->initializeUsingXML(e->FirstChildElement());
     }
   }
 
@@ -302,8 +301,7 @@ namespace MBSim {
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
-      f->initializeUsingXML(e->FirstChildElement());
+      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->FirstChildElement());
       setConstraintFunction(f);
     }
   }
@@ -353,8 +351,7 @@ namespace MBSim {
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
-      f->initializeUsingXML(e->FirstChildElement());
+      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->FirstChildElement());
       setConstraintFunction(f);
     }
   }
