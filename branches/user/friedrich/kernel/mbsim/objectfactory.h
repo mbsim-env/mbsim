@@ -20,7 +20,8 @@
 #ifndef _MBSIM_OBJECTFACTORY_H_
 #define _MBSIM_OBJECTFACTORY_H_
 
-#include <map>
+#include <boost/tuple/tuple_io.hpp>
+#include <vector>
 #include <stdexcept>
 #include <typeinfo>
 #include "mbxmlutilstinyxml/tinyxml.h"
@@ -73,10 +74,11 @@ class ObjectFactory {
       // return NULL if no input is supplied
       if(element==NULL) throw std::runtime_error("Internal error: NULL argument specified.");
       // loop over all all registred types corresponding to element->ValueStr()
-      std::pair<MapIt, MapIt> range=instance().registeredType.equal_range(element->ValueStr());
-      for(MapIt it=range.first; it!=range.second; it++) {
+      for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
+        if(it->template get<0>()!=element->ValueStr()) continue;
+
         // allocate a new object OR get singleton object using the allocate function pointer
-        BaseType *ele=it->second.first();
+        BaseType *ele=it->template get<1>()();
         // try to cast ele up to ContainerType
         ContainerType *ret=dynamic_cast<ContainerType*>(ele);
         // if possible, return it
@@ -85,7 +87,7 @@ class ObjectFactory {
         // if not possible, deallocate newly created (wrong) object OR do nothing for
         // singleton objects (is maybe reused later) and continue searching
         else
-          it->second.second(ele);
+          it->template get<2>()(ele);
       }
       // no matching element found: throw error
       throw std::runtime_error("No class named "+element->ValueStr()+" found which is of type "+
@@ -100,28 +102,31 @@ class ObjectFactory {
     typedef void (*deallocateFkt)(BaseType *obj);
 
     // convinence typedefs
-    typedef std::multimap<std::string, std::pair<allocateFkt, deallocateFkt> > Map;
-    typedef typename Map::iterator MapIt;
+    typedef boost::tuple<std::string, allocateFkt, deallocateFkt> VectorContent;
+    typedef std::vector<VectorContent> Vector;
+    typedef typename Vector::iterator VectorIt;
 
     // private ctor
     ObjectFactory() {}
 
     static void registerXMLName(const std::string &name, allocateFkt alloc, deallocateFkt dealloc) {
       // check if name was already registred with the same &allocate<CreateType>: if yes return and do not add it twice
-      std::pair<MapIt, MapIt> range=instance().registeredType.equal_range(name);
-      for(MapIt it=range.first; it!=range.second; it++)
-        if(it->second.first==alloc)
+      for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
+        if(it->template get<0>()!=name) continue;
+
+        if(it->template get<1>()==alloc)
           return;
+      }
       // name is not registred with &allocate<CreateType>: register it
-      instance().registeredType.insert(std::make_pair(name, std::make_pair(alloc, dealloc)));
+      instance().registeredType.push_back(VectorContent(name, alloc, dealloc));
     }
 
     // create an singleton instance of the object factory.
     // only declaration here and defition and explicit instantation for all BaseType in objectfactory.cc (required for Windows)
     static ObjectFactory<BaseType>& instance();
 
-    // a multimap of all registered types
-    Map registeredType;
+    // a vector of all registered types
+    Vector registeredType;
 
     // a wrapper to allocate an object of type CreateType
     template<class CreateType>
