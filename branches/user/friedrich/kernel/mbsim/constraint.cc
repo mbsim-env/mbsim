@@ -302,45 +302,9 @@ namespace MBSim {
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      // NOTE: We need some special handling here for SymbolicFunctions to distinguish a scalar from a vector with dim 1 because
-      //       it not the same here!!! (see the two "throw 1" statements below)
-      //       - one single scalar argument means the time
-      //       - one single vector argument (even if it has dim 1) is NOT the time but the generalized position
-
-      // first try a Function<VecV(VecV,double)>
-      Function<VecV(VecV,double)> *f1=NULL;
-      try {
-        f1=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
-        f1->initializeUsingXML(e->FirstChildElement());
-        setConstraintFunction(f1);
-      }
-      catch(...) {
-        delete f1;
-        // if this fails try a Function<VecV(double)>
-        Function<VecV(double)> *f2=NULL;
-        try {
-          f2=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement());
-          if(dynamic_cast<SymbolicFunction<VecV(double)>*>(f2) && e->FirstChildElement()->Attribute("arg1dim")) throw 1; // if arg1dim is present => arg1 is a vector => wrong here
-          f2->initializeUsingXML(e->FirstChildElement());
-          setConstraintFunction(f2);
-        }
-        catch(...) {
-          delete f2;
-          // if this fails try a Function<VecV(VecV)>
-          Function<VecV(VecV)> *f3=NULL;
-          try {
-            f3=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement());
-            if(dynamic_cast<SymbolicFunction<VecV(VecV)>*>(f3) && !e->FirstChildElement()->Attribute("arg1dim")) throw 1; // if arg1dim is not present => arg1 is a scalar => wrong here
-            f3->initializeUsingXML(e->FirstChildElement());
-            setConstraintFunction(f3);
-          }
-          catch(...) {
-            delete f3;
-            // if this fails throw exception
-            throw;
-          }
-        }
-      }
+      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
+      f->initializeUsingXML(e->FirstChildElement());
+      setConstraintFunction(f);
     }
   }
 
@@ -389,45 +353,9 @@ namespace MBSim {
       x0 = getVec(e);
     e=element->FirstChildElement(MBSIMNS"constraintFunction");
     if(e) {
-      // NOTE: We need some special handling here for SymbolicFunctions to distinguish a scalar from a vector with dim 1 because
-      //       it not the same here!!! (see the two "throw 1" statements below)
-      //       - one single scalar argument means the time
-      //       - one single vector argument (even if it has dim 1) is NOT the time but the generalized position
-
-      // first try a Function<VecV(VecV,double)>
-      Function<VecV(VecV,double)> *f1=NULL;
-      try {
-        f1=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
-        f1->initializeUsingXML(e->FirstChildElement());
-        setConstraintFunction(f1);
-      }
-      catch(...) {
-        delete f1;
-        // if this fails try a Function<VecV(double)>
-        Function<VecV(double)> *f2=NULL;
-        try {
-          f2=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement());
-          if(dynamic_cast<SymbolicFunction<VecV(double)>*>(f2) && e->FirstChildElement()->Attribute("arg1dim")) throw 1; // if arg1dim is present => arg1 is a vector => wrong here
-          f2->initializeUsingXML(e->FirstChildElement());
-          setConstraintFunction(f2);
-        }
-        catch(...) {
-          delete f2;
-          // if this fails try a Function<VecV(VecV)>
-          Function<VecV(VecV)> *f3=NULL;
-          try {
-            f3=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement());
-            if(dynamic_cast<SymbolicFunction<VecV(VecV)>*>(f3) && !e->FirstChildElement()->Attribute("arg1dim")) throw 1; // if arg1dim is not present => arg1 is a scalar => wrong here
-            f3->initializeUsingXML(e->FirstChildElement());
-            setConstraintFunction(f3);
-          }
-          catch(...) {
-            delete f3;
-            // if this fails throw exception
-            throw;
-          }
-        }
-      }
+      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV,double)> >(e->FirstChildElement());
+      f->initializeUsingXML(e->FirstChildElement());
+      setConstraintFunction(f);
     }
   }
 

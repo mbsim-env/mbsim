@@ -33,7 +33,7 @@ namespace MBSim {
       private:
         fmatvec::Function<Ret(fmatvec::VecV)> *f;
       public:
-        StateDependentFunction(fmatvec::Function<Ret(fmatvec::VecV)> *f_) : f(f_) { }
+        StateDependentFunction(fmatvec::Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_) { }
         ~StateDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
         typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
@@ -47,6 +47,10 @@ namespace MBSim {
         bool constParDer1() const { return f->constParDer(); }
         bool constParDer2() const { return true; }
         fmatvec::Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(fmatvec::VecV)> >(element->FirstChildElement());
+          f->initializeUsingXML(element->FirstChildElement());
+        }
     };
 
   template <class Ret>
@@ -54,7 +58,7 @@ namespace MBSim {
       private:
         fmatvec::Function<Ret(double)> *f;
       public:
-        TimeDependentFunction(fmatvec::Function<Ret(double)> *f_) : f(f_) { }
+        TimeDependentFunction(fmatvec::Function<Ret(double)> *f_=NULL) : f(f_) { }
         ~TimeDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
         typename fmatvec::Size<double>::type getArg2Size() const { return 1; }
@@ -67,6 +71,10 @@ namespace MBSim {
         typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
         bool constParDer1() const { return true; }
         bool constParDer2() const { return f->constParDer(); }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(element->FirstChildElement());
+          f->initializeUsingXML(element->FirstChildElement());
+        }
     };
 
   template<typename Sig> class NestedFunction; 
