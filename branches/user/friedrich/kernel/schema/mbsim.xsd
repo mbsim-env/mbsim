@@ -959,47 +959,133 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="translation">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Vorschrift zur Berechnung des Translationsvektors
-                <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
-                generalisierten Lagen und der Zeit an.<br/>
-                Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
-                im KOS <tt>frameOfReference</tt> dargestellt und stellt die
-                Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinematics</tt> dar.
-                <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function" minOccurs="0"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="rotation">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Vorschrift zur Berechnung der Transformationsmatrix
-                <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
-                generalisierten Lagen und der Zeit an.<br/>
-                Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
-                Transformation vom KOS <tt>frameForKinematics</tt> in das KOS <tt>frameOfReference</tt> dar.
-                <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function" minOccurs="0"/>
-                <xs:element name="translationDependent" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    tbd
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-                <xs:element name="coordinateTransformation" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    tbd
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="generalTranslation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt die Vorschrift zur Berechnung des Translationsvektors
+                  <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                  im KOS <tt>frameOfReference</tt> dargestellt und stellt die
+                  Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinematics</tt> dar.
+                  <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="timeDependentTranslation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt die Vorschrift zur Berechnung des Translationsvektors
+                  <object class="inlineeqn">\boldsymbol{r}_q=f(t)</object> in Abhängigkeit der 
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                  im KOS <tt>frameOfReference</tt> dargestellt und stellt die
+                  Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinematics</tt> dar.
+                  <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="stateDependentTranslation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt die Vorschrift zur Berechnung des Translationsvektors
+                  <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q})</object> in Abhängigkeit der 
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                  im KOS <tt>frameOfReference</tt> dargestellt und stellt die
+                  Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinematics</tt> dar.
+                  <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="generalRotation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                  <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                  Transformation vom KOS <tt>frameForKinematics</tt> in das KOS <tt>frameOfReference</tt> dar.
+                  <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element name="translationDependent" minOccurs="0">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      tbd
+                    </xs:documentation></xs:annotation>
+                  </xs:element>
+                  <xs:element name="coordinateTransformation" minOccurs="0">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      tbd
+                    </xs:documentation></xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="timeDependentRotation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                  <object class="inlineeqn">\boldsymbol{A}_q=f(t)</object> in Abhängigkeit der 
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                  Transformation vom KOS <tt>frameForKinematics</tt> in das KOS <tt>frameOfReference</tt> dar.
+                  <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element name="translationDependent" minOccurs="0">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      tbd
+                    </xs:documentation></xs:annotation>
+                  </xs:element>
+                  <xs:element name="coordinateTransformation" minOccurs="0">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      tbd
+                    </xs:documentation></xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="stateDependentRotation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                  <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q})</object> in Abhängigkeit der 
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                  Transformation vom KOS <tt>frameForKinematics</tt> in das KOS <tt>frameOfReference</tt> dar.
+                  <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element name="translationDependent" minOccurs="0">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      tbd
+                    </xs:documentation></xs:annotation>
+                  </xs:element>
+                  <xs:element name="coordinateTransformation" minOccurs="0">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      tbd
+                    </xs:documentation></xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
           <xs:element name="rotationMapping" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
@@ -1239,16 +1325,38 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="constraintFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              TODO
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="generalConstraintFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                TODO
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="timeDependentConstraintFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                TODO
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="stateDependentConstraintFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                TODO
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1272,16 +1380,38 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="constraintFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              TODO
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:choice>
+            <xs:element name="generalConstraintFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                TODO
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="timeDependentConstraintFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                TODO
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="stateDependentConstraintFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                TODO
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2911,42 +3041,6 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="FunctionType"/>
-
-  <xs:element name="TimeDependentFunction" substitutionGroup="Function" type="TimeDependentFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      tbd
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="TimeDependentFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element ref="Function">
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="StateDependentFunction" substitutionGroup="Function" type="StateDependentFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      tbd
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="StateDependentFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element ref="Function">
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
 
   <xs:element name="LinearFunction" substitutionGroup="Function" type="LinearFunctionType">
     <xs:annotation>

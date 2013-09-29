@@ -12,14 +12,12 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>carrier_Mass</mass>
       <inertiaTensor>carrier_Inertia*eye(3)</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
         <frame>
           <Frame name="fI">
@@ -77,14 +75,12 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>motor_Mass</mass>
       <inertiaTensor>motor_Inertia*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames/>
       <contours/>
       <openMBVRigidBody>
@@ -111,14 +107,12 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>crank_Mass</mass>
       <inertiaTensor>crank_Inertia*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="fRocker">
@@ -176,14 +170,12 @@
       <frameForKinematics ref="Frame[fCrank]"/>
       <mass>rocker_Mass</mass>
       <inertiaTensor>rocker_Inertia*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="fCrank">
@@ -229,14 +221,12 @@
       <frameForKinematics ref="Frame[fCylinder]"/>
       <mass>piston_Mass</mass>
       <inertiaTensor>piston_Inertia*eye(3)</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <translationVectors>[1 0 0]'</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0]'</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
         <frame>
           <Frame name="fRocker">

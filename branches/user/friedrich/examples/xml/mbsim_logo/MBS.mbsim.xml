@@ -55,20 +55,16 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>pi*r^2*(5*x)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(5*x)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(5*x)*rho)*r^2+1/12*(pi*r^2*(5*x)*rho)*(5*x)^2, 0; 0, 0, 1/4*(pi*r^2*(5*x)*rho)*r^2+1/12*(pi*r^2*(5*x)*rho)*(5*x)^2]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <translationVectors>[1, 0, 0; 0, 1, 0]'</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <stateDependentTranslation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1, 0, 0; 0, 1, 0]'</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="FM">

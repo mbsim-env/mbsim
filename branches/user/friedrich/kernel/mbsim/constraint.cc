@@ -299,10 +299,20 @@ namespace MBSim {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialState");
     if (e)
       x0 = getVec(e);
-    e=element->FirstChildElement(MBSIMNS"constraintFunction");
+    e=element->FirstChildElement(MBSIMNS"generalConstraintFunction");
     if(e) {
       Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->FirstChildElement());
-      setConstraintFunction(f);
+      setGeneralConstraintFunction(f);
+    }
+    e=element->FirstChildElement(MBSIMNS"timeDependentConstraintFunction");
+    if(e) {
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement());
+      setTimeDependentConstraintFunction(f);
+    }
+    e=element->FirstChildElement(MBSIMNS"stateDependentConstraintFunction");
+    if(e) {
+      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->FirstChildElement());
+      setStateDependentConstraintFunction(f);
     }
   }
 
@@ -349,10 +359,20 @@ namespace MBSim {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialState");
     if(e)
       x0 = getVec(e);
-    e=element->FirstChildElement(MBSIMNS"constraintFunction");
+    e=element->FirstChildElement(MBSIMNS"generalConstraintFunction");
     if(e) {
       Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->FirstChildElement());
-      setConstraintFunction(f);
+      setGeneralConstraintFunction(f);
+    }
+    e=element->FirstChildElement(MBSIMNS"timeDependentConstraintFunction");
+    if(e) {
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement());
+      setTimeDependentConstraintFunction(f);
+    }
+    e=element->FirstChildElement(MBSIMNS"stateDependentConstraintFunction");
+    if(e) {
+      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->FirstChildElement());
+      setStateDependentConstraintFunction(f);
     }
   }
 

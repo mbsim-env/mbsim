@@ -42,15 +42,13 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>swingMass</mass>
       <inertiaTensor>swingTheta</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation>
-      </rotation>
+      <stateDependentTranslation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation>
+      </generalRotation>
       <frames>
         <frame>
           <Frame name="fMountLeft">
@@ -124,14 +122,12 @@
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
       <inertiaTensor>suspensionTheta</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="fMountLeft">
@@ -185,14 +181,12 @@
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
       <inertiaTensor>suspensionTheta</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="fMountLeft">

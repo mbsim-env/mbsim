@@ -29,16 +29,14 @@
         ]]>
       </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation>
-            <translationVectors>
-              [0; myMFunction(1); 0]
-            </translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>
+            [0; myMFunction(1); 0]
+          </translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
           <FixedRelativeFrame name="P1">
             <enableOpenMBV>
@@ -72,12 +70,10 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>m2</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <TranslationAlongYAxis/>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <TranslationAlongYAxis/>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>

@@ -13,14 +13,12 @@
       <frameForKinematics ref="Frame[fBottom]"/>
       <mass>baseMass</mass>
       <inertiaTensor>baseTheta</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
         <frame>
           <Frame name="fTop">
@@ -79,14 +77,12 @@
       <frameForKinematics ref="Frame[fBottom]"/>
       <mass>pendulumMass</mass>
       <inertiaTensor>pendulumTheta</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="fBottom">
@@ -143,8 +139,8 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>sphereMass</mass>
       <inertiaTensor>sphereTheta</inertiaTensor>
-      <translation/>
-      <rotation/>
+      <generalTranslation/>
+      <generalRotation/>
       <frames/>
       <contours/>
       <openMBVRigidBody>

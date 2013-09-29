@@ -11,29 +11,25 @@
             <frameForKinematics ref="Frame[C]" />
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <translation>
-              <TimeDependentFunction>
-                <SymbolicFunction arg1name="t">
-                  [sin(freq1*t + pi/2); v0y*t; 0]
-                </SymbolicFunction>
-              </TimeDependentFunction>
-            </translation>
-            <rotation>
-              <TimeDependentFunction>
-                <NestedFunction>
-                  <outerFunction>
-                    <RotationAboutFixedAxis>
-                      <axisOfRotation>[0;0;1]</axisOfRotation>
-                    </RotationAboutFixedAxis>
-                  </outerFunction>
-                  <innerFunction>
-                    <SymbolicFunction arg1name="t">
-                      5*sin(freq2*t)
-                    </SymbolicFunction>
-                  </innerFunction>
-                </NestedFunction>
-              </TimeDependentFunction>
-            </rotation>
+            <timeDependentTranslation>
+              <SymbolicFunction arg1name="t">
+                [sin(freq1*t + pi/2); v0y*t; 0]
+              </SymbolicFunction>
+            </timeDependentTranslation>
+            <timeDependentRotation>
+              <NestedFunction>
+                <outerFunction>
+                  <RotationAboutFixedAxis>
+                    <axisOfRotation>[0;0;1]</axisOfRotation>
+                  </RotationAboutFixedAxis>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction arg1name="t">
+                    5*sin(freq2*t)
+                  </SymbolicFunction>
+                </innerFunction>
+              </NestedFunction>
+            </timeDependentRotation>
             <frames />
             <contours />
             <openMBVRigidBody>
@@ -52,27 +48,23 @@
             <frameForKinematics ref="Frame[C]" />
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <translation>
-              <TimeDependentFunction>
-                <SymbolicFunction arg1name="t">
-                  [sin(freq1*t + pi/2); v0y*t; 0]
-                </SymbolicFunction>
-              </TimeDependentFunction>
-            </translation>
-            <rotation>
-              <TimeDependentFunction>
-                <NestedFunction>
-                  <outerFunction>
-                    <RotationAboutAxesXY/>
-                  </outerFunction>
-                  <innerFunction>
-                    <SymbolicFunction arg1name="t">
-                      [t;2*t]
-                    </SymbolicFunction>
-                  </innerFunction>
-                </NestedFunction>
-              </TimeDependentFunction>
-            </rotation>
+            <timeDependentTranslation>
+              <SymbolicFunction arg1name="t">
+                [sin(freq1*t + pi/2); v0y*t; 0]
+              </SymbolicFunction>
+            </timeDependentTranslation>
+            <timeDependentRotation>
+              <NestedFunction>
+                <outerFunction>
+                  <RotationAboutAxesXY/>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction arg1name="t">
+                    [t;2*t]
+                  </SymbolicFunction>
+                </innerFunction>
+              </NestedFunction>
+            </timeDependentRotation>
             <frames />
             <contours />
             <openMBVRigidBody>
@@ -91,14 +83,12 @@
             <frameForKinematics ref="Frame[C]" />
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <translation>
-              <StateDependentFunction>
-                <SymbolicFunction arg1name="q" arg1dim="1">
-                  [5+cos(freq1*q); sin(freq1*q(1)); 0]
-                </SymbolicFunction>
-              </StateDependentFunction>
-            </translation>
-            <rotation/>
+            <stateDependentTranslation>
+              <SymbolicFunction arg1name="q" arg1dim="1">
+                [5+cos(freq1*q); sin(freq1*q(1)); 0]
+              </SymbolicFunction>
+            </stateDependentTranslation>
+            <generalRotation/>
             <frames />
             <contours />
             <openMBVRigidBody>
@@ -118,12 +108,12 @@
             <frameForKinematics ref="Frame[C]" />
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <translation>
+            <generalTranslation>
               <SymbolicFunction arg1name="q" arg1dim="2" arg2name="t">
                [10+t+cos(freq1*q(1)); sin(freq1*q(1)); q(2)]
               </SymbolicFunction>
-            </translation>
-            <rotation/>
+            </generalTranslation>
+            <generalRotation/>
             <frames />
             <contours />
             <openMBVRigidBody>
