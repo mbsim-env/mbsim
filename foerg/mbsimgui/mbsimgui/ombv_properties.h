@@ -195,7 +195,7 @@ class CompoundRigidBodyProperty : public OMBVBodyProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    std::vector<ChoiceProperty> body;
+    ListProperty bodies;
 };
 
 class OMBVBodySelectionProperty : public Property {

@@ -47,6 +47,54 @@
 
 using namespace std;
 
+class SignalAdditionWidgetFactory : public WidgetFactory {
+  public:
+    SignalAdditionWidgetFactory(Element *element_) : element(element_) { }
+    Widget* createWidget();
+  protected:
+    Element *element;
+};
+
+Widget* SignalAdditionWidgetFactory::createWidget() {
+  return new SignalReferenceWidget(element);
+}
+
+class GearConstraintWidgetFactory : public WidgetFactory {
+  public:
+    GearConstraintWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
+    Widget* createWidget();
+  protected:
+    Element *element;
+    QWidget *parent;
+};
+
+Widget* GearConstraintWidgetFactory::createWidget() {
+
+  ContainerWidget *widget = new ContainerWidget;
+  widget->addWidget(new RigidBodyOfReferenceWidget(element,0));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
+  widget->addWidget(new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input)));
+  return widget;
+}
+
+class RigidBodyOfReferenceWidgetFactory : public WidgetFactory {
+  public:
+    RigidBodyOfReferenceWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
+    Widget* createWidget();
+  protected:
+    Element *element;
+    QWidget *parent;
+};
+
+Widget* RigidBodyOfReferenceWidgetFactory::createWidget() {
+  RigidBodyOfReferenceWidget *widget = new RigidBodyOfReferenceWidget(element,0);
+  if(parent)
+    QObject::connect(widget,SIGNAL(bodyChanged()),parent,SLOT(resizeVariables()));
+  return widget;
+}
+
 ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), embed(0) {
   addTab("General");
   name = new ExtWidget("Name",new TextWidget);
@@ -381,7 +429,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   var.clear();
   var << "t";
   widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("r=r(t), Symbolic function");
-  widget.push_back(new VectorValuedFunctionWidget(3)); name.push_back("r=r(t), Vector valued function");
+  widget.push_back(new VectorValuedFunctionWidget(3,true)); name.push_back("r=r(t), Vector valued function");
   widget.push_back(new PiecewiseDefinedFunctionWidget("V",3)); name.push_back("r=r(t), Piecewise defined function");
 
   widget_.clear();
@@ -555,9 +603,12 @@ GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *const
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
   addToTab("General", dependentBody);
 
-  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
-  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
-  addToTab("General", independentBodies);
+//  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
+//  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+//  addToTab("General", independentBodies);
+
+  independentBodies = new ExtWidget("Independent bodies",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Body"));
+  addToTab("General",independentBodies);
 
   gearForceArrow = new ExtWidget("OpenMBV gear force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",gearForceArrow);
@@ -760,15 +811,13 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
   independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
   addToTab("General", independentBody);
 
-  DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(constraint);
-  dependentBodiesFirstSide = new ExtWidget("Dependendent bodies first side",dependentBodiesFirstSide_);
-  addToTab("General", dependentBodiesFirstSide);
-  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  dependentBodiesFirstSide = new ExtWidget("Dependendent bodies first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+  addToTab("General",dependentBodiesFirstSide);
+  connect(dependentBodiesFirstSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(constraint);
-  dependentBodiesSecondSide = new ExtWidget("Dependendent bodies second side",dependentBodiesSecondSide_);
-  addToTab("General", dependentBodiesSecondSide);
-  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  dependentBodiesSecondSide = new ExtWidget("Dependendent bodies second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+  addToTab("General",dependentBodiesSecondSide);
+  connect(dependentBodiesSecondSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,constraint));
   addToTab("Kinetics", connections);
@@ -797,12 +846,18 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
 
 void JointConstraintPropertyDialog::resizeVariables() {
   int size = 0;
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i))
-    size += ((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i)->getqRelSize();
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i))
-      size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i)->getqRelSize();
+  ListWidget *list = static_cast<ListWidget*>(dependentBodiesFirstSide->getWidget());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
+    if(body)
+      size += body->getqRelSize();
+  }
+  list = static_cast<ListWidget*>(dependentBodiesSecondSide->getWidget());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
+    if(body)
+      size += body->getqRelSize();
+  }
   if(q0_->size() != size)
     q0_->resize_(size);
 }
@@ -826,13 +881,15 @@ void JointConstraintPropertyDialog::toWidget(Element *element) {
 }
 
 void JointConstraintPropertyDialog::fromWidget(Element *element) {
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+  ListProperty *list1 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty());
+  for(int i=0; i<list1->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+  ListProperty *list2 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty());
+  for(int i=0; i<list2->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list2->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
@@ -844,13 +901,13 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
   static_cast<JointConstraint*>(element)->jointForceArrow.fromWidget(jointForceArrow);
   static_cast<JointConstraint*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+  for(int i=0; i<list1->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+  for(int i=0; i<list2->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list2->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
@@ -1408,7 +1465,7 @@ void SignalProcessingSystemSensorPropertyDialog::fromWidget(Element *element) {
 }
 
 SignalAdditionPropertyDialog::SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-  signalReferences = new ExtWidget("Signal references",new SignalReferencesWidget(signal));
+  signalReferences = new ExtWidget("Signal references",new ListWidget(new SignalAdditionWidgetFactory(signal),"Signal"));
   addToTab("General", signalReferences);
 }
 

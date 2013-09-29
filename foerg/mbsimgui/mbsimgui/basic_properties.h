@@ -233,28 +233,6 @@ class TextProperty : public Property {
     bool quote;
 };
 
-class DependenciesProperty : public Property {
-
-  public:
-    DependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
-    virtual Property* clone() const {return new DependenciesProperty(*this);}
-
-    void initialize();
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-    const std::vector<RigidBodyOfReferenceProperty>& getBodies() const {return refBody;}
-
-  protected:
-    Element* element;
-    std::string xmlName;
-    std::vector<RigidBodyOfReferenceProperty> refBody;
-
-    void addDependency();
-    void updateGeneralizedCoordinatesOfBodies();
-};
-
 class ConnectFramesProperty : public Property {
 
   public:
@@ -335,41 +313,6 @@ class SolverParametersProperty : public Property {
     ExtProperty constraintSolver, impactSolver, numberOfMaximalIterations, tolerances;
 };
 
-class GearDependencyProperty : public Property {
-  public:
-    GearDependencyProperty(Element* element);
-    virtual Property* clone() const {return new GearDependencyProperty(*this);}
-    void initialize() {refBody.initialize();}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-  protected:
-    RigidBodyOfReferenceProperty refBody;
-    ExtProperty ratio;
-};
-
-class GearDependenciesProperty : public Property {
-
-  public:
-    GearDependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
-    virtual Property* clone() const {return new GearDependenciesProperty(*this);}
-
-    void initialize();
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    Element* element;
-    std::string xmlName;
-    std::vector<GearDependencyProperty> refBody;
-
-    void addDependency();
-    void updateGeneralizedCoordinatesOfBodies();
-};
-
 class EmbedProperty : public Property {
 
   public:
@@ -403,26 +346,6 @@ class SignalReferenceProperty : public Property {
   protected:
     SignalOfReferenceProperty refSignal;
     ExtProperty factor;
-};
-
-class SignalReferencesProperty : public Property {
-
-  public:
-    SignalReferencesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
-    virtual Property* clone() const {return new SignalReferencesProperty(*this);}
-
-    void initialize();
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    Element* element;
-    std::string xmlName;
-    std::vector<SignalReferenceProperty> refSignal;
-
-    void addReference();
 };
 
 class ColorProperty : public Property {

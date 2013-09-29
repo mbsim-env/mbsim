@@ -68,7 +68,7 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
 
   public:
     ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false);
-    QWidget* getWidget() {return widget;}
+    QWidget* getWidget() const {return widget;}
     virtual void updateWidget() {dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
     virtual void resizeVariables() {dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
     void resize_(int m, int n) {dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
@@ -118,6 +118,7 @@ class ContainerWidget : public Widget {
     void resize_(int m, int n);
     void addWidget(QWidget *widget_);
     QWidget* getWidget(int i) const {return widget[i];}
+    void updateWidget();
 
   protected:
     QVBoxLayout *layout;
@@ -130,10 +131,12 @@ class ListWidget : public Widget {
   friend class ListProperty;
 
   public:
-    ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int n=1);
+    ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int n=1, bool fixedSize=false);
     ~ListWidget();
 
     void resize_(int m, int n);
+    int getSize() const;
+    QWidget* getWidget(int i) const;
 
   protected:
     QStackedWidget *stackedWidget; 

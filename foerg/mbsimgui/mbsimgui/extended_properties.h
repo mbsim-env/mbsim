@@ -119,11 +119,13 @@ class ListProperty : public Property {
     ListProperty(PropertyFactory *factory, const std::string &xmlName="", int m=0);
     ~ListProperty() { delete factory; }
     virtual Property* clone() const {return new ListProperty(*this);}
+    int getSize() const { return property.size(); }
     Property* getProperty(int i) const { return property[i]; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void initialize();
   protected:
     std::vector<Property*> property;
     PropertyFactory *factory;

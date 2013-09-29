@@ -42,7 +42,7 @@ class Widget : public QWidget, public WidgetInterface {
 
 class WidgetFactory {
   public:
-    virtual Widget* createWidget() const = 0;
+    virtual Widget* createWidget() = 0;
 };
 
 #endif

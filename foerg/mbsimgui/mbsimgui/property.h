@@ -53,7 +53,7 @@ class Property : public PropertyInterface {
 
 class PropertyFactory {
   public:
-    virtual Property* createProperty() const = 0;
+    virtual Property* createProperty() = 0;
 };
 
 #endif

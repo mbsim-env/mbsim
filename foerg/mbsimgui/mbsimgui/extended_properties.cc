@@ -275,22 +275,39 @@ ListProperty::ListProperty(PropertyFactory *factory_, const string &xmlName_, in
 TiXmlElement* ListProperty::initializeUsingXML(TiXmlElement *element) {
   
   property.clear();
-  TiXmlElement *e = element->FirstChildElement(xmlName);
-  while(e and e->ValueStr()==xmlName) {
-    property.push_back(factory->createProperty());
-    property[property.size()-1]->initializeUsingXML(e);
+  if(xmlName=="") {
+    TiXmlElement *e = element;
+    while(e) {
+      property.push_back(factory->createProperty());
+      property[property.size()-1]->initializeUsingXML(e);
 
-    e=e->NextSiblingElement();
+      e=e->NextSiblingElement();
+    }
+  }
+  else {
+    TiXmlElement *e = element->FirstChildElement(xmlName);
+    while(e and e->ValueStr()==xmlName) {
+      property.push_back(factory->createProperty());
+      property[property.size()-1]->initializeUsingXML(e);
+
+      e=e->NextSiblingElement();
+    }
   }
 
   return element;
 }
 
 TiXmlElement* ListProperty::writeXMLFile(TiXmlNode *parent) {
-  for(unsigned int i=0; i<property.size(); i++) {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    property[i]->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+  if(xmlName=="") {
+    for(unsigned int i=0; i<property.size(); i++)
+      property[i]->writeXMLFile(parent);
+  }
+  else {
+    for(unsigned int i=0; i<property.size(); i++) {
+      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      property[i]->writeXMLFile(ele0);
+      parent->LinkEndChild(ele0);
+    }
   }
   return 0;
 }
@@ -329,3 +346,9 @@ void ListProperty::toWidget(QWidget *widget) {
   }
   static_cast<ListWidget*>(widget)->blockSignals(false);
 }
+
+void ListProperty::initialize() {
+  for(unsigned int i=0; i<property.size(); i++)
+    property[i]->initialize();
+}
+

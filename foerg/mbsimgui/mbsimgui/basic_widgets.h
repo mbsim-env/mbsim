@@ -347,38 +347,6 @@ class ConnectContoursWidget : public Widget {
     Element* element;
 };
 
-class DependenciesWidget : public Widget {
-  Q_OBJECT
-
-  friend class DependenciesProperty;
-
-  public:
-    DependenciesWidget(Element* element);
-
-    void updateWidget(); 
-
-    RigidBody* getSelectedBody(int i) {return refBody[i]->getSelectedBody();}
-    void addBody(int i, RigidBody* body_);
-    int getSize() const {return refBody.size();}
-    void setNumberOfBodies(int n);
-
-  protected:
-    Element* element;
-    std::vector<RigidBody*> selectedBody;
-    std::vector<RigidBodyOfReferenceWidget*> refBody;
-    QStackedWidget *stackedWidget; 
-    QListWidget *bodyList; 
-
-  protected slots:
-    void updateList();
-    void addDependency();
-    void removeDependency();
-    void openContextMenu(const QPoint &pos);
-
-  signals:
-    void bodyChanged();
-};
-
 class SolverChoiceWidget : public Widget {
   friend class SolverChoiceProperty;
 
@@ -421,52 +389,6 @@ class PlotFeature : public Widget {
     QComboBox *status;
 };
 
-class GearDependencyWidget : public Widget {
-
-  friend class GearDependencyProperty;
-
-  public:
-    GearDependencyWidget(Element* element);
-    RigidBody* getSelectedBody() {return refBody->getSelectedBody();}
-    RigidBodyOfReferenceWidget* getRigidBodyOfReferenceWidget() {return refBody;}
-    void updateWidget() {refBody->updateWidget();}
-  protected:
-   RigidBodyOfReferenceWidget* refBody;
-   ExtWidget *ratio;
-};
-
-class GearDependenciesWidget : public Widget {
-  Q_OBJECT
-
-  friend class GearDependenciesProperty;
-
-  public:
-    GearDependenciesWidget(Element* element);
-
-    void updateWidget(); 
-
-    RigidBody* getSelectedBody(int i) {return refBody[i]->getSelectedBody();}
-    void addBody(int i, RigidBody* body_);
-    int getSize() const {return refBody.size();}
-    void setNumberOfBodies(int n);
-
-  protected:
-    Element* element;
-    std::vector<RigidBody*> selectedBody;
-    std::vector<GearDependencyWidget*> refBody;
-    QStackedWidget *stackedWidget; 
-    QListWidget *bodyList; 
-
-  protected slots:
-    void updateList();
-    void addDependency();
-    void removeDependency();
-    void openContextMenu(const QPoint &pos);
-
-  signals:
-    void bodyChanged();
-};
-
 class EmbedWidget : public Widget {
 
   friend class EmbedProperty;
@@ -491,35 +413,6 @@ class SignalReferenceWidget : public Widget {
   protected:
    SignalOfReferenceWidget* refSignal;
    ExtWidget *factor;
-};
-
-class SignalReferencesWidget : public Widget {
-  Q_OBJECT
-
-  friend class SignalReferencesProperty;
-
-  public:
-    SignalReferencesWidget(Element* element);
-
-    void updateWidget(); 
-
-    Signal* getSelectedSignal(int i) {return refSignal[i]->getSelectedSignal();}
-    void addSignal(int i, Signal* signal_);
-    int getSize() const {return refSignal.size();}
-    void setNumberOfSignals(int n);
-
-  protected:
-    Element* element;
-    std::vector<Signal*> selectedSignal;
-    std::vector<SignalReferenceWidget*> refSignal;
-    QStackedWidget *stackedWidget; 
-    QListWidget *signalList; 
-
-  protected slots:
-    void updateList();
-    void addReference();
-    void removeReference();
-    void openContextMenu(const QPoint &pos);
 };
 
 class ColorWidget : public Widget {

@@ -188,12 +188,18 @@ void ContainerWidget::addWidget(QWidget *widget_) {
   widget.push_back(widget_);
 }
 
-ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int n_) : factory(factory_), name(name_), n(n_) {
+void ContainerWidget::updateWidget() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+}
+
+ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int n_, bool fixedSize) : factory(factory_), name(name_), n(n_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   spinBox = new QSpinBox;
+  spinBox->setDisabled(fixedSize);
   spinBox->setRange(0,10);
   QWidget *box = new QWidget;
   QHBoxLayout *hbox = new QHBoxLayout;
@@ -212,6 +218,14 @@ ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int
 
 ListWidget::~ListWidget() {
   delete factory;
+}
+
+int ListWidget::getSize() const {
+  return stackedWidget->count();
+}
+
+QWidget* ListWidget::getWidget(int i) const {
+  return stackedWidget->widget(i);
 }
 
 void ListWidget::currentIndexChanged(int idx) {
@@ -250,6 +264,7 @@ void ListWidget::addElements(int n, bool emitSignals) {
 
     Widget *widget = factory->createWidget();
     stackedWidget->addWidget(widget);
+    widget->updateWidget();
     if(i>0)
       widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
@@ -266,10 +281,13 @@ void ListWidget::addElements(int n, bool emitSignals) {
 
 void ListWidget::removeElements(int n) {
   for(int j=0; j<n; j++) {
-  int i = list->count()-1;
-  delete stackedWidget->widget(i);
-  stackedWidget->removeWidget(stackedWidget->widget(i));
-  delete list->takeItem(i);
+    int i = list->count()-1;
+    delete stackedWidget->widget(i);
+    stackedWidget->removeWidget(stackedWidget->widget(i));
+    delete list->takeItem(i);
   }
+//  if(emitSignals) {
+    emit resize_();
+//  }
 }
 

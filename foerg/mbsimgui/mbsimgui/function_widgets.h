@@ -28,7 +28,6 @@ class ListWidget;
 class QVBoxLayout;
 class QComboBox;
 class ChoiceWidget;
-class QStackedWidget;
 class QListWidget;
 class QSpinBox;
 
@@ -89,7 +88,7 @@ class VectorValuedFunctionWidget : public FunctionWidget {
   friend class VectorValuedFunctionProperty;
 
   public:
-    VectorValuedFunctionWidget(int m=0);
+    VectorValuedFunctionWidget(int m=0, bool fixedSize=false);
     void resize_(int m, int n);
 
   protected:
@@ -97,7 +96,6 @@ class VectorValuedFunctionWidget : public FunctionWidget {
 };
 
 class PiecewiseDefinedFunctionWidget : public FunctionWidget {
-  Q_OBJECT
 
   friend class PiecewiseDefinedFunctionProperty;
 
