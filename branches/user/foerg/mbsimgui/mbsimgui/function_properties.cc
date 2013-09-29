@@ -27,7 +27,6 @@
 #include "utils.h"
 #include "octaveutils.h"
 #include <QSpinBox>
-#include <QStackedWidget>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -35,13 +34,13 @@ using namespace MBXMLUtils;
 class FunctionPropertyFactory : public PropertyFactory {
   public:
     FunctionPropertyFactory(const string &ext_, int n_) : ext(ext_), n(n_) { }
-    Property* createProperty() const;
+    Property* createProperty();
   protected:
     string ext;
     int n;
 };
 
-Property* FunctionPropertyFactory::createProperty() const {
+Property* FunctionPropertyFactory::createProperty() {
   string tmp = ext.substr(0,1);
   vector<Property*> property;
   property.push_back(new ConstantFunctionProperty(tmp));
@@ -61,20 +60,20 @@ Property* FunctionPropertyFactory::createProperty() const {
 class LinearCombinationPropertyFactory : public PropertyFactory {
   public:
     LinearCombinationPropertyFactory(const string &ext_, int n_) : ext(ext_), n(n_) { }
-    Property* createProperty() const;
+    Property* createProperty();
   protected:
     string ext;
     int n;
 };
 
-Property* LinearCombinationPropertyFactory::createProperty() const {
+Property* LinearCombinationPropertyFactory::createProperty() {
   FunctionPropertyFactory factory(ext,n);
 
   ContainerProperty *property = new ContainerProperty;
   property->addProperty(new ExtProperty(factory.createProperty()));
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"factor"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
   property->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   return property;
@@ -83,12 +82,12 @@ Property* LinearCombinationPropertyFactory::createProperty() const {
 class PiecewiseDefinedFunctionPropertyFactory : public PropertyFactory {
   public:
     PiecewiseDefinedFunctionPropertyFactory(int n_) : n(n_) { }
-    Property* createProperty() const;
+    Property* createProperty();
   protected:
     int n;
 };
 
-Property* PiecewiseDefinedFunctionPropertyFactory::createProperty() const {
+Property* PiecewiseDefinedFunctionPropertyFactory::createProperty() {
   FunctionPropertyFactory factory("VS",n);
 
   ContainerProperty *property = new ContainerProperty;

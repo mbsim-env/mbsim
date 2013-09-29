@@ -27,6 +27,25 @@
 
 using namespace std;
 
+class OmbvBodyWidgetFactory : public WidgetFactory {
+  public:
+    OmbvBodyWidgetFactory() { }
+    Widget* createWidget();
+};
+
+Widget* OmbvBodyWidgetFactory::createWidget() {
+
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new CubeWidget); name.push_back("Cube");
+  widget.push_back(new CuboidWidget); name.push_back("Cuboid");
+  widget.push_back(new FrustumWidget); name.push_back("Frustum");
+  widget.push_back(new SphereWidget); name.push_back("Sphere");
+  widget.push_back(new IvBodyWidget); name.push_back("IvBody");
+  widget.push_back(new InvisibleBodyWidget); name.push_back("InvisibleBody");
+  return new ChoiceWidget(widget,name);
+}
+
 OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -239,74 +258,8 @@ IvBodyWidget::IvBodyWidget(const QString &name) : OMBVBodyWidget(name) {
 }
 
 CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVBodyWidget(name) {
-  QGroupBox *box = new QGroupBox("Bodies");
-  QHBoxLayout *sublayout = new QHBoxLayout;
-  box->setLayout(sublayout);
-  layout->addWidget(box);
-  bodyList = new QListWidget;
-  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
-  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
-  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
-  sublayout->addWidget(bodyList);
-  stackedWidget = new QStackedWidget;
-  connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
-  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  sublayout->addWidget(stackedWidget);
-}
-
-void CompoundRigidBodyWidget::changeCurrent(int idx) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(idx);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-}
-
-void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
-  if(bodyList->itemAt(pos)) {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Remove"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(removeBody()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-  else {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Add"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(addBody()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-}
-
-void CompoundRigidBodyWidget::addBody() {
-  int i = stackedWidget->count();
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new CubeWidget);
-  name.push_back("Cube");
-  widget.push_back(new CuboidWidget);
-  name.push_back("Cuboid");
-  widget.push_back(new FrustumWidget);
-  name.push_back("Frustum");
-  widget.push_back(new SphereWidget);
-  name.push_back("Sphere");
-  widget.push_back(new IvBodyWidget);
-  name.push_back("IvBody");
-  widget.push_back(new InvisibleBodyWidget);
-  name.push_back("InvisibleBody");
-  bodyList->addItem((QString("Body")+QString::number(i+1)));
-  stackedWidget->addWidget(new ChoiceWidget(widget,name));
-  if(i>0)
-    stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-}
-
-void CompoundRigidBodyWidget::removeBody() {
-  int i = bodyList->currentRow();
-
-  delete stackedWidget->widget(i);
-  stackedWidget->removeWidget(stackedWidget->widget(i));
-  delete bodyList->takeItem(i);
+  bodies = new ListWidget(new OmbvBodyWidgetFactory,"Body");
+  layout->addWidget(bodies);
 }
 
 OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {

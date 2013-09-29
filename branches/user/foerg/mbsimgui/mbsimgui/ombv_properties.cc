@@ -24,10 +24,31 @@
 #include "ombv_widgets.h"
 #include "rigidbody.h"
 #include "frame.h"
-#include <QStackedWidget>
 
 using namespace std;
 using namespace MBXMLUtils;
+
+class OmbvBodyPropertyFactory : public PropertyFactory {
+  public:
+    OmbvBodyPropertyFactory() : i(0) { }
+    Property* createProperty();
+  private:
+    int i;
+};
+
+Property* OmbvBodyPropertyFactory::createProperty() {
+  string ID("10000");
+  vector<Property*> property;
+  property.push_back(new CubeProperty("Body"+toStr(i),ID));
+  property.push_back(new CuboidProperty("Body"+toStr(i),ID));
+  property.push_back(new FrustumProperty("Body"+toStr(i),ID));
+  property.push_back(new SphereProperty("Body"+toStr(i),ID));
+  property.push_back(new IvBodyProperty("Body"+toStr(i),ID));
+  property.push_back(new InvisibleBodyProperty("Body"+toStr(i),ID));
+
+  i++;
+  return new ChoiceProperty("",property,1,OPENMBVNS);
+}
 
 void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
   if(!ID.empty()) {
@@ -519,61 +540,29 @@ void IvBodyProperty::toWidget(QWidget *widget) {
   boundaryEdges.toWidget(static_cast<IvBodyWidget*>(widget)->boundaryEdges);
 }
 
-CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVBodyProperty(name,ID), bodies(new OmbvBodyPropertyFactory,"") {
 }
 
 TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *element) {
-  body.clear();
-  
   OMBVBodyProperty::initializeUsingXML(element);
   TiXmlElement *e=element->FirstChildElement(OPENMBVNS"scaleFactor");
-  e=e->NextSiblingElement();
-  int i=0;
-  while(e) {
-    vector<Property*> property;
-    property.push_back(new CubeProperty("Body"+toStr(i),ID));
-    property.push_back(new CuboidProperty("Body"+toStr(i),ID));
-    property.push_back(new FrustumProperty("Body"+toStr(i),ID));
-    property.push_back(new SphereProperty("Body"+toStr(i),ID));
-    property.push_back(new IvBodyProperty("Body"+toStr(i),ID));
-    property.push_back(new InvisibleBodyProperty("Body"+toStr(i),ID));
-    body.push_back(ChoiceProperty("",property,1,OPENMBVNS));
-    body[body.size()-1].initializeUsingXML(e);
-    e=e->NextSiblingElement();
-    i++;
-  }
-  return e;
+  TiXmlElement *ee = e->NextSiblingElement();
+  bodies.initializeUsingXML(ee);
+  return element;
 }
 
 TiXmlElement* CompoundRigidBodyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
-  for(unsigned int i=0; i<body.size(); i++)
-    body[i].writeXMLFile(e);
-  return e;
+  TiXmlElement *ele0 = OMBVBodyProperty::writeXMLFile(parent);
+  bodies.writeXMLFile(ele0);
+  return ele0;
 }
 
 void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
-  body.clear();
-  OMBVBodyProperty::fromWidget(widget);
-  for(unsigned int i=0; i<static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->count(); i++) {
-    vector<Property*> property;
-    property.push_back(new CubeProperty("Body"+toStr((int)i),ID));
-    property.push_back(new CuboidProperty("Body"+toStr((int)i),ID));
-    property.push_back(new FrustumProperty("Body"+toStr((int)i),ID));
-    property.push_back(new SphereProperty("Body"+toStr((int)i),ID));
-    property.push_back(new IvBodyProperty("Body"+toStr((int)i),ID));
-    property.push_back(new InvisibleBodyProperty("Body"+toStr((int)i),ID));
-    body.push_back(ChoiceProperty("",property,1,OPENMBVNS));
-    body[i].fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->widget(i));
-  }
+  bodies.fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->bodies);
 }
 
 void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
-  OMBVBodyProperty::toWidget(widget);
-  for(unsigned int i=0; i<body.size(); i++) {
-    static_cast<CompoundRigidBodyWidget*>(widget)->addBody();
-    body[i].toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->widget(i));
-  }
+  bodies.toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->bodies);
 }
 
 OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) {

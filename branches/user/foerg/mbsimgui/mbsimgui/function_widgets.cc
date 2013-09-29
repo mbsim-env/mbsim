@@ -31,22 +31,23 @@ using namespace std;
 class FunctionWidgetFactory : public WidgetFactory {
   public:
     FunctionWidgetFactory(const QString &ext_, int n_) : ext(ext_), n(n_) { }
-    Widget* createWidget() const;
+    Widget* createWidget();
   protected:
     QString ext;
     int n;
 };
 
-Widget* FunctionWidgetFactory::createWidget() const {
+Widget* FunctionWidgetFactory::createWidget() {
+  QString tmp = ext.mid(0,1);
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget(ext[0],n)); name.push_back("Constant function");
-  widget.push_back(new LinearFunctionWidget(ext[0],n)); name.push_back("Linear function");
-  widget.push_back(new QuadraticFunctionWidget(ext[0],n)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget(ext[0],n)); name.push_back("Sinus function");
-  widget.push_back(new TabularFunctionWidget(ext[0],n)); name.push_back("Tabular function");
+  widget.push_back(new ConstantFunctionWidget(tmp,n)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget(tmp,n)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget(tmp,n)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget(tmp,n)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget(tmp,n)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget(ext,n)); name.push_back("LinearCombination function");
-  widget.push_back(new PiecewiseDefinedFunctionWidget(ext[0],n)); name.push_back("Piecewise defined function");
+  widget.push_back(new PiecewiseDefinedFunctionWidget(tmp,n)); name.push_back("Piecewise defined function");
   widget.push_back(new SymbolicFunctionWidget(ext,QStringList("t"))); name.push_back("Symbolic function");
 
   return new ChoiceWidget(widget,name);
@@ -55,12 +56,12 @@ Widget* FunctionWidgetFactory::createWidget() const {
 class LinearCombinationWidgetFactory : public WidgetFactory {
   public:
     LinearCombinationWidgetFactory(int n_) : n(n_) { }
-    Widget* createWidget() const;
+    Widget* createWidget();
   protected:
     int n;
 };
 
-Widget* LinearCombinationWidgetFactory::createWidget() const {
+Widget* LinearCombinationWidgetFactory::createWidget() {
   FunctionWidgetFactory factory("VS",n);
 
   ContainerWidget *widget = new ContainerWidget;
@@ -76,12 +77,12 @@ Widget* LinearCombinationWidgetFactory::createWidget() const {
 class PiecewiseDefinedFunctionWidgetFactory : public WidgetFactory {
   public:
     PiecewiseDefinedFunctionWidgetFactory(int n_) : n(n_) { }
-    Widget* createWidget() const;
+    Widget* createWidget();
   protected:
     int n;
 };
 
-Widget* PiecewiseDefinedFunctionWidgetFactory::createWidget() const {
+Widget* PiecewiseDefinedFunctionWidgetFactory::createWidget() {
   FunctionWidgetFactory factory("VS",n);
 
   ContainerWidget *widget = new ContainerWidget;
@@ -198,13 +199,13 @@ void NestedFunctionWidget::resizeVariables() {
   static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
 }
 
-VectorValuedFunctionWidget::VectorValuedFunctionWidget(int m) : FunctionWidget("V") {
+VectorValuedFunctionWidget::VectorValuedFunctionWidget(int m, bool fixedSize) : FunctionWidget("V") {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  functions = new ListWidget(new FunctionWidgetFactory("SS",1),"Function",m);
+  functions = new ListWidget(new FunctionWidgetFactory("SS",1),"Function",m,1,fixedSize);
   layout->addWidget(functions);
 }
 

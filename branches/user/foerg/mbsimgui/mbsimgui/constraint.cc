@@ -29,6 +29,37 @@
 using namespace std;
 using namespace MBXMLUtils;
 
+class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
+  public:
+    RigidBodyOfReferencePropertyFactory(Element *element_, const string &xmlName_) : element(element_), xmlName(xmlName_) { }
+    Property* createProperty();
+  protected:
+    Element *element;
+    string xmlName;
+};
+
+Property* RigidBodyOfReferencePropertyFactory::createProperty() {
+ return new RigidBodyOfReferenceProperty("",element,xmlName);
+}
+
+class GearConstraintPropertyFactory : public PropertyFactory {
+  public:
+    GearConstraintPropertyFactory(Element *element_, const string &xmlName_) : element(element_), xmlName(xmlName_) { }
+    Property* createProperty();
+  protected:
+    Element *element;
+    string xmlName;
+};
+
+Property* GearConstraintPropertyFactory::createProperty() {
+  ContainerProperty *property = new ContainerProperty;
+  property->addProperty(new RigidBodyOfReferenceProperty("",element,xmlName));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
+  property->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
+  return property;
+}
+
 Constraint::Constraint(const string &str, Element *parent) : Object(str, parent) {
 }
 
@@ -36,7 +67,9 @@ GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
 
-  independentBodies.setProperty(new GearDependenciesProperty(this,MBSIMNS"independentRigidBodies"));
+  //independentBodies.setProperty(new GearDependenciesProperty(this,MBSIMNS"independentRigidBodies"));
+  independentBodies.setProperty(new ListProperty(new GearConstraintPropertyFactory(this,""),MBSIMNS"independentRigidBody"));
+  independentBodies.setXMLName(MBSIMNS"independentRigidBodies");
 
   gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   gearForceArrow.setXMLName(MBSIMNS"openMBVGearForceArrow",false);
@@ -224,11 +257,11 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
 
   independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"independentRigidBody"));
 
-  DependenciesProperty *dependentBodiesFirstSide_ = new DependenciesProperty(this, MBSIMNS"dependentRigidBodiesFirstSide");
-  dependentBodiesFirstSide.setProperty(dependentBodiesFirstSide_);
+  dependentBodiesFirstSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIMNS"dependentRigidBody"));
+  dependentBodiesFirstSide.setXMLName(MBSIMNS"dependentRigidBodiesFirstSide");
 
-  DependenciesProperty *dependentBodiesSecondSide_ = new DependenciesProperty(this, MBSIMNS"dependentRigidBodiesSecondSide");
-  dependentBodiesSecondSide.setProperty(dependentBodiesSecondSide_);
+  dependentBodiesSecondSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIMNS"dependentRigidBody"));
+  dependentBodiesSecondSide.setXMLName(MBSIMNS"dependentRigidBodiesSecondSide");
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
@@ -253,13 +286,15 @@ void JointConstraint::initialize() {
   dependentBodiesFirstSide.initialize();
   dependentBodiesSecondSide.initialize();
   connections.initialize();
-  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+  ListProperty *list = static_cast<ListProperty*>(dependentBodiesFirstSide.getProperty());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
-  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+  list = static_cast<ListProperty*>(dependentBodiesSecondSide.getProperty());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
@@ -267,13 +302,15 @@ void JointConstraint::initialize() {
 
 void JointConstraint::deinitialize() {
   Constraint::deinitialize();
-  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+  ListProperty *list = static_cast<ListProperty*>(dependentBodiesFirstSide.getProperty());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
-  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+  list = static_cast<ListProperty*>(dependentBodiesSecondSide.getProperty());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }

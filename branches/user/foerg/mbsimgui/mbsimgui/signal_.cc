@@ -30,6 +30,18 @@
 using namespace std;
 using namespace MBXMLUtils;
 
+class SignalAdditionPropertyFactory : public PropertyFactory {
+  public:
+    SignalAdditionPropertyFactory(Element *element_) : element(element_) { }
+    Property* createProperty();
+  protected:
+    Element *element;
+};
+
+Property* SignalAdditionPropertyFactory::createProperty() {
+ return new SignalReferenceProperty(element);
+}
+
 Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
 }
 
@@ -37,7 +49,7 @@ Signal::~Signal() {
 }
 
 SignalAddition::SignalAddition(const string &str, Element *parent) : Signal(str, parent) {
-  signalReferences.setProperty(new SignalReferencesProperty(this,""));
+  signalReferences.setProperty(new ListProperty(new SignalAdditionPropertyFactory(this),MBSIMCONTROLNS"inputSignal"));
 }
 
 void SignalAddition::initialize() {

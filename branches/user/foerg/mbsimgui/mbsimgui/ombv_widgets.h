@@ -25,7 +25,6 @@
 
 class ExtWidget;
 class QVBoxLayout;
-class QStackedWidget;
 class QListWidget;
 class QComboBox;
 class RigidBody;
@@ -149,20 +148,13 @@ class IvBodyWidget : public OMBVBodyWidget {
 class OMBVBodyChoiceWidget;
 
 class CompoundRigidBodyWidget : public OMBVBodyWidget {
-  Q_OBJECT
 
   friend class CompoundRigidBodyProperty;
 
   public:
     CompoundRigidBodyWidget(const QString &name="NOTSET");
   protected:
-    QStackedWidget *stackedWidget; 
-    QListWidget *bodyList; 
-  protected slots:
-    void changeCurrent(int idx);
-    void openContextMenu(const QPoint &pos);
-    void addBody();
-    void removeBody();
+    ListWidget *bodies; 
 };
 
 class OMBVBodySelectionWidget : public Widget {
