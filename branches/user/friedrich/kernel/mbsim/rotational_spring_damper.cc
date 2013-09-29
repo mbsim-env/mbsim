@@ -178,7 +178,7 @@ namespace MBSim {
         e=e->NextSiblingElement();
       }
     }
-    catch(const runtime_error&) { // if not CoilSpring then check for Arrow ... (if not a error is thrown)
+    catch(...) { // if not CoilSpring then check for Arrow ... (if not a error is thrown)
       if(e) {
         OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e);
         arrow->initializeUsingXML(e); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow

@@ -20,6 +20,7 @@
 #include "lcp_reformulation_functions.h"
 
 #include <mbsim/utils/nonsmooth_algebra.h>
+#include <mbsim/mbsim_event.h>
 
 #include <iostream>
 
@@ -154,7 +155,7 @@ namespace MBSim {
       J(0, dim / 2, dim / 2 - 1, dim - 1) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
     }
     else
-      throw; //TODO: use error message
+      throw MBSimError("Not implemented"); //TODO: use error message
   }
 
   SqrMat LinearComplementarityJacobianFunction::operator ()(const Vec &x) {

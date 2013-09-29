@@ -33,7 +33,6 @@ canCompare=True # True if numpy and h5py are found
 xmllint=None
 ombvSchema =None
 mbsimSchema=None
-intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
@@ -173,10 +172,9 @@ def main():
     xmllint="xmllint"
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
-  global ombvSchema, mbsimSchema, intSchema
+  global ombvSchema, mbsimSchema
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
   mbsimSchema=pj(schemaDir, "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xsd")
-  intSchema  =pj(schemaDir, "http___mbsim_berlios_de_MBSim", "mbsimintegrator.xsd")
   # set global dirs
   global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
@@ -1000,10 +998,13 @@ def validateXML(example, consoleOutput, htmlOutputFD):
          ["*.ombv.env.xml",   ombvSchema],
          ["*.mbsim.xml",      mbsimSchema],
          ["*.mbsim.flat.xml", mbsimSchema],
-         ["*.mbsimint.xml",   intSchema]]
+         ["*.mbsimint.xml",   mbsimSchema]]
   for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
+        # skip error file
+        if filename==".err.MBS.mbsim.xml":
+          continue
         outputFN=pj(example[0], filename+".txt")
         outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)

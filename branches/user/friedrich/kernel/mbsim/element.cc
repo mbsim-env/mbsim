@@ -246,10 +246,9 @@ namespace MBSim {
       return m(0,0);
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
-           "where a scalar was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a scalar was requested.";
+      throw MBSimErrorInXML(str.str(), e);
     }
   }
 
@@ -259,10 +258,9 @@ namespace MBSim {
       return lround(m(0,0));
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a scalar integer was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return 0;
   }
@@ -274,9 +272,8 @@ namespace MBSim {
       return false;
     else {
       ostringstream str;
-      str<<": Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      str<<"Wrong type: Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
+      throw MBSimErrorInXML(str.str(), e);
     }
     return 0;
   }
@@ -292,10 +289,9 @@ namespace MBSim {
       return m.col(0);
     else if(m.rows()) {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a vector of size "<<((rows==0)?-1:rows)<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return Vec();
   }
@@ -311,10 +307,9 @@ namespace MBSim {
       return m;
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a matrix of size "<<((rows==0)?-1:rows)<<"x"<<((cols==0)?-1:cols)<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return Mat();
   }
@@ -330,10 +325,9 @@ namespace MBSim {
       return SqrMat(m);
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a square matrix of size "<<size<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return SqrMat();
   }
@@ -355,10 +349,9 @@ namespace MBSim {
       return SymMat(m);
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a symmetric matrix of size "<<size<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return SymMat();
   }

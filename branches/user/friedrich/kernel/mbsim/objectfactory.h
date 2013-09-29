@@ -31,10 +31,20 @@
 # include <boost/type_traits.hpp>
 #endif
 #include "mbsim/utils/utils.h"
+#include <mbsim/mbsim_event.h>
 
 #define COMMA ,
 
 namespace MBSim {
+
+class ObjectFactoryNoObject : public MBSimErrorInXML {
+  public:
+    ObjectFactoryNoObject(const MBXMLUtils::TiXmlElement *e_, const std::type_info &cppType_) throw() :
+      MBSimErrorInXML("Unable to create an object with name <"+e_->ValueStr()+"> which is of the requested type "+
+        MBXMLUtils::demangleSymbolName(cppType_.name())+".", e_) {
+    }
+    virtual ~ObjectFactoryNoObject() throw() {}
+};
 
 /** A object factory.
  * A object facroty which creates any object derived from BaseType.
@@ -57,47 +67,72 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
     template<class CreateType>
     static void registerXMLNameAsSingleton(const std::string &name) {
-      registerXMLName(name, &singleton<CreateType>, NULL);
+      registerXMLName(name, &getSingleton<CreateType>, &deallocateSingleton);
     }
 
-    /** Create an object corresponding to the XML element element and return a pointer of type ContainerType.
-     * Throws if the created object is not of type ContainerType.
+    /** Create and initialize an object corresponding to the XML element element and return a pointer of type ContainerType.
+     * Throws if the created object is not of type ContainerType or no object can be create without errors.
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
     template<class ContainerType>
     static ContainerType* createAndInit(const MBXMLUtils::TiXmlElement *element) {
-      int useMatchNr=1;
+      size_t useMatchNr=1;
+      std::vector<std::string> error;
       do {
+        std::pair<ContainerType*, DeallocateFkt> p=std::pair<ContainerType*, DeallocateFkt>(NULL, &deallocateSingleton);
         try {
-          ContainerType *f=create<ContainerType>(element, useMatchNr++);
-          f->initializeUsingXML(const_cast<MBXMLUtils::TiXmlElement*>(element));
-          return f;
+          p=create<ContainerType>(element, useMatchNr++);
+          p.first->initializeUsingXML(const_cast<MBXMLUtils::TiXmlElement*>(element));
+          return p.first;
         }
-        catch(...) {
+        catch(const ObjectFactoryNoObject &ex) {
+          // delete the created object using the provided deallocater (calls delete or nothing for singletons)
+          p.second(p.first);
+          // save exception, only if this is the first exception during this run (this error has a very low priority)
+          if(error.size()==0)
+            error.push_back(ex.what());
           // break if useMatchNr number is larger then the factory size: nothing found which can be initialized.
-          if(useMatchNr>instance().registeredType.size())
-            throw;
+          if(useMatchNr>instance().registeredType.size()) {
+            std::string message;
+            // collect the message of all previous errors and throw them all!
+            for(std::vector<std::string>::iterator it=error.begin(); it!=error.end(); it++) {
+              std::vector<std::string>::iterator it2=it; it2++;
+              message+=*it+(it2!=error.end()?"\n":"");
+            }
+            throw MBSimError(message);
+          }
+        }
+        catch(const MBSimError &ex) {
+          // delete the created object using the provided deallocater (calls delete or nothing for singletons)
+          p.second(p.first);
+          // save exception: it is rethrow (including others) alter if everything fails
+          error.push_back(ex.what());
         }
       }
-      while(true);
+      while(true); // loop until we are able to create and init a object without errors
     }
 
   private:
 
+    // a pointer to a function allocating an object
+    typedef BaseType* (*AllocateFkt)();
+    // a pointer to a function deallocating an object
+    typedef void (*DeallocateFkt)(BaseType *obj);
+
     /** Create an object corresponding to the XML element element and return a pointer of type ContainerType.
      * Throws if the created object is not of type ContainerType.
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
     template<class ContainerType>
-    static ContainerType* create(const MBXMLUtils::TiXmlElement *element, int useMatchNr=1) {
+    static std::pair<ContainerType*, DeallocateFkt> create(const MBXMLUtils::TiXmlElement *element, size_t useMatchNr=1) {
 #ifdef HAVE_BOOST_TYPE_TRAITS_HPP
       // just check if ContainerType is derived from BaseType if not throw a compile error if boost is avaliable
       // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
       BOOST_STATIC_ASSERT_MSG((boost::is_convertible<ContainerType*, BaseType*>::value),
         "In MBSim::ObjectFactory<BaseType>::create<ContainerType>(...) ContainerType must be derived from BaseType.");
 #endif
-      // return NULL if no input is supplied
-      if(element==NULL) throw std::runtime_error("Internal error: NULL argument specified.");
+      // throw error if NULL is supplied as element
+      if(element==NULL) throw MBSimError("Internal error: NULL argument specified.");
       // loop over all all registred types corresponding to element->ValueStr()
-      int matchNr=1;
+      size_t matchNr=1;
       for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
         // skip type with wrong key value get<0>()
         if(it->template get<0>()!=element->ValueStr()) continue;
@@ -108,31 +143,25 @@ class ObjectFactory {
         ContainerType *ret=dynamic_cast<ContainerType*>(ele);
         // if possible (and it is the useMatchNr'st element, return it
         if(ret && (matchNr++)==useMatchNr)
-          return ret;
+          return std::pair<ContainerType*, DeallocateFkt>(ret, it->template get<2>());
         // if not possible, deallocate newly created (wrong) object OR do nothing for
         // singleton objects (is maybe reused later) and continue searching
         else
           it->template get<2>()(ele);
       }
       // no matching element found: throw error
-      throw std::runtime_error("No class named "+element->ValueStr()+" found which is of type "+
-          MBXMLUtils::demangleSymbolName(typeid(ContainerType).name())+".");
+      throw ObjectFactoryNoObject(element, typeid(ContainerType));
     }
 
-    // a pointer to a function allocating an object
-    typedef BaseType* (*allocateFkt)();
-    // a pointer to a function deallocating an object
-    typedef void (*deallocateFkt)(BaseType *obj);
-
     // convinence typedefs
-    typedef boost::tuple<std::string, allocateFkt, deallocateFkt> VectorContent;
+    typedef boost::tuple<std::string, AllocateFkt, DeallocateFkt> VectorContent;
     typedef std::vector<VectorContent> Vector;
     typedef typename Vector::iterator VectorIt;
 
     // private ctor
     ObjectFactory() {}
 
-    static void registerXMLName(const std::string &name, allocateFkt alloc, deallocateFkt dealloc) {
+    static void registerXMLName(const std::string &name, AllocateFkt alloc, DeallocateFkt dealloc) {
       // check if name was already registred with the same &allocate<CreateType>: if yes return and do not add it twice
       for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
         // skip type with wrong key value get<0>()
@@ -165,8 +194,13 @@ class ObjectFactory {
 
     // a wrapper to get an singleton object of type CreateType (Must have the same signature as allocate()
     template<class CreateType>
-    static BaseType* singleton() {
+    static BaseType* getSingleton() {
       return CreateType::getInstance();
+    }
+
+    // a wrapper to "deallocate" an singleton object (Must have the same signature as deallocate()
+    static void deallocateSingleton(BaseType *obj) {
+      // just do nothing for singletons
     }
 
 };

@@ -26,6 +26,7 @@
 
 #include <mbsim/utils/nonsmooth_algebra.h>
 #include <mbsim/utils/stopwatch.h>
+#include <mbsim/mbsim_event.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -283,7 +284,7 @@ namespace MBSim {
         }
       }
       else {
-        throw; // MBSimError("ERROR MaxwellContact::solveLCP(): No Solution found for this LCP");
+        throw MBSimError("ERROR MaxwellContact::solveLCP(): No Solution found for this LCP");
       }
     }
 
