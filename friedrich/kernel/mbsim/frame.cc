@@ -204,7 +204,7 @@ namespace MBSim {
     else if (path.substr(0, 3)=="../") // relative path
       return parent->getByPathSearch(path.substr(3));
     else { // local path
-      throw;
+      throw MBSimError("Internal error: local path");
     }
   }
 

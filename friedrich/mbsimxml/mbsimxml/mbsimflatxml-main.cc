@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     MBSimXML::postMain(argc, argv, integrator, dss);
   }
   catch(const MBSimError &e) {
-    cerr<<"MBSimError: "<<e.what()<<endl;
+    cerr<<e.what()<<endl;
     return 1;
   }
   catch(const H5::Exception &e) {

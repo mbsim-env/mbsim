@@ -157,7 +157,7 @@ namespace MBSim {
 
   void SingleContact::updateStopVector(double t) {
     if (gActive != gdActive[0])
-      throw;
+      throw MBSimError("Internal error");
     if (gActive) {
       sv(0) = gddN(0) > gddTol ? -1 : 1;
       if (gdActive[1]) {
@@ -321,7 +321,7 @@ namespace MBSim {
       laSize = gActive * gdActive[0];
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calcgSize(int j) {
@@ -336,7 +336,7 @@ namespace MBSim {
       gSize = gActive * gdActive[0];
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calcgdSize(int j) {
@@ -400,7 +400,7 @@ namespace MBSim {
 
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calcrFactorSize(int j) {
@@ -1305,7 +1305,7 @@ namespace MBSim {
       }
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   int SingleContact::getFrictionDirections() {
@@ -1490,7 +1490,7 @@ namespace MBSim {
       }
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calccorrSize(int j) {
@@ -1512,7 +1512,7 @@ namespace MBSim {
       corrSize += gActive * gdActive[0] * (1 + gdActive[1] * getFrictionDirections());
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::checkRoot() {

@@ -24,6 +24,7 @@
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include "casadi/symbolic/matrix/matrix_tools.hpp"
 #include "mbxmlutilstinyxml/casadiXML.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -54,7 +55,7 @@ namespace MBSim {
   class FromCasadi {
     public:
       static Ret cast(const CasADi::Matrix<double> &x) {
-        throw std::runtime_error("FromCasadi::cast not implemented for current type.");
+        throw MBSimError("FromCasadi::cast not implemented for current type.");
         return Ret();
       }
   };
@@ -187,12 +188,12 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      if(f.getNumInputs()!=1) throw std::runtime_error("Function must have only 1 argument.");
-      if(f.getNumOutputs()!=1) throw std::runtime_error("Function must have only 1 output.");
-      if(f.inputExpr(0).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");
-      if(f.outputExpr(0).size2()!=1) throw std::runtime_error("Matrix outputs are not allowed.");
-      //MFMF if(Arg::staticSize()!=0 && f.inputExpr(0).size1()!=Arg::staticSize()) throw std::runtime_error("The dimension of a parameter does not match.");
-      //MFMF if(Ret::staticSize()!=0 && f.outputExpr(0).size1()!=Ret::staticSize()) throw std::runtime_error("The output dimension does not match.");
+      if(f.getNumInputs()!=1) throw MBSimError("Function must have only 1 argument.");
+      if(f.getNumOutputs()!=1) throw MBSimError("Function must have only 1 output.");
+      if(f.inputExpr(0).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
+      if(f.outputExpr(0).size2()!=1) throw MBSimError("Matrix outputs are not allowed.");
+      //MFMF if(Arg::staticSize()!=0 && f.inputExpr(0).size1()!=Arg::staticSize()) throw MBSimError("The dimension of a parameter does not match.");
+      //MFMF if(Ret::staticSize()!=0 && f.outputExpr(0).size1()!=Ret::staticSize()) throw MBSimError("The output dimension does not match.");
       init();
     }
   };
@@ -316,14 +317,14 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      if(f.getNumInputs()!=2) throw std::runtime_error("Function has must have exact 2 arguments.");
-      if(f.getNumOutputs()!=1) throw std::runtime_error("Function has must have only 1 output.");
-      if(f.inputExpr(0).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");
-      if(f.inputExpr(1).size2()!=1) throw std::runtime_error("Matrix parameter are not allowed.");
-      if(f.outputExpr(0).size2()!=1) throw std::runtime_error("Matrix outputs are not allowed.");
-      //MFMF if(Arg2::staticSize()!=0 && f.inputExpr(0).size1()!=Arg2::staticSize()) throw std::runtime_error("The dimension of a parameter does not match.");
-      //MFMF if(Arg2::staticSize()!=0 && f.inputExpr(1).size1()!=Arg2::staticSize()) throw std::runtime_error("The dimension of a parameter does not match.");
-      //MFMF if(Ret::staticSize()!=0 && f.outputExpr(0).size1()!=Ret::staticSize()) throw std::runtime_error("The output dimension does not match.");
+      if(f.getNumInputs()!=2) throw MBSimError("Function has must have exact 2 arguments.");
+      if(f.getNumOutputs()!=1) throw MBSimError("Function has must have only 1 output.");
+      if(f.inputExpr(0).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
+      if(f.inputExpr(1).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
+      if(f.outputExpr(0).size2()!=1) throw MBSimError("Matrix outputs are not allowed.");
+      //MFMF if(Arg2::staticSize()!=0 && f.inputExpr(0).size1()!=Arg2::staticSize()) throw MBSimError("The dimension of a parameter does not match.");
+      //MFMF if(Arg2::staticSize()!=0 && f.inputExpr(1).size1()!=Arg2::staticSize()) throw MBSimError("The dimension of a parameter does not match.");
+      //MFMF if(Ret::staticSize()!=0 && f.outputExpr(0).size1()!=Ret::staticSize()) throw MBSimError("The output dimension does not match.");
       init();
     }
   };
