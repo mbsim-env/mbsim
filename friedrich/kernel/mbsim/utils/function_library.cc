@@ -152,14 +152,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<VecV>, MBSIMNS"ConstantFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<Vec3>, MBSIMNS"ConstantFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TimeDependentFunction<VecV>, MBSIMNS"TimeDependentFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TimeDependentFunction<Vec3>, MBSIMNS"TimeDependentFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TimeDependentFunction<RotMat3>, MBSIMNS"TimeDependentFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StateDependentFunction<VecV>, MBSIMNS"StateDependentFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StateDependentFunction<Vec3>, MBSIMNS"StateDependentFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StateDependentFunction<RotMat3>, MBSIMNS"StateDependentFunction")
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<double>, MBSIMNS"LinearFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<VecV>, MBSIMNS"LinearFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<Vec3>, MBSIMNS"LinearFunction")

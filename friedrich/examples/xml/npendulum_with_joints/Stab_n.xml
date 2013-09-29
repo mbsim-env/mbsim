@@ -8,28 +8,24 @@
   <frameForKinematics ref="Frame[C]"/>
   <mass>5000000</mass>
   <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
-  <translation>
-    <StateDependentFunction>
-      <LinearTranslation>
-        <translationVectors>
-          <xi:include href="abc/mat.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-        </translationVectors>
-      </LinearTranslation>
-    </StateDependentFunction>
-  </translation>
-  <rotation>
-    <StateDependentFunction>
-      <RotationAboutFixedAxis>
-        <axisOfRotation>
-          <pv:xmlVector>
-            <pv:ele>0</pv:ele>
-            <pv:ele>0</pv:ele>
-            <pv:ele>1</pv:ele>
-          </pv:xmlVector>
-        </axisOfRotation>
-      </RotationAboutFixedAxis>
-    </StateDependentFunction>
-  </rotation>
+  <stateDependentTranslation>
+    <LinearTranslation>
+      <translationVectors>
+        <xi:include href="abc/mat.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </translationVectors>
+    </LinearTranslation>
+  </stateDependentTranslation>
+  <stateDependentRotation>
+    <RotationAboutFixedAxis>
+      <axisOfRotation>
+        <pv:xmlVector>
+          <pv:ele>0</pv:ele>
+          <pv:ele>0</pv:ele>
+          <pv:ele>1</pv:ele>
+        </pv:xmlVector>
+      </axisOfRotation>
+    </RotationAboutFixedAxis>
+  </stateDependentRotation>
   <frames>
     <frame>
       <Frame name="O"/>

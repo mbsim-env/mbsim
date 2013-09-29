@@ -30,14 +30,12 @@
       <frameForKinematics ref="Frame[B2]"/>
       <mass>m2</mass>
       <inertiaTensor>J2*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="B2">
@@ -97,14 +95,12 @@
       <frameForKinematics ref="Frame[B4]"/>
       <mass>m4</mass>
       <inertiaTensor>J4*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="B4">
@@ -149,14 +145,12 @@
       <frameForKinematics ref="Frame[B3]"/>
       <mass>m3</mass>
       <inertiaTensor>J3*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0 0 1]'</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0 0 1]'</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="B3">

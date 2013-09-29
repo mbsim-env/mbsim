@@ -35,20 +35,16 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>1</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation>
-            <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis>
-            <axisOfRotation>[0;0;1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>[0;0;1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames/>
       <contours/>
       <openMBVRigidBody>

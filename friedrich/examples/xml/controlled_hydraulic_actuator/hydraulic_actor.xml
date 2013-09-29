@@ -11,14 +11,12 @@
       <frameForKinematics ref="Frame[FMount]"/>
       <mass>1.</mass>
       <inertiaTensor>1e-4*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis>
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="FMount">
@@ -88,14 +86,12 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>1.</mass>
       <inertiaTensor>1e-4*eye(3)</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation>
-            <translationVectors>[0;1;0]</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>[0;1;0]</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
         <frame>
           <Frame name="FTop"/>

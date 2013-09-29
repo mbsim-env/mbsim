@@ -25,32 +25,28 @@
                     </pv:row>
                 </pv:xmlMatrix>
             </inertiaTensor>
-            <translation>
-              <StateDependentFunction>
-                <SymbolicFunction arg1name="s" arg1dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
-              </StateDependentFunction>
-            </translation>
-            <rotation>
-              <StateDependentFunction>
-                <NestedFunction>
-                  <outerFunction>
-                    <RotationAboutFixedAxis>
-                      <axisOfRotation unit="-">
-                        <pv:xmlVector>
-                          <pv:ele>0</pv:ele>
-                          <pv:ele>0</pv:ele>
-                          <pv:ele>1</pv:ele>
-                        </pv:xmlVector>
-                      </axisOfRotation>
-                    </RotationAboutFixedAxis>
-                  </outerFunction>
-                  <innerFunction>
-                    <SymbolicFunction arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction>
-                  </innerFunction>
-                </NestedFunction>
-              </StateDependentFunction>
+            <stateDependentTranslation>
+              <SymbolicFunction arg1name="s" arg1dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
+            </stateDependentTranslation>
+            <stateDependentRotation>
+              <NestedFunction>
+                <outerFunction>
+                  <RotationAboutFixedAxis>
+                    <axisOfRotation unit="-">
+                      <pv:xmlVector>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>1</pv:ele>
+                      </pv:xmlVector>
+                    </axisOfRotation>
+                  </RotationAboutFixedAxis>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction>
+                </innerFunction>
+              </NestedFunction>
               <translationDependent>true</translationDependent>
-            </rotation>
+            </stateDependentRotation>
             <frames />
             <contours />
             <openMBVRigidBody>

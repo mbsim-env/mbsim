@@ -10,16 +10,14 @@
       <frameForKinematics ref="Frame[Mount]"/>
       <mass>800*pi*.025^2*.5</mass>
       <inertiaTensor>800*.025^2*.5*(0.25^2/4+.5^2/12)*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis>
-            <axisOfRotation>
-              [0; 0; 1]
-            </axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>
+            [0; 0; 1]
+          </axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="Mount"/>
@@ -60,8 +58,8 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>800*.005^2*.06</mass>
       <inertiaTensor>800*pi*.005^2*.06*(0.005^2/4+.06^2/12)*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation/>
+      <generalTranslation/>
+      <generalRotation/>
       <frames>
       </frames>
       <contours>
@@ -85,14 +83,12 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>800*pi*.005^2*.06</mass>
       <inertiaTensor>800*.005^2*.06*(0.005^2/4+.06^2/12)*eye(3)</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation>
-            <translationVectors>[1; 0; 0]</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>[1; 0; 0]</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
       </frames>
       <contours>
@@ -116,14 +112,12 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>800*pi*.1^2*.1</mass>
       <inertiaTensor>800*.1^2*.1*(.1^2/4+.1^2/12)*eye(3)</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation>
-            <translationVectors>[0; 1; 0]</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>[0; 1; 0]</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames>
       </frames>
       <contours>

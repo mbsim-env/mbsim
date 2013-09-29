@@ -20,18 +20,14 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>6e-3</mass>
       <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <LinearTranslation>
-            <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
-          </LinearTranslation>
-        </StateDependentFunction>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutAxesXYZ/>
-        </StateDependentFunction>
-      </rotation>
+      <stateDependentTranslation>
+        <LinearTranslation>
+          <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
+        </LinearTranslation>
+      </stateDependentTranslation>
+      <stateDependentRotation>
+        <RotationAboutAxesXYZ/>
+      </stateDependentRotation>
       <frames/>
       <contours>
         <contour>

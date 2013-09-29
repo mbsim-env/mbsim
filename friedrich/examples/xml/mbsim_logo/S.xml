@@ -12,15 +12,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(x-hx)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(x-hx)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2, 0; 0, 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -72,15 +70,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -132,15 +128,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(c*y/4)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(c*y/4)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2, 0; 0, 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -192,15 +186,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -252,15 +244,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(x-2*hx)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(x-2*hx)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(x-2*hx)*rho)*r^2+1/12*(pi*r^2*(x-2*hx)*rho)*(x-2*hx)^2, 0; 0, 0, 1/4*(pi*r^2*(x-2*hx)*rho)*r^2+1/12*(pi*r^2*(x-2*hx)*rho)*(x-2*hx)^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -312,15 +302,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -372,15 +360,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(c*y/4)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(c*y/4)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2, 0; 0, 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -444,15 +430,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">
@@ -504,15 +488,13 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(x-hx)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(x-hx)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2, 0; 0, 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
-            <axisOfRotation>[0; 0; 1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <generalTranslation>
+      </generalTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="F1">

@@ -24,12 +24,10 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>m</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <TranslationAlongYAxis/>
-        </StateDependentFunction>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <TranslationAlongYAxis/>
+      </stateDependentTranslation>
+      <generalRotation/>
       <frames/>
       <contours/>
       <openMBVRigidBody>

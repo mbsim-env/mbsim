@@ -794,22 +794,41 @@ namespace MBSim {
     setMass(getDouble(e));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
-    e=element->FirstChildElement(MBSIMNS"translation");
-    if(e->FirstChildElement()) {
+    e=element->FirstChildElement(MBSIMNS"generalTranslation");
+    if(e && e->FirstChildElement()) {
       Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV,double)> >(e->FirstChildElement());
-      setTranslation(trans);
+      setGeneralTranslation(trans);
     }
-    e=element->FirstChildElement(MBSIMNS"rotation");
-    if(e->FirstChildElement()) {
+    e=element->FirstChildElement(MBSIMNS"timeDependentTranslation");
+    if(e && e->FirstChildElement()) {
+      Function<Vec3(double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(double)> >(e->FirstChildElement());
+      setTimeDependentTranslation(trans);
+    }
+    e=element->FirstChildElement(MBSIMNS"stateDependentTranslation");
+    if(e && e->FirstChildElement()) {
+      Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV)> >(e->FirstChildElement());
+      setStateDependentTranslation(trans);
+    }
+    e=element->FirstChildElement(MBSIMNS"generalRotation");
+    if(e && e->FirstChildElement()) {
       Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV,double)> >(e->FirstChildElement());
-      setRotation(rot);
-
-      if(fAPK) {
-        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"translationDependent");
-        if(ee) translationDependentRotation = getBool(ee);
-        ee=e->FirstChildElement(MBSIMNS"coordinateTransformation");
-        if(ee) coordinateTransformation = getBool(ee);
-      }
+      setGeneralRotation(rot);
+    }
+    e=element->FirstChildElement(MBSIMNS"timeDependentRotation");
+    if(e && e->FirstChildElement()) {
+      Function<RotMat3(double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(double)> >(e->FirstChildElement());
+      setTimeDependentRotation(rot);
+    }
+    e=element->FirstChildElement(MBSIMNS"stateDependentRotation");
+    if(e && e->FirstChildElement()) {
+      Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV)> >(e->FirstChildElement());
+      setStateDependentRotation(rot);
+    }
+    if(e && fAPK) {
+      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"translationDependent");
+      if(ee) translationDependentRotation = getBool(ee);
+      ee=e->FirstChildElement(MBSIMNS"coordinateTransformation");
+      if(ee) coordinateTransformation = getBool(ee);
     }
 
     // END

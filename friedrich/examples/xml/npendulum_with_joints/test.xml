@@ -6,18 +6,14 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
-      <translation>
-        <StateDependentFunction>
-          <TranslationAlongAxesXY/>
-        </StateDependentFunction>
-      </translation>
-      <rotation>
-        <StateDependentFunction>
-          <RotationAboutFixedAxis>
-            <axisOfRotation>[0;0;1]</axisOfRotation>
-          </RotationAboutFixedAxis>
-        </StateDependentFunction>
-      </rotation>
+      <stateDependentTranslation>
+        <TranslationAlongAxesXY/>
+      </stateDependentTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>[0;0;1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
       <frames>
         <frame>
           <Frame name="O"/>

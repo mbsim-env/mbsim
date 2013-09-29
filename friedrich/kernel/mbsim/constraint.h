@@ -154,7 +154,19 @@ namespace MBSim {
 
       void calcxSize();
 
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      // NOTE: we can not use a overloaded setConstraintFunction here due to restrictions in XML but define them for convinience in c++
+      void setGeneralConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
+        f = f_;
+      }
+      void setTimeDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) {
+        setGeneralConstraintFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setStateDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) {
+        setGeneralConstraintFunction(new StateDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { setGeneralConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { setTimeDependentConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { setStateDependentConstraintFunction(f_); }
 
       virtual void setUpInverseKinetics();
 
@@ -180,7 +192,19 @@ namespace MBSim {
 
       void calcxSize();
 
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      // NOTE: we can not use a overloaded setConstraintFunction here due to restrictions in XML but define them for convinience in c++
+      void setGeneralConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
+        f = f_;
+      }
+      void setTimeDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) {
+        setGeneralConstraintFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setStateDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) {
+        setGeneralConstraintFunction( new StateDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { setGeneralConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { setTimeDependentConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { setStateDependentConstraintFunction(f_); }
 
       virtual void setUpInverseKinetics();
 
