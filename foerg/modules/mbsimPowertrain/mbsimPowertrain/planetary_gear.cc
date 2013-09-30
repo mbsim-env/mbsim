@@ -71,7 +71,7 @@ namespace MBSimPowertrain {
 
     r(2) = lS/2-lH/2*1.0;
     r(1) = 0;
-    housing->addFrame("Q",r,BasicRotAKIy(0));
+    housing->addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(0)));
 
     annulus->setFrameOfReference(housing->getFrame("Q"));
     annulus->setFrameForKinematics(annulus->getFrame("C"));
@@ -89,7 +89,7 @@ namespace MBSimPowertrain {
 
     r.init(0);
     r(2) = lS/2+lT/2;
-    housing->addFrame("R",r,BasicRotAKIy(0));
+    housing->addFrame(new FixedRelativeFrame("R",r,BasicRotAKIy(0)));
     carrier->setFrameOfReference(housing->getFrame("R"));
     carrier->setFrameForKinematics(carrier->getFrame("C"));
     carrier->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
@@ -106,7 +106,7 @@ namespace MBSimPowertrain {
     r(2) = -lT/2-lP/2;
     r(1) = rT2;
 
-    vector<Frame*> P;
+    vector<FixedRelativeFrame*> P;
     vector<RigidBody*> planet;
     int numP = 3;
     for(int i=0; i<numP; i++) {
@@ -114,8 +114,8 @@ namespace MBSimPowertrain {
       stringstream shaftName;
       str << "P" << i;
       shaftName << "Planet" << i;
-      P.push_back(new Frame(str.str()));
-      carrier->addFrame(P[i],BasicRotAKIz(M_PI*2*i/3.)*r,BasicRotAKIy(0));
+      P.push_back(new FixedRelativeFrame(str.str(),BasicRotAKIz(M_PI*2*i/3.)*r,BasicRotAKIy(0)));
+      carrier->addFrame(P[i]);
       planet.push_back(new RigidBody(shaftName.str()));
       addObject(planet[i]);
       planet[i]->setFrameOfReference(carrier->getFrame(str.str()));
