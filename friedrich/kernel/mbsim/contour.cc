@@ -46,7 +46,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Point, MBSIMNS"Point")
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), R(0) {
+  Contour::Contour(const string &name, Frame *R_) : Element(name), R(R_) {
     // no canonic output...
     hSize[0] = 0;
     hSize[1] = 0;

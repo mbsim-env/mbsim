@@ -39,14 +39,14 @@ namespace MBSim {
        * \param name of circle
        * \default contact from inside
        */
-      Circle(const std::string& name);
+      Circle(const std::string& name, Frame *R=0);
 
       /*! 
        * \brief constructor
        * \param name of circle
        * \param contact from outside?
        */
-      Circle(const std::string& name, bool outCont_);
+      Circle(const std::string& name, bool outCont_, Frame *R=0);
 
       /*! 
        * \brief constructor
@@ -54,7 +54,7 @@ namespace MBSim {
        * \param radius
        * \param contact from outside?
        */
-      Circle(const std::string& name, double r_, bool outCont_);
+      Circle(const std::string& name, double r_, bool outCont_, Frame *R=0);
 
       /*!
        * \brief destructor

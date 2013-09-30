@@ -544,36 +544,6 @@ namespace MBSim {
     Body::addFrame(frame_);
   }
 
-  void RigidBody::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    Deprecated::registerMessage("Using RigidBody::addFrame(Frame*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
-    FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(frame_->getName(),RrRF,ARF,refFrame);
-    if(frame_->getOpenMBVFrame())
-      rigidBodyFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
-    addFrame(rigidBodyFrame);
-  }
-
-  void RigidBody::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    Deprecated::registerMessage("Using RigidBody::addFrame(const string&, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
-    FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(str,RrRF,ARF,refFrame);
-    addFrame(rigidBodyFrame);
-  }
-
-  void RigidBody::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const Frame* refFrame) {
-    Deprecated::registerMessage("Using RigidBody::addCongour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
-    stringstream frameName;
-    frameName << "ContourFrame" << contour.size();
-    Frame *contourFrame;
-    if(!refFrame && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
-      fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
-      contourFrame = C;
-    else {
-      contourFrame = new FixedRelativeFrame(frameName.str(),RrRC,ARC,refFrame);
-      addFrame((FixedRelativeFrame*)contourFrame);
-    }
-    contour_->setFrameOfReference(contourFrame);
-    Body::addContour(contour_);
-  }
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void RigidBody::setOpenMBVRigidBody(OpenMBV::RigidBody* body) {
     openMBVBody=body;
@@ -724,22 +694,6 @@ namespace MBSim {
 
     // frames
     e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMNS"frame") {
-      Deprecated::registerMessage("Using the <mbsim:frame> element is deprecated, use the <mbsim:Frame> element instead.", e);
-      TiXmlElement *ec=e->FirstChildElement();
-      FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
-      addFrame(f);
-      f->initializeUsingXML(ec);
-      ec=ec->NextSiblingElement();
-      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        f->setFrameOfReference(string("../")+ec->Attribute("ref"));
-        ec=ec->NextSiblingElement();
-      }
-      f->setRelativePosition(getVec3(ec));
-      ec=ec->NextSiblingElement();
-      f->setRelativeOrientation(getSqrMat3(ec));
-      e=e->NextSiblingElement();
-    }
     while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
       FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"));
       addFrame(f);
@@ -749,39 +703,6 @@ namespace MBSim {
 
     // contours
     e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMNS"contour") {
-      Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", e);
-      TiXmlElement *ec=e->FirstChildElement();
-
-      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(ec);
-      ec=ec->NextSiblingElement();
-      string refF;
-      if(ec) {
-        if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-          refF = string("../")+ec->Attribute("ref");
-          ec=ec->NextSiblingElement();
-        }
-        Vec3 RrRC = getVec3(ec);
-        ec=ec->NextSiblingElement();
-        SqrMat3 ARC = getSqrMat3(ec);
-        e=e->NextSiblingElement();
-        stringstream frameName;
-        frameName << "ContourFrame" << contour.size();
-        Frame *contourFrame;
-        if(refF=="" && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
-            fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
-          contourFrame = C;
-        else {
-          contourFrame = new FixedRelativeFrame(frameName.str());
-          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
-          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
-          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
-          addFrame((FixedRelativeFrame*)contourFrame);
-        }
-        c->setFrameOfReference(contourFrame);
-      }
-      addContour(c);
-    }
     while(e) {
       Contour *c=ObjectFactory<Element>::createAndInit<Contour>(e);
       addContour(c);

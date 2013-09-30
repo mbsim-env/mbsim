@@ -132,22 +132,6 @@ namespace MBSim {
 
     // frames
     TiXmlElement *E=e->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"frame") {
-      Deprecated::registerMessage("Using the <mbsim:frame> element is deprecated, use the <mbsim:Frame> element instead.", E);
-      TiXmlElement *ec=E->FirstChildElement();
-      FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
-      addFrame(f);
-      f->initializeUsingXML(ec);
-      ec=ec->NextSiblingElement();
-      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        f->setFrameOfReference(string("../")+ec->Attribute("ref"));
-        ec=ec->NextSiblingElement();
-      }
-      f->setRelativePosition(getVec3(ec));
-      ec=ec->NextSiblingElement();
-      f->setRelativeOrientation(getSqrMat3(ec));
-      E=E->NextSiblingElement();
-    }
     while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
       FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"));
       addFrame(f);
@@ -158,39 +142,6 @@ namespace MBSim {
 
     // contours
     E=e->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"contour") {
-      Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", E);
-      TiXmlElement *ec=E->FirstChildElement();
-      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(ec);
-      ec=ec->NextSiblingElement();
-      string refF;
-      if(ec) {
-        cout << c->getName() << endl;
-        if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-          refF = string("../")+ec->Attribute("ref");
-          ec=ec->NextSiblingElement();
-        }
-        Vec3 RrRC = getVec3(ec);
-        ec=ec->NextSiblingElement();
-        SqrMat3 ARC = getSqrMat3(ec);
-        E=E->NextSiblingElement();
-        stringstream frameName;
-        frameName << "ContourFrame" << contour.size();
-        Frame *contourFrame;
-        if(refF=="" && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
-            fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
-          contourFrame = frame[0];
-        else {
-          contourFrame = new FixedRelativeFrame(frameName.str());
-          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
-          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
-          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
-          addFrame((FixedRelativeFrame*)contourFrame);
-        }
-        c->setFrameOfReference(contourFrame);
-      }
-      addContour(c);
-    }
     while(E) {
       Contour *c=ObjectFactory<Element>::createAndInit<Contour>(E);
       addContour(c);

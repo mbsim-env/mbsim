@@ -1309,20 +1309,6 @@ namespace MBSim {
     frame_->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    Deprecated::registerMessage("Using DynamicSystem::addFrame(Frame*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
-    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(frame_->getName(), RrRF, ARF, refFrame);
-    if (frame_->getOpenMBVFrame())
-      environmentFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
-    addFrame(environmentFrame);
-  }
-
-  void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    Deprecated::registerMessage("Using DynamicSystem::addFrame(const string&, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
-    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(str, RrRF, ARF, refFrame);
-    addFrame(environmentFrame);
-  }
-
   void DynamicSystem::addContour(Contour* contour_) {
     if (getContour(contour_->getName(), false)) {
       throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one Contour by the name \"" + name + "\"!");
@@ -1330,21 +1316,6 @@ namespace MBSim {
     }
     contour.push_back(contour_);
     contour_->setParent(this);
-  }
-
-  void DynamicSystem::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
-    Deprecated::registerMessage("Using DynamicSystem::addContour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
-    stringstream frameName;
-    frameName << "ContourFrame" << contour.size();
-    Frame *contourFrame;
-    if (!refFrame && fabs(RrRC(0)) < 1e-10 && fabs(RrRC(1)) < 1e-10 && fabs(RrRC(2)) < 1e-10 && fabs(ARC(0, 0) - 1) < 1e-10 && fabs(ARC(1, 1) - 1) < 1e-10 && fabs(ARC(2, 2) - 1) < 1e-10)
-      contourFrame = frame[0];
-    else {
-      contourFrame = new FixedRelativeFrame(frameName.str(), RrRC, ARC, refFrame);
-      addFrame((FixedRelativeFrame*) contourFrame);
-    }
-    contour_->setFrameOfReference(contourFrame);
-    addContour(contour_);
   }
 
   int DynamicSystem::frameIndex(const Frame *frame_) const {

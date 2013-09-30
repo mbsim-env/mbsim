@@ -38,11 +38,11 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleHollow, MBSIMNS"CircleHollow")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleSolid, MBSIMNS"CircleSolid")
 
-  Circle::Circle(const string& name) : RigidContour(name),r(0.),curvature(0),outCont(false) {}
+  Circle::Circle(const string& name, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(false) {}
  
-  Circle::Circle(const string& name, bool outCont_) : RigidContour(name),r(0.),curvature(0),outCont(outCont_) {}
+  Circle::Circle(const string& name, bool outCont_, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(outCont_) {}
 
-  Circle::Circle(const string& name, double r_, bool outCont_) : RigidContour(name),r(r_),curvature(outCont_ ? 1./r_ : -1./r_),outCont(outCont_) {}
+  Circle::Circle(const string& name, double r_, bool outCont_, Frame *R) : RigidContour(name,R),r(r_),curvature(outCont_ ? 1./r_ : -1./r_),outCont(outCont_) {}
 
   Circle::~Circle() {}
 
