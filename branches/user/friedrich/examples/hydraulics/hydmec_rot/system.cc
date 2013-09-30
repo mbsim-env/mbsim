@@ -101,7 +101,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addObject(traeger);
   double phi=0;
   for (int i=0; i<5; i++) {
-    traeger->addFrame(getBodyName(i), Vec(3), BasicRotAIKz(phi));
+    traeger->addFrame(new FixedRelativeFrame(getBodyName(i), Vec(3), BasicRotAIKz(phi)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     traeger->getFrame(getBodyName(i))->enableOpenMBV(h/2.);
 #endif
@@ -124,7 +124,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuBoden->setHeight(h/4.);
   traegerVisuBoden->setInitialRotation(0, 0, 0);
   traegerVisuBoden->setInitialTranslation(0, 0, 0);
-  traegerVisuBoden->setStaticColor(0);
+  traegerVisuBoden->setDiffuseColor(0.5,0.5,0.5);
   traegerVisuBoden->setName("frustum1");
   traegerVisu->addRigidBody(traegerVisuBoden);
   
@@ -134,7 +134,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuMitte->setHeight(h);
   traegerVisuMitte->setInitialRotation(0, 0, 0);
   traegerVisuMitte->setInitialTranslation(0, 0, h);
-  traegerVisuMitte->setStaticColor(0);
+  traegerVisuMitte->setDiffuseColor(0.5,0.5,0.5);
   traegerVisuMitte->setName("frustum2");
   traegerVisu->addRigidBody(traegerVisuMitte);
   traeger->setOpenMBVRigidBody(traegerVisuMitte);
@@ -147,11 +147,11 @@ System::System(const string &name, bool unilateral) : Group(name) {
     RigidBody * scheibe = new RigidBody("Scheibe_"+getBodyName(i));
     addObject(scheibe);
     scheibe->setMass(2.);
-    scheibe->addFrame("L", BasicRotAIKz(phiSolid/2.)*r, BasicRotAIKz(phiSolid/2.));
+    scheibe->addFrame(new FixedRelativeFrame("L", BasicRotAIKz(phiSolid/2.)*r, BasicRotAIKz(phiSolid/2.)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     scheibe->getFrame("L")->enableOpenMBV(h/2.);
 #endif
-    scheibe->addFrame("R", BasicRotAIKz(-phiSolid/2.)*r, BasicRotAIKz(-phiSolid/2.));
+    scheibe->addFrame(new FixedRelativeFrame("R", BasicRotAIKz(-phiSolid/2.)*r, BasicRotAIKz(-phiSolid/2.)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     scheibe->getFrame("R")->enableOpenMBV(h/2.);
 #endif
@@ -168,7 +168,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibeVisu->setHeight(h);
     scheibeVisu->addContour(createPiece(dI/2., dA/2., 0, phiSolid));
     scheibeVisu->setInitialRotation(0, 0, -phiSolid/2.);
-    scheibeVisu->setStaticColor((i)/4.);
+    scheibeVisu->setDiffuseColor(i/4.,i/4.,i/4.);
     scheibe->setOpenMBVRigidBody(scheibeVisu);
 #endif
 
