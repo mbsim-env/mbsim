@@ -86,7 +86,7 @@ namespace MBSimPowertrain {
     double a = data.lengthInputShaft/2+data.radiusPlanet*1.2;
     Vec r(3);
     r(2) = -a;
-    housing->addFrame("Q",r,SqrMat(3,EYE));
+    housing->addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
     shaft2->setFrameOfReference(housing->getFrame("Q"));
     shaft2->setFrameForKinematics(shaft2->getFrame("C"));
     shaft2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
@@ -99,7 +99,7 @@ namespace MBSimPowertrain {
 
     r.init(0);
     r(2) = a;
-    shaft2->addFrame("Q",r,BasicRotAKIy(M_PI/2));
+    shaft2->addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(M_PI/2)));
     planet->setFrameOfReference(shaft2->getFrame("Q"));
     planet->setFrameForKinematics(planet->getFrame("C"));
     planet->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
@@ -112,12 +112,12 @@ namespace MBSimPowertrain {
 
     r.init(0);
     r(2) = -data.lengthLeftOutputShaft/2+a;
-    housing->addFrame("L",r,SqrMat(3,EYE),housing->getFrame("Q"));
+    housing->addFrame(new FixedRelativeFrame("L",r,SqrMat(3,EYE),housing->getFrame("Q")));
     shaft4->setFrameOfReference(housing->getFrame("L"));
     shaft4->setFrameForKinematics(shaft4->getFrame("C"));
     shaft4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     r(2) = -data.lengthLeftOutputShaft/2;
-    shaft4->addFrame("Q",r,BasicRotAKIy(M_PI));
+    shaft4->addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(M_PI)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     shaft4->getFrame("Q")->enableOpenMBV(0.3);
 #endif
@@ -130,12 +130,12 @@ namespace MBSimPowertrain {
 
     r.init(0);
     r(2) = data.lengthRightOutputShaft/2+a;
-    housing->addFrame("R",r,SqrMat(3,EYE),housing->getFrame("Q"));
+    housing->addFrame(new FixedRelativeFrame("R",r,SqrMat(3,EYE),housing->getFrame("Q")));
     shaft5->setFrameOfReference(housing->getFrame("R"));
     shaft5->setFrameForKinematics(shaft5->getFrame("C"));
     shaft5->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     r(2) = data.lengthRightOutputShaft/2;
-    shaft5->addFrame("Q",r,SqrMat(3,EYE));
+    shaft5->addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     shaft5->getFrame("Q")->enableOpenMBV(0.3);
 #endif

@@ -119,18 +119,21 @@ namespace MBSimHydraulics {
       ballSeat->setMass(0);
       ballSeat->setInertiaTensor(SymMat(3, INIT, 0));
       ballSeat->setFrameForKinematics(ballSeat->getFrame("C"));
-      ballSeat->addFrame("BallMount", h0*Vec("[1; 0; 0]"), SqrMat(3, EYE));
-      ballSeat->addFrame("SpringMount", (rBall+h0+hMax)*Vec("[1;0;0]"), SqrMat(3, EYE));
-      ballSeat->addContour(new Line("ContourSeat"), (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0));
-      ballSeat->addContour(new Line("ContourMaxOpening"), (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI));
+      ballSeat->addFrame(new FixedRelativeFrame("BallMount", h0*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
+      ballSeat->addFrame(new FixedRelativeFrame("SpringMount", (rBall+h0+hMax)*Vec("[1;0;0]"), SqrMat(3, EYE)));
+      ballSeat->addFrame(new FixedRelativeFrame("ContourSeat", (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0)));
+      ballSeat->addContour(new Line("ContourSeat", ballSeat->getFrame("ContourSeat")));
+      ballSeat->addFrame(new FixedRelativeFrame("ContourMaxOpening", (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI)));
+      ballSeat->addContour(new Line("ContourMaxOpening", ballSeat->getFrame("ContourMaxOpening")));
 
       ball->setInertiaTensor(SymMat(3, EYE) * 2./5. * mBall * rBall * rBall);
       ball->setFrameOfReference(ballSeat->getFrame("BallMount"));
       ball->setFrameForKinematics(ball->getFrame("C"));
       ball->setTranslation(new LinearTranslation<VecV>("[1;0;0]"));
-      ball->addContour(new CircleSolid("ContourBall", rBall), Vec(3, INIT, 0), SqrMat(3, EYE));
-      ball->addFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE));
-      ball->addFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE));
+
+      ball->addContour(new CircleSolid("ContourBall", rBall));
+      ball->addFrame(new FixedRelativeFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE)));
+      ball->addFrame(new FixedRelativeFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
 
       seatContact->connect(ballSeat->getContour("ContourSeat"), ball->getContour("ContourBall"));
 
