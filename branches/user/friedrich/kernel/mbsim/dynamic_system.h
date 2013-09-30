@@ -942,6 +942,8 @@ namespace MBSim {
 
       int corrSize, corrInd;
       fmatvec::Vec corr;
+
+      std::string saved_frameOfReference;
   };
 }
 
