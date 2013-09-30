@@ -5,11 +5,10 @@
   <position>[0;0;0]</position><!-- dummy -->
   <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <frames>
-    <frame>
-      <Frame name="Os"/>
-      <position>[0;0;0.04]</position>
-      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-    </frame>
+    <FixedRelativeFrame name="Os">
+      <relativePosition>[0;0;0.04]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups/>

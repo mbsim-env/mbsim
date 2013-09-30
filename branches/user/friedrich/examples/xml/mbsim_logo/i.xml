@@ -20,40 +20,33 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="F1">
-            <enableOpenMBV> 
-              <size>frameSize</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/> 
-          <position>[-y/2; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="F2">
-            <enableOpenMBV> 
-              <size>frameSize</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/> 
-          <position>[y/2; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="F1">
+          <enableOpenMBV> 
+            <size>frameSize</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/> 
+          <relativePosition>[-y/2; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="F2">
+          <enableOpenMBV> 
+            <size>frameSize</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/> 
+          <relativePosition>[y/2; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour xmlns="http://mbsim.berlios.de/MBSim">
-          <Line name="CTop"/>
-          <frameOfReference ref="Frame[F2]"/> 
-          <position>[0;0;0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Line name="CTop" xmlns="http://mbsim.berlios.de/MBSim">
+          <frameOfReference ref="../Frame[F2]"/> 
+        </Line>
       </contours>
       <openMBVRigidBody> 
         <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -86,18 +79,14 @@
       <frames>
       </frames>
       <contours>
-        <contour xmlns="http://mbsim.berlios.de/MBSim">
-          <CircleSolid name="CCircle" xmlns="http://mbsim.berlios.de/MBSim">
-            <radius>2*r</radius>
-          </CircleSolid>
-          <frameOfReference ref="Frame[C]"/> 
-          <position>[0;0;0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <CircleSolid name="CCircle" xmlns="http://mbsim.berlios.de/MBSim">
+          <frameOfReference ref="../Frame[C]"/> 
+          <radius>2*r</radius>
+        </CircleSolid>
       </contours>
       <openMBVRigidBody> 
         <Sphere name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>

@@ -66,16 +66,14 @@
       <generalTranslation/>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="PistonC"/>
-          <position>[0; hpcInitialHeight+pistonHeight/2.; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="PistonGap"/>
-          <position>[0; hpcInitialHeight+gapLength; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="PistonC">
+          <relativePosition>[0; hpcInitialHeight+pistonHeight/2.; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="PistonGap">
+          <relativePosition>[0; hpcInitialHeight+gapLength; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <enableOpenMBVFrameC>
@@ -93,41 +91,38 @@
       </stateDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="CheckvalveF">
-            <enableOpenMBV>
-              <size>.001</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[0; -pistonHeight/2.; 0]</position>
-          <orientation>[0,-1,0; 1,0,0; 0,0,1]'</orientation>
-        </frame>
-        <frame>
-          <Frame name="TopF">
-            <enableOpenMBV>
-              <size>.001</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[0; pistonHeight/2; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="CheckvalveF">
+          <enableOpenMBV>
+            <size>.001</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <relativePosition>[0; -pistonHeight/2.; 0]</relativePosition>
+          <relativeOrientation>[0,-1,0; 1,0,0; 0,0,1]'</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="TopF">
+          <enableOpenMBV>
+            <size>.001</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <relativePosition>[0; pistonHeight/2; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="Contour">
+          <frameOfReference ref="../Frame[TopF]"/>
+          <relativePosition>[0; -pistonContourRadius; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <CircleSolid name="Contour">
-            <radius>pistonContourRadius</radius>
-            <enableOpenMBV/>
-          </CircleSolid>
-          <frameOfReference ref="Frame[TopF]"/>
-          <position>[0; -pistonContourRadius; 0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <CircleSolid name="Contour">
+          <frameOfReference ref="../Frame[Contour]"/>
+          <radius>pistonContourRadius</radius>
+          <enableOpenMBV/>
+        </CircleSolid>
       </contours>
       <openMBVRigidBody>
         <Frustum name="Frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.5</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0; -pistonHeight/2.; 0]</initialTranslation>
           <initialRotation>[pi/2; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>

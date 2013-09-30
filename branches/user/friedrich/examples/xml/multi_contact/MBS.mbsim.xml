@@ -7,16 +7,12 @@
   xmlns:c="http://mbsim.berlios.de/MBSimControl">
   <frames/>
   <contours>
-    <contour>
-      <Plane name="Ground">
-          <enableOpenMBV>
-           <size>1</size>   
-		   <numberOfLines>2</numberOfLines>      
-          </enableOpenMBV>
-      </Plane>
-      <position>[0;0;0]</position>
-      <orientation>eye(3)</orientation> 
-    </contour> 
+    <Plane name="Ground">
+      <enableOpenMBV>
+        <size>1</size>   
+        <numberOfLines>2</numberOfLines>      
+      </enableOpenMBV>
+    </Plane>
   </contours>
   <groups/>
   <objects>
@@ -32,14 +28,10 @@
       <generalRotation/>
       <frames/>
       <contours>
-        <contour>
-          <Sphere name="Sphere"> 
-              <radius>0.006</radius>
-              <enableOpenMBV></enableOpenMBV>
-          </Sphere>
-          <position>[0;0;0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Sphere name="Sphere"> 
+          <radius>0.006</radius>
+          <enableOpenMBV></enableOpenMBV>
+        </Sphere>
       </contours>
       <enableOpenMBVFrameC>
         <size>.001</size>
@@ -59,14 +51,10 @@
       <generalRotation/>
       <frames/>
       <contours>
-        <contour>
-          <Sphere name="Sphere"> 
-              <radius>0.006</radius>
-              <enableOpenMBV></enableOpenMBV>
-          </Sphere>
-          <position>[0;0;0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Sphere name="Sphere"> 
+          <radius>0.006</radius>
+          <enableOpenMBV></enableOpenMBV>
+        </Sphere>
       </contours>
       <enableOpenMBVFrameC>
         <size>.001</size>

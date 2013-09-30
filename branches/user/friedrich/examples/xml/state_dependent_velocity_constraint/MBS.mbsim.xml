@@ -52,7 +52,6 @@
             <openMBVRigidBody>
                 <ns_1:Cube name="NOTSET">
                     <?OPENMBV_ID 4?>
-                    <ns_1:staticColor unit="-">0</ns_1:staticColor>
                     <ns_1:initialTranslation unit="m">
                         <pv:xmlVector>
                             <pv:ele>0</pv:ele>

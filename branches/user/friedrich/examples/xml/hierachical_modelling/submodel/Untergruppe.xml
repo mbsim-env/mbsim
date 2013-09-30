@@ -93,7 +93,7 @@
       <contours/>
       <openMBVRigidBody>
         <IvBody name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>[0.5]</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0;0;0]</initialTranslation>
           <initialRotation>[0;0;0]</initialRotation>
           <scaleFactor>1</scaleFactor>

@@ -1,15 +1,13 @@
 <DynamicSystemSolver name="CrankMechanism" xmlns="http://mbsim.berlios.de/MBSim">
   <frames>
-    <frame>
-      <Frame name="I2">
-        <enableOpenMBV> <!-- optional -->
-          <size>fSize</size>
-          <offset>1</offset>
-        </enableOpenMBV>
-      </Frame>
-      <position>[l1 0 0]'</position>
-      <orientation>eye(3)</orientation>
-    </frame>
+    <FixedRelativeFrame name="I2">
+      <enableOpenMBV> <!-- optional -->
+        <size>fSize</size>
+        <offset>1</offset>
+      </enableOpenMBV>
+    <relativePosition>[l1 0 0]'</relativePosition>
+    <relativeOrientation>eye(3)</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups>
@@ -37,31 +35,30 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="B2">
-            <enableOpenMBV> <!-- optional -->
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[-r2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="B2">
+          <enableOpenMBV> <!-- optional -->
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[-r2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="B3">
+          <frameOfReference ref="../Frame[C]"/> <!-- optional -->
+          <relativePosition>[l2-r2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <CircleSolid name="crankBolt" xmlns="http://mbsim.berlios.de/MBSim">
+        <CircleSolid name="crankBolt" xmlns="http://mbsim.berlios.de/MBSim">
+          <frameOfReference ref="../Frame[B3]"/> <!-- optional -->
             <radius>rBolt</radius>
             <!--<enableOpenMBV/> [> optional <]-->
-          </CircleSolid>
-          <frameOfReference ref="Frame[C]"/> <!-- optional -->
-          <position>[l2-r2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        </CircleSolid>
       </contours>
       <openMBVRigidBody> <!-- optional -->
         <CompoundRigidBody name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.2</staticColor> <!-- optional -->
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor> <!-- optional -->
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -102,31 +99,27 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="B4">
-            <enableOpenMBV> <!-- optional -->
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[-l4+r4 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="T4">
-            <enableOpenMBV> <!-- optional -->
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[r4 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="B4">
+          <enableOpenMBV> <!-- optional -->
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+        <relativePosition>[-l4+r4 0 0]'</relativePosition>
+        <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="T4">
+          <enableOpenMBV> <!-- optional -->
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+        <relativePosition>[r4 0 0]'</relativePosition>
+        <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody> <!-- optional -->
         <Cuboid name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.6</staticColor> <!-- optional -->
+          <diffuseColor>[0;1;0.6666]</diffuseColor> <!-- optional -->
           <initialTranslation>[-l4/2+r4 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -152,31 +145,30 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="B3">
-            <enableOpenMBV> <!-- optional -->
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[-l3+r3 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="B3">
+          <enableOpenMBV> <!-- optional -->
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[-l3+r3 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="B4">
+          <frameOfReference ref="../Frame[C]"/> <!-- optional -->
+          <relativePosition>[r3 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <CircleHollow name="couplerBushing" xmlns="http://mbsim.berlios.de/MBSim">
-            <radius>rBushing</radius>
-            <!--<enableOpenMBV/> [> optional <]-->
-          </CircleHollow>
-          <frameOfReference ref="Frame[C]"/> <!-- optional -->
-          <position>[r3 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <CircleHollow name="couplerBushing" xmlns="http://mbsim.berlios.de/MBSim">
+          <frameOfReference ref="../Frame[B4]"/> <!-- optional -->
+          <radius>rBushing</radius>
+          <!--<enableOpenMBV/> [> optional <]-->
+        </CircleHollow>
       </contours>
       <openMBVRigidBody> <!-- optional -->
         <CompoundRigidBody name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.5</staticColor> <!-- optional -->
+          <diffuseColor>[0.6666;1;1]</diffuseColor> <!-- optional -->
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>

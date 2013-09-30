@@ -26,7 +26,6 @@
       <contours/>
       <openMBVRigidBody>
         <ombv:Frustum name="xxx">
-          <ombv:staticColor>0</ombv:staticColor>
           <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
           <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
           <ombv:scaleFactor>1.</ombv:scaleFactor>

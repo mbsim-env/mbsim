@@ -19,28 +19,25 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="Mount"/>
-          <position>[-.15; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="LeftPin"/>
-          <frameOfReference ref="Frame[Mount]"/>
-          <position>[-.1; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="RightPin"/>
-          <frameOfReference ref="Frame[Mount]"/>
-          <position>[.4; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="Mount">
+          <relativePosition>[-.15; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="LeftPin">
+          <frameOfReference ref="../Frame[Mount]"/>
+          <relativePosition>[-.1; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="RightPin">
+          <frameOfReference ref="../Frame[Mount]"/>
+          <relativePosition>[.4; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.5</staticColor>
+          <diffuseColor>.5*ones(3,1)</diffuseColor>
           <initialTranslation>[.25; 0; 0]</initialTranslation>
           <initialRotation>[0; pi/2; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -66,7 +63,7 @@
       </contours>
       <openMBVRigidBody>
         <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.2</staticColor>
+          <diffuseColor>.2*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0.03]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -95,7 +92,7 @@
       </contours>
       <openMBVRigidBody>
         <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.7</staticColor>
+          <diffuseColor>.7*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0.03]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -124,7 +121,7 @@
       </contours>
       <openMBVRigidBody>
         <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1</staticColor>
+          <diffuseColor>1*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0.03]</initialTranslation>
           <initialRotation>[pi/2; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>

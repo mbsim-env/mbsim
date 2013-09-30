@@ -2,11 +2,10 @@
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <frames>
-    <frame>
-      <Frame name="AnregungC"/>
-      <position>[0;pistonRadius; 0 ]</position>
-      <orientation>eye(3)</orientation>
-    </frame>
+    <FixedRelativeFrame name="AnregungC">
+      <relativePosition>[0;pistonRadius; 0 ]</relativePosition>
+      <relativeOrientation>eye(3)</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups>
@@ -28,29 +27,24 @@
       </timeDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="LineF">
-            <enableOpenMBV>
-              <size>.005</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>zeros(3,1)</position>
-          <orientation>[0,-1,0;1,0,0;0,0,1]'</orientation>
-        </frame>
+        <FixedRelativeFrame name="LineF">
+          <enableOpenMBV>
+            <size>.005</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>zeros(3,1)</relativePosition>
+          <relativeOrientation>[0,-1,0;1,0,0;0,0,1]'</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <Line name="Line"/>
-          <frameOfReference ref="Frame[LineF]"/>
-          <position>[0; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Line name="Line">
+          <frameOfReference ref="../Frame[LineF]"/>
+        </Line>
       </contours>
       <openMBVRigidBody>
         <Frustum name="Frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>0</staticColor>
+          <diffuseColor>[0.6666;1;1]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[pi/2; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>

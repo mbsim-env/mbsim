@@ -19,44 +19,38 @@
       </stateDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="fI">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fMotor">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[fI]"/>
-          <position>[1/sqrt(2) -1/sqrt(2) 0; 1/sqrt(2) 1/sqrt(2) 0; 0 0 1]*[crank_TransmissionRadius+motor_TransmissionRadius 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fPiston">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[fI]"/>
-          <position>[sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length piston_Eccentricity 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fI">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fMotor">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[fI]"/>
+          <relativePosition>[1/sqrt(2) -1/sqrt(2) 0; 1/sqrt(2) 1/sqrt(2) 0; 0 0 1]*[crank_TransmissionRadius+motor_TransmissionRadius 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fPiston">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[fI]"/>
+          <relativePosition>[sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length piston_Eccentricity 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>0</staticColor>
+          <diffuseColor>[0.6666;0.3333;0]</diffuseColor>
           <initialTranslation>[(sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length+crank_Radius)/2-crank_Radius; (crank_Radius+max([crank_Radius, piston_Eccentricity])+cylinder_Radius)/2-crank_Radius; -2*2*cylinder_Radius/3]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -85,7 +79,7 @@
       <contours/>
       <openMBVRigidBody>
         <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.8</staticColor>
+          <diffuseColor>[0.6666;0.3333;0]</diffuseColor>
           <initialTranslation>[0; 0; -cylinder_Radius/3/2]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -114,22 +108,20 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fRocker">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[crank_Radius 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fRocker">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[crank_Radius 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <CompoundRigidBody xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.2</staticColor>
+          <diffuseColor>[0.6666;0.3333;0]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -177,33 +169,29 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fCrank">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-rocker_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fPiston">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[rocker_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fCrank">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-rocker_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fPiston">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[rocker_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.6</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -228,33 +216,29 @@
       </stateDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="fRocker">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-piston_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fCylinder">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[piston_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fRocker">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-piston_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fCylinder">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[piston_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.4</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -294,7 +278,7 @@
           </TabularFunction>
         </function>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0.6666;1;0]</diffuseColor>
           <diameter>cylinder_Radius/3</diameter>
           <headDiameter>cylinder_Radius/3*2</headDiameter>
           <headLength>cylinder_Radius/3*2</headLength>
@@ -319,7 +303,7 @@
         </generalizedForceLaw>
         <generalizedImpactLaw/>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0.6666;1;0]</diffuseColor>
           <diameter>cylinder_Radius/3</diameter>
           <headDiameter>cylinder_Radius/3*2</headDiameter>
           <headLength>cylinder_Radius/3*2</headLength>
@@ -344,7 +328,7 @@
         </generalizedForceLaw>
         <generalizedImpactLaw/>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0.6666;1;0]</diffuseColor>
           <diameter>cylinder_Radius/3</diameter>
           <headDiameter>cylinder_Radius/3*2</headDiameter>
           <headLength>cylinder_Radius/3*2</headLength>

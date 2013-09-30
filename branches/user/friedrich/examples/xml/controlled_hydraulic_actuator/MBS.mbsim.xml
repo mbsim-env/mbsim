@@ -4,23 +4,20 @@
   <position>[0;0;0]</position><!-- dummy -->
   <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <frames>
-    <frame>
-      <Frame name="FRocker"/>
-      <position>[0; 0; 0]</position>
-      <orientation>eye(3)</orientation>
-    </frame>
-    <frame>
-      <Frame name="FMass"/>
-      <frameOfReference ref="Frame[FRocker]"/>
-      <position>[.4; 0; 0]</position>
-      <orientation>eye(3)</orientation>
-    </frame>
-    <frame>
-      <Frame name="FJack"/>
-      <frameOfReference ref="Frame[FRocker]"/>
-      <position>[-.1; -.2; 0]</position>
-      <orientation>eye(3)</orientation>
-    </frame>
+    <FixedRelativeFrame name="FRocker">
+      <relativePosition>[0; 0; 0]</relativePosition>
+      <relativeOrientation>eye(3)</relativeOrientation>
+    </FixedRelativeFrame>
+    <FixedRelativeFrame name="FMass">
+      <frameOfReference ref="../Frame[FRocker]"/>
+      <relativePosition>[.4; 0; 0]</relativePosition>
+      <relativeOrientation>eye(3)</relativeOrientation>
+    </FixedRelativeFrame>
+    <FixedRelativeFrame name="FJack">
+      <frameOfReference ref="../Frame[FRocker]"/>
+      <relativePosition>[-.1; -.2; 0]</relativePosition>
+      <relativeOrientation>eye(3)</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours>
   </contours>
