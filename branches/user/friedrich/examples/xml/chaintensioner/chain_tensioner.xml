@@ -126,7 +126,7 @@
         <ombv:IvBody name="xxx">
           <ombv:staticColor>.5</ombv:staticColor>
           <ombv:initialTranslation>[0; -0.0245113; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[-pi/2; 0; 0]</ombv:initialRotation>
+          <ombv:initialRotation>[3/2*pi; 0; 0]</ombv:initialRotation>
           <ombv:scaleFactor>1.</ombv:scaleFactor>
           <ombv:ivFileName>"inventor/housing.iv"</ombv:ivFileName>
         </ombv:IvBody>
@@ -179,7 +179,7 @@
         <ombv:IvBody name="xxx">
           <ombv:staticColor>.5</ombv:staticColor>
           <ombv:initialTranslation>[0; -0.0404966; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[-pi/2; 0; 0]</ombv:initialRotation>
+          <ombv:initialRotation>[3/2*pi; 0; 0]</ombv:initialRotation>
           <ombv:scaleFactor>1.</ombv:scaleFactor>
           <ombv:ivFileName>"inventor/piston.iv"</ombv:ivFileName>
         </ombv:IvBody>
