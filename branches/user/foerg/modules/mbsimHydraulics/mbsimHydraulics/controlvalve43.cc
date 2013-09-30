@@ -211,8 +211,7 @@ namespace MBSimHydraulics {
       aT=getDouble(e);
     setAlpha(a, aT);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAlphaPA");
-    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory<FunctionBase>::create<Function<double(double)> >(e->FirstChildElement()); 
-    relAlphaPA_->initializeUsingXML(e->FirstChildElement());
+    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->FirstChildElement()); 
     setPARelativeAlphaFunction(relAlphaPA_);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeAlpha");
     setMinimalRelativeAlpha(getDouble(e));

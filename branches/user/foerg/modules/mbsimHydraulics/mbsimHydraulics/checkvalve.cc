@@ -223,8 +223,7 @@ namespace MBSimHydraulics {
     setLineDiameter(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"checkvalvePressureLoss");
     TiXmlElement * eee = ee->FirstChildElement();
-    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<FunctionBase>::create<CheckvalveClosablePressureLoss>(eee);
-    ccpl_->initializeUsingXML(eee);
+    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<FunctionBase>::createAndInit<CheckvalveClosablePressureLoss>(eee);
     setLinePressureLoss(ccpl_);
     eee = ee->FirstChildElement(MBSIMHYDRAULICSNS"minimalXOpen");
     setLineMinimalXOpen(Element::getDouble(eee));
@@ -239,30 +238,25 @@ namespace MBSimHydraulics {
       setBallInitialPosition(getDouble(ee));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Spring");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"forceFunction");
-    Function<double(double,double)> *f=MBSim::ObjectFactory<FunctionBase>::create<Function<double(double,double)> >(ee->FirstChildElement());
-    f->initializeUsingXML(ee->FirstChildElement());
+    Function<double(double,double)> *f=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(ee->FirstChildElement());
     setSpringForceFunction(f);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"SeatContact");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactForceLaw");
-    GeneralizedForceLaw *gflS=MBSim::ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
-    gflS->initializeUsingXML(ee->FirstChildElement());
+    GeneralizedForceLaw *gflS=MBSim::ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
     setSeatContactForceLaw(gflS);
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactImpactLaw");
-    GeneralizedImpactLaw *gilS=MBSim::ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
+    GeneralizedImpactLaw *gilS=MBSim::ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
     if (gilS) {
-      gilS->initializeUsingXML(ee->FirstChildElement());
       setSeatContactImpactLaw(gilS);
     }
     setMaximalOpening(getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"maximalOpening")));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"MaximalOpeningContact");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactForceLaw");
-    GeneralizedForceLaw * gflM=MBSim::ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
-    gflM->initializeUsingXML(ee->FirstChildElement());
+    GeneralizedForceLaw * gflM=MBSim::ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
     setMaximalContactForceLaw(gflM);
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactImpactLaw");
-    GeneralizedImpactLaw * gilM=MBSim::ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
+    GeneralizedImpactLaw * gilM=MBSim::ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
     if (gilM) {
-      gilM->initializeUsingXML(ee->FirstChildElement());
       setMaximalContactImpactLaw(gilM);
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE

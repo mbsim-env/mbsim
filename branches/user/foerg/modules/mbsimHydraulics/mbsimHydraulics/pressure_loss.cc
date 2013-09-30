@@ -50,9 +50,8 @@ namespace MBSimHydraulics {
     TiXmlElement * e;
     e=element->FirstChildElement();
     while (e) {
-      LinePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::create<LinePressureLoss>(e);
+      LinePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<LinePressureLoss>(e);
       addLinePressureLoss(p);
-      p->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
   }
@@ -69,8 +68,7 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
     int n=Element::getInt(e);
     e=e->NextSiblingElement();
-    LinePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::create<LinePressureLoss>(e);
-    p->initializeUsingXML(e);
+    LinePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<LinePressureLoss>(e);
     setLinePressureLoss(p, n);
   }
 
@@ -246,8 +244,7 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    zetaTabular=MBSim::ObjectFactory<FunctionBase>::create<Function<double(double)> >(e->FirstChildElement());
-    zetaTabular->initializeUsingXML(e->FirstChildElement());
+    zetaTabular=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->FirstChildElement());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RelativeAreaZetaClosablePressureLoss,  MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")
