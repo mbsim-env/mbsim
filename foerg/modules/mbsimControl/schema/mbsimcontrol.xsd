@@ -348,7 +348,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function_VS"/>
+                <xs:element ref="mbsim:Function"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -386,7 +386,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function_SS"/>
+                <xs:element ref="mbsim:Function"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -434,7 +434,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function_SSS"/>
+                <xs:element ref="mbsim:Function"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1350,7 +1350,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function_VV"/>
+                <xs:element ref="mbsim:Function"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1386,7 +1386,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function_VVV"/>
+                <xs:element ref="mbsim:Function"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

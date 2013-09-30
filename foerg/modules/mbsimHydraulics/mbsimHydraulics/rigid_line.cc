@@ -76,9 +76,8 @@ namespace MBSimHydraulics {
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    LinePressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::create<LinePressureLoss>(e->FirstChildElement());
+    LinePressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<LinePressureLoss>(e->FirstChildElement());
     setLinePressureLoss(p);
-    p->initializeUsingXML(e->FirstChildElement());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ClosableRigidLine,  MBSIMHYDRAULICSNS"ClosableRigidLine")
@@ -113,9 +112,8 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"closablePressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    ClosablePressureLoss *p=MBSim::ObjectFactory< fmatvec::FunctionBase>::create<ClosablePressureLoss>(ee);
+    ClosablePressureLoss *p=MBSim::ObjectFactory< fmatvec::FunctionBase>::createAndInit<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
-    p->initializeUsingXML(ee);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
     refSignalString=ee->Attribute("ref");
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalChecksizeValue");
@@ -143,10 +141,9 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"unidirectionalPressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::create<UnidirectionalPressureLoss>(ee);
+    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<UnidirectionalPressureLoss>(ee);
     if (p) {
       setUnidirectionalPressureLoss(p);
-      p->initializeUsingXML(ee);
     }
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressureDrop");
     setMinimalPressureDrop(getDouble(ee));

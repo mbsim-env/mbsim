@@ -305,8 +305,7 @@ namespace MBSimHydraulics {
   void ConstrainedNode::initializeUsingXML(TiXmlElement *element) {
     HNode::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
-    pFun->initializeUsingXML(e->FirstChildElement());
+    pFun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, EnvironmentNode, MBSIMHYDRAULICSNS"EnvironmentNode")
