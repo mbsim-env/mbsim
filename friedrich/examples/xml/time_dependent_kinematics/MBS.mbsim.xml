@@ -34,7 +34,6 @@
             <contours />
             <openMBVRigidBody>
                 <ombv:Cube name="Box1">
-                    <ombv:staticColor>0</ombv:staticColor>
                     <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
                     <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
                     <ombv:scaleFactor>1</ombv:scaleFactor>
@@ -69,7 +68,6 @@
             <contours />
             <openMBVRigidBody>
                 <ombv:Cube name="Box1a">
-                    <ombv:staticColor>0</ombv:staticColor>
                     <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
                     <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
                     <ombv:scaleFactor>1</ombv:scaleFactor>
@@ -93,7 +91,6 @@
             <contours />
             <openMBVRigidBody>
                 <ombv:Cube name="Box2">
-                    <ombv:staticColor>0</ombv:staticColor>
                     <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
                     <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
                     <ombv:scaleFactor>1</ombv:scaleFactor>
@@ -118,7 +115,6 @@
             <contours />
             <openMBVRigidBody>
                 <ombv:Cube name="Box3">
-                    <ombv:staticColor>0</ombv:staticColor>
                     <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
                     <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
                     <ombv:scaleFactor>1</ombv:scaleFactor>

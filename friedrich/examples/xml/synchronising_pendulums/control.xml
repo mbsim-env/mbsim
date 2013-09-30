@@ -48,12 +48,9 @@
         <frames>
         </frames>
         <contours>
-          <contour>
-            <Line name="cTop"/>
-            <frameOfReference ref="Frame[C]"/>
-            <position>[0 0 0]'</position>
-            <orientation>eye(3)</orientation>
-          </contour>
+          <Line name="cTop">
+            <frameOfReference ref="../Frame[C]"/>
+          </Line>
         </contours>
         <!--
            -<openMBVRigidBody>

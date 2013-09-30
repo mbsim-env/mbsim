@@ -20,44 +20,37 @@
       </stateDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="fTop">
-            <!--
-            -<enableOpenMBV>
-              -  <size>fSize</size>
-              -  <offset>1</offset>
-              -</enableOpenMBV>
-            -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0 baseH/2 0]'</position>
-          <orientation>rotateAboutZ(pi/2)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fBottom">
-            <!--
-            -<enableOpenMBV>
-              -  <size>fSize</size>
-              -  <offset>1</offset>
-              -</enableOpenMBV>
-            -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0 -baseH/2 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fTop">
+          <!--
+          -<enableOpenMBV>
+            -  <size>fSize</size>
+            -  <offset>1</offset>
+            -</enableOpenMBV>
+          -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0 baseH/2 0]'</relativePosition>
+          <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fBottom">
+          <!--
+          -<enableOpenMBV>
+            -  <size>fSize</size>
+            -  <offset>1</offset>
+            -</enableOpenMBV>
+          -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0 -baseH/2 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <Point name="cBottom"/>
-          <frameOfReference ref="Frame[fBottom]"/>
-          <position>[0 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Point name="cBottom">
+          <frameOfReference ref="../Frame[fBottom]"/>
+        </Point>
       </contours>
       <openMBVRigidBody>
         <Cuboid name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.8</staticColor>
+          <diffuseColor>[0.9;0;0]</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -84,38 +77,34 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fBottom">
-            <!--
-            -<enableOpenMBV>
-              -  <size>fSize</size>
-              -  <offset>1</offset>
-              -</enableOpenMBV>
-            -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-pendulumL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fSphere">
-            <!--
-            -<enableOpenMBV>
-              -  <size>fSize</size>
-              -  <offset>1</offset>
-              -</enableOpenMBV>
-            -->
-          </Frame>
-          <frameOfReference ref="Frame[fBottom]"/>
-          <position>[sphereHeight(i) 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fBottom">
+          <!--
+          -<enableOpenMBV>
+            -  <size>fSize</size>
+            -  <offset>1</offset>
+            -</enableOpenMBV>
+          -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-pendulumL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fSphere">
+          <!--
+          -<enableOpenMBV>
+            -  <size>fSize</size>
+            -  <offset>1</offset>
+            -</enableOpenMBV>
+          -->
+          <frameOfReference ref="../Frame[fBottom]"/>
+          <relativePosition>[sphereHeight(i) 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
       </contours>
       <openMBVRigidBody>
         <Frustum name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0.7;0;0]</diffuseColor>
           <initialTranslation>[pendulumL/2 0 0]'</initialTranslation>
           <initialRotation>[0 pi/2 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -145,7 +134,7 @@
       <contours/>
       <openMBVRigidBody>
         <Sphere name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1.</staticColor>
+          <diffuseColor>[0.7;0;0]</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1</scaleFactor>

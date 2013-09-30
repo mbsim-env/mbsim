@@ -18,45 +18,40 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="FMount">
-            <enableOpenMBV>
-              <size>.02</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0; -.11; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="FBottom"/>
-          <frameOfReference ref="Frame[FMount]"/>
-          <position>[0; .01; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="FPlunger"/>
-          <frameOfReference ref="Frame[FBottom]"/>
-          <position>[0; .05+.01; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="FTop"/>
-          <frameOfReference ref="Frame[FPlunger]"/>
-          <position>[0; .01+.05; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="FMount">
+          <enableOpenMBV>
+            <size>.02</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0; -.11; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="FBottom">
+          <frameOfReference ref="../Frame[FMount]"/>
+          <relativePosition>[0; .01; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="FPlunger">
+          <frameOfReference ref="../Frame[FBottom]"/>
+          <relativePosition>[0; .05+.01; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="FTop">
+          <frameOfReference ref="../Frame[FPlunger]"/>
+          <relativePosition>[0; .01+.05; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <CompoundRigidBody name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.4</staticColor>
+          <diffuseColor>.4*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
           <Frustum name="frustum1">
-            <staticColor>.4</staticColor>
+            <diffuseColor>.4*ones(3,1)</diffuseColor>
             <initialTranslation>[0; 0; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -67,7 +62,7 @@
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
           <Frustum name="frustum2">
-            <staticColor>.4</staticColor>
+            <diffuseColor>.4*ones(3,1)</diffuseColor>
             <initialTranslation>[0; .13; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -93,36 +88,32 @@
       </stateDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="FTop"/>
-          <position>[0; .01; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="FBottom"/>
-          <position>[0; -.01; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="Top">
-            <enableOpenMBV>
-              <size>.05</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[0; .13; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="FTop">
+          <relativePosition>[0; .01; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="FBottom">
+          <relativePosition>[0; -.01; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="Top">
+          <enableOpenMBV>
+            <size>.05</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0; .13; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <CompoundRigidBody name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.1</staticColor>
+          <diffuseColor>.1*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
           <Frustum name="frustum1">
-            <staticColor>.1</staticColor>
+            <diffuseColor>.1*ones(3,1)</diffuseColor>
             <initialTranslation>[0; -.01; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -133,7 +124,7 @@
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
           <Frustum name="frustum2">
-            <staticColor>.1</staticColor>
+            <diffuseColor>.1*ones(3,1)</diffuseColor>
             <initialTranslation>[0; .01; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>

@@ -75,56 +75,48 @@
       <generalTranslation/>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="Bottom">
-            <enableOpenMBV>
-              <size>3e-3</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>zeros(3, 1)</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="CVMount">
-            <enableOpenMBV>
-              <size>3e-3</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[Bottom]"/>
-          <position>[0; 0.0105; 0]</position>
-          <orientation>[0,1,0; -1,0,0; 0,0,1]'</orientation>
-        </frame>
-        <frame>
-          <Frame name="PistonSpringMount"/>
-          <frameOfReference ref="Frame[CVMount]"/>
-          <position>[0.0011; 0; 0]</position>
-          <orientation>[0,1,0; -1,0,0; 0,0,1]</orientation>
-        </frame>
-        <frame>
-          <Frame name="Piston">
-            <enableOpenMBV>
-              <size>3e-3</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[CVMount]"/>
-          <position>[.01; 0; 0]</position>
-          <orientation>[0,1,0; -1,0,0; 0,0,1]</orientation>
-        </frame>
-        <frame>
-          <Frame name="PistonInitialTopFrame"/>
-          <frameOfReference ref="Frame[Piston]"/>
-          <position>[0; 0.03; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="Bottom">
+          <enableOpenMBV>
+            <size>3e-3</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>zeros(3, 1)</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="CVMount">
+          <enableOpenMBV>
+             <size>3e-3</size>
+             <offset>1</offset>
+           </enableOpenMBV>
+          <frameOfReference ref="../Frame[Bottom]"/>
+          <relativePosition>[0; 0.0105; 0]</relativePosition>
+          <relativeOrientation>[0,1,0; -1,0,0; 0,0,1]'</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="PistonSpringMount">
+          <frameOfReference ref="../Frame[CVMount]"/>
+          <relativePosition>[0.0011; 0; 0]</relativePosition>
+          <relativeOrientation>[0,1,0; -1,0,0; 0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="Piston">
+          <enableOpenMBV>
+            <size>3e-3</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[CVMount]"/>
+          <relativePosition>[.01; 0; 0]</relativePosition>
+          <relativeOrientation>[0,1,0; -1,0,0; 0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="PistonInitialTopFrame">
+          <frameOfReference ref="../Frame[Piston]"/>
+          <relativePosition>[0; 0.03; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <ombv:IvBody name="xxx">
-          <ombv:staticColor>.5</ombv:staticColor>
+          <ombv:diffuseColor>.5*ones(3,1)</ombv:diffuseColor>
           <ombv:initialTranslation>[0; -0.0245113; 0]</ombv:initialTranslation>
           <ombv:initialRotation>[3/2*pi; 0; 0]</ombv:initialRotation>
           <ombv:scaleFactor>1.</ombv:scaleFactor>
@@ -149,35 +141,30 @@
       </stateDependentTranslation>
       <generalRotation/>
       <frames>
-        <frame>
-          <Frame name="Bottom">
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0; -1.5e-2; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="PistonSpringMount"/>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0; 0.0104; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="Top">
-            <enableOpenMBV>
-              <size>3e-3</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[PistonSpringMount]"/>
-          <position>[0; 0.0046; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="Bottom">
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0; -1.5e-2; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="PistonSpringMount">
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0; 0.0104; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="Top">
+          <enableOpenMBV>
+            <size>3e-3</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[PistonSpringMount]"/>
+          <relativePosition>[0; 0.0046; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <ombv:IvBody name="xxx">
-          <ombv:staticColor>.5</ombv:staticColor>
+          <ombv:diffuseColor>.5*ones(3,1)</ombv:diffuseColor>
           <ombv:initialTranslation>[0; -0.0404966; 0]</ombv:initialTranslation>
           <ombv:initialRotation>[3/2*pi; 0; 0]</ombv:initialRotation>
           <ombv:scaleFactor>1.</ombv:scaleFactor>

@@ -1,24 +1,22 @@
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim">
   <frames>
     <embed count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <frame xmlns="http://mbsim.berlios.de/MBSim">
-        <Frame name="I{i}">
-          <!--
-          -<enableOpenMBV>
-            -  <size>fSize</size>
-            -  <offset>1</offset>
-            -</enableOpenMBV>
-          -->
-        </Frame>
-        <frameOfReference ref="Frame[I]"/>
-        <position>
+      <FixedRelativeFrame name="I{i}" xmlns="http://mbsim.berlios.de/MBSim">
+        <!--
+        -<enableOpenMBV>
+          -  <size>fSize</size>
+          -  <offset>1</offset>
+          -</enableOpenMBV>
+        -->
+        <frameOfReference ref="../Frame[I]"/>
+        <relativePosition>
           <![CDATA[
           x=linspace(-swingL/2*.6, swingL/2*.6, 3);
           ret=[x(i) swingH+.02 0]';
           ]]>
-        </position>
-        <orientation>eye(3)</orientation>
-      </frame>
+        </relativePosition>
+        <relativeOrientation>eye(3)</relativeOrientation>
+      </FixedRelativeFrame>
     </embed>
   </frames>
   <contours>
