@@ -37,14 +37,14 @@ namespace MBSim {
        * \brief constructor
        * \param name of circle
        */
-      CircleSolid(const std::string& name="") : Circle(name,true) {}
+      CircleSolid(const std::string& name="", Frame *R=0) : Circle(name,true,R) {}
 
       /**
        * \brief constructor
        * \param name of circle
        * \param radius of circle
        */
-      CircleSolid(const std::string &name, double r_) : Circle(name,r_,true) {}
+      CircleSolid(const std::string &name, double r_, Frame *R=0) : Circle(name,r_,true,R) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "CircleSolid"; }

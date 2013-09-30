@@ -38,7 +38,11 @@ namespace MBSim {
        * \brief constructor
        * \param name of line segment
        */
-      LineSegment(const std::string& name="");
+      LineSegment(const std::string& name, double l, double t, Frame *R=0);
+
+      LineSegment(const std::string& name, double l, Frame *R=0);
+
+      LineSegment(const std::string& name="", Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "LineSegment"; }
