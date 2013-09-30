@@ -438,7 +438,11 @@ namespace MBSim {
   }
 
   void DynamicSystem::init(InitStage stage) {
-    if (stage == preInit) {
+    if (stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+    }
+    else if (stage == preInit) {
       if (!R) {
         DynamicSystem *sys = dynamic_cast<DynamicSystem*>(parent);
         if (sys)
