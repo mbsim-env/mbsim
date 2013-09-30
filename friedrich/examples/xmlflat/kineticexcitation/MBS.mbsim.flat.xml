@@ -2,28 +2,24 @@
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <frames>
-    <frame>
-      <Frame name="W">
-        <enableOpenMBV>
-          <size>1</size>
-          <offset>1</offset>
-        </enableOpenMBV>
-      </Frame>
-      <frameOfReference ref="Frame[I]"/>
-      <position>[0;0;0]</position>
-      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-    </frame>
-    <frame>
-      <Frame name="Wrot">
-        <enableOpenMBV>
-          <size>1</size>
-          <offset>1</offset>
-        </enableOpenMBV>
-      </Frame>
-      <frameOfReference ref="Frame[I]"/>
-      <position>[0;0;0]</position>
-      <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
-    </frame>
+    <FixedRelativeFrame name="W">
+      <enableOpenMBV>
+        <size>1</size>
+        <offset>1</offset>
+      </enableOpenMBV>
+      <frameOfReference ref="../Frame[I]"/>
+      <relativePosition>[0;0;0]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
+    <FixedRelativeFrame name="Wrot">
+      <enableOpenMBV>
+        <size>1</size>
+        <offset>1</offset>
+      </enableOpenMBV>
+      <frameOfReference ref="../Frame[I]"/>
+      <relativePosition>[0;0;0]</relativePosition>
+      <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups/>

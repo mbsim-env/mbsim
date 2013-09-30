@@ -26,14 +26,14 @@ using namespace MBSimHydraulics;
 
 System::System(const string &name, bool bilateral, bool unilateral) : Group(name) {
 
-  addFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(1)*BasicRotAIKz(-1.));
+  addFrame(new FixedRelativeFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(1)*BasicRotAIKz(-1.)));
 
   RigidBody * b = new RigidBody("Body");
   addObject(b);
   b->setMass(1);
   b->setInertiaTensor(SymMat(3, EYE));
   b->setFrameOfReference(getFrame("ref"));
-  b->addFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(-2.)*BasicRotAIKz(-1.));
+  b->addFrame(new FixedRelativeFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(-2.)*BasicRotAIKz(-1.)));
   b->setFrameForKinematics(b->getFrame("C"));
   b->setTranslation(new TranslationAlongXAxis<VecV>);
   b->setInitialGeneralizedVelocity(.1);

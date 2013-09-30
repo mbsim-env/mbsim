@@ -56,27 +56,27 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addObject(traeger);
   Vec KrCF(3, INIT, 0);
   KrCF(0)=-l/2.;
-  traeger->addFrame(getBodyName(0), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(0), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(0))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=-l/4.;
-  traeger->addFrame(getBodyName(1), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(1), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(1))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=0;
-  traeger->addFrame(getBodyName(2), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(2), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(2))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=l/4.;
-  traeger->addFrame(getBodyName(3), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(3), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(3))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=l/2.;
-  traeger->addFrame(getBodyName(4), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(4), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(4))->enableOpenMBV(3.*lScheibe);
 #endif
@@ -94,7 +94,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisu->setHeight(l+lScheibe);
   traegerVisu->setInitialRotation(0, -M_PI/2., 0);
   traegerVisu->setInitialTranslation(-(l+lScheibe)/2., 0, 0);
-  traegerVisu->setStaticColor(0);
+  traegerVisu->setDiffuseColor(0.5,0.5,0.5);
   traeger->setOpenMBVRigidBody(traegerVisu);
 #endif
 
@@ -106,8 +106,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
     RigidBody * scheibe = new RigidBody("Scheibe_"+getBodyName(i));
     addObject(scheibe);
     scheibe->setMass(2.);
-    scheibe->addFrame("L", vML, SqrMat(3, EYE));
-    scheibe->addFrame("R", vMR, SqrMat(3, EYE));
+    scheibe->addFrame(new FixedRelativeFrame("L", vML, SqrMat(3, EYE)));
+    scheibe->addFrame(new FixedRelativeFrame("R", vMR, SqrMat(3, EYE)));
     scheibe->setFrameOfReference(traeger->getFrame(getBodyName(i)));
     scheibe->setFrameForKinematics(scheibe->getFrame("C"));
     scheibe->setInertiaTensor(0.001*SymMat(3, EYE));
@@ -122,7 +122,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibeVisu->setHeight(lScheibe);
     scheibeVisu->setInitialRotation(0, M_PI/2., 0);
     scheibeVisu->setInitialTranslation(lScheibe/2., 0, 0);
-    scheibeVisu->setStaticColor((i)/4.);
+    scheibeVisu->setDiffuseColor(i/4.,i/4.,i/4.);
     scheibe->setOpenMBVRigidBody(scheibeVisu);
 #endif
 

@@ -11,7 +11,7 @@ packages = mbsim mbsimHydraulics mbsimControl
 CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -O0 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags $(packages)` 
+	CPPFLAGS= -g -O3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags $(packages)` 
 
 $(Target) : $(objects)
 	$(CXX) -o $@ $(objects) `pkg-config --libs $(packages)` 

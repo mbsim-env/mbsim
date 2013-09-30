@@ -3,13 +3,16 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <position>[0;0;0]</position><!-- dummy -->
   <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
-  <frames/>
+  <frames>
+    <FixedRelativeFrame name="Os">
+      <relativePosition>[0;0;0]</relativePosition>
+      <relativeOrientation>[0,-1,0;1,0,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
+  </frames>
   <contours>
-    <contour>
-      <Plane name="Plane"/>
-      <position>[0;0;0]</position>
-      <orientation>[0,-1,0;1,0,0;0,0,1]</orientation>
-    </contour>
+    <Plane name="Plane">
+      <frameOfReference ref="../Frame[Os]"/>
+    </Plane>
   </contours>
   <groups/>
   <objects>
@@ -28,24 +31,27 @@
       <stateDependentRotation>
         <RotationAboutAxesXYZ/>
       </stateDependentRotation>
-      <frames/>
+      <frames>
+        <FixedRelativeFrame name="S1">
+          <relativePosition>[0;0.3e-2;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="S2">
+          <relativePosition>[0;1.6e-2;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+      </frames>
       <contours>
-        <contour>
-          <Sphere name="Sphere1">
-            <radius>1.5e-2</radius>
-            <enableOpenMBV/>
-          </Sphere>
-          <position>[0;0.3e-2;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </contour>
-        <contour>
-          <Sphere name="Sphere2">
-            <radius>0.5e-2</radius>
-            <enableOpenMBV/>
-          </Sphere>
-          <position>[0;1.6e-2;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </contour>
+        <Sphere name="Sphere1">
+          <frameOfReference ref="../Frame[S1]"/>
+          <radius>1.5e-2</radius>
+          <enableOpenMBV/>
+        </Sphere>
+        <Sphere name="Sphere2">
+          <frameOfReference ref="../Frame[S2]"/>
+          <radius>0.5e-2</radius>
+          <enableOpenMBV/>
+        </Sphere>
       </contours>
       <enableOpenMBVFrameC>
         <size>0.036</size>

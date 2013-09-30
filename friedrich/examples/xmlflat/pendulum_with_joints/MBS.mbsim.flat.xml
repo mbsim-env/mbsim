@@ -4,11 +4,10 @@
   <position>[0;0;0]</position><!-- dummy -->
   <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <frames>
-    <frame>
-      <Frame name="Os"/>
-      <position>[0;0;0.04]</position>
-      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-    </frame>
+    <FixedRelativeFrame name="Os">
+      <relativePosition>[0;0;0.04]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups/>
@@ -31,16 +30,14 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="PunktO"/>
-          <position>[0;0.2;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
-        <frame>
-          <Frame name="PunktU"/>
-          <position>[0;-0.45;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
+        <FixedRelativeFrame name="PunktO">
+          <relativePosition>[0;0.2;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="PunktU">
+          <relativePosition>[0;-0.45;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
@@ -74,11 +71,10 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="Punkt"/>
-          <position>[0;0.2;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
+        <FixedRelativeFrame name="Punkt">
+          <relativePosition>[0;0.2;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
@@ -106,7 +102,6 @@
           <BilateralImpact/>
         </generalizedImpactLaw>
         <ombv:Arrow name="dummy">
-          <ombv:staticColor>1</ombv:staticColor>
           <ombv:diameter>0.01</ombv:diameter>
           <ombv:headDiameter>0.02</ombv:headDiameter>
           <ombv:headLength>0.04</ombv:headLength>
@@ -126,7 +121,6 @@
           <BilateralImpact/>
         </generalizedImpactLaw>
         <ombv:Arrow name="dummy">
-          <ombv:staticColor>1</ombv:staticColor>
           <ombv:diameter>0.01</ombv:diameter>
           <ombv:headDiameter>0.02</ombv:headDiameter>
           <ombv:headLength>0.04</ombv:headLength>
