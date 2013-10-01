@@ -92,42 +92,41 @@ void ChoiceProperty::initialize() {
 }
 
 TiXmlElement* ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  cout << "ChoiceProperty " << "xmlName = " << xmlName << "element = " << element << endl;
-  if(element)
-  cout << "mode = " << mode << " " << element->ValueStr() << endl;
-  if(mode<=1) {
-    TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
-    if(e) {
-      TiXmlElement* ee=(mode==0)?e->FirstChildElement():e;
-      if(ee) {
-        for(int i=0; i<property.size(); i++) {
-          if(ee->ValueStr() == xmlBase+property[i]->getType()) {
-            index = i;
-            return property[index]->initializeUsingXML(ee);
+  if(element) {
+    if(mode<=1) {
+      TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
+      if(e) {
+        TiXmlElement* ee=(mode==0)?e->FirstChildElement():e;
+        if(ee) {
+          for(int i=0; i<property.size(); i++) {
+            if(ee->ValueStr() == xmlBase+property[i]->getType()) {
+              index = i;
+              return property[index]->initializeUsingXML(ee);
+            }
           }
         }
       }
-    }
-    return 0;
-  }
-  else {
-    if(xmlName!="") {
-      TiXmlElement *e=element->FirstChildElement(xmlName);
-      if(e)
-        for(int i=0; i<property.size(); i++)
-          if(property[i]->initializeUsingXML(e)) {
-            index = i;
-            return e;
-          }
+      return 0;
     }
     else {
-      for(int i=0; i<property.size(); i++)
-        if(property[i]->initializeUsingXML(element)) {
-          index = i;
-          return element;
-        }
+      if(xmlName!="") {
+        TiXmlElement *e=element->FirstChildElement(xmlName);
+        if(e)
+          for(int i=0; i<property.size(); i++)
+            if(property[i]->initializeUsingXML(e)) {
+              index = i;
+              return e;
+            }
+      }
+      else {
+        for(int i=0; i<property.size(); i++)
+          if(property[i]->initializeUsingXML(element)) {
+            index = i;
+            return element;
+          }
+      }
+      return 0;
     }
-    return 0;
   }
 }
 
@@ -161,12 +160,9 @@ void ChoiceProperty::toWidget(QWidget *widget) {
 
 TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
   active = false;
-  cout << "ExtProperty " << "xmlName = " << xmlName << "element = " << element << endl;
   if(element)
-  cout << element->ValueStr() << endl;
   if(xmlName!="") {
     TiXmlElement *e=element->FirstChildElement(xmlName);
-    cout << e << endl;
     if(e)
       active = property->initializeUsingXML(e);
     if(alwaysWriteXMLName) 
@@ -174,7 +170,6 @@ TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
   }
   else
     active = property->initializeUsingXML(element);
-  cout << active << endl;
   return active?element:0;
 }
 
