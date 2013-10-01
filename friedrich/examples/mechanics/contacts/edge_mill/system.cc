@@ -45,8 +45,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   JR_axis(1) = 1.;
   KrKS(1) = 0.5*l_axis;
 
-  this->addFrame("R",WrOK,SqrMat(3,EYE));
-  axis->addFrame("R",-KrKS,SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("R",WrOK,SqrMat(3,EYE)));
+  axis->addFrame(new FixedRelativeFrame("R",-KrKS,SqrMat(3,EYE)));
   axis->setFrameOfReference(getFrame("R"));
   axis->setFrameForKinematics(axis->getFrame("R"));
   axis->setRotation(new RotationAboutFixedAxis<VecV>(JR_axis));
@@ -78,8 +78,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   WrOK(1) = l_axis;
   KrKS(0) = 0.5*l_pole, KrKS(1) = 0.;
 
-  axis->addFrame("P",WrOK,AWK,axis->getFrame("R"));
-  pole->addFrame("R",-KrKS,SqrMat(3,EYE));
+  axis->addFrame(new FixedRelativeFrame("P",WrOK,AWK,axis->getFrame("R")));
+  pole->addFrame(new FixedRelativeFrame("R",-KrKS,SqrMat(3,EYE)));
   pole->setFrameOfReference(axis->getFrame("P"));
   pole->setFrameForKinematics(pole->getFrame("R"));
   pole->setRotation(new RotationAboutFixedAxis<VecV>(JR_pole));
@@ -101,8 +101,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   WrOK(0) = l_pole, WrOK(1) = 0.;
   KrKS(0) = 0.5*l_muller;
 
-  pole->addFrame("P",WrOK,SqrMat(3,EYE),pole->getFrame("R"));
-  muller->addFrame("R",-KrKS,SqrMat(3,EYE));
+  pole->addFrame(new FixedRelativeFrame("P",WrOK,SqrMat(3,EYE),pole->getFrame("R")));
+  muller->addFrame(new FixedRelativeFrame("R",-KrKS,SqrMat(3,EYE)));
   muller->setFrameOfReference(pole->getFrame("P"));
   muller->setFrameForKinematics(muller->getFrame("R"));
   muller->setRotation(new RotationAboutFixedAxis<VecV>(JR_muller));	
@@ -116,9 +116,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(0,0) = cos(M_PI*0.5); AWK(0,1) = 0.; AWK(0,2) = sin(M_PI*0.5);
   AWK(1,0) = 0., AWK(1,1) = 1.;
   AWK(2,0) = -sin(M_PI*0.5), AWK(2,2) = cos(M_PI*0.5);
+  muller->addFrame(new FixedRelativeFrame("Disk",Vec(3,INIT,0.),AWK));
+  disk->setFrameOfReference(muller->getFrame("Disk"));
   disk->setOutCont(true);
   disk->setRadius(r_muller);
-  muller->addContour(disk,Vec(3,INIT,0.),AWK);
+  muller->addContour(disk);
 
   /* stony ground */
   RigidBody* groundBase = new RigidBody("GroundBase");
@@ -162,7 +164,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
   WrOK(0) = 0., WrOK(1) = -dh;
-  this->addFrame("K",WrOK,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("K",WrOK,SqrMat(3,EYE),this->getFrame("I")));
   groundBase->setFrameOfReference(this->getFrame("K"));
   groundBase->setFrameForKinematics(groundBase->getFrame("C"));
   groundBase->setMass(1.);
@@ -171,7 +173,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   ground->setRadii(radii);
   ground->setHeight(h);
-  groundBase->addContour(ground,Vec(3,INIT,0.),SqrMat(3,EYE));
+  groundBase->addContour(ground);
 
   /* contact */
   Contact *contact = new Contact("Contact");
@@ -194,7 +196,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obj1->setHeight(l_axis);
   obj1->setInitialRotation(-M_PI/2,0.,0.);
   obj1->setInitialTranslation(0.,l_axis*0.5,0.);
-  obj1->setStaticColor(0.75);
+  obj1->setDiffuseColor(0.3333,1,0.6666);
   axis->setOpenMBVRigidBody(obj1);
 
   /* pole */
@@ -294,7 +296,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
   frustumMBV->setIvFileName("frustum.iv");
-  frustumMBV->setStaticColor(1.);
+  frustumMBV->setDiffuseColor(0.3333,0.3333,0.6666);
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   groundBase->setOpenMBVRigidBody(frustumMBV);

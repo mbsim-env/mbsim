@@ -38,7 +38,11 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Rectangle(const std::string &name);
+      Rectangle(const std::string &name="", Frame *R=0);
+
+      Rectangle(const std::string &name, double yL, double zL, Frame *R=0);
+
+      Rectangle(const std::string &name, double yL, double zL, double t, Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const {

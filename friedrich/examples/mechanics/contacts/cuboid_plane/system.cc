@@ -18,7 +18,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  addFrame("Os",Vec(3),SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("Os",Vec(3),SqrMat(3,EYE)));
 
   Plane *wall = new Plane("WandUnten");
   double phi = M_PI/2;
@@ -31,7 +31,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   wall->enableOpenMBV(true, 10, 5);
 #endif
-  addContour(wall,Vec(3),AWK);
+  addFrame(new FixedRelativeFrame("WandUnten",Vec(3),AWK));
+  wall->setFrameOfReference(getFrame("WandUnten"));
+  addContour(wall);
 
   RigidBody* body = new RigidBody("Wuerfel");
   addObject(body);
@@ -65,7 +67,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setXLength(l);
   cuboid->setYLength(h);
   cuboid->setZLength(b);
-  body->addContour(cuboid,Vec(3),SqrMat(3,EYE));
+  body->addContour(cuboid);
 
   Contact *cnf = new Contact("Kontakt_Wuerfel");
   cnf->setContactForceLaw(new UnilateralConstraint);

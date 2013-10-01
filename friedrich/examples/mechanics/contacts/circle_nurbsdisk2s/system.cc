@@ -48,7 +48,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   KrKS(1) = 0.5*l_axis;
 
-  axis->addFrame("R",-KrKS,SqrMat(3,EYE));
+  axis->addFrame(new FixedRelativeFrame("R",-KrKS,SqrMat(3,EYE)));
   axis->setFrameOfReference(this->getFrame("I"));
   axis->setFrameForKinematics(axis->getFrame("R"));
   axis->setRotation(new RotationAboutFixedAxis<VecV>(JR_axis));
@@ -75,8 +75,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   WrOK(1) = l_axis;
   KrKS(0) = 0.5*l_pole; KrKS(1) = 0.;
 
-  axis->addFrame("P",WrOK,AWK,axis->getFrame("R"));
-  pole->addFrame("R",-KrKS,SqrMat(3,EYE));
+  axis->addFrame(new FixedRelativeFrame("P",WrOK,AWK,axis->getFrame("R")));
+  pole->addFrame(new FixedRelativeFrame("R",-KrKS,SqrMat(3,EYE)));
   pole->setFrameOfReference(axis->getFrame("P"));
   pole->setFrameForKinematics(pole->getFrame("R"));
   pole->setRotation(new RotationAboutFixedAxis<VecV>(JR_pole));
@@ -99,8 +99,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   WrOK(0) = l_pole; WrOK(1) = 0.;
   KrKS(0) = 0.5*l_muller;
 
-  pole->addFrame("P",WrOK,SqrMat(3,EYE),pole->getFrame("R"));
-  muller->addFrame("R",-KrKS,SqrMat(3,EYE));
+  pole->addFrame(new FixedRelativeFrame("P",WrOK,SqrMat(3,EYE),pole->getFrame("R")));
+  muller->addFrame(new FixedRelativeFrame("R",-KrKS,SqrMat(3,EYE)));
   muller->setFrameOfReference(pole->getFrame("P"));
   muller->setFrameForKinematics(muller->getFrame("R"));
   muller->setRotation(new RotationAboutFixedAxis<VecV>(JR_muller));	
@@ -109,14 +109,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(muller);
 
   /* contour of muller */
-  Circle* disk = new Circle("Disk");
   AWK = SqrMat(3,EYE);
   AWK(0,0) = cos(M_PI*0.5); AWK(0,2) = sin(M_PI*0.5);
   AWK(2,0) = -sin(M_PI*0.5); AWK(2,2) = cos(M_PI*0.5);
+  muller->addFrame(new FixedRelativeFrame("Disk",Vec(3,INIT,0.),AWK,muller->getFrame("C")));
+  Circle* disk = new Circle("Disk");
+  disk->setFrameOfReference(muller->getFrame("Disk"));
   disk->setOutCont(true);
   disk->setRadius(r_muller);
   disk->enableOpenMBV();
-  muller->addContour(disk,Vec(3,INIT,0.),AWK,muller->getFrame("C"));
+  muller->addContour(disk);
 
   /* disk */
   // body
@@ -141,7 +143,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   WrOK = Vec(3,INIT,0);
   WrOK(1) = - d(0)/2 + l_axis - r_muller/cos(delta);
-  this->addFrame("D",WrOK,AWK_disk);
+  this->addFrame(new FixedRelativeFrame("D",WrOK,AWK_disk));
 
   nurbsdisk->setEModul(E);
   nurbsdisk->setDensity(rho);

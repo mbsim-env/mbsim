@@ -121,6 +121,14 @@ namespace MBSim {
 
   void RigidBody::init(InitStage stage) {
     if(stage==preInit) {
+
+      for(unsigned int k=0; k<contour.size(); k++) {
+        if(!(contour[k]->getFrameOfReference()))
+          contour[k]->setFrameOfReference(C);
+        CompoundContour *c = dynamic_cast<CompoundContour*>(contour[k]);
+        if(c) RBC.push_back(c);
+      }
+
       Body::init(stage);
 
       int nqT=0, nqR=0, nuT=0, nuR=0;
@@ -179,13 +187,6 @@ namespace MBSim {
         C->setFrameOfReference(K);
         C->setRelativeOrientation(K->getRelativeOrientation().T());
         C->setRelativePosition(-(C->getRelativeOrientation()*K->getRelativePosition()));
-      }
-
-      for(unsigned int k=0; k<contour.size(); k++) {
-        if(!(contour[k]->getFrameOfReference()))
-          contour[k]->setFrameOfReference(C);
-        CompoundContour *c = dynamic_cast<CompoundContour*>(contour[k]);
-        if(c) RBC.push_back(c);
       }
     }
     else if(stage==resize) {

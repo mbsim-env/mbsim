@@ -123,22 +123,23 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
  
   // Contour of Body1
   Sphere *spherecontour1 = new Sphere("Sphere1",2*d);
-  body1->addContour(spherecontour1,Vec(3),SqrMat(3,EYE));
+  body1->addContour(spherecontour1);
   
   // Contour of Body2
   Sphere *spherecontour2 = new Sphere("Sphere2",d);
-  body2->addContour(spherecontour2,Vec(3),SqrMat(3,EYE));
+  body2->addContour(spherecontour2);
 
   // Contour of Body3
   Sphere *spherecontour3 = new Sphere("Sphere3",d);
-  body3->addContour(spherecontour3,Vec(3),SqrMat(3,EYE));
+  body3->addContour(spherecontour3);
 
   // Contour of ground plane
   SqrMat A(3);
   A(2,2) = 1;
   A(0,1) = 1;
   A(1,0) = 1;
-  addContour(new Plane("Plane"),Vec(3),A);
+  addFrame(new FixedRelativeFrame("Plane",Vec(3),A));
+  addContour(new Plane("Plane",getFrame("Plane")));
 
   // Contour of Frustum
   Vec radii(2);
@@ -149,7 +150,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   frustumcontour->enableOpenMBV();
 #endif
-  cup->addContour(frustumcontour,Vec(3,INIT,0.),SqrMat(3,EYE),cup->getFrame("C"));
+  cup->addContour(frustumcontour);
 
 //  // Contour of Frustum 2
 //  Vec radii2(2);
@@ -288,7 +289,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy1->setScaleFactor(1.);
   dummy1->setMinimalColorValue(0);
   dummy1->setMaximalColorValue(1);
-  dummy1->setStaticColor(1);
+  dummy1->setDiffuseColor(0.3333,0.6666,1);
   body1->setOpenMBVRigidBody(dummy1);
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
@@ -297,7 +298,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy2->setScaleFactor(1.);
   dummy2->setMinimalColorValue(0);
   dummy2->setMaximalColorValue(1);
-  dummy2->setStaticColor(0.3);
+  dummy2->setDiffuseColor(0.3333,1,1);
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
@@ -306,7 +307,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy3->setScaleFactor(1.);
   dummy3->setMinimalColorValue(0);
   dummy3->setMaximalColorValue(1);
-  dummy3->setStaticColor(0.1);
+  dummy3->setDiffuseColor(0.6666,0.6666,1);
   body3->setOpenMBVRigidBody(dummy3);
 
 //  cup2->getFrame("C")->enableOpenMBV(1.5*d);

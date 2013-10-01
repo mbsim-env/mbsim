@@ -37,14 +37,14 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Sphere(const std::string &name="") : RigidContour(name), r(0.) {}
+      Sphere(const std::string &name="", Frame *R=0) : RigidContour(name,R), r(0.) {}
 
       /**
        * \brief constructor
        * \param name of sphere
        * \param radius of sphere
        */
-      Sphere(const std::string &name, double r_) : RigidContour(name), r(r_) {}
+      Sphere(const std::string &name, double r_, Frame *R=0) : RigidContour(name,R), r(r_) {}
       
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Sphere"; }

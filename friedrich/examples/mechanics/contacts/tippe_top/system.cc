@@ -23,7 +23,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  Plane *plane = new Plane("Plane");
   double phi = M_PI/2;
   SqrMat AWK(3);
   AWK(0,0) = cos(phi);
@@ -31,7 +30,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
-  addContour(plane,Vec(3),AWK);
+  addFrame(new FixedRelativeFrame("Plane",Vec(3),AWK));
+  addContour(new Plane("Plane",getFrame("Plane")));
 
   RigidBody* body = new RigidBody("Body");
   addObject(body);
@@ -67,7 +67,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sphere->enableOpenMBV();
 #endif
-  body->addContour(sphere,rSM,SqrMat(3,EYE));
+  body->addFrame(new FixedRelativeFrame("Sphere1",rSM,SqrMat(3,EYE)));
+  sphere->setFrameOfReference(body->getFrame("Sphere1"));
+  body->addContour(sphere);
   sphere = new Sphere("Sphere2");
   sphere->setRadius(r2);
   rSM(1) = a2;
@@ -75,7 +77,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sphere->enableOpenMBV();
   body->getFrame("C")->enableOpenMBV(2*1.2*r1,0);
 #endif
-  body->addContour(sphere,rSM,SqrMat(3,EYE));
+  body->addFrame(new FixedRelativeFrame("Sphere2",rSM,SqrMat(3,EYE)));
+  sphere->setFrameOfReference(body->getFrame("Sphere2"));
+  body->addContour(sphere);
 
   double mu = 0.2;
 
