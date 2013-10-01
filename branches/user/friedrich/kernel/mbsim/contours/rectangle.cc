@@ -29,8 +29,13 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Rectangle::Rectangle(const string &name) :
-      Plane(name), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Rectangle::Rectangle(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  }
+
+  Rectangle::Rectangle(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  }
+
+  Rectangle::Rectangle(const string &name, double yL, double zL, double t, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(t), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
   void Rectangle::init(InitStage stage) {

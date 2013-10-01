@@ -34,7 +34,9 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Cuboid(const std::string &name);
+      Cuboid(const std::string &name="", Frame *R=0);
+
+      Cuboid(const std::string &name, double lx, double ly, double lz, Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Cuboid"; }

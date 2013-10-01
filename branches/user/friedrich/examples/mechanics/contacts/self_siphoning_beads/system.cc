@@ -152,10 +152,7 @@ void System::addTrajectory(double tEnd) {
   SX t("t");
   vector<SX> fexp(3);
   double v = M_PI / tEnd;
-  double h = 2e-2;
   double x0 = 2e-2;
-  double a = -h / (x0 * x0);
-  double b = -2 * a * x0;
   fexp[0] = x0 * sin(v * t - (M_PI_2)) + x0;
   fexp[1] = radius + x0 * cos(v * t - (M_PI_2));
 //  fexp[1] = radius + (a * v * t * v * t + b * v * t);

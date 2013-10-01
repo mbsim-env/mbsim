@@ -32,7 +32,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Cuboid::Cuboid(const string &name) : CompoundContour(name), lx(1.0), ly(1.0), lz(1.0) {}
+  Cuboid::Cuboid(const string &name, Frame *R) : CompoundContour(name,R), lx(1.0), ly(1.0), lz(1.0) { }
+
+  Cuboid::Cuboid(const string &name, double lx_, double ly_, double lz_, Frame *R) : CompoundContour(name,R), lx(lx_), ly(ly_), lz(lz_) { }
 
   void Cuboid::init(InitStage stage) {
     if(stage==preInit) {

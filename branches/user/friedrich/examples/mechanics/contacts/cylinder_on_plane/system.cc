@@ -79,28 +79,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Contour of InnerCylinder
   CircleSolid *circlecontour=new CircleSolid("Circle",d);
-  body->addContour(circlecontour,Vec(3),SqrMat(3,EYE));
+  body->addContour(circlecontour);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour->enableOpenMBV();
 #endif
 
   // Contour of ObstacleCylinder
   CircleSolid *circlecontour2=new CircleSolid("Circle2",d);
-  body2->addContour(circlecontour2,Vec(3),SqrMat(3,EYE));
+  body2->addContour(circlecontour2);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour2->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (outward)
   CircleHollow *circlecontour3=new CircleHollow("Circle3",2.5*d);
-  body3->addContour(circlecontour3,Vec(3),SqrMat(3,EYE));
+  body3->addContour(circlecontour3);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour3->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (inward)
   CircleSolid *circlecontour4=new CircleSolid("Circle4",3*d);
-  body3->addContour(circlecontour4,Vec(3),SqrMat(3,EYE));
+  body3->addContour(circlecontour4);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour4->enableOpenMBV();
 #endif
@@ -114,7 +114,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(1,1) = cos(phi);
   A(1,0) = sin(phi);
   A(2,2) = 1;
-  addContour(new Line("Line"),Vec(3),A);
+  addFrame(new FixedRelativeFrame("Line",Vec(3),A));
+  addContour(new Line("Line",getFrame("Line")));
 
 
   // Contact between CylinderHollow and ObstacleCylinder

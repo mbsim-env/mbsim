@@ -45,8 +45,12 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Line *lL = new Line("LineL");
   Line *lR = new Line("LineR");
 
-  this->addContour(lL, r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(0));
-  this->addContour(lR,-r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(M_PI));
+  this->addFrame(new FixedRelativeFrame("LineL", r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(0)));
+  this->addFrame(new FixedRelativeFrame("LineR",-r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(M_PI)));
+  lL->setFrameOfReference(this->getFrame("LineL"));
+  lR->setFrameOfReference(this->getFrame("LineR"));
+  this->addContour(lL);
+  this->addContour(lR);
 
   SymMat Theta(3);
   Vec WrOS(3);
@@ -64,7 +68,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   this->addObject(muffe);
 
   WrOS(1) = yMuffe0;
-  this->addFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I")));
   muffe->setFrameOfReference(this->getFrame("B"));
   muffe->setFrameForKinematics(muffe->getFrame("C"));
   muffe->setTranslation(new LinearTranslation<VecV>(JT));
@@ -103,7 +107,9 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
               KrSPMuffe(0) = -R/2;   KrSPMuffe(1) = -hoehe/2.;
               break;
     }
-    muffe->addContour(pMuffe,KrSPMuffe,SqrMat(3,EYE));
+    muffe->addFrame(new FixedRelativeFrame(name.str(),KrSPMuffe,SqrMat(3,EYE)));
+    pMuffe->setFrameOfReference(muffe->getFrame(name.str()));
+    muffe->addContour(pMuffe);
     contact->setContactForceLaw  (cntForceLaw );
     contact->setContactImpactLaw (impForceLaw );
     contact->setFrictionForceLaw (coulFriction);
@@ -114,7 +120,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   // Drehpunkt der Feder
   Vec KrSPFederDrehpunkt(3);
   KrSPFederDrehpunkt(0) = FDPunkt;
-  muffe->addFrame("Drehpunkt",KrSPFederDrehpunkt,SqrMat(3,EYE));
+  muffe->addFrame(new FixedRelativeFrame("Drehpunkt",KrSPFederDrehpunkt,SqrMat(3,EYE)));
 
   // Specht --------------------------------------
   double  mSpecht = 100.e-3;
@@ -128,7 +134,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   Vec MrDrehpunkt(3); /* wird von Schwerpunkt aus bemast */
   MrDrehpunkt(0) = -2.0 * FDPunkt;
-  specht->addFrame("D",MrDrehpunkt,SqrMat(3,EYE),specht->getFrame("C"));
+  specht->addFrame(new FixedRelativeFrame("D",MrDrehpunkt,SqrMat(3,EYE),specht->getFrame("C")));
   specht->setFrameForKinematics(specht->getFrame("D"));
 
   Vec SrSchabelspitze(3);
@@ -140,7 +146,9 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInertiaTensor(Theta);
 
   Point* schnabel = new Point("Schabel");
-  specht->addContour(schnabel,SrSchabelspitze,SqrMat(3,EYE));
+  specht->addFrame(new FixedRelativeFrame("Schabel",SrSchabelspitze,SqrMat(3,EYE)));
+  schnabel->setFrameOfReference(specht->getFrame("Schabel"));
+  specht->addContour(schnabel);
 
   RelativeRotationalSpringDamper *feder = new RelativeRotationalSpringDamper("Drehfeder");
   feder->connect(muffe->getFrame("Drehpunkt"),specht->getFrame("D"));

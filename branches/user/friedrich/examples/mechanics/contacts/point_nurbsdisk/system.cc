@@ -93,7 +93,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     WrOS0B(0) = (rI+rO)*0.25*cos(k*2.*M_PI/nB);
     WrOS0B(1) = (rI+rO)*0.35*sin(k*2.*M_PI/nB);
     WrOS0B(2) = b(1)*0.5 + r + 1e-2*(1.+cos(k*2.*M_PI/nB));
-    this->addFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+    this->addFrame(new FixedRelativeFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
 
     balls[k]->setFrameOfReference(this->getFrame(frame.str()));
     balls[k]->setFrameForKinematics(balls[k]->getFrame("C"));
@@ -113,10 +113,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   for(int k=0; k<nB; k++) {
     stringstream pointname; // point contour at lower position
     pointname << "Point_" << k;
-    points.push_back(new Point(pointname.str()));
-
     Vec BR(3,INIT,0.); BR(2)=-r;
-    balls[k]->addContour(points[k],BR,SqrMat(3,EYE),balls[k]->getFrame("C"));
+    balls[k]->addFrame(new FixedRelativeFrame(pointname.str(),BR,SqrMat(3,EYE),balls[k]->getFrame("C")));
+    points.push_back(new Point(pointname.str(),balls[k]->getFrame(pointname.str())));
+    balls[k]->addContour(points[k]);
 
     stringstream contactname; // fricional contact
     contactname << "Contact_" << k;

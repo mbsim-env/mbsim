@@ -70,7 +70,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   normalArrow->setScaleLength(0.00001);
   OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
   frArrow->setScaleLength(0.001);
-  frArrow->setStaticColor(0.75);
 
 
   /*Parameters for the balls*/
@@ -108,7 +107,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   Vec planeTrans(3, INIT, 0.);
   planeTrans(1) = height/2;
 
-  Beam->addContour(BeamContour, planeTrans, BasicRotAIKz(planeRot));
+  Beam->addFrame(new FixedRelativeFrame("Line", planeTrans, BasicRotAIKz(planeRot)));
+  BeamContour->setFrameOfReference(Beam->getFrame("Line"));
+  Beam->addContour(BeamContour);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *openMBVBeam=new OpenMBV::Cuboid();
@@ -159,7 +160,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     Vec pointTrans = Vec(3, INIT, 0.);
     pointTrans(1) = - radius;
 
-    balls[ballIter]->addContour(ballsContours[ballIter], pointTrans, CircContourRot);
+    balls[ballIter]->addFrame(new FixedRelativeFrame(ballname.str(), pointTrans, CircContourRot));
+    ballsContours[ballIter]->setFrameOfReference(balls[ballIter]->getFrame(ballname.str()));
+    balls[ballIter]->addContour(ballsContours[ballIter]);
 
     /*Visualization of the balls*/
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -169,15 +172,15 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     switch (contactType) {
       case 0:
         openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(0));
-        openMBVSphere->setStaticColor(0.4);
+        openMBVSphere->setDiffuseColor(0.3333,1,0.6666);
         break;
       case 1:
         openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(1));
-        openMBVSphere->setStaticColor(0.6);
+        openMBVSphere->setDiffuseColor(0,1,0.6666);
         break;
       case 2:
         openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(1));
-        openMBVSphere->setStaticColor(0.8);
+        openMBVSphere->setDiffuseColor(0.6666,1,1);
         break;
     }
     balls[ballIter]->setOpenMBVRigidBody(openMBVSphere);

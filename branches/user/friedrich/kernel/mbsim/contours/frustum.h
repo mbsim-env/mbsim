@@ -36,7 +36,11 @@ namespace MBSim {
        * \brief constructor with contact from inside
        * \param name of contour
        */
-      Frustum(const std::string &name="") : RigidContour(name), h(0.), outCont(false) {}
+      Frustum(const std::string &name="", Frame *R=0) : RigidContour(name,R), h(0.), outCont(false) {}
+
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(false) {}
+
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(outCont) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum"; }

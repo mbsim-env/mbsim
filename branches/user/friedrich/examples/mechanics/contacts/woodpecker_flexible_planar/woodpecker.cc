@@ -110,7 +110,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   this->addObject(muffe);
 
   WrOS(1) = yMuffe0;
-  this->addFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I")));
   muffe->setFrameOfReference(this->getFrame("B"));
   muffe->setFrameForKinematics(muffe->getFrame("C"));
   muffe->setTranslation(new LinearTranslation<VecV>(JT));
@@ -155,7 +155,9 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
               KrSPMuffe(0) = -R;   KrSPMuffe(1) = -hoehe/2.;
               break;
     }
-    muffe->addContour(pMuffe,KrSPMuffe,SqrMat(3,EYE));
+    muffe->addFrame(new FixedRelativeFrame(name.str(),KrSPMuffe,SqrMat(3,EYE)));
+    pMuffe->setFrameOfReference(muffe->getFrame(name.str()));
+    muffe->addContour(pMuffe);
     contact->setContactForceLaw  (cntForceLaw);
     contact->setContactImpactLaw (impForceLaw );
     contact->setFrictionForceLaw (coulFriction);
@@ -166,7 +168,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   // Drehpunkt der Feder
   Vec KrSPFederDrehpunkt(3);
   KrSPFederDrehpunkt(0) = FDPunkt;
-  muffe->addFrame("Drehpunkt",KrSPFederDrehpunkt,SqrMat(3,EYE));
+  muffe->addFrame(new FixedRelativeFrame("Drehpunkt",KrSPFederDrehpunkt,SqrMat(3,EYE)));
 
   // Specht --------------------------------------
   double  mSpecht = 100.e-3;
@@ -180,7 +182,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   Vec MrDrehpunkt(3); /* wird von Schwerpunkt aus bemast */
   MrDrehpunkt(0) = -2.0 * FDPunkt;
-  specht->addFrame("D",MrDrehpunkt,SqrMat(3,EYE),specht->getFrame("C"));
+  specht->addFrame(new FixedRelativeFrame("D",MrDrehpunkt,SqrMat(3,EYE),specht->getFrame("C")));
   specht->setFrameForKinematics(specht->getFrame("D"));
 
   Vec SrSchabelspitze(3);
@@ -192,7 +194,9 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInertiaTensor(Theta);
 
   Point* schnabel = new Point("Schabel");
-  specht->addContour(schnabel,SrSchabelspitze,SqrMat(3,EYE));
+  specht->addFrame(new FixedRelativeFrame("Schabel",SrSchabelspitze,SqrMat(3,EYE)));
+  schnabel->setFrameOfReference(specht->getFrame("Schabel"));
+  specht->addContour(schnabel);
 
   RelativeRotationalSpringDamper *feder = new RelativeRotationalSpringDamper("Drehfeder");
   feder->connect(muffe->getFrame("Drehpunkt"),specht->getFrame("D"));
@@ -216,7 +220,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
   int spineDiscretisation = 4;
   cuboid->setNumberOfSpinePoints(Elements*spineDiscretisation+1); // resolution of visualisation
-  cuboid->setStaticColor(0.6); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setDiffuseColor(0.6666,1,0.3333); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   int circDiscretisation = 36;

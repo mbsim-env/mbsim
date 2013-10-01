@@ -31,7 +31,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec WrOSStab(3);
   WrOSStab(0) = lStab;
   WrOSStab(1) = 0.5*sqrt(lStab*lStab+hStab*hStab)*sin(alpha0)+0.015;
-  addFrame("D",WrOSStab,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("D",WrOSStab,SqrMat(3,EYE)));
   
   stab->setFrameOfReference(this->getFrame("D"));
   stab->setFrameForKinematics(stab->getFrame("C"));
@@ -55,7 +55,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid* cuboid = new OpenMBV::Cuboid;
   cuboid->setLength(lStab,hStab,0.1);
-  cuboid->setStaticColor(0.1);
+  cuboid->setDiffuseColor(0.3333,1,0.3333);
   stab->setOpenMBVRigidBody(cuboid);
 #endif
 
@@ -63,27 +63,26 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec rSP(3);
   rSP(0) = -lStab/2.;
   rSP(1) = -hStab/2.;
-  Point *point = new Point("PunktUntenLinks");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktUntenLinks",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktUntenLinks",stab->getFrame("PunktUntenLinks")));
   
   rSP(0) = -lStab/2.;
   rSP(1) =  hStab/2.;
-  point = new Point("PunktUntenRechts");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktUntenRechts",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktUntenRechts",stab->getFrame("PunktUntenRechts")));
   
   rSP(0) =  lStab/2.;
   rSP(1) = -hStab/2.;
-  point = new Point("PunktObenLinks");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktObenLinks",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktObenLinks",stab->getFrame("PunktObenLinks")));
   
   rSP(0) = lStab/2.;
   rSP(1) = hStab/2.;
-  point = new Point("PunktObenRechts");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktObenRechts",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktObenRechts",stab->getFrame("PunktObenRechts")));
 
-  Plane *line = new Plane("Grund");
-  SqrMat lineRot("[0,1,0;1,0,0;0,0,1]");
-  addContour(line,Vec(3,INIT,0),lineRot);
+  addFrame(new FixedRelativeFrame("Grund",Vec(3,INIT,0),SqrMat("[0,1,0;1,0,0;0,0,1]")));
+  addContour(new Plane("Grund",getFrame("Grund")));
 
   // Contacts
   Contact *cnf = new Contact("KontaktUntenLinks");

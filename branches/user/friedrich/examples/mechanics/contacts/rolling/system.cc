@@ -53,8 +53,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rD(0) = 15*d;
   rD(1) = d;
 
-  addFrame("Z",Vec(3),AZI,getFrame("I"));
-  addFrame("D",rD,SqrMat(3,EYE),getFrame("Z"));
+  addFrame(new FixedRelativeFrame("Z",Vec(3),AZI,getFrame("I")));
+  addFrame(new FixedRelativeFrame("D",rD,SqrMat(3,EYE),getFrame("Z")));
 
 
 
@@ -135,27 +135,30 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Contour of Cylinder
   CircleSolid *circlecontour=new CircleSolid("Circle",d);
-  body->addContour(circlecontour,Vec(3),SqrMat(3,EYE));
+  body->addContour(circlecontour);
 
   // Contour of HollowCylinder (outward)
   CircleSolid *circlecontour2=new CircleSolid("Circle2",d);
-  body2->addContour(circlecontour2,Vec(3),SqrMat(3,EYE));
+  body2->addContour(circlecontour2);
 
   // Contour of Sphere
   Sphere *spherecontour=new Sphere("Sphere",d);
-  body3->addContour(spherecontour,Vec(3),SqrMat(3,EYE));
+  body3->addContour(spherecontour);
  
   // Contour of Stopper
   Vec rBP(3), rBP2(3);
   rBP(1)=-d;
   rBP2(0)=-d/2.;
-  body4->addContour(new Point("PointStopper"),rBP,SqrMat(3,EYE)); // pairing with ground
-  body4->addContour(new Line("LineStopper"),rBP2,(SqrMat("[-1,0,0;0,-1,0;0,0,1]"))); // pairing with cylinders
-  body4->addContour(new Plane("PlaneStopper"),rBP2,(SqrMat("[-1,0,0;0,-1,0;0,0,1]"))); // pairing with sphere
+  body4->addFrame(new FixedRelativeFrame("S1",rBP,SqrMat(3,EYE)));
+  body4->addFrame(new FixedRelativeFrame("S2",rBP2,(SqrMat("[-1,0,0;0,-1,0;0,0,1]"))));
+  body4->addContour(new Point("PointStopper",body4->getFrame("S1")));
+  body4->addContour(new Line("LineStopper",body4->getFrame("S2")));
+  body4->addContour(new Plane("PlaneStopper",body4->getFrame("S2")));
 
   // Contour of ground plane (x-axis of Line/Plane || y_Z)
-  addContour(new Line("Line"),Vec(3),(SqrMat("[0,-1,0;1,0,0;0,0,1]")),getFrame("Z"));
-  addContour(new Plane("Plane"),Vec(3),(SqrMat("[0,-1,0;1,0,0;0,0,1]")),getFrame("Z"));
+  addFrame(new FixedRelativeFrame("S",Vec(3),(SqrMat("[0,-1,0;1,0,0;0,0,1]")),getFrame("Z")));
+  addContour(new Line("Line",getFrame("S")));
+  addContour(new Plane("Plane",getFrame("S")));
 
 
   // Contact between Cylinder and plane (Contact-Pairing: CircleSolid-Line)
@@ -276,7 +279,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy->setScaleFactor(1.);
   dummy->setMinimalColorValue(0);
   dummy->setMaximalColorValue(1);
-  dummy->setStaticColor(1);
+  dummy->setDiffuseColor(0.3333,1,0.3333);
   body->setOpenMBVRigidBody(dummy);
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
@@ -289,7 +292,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy2->setScaleFactor(1.);
   dummy2->setMinimalColorValue(0);
   dummy2->setMaximalColorValue(1);
-  dummy2->setStaticColor(0.5);
+  dummy2->setDiffuseColor(0.3333,1,0.6666);
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
@@ -298,12 +301,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy3->setScaleFactor(1.);
   dummy3->setMinimalColorValue(0);
   dummy3->setMaximalColorValue(1);
-  dummy3->setStaticColor(0.1);
+  dummy3->setDiffuseColor(0.6666,1,1);
   body3->setOpenMBVRigidBody(dummy3);
 
   OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(d);
-  cuboid->setStaticColor(0.7);
+  cuboid->setDiffuseColor(0.6666,0.6666,1);
   body4->setOpenMBVRigidBody(cuboid);
   body4->getFrame("C")->enableOpenMBV(d);
 
