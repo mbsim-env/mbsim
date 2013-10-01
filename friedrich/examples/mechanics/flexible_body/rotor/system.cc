@@ -103,7 +103,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* Schwungrad */
   RigidBody *ScheibeS = new RigidBody("Schwungrad");
   Vec Wr0_S(3,INIT,0.); Wr0_S(0) = PosScheibeS;
-  this->addFrame("ScheibeS",Wr0_S,SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("ScheibeS",Wr0_S,SqrMat(3,EYE)));
   ScheibeS->setFrameForKinematics(ScheibeS->getFrame("C"));
   ScheibeS->setFrameOfReference(this->getFrame("ScheibeS")); 
   ScheibeS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
@@ -144,7 +144,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
   SqrMat AWK_cylsurf_GLS(3,INIT,0.); AWK_cylsurf_GLS(2,2) = 1.; AWK_cylsurf_GLS(0,0) = cos(M_PI/2.); AWK_cylsurf_GLS(1,1) = cos(M_PI/2.); AWK_cylsurf_GLS(0,1) = sin(M_PI/2.); AWK_cylsurf_GLS(1,0) = -sin(M_PI/2.);
   Vec KrKS_cylsurf_GLS(3,INIT,0.); KrKS_cylsurf_GLS(0) = -b_GLS;
-  ScheibeGLS->addContour(cylsurf_GLS,KrKS_cylsurf_GLS,AWK_cylsurf_GLS);
+  ScheibeGLS->addFrame(new FixedRelativeFrame("cylsurf_GLS",KrKS_cylsurf_GLS,AWK_cylsurf_GLS));
+  cylsurf_GLS->setFrameOfReference(ScheibeGLS->getFrame("cylsurf_GLS"));
+  ScheibeGLS->addContour(cylsurf_GLS);
   this->addObject(ScheibeGLS);
 
   /* Gleitlager */
@@ -164,12 +166,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
   SqrMat AWK_rightCircle(3,INIT,0.); AWK_rightCircle(1,1) = 1.; AWK_rightCircle(0,0) = cos(M_PI/2.); AWK_rightCircle(2,2) = cos(M_PI/2.); AWK_rightCircle(0,2) = sin(M_PI/2.); AWK_rightCircle(2,0) = -sin(M_PI/2.);
   Vec PosRightCircle(3,INIT,0.); PosRightCircle(0) = b_GLS/2.;
-  Gleitlager->addContour(rightCircle,PosRightCircle,AWK_rightCircle);
+  Gleitlager->addFrame(new FixedRelativeFrame("rightCircle",PosRightCircle,AWK_rightCircle));
+  rightCircle->setFrameOfReference(Gleitlager->getFrame("rightCircle"));
+  Gleitlager->addContour(rightCircle);
   this->addObject(Gleitlager);
 
   /* Lager A */
   Vec VTemp(3,INIT,0.);
-  this->addFrame("Lager_A_Frame",VTemp,SqrMat(3,EYE)); 
+  this->addFrame(new FixedRelativeFrame("Lager_A_Frame",VTemp,SqrMat(3,EYE))); 
   Joint *alager = new Joint("Lager_A");
   alager->setForceDirection(Mat(3,3,EYE));
   alager->setMomentDirection(Mat(3,3,EYE));
@@ -180,7 +184,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* Lager B */
   VTemp(0) = L;
-  this->addFrame("Lager_B_Frame",VTemp,SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("Lager_B_Frame",VTemp,SqrMat(3,EYE)));
   Joint *blager = new Joint("Lager_B");
   blager->setForceDirection(Mat(3,3,EYE));
   blager->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(StiffnessLagerB,DampingLagerB)));

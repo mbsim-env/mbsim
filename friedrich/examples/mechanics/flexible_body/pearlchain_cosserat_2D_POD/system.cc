@@ -87,7 +87,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 	OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
 	cuboid->setNumberOfSpinePoints(elements*4+1);
-	cuboid->setStaticColor(0.5);
+        cuboid->setDiffuseColor(0.6666,1,1);
 	cuboid->setScaleFactor(1.);
 	vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>;
 	OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0*0.5,b0*0.5,1);
@@ -127,23 +127,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		balls[i]->setInertiaTensor(Theta);
 		this->addObject(balls[i]);
 
-		MBSim::Point *pt = new MBSim::Point("COG");
-		balls[i]->addContour(pt,Vec(3,INIT,0.),SqrMat(3,EYE),balls[i]->getFrame("C"));
+		balls[i]->addContour(new MBSim::Point("COG"));
 
-		MBSim::Point *tP = new MBSim::Point("topPoint");
-		balls[i]->addContour(tP,d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+		balls[i]->addFrame(new FixedRelativeFrame("topPoint",d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+		balls[i]->addContour(new MBSim::Point("topPoint",balls[i]->getFrame("topPoint")));
 
-		MBSim::Point *bP = new MBSim::Point("bottomPoint");
-		balls[i]->addContour(bP,d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+		balls[i]->addFrame(new FixedRelativeFrame("bottomPoint",d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+		balls[i]->addContour(new MBSim::Point("bottomPoint",balls[i]->getFrame("bottomPoint")));
 
-		Plane *plane = new Plane("Plane");
 		SqrMat trafoPlane(3,INIT,0.); trafoPlane(0,0) = -1.; trafoPlane(1,1) = 1.; trafoPlane(2,2) = -1.;
-		balls[i]->addContour(plane,-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C"));
+		balls[i]->addFrame(new FixedRelativeFrame("Plane",-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C")));
+		balls[i]->addContour(new Plane("Plane",balls[i]->getFrame("Plane")));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 		OpenMBV::Cuboid *cube=new OpenMBV::Cuboid;
 		cube->setLength(d,b,b);
-		cube->setStaticColor(1.);
+		cube->setDiffuseColor(0.3333,0.6666,1);
 		balls[i]->setOpenMBVRigidBody(cube);
 #endif
 	}
@@ -176,7 +175,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 	delete rodInfo;
 
 	// inertial ball constraint
-	this->addFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
+	this->addFrame(new FixedRelativeFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I")));
 	Joint *joint = new Joint("BearingJoint");
 	joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
 	joint->setForceLaw(new BilateralConstraint);

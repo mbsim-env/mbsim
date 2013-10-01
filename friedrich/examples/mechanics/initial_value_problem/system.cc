@@ -143,13 +143,15 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   camContour->setAlphaStart(0.);
   camContour->setAlphaEnd(2.*M_PI);
   camContour->setNodes(searchpoints);
-  cam->addContour(camContour, "[.003; .01; 0]", Cardan2AIK(-M_PI/2., 0, -M_PI/2. ));
+  cam->addFrame(new FixedRelativeFrame("Contour", "[.003; .01; 0]", Cardan2AIK(-M_PI/2., 0, -M_PI/2. )));
+  camContour->setFrameOfReference(cam->getFrame("Contour"));
+  cam->addContour(camContour);
 
-  addFrame("I2", "[0.25; 0.09; 0.0]", SqrMat(3, EYE));
+  addFrame(new FixedRelativeFrame("I2", "[0.25; 0.09; 0.0]", SqrMat(3, EYE)));
 
   RigidBody * rocker = new RigidBody("Rocker");
   rocker->setFrameOfReference(this->getFrame("I2"));
-  rocker->addFrame("Joint", Vec("[0.2; 0; 0]"), SqrMat(3, EYE));
+  rocker->addFrame(new FixedRelativeFrame("Joint", Vec("[0.2; 0; 0]"), SqrMat(3, EYE)));
   rocker->setFrameForKinematics(rocker->getFrame("Joint"));
   rocker->setMass(m1*10);
   rocker->setInertiaTensor(Theta);
@@ -158,7 +160,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   CircleSolid * rockerContour = new CircleSolid("Contour");
   rockerContour->setRadius(.022);
-  rocker->addContour(rockerContour, Vec(3, INIT, 0), SqrMat(3, EYE));
+  rocker->addContour(rockerContour);
 
   Contact * contactCamRocker = new Contact("Contact");
   contactCamRocker->setContactForceLaw(new UnilateralConstraint);
