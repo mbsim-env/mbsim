@@ -31,7 +31,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
+RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
   Frame *C = new Frame("C",this);
   addFrame(C);
 
@@ -45,7 +45,8 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
 
-  translation.setXMLName(MBSIMNS"translation");
+  vector<Property*> propertyTranslation;
+
   vector<Property*> property;
   property.push_back(new TranslationAlongXAxisProperty("V"));
   property.push_back(new TranslationAlongYAxisProperty("V"));
@@ -56,11 +57,9 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new TranslationAlongAxesXYZProperty("V"));
   property.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new LinearTranslationProperty("V",3,1));
-
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
-
   vector<Property*> property_;
   property_.push_back(new TranslationAlongXAxisProperty("V"));
   property_.push_back(new TranslationAlongYAxisProperty("V"));
@@ -72,24 +71,18 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("VVV",property_));
 
-  property_.clear();
-  property_.push_back(new TranslationAlongXAxisProperty("S"));
-  property_.push_back(new TranslationAlongYAxisProperty("S"));
-  property_.push_back(new TranslationAlongZAxisProperty("S"));
-  property_.push_back(new TranslationAlongFixedAxisProperty("S"));
-  property.push_back(new NestedFunctionProperty("VSV",property_));
+  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentTranslation"));
 
+  property.clear();
   property.push_back(new ConstantFunctionProperty("V",3));
   property.push_back(new LinearFunctionProperty("V",3));
   property.push_back(new QuadraticFunctionProperty("V",3));
   property.push_back(new SinusFunctionProperty("V",3));
-
   var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
   property.push_back(new VectorValuedFunctionProperty(0));
   property.push_back(new PiecewiseDefinedFunctionProperty("V"));
-
   property_.clear();
   property_.push_back(new TranslationAlongXAxisProperty("V"));
   property_.push_back(new TranslationAlongYAxisProperty("V"));
@@ -101,21 +94,19 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("VVS",property_));
 
-  property_.clear();
-  property_.push_back(new TranslationAlongXAxisProperty("S"));
-  property_.push_back(new TranslationAlongYAxisProperty("S"));
-  property_.push_back(new TranslationAlongZAxisProperty("S"));
-  property_.push_back(new TranslationAlongFixedAxisProperty("S"));
-  property.push_back(new NestedFunctionProperty("VSS",property_));
+  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentTranslation"));
 
+  property.clear();
   var.clear();
   var.push_back("q");
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VVS",var));
+  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalTranslation"));
 
-  translation.setProperty(new ExtProperty(new ChoiceProperty("",property)));
+  translation.setProperty(new ChoiceProperty("",propertyTranslation,2)); 
 
-  rotation.setXMLName(MBSIMNS"rotation");
+  vector<Property*> propertyRotation;
+
   property.clear();
   property.push_back(new RotationAboutXAxisProperty("V"));
   property.push_back(new RotationAboutYAxisProperty("V"));
@@ -125,7 +116,6 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new RotationAboutAxesXZProperty("V"));
   property.push_back(new RotationAboutAxesXYZProperty("V"));
   property.push_back(new RotationAboutFixedAxisProperty("V"));
-
   property_.clear();
   property_.push_back(new RotationAboutXAxisProperty("V"));
   property_.push_back(new RotationAboutYAxisProperty("V"));
@@ -137,13 +127,9 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVV",property_));
 
-  property_.clear();
-  property_.push_back(new RotationAboutXAxisProperty("S"));
-  property_.push_back(new RotationAboutYAxisProperty("S"));
-  property_.push_back(new RotationAboutZAxisProperty("S"));
-  property_.push_back(new RotationAboutFixedAxisProperty("S"));
-  property.push_back(new NestedFunctionProperty("MSV",property_));
+  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentRotation"));
 
+  property.clear();
   property_.clear();
   property_.push_back(new RotationAboutXAxisProperty("V"));
   property_.push_back(new RotationAboutYAxisProperty("V"));
@@ -155,15 +141,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVS",property_));
 
-  property_.clear();
-  property_.push_back(new RotationAboutXAxisProperty("S"));
-  property_.push_back(new RotationAboutYAxisProperty("S"));
-  property_.push_back(new RotationAboutZAxisProperty("S"));
-  property_.push_back(new RotationAboutFixedAxisProperty("S"));
-  property.push_back(new NestedFunctionProperty("MSS",property_));
+  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentRotation"));
+
+//  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalRotation"));
+
+//  rotation.setProperty(new ChoiceProperty("",propertyRotation,2)); 
 
   ContainerProperty *propertyContainer = new ContainerProperty;
-  propertyContainer->addProperty(new ExtProperty(new ChoiceProperty("",property)));
+  propertyContainer->addProperty(new ExtProperty(new ChoiceProperty("",propertyRotation,2)));
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 

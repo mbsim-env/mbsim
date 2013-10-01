@@ -92,6 +92,9 @@ void ChoiceProperty::initialize() {
 }
 
 TiXmlElement* ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+  cout << "ChoiceProperty " << "xmlName = " << xmlName << "element = " << element << endl;
+  if(element)
+  cout << "mode = " << mode << " " << element->ValueStr() << endl;
   if(mode<=1) {
     TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
     if(e) {
@@ -158,13 +161,20 @@ void ChoiceProperty::toWidget(QWidget *widget) {
 
 TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
   active = false;
+  cout << "ExtProperty " << "xmlName = " << xmlName << "element = " << element << endl;
+  if(element)
+  cout << element->ValueStr() << endl;
   if(xmlName!="") {
     TiXmlElement *e=element->FirstChildElement(xmlName);
+    cout << e << endl;
     if(e)
       active = property->initializeUsingXML(e);
+    if(alwaysWriteXMLName) 
+      return e;
   }
   else
     active = property->initializeUsingXML(element);
+  cout << active << endl;
   return active?element:0;
 }
 
@@ -269,7 +279,6 @@ void ContainerProperty::toWidget(QWidget *widget) {
 ListProperty::ListProperty(PropertyFactory *factory_, const string &xmlName_, int m) : factory(factory_), xmlName(xmlName_) {
   for(int i=0; i<m; i++)
     property.push_back(factory->createProperty());
-  cout << property.size() << endl;
 }
 
 TiXmlElement* ListProperty::initializeUsingXML(TiXmlElement *element) {

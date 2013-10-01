@@ -30,7 +30,7 @@ class FunctionProperty : public Property {
     virtual ~FunctionProperty() {}
     virtual int getArg1Size() const {return 0;}
     virtual int getArg2Size() const {return 0;}
-    virtual std::string getType() const { return "Function_"+ext; }
+    virtual std::string getType() const { return "Function"; }
     virtual std::string getExt() const { return ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) { return element; }
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
@@ -71,7 +71,7 @@ class ConstantFunctionProperty : public FunctionProperty {
   public:
     ConstantFunctionProperty(const std::string &ext, int m=1);
     virtual Property* clone() const {return new ConstantFunctionProperty(*this);}
-    inline std::string getType() const { return "ConstantFunction_"+ext; }
+    inline std::string getType() const { return "ConstantFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -84,7 +84,7 @@ class LinearFunctionProperty : public FunctionProperty {
   public:
     LinearFunctionProperty(const std::string &ext, int m=1);
     virtual Property* clone() const {return new LinearFunctionProperty(*this);}
-    inline std::string getType() const { return "LinearFunction_"+ext; }
+    inline std::string getType() const { return "LinearFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -98,7 +98,7 @@ class NestedFunctionProperty : public FunctionProperty {
     NestedFunctionProperty(const std::string &ext, const std::vector<Property*> &property);
     virtual Property* clone() const {return new NestedFunctionProperty(*this);}
     int getArg1Size() const;
-    inline std::string getType() const { return "NestedFunction_"+ext; }
+    inline std::string getType() const { return "NestedFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -111,7 +111,7 @@ class VectorValuedFunctionProperty : public FunctionProperty {
   public:
     VectorValuedFunctionProperty(int m=0);
     virtual Property* clone() const {return new VectorValuedFunctionProperty(*this);}
-    inline std::string getType() const { return "VectorValuedFunction_V"; }
+    inline std::string getType() const { return "VectorValuedFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -124,7 +124,7 @@ class PiecewiseDefinedFunctionProperty : public FunctionProperty {
   public:
     PiecewiseDefinedFunctionProperty(const std::string &ext);
     virtual Property* clone() const {return new PiecewiseDefinedFunctionProperty(*this);}
-    inline std::string getType() const { return "PiecewiseDefinedFunction_"+ext; }
+    inline std::string getType() const { return "PiecewiseDefinedFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -139,7 +139,7 @@ class TranslationAlongXAxisProperty: public FunctionProperty {
     TranslationAlongXAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongXAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "TranslationAlongXAxis_"+ext; }
+    inline std::string getType() const { return "TranslationAlongXAxis"; }
 };
 
 class TranslationAlongYAxisProperty: public FunctionProperty {
@@ -147,7 +147,7 @@ class TranslationAlongYAxisProperty: public FunctionProperty {
     TranslationAlongYAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongYAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "TranslationAlongYAxis_"+ext; }
+    inline std::string getType() const { return "TranslationAlongYAxis"; }
 };
 
 class TranslationAlongZAxisProperty: public FunctionProperty {
@@ -155,7 +155,7 @@ class TranslationAlongZAxisProperty: public FunctionProperty {
     TranslationAlongZAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongZAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "TranslationAlongZAxis_"+ext; }
+    inline std::string getType() const { return "TranslationAlongZAxis"; }
 };
 
 class TranslationAlongAxesXYProperty: public FunctionProperty {
@@ -163,7 +163,7 @@ class TranslationAlongAxesXYProperty: public FunctionProperty {
     TranslationAlongAxesXYProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongAxesXYProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?2:0;}
-    inline std::string getType() const { return "TranslationAlongAxesXY_"+ext; }
+    inline std::string getType() const { return "TranslationAlongAxesXY"; }
 };
 
 class TranslationAlongAxesYZProperty: public FunctionProperty {
@@ -171,7 +171,7 @@ class TranslationAlongAxesYZProperty: public FunctionProperty {
     TranslationAlongAxesYZProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongAxesYZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?2:0;}
-    inline std::string getType() const { return "TranslationAlongAxesYZ_"+ext; }
+    inline std::string getType() const { return "TranslationAlongAxesYZ"; }
 };
 
 class TranslationAlongAxesXZProperty: public FunctionProperty {
@@ -179,7 +179,7 @@ class TranslationAlongAxesXZProperty: public FunctionProperty {
     TranslationAlongAxesXZProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongAxesXZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?2:0;}
-    inline std::string getType() const { return "TranslationAlongAxesXZ_"+ext; }
+    inline std::string getType() const { return "TranslationAlongAxesXZ"; }
 };
 
 class TranslationAlongAxesXYZProperty: public FunctionProperty {
@@ -187,7 +187,7 @@ class TranslationAlongAxesXYZProperty: public FunctionProperty {
     TranslationAlongAxesXYZProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TranslationAlongAxesXYZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?3:0;}
-    inline std::string getType() const { return "TranslationAlongAxesXYZ_"+ext; }
+    inline std::string getType() const { return "TranslationAlongAxesXYZ"; }
 };
 
 class TranslationAlongFixedAxisProperty : public FunctionProperty {
@@ -195,7 +195,7 @@ class TranslationAlongFixedAxisProperty : public FunctionProperty {
     TranslationAlongFixedAxisProperty(const std::string &ext);
     virtual Property* clone() const {return new TranslationAlongFixedAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "TranslationAlongFixedAxis_"+ext; }
+    inline std::string getType() const { return "TranslationAlongFixedAxis"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -209,7 +209,7 @@ class LinearTranslationProperty : public FunctionProperty {
     LinearTranslationProperty(const std::string &ext, int m=1, int n=1);
     virtual Property* clone() const {return new LinearTranslationProperty(*this);}
     int getArg1Size() const;
-    inline std::string getType() const { return "LinearTranslation_"+ext; }
+    inline std::string getType() const { return "LinearTranslation"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -223,7 +223,7 @@ class RotationAboutXAxisProperty : public FunctionProperty {
     RotationAboutXAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutXAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "RotationAboutXAxis_"+ext; }
+    inline std::string getType() const { return "RotationAboutXAxis"; }
 };
 
 class RotationAboutYAxisProperty : public FunctionProperty {
@@ -231,7 +231,7 @@ class RotationAboutYAxisProperty : public FunctionProperty {
     RotationAboutYAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutYAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "RotationAboutYAxis_"+ext; }
+    inline std::string getType() const { return "RotationAboutYAxis"; }
 };
 
 class RotationAboutZAxisProperty : public FunctionProperty {
@@ -239,7 +239,7 @@ class RotationAboutZAxisProperty : public FunctionProperty {
     RotationAboutZAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutZAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "RotationAboutZAxis_"+ext; }
+    inline std::string getType() const { return "RotationAboutZAxis"; }
 };
 
 class RotationAboutAxesXYProperty : public FunctionProperty {
@@ -247,7 +247,7 @@ class RotationAboutAxesXYProperty : public FunctionProperty {
     RotationAboutAxesXYProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutAxesXYProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?2:0;}
-    inline std::string getType() const { return "RotationAboutAxesXY_"+ext; }
+    inline std::string getType() const { return "RotationAboutAxesXY"; }
 };
 
 class RotationAboutAxesYZProperty : public FunctionProperty {
@@ -255,7 +255,7 @@ class RotationAboutAxesYZProperty : public FunctionProperty {
     RotationAboutAxesYZProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutAxesYZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?2:0;}
-    inline std::string getType() const { return "RotationAboutAxesYZ_"+ext; }
+    inline std::string getType() const { return "RotationAboutAxesYZ"; }
 };
 
 class RotationAboutAxesXZProperty : public FunctionProperty {
@@ -263,7 +263,7 @@ class RotationAboutAxesXZProperty : public FunctionProperty {
     RotationAboutAxesXZProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutAxesXZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?2:0;}
-    inline std::string getType() const { return "RotationAboutAxesXZ_"+ext; }
+    inline std::string getType() const { return "RotationAboutAxesXZ"; }
 };
 
 class RotationAboutAxesXYZProperty : public FunctionProperty {
@@ -271,7 +271,7 @@ class RotationAboutAxesXYZProperty : public FunctionProperty {
     RotationAboutAxesXYZProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new RotationAboutAxesXYZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?3:0;}
-    inline std::string getType() const { return "RotationAboutAxesXYZ_"+ext; }
+    inline std::string getType() const { return "RotationAboutAxesXYZ"; }
 };
 
 class RotationAboutFixedAxisProperty : public FunctionProperty {
@@ -279,7 +279,7 @@ class RotationAboutFixedAxisProperty : public FunctionProperty {
     RotationAboutFixedAxisProperty(const std::string &ext);
     virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?1:0;}
-    inline std::string getType() const { return "RotationAboutFixedAxis_"+ext; }
+    inline std::string getType() const { return "RotationAboutFixedAxis"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -293,14 +293,14 @@ class TCardanAnglesProperty : public FunctionProperty {
     TCardanAnglesProperty(const std::string &ext) : FunctionProperty(ext) { }
     virtual Property* clone() const {return new TCardanAnglesProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?3:0;}
-    inline std::string getType() const { return "TCardanAngles_"+ext; }
+    inline std::string getType() const { return "TCardanAngles"; }
 };
 
 class QuadraticFunctionProperty : public FunctionProperty {
   public:
     QuadraticFunctionProperty(const std::string &ext, int m=1);
     virtual Property* clone() const {return new QuadraticFunctionProperty(*this);}
-    inline std::string getType() const { return "QuadraticFunction_"+ext; }
+    inline std::string getType() const { return "QuadraticFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -314,7 +314,7 @@ class SinusFunctionProperty : public FunctionProperty {
   public:
     SinusFunctionProperty(const std::string &ext, int m=1);
     virtual Property* clone() const {return new SinusFunctionProperty(*this);}
-    inline std::string getType() const { return "SinusFunction_"+ext; }
+    inline std::string getType() const { return "SinusFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -328,7 +328,7 @@ class TabularFunctionProperty : public FunctionProperty {
   public:
     TabularFunctionProperty(const std::string &ext);
     virtual Property* clone() const {return new TabularFunctionProperty(*this);}
-    inline std::string getType() const { return "TabularFunction_V"; }
+    inline std::string getType() const { return "TabularFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -343,7 +343,7 @@ class LinearCombinationFunctionProperty : public FunctionProperty {
   public:
     LinearCombinationFunctionProperty(const std::string &ext);
     virtual Property* clone() const {return new LinearCombinationFunctionProperty(*this);}
-    inline std::string getType() const { return "LinearCombinationFunction_"+ext; }
+    inline std::string getType() const { return "LinearCombinationFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -359,7 +359,7 @@ class SymbolicFunctionProperty : public FunctionProperty {
     virtual Property* clone() const {return new SymbolicFunctionProperty(*this);}
     int getArg1Size() const;
     int getArg2Size() const;
-    inline std::string getType() const { return "SymbolicFunction_"+ext; }
+    inline std::string getType() const { return "SymbolicFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -373,7 +373,7 @@ class LinearSpringDamperForceProperty : public FunctionProperty {
   public:
     LinearSpringDamperForceProperty();
     virtual Property* clone() const {return new LinearSpringDamperForceProperty(*this);}
-    inline std::string getType() const { return "LinearSpringDamperForce"+ext; }
+    inline std::string getType() const { return "LinearSpringDamperForce"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
