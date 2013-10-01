@@ -151,28 +151,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SrSP(0) = d;
   SrSP(1) = -h+r;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("VL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("VL",SrSP,ASP));
   SrSP(2) = b/2-bR/2;
-  karosserie->addFrame("VR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("VR",SrSP,ASP));
 
   SrSP(1) = -h+r+0.3;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("FVL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FVL",SrSP,ASP));
   SrSP(2) = b/2-bR/2;
-  karosserie->addFrame("FVR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FVR",SrSP,ASP));
 
   SrSP(0) = -e;
   SrSP(1) = -h+r;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("HL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("HL",SrSP,ASP));
   SrSP(2) = +b/2-bR/2;
-  karosserie->addFrame("HR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("HR",SrSP,ASP));
 
   SrSP(1) = -h+r+0.3;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("FHL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FHL",SrSP,ASP));
   SrSP(2) = +b/2-bR/2;
-  karosserie->addFrame("FHR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FHR",SrSP,ASP));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   karosserie->getFrame("FHL")->enableOpenMBV(0.3);
 #endif
@@ -245,19 +245,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SrSP.init(0);
   CircleSolid *circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  vl->addContour(circle,SrSP,ASP);
+  vl->addContour(circle);
 
   circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  hl->addContour(circle,SrSP,ASP);
+  hl->addContour(circle);
 
   circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  vr->addContour(circle,SrSP,ASP);
+  vr->addContour(circle);
 
   circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  hr->addContour(circle,SrSP,ASP);
+  hr->addContour(circle);
 
   Plane *plane = new Plane("Ebene");
   double phi = M_PI*0.5; 
@@ -267,7 +267,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(1,1) = cos(phi);
   A(1,0) = sin(phi);
   A(2,2) = 1;
-  addContour(plane,SrSP,A);
+  addFrame(new FixedRelativeFrame("Ebene",SrSP,A));
+  plane->setFrameOfReference(getFrame("Ebene"));
+  addContour(plane);
 
   Contact *c = new Contact("KontaktVorneLinks"); 
   if(rigidContacts) {
@@ -342,7 +344,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec rSD(3);
   rSD(0) = -w/2;
   rSD(1) = -h+r;
-  karosserie->addFrame("D",rSD,BasicRotAKIy(0));
+  karosserie->addFrame(new FixedRelativeFrame("D",rSD,BasicRotAKIy(0)));
   static_cast<RigidBody*>(differentialGear->getObject("Housing"))->setFrameOfReference(karosserie->getFrame("D"));
 
   CardanShaft* psR = new CardanShaft("CardanShaftRechts");
@@ -356,14 +358,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   rSD.init(0);
   rSD(2) = -bR/2;
-  hr->addFrame("K",rSD,BasicRotAKIz(M_PI/2));
+  hr->addFrame(new FixedRelativeFrame("K",rSD,BasicRotAKIz(M_PI/2)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   hr->getFrame("K")->enableOpenMBV(0.3);
 #endif
 
   rSD.init(0);
   rSD(2) = bR/2;
-  hl->addFrame("K",rSD,BasicRotAKIy(-M_PI)*BasicRotAKIz(M_PI/2));
+  hl->addFrame(new FixedRelativeFrame("K",rSD,BasicRotAKIy(-M_PI)*BasicRotAKIz(M_PI/2)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   hl->getFrame("K")->enableOpenMBV(0.3);
 #endif
@@ -447,7 +449,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   rSD(1) = -h+r;
 
-  karosserie->addFrame("W",rSD,BasicRotAKIy(M_PI/2));
+  karosserie->addFrame(new FixedRelativeFrame("W",rSD,BasicRotAKIy(M_PI/2)));
   shaft1->setFrameOfReference(karosserie->getFrame("W"));
   shaft1->setFrameForKinematics(shaft1->getFrame("C"));
 
@@ -463,7 +465,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   rSD.init(0);
   rSD(2) = l/2;
-  shaft1->addFrame("Q",rSD,SqrMat(3,EYE));
+  shaft1->addFrame(new FixedRelativeFrame("Q",rSD,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 #endif

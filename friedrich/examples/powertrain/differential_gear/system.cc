@@ -29,7 +29,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   Vec r(3);
   r(0) = l/2;
-  addFrame("Q",r,BasicRotAKIy(M_PI/2));
+  addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(M_PI/2)));
 
   RigidBody* shaft1 = new RigidBody("Shaft1");
   addObject(shaft1);
@@ -45,7 +45,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   r.init(0);
   r(2) = l/2;
-  shaft1->addFrame("Q",r,SqrMat(3,EYE));
+  shaft1->addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
   shaft1->getFrame("C")->enableOpenMBV(0.3);
