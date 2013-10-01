@@ -383,144 +383,134 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   addToTab("General", inertia);
 
+  vector<QWidget*> widgetTranslation;
+  vector<QString> nameTranslation;
+
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new TranslationAlongXAxisWidget("V")); name.push_back("r=r(q), Translation along x axis");
-  widget.push_back(new TranslationAlongYAxisWidget("V")); name.push_back("r=r(q), Translation along y axis");
-  widget.push_back(new TranslationAlongZAxisWidget("V")); name.push_back("r=r(q), Translation along z axis");
-  widget.push_back(new TranslationAlongAxesXYWidget("V")); name.push_back("r=r(q), Translation along axes x and y");
-  widget.push_back(new TranslationAlongAxesYZWidget("V")); name.push_back("r=r(q), Translation along axes y and z");
-  widget.push_back(new TranslationAlongAxesXZWidget("V")); name.push_back("r=r(q), Translation along axes x and z");
-  widget.push_back(new TranslationAlongAxesXYZWidget("V")); name.push_back("r=r(q), Translation along axes x,y and z");
-  widget.push_back(new TranslationAlongFixedAxisWidget("V")); name.push_back("r=r(q), Translation along fixed axis");
-  widget.push_back(new LinearTranslationWidget("V",3,1)); name.push_back("r=r(q) Linear translation");
+  widget.push_back(new TranslationAlongXAxisWidget("V")); name.push_back("Translation along x axis");
+  widget.push_back(new TranslationAlongYAxisWidget("V")); name.push_back("Translation along y axis");
+  widget.push_back(new TranslationAlongZAxisWidget("V")); name.push_back("Translation along z axis");
+  widget.push_back(new TranslationAlongAxesXYWidget("V")); name.push_back("Translation along axes x and y");
+  widget.push_back(new TranslationAlongAxesYZWidget("V")); name.push_back("Translation along axes y and z");
+  widget.push_back(new TranslationAlongAxesXZWidget("V")); name.push_back("Translation along axes x and z");
+  widget.push_back(new TranslationAlongAxesXYZWidget("V")); name.push_back("Translation along axes x,y and z");
+  widget.push_back(new TranslationAlongFixedAxisWidget("V")); name.push_back("Translation along fixed axis");
+  widget.push_back(new LinearTranslationWidget("V",3,1)); name.push_back("Linear translation");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
-
   QStringList var;
   var << "q";
-  widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("r=r(q), Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("Symbolic function");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
-
   vector<QWidget*> widget_;
   vector<QString> name_;
-  widget_.push_back(new TranslationAlongXAxisWidget("V")); name_.push_back("r=r(f), Translation along x axis");
-  widget_.push_back(new TranslationAlongYAxisWidget("V")); name_.push_back("r=r(f), Translation along y axis");
-  widget_.push_back(new TranslationAlongZAxisWidget("V")); name_.push_back("r=r(f), Translation along z axis");
-  widget_.push_back(new TranslationAlongAxesXYWidget("V")); name_.push_back("r=r(f), Translation along axes x and y");
-  widget_.push_back(new TranslationAlongAxesYZWidget("V")); name_.push_back("r=r(f), Translation along axes y and z");
-  widget_.push_back(new TranslationAlongAxesXZWidget("V")); name_.push_back("r=r(f), Translation along axes x and z");
-  widget_.push_back(new TranslationAlongAxesXYZWidget("V")); name_.push_back("r=r(f), Translation along axes x,y and z");
-  widget_.push_back(new TranslationAlongFixedAxisWidget("V")); name_.push_back("r=r(f), Translation along fixed axis");
-  widget.push_back(new NestedFunctionWidget("VVV",widget_,name_)); name.push_back("r=r(f(q)), Nested function (vector inner function)");
+  widget_.push_back(new TranslationAlongXAxisWidget("V")); name_.push_back("Translation along x axis");
+  widget_.push_back(new TranslationAlongYAxisWidget("V")); name_.push_back("Translation along y axis");
+  widget_.push_back(new TranslationAlongZAxisWidget("V")); name_.push_back("Translation along z axis");
+  widget_.push_back(new TranslationAlongAxesXYWidget("V")); name_.push_back("Translation along axes x and y");
+  widget_.push_back(new TranslationAlongAxesYZWidget("V")); name_.push_back("Translation along axes y and z");
+  widget_.push_back(new TranslationAlongAxesXZWidget("V")); name_.push_back("Translation along axes x and z");
+  widget_.push_back(new TranslationAlongAxesXYZWidget("V")); name_.push_back("Translation along axes x,y and z");
+  widget_.push_back(new TranslationAlongFixedAxisWidget("V")); name_.push_back("Translation along fixed axis");
+  widget.push_back(new NestedFunctionWidget("VVV",widget_,name_)); name.push_back("Nested function");
 
-  widget_.clear();
-  name_.clear();
-  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("r=r(f), Translation along x axis");
-  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("r=r(f), Translation along y axis");
-  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("r=r(f), Translation along z axis");
-  widget_.push_back(new TranslationAlongFixedAxisWidget("S")); name_.push_back("r=r(f), Translation along fixed axis");
-  widget.push_back(new NestedFunctionWidget("VSV",widget_,name_)); name.push_back("r=r(f(q)), Nested function (scalar inner function)");
-
-  widget.push_back(new ConstantFunctionWidget("V",3)); name.push_back("r=r(t), Constant function");
-  widget.push_back(new LinearFunctionWidget("V",3)); name.push_back("r=r(t), Linear function");
-  widget.push_back(new QuadraticFunctionWidget("V",3)); name.push_back("r=r(t), Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",3)); name.push_back("r=r(t), Sinus function");
-
-  var.clear();
-  var << "t";
-  widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("r=r(t), Symbolic function");
-  widget.push_back(new VectorValuedFunctionWidget(3,true)); name.push_back("r=r(t), Vector valued function");
-  widget.push_back(new PiecewiseDefinedFunctionWidget("V",3)); name.push_back("r=r(t), Piecewise defined function");
-
-  widget_.clear();
-  name_.clear();
-  widget_.push_back(new TranslationAlongXAxisWidget("V")); name_.push_back("r=r(f), Translation along x axis");
-  widget_.push_back(new TranslationAlongYAxisWidget("V")); name_.push_back("r=r(f), Translation along y axis");
-  widget_.push_back(new TranslationAlongZAxisWidget("V")); name_.push_back("r=r(f), Translation along z axis");
-  widget_.push_back(new TranslationAlongAxesXYWidget("V")); name_.push_back("r=r(f), Translation along axes x and y");
-  widget_.push_back(new TranslationAlongAxesYZWidget("V")); name_.push_back("r=r(f), Translation along axes y and z");
-  widget_.push_back(new TranslationAlongAxesXZWidget("V")); name_.push_back("r=r(f), Translation along axes x and z");
-  widget_.push_back(new TranslationAlongAxesXYZWidget("V")); name_.push_back("r=r(f), Translation along axes x,y and z");
-  widget_.push_back(new TranslationAlongFixedAxisWidget("V")); name_.push_back("r=r(f), Translation along fixed axis");
-  widget.push_back(new NestedFunctionWidget("VVS",widget_,name_)); name.push_back("r=r(f(t)), Nested function (vector inner function)");
-
-  widget_.clear();
-  name_.clear();
-  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("r=r(f), Translation along x axis");
-  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("r=r(f), Translation along y axis");
-  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("r=r(f), Translation along z axis");
-  widget_.push_back(new TranslationAlongFixedAxisWidget("S")); name_.push_back("r=r(f), Translation along fixed axis");
-  widget.push_back(new NestedFunctionWidget("VSS",widget_,name_)); name.push_back("r=r(f(t)), Nested function (scalar inner function)");
-
-  var.clear();
-  var << "q" << "t";
-  widget.push_back(new SymbolicFunctionWidget("VVS",var)); name.push_back("r=r(q,t), Symbolic function");
-  connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
-
-  translation = new ExtWidget("Translation",new ExtWidget("Function",new ChoiceWidget(widget,name)),true);
-  addToTab("Kinematics", translation);
-  connect(static_cast<ExtWidget*>(translation->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  widgetTranslation.push_back(new ExtWidget("Function r=r(q)",new ChoiceWidget(widget,name),true)); nameTranslation.push_back("State dependent translation");
 
   widget.clear();
   name.clear();
-  widget.push_back(new RotationAboutXAxisWidget("V")); name.push_back("A=A(q), Rotation about x axis");
-  widget.push_back(new RotationAboutYAxisWidget("V")); name.push_back("A=A(q), Rotation about y axis");
-  widget.push_back(new RotationAboutZAxisWidget("V")); name.push_back("A=A(q), Rotation about z axis");
-  widget.push_back(new RotationAboutAxesXYWidget("V")); name.push_back("A=A(q), Rotation about axes x and y");
-  widget.push_back(new RotationAboutAxesYZWidget("V")); name.push_back("A=A(q), Rotation about axes y and z");
-  widget.push_back(new RotationAboutAxesXZWidget("V")); name.push_back("A=A(q), Rotation about axes x and z");
-  widget.push_back(new RotationAboutAxesXYZWidget("V")); name.push_back("A=A(q), Rotation about axes x,y and z");
-  widget.push_back(new RotationAboutFixedAxisWidget("V")); name.push_back("A=A(q), Rotation about fixed axis");
-
+  widget.push_back(new ConstantFunctionWidget("V",3)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",3)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",3)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",3)); name.push_back("Sinus function");
+  var.clear();
+  var << "t";
+  widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function");
+  widget.push_back(new VectorValuedFunctionWidget(3,true)); name.push_back("Vector valued function");
+  widget.push_back(new PiecewiseDefinedFunctionWidget("V",3)); name.push_back("Piecewise defined function");
   widget_.clear();
   name_.clear();
-  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("A=A(f), Rotation about x axis");
-  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("A=A(f), Rotation about y axis");
-  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("A=A(f), Rotation about z axis");
-  widget_.push_back(new RotationAboutAxesXYWidget("V")); name_.push_back("A=A(f), Rotation about axes x and y");
-  widget_.push_back(new RotationAboutAxesYZWidget("V")); name_.push_back("A=A(f), Rotation about axes y and z");
-  widget_.push_back(new RotationAboutAxesXZWidget("V")); name_.push_back("A=A(f), Rotation about axes x and z");
-  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("A=A(f), Rotation about axes x,y and z");
-  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("A=A(f), Rotation about fixed axis");
-  widget.push_back(new NestedFunctionWidget("MVV",widget_,name_)); name.push_back("A=A(f(q)), Nested function (vector inner function)");
+  widget_.push_back(new TranslationAlongXAxisWidget("V")); name_.push_back("Translation along x axis");
+  widget_.push_back(new TranslationAlongYAxisWidget("V")); name_.push_back("Translation along y axis");
+  widget_.push_back(new TranslationAlongZAxisWidget("V")); name_.push_back("Translation along z axis");
+  widget_.push_back(new TranslationAlongAxesXYWidget("V")); name_.push_back("Translation along axes x and y");
+  widget_.push_back(new TranslationAlongAxesYZWidget("V")); name_.push_back("Translation along axes y and z");
+  widget_.push_back(new TranslationAlongAxesXZWidget("V")); name_.push_back("Translation along axes x and z");
+  widget_.push_back(new TranslationAlongAxesXYZWidget("V")); name_.push_back("Translation along axes x,y and z");
+  widget_.push_back(new TranslationAlongFixedAxisWidget("V")); name_.push_back("Translation along fixed axis");
+  widget.push_back(new NestedFunctionWidget("VVS",widget_,name_)); name.push_back("Nested function");
 
+  widgetTranslation.push_back(new ExtWidget("Function r=r(t)",new ChoiceWidget(widget,name),true)); nameTranslation.push_back("Time dependent translation");
+
+  widget.clear();
+  name.clear();
+  var.clear();
+  var << "q" << "t";
+  widget.push_back(new SymbolicFunctionWidget("VVS",var)); name.push_back("Symbolic function");
+  connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
+
+  widgetTranslation.push_back(new ExtWidget("Function r=r(q,t)",new ChoiceWidget(widget,name),true)); nameTranslation.push_back("General translation");
+
+  translation = new ExtWidget("Translation",new ChoiceWidget(widgetTranslation,nameTranslation));
+  addToTab("Kinematics", translation);
+
+//  connect(static_cast<ExtWidget*>(translation->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+
+  vector<QWidget*> widgetRotation;
+  vector<QString> nameRotation;
+
+  widget.clear();
+  name.clear();
+  widget.push_back(new RotationAboutXAxisWidget("V")); name.push_back("Rotation about x axis");
+  widget.push_back(new RotationAboutYAxisWidget("V")); name.push_back("Rotation about y axis");
+  widget.push_back(new RotationAboutZAxisWidget("V")); name.push_back("Rotation about z axis");
+  widget.push_back(new RotationAboutAxesXYWidget("V")); name.push_back("Rotation about axes x and y");
+  widget.push_back(new RotationAboutAxesYZWidget("V")); name.push_back("Rotation about axes y and z");
+  widget.push_back(new RotationAboutAxesXZWidget("V")); name.push_back("Rotation about axes x and z");
+  widget.push_back(new RotationAboutAxesXYZWidget("V")); name.push_back("Rotation about axes x,y and z");
+  widget.push_back(new RotationAboutFixedAxisWidget("V")); name.push_back("Rotation about fixed axis");
   widget_.clear();
   name_.clear();
-  widget_.push_back(new RotationAboutXAxisWidget("S")); name_.push_back("A=A(f), Rotation about x axis");
-  widget_.push_back(new RotationAboutYAxisWidget("S")); name_.push_back("A=A(f), Rotation about y axis");
-  widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("A=A(f), Rotation about z axis");
-  widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("A=A(f), Rotation about fixed axis");
-  widget.push_back(new NestedFunctionWidget("MSV",widget_,name_)); name.push_back(" A=A(f(q)), Nested function (scalar inner function)");
+  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("Rotation about x axis");
+  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("Rotation about y axis");
+  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("Rotation about z axis");
+  widget_.push_back(new RotationAboutAxesXYWidget("V")); name_.push_back("Rotation about axes x and y");
+  widget_.push_back(new RotationAboutAxesYZWidget("V")); name_.push_back("Rotation about axes y and z");
+  widget_.push_back(new RotationAboutAxesXZWidget("V")); name_.push_back("Rotation about axes x and z");
+  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("Rotation about axes x,y and z");
+  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis");
+  widget.push_back(new NestedFunctionWidget("MVV",widget_,name_)); name.push_back("Nested function");
 
+  widgetRotation.push_back(new ExtWidget("Function A=A(q)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("State dependent rotation");
+
+  widget.clear();
+  name.clear();
   widget_.clear();
   name_.clear();
-  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("A=A(f), Rotation about x axis");
-  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("A=A(f), Rotation about y axis");
-  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("A=A(f), Rotation about z axis");
-  widget_.push_back(new RotationAboutAxesXYWidget("V")); name_.push_back("A=A(f), Rotation about axes x and y");
-  widget_.push_back(new RotationAboutAxesYZWidget("V")); name_.push_back("A=A(f), Rotation about axes y and z");
-  widget_.push_back(new RotationAboutAxesXZWidget("V")); name_.push_back("A=A(f), Rotation about axes x and z");
-  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("A=A(f), Rotation about axes x,y and z");
-  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("A=A(f), Rotation about fixed axis");
-  widget.push_back(new NestedFunctionWidget("MVS",widget_,name_)); name.push_back("A=A(f(t)), Nested function (vector inner function)");
+  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("Rotation about x axis");
+  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("Rotation about y axis");
+  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("Rotation about z axis");
+  widget_.push_back(new RotationAboutAxesXYWidget("V")); name_.push_back("Rotation about axes x and y");
+  widget_.push_back(new RotationAboutAxesYZWidget("V")); name_.push_back("Rotation about axes y and z");
+  widget_.push_back(new RotationAboutAxesXZWidget("V")); name_.push_back("Rotation about axes x and z");
+  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("Rotation about axes x,y and z");
+  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis");
+  widget.push_back(new NestedFunctionWidget("MVS",widget_,name_)); name.push_back("Nested function");
 
-  widget_.clear();
-  name_.clear();
-  widget_.push_back(new RotationAboutXAxisWidget("S")); name_.push_back("A=A(f), Rotation about x axis");
-  widget_.push_back(new RotationAboutYAxisWidget("S")); name_.push_back("A=A(f), Rotation about y axis");
-  widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("A=A(f), Rotation about z axis");
-  widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("A=A(f), Rotation about fixed axis");
-  widget.push_back(new NestedFunctionWidget("MSS",widget_,name_)); name.push_back("A=A(f(t)), Nested function (scalar inner function)");
+  widgetRotation.push_back(new ExtWidget("Function A=A(t)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("Time dependent rotation");
+ 
+//  widgetRotation.push_back(new ExtWidget("Function A=A(q,t)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("General rotation");
+
+//  rotation = new ExtWidget("Rotation",new ChoiceWidget(widgetRotation,nameRotation));
 
   ContainerWidget *widgetContainer = new ContainerWidget;
-  widgetContainer->addWidget(new ExtWidget("Function",new ChoiceWidget(widget,name)));
+  widgetContainer->addWidget(new ExtWidget("Rotation",new ChoiceWidget(widgetRotation,nameRotation)));
   input.clear();
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   widgetContainer->addWidget(new ExtWidget("Translation dependent",new ExtPhysicalVarWidget(input),true)); 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   widgetContainer->addWidget(new ExtWidget("Coordinate Transformation",new ExtPhysicalVarWidget(input),true)); 
-  rotation = new ExtWidget("Rotation",widgetContainer,true);
+  rotation = new ExtWidget("Rotation",widgetContainer);
   addToTab("Kinematics", rotation);
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
@@ -566,14 +556,14 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
 
 int RigidBodyPropertyDialog::getqRelSize() const {
   int nqT=0, nqR=0;
-  if(translation->isActive()) {
-    ChoiceWidget *trans = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(translation->getWidget())->getWidget());
-    nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
-  }
-  if(rotation->isActive()) {
-    ChoiceWidget *rot = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<const ContainerWidget*>(rotation->getWidget())->getWidget(0))->getWidget());
-    nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
-  }
+//  if(translation->isActive()) {
+//    ChoiceWidget *trans = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(translation->getWidget())->getWidget());
+//    nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+//  }
+//  if(rotation->isActive()) {
+//    ChoiceWidget *rot = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<const ContainerWidget*>(rotation->getWidget())->getWidget(0))->getWidget());
+//    nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+//  }
   int nq = nqT + nqR;
   return nq;
 }

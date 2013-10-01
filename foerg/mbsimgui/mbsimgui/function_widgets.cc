@@ -163,27 +163,27 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   QStringList var;
   if(ext[1]=='V' and ext[2]=='V') {
     var << "q";
-    widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("f=f(q), Symbolic function");
+    widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("Symbolic function");
   }
   else if(ext[1]=='V' and ext[2]=='S') {
     var << "t";
-    widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("f=f(t), Symbolic function");
-    widget.push_back(new ConstantFunctionWidget("V")); name.push_back("f=f(t), Constant function");
-    widget.push_back(new LinearFunctionWidget("V")); name.push_back("f=f(t), Linear function v(t)");
-    widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("f=f(t), Quadratic function");
-    widget.push_back(new SinusFunctionWidget("V")); name.push_back("f=f(t), Sinus function");
+    widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function");
+    widget.push_back(new ConstantFunctionWidget("V")); name.push_back("Constant function");
+    widget.push_back(new LinearFunctionWidget("V")); name.push_back("Linear function v(t)");
+    widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function");
+    widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function");
   }
   else if(ext[1]=='S' and ext[2]=='V') {
     var << "q";
-    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("f=f(q), Symbolic function");
+    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function");
   }
   else if(ext[1]=='S' and ext[2]=='S') {
     var << "t";
-    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("f=f(t), Symbolic function");
-    widget.push_back(new ConstantFunctionWidget("S")); name.push_back("f=f(t), Constant function");
-    widget.push_back(new LinearFunctionWidget("S")); name.push_back("f=f(t), Linear function");
-    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("f=f(t), Quadratic function");
-    widget.push_back(new SinusFunctionWidget("S")); name.push_back("f=f(t), Sinus function");
+    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function");
+    widget.push_back(new ConstantFunctionWidget("S")); name.push_back("Constant function");
+    widget.push_back(new LinearFunctionWidget("S")); name.push_back("Linear function");
+    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function");
+    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function");
   }
   fi = new ExtWidget("Inner function",new ChoiceWidget(widget,name));
   layout->addWidget(fi);
