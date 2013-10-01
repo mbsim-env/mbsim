@@ -82,7 +82,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
   WrOS0B(0) = l0*0.9; WrOS0B(1) = b0*0.5+0.05;
-  this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
@@ -95,7 +95,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->setTranslation(new LinearTranslation<VecV>(JacTrans));
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addContour(point);
   ball->setInitialGeneralizedVelocity(-0.5);
   this->addObject(ball);
 

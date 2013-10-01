@@ -59,7 +59,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
-  cuboid->setStaticColor(0.6); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setDiffuseColor(0.6666,0.3333,0.6666); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0*0.5,b0*0.5,1);
@@ -78,7 +78,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
   WrOS0B(0) = l0*0.75; WrOS0B(1) = b0*0.5+r; WrOS0B(2) = b0*0.3;
-  this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
@@ -88,15 +88,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
   ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
-  Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  ball->addContour(new Point("Point",ball->getFrame("Point")));
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
   sphere->setRadius(r);
-  sphere->setStaticColor(0.5);
+  sphere->setDiffuseColor(0.6666,1,0.6666); // color in (minimalColorValue, maximalColorValue)
   ball->setOpenMBVRigidBody(sphere);
 #endif
 

@@ -63,12 +63,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 // frames for disk axes
   Vec mid(3,INIT,0.0);
   for(int i=0;i<nDisks;i++) mid += positionDisks.col(i)/double(nDisks);
-  this->addFrame("OB",mid,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("OB",mid,SqrMat(3,EYE),this->getFrame("I")));
 
   double inc = 0.021;
   double off = -0.08;
   double lengthPath = 2*M_PI*radiiDisks(0)*(1.0+inc);
-  this->addFrame("off",radiiDisks(0)*0*inc*(1.0-off)*Vec("[-0.5;0;0]"),SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("off",radiiDisks(0)*0*inc*(1.0-off)*Vec("[-0.5;0;0]"),SqrMat(3,EYE),this->getFrame("I")));
 
   double beltLength = lengthPath * (1.0 - F0/(E*A));
 // implementation
@@ -87,7 +87,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
-  cuboid->setStaticColor(0.8); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setDiffuseColor(0.6666,1,0.6666); 
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   double h0 = 50.0e-3;
@@ -125,7 +125,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     name.clear();
     name << "B" << i;
-    this->addFrame(name.str(),positionDisks.col(i),SqrMat(3,EYE),this->getFrame("I"));
+    this->addFrame(new FixedRelativeFrame(name.str(),positionDisks.col(i),SqrMat(3,EYE),this->getFrame("I")));
     disk->setFrameOfReference(this->getFrame(name.str()));
     disk->setFrameForKinematics(disk->getFrame("C"));
     disk->setMass(massDisks(i));
@@ -142,15 +142,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     CircleSolid *cDisk = new CircleSolid("cDisk");
     cDisk->setRadius(radiiDisks(i));
-    Vec BR(3,INIT,0.);// BR(1)=-r;
-    disk->addContour(cDisk,BR,SqrMat(3,EYE),disk->getFrame("C"));
+    disk->addContour(cDisk);
     disk->setInitialGeneralizedVelocity(-Vec("[1.0]")*v0*double(sideInOut(i))/radiiDisks(i));
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Sphere *cylinder=new OpenMBV::Sphere;
     cylinder->setRadius(radiiDisks(i));
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(0.6666,1,1); 
     disk->setOpenMBVRigidBody(cylinder);
 #endif
 

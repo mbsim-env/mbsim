@@ -113,17 +113,23 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addObject(balls[i]);
 
     Point *pt = new Point("COG");
-    balls[i]->addContour(pt,Vec(3,INIT,0.),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addContour(pt);
 
     Point *tP = new Point("topPoint");
-    balls[i]->addContour(tP,d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("topPoint",d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+    tP->setFrameOfReference(balls[i]->getFrame("topPoint"));
+    balls[i]->addContour(tP);
 
     Point *bP = new Point("bottomPoint");
-    balls[i]->addContour(bP,d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("bottomPoint",d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+    bP->setFrameOfReference(balls[i]->getFrame("bottomPoint"));
+    balls[i]->addContour(bP);
 
     Plane *plane = new Plane("Plane");
     SqrMat trafoPlane(3,INIT,0.); trafoPlane(0,0) = -1.; trafoPlane(1,1) = 1.; trafoPlane(2,2) = -1.;
-    balls[i]->addContour(plane,-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("Plane",-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C")));
+    plane->setFrameOfReference(balls[i]->getFrame("Plane"));
+    balls[i]->addContour(plane);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cuboid *cube=new OpenMBV::Cuboid;
@@ -162,7 +168,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   delete rodInfo;
 
   // inertial ball constraint
-  this->addFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I")));
   Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
