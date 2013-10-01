@@ -181,6 +181,8 @@ TiXmlElement* GeneralizedPositionConstraint::writeXMLFile(TiXmlNode *parent) {
 
 GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
+  vector<Property*> propertyConstraint;
+
   vector<Property*> property;
   property.push_back(new ConstantFunctionProperty("V",1));
   property.push_back(new LinearFunctionProperty("V",1));
@@ -189,11 +191,17 @@ GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, 
   vector<string> var;
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
+  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentConstraintFunction"));
+
+  property.clear();
   var.clear();
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
+  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentConstraintFunction"));
 
-  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+//  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalConstraintFunction"));
+
+  constraintFunction.setProperty(new ChoiceProperty("",propertyConstraint,2)); 
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialState"));
@@ -218,6 +226,8 @@ TiXmlElement* GeneralizedVelocityConstraint::writeXMLFile(TiXmlNode *parent) {
 
 GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
+  vector<Property*> propertyConstraint;
+
   vector<Property*> property;
   property.push_back(new ConstantFunctionProperty("V",1));
   property.push_back(new LinearFunctionProperty("V",1));
@@ -226,11 +236,31 @@ GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const strin
   vector<string> var;
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
-  var.clear();
-  var.push_back("z");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
+  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentConstraintFunction"));
 
-  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+  property.clear();
+  var.clear();
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
+  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentConstraintFunction"));
+
+//  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalConstraintFunction"));
+
+  constraintFunction.setProperty(new ChoiceProperty("",propertyConstraint,2)); 
+
+//  vector<Property*> property;
+//  property.push_back(new ConstantFunctionProperty("V",1));
+//  property.push_back(new LinearFunctionProperty("V",1));
+//  property.push_back(new QuadraticFunctionProperty("V",1));
+//  property.push_back(new SinusFunctionProperty("V",1));
+//  vector<string> var;
+//  var.push_back("t");
+//  property.push_back(new SymbolicFunctionProperty("VS",var));
+//  var.clear();
+//  var.push_back("z");
+//  property.push_back(new SymbolicFunctionProperty("VV",var));
+//
+//  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialState"));

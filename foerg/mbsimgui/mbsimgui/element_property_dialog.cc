@@ -480,7 +480,15 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis");
   widget.push_back(new NestedFunctionWidget("MVV",widget_,name_)); name.push_back("Nested function");
 
-  widgetRotation.push_back(new ExtWidget("Function A=A(q)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("State dependent rotation");
+  ContainerWidget *widgetContainer = new ContainerWidget;
+  widgetContainer->addWidget(new ChoiceWidget(widget,name));
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  widgetContainer->addWidget(new ExtWidget("Translation dependent",new ExtPhysicalVarWidget(input),true)); 
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  widgetContainer->addWidget(new ExtWidget("Coordinate Transformation",new ExtPhysicalVarWidget(input),true)); 
+  widgetRotation.push_back(new ExtWidget("Function A=A(q)",widgetContainer,true)); nameRotation.push_back("State dependent rotation");
 
   widget.clear();
   name.clear();
@@ -496,21 +504,19 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis");
   widget.push_back(new NestedFunctionWidget("MVS",widget_,name_)); name.push_back("Nested function");
 
-  widgetRotation.push_back(new ExtWidget("Function A=A(t)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("Time dependent rotation");
- 
-//  widgetRotation.push_back(new ExtWidget("Function A=A(q,t)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("General rotation");
-
-//  rotation = new ExtWidget("Rotation",new ChoiceWidget(widgetRotation,nameRotation));
-
-  ContainerWidget *widgetContainer = new ContainerWidget;
-  widgetContainer->addWidget(new ExtWidget("Rotation",new ChoiceWidget(widgetRotation,nameRotation)));
+  widgetContainer = new ContainerWidget;
+  widgetContainer->addWidget(new ChoiceWidget(widget,name));
   input.clear();
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   widgetContainer->addWidget(new ExtWidget("Translation dependent",new ExtPhysicalVarWidget(input),true)); 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   widgetContainer->addWidget(new ExtWidget("Coordinate Transformation",new ExtPhysicalVarWidget(input),true)); 
-  rotation = new ExtWidget("Rotation",widgetContainer);
+  widgetRotation.push_back(new ExtWidget("Function A=A(t)",widgetContainer,true)); nameRotation.push_back("Time dependent rotation");
+
+//  widgetRotation.push_back(new ExtWidget("Function A=A(q,t)",new ChoiceWidget(widget,name),true)); nameRotation.push_back("General rotation");
+
+  rotation = new ExtWidget("Rotation",new ChoiceWidget(widgetRotation,nameRotation));
   addToTab("Kinematics", rotation);
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
@@ -698,16 +704,27 @@ void GeneralizedPositionConstraintPropertyDialog::fromWidget(Element *element) {
 GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
   addTab("Initial conditions");
 
+  vector<QWidget*> widgetConstraint;
+  vector<QString> nameConstraint;
+
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("u=u(t), Constant function");
-  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("u=u(t), Linear function");
-  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("u=u(t), Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("u=u(t), Sinus function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("u=u(t), Symbolic function");
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("u=u(q), Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
 
-  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
+  widgetConstraint.push_back(new ExtWidget("Function r=r(t)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("Time dependent constraint function");
+
+  widget.clear();
+  name.clear();
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("Symbolic function");
+  widgetConstraint.push_back(new ExtWidget("Function r=r(q)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("State dependent constraint function");
+
+  //widgetConstraint.push_back(new ExtWidget("Function r=r(q,t)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("General constraint function");
+  
+  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widgetConstraint,nameConstraint));
   addToTab("General", constraintFunction);
   connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
@@ -723,12 +740,12 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
-  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
-  int size = refBody?refBody->getqRelSize():0;
-  ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
-  if(x0_ && x0_->size() != size)
-    x0_->resize_(size);
-  static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+  //RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
+  //int size = refBody?refBody->getqRelSize():0;
+  //((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
+  //if(x0_ && x0_->size() != size)
+  //  x0_->resize_(size);
+  //static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
 }
 
 void GeneralizedVelocityConstraintPropertyDialog::toWidget(Element *element) {
@@ -746,18 +763,42 @@ void GeneralizedVelocityConstraintPropertyDialog::fromWidget(Element *element) {
 GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
   addTab("Initial conditions");
 
+  vector<QWidget*> widgetConstraint;
+  vector<QString> nameConstraint;
+
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("ud=ud(t), Constant function");
-  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("ud=ud(t), Linear function");
-  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("ud=ud(t), Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("ud=ud(t), Sinus function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("ud=ud(t), Symbolic function");
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("z"))); name.push_back("ud=ud(z), Symbolic function");
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
 
-  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
+  widgetConstraint.push_back(new ExtWidget("Function r=r(t)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("Time dependent constraint function");
+
+  widget.clear();
+  name.clear();
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("Symbolic function");
+  widgetConstraint.push_back(new ExtWidget("Function r=r(z)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("State dependent constraint function");
+
+  //widgetConstraint.push_back(new ExtWidget("Function r=r(q,t)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("General constraint function");
+  
+  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widgetConstraint,nameConstraint));
   addToTab("General", constraintFunction);
   connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+//  vector<QWidget*> widget;
+//  vector<QString> name;
+//  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("ud=ud(t), Constant function");
+//  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("ud=ud(t), Linear function");
+//  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("ud=ud(t), Quadratic function");
+//  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("ud=ud(t), Sinus function");
+//  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("ud=ud(t), Symbolic function");
+//  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("z"))); name.push_back("ud=ud(z), Symbolic function");
+//
+//  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
+//  addToTab("General", constraintFunction);
+//  connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   vector<PhysicalVariableWidget*> input;
   x0_ = new VecWidget(0);

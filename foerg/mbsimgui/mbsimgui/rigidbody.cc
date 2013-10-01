@@ -127,7 +127,15 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVV",property_));
 
-  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentRotation"));
+  ContainerProperty *propertyContainer = new ContainerProperty;
+  propertyContainer->addProperty(new ChoiceProperty("",property));
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
+  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
+  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
+  propertyRotation.push_back(new ExtProperty(propertyContainer,false,MBSIMNS"stateDependentRotation"));
 
   property.clear();
   property_.clear();
@@ -141,21 +149,29 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVS",property_));
 
-  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentRotation"));
-
-//  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalRotation"));
-
-//  rotation.setProperty(new ChoiceProperty("",propertyRotation,2)); 
-
-  ContainerProperty *propertyContainer = new ContainerProperty;
-  propertyContainer->addProperty(new ExtProperty(new ChoiceProperty("",propertyRotation,2)));
+  propertyContainer = new ContainerProperty;
+  propertyContainer->addProperty(new ChoiceProperty("",property));
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  rotation.setProperty(propertyContainer);
+  propertyRotation.push_back(new ExtProperty(propertyContainer,false,MBSIMNS"timeDependentRotation"));
+
+//  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalRotation"));
+
+  rotation.setProperty(new ChoiceProperty("",propertyRotation,2)); 
+
+//  ContainerProperty *propertyContainer = new ContainerProperty;
+//  propertyContainer->addProperty(new ExtProperty(new ChoiceProperty("",propertyRotation,2)));
+//  input.clear();
+//  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
+//  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
+//  input.clear();
+//  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
+//  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
+//  rotation.setProperty(propertyContainer);
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
@@ -172,14 +188,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
 int RigidBody::getqRelSize() const {
   int nqT=0, nqR=0;
-  if(translation.isActive()) {
-    const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(static_cast<const ExtProperty*>(translation.getProperty())->getProperty());
-    nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
-  }
-  if(rotation.isActive()) {
-    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<ExtProperty*>(static_cast<const ContainerProperty*>(rotation.getProperty())->getProperty(0))->getProperty());
-    nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
-  }
+//  if(translation.isActive()) {
+//    const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(static_cast<const ExtProperty*>(translation.getProperty())->getProperty());
+//    nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
+//  }
+//  if(rotation.isActive()) {
+//    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<ExtProperty*>(static_cast<const ContainerProperty*>(rotation.getProperty())->getProperty(0))->getProperty());
+//    nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
+//  }
   int nq = nqT + nqR;
   return nq;
 }
