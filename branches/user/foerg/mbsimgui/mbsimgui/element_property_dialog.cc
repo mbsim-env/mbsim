@@ -453,7 +453,9 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   translation = new ExtWidget("Translation",new ChoiceWidget(widgetTranslation,nameTranslation));
   addToTab("Kinematics", translation);
 
-//  connect(static_cast<ExtWidget*>(translation->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   vector<QWidget*> widgetRotation;
   vector<QString> nameRotation;
@@ -519,6 +521,10 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   rotation = new ExtWidget("Rotation",new ChoiceWidget(widgetRotation,nameRotation));
   addToTab("Kinematics", rotation);
 
+  connect(static_cast<const ContainerWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditor);
 
@@ -562,14 +568,16 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
 
 int RigidBodyPropertyDialog::getqRelSize() const {
   int nqT=0, nqR=0;
-//  if(translation->isActive()) {
-//    ChoiceWidget *trans = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(translation->getWidget())->getWidget());
-//    nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
-//  }
-//  if(rotation->isActive()) {
-//    ChoiceWidget *rot = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<const ContainerWidget*>(rotation->getWidget())->getWidget(0))->getWidget());
-//    nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
-//  }
+  ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget());
+  if(extWidget->isActive()) {
+    ChoiceWidget *trans = static_cast<ChoiceWidget*>(extWidget->getWidget());
+    nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+  }
+  extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget());
+  if(extWidget->isActive()) {
+    ChoiceWidget *rot = static_cast<ChoiceWidget*>(static_cast<const ContainerWidget*>(extWidget->getWidget())->getWidget(0));
+    nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+  }
   int nq = nqT + nqR;
   return nq;
 }
