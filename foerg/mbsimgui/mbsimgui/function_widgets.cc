@@ -441,8 +441,10 @@ SymbolicFunctionWidget::SymbolicFunctionWidget(const QString &ext, const QString
     layout->addWidget(argname[i],i,0);
 
     argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
-    if(var[i]!="t")
+    if(var[i]!="t") {
+      connect(argdim[i]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
       layout->addWidget(argdim[i],i,1);
+    }
   }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
   layout->addWidget(f,var.size(),0,1,2);
