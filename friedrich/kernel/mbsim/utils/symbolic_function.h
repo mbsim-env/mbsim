@@ -25,6 +25,7 @@
 #include "casadi/symbolic/matrix/matrix_tools.hpp"
 #include "mbxmlutilstinyxml/casadiXML.h"
 #include "mbsim/mbsim_event.h"
+#include <boost/static_assert.hpp>
 
 namespace MBSim {
 
@@ -120,6 +121,21 @@ template<typename Ret, typename Arg>
 //    }
 
     void init() {
+      // check function: number in inputs and outputs
+      if(f.getNumInputs()!=1) throw MBSimError("Function must have only 1 argument.");
+      if(f.getNumOutputs()!=1) throw MBSimError("Function must have only 1 output.");
+      // check template arguments: only scalar and vector arguments are supported
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg>::size2==1);
+      // check function: only scalar and vector arguments are supported
+      if(f.inputExpr(0).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
+      // check function <-> template argument dimension
+      if(fmatvec::StaticSize<Arg>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg>::size1)
+        throw MBSimError("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+        throw MBSimError("The output dimension does not match.");
+      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+        throw MBSimError("The output dimension does not match.");
+
       f.init();
       pd = CasADi::SXFunction(f.inputExpr(),f.jac());
       pd.init();
@@ -188,12 +204,6 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      if(f.getNumInputs()!=1) throw MBSimError("Function must have only 1 argument.");
-      if(f.getNumOutputs()!=1) throw MBSimError("Function must have only 1 output.");
-      if(f.inputExpr(0).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
-      if(f.outputExpr(0).size2()!=1) throw MBSimError("Matrix outputs are not allowed.");
-      //MFMF if(Arg::staticSize()!=0 && f.inputExpr(0).size1()!=Arg::staticSize()) throw MBSimError("The dimension of a parameter does not match.");
-      //MFMF if(Ret::staticSize()!=0 && f.outputExpr(0).size1()!=Ret::staticSize()) throw MBSimError("The output dimension does not match.");
       init();
     }
   };
@@ -216,6 +226,25 @@ template<typename Ret, typename Arg1, typename Arg2>
 //    }
 
     void init() {
+      // check function: number in inputs and outputs
+      if(f.getNumInputs()!=2) throw MBSimError("Function has must have exact 2 arguments.");
+      if(f.getNumOutputs()!=1) throw MBSimError("Function has must have only 1 output.");
+      // check template arguments: only scalar and vector arguments are supported
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg2>::size2==1);
+      // check function: only scalar and vector arguments are supported
+      if(f.inputExpr(0).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
+      if(f.inputExpr(1).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
+      // check function <-> template argument dimension
+      if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
+        throw MBSimError("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Arg2>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<Arg2>::size1)
+        throw MBSimError("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+        throw MBSimError("The output dimension does not match.");
+      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+        throw MBSimError("The output dimension does not match.");
+
       f.init();
       pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
       pd1.init();
@@ -317,14 +346,6 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      if(f.getNumInputs()!=2) throw MBSimError("Function has must have exact 2 arguments.");
-      if(f.getNumOutputs()!=1) throw MBSimError("Function has must have only 1 output.");
-      if(f.inputExpr(0).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
-      if(f.inputExpr(1).size2()!=1) throw MBSimError("Matrix parameter are not allowed.");
-      if(f.outputExpr(0).size2()!=1) throw MBSimError("Matrix outputs are not allowed.");
-      //MFMF if(Arg2::staticSize()!=0 && f.inputExpr(0).size1()!=Arg2::staticSize()) throw MBSimError("The dimension of a parameter does not match.");
-      //MFMF if(Arg2::staticSize()!=0 && f.inputExpr(1).size1()!=Arg2::staticSize()) throw MBSimError("The dimension of a parameter does not match.");
-      //MFMF if(Ret::staticSize()!=0 && f.outputExpr(0).size1()!=Ret::staticSize()) throw MBSimError("The output dimension does not match.");
       init();
     }
   };

@@ -40,6 +40,10 @@ willFail=set([
   pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD')
 ])
 
+# MBSim Modules
+mbsimModules=["mbsimControl", "mbsimElectronics", "mbsimFlexibleBody",
+              "mbsimHydraulics", "mbsimInterface", "mbsimPowertrain"]
+
 # command line option definition
 argparser = argparse.ArgumentParser(
   formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -49,10 +53,10 @@ argparser = argparse.ArgumentParser(
   However only examples of the type matching --filter are executed.
   If the directory is prefixed with '^' this directory (and subdirectories) is removed from the current list.
   The specified directories are processed from left to right.
-  The type of an example is defined dependent on some key files in the corrosponding example directory.
-  If a file named 'Makefile' exists, than it is treated as a SRC example.
-  If a file named 'MBS.mbsim.flat.xml' exists, then it is treated as a FLATXML example.
-  If a file named 'MBS.mbsim.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
+  The type of an example is defined dependent on some key files in the corrosponding example directory:
+  - If a file named 'Makefile' exists, than it is treated as a SRC example.
+  - If a file named 'MBS.mbsim.flat.xml' exists, then it is treated as a FLATXML example.
+  - If a file named 'MBS.mbsim.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
   If more then one of these files exist the behaviour is undefined.
   The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
   For a FLATXML and XML examples a second file named 'Integrator.mbsimint.xml' must exist.
@@ -74,12 +78,16 @@ mainOpts.add_argument("--action", default="report", type=str,
           'updateReference[=URL|DIR]': update references from URL or DIR, use the build system if not given;
           'pushReference=DIR': push references to DIR;''')
 mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
-mainOpts.add_argument("--filter", default="all",
-  choices=["all",
-           "allxml",
-           "flatxml",
-           "xml",
-           "src"], help="Filter the specified directories")
+mainOpts.add_argument("--filter", default="True", type=str,
+  help='''Filter the specifed directories using the given Python code. A directory is processed if the provided
+          Python code evaluates to True where the following variables are defined:
+          src: is True if the directory is a source code examples;
+          flatxml: is True if the directory is a xml flat examples;
+          ppxml: is True if the directory is a preprocessing xml examples;
+          xml: is True if the directory is a flat or preprocessing xml examples;
+          mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
+                    mbsimXXX='''+str(mbsimModules)+''';
+          Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
 cfgOpts.add_argument("--atol", default=2e-5, type=float,
@@ -395,17 +403,38 @@ def addExamplesByFilter(baseDir, directoriesSet):
     addOrDiscard=directoriesSet.discard
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
-  for root, _, _ in os.walk(baseDir):
-    foundXML=os.path.isfile(pj(root, "MBS.mbsim.xml"))
-    foundFLATXML=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
-    foundSRC=os.path.isfile(pj(root, "Makefile"))
-    add=False
-    if args.filter=="xml"     and (foundXML)                            : add=True
-    if args.filter=="flatxml" and (foundFLATXML)                        : add=True
-    if args.filter=="src"     and (foundSRC)                            : add=True
-    if args.filter=="allxml"  and (foundXML or foundFLATXML)            : add=True
-    if args.filter=="all"     and (foundXML or foundFLATXML or foundSRC): add=True
-    if add:
+  for root, dirs, _ in os.walk(baseDir):
+    ppxml=os.path.isfile(pj(root, "MBS.mbsim.xml"))
+    flatxml=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
+    xml=ppxml or flatxml
+    src=os.path.isfile(pj(root, "Makefile"))
+    # skip none examples directires
+    if(not ppxml and not flatxml and not src):
+      continue
+    dirs=[]
+    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src}
+    for m in mbsimModules:
+      d[m]=False
+    # check for MBSim modules in src examples
+    if src:
+      filecont=open(pj(root, "Makefile"), "rb").read().decode('utf-8')
+      for m in mbsimModules:
+        if re.search("\\b"+m+"\\b", filecont): d[m]=True
+    # check for MBSim modules in xml and flatxml examples
+    else:
+      for filedir, _, filenames in os.walk(root):
+        for filename in fnmatch.filter(filenames, "*.xml"):
+          if filename[0:4]==".pp.": continue # skip generated .pp.* files
+          filecont=open(pj(filedir, filename), "rb").read().decode('utf-8')
+          for m in mbsimModules:
+            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): d[m]=True
+    # evaluate filter
+    try:
+      filterResult=eval(args.filter, d)
+    except:
+      print("Unable to evaluate the filter:\n"+args.filter)
+      exit(1)
+    if filterResult:
       addOrDiscard(os.path.normpath(root))
 
 
