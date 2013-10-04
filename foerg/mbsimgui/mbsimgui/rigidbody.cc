@@ -183,7 +183,7 @@ int RigidBody::getqRelSize() const {
   }
   extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(rotation.getProperty())->getProperty());
   if(extProperty->isActive()) {
-    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<const ContainerProperty*>(rotation.getProperty())->getProperty(0));
+    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<const ContainerProperty*>(extProperty->getProperty())->getProperty(0));
     nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
   }
   int nq = nqT + nqR;
