@@ -695,7 +695,7 @@ namespace MBSim {
 
     // frames
     e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+    while(e) {
       FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(e);

@@ -48,13 +48,19 @@ namespace MBSim {
 #endif
   };
 
+  struct Transmission {
+    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
+    RigidBody *body;
+    double ratio;
+  };
+
   class GearConstraint : public Constraint {
 
     public:
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name="");
 
-      void addDependency(RigidBody* body_, double ratio);
+      void addTransmission(const Transmission &transmission);
 
       void init(InitStage stage);
 
@@ -80,9 +86,9 @@ namespace MBSim {
       std::vector<RigidBody*> bi;
       RigidBody *bd;
       std::vector<double> ratio;
-      
+
       std::string saved_DependentBody;
-      std::vector<std::string> saved_DependencyBodies;
+      std::vector<std::string> saved_IndependentBody;
       std::vector<double> saved_ratio;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

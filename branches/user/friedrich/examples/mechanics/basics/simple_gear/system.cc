@@ -82,11 +82,11 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
 
   GearConstraint *constraint = new GearConstraint("C1",shaft2);
   addObject(constraint);
-  constraint->addDependency(shaft1,-R1/R2a);
+  constraint->addTransmission(Transmission(shaft1,-R1/R2a));
 
   constraint = new GearConstraint("C2",shaft3);
   addObject(constraint);
-  constraint->addDependency(shaft2,-R2b/R3);
+  constraint->addTransmission(Transmission(shaft2,-R2b/R3));
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
@@ -117,7 +117,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   OpenMBV::CompoundRigidBody *c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);
   c->addRigidBody(c2);
-  c->setStaticColor(0.1);
+  c->setDiffuseColor(0.3333,1,0.3333);
   shaft1->setOpenMBVRigidBody(c);
 
   c1=new OpenMBV::Frustum;
@@ -145,7 +145,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c->addRigidBody(c1);
   c->addRigidBody(c2);
   c->addRigidBody(c3);
-  c->setStaticColor(0.3);
+  c->setDiffuseColor(0.6666,1,0.6666);
   shaft2->setOpenMBVRigidBody(c);
 
   c1=new OpenMBV::Frustum;
@@ -160,12 +160,13 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c2->setBaseRadius(R3);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,-l/2+l/20);
+  c2->setDiffuseColor(0.1111,1,1);
   c2->setName("frustum2");
 
   c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);
   c->addRigidBody(c2);
-  c->setStaticColor(0.5);
+  c->setDiffuseColor(0.1111,1,1);
   shaft3->setOpenMBVRigidBody(c);
 #endif
 }

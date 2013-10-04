@@ -21,6 +21,7 @@
 #include "mbsim/gear.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/constraint.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
 #endif
@@ -50,9 +51,9 @@ namespace MBSim {
     gdSize = 1;
   }
 
-  void Gear::addDependency(RigidBody* body_, double ratio_) {
-    body.push_back(body_); 
-    ratio.push_back(ratio_);
+  void Gear::addTransmission(const Transmission &transmission) { 
+    body.push_back(transmission.body); 
+    ratio.push_back(transmission.ratio); 
   }
 
   void Gear::updateW(double t, int j) {
