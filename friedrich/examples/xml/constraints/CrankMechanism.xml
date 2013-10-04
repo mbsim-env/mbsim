@@ -151,11 +151,12 @@
     </RigidBody>
     <GearConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
       <dependentRigidBody ref="../Object[Crank]"/>
-      <independentRigidBodies>
-        <independentRigidBody ref="../Object[Motor]">
-          <transmissionRatio>-motor_TransmissionRadius/crank_TransmissionRadius</transmissionRatio>
-        </independentRigidBody>
-      </independentRigidBodies>
+      <transmissions>
+        <Transmission>
+          <rigidBody ref="../Object[Motor]"/>
+          <ratio>-motor_TransmissionRadius/crank_TransmissionRadius</ratio>
+        </Transmission>
+      </transmissions>
     </GearConstraint>
     <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="Rocker">
       <frameOfReference ref="../Object[Crank]/Frame[fRocker]"/>

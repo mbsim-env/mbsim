@@ -1377,6 +1377,33 @@
     </xs:complexContent>
   </xs:complexType>
 
+ <xs:element name="Transmission" type="TransmissionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TransmissionType">
+    <xs:sequence>
+      <xs:element name="rigidBody">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+          tbd
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ratio" type="pv:unknownScalar">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+          tbd
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType> 
+
   <xs:element name="GearConstraint" substitutionGroup="Constraint" type="GearConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1397,30 +1424,15 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="independentRigidBodies">
+          <xs:element name="transmissions">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Liste der Starrkörper, von deren generalisierten Koordinaten die generalisierten Koordinaten des abhängigen Körpers direkt bestimmt werden können.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="independentRigidBody">
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element name="transmissionRatio" type="pv:unknownScalar">
-                        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                          Übersetzungsverhältnis
-                        </xs:documentation></xs:annotation>
-                      </xs:element>
-                    </xs:sequence>
-                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
-                      <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        Angabe des Körpers 
-                      </xs:documentation></xs:annotation>
-                    </xs:attribute>
-                  </xs:complexType>
-                </xs:element>
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element name="Transmission"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

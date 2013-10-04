@@ -25,6 +25,8 @@
 
 namespace MBSim {
 
+  class Transmission;
+
   class Gear : public LinkMechanics {
     protected:
       fmatvec::Function<double(double,double)> *func;
@@ -42,7 +44,7 @@ namespace MBSim {
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body[0] = body_;}
-      void addDependency(RigidBody* body_, double ratio);
+      void addTransmission(const Transmission &transmission);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

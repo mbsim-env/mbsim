@@ -132,7 +132,7 @@ namespace MBSim {
 
     // frames
     TiXmlElement *E=e->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+    while(E) {
       FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(E);

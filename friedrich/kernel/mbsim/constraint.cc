@@ -103,10 +103,9 @@ namespace MBSim {
       if (saved_DependentBody!="")
         setDependentBody(getByPath<RigidBody>(saved_DependentBody));
       bd->addDependency(this);
-      if (saved_DependencyBodies.size()>0) {
-        for (unsigned int i=0; i<saved_DependencyBodies.size(); i++) {
-          addDependency(getByPath<RigidBody>(saved_DependencyBodies[i]), saved_ratio[i]);
-        }
+      if (saved_IndependentBody.size()>0) {
+        for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
+          addTransmission(Transmission(getByPath<RigidBody>(saved_IndependentBody[i]),saved_ratio[i]));
       }
       Constraint::init(stage);
     }
@@ -119,9 +118,9 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void GearConstraint::addDependency(RigidBody* body, double ratio_) {
-    bi.push_back(body); 
-    ratio.push_back(ratio_);
+  void GearConstraint::addTransmission(const Transmission &indepBody) {
+    bi.push_back(indepBody.body); 
+    ratio.push_back(indepBody.ratio);
   }
 
   void GearConstraint::updateStateDependentVariables(double t){
@@ -145,11 +144,11 @@ namespace MBSim {
     TiXmlElement *e, *ee;
     e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
     saved_DependentBody=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"independentRigidBodies");
+    e=element->FirstChildElement(MBSIMNS"transmissions");
     ee=e->FirstChildElement();
-    while(ee) {
-      saved_DependencyBodies.push_back(ee->Attribute("ref"));
-      saved_ratio.push_back(getDouble(ee->FirstChildElement()));
+    while(ee && ee->ValueStr()==MBSIMNS"Transmission") {
+      saved_IndependentBody.push_back(ee->FirstChildElement(MBSIMNS"rigidBody")->Attribute("ref"));
+      saved_ratio.push_back(getDouble(ee->FirstChildElement(MBSIMNS"ratio")));
       ee=ee->NextSiblingElement();
     }
 
@@ -174,9 +173,8 @@ namespace MBSim {
     Gear *gear = new Gear(string("Gear")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setDependentBody(bd);
-    for(unsigned int i=0; i<bi.size(); i++) {
-      gear->addDependency(bi[i],ratio[i]);
-    }
+    for(unsigned int i=0; i<bi.size(); i++)
+      gear->addTransmission(Transmission(bi[i],ratio[i]));
     if(FArrow)
       gear->setOpenMBVForceArrow(FArrow);
     if(MArrow)
