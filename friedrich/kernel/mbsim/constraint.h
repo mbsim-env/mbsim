@@ -60,7 +60,7 @@ namespace MBSim {
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name="");
 
-      void addTransmission(const Transmission &transmission);
+      void addTransmission(Transmission *transmission);
 
       void init(InitStage stage);
 
@@ -89,7 +89,6 @@ namespace MBSim {
 
       std::string saved_DependentBody;
       std::vector<std::string> saved_IndependentBody;
-      std::vector<double> saved_ratio;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *FArrow, *MArrow;

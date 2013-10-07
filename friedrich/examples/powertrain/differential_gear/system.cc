@@ -59,7 +59,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   GearConstraint *constraint = new GearConstraint("C1",shaft1);
   addObject(constraint);
-  constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1));
+  constraint->addTransmission(new Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1));
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
