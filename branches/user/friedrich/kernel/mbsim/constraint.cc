@@ -105,7 +105,7 @@ namespace MBSim {
       bd->addDependency(this);
       if (saved_IndependentBody.size()>0) {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
-          addTransmission(Transmission(getByPath<RigidBody>(saved_IndependentBody[i]),saved_ratio[i]));
+          bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       }
       Constraint::init(stage);
     }
@@ -118,9 +118,10 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void GearConstraint::addTransmission(const Transmission &indepBody) {
-    bi.push_back(indepBody.body); 
-    ratio.push_back(indepBody.ratio);
+  void GearConstraint::addTransmission(Transmission *transmission) {
+    bi.push_back(transmission->body); 
+    ratio.push_back(transmission->ratio);
+    delete transmission;
   }
 
   void GearConstraint::updateStateDependentVariables(double t){
@@ -148,7 +149,7 @@ namespace MBSim {
     ee=e->FirstChildElement();
     while(ee && ee->ValueStr()==MBSIMNS"Transmission") {
       saved_IndependentBody.push_back(ee->FirstChildElement(MBSIMNS"rigidBody")->Attribute("ref"));
-      saved_ratio.push_back(getDouble(ee->FirstChildElement(MBSIMNS"ratio")));
+      ratio.push_back(getDouble(ee->FirstChildElement(MBSIMNS"ratio")));
       ee=ee->NextSiblingElement();
     }
 
@@ -174,7 +175,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setDependentBody(bd);
     for(unsigned int i=0; i<bi.size(); i++)
-      gear->addTransmission(Transmission(bi[i],ratio[i]));
+      gear->addTransmission(new Transmission(bi[i],ratio[i]));
     if(FArrow)
       gear->setOpenMBVForceArrow(FArrow);
     if(MArrow)

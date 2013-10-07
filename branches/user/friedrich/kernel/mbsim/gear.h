@@ -44,7 +44,7 @@ namespace MBSim {
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body[0] = body_;}
-      void addTransmission(const Transmission &transmission);
+      void addTransmission(Transmission *transmission);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
