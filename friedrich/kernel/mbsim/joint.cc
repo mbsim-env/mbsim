@@ -149,6 +149,11 @@ namespace MBSim {
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);
 
+      if(ffl)
+        fifl = new BilateralImpact;
+      if(fml)
+        fiml = new BilateralImpact;
+
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
       if(forceDir.cols()) 
@@ -564,52 +569,31 @@ namespace MBSim {
   }
 
   void Joint::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e, *ee;
     LinkMechanics::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"force");
-    if(e) {
-      ee=e->FirstChildElement(MBSIMNS"direction");
-      setForceDirection(getMat3xV(ee,0));
-      ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
-      setForceLaw(gfl);
-      ee=ee->NextSiblingElement();
-      if(ee->FirstChildElement()) {
-        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
-        setImpactForceLaw(gifl);
-      }
-      ee=ee->NextSiblingElement();
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"forceDirection");
+    if(e) setForceDirection(getMat(e,3,0));
+    e=element->FirstChildElement(MBSIMNS"forceLaw");
+    if(e) setForceLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if(ee) {
-        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVForceArrow(arrow);
-        ee=ee->NextSiblingElement();
-      }
-#endif
-    }
-    e=element->FirstChildElement(MBSIMNS"moment");
+    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
     if(e) {
-      ee=e->FirstChildElement(MBSIMNS"direction");
-      setMomentDirection(getMat3xV(ee,0));
-      ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
-      setMomentLaw(gfl);
-      ee=ee->NextSiblingElement();
-      if(ee->FirstChildElement()) {
-        GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
-        setImpactMomentLaw(gifl);
-      }
-      ee=ee->NextSiblingElement();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(ee) {
-        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVMomentArrow(arrow);
-        ee=ee->NextSiblingElement();
-      }
-#endif
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
     }
+#endif
+    e=element->FirstChildElement(MBSIMNS"momentDirection");
+    if(e) setMomentDirection(getMat(e,3,0));
+    e=element->FirstChildElement(MBSIMNS"momentLaw");
+    if(e) setMomentLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVMomentArrow(arrow);
+    }
+#endif
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");

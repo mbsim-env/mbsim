@@ -527,13 +527,13 @@ namespace MBSim {
    }
 
   template<class Ret>
-  class SinusFunction : public fmatvec::Function<Ret(double)> {
+  class SinusoidalFunction : public fmatvec::Function<Ret(double)> {
     protected:
       Ret A, f, phi0, y0;
       Ret zeros(const Ret &x) { return Ret(x.size()); }
     public:
-      SinusFunction() { }
-      SinusFunction(const Ret &A_, const Ret &f_, const Ret &phi0_, const Ret &y0_) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
+      SinusoidalFunction() { }
+      SinusoidalFunction(const Ret &A_, const Ret &f_, const Ret &phi0_, const Ret &y0_) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
       Ret operator()(const double &x) {  
         Ret y(A.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++)
@@ -562,7 +562,7 @@ namespace MBSim {
         e=element->FirstChildElement(MBSIMNS"frequency");
         f=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"phase");
-        phi0=FromMatStr<Ret>::cast(e->GetText());
+        phi0=e?FromMatStr<Ret>::cast(e->GetText()):zeros(A);
         e=element->FirstChildElement(MBSIMNS"offset");
         y0=e?FromMatStr<Ret>::cast(e->GetText()):zeros(A);
       }
@@ -577,24 +577,24 @@ namespace MBSim {
   };
 
   template<>
-    inline double SinusFunction<double>::operator()(const double &x) {  
+    inline double SinusoidalFunction<double>::operator()(const double &x) {  
       return y0+A*sin(2.*M_PI*f*x+phi0);
     }
 
   template<>
-    inline double SinusFunction<double>::parDer(const double &x) {  
+    inline double SinusoidalFunction<double>::parDer(const double &x) {  
       double om = 2.*M_PI*f;
       return A*om*cos(om*x+phi0);
     }
 
   template<>
-    inline double SinusFunction<double>::parDerParDer(const double &x) {  
+    inline double SinusoidalFunction<double>::parDerParDer(const double &x) {  
       double om = 2.*M_PI*f;
       return -A*om*om*sin(om*x+phi0);
     }
 
   template<>
-    inline double SinusFunction<double>::zeros(const double &x) { return 0; } 
+    inline double SinusoidalFunction<double>::zeros(const double &x) { return 0; } 
 
   template<class Ret>
   class PositiveFunction : public fmatvec::Function<Ret(double)> {
@@ -648,108 +648,185 @@ namespace MBSim {
     }
 
   template<class Ret>
-    class LinearCombinationFunction : public fmatvec::Function<Ret(double)> {
+    class ScaledFunction : public fmatvec::Function<Ret(double)> {
       public:
-        LinearCombinationFunction() { }
-        ~LinearCombinationFunction() { 
-          for (unsigned int i=1; i<functions.size(); i++)
-            delete functions[i]; 
+        ScaledFunction(fmatvec::Function<Ret(double)> *function_=0, double factor_=1) : function(function_), factor(factor_) { }
+        ~ScaledFunction() { delete function; }
+        void setScalingFactor(double factor_) { factor = factor_; }
+        void setFunction(fmatvec::Function<Ret(double)> *function_) { function = function_; }
+        Ret operator()(const double &x) { return factor*(*function)(x); }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &x) { return factor*function->parDer(x); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return factor*function->parDerParDer(x); }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+          function=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
+          e=element->FirstChildElement(MBSIMNS"scalingFactor");
+          if(e) factor=Element::getDouble(e);
         }
-        void addFunction(fmatvec::Function<Ret(double)> *function, double factor=1.) {
-          functions.push_back(function);
-          factors.push_back(factor);
+      private:
+        fmatvec::Function<Ret(double)> *function;
+        double factor;
+    };
+
+  template<class Ret>
+    class SummationFunction : public fmatvec::Function<Ret(double)> {
+      public:
+        SummationFunction() { }
+        ~SummationFunction() { 
+          for (unsigned int i=1; i<summand.size(); i++)
+            delete summand[i]; 
         }
+        void addSummand(fmatvec::Function<Ret(double)> *function) { summand.push_back(function); }
         Ret operator()(const double &x) {
-          Ret y=factors[0]*(*(functions[0]))(x);
-          for (unsigned int i=1; i<functions.size(); i++)
-            y+=factors[i]*(*(functions[i]))(x);
+          Ret y=(*(summand[0]))(x);
+          for (unsigned int i=1; i<summand.size(); i++)
+            y+=(*(summand[i]))(x);
           return y;
         }
         typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
-          typename fmatvec::Der<Ret, double>::type y=factors[0]*functions[0]->parDer(x);
-          for (unsigned int i=0; i<functions.size(); i++)
-            y+=factors[i]*functions[i]->parDer(x);
+          typename fmatvec::Der<Ret, double>::type y=summand[0]->parDer(x);
+          for (unsigned int i=0; i<summand.size(); i++)
+            y+=summand[i]->parDer(x);
           return y;
         }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
-          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y=factors[0]*functions[0]->parDerParDer(x);
-          for (unsigned int i=0; i<functions.size(); i++)
-            y+=factors[i]*functions[i]->parDerParDer(x);
+          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y=summand[0]->parDerParDer(x);
+          for (unsigned int i=0; i<summand.size(); i++)
+            y+=summand[i]->parDerParDer(x);
           return y;
         }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-          while (e && e->ValueStr()==MBSIMNS"function") {
-            MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(ee);
-            ee=e->FirstChildElement(MBSIMNS"factor");
-            double factor=ee?Element::getDouble(ee):1;
-            addFunction(f, factor);
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"summands")->FirstChildElement();
+          while (e) {
+            addSummand(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e));
             e=e->NextSiblingElement();
           }
         }
       private:
-        std::vector<fmatvec::Function<Ret(double)> *> functions;
-        std::vector<double> factors;
+        std::vector<fmatvec::Function<Ret(double)> *> summand;
     };
 
   template<class Ret>
     class VectorValuedFunction : public fmatvec::Function<Ret(double)> {
       public:
         VectorValuedFunction() { }
-        VectorValuedFunction(const std::vector<fmatvec::Function<double(double)> *> &functions_) : functions(functions_) { }
+        VectorValuedFunction(const std::vector<fmatvec::Function<double(double)> *> &component_) : component(component_) { }
         ~VectorValuedFunction() { 
-          for (unsigned int i=1; i<functions.size(); i++)
-            delete functions[i]; 
+          for (unsigned int i=1; i<component.size(); i++)
+            delete component[i]; 
         }
+        void addComponent(fmatvec::Function<double(double)> *function) { component.push_back(function); }
         Ret operator()(const double &x) {
-          Ret y(functions.size(),fmatvec::NONINIT);
-          for (unsigned int i=0; i<functions.size(); i++)
-            y(i)=(*functions[i])(x);
+          Ret y(component.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++)
+            y(i)=(*component[i])(x);
           return y;
         }
         typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
-          typename fmatvec::Der<Ret, double>::type y(functions.size(),fmatvec::NONINIT);
-          for (unsigned int i=0; i<functions.size(); i++)
-            y(i)=functions[i]->parDer(x);
+          typename fmatvec::Der<Ret, double>::type y(component.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++)
+            y(i)=component[i]->parDer(x);
           return y;
         }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
-          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(functions.size(),fmatvec::NONINIT);
-          for (unsigned int i=0; i<functions.size(); i++)
-            y(i)=functions[i]->parDerParDer(x);
+          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(component.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++)
+            y(i)=component[i]->parDerParDer(x);
           return y;
         }
 
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-          while (e && e->ValueStr()==MBSIMNS"function") {
-            MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<double(double)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(ee);
-            functions.push_back(f);
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"components")->FirstChildElement();
+          while (e) {
+            addComponent(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e));
             e=e->NextSiblingElement();
           }
         }
       private:
-        std::vector<fmatvec::Function<double(double)> *> functions;
+        std::vector<fmatvec::Function<double(double)> *> component;
     };
+
+//  template<class Ret>
+//    class LimitedFunction : public fmatvec::Function<Ret(double)> {
+//      public:
+//        LimitedFunction(fmatvec::Function<Ret(double)> *function_=0, double limit_=1) : function(function_), limit(limit_) { }
+//        ~LimitedFunction() { delete function; }
+//        void setLimit(double limit_) { limit = limit_; }
+//        void setFunction(fmatvec::Function<Ret(double)> *function_) { function = function_; }
+//        Ret operator()(const double &x) {
+//          if(x<=limit)
+//            return (*function)(x);
+//          if(contDiff==0)
+//            return yEnd;
+//          else if(contDiff==1)
+//            return yEnd+ysEnd*(x-limit);
+//          else 
+//            return yEnd+(ysEnd+0.5*yssEnd*(x-limit))*(x-limit);
+//        }
+//        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+//          if(x<=limit)
+//            return function->parDer(x);
+//          if(contDiff==0)
+//            return zeros(yEnd);
+//          else if(contDiff==1)
+//            return ysEnd;
+//          else 
+//            return ysEnd+yssEnd*(x-limit);
+//        }
+//        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+//          if(x<=limit)
+//            return function->parDerParDer(x);
+//          if(contDiff==0)
+//            return zeros(yEnd);
+//          else if(contDiff==1)
+//            return zeros(yEnd);
+//          else 
+//            return yssEnd;
+//        }
+//        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+//          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+//          function=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
+//          e=element->FirstChildElement(MBSIMNS"limit");
+//          if(e) limit=Element::getDouble(e);
+//        }
+//      private:
+//        fmatvec::Function<Ret(double)> *function;
+//        double limit;
+//        int contDiff;
+//        Ret yEnd, ysEnd, yssEnd;
+//        void init() {
+//          yEnd = (*function)(limit); 
+//          if(contDiff>0) {
+//            ysEnd = function->parDer(limit); 
+//            if(contDiff>1)
+//              yssEnd = function->parDerParDer(limit); 
+//          }
+//        }
+//    };
+
+  template <typename Ret>
+  struct LimitedFunction {
+    LimitedFunction(fmatvec::Function<Ret(double)> *function_, double limit_) : function(function_), limit(limit_) { }
+    ~LimitedFunction() { delete function; }
+    fmatvec::Function<Ret(double)> *function;
+    double limit;
+  };
 
   template<class Ret>
     class PiecewiseDefinedFunction : public fmatvec::Function<Ret(double)> {
       public:
         PiecewiseDefinedFunction() : contDiff(0) { }
-        PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_, int contDiff_=0) : functions(functions_), a(a_), contDiff(contDiff_) { 
+        void addLimitedFunction(const LimitedFunction<Ret> &limitedFunction) { 
+          function.push_back(limitedFunction.function); 
+          function.push_back(limitedFunction.limit); 
           init();
         }
-        ~PiecewiseDefinedFunction() { 
-          for (unsigned int i=1; i<functions.size(); i++)
-            delete functions[i]; 
-        }
+        void setContinouslyDifferentiable(double contDiff_) { contDiff = contDiff_; }
         Ret zeros(const Ret &x) { return Ret(x.size()); }
         Ret operator()(const double &x) {
           for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
-              return (*functions[i])(x);
+              return (*function[i])(x);
           if(contDiff==0)
             return yEnd;
           else if(contDiff==1)
@@ -760,7 +837,7 @@ namespace MBSim {
         typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
           for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
-              return functions[i]->parDer(x);
+              return function[i]->parDer(x);
           if(contDiff==0)
             return zeros(yEnd);
           else if(contDiff==1)
@@ -771,7 +848,7 @@ namespace MBSim {
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
           for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
-              return functions[i]->parDerParDer(x);
+              return function[i]->parDerParDer(x);
           if(contDiff==0)
             return zeros(yEnd);
           else if(contDiff==1)
@@ -781,30 +858,28 @@ namespace MBSim {
         }
 
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-          while (e && e->ValueStr()==MBSIMNS"function") {
-            MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(ee);
-            functions.push_back(f);
-            ee=e->FirstChildElement(MBSIMNS"limit");
-            a.push_back(Element::getDouble(ee));
-            e=e->NextSiblingElement();
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"limitedFunctions");
+          MBXMLUtils::TiXmlElement *ee=e->FirstChildElement();
+          while(ee && ee->ValueStr()==MBSIMNS"LimitedFunction") {
+            function.push_back(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(ee->FirstChildElement(MBSIMNS"function")->FirstChildElement()));
+            a.push_back(Element::getDouble(ee->FirstChildElement(MBSIMNS"limit")));
+            ee=ee->NextSiblingElement();
           }
           e=element->FirstChildElement(MBSIMNS"continouslyDifferentiable");
           if(e) contDiff=Element::getDouble(e);
           init();
         }
       private:
-        std::vector<fmatvec::Function<Ret(double)> *> functions;
+        std::vector<fmatvec::Function<Ret(double)> *> function;
         std::vector<double> a;
         int contDiff;
         Ret yEnd, ysEnd, yssEnd;
         void init() {
-          yEnd = (*functions[functions.size()-1])(a[a.size()-1]); 
+          yEnd = (*function[function.size()-1])(a[a.size()-1]); 
           if(contDiff>0) {
-            ysEnd = functions[functions.size()-1]->parDer(a[a.size()-1]); 
+            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]); 
             if(contDiff>1)
-              yssEnd = functions[functions.size()-1]->parDerParDer(a[a.size()-1]); 
+              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]); 
           }
         }
     };

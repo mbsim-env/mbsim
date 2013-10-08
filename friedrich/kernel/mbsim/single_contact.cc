@@ -1389,7 +1389,7 @@ namespace MBSim {
     TiXmlElement *e;
 
     //Set contact law
-    e = element->FirstChildElement(MBSIMNS"contactForceLaw");
+    e = element->FirstChildElement(MBSIMNS"normalForceLaw");
     GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
     setContactForceLaw(gfl);
 
@@ -1436,7 +1436,7 @@ namespace MBSim {
     }
 
     //Friction force
-    e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
+    e = element->FirstChildElement(MBSIMNS"openMBVTangentialForceArrow");
     if (e) {
       OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow

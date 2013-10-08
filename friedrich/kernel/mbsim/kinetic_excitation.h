@@ -66,14 +66,24 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
 
+      /**
+       * \param local force direction represented in first frame
+       */
+      void setForceDirection(const fmatvec::Mat3xV& fd);
+
+      /**
+       * \param local moment direction represented in first frame
+       */
+      void setMomentDirection(const fmatvec::Mat3xV& md);
+
       /** \brief Set the force excitation.
        * forceDir*func(t) is the applied force vector in space.
        * This force vector is given in the frame set by setFrameOfReference.
        */
-      void setForce(const fmatvec::Mat3xV &dir, fmatvec::Function<fmatvec::VecV(double)> *func);
+      void setForceFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
 
       /** \brief see setForce */
-      void setMoment(const fmatvec::Mat3xV &dir, fmatvec::Function<fmatvec::VecV(double)> *func);
+      void setMomentFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
 
       /** \brief The frame of reference for the force/moment direction vectors.
        * If not given, the frame the excitation is connected to is used.
