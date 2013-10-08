@@ -785,31 +785,31 @@ namespace MBSim {
     TiXmlElement *e;
 
     /*Read Contact Force Law*/
-    e = element->FirstChildElement(MBSIMNS"contactForceLaw");
+    e = element->FirstChildElement(MBSIMNS"normalForceLaw");
 
     //Get contact force law
     GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
-    setContactForceLaw(gfl);
+    setNormalForceLaw(gfl);
 
     //Get Impact law
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
       GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
-      setContactImpactLaw(gifl);
+      setNormalImpactLaw(gifl);
       e = e->NextSiblingElement();
     }
 
     //Get Friction Force Law
     if (e->FirstChildElement()) {
       FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
-      setFrictionForceLaw(ffl);
+      setTangentialForceLaw(ffl);
       e = e->NextSiblingElement();
     }
 
     //Get Friction Impact Law
     if (e->FirstChildElement()) {
       FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
-      setFrictionImpactLaw(fil);
+      setTangentialImpactLaw(fil);
     }
 
     /*Read all contour pairings*/
@@ -843,14 +843,12 @@ namespace MBSim {
       OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
       setOpenMBVNormalForceArrow(arrow);
-      e = e->NextSiblingElement();
     }
-    e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
+    e = element->FirstChildElement(MBSIMNS"openMBVTangentialForceArrow");
     if (e) {
       OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVFrictionArrow(arrow);
-      e = e->NextSiblingElement();
+      setOpenMBVTangentialForceArrow(arrow);
     }
 #endif
   }
@@ -858,22 +856,22 @@ namespace MBSim {
   TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
     TiXmlElement *ele1;
-    ele1 = new TiXmlElement( MBSIMNS"contactForceLaw" );
+    ele1 = new TiXmlElement( MBSIMNS"normalForceLaw" );
     if(fcl) 
       fcl->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
     if(fnil) {
-      ele1 = new TiXmlElement( MBSIMNS"contactImpactLaw" );
+      ele1 = new TiXmlElement( MBSIMNS"normalImpactLaw" );
       fnil->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     if(fdf) {
-      ele1 = new TiXmlElement( MBSIMNS"frictionForceLaw" );
+      ele1 = new TiXmlElement( MBSIMNS"tangentialForceLaw" );
       fdf->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     if(ftil) {
-      ele1 = new TiXmlElement( MBSIMNS"frictionImpactLaw" );
+      ele1 = new TiXmlElement( MBSIMNS"tangentialImpactLaw" );
       ftil->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
@@ -892,7 +890,7 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
     if(frictionArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVFrictionArrow" );
+      ele1 = new TiXmlElement( MBSIMNS"openMBVTangentialForceArrow" );
       frictionArrow->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }

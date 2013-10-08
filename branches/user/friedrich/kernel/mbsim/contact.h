@@ -175,7 +175,7 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setOpenMBVFrictionArrow(OpenMBV::Arrow *arrow) {
+      void setOpenMBVTangentialForceArrow(OpenMBV::Arrow *arrow) {
         frictionArrow = arrow;
       }
 #endif
@@ -189,19 +189,19 @@ namespace MBSim {
       virtual void setLinkStatusInd(int LinkStatusInd_);
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
 
-      void setContactForceLaw(GeneralizedForceLaw *fcl_) {
+      void setNormalForceLaw(GeneralizedForceLaw *fcl_) {
         fcl = fcl_;
       }
-      GeneralizedForceLaw * getContactForceLaw() const {
+      GeneralizedForceLaw * getNormalForceLaw() const {
         return fcl;
       }
-      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) {
+      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_) {
         fnil = fnil_;
       }
-      void setFrictionForceLaw(FrictionForceLaw *fdf_) {
+      void setTangentialForceLaw(FrictionForceLaw *fdf_) {
         fdf = fdf_;
       }
-      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) {
+      void setTangentialImpactLaw(FrictionImpactLaw *ftil_) {
         ftil = ftil_;
       }
       void setContactKinematics(ContactKinematics* ck, size_t index = 0) {
