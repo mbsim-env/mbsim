@@ -91,11 +91,11 @@ void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
   frameOfReference.initializeUsingXML(element);
   forceDirection.initializeUsingXML(element);
   forceFunction.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
   momentDirection.initializeUsingXML(element);
   momentFunction.initializeUsingXML(element);
-  momentArrow.initializeUsingXML(element);
   connections.initializeUsingXML(element);
+  forceArrow.initializeUsingXML(element);
+  momentArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
@@ -103,11 +103,11 @@ TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
   frameOfReference.writeXMLFile(ele0);
   forceDirection.writeXMLFile(ele0);
   forceFunction.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
   momentDirection.writeXMLFile(ele0);
   momentFunction.writeXMLFile(ele0);
-  momentArrow.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
+  forceArrow.writeXMLFile(ele0);
+  momentArrow.writeXMLFile(ele0);
   return ele0;
 }
 
