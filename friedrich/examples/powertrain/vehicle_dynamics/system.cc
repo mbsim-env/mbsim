@@ -273,52 +273,52 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Contact *c = new Contact("KontaktVorneLinks"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),vl->getContour("Reifen"));
   addLink(c);
 
   c = new Contact("KontaktHintenLinks"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),hl->getContour("Reifen"));
   addLink(c);
 
   c = new Contact("KontaktVorneRechts"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),vr->getContour("Reifen"));
   addLink(c);
 
   c = new Contact("KontaktHintenRechts"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),hr->getContour("Reifen"));
   addLink(c);
@@ -382,9 +382,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     if(rigidJoints) {
       joint2->setForceLaw(new BilateralConstraint);
-      joint2->setImpactForceLaw(new BilateralImpact);
       joint2->setMomentLaw(new BilateralConstraint);
-      joint2->setImpactMomentLaw(new BilateralImpact);
     } 
     else {
       joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
@@ -399,9 +397,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     if(rigidJoints) {
       joint2->setForceLaw(new BilateralConstraint);
-      joint2->setImpactForceLaw(new BilateralImpact);
       joint2->setMomentLaw(new BilateralConstraint);
-      joint2->setImpactMomentLaw(new BilateralImpact);
     } 
     else {
       joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));

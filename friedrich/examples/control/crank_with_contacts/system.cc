@@ -184,7 +184,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Anregung
   KineticExcitation *MomentAnCrank = new KineticExcitation("MomentAnCrank");
-  MomentAnCrank->setMoment("[0;0;1]", new ConstantFunction<VecV>("[109]"));
+  MomentAnCrank->setMomentDirection("[0;0;1]");
+  MomentAnCrank->setMomentFunction(new ConstantFunction<VecV>("[109]"));
   MomentAnCrank->setFrameOfReference(Crank->getFrameForKinematics());
   MomentAnCrank->connect(Crank->getFrameForKinematics());
 
@@ -198,7 +199,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Joint *joint_Rod_Piston = new Joint("Joint_Rod_Piston");
   joint_Rod_Piston->setForceDirection("[1,0;0,1;0,0]");
   joint_Rod_Piston->setForceLaw( new BilateralConstraint());
-  joint_Rod_Piston->setImpactForceLaw( new BilateralImpact());
   joint_Rod_Piston->connect( Rod->getFrame("P") , Piston->getFrameForKinematics() );
 
   addLink(joint_Rod_Piston);
@@ -252,60 +252,60 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Contact *contact_Point_Piston_Ebene = new Contact("contact_Point_Piston_Ebene");
   contact_Point_Piston_Ebene->connect(Piston->getContour("Point_Piston"),getContour("plane1"));
 
-  contact_Point_Piston_Ebene->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-  contact_Point_Piston_Ebene->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-  contact_Point_Piston_Ebene->setContactForceLaw(new UnilateralConstraint());
-  contact_Point_Piston_Ebene->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
+  contact_Point_Piston_Ebene->setTangentialForceLaw(new PlanarCoulombFriction(0.1) );
+  contact_Point_Piston_Ebene->setTangentialImpactLaw(new PlanarCoulombImpact(0.1));
+  contact_Point_Piston_Ebene->setNormalForceLaw(new UnilateralConstraint());
+  contact_Point_Piston_Ebene->setNormalImpactLaw(new UnilateralNewtonImpact(0.2));
   this->addLink(contact_Point_Piston_Ebene);
 
   // Contact Point an Piston und Ebene der Welt oben
   Contact *contact_Point_Piston_Ebene2 = new Contact("contact_Point_Piston_Ebene2");
   contact_Point_Piston_Ebene2->connect(Piston->getContour("Point_Piston"),getContour("plane2"));
 
-  contact_Point_Piston_Ebene2->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-  contact_Point_Piston_Ebene2->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-  contact_Point_Piston_Ebene2->setContactForceLaw(new UnilateralConstraint());
-  contact_Point_Piston_Ebene2->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
+  contact_Point_Piston_Ebene2->setTangentialForceLaw(new PlanarCoulombFriction(0.1) );
+  contact_Point_Piston_Ebene2->setTangentialImpactLaw(new PlanarCoulombImpact(0.1));
+  contact_Point_Piston_Ebene2->setNormalForceLaw(new UnilateralConstraint());
+  contact_Point_Piston_Ebene2->setNormalImpactLaw(new UnilateralNewtonImpact(0.2));
   this->addLink(contact_Point_Piston_Ebene2);
 
   // Contact Point an Block und Ebene der Welt unten
   Contact *contact_Point_Block_Ebene = new Contact("contact_Point_Block_Ebene");
   contact_Point_Block_Ebene->connect(Block->getContour("Point_Block"),getContour("plane1"));
 
-  contact_Point_Block_Ebene->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-  contact_Point_Block_Ebene->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-  contact_Point_Block_Ebene->setContactForceLaw(new UnilateralConstraint());
-  contact_Point_Block_Ebene->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
+  contact_Point_Block_Ebene->setTangentialForceLaw(new PlanarCoulombFriction(0.1) );
+  contact_Point_Block_Ebene->setTangentialImpactLaw(new PlanarCoulombImpact(0.1));
+  contact_Point_Block_Ebene->setNormalForceLaw(new UnilateralConstraint());
+  contact_Point_Block_Ebene->setNormalImpactLaw(new UnilateralNewtonImpact(0.2));
   this->addLink(contact_Point_Block_Ebene);
 
   // Contact Point an Block und Ebene der Welt oben
   Contact *contact_Point_Block_Ebene2 = new Contact("contact_Point_Block_Ebene2");
   contact_Point_Block_Ebene2->connect(Block->getContour("Point_Block"),getContour("plane2"));
 
-  contact_Point_Block_Ebene2->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-  contact_Point_Block_Ebene2->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-  contact_Point_Block_Ebene2->setContactForceLaw(new UnilateralConstraint());
-  contact_Point_Block_Ebene2->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
+  contact_Point_Block_Ebene2->setTangentialForceLaw(new PlanarCoulombFriction(0.1) );
+  contact_Point_Block_Ebene2->setTangentialImpactLaw(new PlanarCoulombImpact(0.1));
+  contact_Point_Block_Ebene2->setNormalForceLaw(new UnilateralConstraint());
+  contact_Point_Block_Ebene2->setNormalImpactLaw(new UnilateralNewtonImpact(0.2));
   this->addLink(contact_Point_Block_Ebene2);
 
   // Contact Point an Piston und Line an Block
   Contact *contact_Point_Piston_Line_Block = new Contact("contact_Point_Piston_Line_Block");
   contact_Point_Piston_Line_Block->connect(Piston->getContour("Point_Piston"),Block->getContour("line1"));
 
-  contact_Point_Piston_Line_Block->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-  contact_Point_Piston_Line_Block->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-  contact_Point_Piston_Line_Block->setContactForceLaw(new UnilateralConstraint());
-  contact_Point_Piston_Line_Block->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
+  contact_Point_Piston_Line_Block->setTangentialForceLaw(new PlanarCoulombFriction(0.1) );
+  contact_Point_Piston_Line_Block->setTangentialImpactLaw(new PlanarCoulombImpact(0.1));
+  contact_Point_Piston_Line_Block->setNormalForceLaw(new UnilateralConstraint());
+  contact_Point_Piston_Line_Block->setNormalImpactLaw(new UnilateralNewtonImpact(0.2));
   this->addLink(contact_Point_Piston_Line_Block);
 
   // Contact Point an Block und Ebene Vertikal rechts
   Contact *contact_Point_Block_Ebene_Vertikal = new Contact("contact_Point_Block_Ebene_Vertikal");
   contact_Point_Block_Ebene_Vertikal->connect(Block->getContour("Point_Block"),getContour("plane3"));
 
-  contact_Point_Block_Ebene_Vertikal->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-  contact_Point_Block_Ebene_Vertikal->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-  contact_Point_Block_Ebene_Vertikal->setContactForceLaw(new UnilateralConstraint());
-  contact_Point_Block_Ebene_Vertikal->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
+  contact_Point_Block_Ebene_Vertikal->setTangentialForceLaw(new PlanarCoulombFriction(0.1) );
+  contact_Point_Block_Ebene_Vertikal->setTangentialImpactLaw(new PlanarCoulombImpact(0.1));
+  contact_Point_Block_Ebene_Vertikal->setNormalForceLaw(new UnilateralConstraint());
+  contact_Point_Block_Ebene_Vertikal->setNormalImpactLaw(new UnilateralNewtonImpact(0.2));
   this->addLink(contact_Point_Block_Ebene_Vertikal);
 
 
