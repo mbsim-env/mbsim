@@ -124,10 +124,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     stringstream contactname; // fricional contact
     contactname << "Contact_" << k;
     contact.push_back(new Contact(contactname.str()));
-    contact[k]->setContactForceLaw(new UnilateralConstraint);
-    contact[k]->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-    contact[k]->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
-    contact[k]->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
+    contact[k]->setNormalForceLaw(new UnilateralConstraint);
+    contact[k]->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
+    contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
     this->addLink(contact[k]);
   }

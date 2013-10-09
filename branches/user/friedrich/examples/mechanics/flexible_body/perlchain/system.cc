@@ -150,15 +150,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->connect(this->getFrame("BearingFrame"),balls[0]->getFrame("C"));
   this->addLink(joint);
 
   // constraints balls on flexible band
   for(int i=0;i<nBalls;i++) {
     Contact *contact = new Contact("Band_"+balls[i]->getName());
-    contact->setContactForceLaw(new BilateralConstraint);
-    contact->setContactImpactLaw(new BilateralImpact);
+    contact->setNormalForceLaw(new BilateralConstraint);
+    contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
     contact->enableOpenMBVContactPoints(0.01);
     this->addLink(contact);
@@ -171,10 +170,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     nameb << "ContactBot_" << i;
     Contact *ctrt = new Contact(namet.str());
     Contact *ctrb = new Contact(nameb.str());
-    ctrt->setContactForceLaw(new UnilateralConstraint);
-    ctrt->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-    ctrb->setContactForceLaw(new UnilateralConstraint);
-    ctrb->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+    ctrt->setNormalForceLaw(new UnilateralConstraint);
+    ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    ctrb->setNormalForceLaw(new UnilateralConstraint);
+    ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     if(i==nBalls-1) {
       ctrt->connect(balls[0]->getContour("topPoint"),balls[i]->getContour("Plane"));
       ctrb->connect(balls[0]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
