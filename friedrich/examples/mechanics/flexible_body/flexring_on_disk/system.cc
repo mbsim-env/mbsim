@@ -158,12 +158,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     name << "Contact" << i;
     Contact *contact = new Contact(name.str());
     //  contact->setContactKinematics(ck);
-    //contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(c,d)));
+    //contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(c,d)));
     cout << name.str() << " is ";
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(.0));
-    contact->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    contact->setNormalForceLaw(new UnilateralConstraint);
+    contact->setNormalImpactLaw(new UnilateralNewtonImpact(.0));
+    contact->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
     contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
     //contact->setPlotFeature(linkLagrangeParameters, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -179,7 +179,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     aC_T->setDiameter (0.5);
     aC_T->setScaleLength(0.01);
     contact->setOpenMBVNormalForceArrow(aC_N);
-    contact->setOpenMBVFrictionArrow(aC_T);
+    contact->setOpenMBVTangentialForceArrow(aC_T);
     contact->enableOpenMBVContactPoints(0.02,true);
 #endif
     this->addLink(contact);

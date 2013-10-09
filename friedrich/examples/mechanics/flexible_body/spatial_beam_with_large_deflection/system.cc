@@ -101,8 +101,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
   OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
   //a_n->setHeadDiameter(tP*0.05);
@@ -117,7 +117,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //a_t->setDiameter(tP*0.02);
   //a_t->setScaleLength(tP*0.1);
   //a_t->setEnable(false);
-  contact->setOpenMBVFrictionArrow(a_t);
+  contact->setOpenMBVTangentialForceArrow(a_t);
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);
@@ -130,10 +130,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat(3,3,EYE));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->setMomentDirection(Mat(3,3,EYE));
   joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
 }
 

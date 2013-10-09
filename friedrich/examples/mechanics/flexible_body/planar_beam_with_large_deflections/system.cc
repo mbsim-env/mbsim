@@ -109,8 +109,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
   this->addLink(contact);
 
@@ -122,10 +122,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->setMomentDirection("[0; 0; 1]");
   joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
 }
 

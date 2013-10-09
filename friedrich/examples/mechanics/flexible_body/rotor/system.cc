@@ -197,8 +197,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeS->setMomentDirection(Mat(3,3,EYE));
   VerbScheibeS->setForceLaw(new BilateralConstraint());
   VerbScheibeS->setMomentLaw(new BilateralConstraint());
-  VerbScheibeS->setImpactForceLaw(new BilateralImpact());
-  VerbScheibeS->setImpactMomentLaw(new BilateralImpact());
   VerbScheibeS->connect(ScheibeS->getFrame("C"),welle->getFrame("PosScheibeS"));
   this->addLink(VerbScheibeS);
 
@@ -208,18 +206,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeGLS->setMomentDirection(Mat(3,3,EYE));
   VerbScheibeGLS->setForceLaw(new BilateralConstraint());
   VerbScheibeGLS->setMomentLaw(new BilateralConstraint());
-  VerbScheibeGLS->setImpactForceLaw(new BilateralImpact());
-  VerbScheibeGLS->setImpactMomentLaw(new BilateralImpact());
   VerbScheibeGLS->connect(ScheibeGLS->getFrame("C"),welle->getFrame("Anfang"));
   this->addLink(VerbScheibeGLS);
 
   /* Kontakte im Gleitlager */
   Contact *cGL_Right = new Contact("KontaktGL0");
   cGL_Right->connect(Gleitlager->getContour("rightCircle"),ScheibeGLS->getContour("cylsurf_GLS"));
-  cGL_Right->setContactForceLaw(new UnilateralConstraint);
-  cGL_Right->setContactImpactLaw(new UnilateralNewtonImpact);
-  cGL_Right->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-  cGL_Right->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+  cGL_Right->setNormalForceLaw(new UnilateralConstraint);
+  cGL_Right->setNormalImpactLaw(new UnilateralNewtonImpact);
+  cGL_Right->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+  cGL_Right->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   this->addLink(cGL_Right);  
 }
 
