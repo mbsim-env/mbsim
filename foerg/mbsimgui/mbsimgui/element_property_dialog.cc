@@ -1077,21 +1077,66 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   connections = new ExtWidget("Connections",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight));
   addToTab("Kinetics",connections);
 
-  ForceChoiceWidget *f = new ForceChoiceWidget;
-  connect(buttonResize, SIGNAL(clicked(bool)), f, SLOT(resizeVariables()));
-  force = new ExtWidget("Force",f,true);
-  addToTab("Kinetics",force);
+//  ForceChoiceWidget *f = new ForceChoiceWidget;
+//  connect(buttonResize, SIGNAL(clicked(bool)), f, SLOT(resizeVariables()));
+//  force = new ExtWidget("Force",f,true);
+//  addToTab("Kinetics",force);
+//
+//  ForceChoiceWidget *m = new ForceChoiceWidget;
+//  moment = new ExtWidget("Moment",m,true);
+//  addToTab("Kinetics",moment);
 
-  ForceChoiceWidget *m = new ForceChoiceWidget;
-  moment = new ExtWidget("Moment",m,true);
-  addToTab("Kinetics",moment);
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics",forceDirection);
+
+  connect(forceDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
+  connect(forceDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
+
+  widget.clear();
+  name.clear();
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
+  widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
+  widget.push_back(new PiecewiseDefinedFunctionWidget("V",1)); name.push_back("Piecewise defined function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
+  forceFunction = new ExtWidget("Force function",new ChoiceWidget(widget,name),true);
+  addToTab("Kinetics",forceFunction);
+
+  connect((ChoiceWidget*)forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  input.clear();
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
+  momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics",momentDirection);
+
+  connect(momentDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
+  connect(momentDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
+
+  widget.clear();
+  name.clear();
+  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
+  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
+  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
+  widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
+  widget.push_back(new PiecewiseDefinedFunctionWidget("V",1)); name.push_back("Piecewise defined function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
+  momentFunction = new ExtWidget("Moment function",new ChoiceWidget(widget,name),true);
+  addToTab("Kinetics",momentFunction);
+
+  connect((ChoiceWidget*)momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   FrameOfReferenceWidget* ref = new FrameOfReferenceWidget(kineticExcitation,0);
   frameOfReference = new ExtWidget("Frame of reference",ref,true);
   addToTab("Kinetics",frameOfReference);
-
-//  ListWidget* test = new ListWidget(new LinCombFactory(1),"Function");
-//  addToTab("Kinetics",test);
 }
 
 void KineticExcitationPropertyDialog::toWidget(Element *element) {
@@ -1099,8 +1144,10 @@ void KineticExcitationPropertyDialog::toWidget(Element *element) {
   static_cast<KineticExcitation*>(element)->forceArrow.toWidget(forceArrow);
   static_cast<KineticExcitation*>(element)->momentArrow.toWidget(momentArrow);
   static_cast<KineticExcitation*>(element)->connections.toWidget(connections);
-  static_cast<KineticExcitation*>(element)->force.toWidget(force);
-  static_cast<KineticExcitation*>(element)->moment.toWidget(moment);
+  static_cast<KineticExcitation*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<KineticExcitation*>(element)->forceFunction.toWidget(forceFunction);
+  static_cast<KineticExcitation*>(element)->momentDirection.toWidget(momentDirection);
+  static_cast<KineticExcitation*>(element)->momentFunction.toWidget(momentFunction);
   static_cast<KineticExcitation*>(element)->frameOfReference.toWidget(frameOfReference);
 }
 
@@ -1109,8 +1156,10 @@ void KineticExcitationPropertyDialog::fromWidget(Element *element) {
   static_cast<KineticExcitation*>(element)->forceArrow.fromWidget(forceArrow);
   static_cast<KineticExcitation*>(element)->momentArrow.fromWidget(momentArrow);
   static_cast<KineticExcitation*>(element)->connections.fromWidget(connections);
-  static_cast<KineticExcitation*>(element)->force.fromWidget(force);
-  static_cast<KineticExcitation*>(element)->moment.fromWidget(moment);
+  static_cast<KineticExcitation*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<KineticExcitation*>(element)->forceFunction.fromWidget(forceFunction);
+  static_cast<KineticExcitation*>(element)->momentDirection.fromWidget(momentDirection);
+  static_cast<KineticExcitation*>(element)->momentFunction.fromWidget(momentFunction);
   static_cast<KineticExcitation*>(element)->frameOfReference.fromWidget(frameOfReference);
 }
 
@@ -1168,11 +1217,27 @@ JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::Wind
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,joint));
   addToTab("Kinetics", connections);
 
-  force = new ExtWidget("Force",new GeneralizedForceChoiceWidget,true);
-  addToTab("Kinetics", force);
+//  force = new ExtWidget("Force",new GeneralizedForceChoiceWidget,true);
+//  addToTab("Kinetics", force);
+//
+//  moment = new ExtWidget("Moment",new GeneralizedForceChoiceWidget,true);
+//  addToTab("Kinetics", moment);
 
-  moment = new ExtWidget("Moment",new GeneralizedForceChoiceWidget,true);
-  addToTab("Kinetics", moment);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics", forceDirection);
+
+  forceLaw = new ExtWidget("Force law",new GeneralizedForceLawChoiceWidget,true);
+  addToTab("Kinetics", forceLaw);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics", momentDirection);
+
+  momentLaw = new ExtWidget("Moment law",new GeneralizedForceLawChoiceWidget,true);
+  addToTab("Kinetics", momentLaw);
 }
 
 void JointPropertyDialog::toWidget(Element *element) {
@@ -1180,8 +1245,10 @@ void JointPropertyDialog::toWidget(Element *element) {
   static_cast<Joint*>(element)->forceArrow.toWidget(forceArrow);
   static_cast<Joint*>(element)->momentArrow.toWidget(momentArrow);
   static_cast<Joint*>(element)->connections.toWidget(connections);
-  static_cast<Joint*>(element)->force.toWidget(force);
-  static_cast<Joint*>(element)->moment.toWidget(moment);
+  static_cast<Joint*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<Joint*>(element)->forceLaw.toWidget(forceLaw);
+  static_cast<Joint*>(element)->momentDirection.toWidget(momentDirection);
+  static_cast<Joint*>(element)->momentLaw.toWidget(momentLaw);
 }
 
 void JointPropertyDialog::fromWidget(Element *element) {
@@ -1189,8 +1256,10 @@ void JointPropertyDialog::fromWidget(Element *element) {
   static_cast<Joint*>(element)->forceArrow.fromWidget(forceArrow);
   static_cast<Joint*>(element)->momentArrow.fromWidget(momentArrow);
   static_cast<Joint*>(element)->connections.fromWidget(connections);
-  static_cast<Joint*>(element)->force.fromWidget(force);
-  static_cast<Joint*>(element)->moment.fromWidget(moment);
+  static_cast<Joint*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<Joint*>(element)->forceLaw.fromWidget(forceLaw);
+  static_cast<Joint*>(element)->momentDirection.fromWidget(momentDirection);
+  static_cast<Joint*>(element)->momentLaw.fromWidget(momentLaw);
 }
 
 ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(contact,parent,f) {

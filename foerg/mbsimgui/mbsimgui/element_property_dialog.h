@@ -326,7 +326,7 @@ class KineticExcitationPropertyDialog : public LinkPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *force, *moment, *connections, *frameOfReference, *forceArrow, *momentArrow;
+    ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction, *connections, *frameOfReference, *forceArrow, *momentArrow;
 };
 
 class SpringDamperPropertyDialog : public LinkPropertyDialog {
@@ -346,7 +346,7 @@ class JointPropertyDialog : public LinkPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *force, *moment, *connections, *forceArrow, *momentArrow;
+    ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw, *connections, *forceArrow, *momentArrow;
 };
 
 class ContactPropertyDialog : public LinkPropertyDialog {
