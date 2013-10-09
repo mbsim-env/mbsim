@@ -34,7 +34,7 @@ class KineticExcitation : public Link {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
   protected:
-    ExtProperty force, moment, connections, frameOfReference, forceArrow, momentArrow;
+    ExtProperty forceDirection, forceFunction, momentDirection, momentFunction, connections, frameOfReference, forceArrow, momentArrow;
 };
 
 #endif

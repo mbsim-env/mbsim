@@ -275,38 +275,6 @@ class FrictionImpactLawChoiceWidget : public Widget {
     FrictionImpactLawWidget *frictionImpactLaw;
 };
 
-class GeneralizedForceChoiceWidget : public Widget {
-
-  friend class GeneralizedForceChoiceProperty;
-
-  public:
-    GeneralizedForceChoiceWidget();
-
-    int getSize() const; 
-
-  protected:
-    QVBoxLayout *layout;
-    ExtWidget *generalizedForceLaw, *generalizedImpactLaw, *mat;
-};
-
-class ForceChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class ForceChoiceProperty;
-
-  public:
-    ForceChoiceWidget();
-
-    int getSize() const; 
-
-  public slots:
-    void resizeVariables();
-
-  protected:
-    QVBoxLayout *layout;
-    ExtWidget *forceLaw, *mat;
-};
-
 class ForceDirectionWidget : public Widget {
 
   friend class ForceDirectionProperty;

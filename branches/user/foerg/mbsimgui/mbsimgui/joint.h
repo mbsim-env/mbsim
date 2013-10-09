@@ -34,7 +34,7 @@ class Joint : public Link {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
   protected:
-    ExtProperty force, moment, connections, forceArrow, momentArrow;
+    ExtProperty forceDirection, forceLaw, momentDirection, momentLaw, connections, forceArrow, momentArrow;
 };
 
 #endif

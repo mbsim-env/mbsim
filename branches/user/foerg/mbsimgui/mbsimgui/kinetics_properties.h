@@ -312,38 +312,6 @@ class FrictionImpactLawChoiceProperty : public Property {
     std::string xmlName;
 };
 
-class GeneralizedForceChoiceProperty : public Property {
-
-  public:
-    GeneralizedForceChoiceProperty(ExtProperty& arrow, const std::string &xmlName);
-    virtual Property* clone() const {return new GeneralizedForceChoiceProperty(*this);}
-
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    ExtProperty generalizedForceLaw, generalizedImpactLaw, mat, &arrow;
-    std::string xmlName;
-};
-
-class ForceChoiceProperty : public Property {
-
-  public:
-    ForceChoiceProperty(ExtProperty &arrow, const std::string &xmlName);
-    virtual Property* clone() const {return new ForceChoiceProperty(*this);}
-
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    ExtProperty forceLaw, mat, &arrow;
-    std::string xmlName;
-};
-
 class ForceDirectionProperty : public Property {
 
   public:

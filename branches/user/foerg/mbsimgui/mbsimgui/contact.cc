@@ -31,16 +31,16 @@ Contact::Contact(const string &str, Element *parent) : Link(str, parent), contac
 
   connections.setProperty(new ConnectContoursProperty(2,this));
 
-  contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"contactForceLaw"));
+  contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"normalForceLaw"));
 
   contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(""));
-  contactImpactLaw.setXMLName(MBSIMNS"contactImpactLaw");
+  contactImpactLaw.setXMLName(MBSIMNS"normalImpactLaw");
 
   frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(""));
-  frictionForceLaw.setXMLName(MBSIMNS"frictionForceLaw");
+  frictionForceLaw.setXMLName(MBSIMNS"tangentialForceLaw");
 
   frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
-  frictionImpactLaw.setXMLName(MBSIMNS"frictionImpactLaw");
+  frictionImpactLaw.setXMLName(MBSIMNS"tangentialImpactLaw");
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));

@@ -20,16 +20,19 @@
 #include <config.h>
 #include "kinetic_excitation.h"
 #include "ombv_properties.h"
-#include "kinetics_properties.h"
+//#include "kinetics_properties.h"
+#include "function_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 
-KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), forceArrow(0,true), momentArrow(0,true), force(0,false), moment(0,false), frameOfReference(0,false) {
+KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), forceArrow(0,true), momentArrow(0,true), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), frameOfReference(0,false) {
 
   forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  forceArrow.setXMLName(MBSIMNS"openMBVForceArrow",false);
 
   momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  momentArrow.setXMLName(MBSIMNS"openMBVMomentArrow",false);
 
   vector<Property*> widget;
   widget.push_back(new ConnectFramesProperty(1,this));
@@ -37,8 +40,42 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
 
   connections.setProperty(new ChoiceProperty("",widget,2)); 
 
-  force.setProperty(new ForceChoiceProperty(forceArrow,MBSIMNS"force"));
-  moment.setProperty(new ForceChoiceProperty(momentArrow,MBSIMNS"moment"));
+  //force.setProperty(new ForceChoiceProperty(forceArrow,MBSIMNS"force"));
+  //moment.setProperty(new ForceChoiceProperty(momentArrow,MBSIMNS"moment"));
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));
+  forceDirection.setProperty(new ExtPhysicalVarProperty(input));
+
+  vector<Property*> property;
+  property.push_back(new ConstantFunctionProperty("V"));
+  property.push_back(new LinearFunctionProperty("V"));
+  property.push_back(new QuadraticFunctionProperty("V"));
+  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new TabularFunctionProperty("V"));
+  property.push_back(new LinearCombinationFunctionProperty("V"));
+  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
+  vector<string> var;
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+  forceFunction.setProperty(new ChoiceProperty(MBSIMNS"forceFunction",property));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"momentDirection"));
+  momentDirection.setProperty(new ExtPhysicalVarProperty(input));
+
+  property.clear();
+  property.push_back(new ConstantFunctionProperty("V"));
+  property.push_back(new LinearFunctionProperty("V"));
+  property.push_back(new QuadraticFunctionProperty("V"));
+  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new TabularFunctionProperty("V"));
+  property.push_back(new LinearCombinationFunctionProperty("V"));
+  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
+  var.clear();
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+  momentFunction.setProperty(new ChoiceProperty(MBSIMNS"momentFunction",property));
 
   frameOfReference.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
 
@@ -52,16 +89,24 @@ void KineticExcitation::initialize() {
 void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
   frameOfReference.initializeUsingXML(element);
-  force.initializeUsingXML(element);
-  moment.initializeUsingXML(element);
+  forceDirection.initializeUsingXML(element);
+  forceFunction.initializeUsingXML(element);
+  forceArrow.initializeUsingXML(element);
+  momentDirection.initializeUsingXML(element);
+  momentFunction.initializeUsingXML(element);
+  momentArrow.initializeUsingXML(element);
   connections.initializeUsingXML(element);
 }
 
 TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   frameOfReference.writeXMLFile(ele0);
-  force.writeXMLFile(ele0);
-  moment.writeXMLFile(ele0);
+  forceDirection.writeXMLFile(ele0);
+  forceFunction.writeXMLFile(ele0);
+  forceArrow.writeXMLFile(ele0);
+  momentDirection.writeXMLFile(ele0);
+  momentFunction.writeXMLFile(ele0);
+  momentArrow.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
   return ele0;
 }
