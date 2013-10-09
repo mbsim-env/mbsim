@@ -160,26 +160,10 @@ namespace MBSim {
     if(e) setForceDirection(getMat(e,3,0));
     e=element->FirstChildElement(MBSIMNS"forceFunction");
     if(e) setForceFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement()));
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"openMBVForceArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
-    }
-#endif
     e=element->FirstChildElement(MBSIMNS"momentDirection");
     if(e) setMomentDirection(getMat(e,3,0));
     e=element->FirstChildElement(MBSIMNS"momentFunction");
     if(e) setMomentFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement()));
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"openMBVMomentArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVMomentArrow calls the copy constructor on arrow
-      setOpenMBVMomentArrow(arrow);
-    }
-#endif
     e=element->FirstChildElement(MBSIMNS"connect");
     if(e->Attribute("ref"))
       saved_ref=e->Attribute("ref");
@@ -187,7 +171,20 @@ namespace MBSim {
       saved_ref1=e->Attribute("ref1");
       saved_ref2=e->Attribute("ref2");
     }
-    e=e->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = element->FirstChildElement(MBSIMNS"openMBVForceArrow");
+    if (e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
+    }
+    e = element->FirstChildElement(MBSIMNS"openMBVMomentArrow");
+    if (e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVMomentArrow calls the copy constructor on arrow
+      setOpenMBVMomentArrow(arrow);
+    }
+#endif
   }
 
   TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
@@ -198,19 +195,15 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
     if(forceDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
-      addElementText(ele1,MBSIMNS"directionVectors",forceDir);
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
-      F->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
+      addElementText(ele0,MBSIMNS"forceDirection",forceDir);
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"forceFunction");
+      F->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     if(momentDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
-      addElementText(ele1,MBSIMNS"directionVectors",momentDir);
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
-      M->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
+      addElementText(ele0,MBSIMNS"momentDirection",momentDir);
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"momentFunction");
+      M->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
