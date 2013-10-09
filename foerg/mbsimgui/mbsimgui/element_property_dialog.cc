@@ -1270,16 +1270,16 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
   addToTab("Kinetics", connections);
 
-  contactForceLaw = new ExtWidget("Contact force law",new GeneralizedForceLawChoiceWidget);
+  contactForceLaw = new ExtWidget("Normal force law",new GeneralizedForceLawChoiceWidget);
   addToTab("Kinetics", contactForceLaw);
 
-  contactImpactLaw = new ExtWidget("Contact impact law",new GeneralizedImpactLawChoiceWidget,true);
+  contactImpactLaw = new ExtWidget("Normal impact law",new GeneralizedImpactLawChoiceWidget,true);
   addToTab("Kinetics", contactImpactLaw);
 
-  frictionForceLaw = new ExtWidget("Friction force law",new FrictionForceLawChoiceWidget,true);
+  frictionForceLaw = new ExtWidget("Tangential force law",new FrictionForceLawChoiceWidget,true);
   addToTab("Kinetics", frictionForceLaw);
 
-  frictionImpactLaw = new ExtWidget("Friction impact law",new FrictionImpactLawChoiceWidget,true);
+  frictionImpactLaw = new ExtWidget("Tangential impact law",new FrictionImpactLawChoiceWidget,true);
   addToTab("Kinetics", frictionImpactLaw);
 
   vector<PhysicalVariableWidget*> input;
@@ -1290,7 +1290,7 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",normalForceArrow);
 
-  frictionArrow = new ExtWidget("OpenMBV friction arrow",new OMBVArrowWidget("NOTSET"),true);
+  frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",frictionArrow);
 }
 

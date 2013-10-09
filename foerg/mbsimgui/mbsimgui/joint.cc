@@ -63,21 +63,21 @@ void Joint::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
   forceDirection.initializeUsingXML(element);
   forceLaw.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
   momentDirection.initializeUsingXML(element);
   momentLaw.initializeUsingXML(element);
-  momentArrow.initializeUsingXML(element);
   connections.initializeUsingXML(element);
+  forceArrow.initializeUsingXML(element);
+  momentArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   forceDirection.writeXMLFile(ele0);
   forceLaw.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
   momentDirection.writeXMLFile(ele0);
   momentLaw.writeXMLFile(ele0);
-  momentArrow.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
+  forceArrow.writeXMLFile(ele0);
+  momentArrow.writeXMLFile(ele0);
   return ele0;
 }

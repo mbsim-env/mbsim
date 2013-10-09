@@ -50,7 +50,7 @@ Contact::Contact(const string &str, Element *parent) : Link(str, parent), contac
   normalForceArrow.setXMLName(MBSIMNS"openMBVNormalForceArrow",false);
 
   frictionArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  frictionArrow.setXMLName(MBSIMNS"openMBVFrictionArrow",false);
+  frictionArrow.setXMLName(MBSIMNS"openMBVTangentialForceArrow",false);
 }
 
 Contact::~Contact() {
