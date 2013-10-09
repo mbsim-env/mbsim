@@ -100,10 +100,10 @@ namespace MBSimHydraulics {
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
   void Checkvalve::setBallInitialPosition(double x0) {ball->setInitialGeneralizedPosition(x0); }
   void Checkvalve::setSpringForceFunction(Function<double(double,double)> *func) {spring->setForceFunction(func); }
-  void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setContactImpactLaw(GIL); }
-  void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setContactForceLaw(GFL); }
-  void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setContactImpactLaw(GIL); }
-  void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setContactForceLaw(GFL); }
+  void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setNormalImpactLaw(GIL); }
+  void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setNormalForceLaw(GFL); }
+  void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setNormalImpactLaw(GIL); }
+  void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setNormalForceLaw(GFL); }
 
   void Checkvalve::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
