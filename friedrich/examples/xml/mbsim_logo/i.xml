@@ -102,25 +102,21 @@
   </objects>
   <links>
     <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
-      <moment> 
-        <direction>[0; 0; 1]</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>jc</stiffnessCoefficient>
-                <dampingCoefficient>jd</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-        </generalizedImpactLaw>
-      </moment>
+      <momentDirection>[0; 0; 1]</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>jc</stiffnessCoefficient>
+              <dampingCoefficient>jd</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
       <connect ref1="../../Object[Carrier]/Frame[Fi]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
     <Contact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
-      <contactForceLaw>
+      <normalForceLaw>
         <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
           <forceFunction>
             <LinearRegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -129,13 +125,13 @@
             </LinearRegularizedUnilateralConstraint>
           </forceFunction>
         </RegularizedUnilateralConstraint>
-      </contactForceLaw>
-      <contactImpactLaw>
-      </contactImpactLaw>
-      <frictionForceLaw>
-      </frictionForceLaw>
-      <frictionImpactLaw>
-      </frictionImpactLaw>
+      </normalForceLaw>
+      <normalImpactLaw>
+      </normalImpactLaw>
+      <tangentialForceLaw>
+      </tangentialForceLaw>
+      <tangentialImpactLaw>
+      </tangentialImpactLaw>
       <connect ref1="../Object[S1]/Contour[CTop]" ref2="../Object[S2]/Contour[CCircle]"/>
     </Contact>
   </links>

@@ -198,24 +198,24 @@
   </objects>
   <links>
     <Contact name="jointContact" xmlns="http://mbsim.berlios.de/MBSim">
-      <contactForceLaw>
+      <normalForceLaw>
         <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"></UnilateralConstraint>
-      </contactForceLaw>
-      <contactImpactLaw>
+      </normalForceLaw>
+      <normalImpactLaw>
         <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
           <restitutionCoefficient>epsilon</restitutionCoefficient>
         </UnilateralNewtonImpact>
-      </contactImpactLaw>
-      <frictionForceLaw>
+      </normalImpactLaw>
+      <tangentialForceLaw>
         <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>mu</frictionCoefficient>
         </PlanarCoulombFriction>
-      </frictionForceLaw>
-      <frictionImpactLaw>
+      </tangentialForceLaw>
+      <tangentialImpactLaw>
         <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>mu</frictionCoefficient>
         </PlanarCoulombImpact>
-      </frictionImpactLaw>
+      </tangentialImpactLaw>
       <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
       <enableOpenMBVContactPoints>fSize/4.</enableOpenMBVContactPoints> <!-- optional -->
       <openMBVNormalForceArrow> <!-- optional -->
@@ -229,7 +229,7 @@
           <scaleLength>.01</scaleLength>
         </Arrow>
       </openMBVNormalForceArrow>
-      <openMBVFrictionArrow> <!-- optional -->
+      <openMBVTangentialForceArrow> <!-- optional -->
         <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
           <minimalColorValue>-10</minimalColorValue> <!-- optional -->
           <maximalColorValue>10</maximalColorValue> <!-- optional -->
@@ -239,7 +239,7 @@
           <type>"toHead"</type>
           <scaleLength>.1</scaleLength>
         </Arrow>
-      </openMBVFrictionArrow>
+      </openMBVTangentialForceArrow>
     </Contact>
   </links>
   <environments>

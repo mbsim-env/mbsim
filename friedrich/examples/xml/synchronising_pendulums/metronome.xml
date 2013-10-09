@@ -152,54 +152,51 @@
   </objects>
   <links>
     <Joint name="Spring" xmlns="http://mbsim.berlios.de/MBSim">
-      <moment>
-        <direction>[0 0 1]'</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>metronomeStiffness</stiffnessCoefficient>
-                <dampingCoefficient>metronomeStiffness*0.005*2</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-        </generalizedImpactLaw>
-      </moment>
+      <momentDirection>[0 0 1]'</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>metronomeStiffness</stiffnessCoefficient>
+              <dampingCoefficient>metronomeStiffness*0.005*2</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
       <connect ref1="../Object[Base]/Frame[fTop]" ref2="../Object[Pendulum]/Frame[fBottom]"/>
     </Joint>
     <Contact name="contactSwing" xmlns="http://mbsim.berlios.de/MBSim">
-      <contactForceLaw>
+      <normalForceLaw>
         <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-      </contactForceLaw>
-      <contactImpactLaw>
+      </normalForceLaw>
+      <normalImpactLaw>
         <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
           <restitutionCoefficient>0</restitutionCoefficient>
         </UnilateralNewtonImpact>
-      </contactImpactLaw>
-      <frictionForceLaw>
+      </normalImpactLaw>
+      <tangentialForceLaw>
         <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombFriction>
-      </frictionForceLaw>
-      <frictionImpactLaw>
+      </tangentialForceLaw>
+      <tangentialImpactLaw>
         <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
-      </frictionImpactLaw>
+      </tangentialImpactLaw>
       <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
     </Contact>
     <KineticExcitation name="KineticExcitation" xmlns="http://mbsim.berlios.de/MBSim">
       <frameOfReference ref="../Object[Sphere]/Frame[C]"/>
-      <force>
-        <directionVectors>[0 1 0]'</directionVectors>
-        <function>
-          <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
-            <x>[-99e99 .1 .15 .2 99e99]'+timalOffset(i)</x>
-            <y>[0      0  .05  0  0]'</y>
-          </TabularFunction>
-        </function>
+      <forceDirection>[0 1 0]'</forceDirection>
+      <forceFunction>
+        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+          <x>[-99e99 .1 .15 .2 99e99]'+timalOffset(i)</x>
+          <y>[0      0  .05  0  0]'</y>
+        </TabularFunction>
+      </forceFunction>
+      <connect ref="../Object[Sphere]/Frame[C]"/>
+      <openMBVForceArrow>
         <Arrow name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
           <diameter>pendulumD*2</diameter>
           <headDiameter>pendulumD*4</headDiameter>
@@ -207,8 +204,7 @@
           <type>"toHead"</type>
           <scaleLength>1.</scaleLength>
         </Arrow>
-      </force>
-      <connect ref="../Object[Sphere]/Frame[C]"/>
+      </openMBVForceArrow>
     </KineticExcitation>
 
     <GeneralizedPositionSensor name="AngularSensor" xmlns="http://mbsim.berlios.de/MBSimControl">

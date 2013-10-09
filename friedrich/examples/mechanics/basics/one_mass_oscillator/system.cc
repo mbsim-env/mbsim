@@ -71,8 +71,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   mass2->addContour(sphere2);
   Contact *contact = new Contact("Contact");
   contact->connect(sphere1,sphere2);
-  contact->setContactForceLaw(new UnilateralConstraint());
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+  contact->setNormalForceLaw(new UnilateralConstraint());
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.3));
   this->addLink(contact);
 
   // visualisation

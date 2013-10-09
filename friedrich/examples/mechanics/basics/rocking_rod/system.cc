@@ -81,20 +81,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cr2S);
 
   if(rigidContacts) {
-    cr1S->setContactForceLaw(new UnilateralConstraint);
-    cr1S->setContactImpactLaw(new UnilateralNewtonImpact);
-    cr1S->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    cr1S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
-    cr2S->setContactForceLaw(new UnilateralConstraint);
-    cr2S->setContactImpactLaw(new UnilateralNewtonImpact);
-    cr2S->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    cr2S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    cr1S->setNormalForceLaw(new UnilateralConstraint);
+    cr1S->setNormalImpactLaw(new UnilateralNewtonImpact);
+    cr1S->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    cr1S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+    cr2S->setNormalForceLaw(new UnilateralConstraint);
+    cr2S->setNormalImpactLaw(new UnilateralNewtonImpact);
+    cr2S->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    cr2S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   }
   else {
-    cr1S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    cr1S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
-    cr2S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    cr2S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    cr1S->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    cr1S->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    cr2S->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    cr2S->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

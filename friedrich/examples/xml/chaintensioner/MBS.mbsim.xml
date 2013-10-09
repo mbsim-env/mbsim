@@ -52,20 +52,17 @@
       <c:direction>[0;1;0]</c:direction>
     </c:AbsoluteVelocitySensor>
     <Joint name="Sensor">
-      <force>
-        <direction>[0;1;0]</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint>
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint>
-                <stiffnessCoefficient>2e7</stiffnessCoefficient>
-                <dampingCoefficient>20</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw/>
-      </force>
+      <forceDirection>[0;1;0]</forceDirection>
+      <forceLaw>
+        <RegularizedBilateralConstraint>
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint>
+              <stiffnessCoefficient>2e7</stiffnessCoefficient>
+              <dampingCoefficient>20</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </forceLaw>
       <connect ref1="../Group[ChainTensioner]/Object[Piston]/Frame[Top]" ref2="../Object[KinematicExcitation]/Frame[C]"/>
     </Joint>
   </links>

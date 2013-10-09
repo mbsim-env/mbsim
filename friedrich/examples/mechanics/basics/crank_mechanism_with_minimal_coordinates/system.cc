@@ -111,7 +111,8 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   KineticExcitation *load = new KineticExcitation("Motor");
   addLink(load);
-  load->setMoment("[0;0;1]",new Moment);
+  load->setMomentDirection("[0;0;1]");
+  load->setMomentFunction(new Moment);
   load->connect(body1->getFrame("C"));
 
 #if HAVE_OPENMBVCPPINTERFACE

@@ -118,41 +118,33 @@
   </objects>
   <links>
     <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
-      <force>
-        <direction>[1, 0, 0; 0, 1, 0]'</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>jc*1000</stiffnessCoefficient>
-                <dampingCoefficient>jd*1000</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-        </generalizedImpactLaw>
-      </force>
-      <moment> 
-        <direction>[0; 0; 1]</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>jc*10</stiffnessCoefficient>
-                <dampingCoefficient>jd*10</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-        </generalizedImpactLaw>
-      </moment>
+      <forceDirection>[1, 0, 0; 0, 1, 0]'</forceDirection>
+      <forceLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>jc*1000</stiffnessCoefficient>
+              <dampingCoefficient>jd*1000</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </forceLaw>
+      <momentDirection>[0; 0; 1]</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>jc*10</stiffnessCoefficient>
+              <dampingCoefficient>jd*10</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
       <connect ref1="../Frame[I]" ref2="../Object[Carrier]/Frame[C]"/>
     </Joint>
     <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <Contact name="ContactBS{nr}" xmlns="http://mbsim.berlios.de/MBSim">
-        <contactForceLaw>
+        <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
             <forceFunction>
               <LinearRegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -161,20 +153,20 @@
               </LinearRegularizedUnilateralConstraint>
             </forceFunction>
           </RegularizedUnilateralConstraint>
-        </contactForceLaw>
-        <contactImpactLaw>
-        </contactImpactLaw>
-        <frictionForceLaw>
-        </frictionForceLaw>
-        <frictionImpactLaw>
-        </frictionImpactLaw>
+        </normalForceLaw>
+        <normalImpactLaw>
+        </normalImpactLaw>
+        <tangentialForceLaw>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+        </tangentialImpactLaw>
         <connect ref1="../Group[B]/Object[S10]/Contour[CSide]" ref2="../Group[S]/Object[S7]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
     </embed>
     <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <Contact name="ContactMB{nr}" xmlns="http://mbsim.berlios.de/MBSim">
-        <contactForceLaw>
+        <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
             <forceFunction>
               <LinearRegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -183,19 +175,19 @@
               </LinearRegularizedUnilateralConstraint>
             </forceFunction>
           </RegularizedUnilateralConstraint>
-        </contactForceLaw>
-        <contactImpactLaw>
-        </contactImpactLaw>
-        <frictionForceLaw>
-        </frictionForceLaw>
-        <frictionImpactLaw>
-        </frictionImpactLaw>
+        </normalForceLaw>
+        <normalImpactLaw>
+        </normalImpactLaw>
+        <tangentialForceLaw>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+        </tangentialImpactLaw>
         <connect ref1="../Group[B]/Object[S1]/Contour[CSide]" ref2="../Group[M]/Object[S4]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
     </embed>
       <Contact name="ContactSi" xmlns="http://mbsim.berlios.de/MBSim">
-        <contactForceLaw>
+        <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
             <forceFunction>
               <LinearRegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -204,13 +196,13 @@
               </LinearRegularizedUnilateralConstraint>
             </forceFunction>
           </RegularizedUnilateralConstraint>
-        </contactForceLaw>
-        <contactImpactLaw>
-        </contactImpactLaw>
-        <frictionForceLaw>
-        </frictionForceLaw>
-        <frictionImpactLaw>
-        </frictionImpactLaw>
+        </normalForceLaw>
+        <normalImpactLaw>
+        </normalImpactLaw>
+        <tangentialForceLaw>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+        </tangentialImpactLaw>
         <connect ref1="../Group[S]/Object[S9]/Contour[CTop]" ref2="../Group[i]/Object[S2]/Contour[CCircle]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
