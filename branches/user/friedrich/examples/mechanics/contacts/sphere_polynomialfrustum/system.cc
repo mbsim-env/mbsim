@@ -103,14 +103,14 @@ System::System(const string &projectName) :
     contact->enableOpenMBVContactPoints();
     OpenMBV::Arrow* arrow = new OpenMBV::Arrow();
     contact->setOpenMBVNormalForceArrow(arrow);
-    contact->setOpenMBVFrictionArrow(arrow);
+    contact->setOpenMBVTangentialForceArrow(arrow);
 #endif
 
     //Set contact law
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    contact->setNormalForceLaw(new UnilateralConstraint);
+    contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(0.5));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }

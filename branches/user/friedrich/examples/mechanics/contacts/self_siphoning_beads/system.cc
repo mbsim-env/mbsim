@@ -53,21 +53,21 @@ System::System(const string &projectName, int elements) :
     /*Prepare Contact*/
     Contact* ballOben = new Contact("Ball_Boden");
     if (not ODE) {
-      ballOben->setContactForceLaw(new UnilateralConstraint());
-      ballOben->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+      ballOben->setNormalForceLaw(new UnilateralConstraint());
+      ballOben->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
     else {
-      ballOben->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, damping)));
+      ballOben->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, damping)));
     }
     addLink(ballOben);
 
     Contact* ballUnten = new Contact("Ball_Unten");
     if (not ODE) {
-      ballUnten->setContactForceLaw(new UnilateralConstraint());
-      ballUnten->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+      ballUnten->setNormalForceLaw(new UnilateralConstraint());
+      ballUnten->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
     else {
-      ballUnten->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100*damping)));
+      ballUnten->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100*damping)));
     }
     addLink(ballUnten);
 

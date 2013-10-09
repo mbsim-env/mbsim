@@ -87,34 +87,34 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Contacts
   Contact *cnf = new Contact("KontaktUntenLinks");
   cnf->connect(stab->getContour("PunktUntenLinks"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(1.5));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(1.5));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(1.5));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(1.5));
   addLink(cnf);
   
   cnf = new Contact("KontaktObenLinks");
   cnf->connect(stab->getContour("PunktObenLinks"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(0.2));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(0.2));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(0.2));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(0.2));
   addLink(cnf);
   
   cnf = new Contact("KontaktObenRechts");
   cnf->connect(stab->getContour("PunktObenRechts"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(0.2));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(0.2));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(0.2));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(0.2));
   addLink(cnf);
   
   cnf = new Contact("KontaktUntenRechts");
   cnf->connect(stab->getContour("PunktUntenRechts"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(1.5));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(1.5));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(1.5));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(1.5));
   addLink(cnf);
 }
 

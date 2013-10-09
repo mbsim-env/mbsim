@@ -204,7 +204,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   //fancy stuff
   contact->enableOpenMBVContactPoints(1.,false);
   contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVFrictionArrow(frArrow);
+  contact->setOpenMBVTangentialForceArrow(frArrow);
 
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
@@ -220,7 +220,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     case 0: //Maxwell Contact
     {
       MaxwellUnilateralConstraint* mcl = new MaxwellUnilateralConstraint();
-      contact->setContactForceLaw(mcl);
+      contact->setNormalForceLaw(mcl);
       //Debug features
       mcl->setDebuglevel(0);
 
@@ -228,9 +228,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
       mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
       //Force Law (friction)
-//      contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-      contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-      contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
 
     }
     break;
@@ -238,21 +238,21 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     case 1: //regularized contact
     {
         double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
-        contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
+        contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
 
         //Force Law (friction)
-        contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+        contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
     }
     break;
 
     case 2:
     {
-        contact->setContactForceLaw(new UnilateralConstraint);
-        contact->setContactImpactLaw(new UnilateralNewtonImpact(1.));
+        contact->setNormalForceLaw(new UnilateralConstraint);
+        contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.));
 
         //Force Law (friction)
-        contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-        contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+        contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+        contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     }
     break;
     default:

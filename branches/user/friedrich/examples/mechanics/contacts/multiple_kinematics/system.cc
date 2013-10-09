@@ -88,7 +88,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   //fancy stuff
   contact->enableOpenMBVContactPoints(0.01);
   contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVFrictionArrow(frArrow);
+  contact->setOpenMBVTangentialForceArrow(frArrow);
 #endif
 
   double stiffness = 1e5;
@@ -102,30 +102,30 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1/stiffness);
     MaxwellUnilateralConstraint* mfl = new MaxwellUnilateralConstraint(damping);
     mfl->addContourCoupling(ground, ground, infl);
-    contact->setContactForceLaw(mfl);
+    contact->setNormalForceLaw(mfl);
 
     //Frictional force
-//    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
     //Normal force
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
+    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
 
     //Frictional force
-//    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if (contactlaw == 2) { //Unilateral Constraint Contact
     //Normal force
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0));
+    contact->setNormalForceLaw(new UnilateralConstraint);
+    contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
 
     //Frictional force
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   this->addLink(contact);
 

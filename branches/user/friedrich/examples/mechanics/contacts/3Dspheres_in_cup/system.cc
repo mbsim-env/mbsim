@@ -165,14 +165,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc1->connect(getContour("Plane"),body1->getContour("Sphere1"));
   addLink(rc1);
   if(rigidContact) {
-    rc1->setContactForceLaw(new UnilateralConstraint);
-    rc1->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc1->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    rc1->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    rc1->setNormalForceLaw(new UnilateralConstraint);
+    rc1->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc1->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    rc1->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc1->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc1->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc1->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc1->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 
@@ -181,14 +181,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
  rc2->connect(getContour("Plane"),body2->getContour("Sphere2"));
  addLink(rc2);
  if(rigidContact) {
-   rc2->setContactForceLaw(new UnilateralConstraint);
-   rc2->setContactImpactLaw(new UnilateralNewtonImpact);
-   rc2->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-   rc2->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+   rc2->setNormalForceLaw(new UnilateralConstraint);
+   rc2->setNormalImpactLaw(new UnilateralNewtonImpact);
+   rc2->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+   rc2->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
  } 
  else {
-   rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-   rc2->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+   rc2->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+   rc2->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
  }
 
  // Contact between Body3 and plane
@@ -196,14 +196,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
  rc3->connect(getContour("Plane"),body3->getContour("Sphere3"));
  addLink(rc3);
  if(rigidContact) {
-   rc3->setContactForceLaw(new UnilateralConstraint);
-   rc3->setContactImpactLaw(new UnilateralNewtonImpact);
-   rc3->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-   rc3->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+   rc3->setNormalForceLaw(new UnilateralConstraint);
+   rc3->setNormalImpactLaw(new UnilateralNewtonImpact);
+   rc3->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+   rc3->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
  } 
  else {
-   rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-   rc3->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+   rc3->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+   rc3->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
  }
 
   // Contact between Body1 and Frustum
@@ -211,14 +211,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc1f->connect(cup->getContour("Frustum"),body1->getContour("Sphere1"));
   addLink(rc1f);
   if(rigidContact) {
-    rc1f->setContactForceLaw(new UnilateralConstraint);
-    rc1f->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc1f->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    rc1f->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    rc1f->setNormalForceLaw(new UnilateralConstraint);
+    rc1f->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc1f->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    rc1f->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc1f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc1f->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc1f->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc1f->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between Body2 and Frustum
@@ -226,14 +226,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc2f->connect(cup->getContour("Frustum"),body2->getContour("Sphere2"));
   addLink(rc2f);
   if(rigidContact) {
-    rc2f->setContactForceLaw(new UnilateralConstraint);
-    rc2f->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc2f->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    rc2f->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    rc2f->setNormalForceLaw(new UnilateralConstraint);
+    rc2f->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc2f->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    rc2f->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc2f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc2f->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc2f->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2f->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between Body3 and Frustum
@@ -241,14 +241,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc3f->connect(cup->getContour("Frustum"),body3->getContour("Sphere3"));
   addLink(rc3f);
   if(rigidContact) {
-    rc3f->setContactForceLaw(new UnilateralConstraint);
-    rc3f->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc3f->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    rc3f->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    rc3f->setNormalForceLaw(new UnilateralConstraint);
+    rc3f->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc3f->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    rc3f->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc3f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc3f->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc3f->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3f->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between Body2 and Body3
@@ -256,14 +256,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc23->connect(body2->getContour("Sphere2"),body3->getContour("Sphere3"));
   addLink(rc23);
   if(rigidContact) {
-    rc23->setContactForceLaw(new UnilateralConstraint);
-    rc23->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc23->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    rc23->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    rc23->setNormalForceLaw(new UnilateralConstraint);
+    rc23->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc23->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    rc23->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc23->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc23->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc23->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc23->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 
@@ -272,14 +272,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  rc1f2->connect(cup2->getContour("Frustum2"),body1->getContour("Sphere1"));
 //  addLink(rc1f2);
 //  if(rigidContact) {
-//    rc1f2->setContactForceLaw(new UnilateralConstraint);
-//    rc1f2->setContactImpactLaw(new UnilateralNewtonImpact);
-//    rc1f2->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-//    rc1f2->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//    rc1f2->setNormalForceLaw(new UnilateralConstraint);
+//    rc1f2->setNormalImpactLaw(new UnilateralNewtonImpact);
+//    rc1f2->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+//    rc1f2->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
 //  } 
 //  else {
-//    rc1f2->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-//    rc1f2->setFrictionForceLaw(new LinearRegularizedCoulombFriction(mu));}
+//    rc1f2->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
+//    rc1f2->setTangentialForceLaw(new LinearRegularizedCoulombFriction(mu));}
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

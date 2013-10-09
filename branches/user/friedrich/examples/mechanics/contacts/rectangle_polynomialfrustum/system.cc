@@ -96,10 +96,10 @@ System::System(const string &projectName) :
     contact->enableOpenMBVContactPoints();
 
     //Set contact law
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
-    //contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
-    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
-    //contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
+    //contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
+    //contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }
@@ -137,10 +137,10 @@ System::System(const string &projectName) :
 
     //Set contact law
     //Set contact law
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
-    //contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
-    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
-    //contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
+    //contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
+    //contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }
@@ -179,10 +179,10 @@ System::System(const string &projectName) :
 
     //Set contact law
     //Set contact law
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e3, 10)));
-    //contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
-    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
-    //contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e3, 10)));
+    //contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
+    //contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }

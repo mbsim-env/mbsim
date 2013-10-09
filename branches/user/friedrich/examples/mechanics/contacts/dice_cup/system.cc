@@ -228,8 +228,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     stringstream nameContour;
     nameContour <<"point_"<< i+1;
     contact.push_back(new Contact(nameContact.str()));
-    contact[i]->setContactForceLaw(new UnilateralConstraint());
-    contact[i]->setContactImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
+    contact[i]->setNormalForceLaw(new UnilateralConstraint());
+    contact[i]->setNormalImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     contact[i]->enableOpenMBVContactPoints(.05);
 #endif

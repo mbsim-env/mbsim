@@ -68,12 +68,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->addContour(sphere);
 
   Contact *cnf = new Contact("Contact");
-  cnf->setContactForceLaw(new UnilateralConstraint);
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-  //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e-6,100));
-  //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
-  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.1));
-  cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.1));
+  cnf->setNormalForceLaw(new UnilateralConstraint);
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+  //cnf->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e-6,100));
+  //cnf->setTangentialForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  cnf->setTangentialForceLaw(new SpatialCoulombFriction(0.1));
+  cnf->setTangentialImpactLaw(new SpatialCoulombImpact(0.1));
   cnf->connect(getContour("Plane"), body->getContour("Sphere"));
   // cnf->setFrictionCoefficient(0.3);
   //cnf->setPlotLevel(2);

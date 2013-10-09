@@ -70,13 +70,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->addContour(cuboid);
 
   Contact *cnf = new Contact("Kontakt_Wuerfel");
-  cnf->setContactForceLaw(new UnilateralConstraint);
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.4));
-  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.3));
-  cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.3));
+  cnf->setNormalForceLaw(new UnilateralConstraint);
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.4));
+  cnf->setTangentialForceLaw(new SpatialCoulombFriction(0.3));
+  cnf->setTangentialImpactLaw(new SpatialCoulombImpact(0.3));
   //cnf->setPlotFeature(linkKinematics,disabled);
-  //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
-  //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  //cnf->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
+  //cnf->setTangentialForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
   cnf->connect(getContour("WandUnten"), body->getContour("Wuerfel"));
   addLink(cnf);
 

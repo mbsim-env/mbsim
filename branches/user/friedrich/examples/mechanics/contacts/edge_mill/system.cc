@@ -178,10 +178,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* contact */
   Contact *contact = new Contact("Contact");
   contact->connect(groundBase->getContour("Ground"),muller->getContour("Disk"));
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact);
-  contact->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
-  contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact);
+  contact->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
+  contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   contact->enableOpenMBVContactPoints();
 #endif
