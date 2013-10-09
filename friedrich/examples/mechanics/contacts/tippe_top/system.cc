@@ -92,20 +92,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cnf2);
 
   if(rigidContact) {
-    cnf1->setContactForceLaw(new UnilateralConstraint);
-    cnf1->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf1->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf1->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
-    cnf2->setContactForceLaw(new UnilateralConstraint);
-    cnf2->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf2->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf2->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf1->setNormalForceLaw(new UnilateralConstraint);
+    cnf1->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf1->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf1->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+    cnf2->setNormalForceLaw(new UnilateralConstraint);
+    cnf2->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf2->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf2->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    cnf1->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
-    cnf1->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
-    cnf2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
-    cnf2->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
+    cnf1->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
+    cnf1->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
+    cnf2->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
+    cnf2->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

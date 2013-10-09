@@ -79,14 +79,14 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   Contact * contactCamRoll = new Contact("Contact");
   if (rigid) {
-    contactCamRoll->setContactForceLaw(new UnilateralConstraint);
-    contactCamRoll->setContactImpactLaw(new UnilateralNewtonImpact);
-    contactCamRoll->setFrictionForceLaw(new PlanarCoulombFriction(.1));
-    contactCamRoll->setFrictionImpactLaw(new PlanarCoulombImpact(.1));
+    contactCamRoll->setNormalForceLaw(new UnilateralConstraint);
+    contactCamRoll->setNormalImpactLaw(new UnilateralNewtonImpact);
+    contactCamRoll->setTangentialForceLaw(new PlanarCoulombFriction(.1));
+    contactCamRoll->setTangentialImpactLaw(new PlanarCoulombImpact(.1));
   }
   else {
-    contactCamRoll->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 1e4)));
-    contactCamRoll->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(1.)));
+    contactCamRoll->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 1e4)));
+    contactCamRoll->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(1.)));
   }
   contactCamRoll->connect(cam->getContour("Contour"), roll->getContour("Contour"));
 #ifdef HAVE_OPENMBVCPPINTERFACE

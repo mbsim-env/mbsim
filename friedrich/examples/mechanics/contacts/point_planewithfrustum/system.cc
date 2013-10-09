@@ -122,14 +122,14 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     addLink(c);
     c->connect(b->getContour("Point"+numtostr(i)), getContour("Plane"));
     if (setValued) {
-      c->setContactForceLaw(new UnilateralConstraint());
-      c->setContactImpactLaw(new UnilateralNewtonImpact());
-      c->setFrictionForceLaw(new SpatialCoulombFriction(mue));
-      c->setFrictionImpactLaw(new SpatialCoulombImpact(mue));
+      c->setNormalForceLaw(new UnilateralConstraint());
+      c->setNormalImpactLaw(new UnilateralNewtonImpact());
+      c->setTangentialForceLaw(new SpatialCoulombFriction(mue));
+      c->setTangentialImpactLaw(new SpatialCoulombImpact(mue));
     }
     else {
-      c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
-      c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
+      c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
+      c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
     c->enableOpenMBVContactPoints(.1*rBar);

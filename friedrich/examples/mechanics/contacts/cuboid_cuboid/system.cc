@@ -82,10 +82,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     stringstream nameContact;
     nameContact << "ContactGround" << i;
     Contact *cnf = new Contact(nameContact.str());
-    cnf->setContactForceLaw(new UnilateralConstraint);
-    cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf->setNormalForceLaw(new UnilateralConstraint);
+    cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     cnf->connect(getContour("Ground"), body[i]->getContour("Cuboid"));
     addLink(cnf);
 
@@ -93,10 +93,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
       stringstream nameContact;
       nameContact << "ContactCuboid" << i << j;
       Contact *cnf = new Contact(nameContact.str());
-      cnf->setContactForceLaw(new UnilateralConstraint);
-      cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-      cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-      cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+      cnf->setNormalForceLaw(new UnilateralConstraint);
+      cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+      cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
       cnf->connect(body[j]->getContour("Cuboid"), body[i]->getContour("Cuboid"));
       addLink(cnf);
     }

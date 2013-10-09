@@ -69,10 +69,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   joint->connect(this->getFrame("I"),balken->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->setMomentDirection("[0; 0; 1]");
   joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
 
   Vec nodes(Elements+1);
@@ -158,10 +156,10 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
     muffe->addFrame(new FixedRelativeFrame(name.str(),KrSPMuffe,SqrMat(3,EYE)));
     pMuffe->setFrameOfReference(muffe->getFrame(name.str()));
     muffe->addContour(pMuffe);
-    contact->setContactForceLaw  (cntForceLaw);
-    contact->setContactImpactLaw (impForceLaw );
-    contact->setFrictionForceLaw (coulFriction);
-    contact->setFrictionImpactLaw(coulImptact );
+    contact->setNormalForceLaw  (cntForceLaw);
+    contact->setNormalImpactLaw (impForceLaw );
+    contact->setTangentialForceLaw (coulFriction);
+    contact->setTangentialImpactLaw(coulImptact );
     addLink(contact);
   }
 
@@ -207,10 +205,10 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   Contact *contact = new Contact("SchnabelKontakt");
   contact->connect(schnabel,balken->getContour("Top"));
-  contact->setContactForceLaw  (cntForceLaw );
-  contact->setContactImpactLaw (impForceLaw );
-  contact->setFrictionForceLaw (coulFriction);
-  contact->setFrictionImpactLaw(coulImptact );
+  contact->setNormalForceLaw  (cntForceLaw );
+  contact->setNormalImpactLaw (impForceLaw );
+  contact->setTangentialForceLaw (coulFriction);
+  contact->setTangentialImpactLaw(coulImptact );
   addLink(contact);
 
   specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));

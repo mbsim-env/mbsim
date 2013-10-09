@@ -110,10 +110,10 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
     muffe->addFrame(new FixedRelativeFrame(name.str(),KrSPMuffe,SqrMat(3,EYE)));
     pMuffe->setFrameOfReference(muffe->getFrame(name.str()));
     muffe->addContour(pMuffe);
-    contact->setContactForceLaw  (cntForceLaw );
-    contact->setContactImpactLaw (impForceLaw );
-    contact->setFrictionForceLaw (coulFriction);
-    contact->setFrictionImpactLaw(coulImptact );
+    contact->setNormalForceLaw  (cntForceLaw );
+    contact->setNormalImpactLaw (impForceLaw );
+    contact->setTangentialForceLaw (coulFriction);
+    contact->setTangentialImpactLaw(coulImptact );
     addLink(contact);
   }
 
@@ -160,10 +160,10 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   Contact *contact = new Contact("SchnabelKontakt");
   contact->connect(schnabel,this->getContour("LineL"));
-  contact->setContactForceLaw  (cntForceLaw );
-  contact->setContactImpactLaw (impForceLaw );
-  contact->setFrictionForceLaw (coulFriction);
-  contact->setFrictionImpactLaw(coulImptact );
+  contact->setNormalForceLaw  (cntForceLaw );
+  contact->setNormalImpactLaw (impForceLaw );
+  contact->setTangentialForceLaw (coulFriction);
+  contact->setTangentialImpactLaw(coulImptact );
   addLink(contact);
 
   specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));
