@@ -1391,27 +1391,27 @@ namespace MBSim {
     //Set contact law
     e = element->FirstChildElement(MBSIMNS"normalForceLaw");
     GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
-    setContactForceLaw(gfl);
+    setNormalForceLaw(gfl);
 
     //Set impact law (if given)
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
       GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
-      setContactImpactLaw(gifl);
+      setNormalImpactLaw(gifl);
     }
 
     //Set friction law (if given)
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
       FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
-      setFrictionForceLaw(ffl);
+      setTangentialForceLaw(ffl);
     }
 
     //Set friction impact law (if given)
     e = e->NextSiblingElement();
     if (e->FirstChildElement()) {
       FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
-      setFrictionImpactLaw(fil);
+      setTangentialImpactLaw(fil);
     }
 
     //Save contour names for initialization
@@ -1440,7 +1440,7 @@ namespace MBSim {
     if (e) {
       OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVFrictionArrow(arrow);
+      setOpenMBVTangentialForceArrow(arrow);
       e = e->NextSiblingElement();
     }
 #endif

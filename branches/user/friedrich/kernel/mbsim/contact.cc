@@ -388,10 +388,10 @@ namespace MBSim {
           jter->setDynamicSystemSolver(ds);
 
           //set contact laws for children
-          jter->setContactForceLaw(fcl);
-          jter->setContactImpactLaw(fnil);
-          jter->setFrictionForceLaw(fdf);
-          jter->setFrictionImpactLaw(ftil);
+          jter->setNormalForceLaw(fcl);
+          jter->setNormalImpactLaw(fnil);
+          jter->setTangentialForceLaw(fdf);
+          jter->setTangentialImpactLaw(ftil);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
           //Set OpenMBV-Properties to single contacts
@@ -399,7 +399,7 @@ namespace MBSim {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
               jter->enableOpenMBVContactPoints(openMBVContactFrameSize, openMBVContactFrameEnabled);
               jter->setOpenMBVNormalForceArrow(contactArrow);
-              jter->setOpenMBVFrictionArrow(frictionArrow);
+              jter->setOpenMBVTangentialForceArrow(frictionArrow);
             }
           }
 #endif
