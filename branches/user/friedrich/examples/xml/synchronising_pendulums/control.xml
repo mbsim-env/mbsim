@@ -69,24 +69,24 @@
   </objects>
   <links>
     <Contact name="contactMetronome" xmlns="http://mbsim.berlios.de/MBSim">
-      <contactForceLaw>
+      <normalForceLaw>
         <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-      </contactForceLaw>
-      <contactImpactLaw>
+      </normalForceLaw>
+      <normalImpactLaw>
         <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
           <restitutionCoefficient>0</restitutionCoefficient>
         </UnilateralNewtonImpact>
-      </contactImpactLaw>
-      <frictionForceLaw>
+      </normalImpactLaw>
+      <tangentialForceLaw>
         <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombFriction>
-      </frictionForceLaw>
-      <frictionImpactLaw>
+      </tangentialForceLaw>
+      <tangentialImpactLaw>
         <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
-      </frictionImpactLaw>
+      </tangentialImpactLaw>
       <connect ref1="../Object[Body]/Contour[cTop]" ref2="../../Group[Metronome{i}]/Object[Base]/Contour[cBottom]"/>
     </Contact>
   </links>

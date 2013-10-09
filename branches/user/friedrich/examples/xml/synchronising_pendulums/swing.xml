@@ -215,27 +215,17 @@
   </objects>
   <links>
     <Joint name="JointMountLeft" xmlns="http://mbsim.berlios.de/MBSim">
-      <force>
-        <direction>[1 0 0; 0 1 0]'</direction>
-        <generalizedForceLaw>
-          <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-          <BilateralImpact xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedImpactLaw>
-      </force>
+      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
+      <forceLaw>
+        <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+      </forceLaw>
       <connect ref1="../Object[Swing]/Frame[fMountLeft]" ref2="../Object[SuspensionLeft]/Frame[fMountRight]"/>
     </Joint>
     <Joint name="JointMountRight" xmlns="http://mbsim.berlios.de/MBSim">
-      <force>
-        <direction>[1 0 0; 0 1 0]'</direction>
-        <generalizedForceLaw>
-          <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-          <BilateralImpact xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedImpactLaw>
-      </force>
+      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
+      <forceLaw>
+        <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+      </forceLaw>
       <connect ref1="../Object[Swing]/Frame[fMountRight]" ref2="../Object[SuspensionRight]/Frame[fMountRight]"/>
     </Joint>
   </links>

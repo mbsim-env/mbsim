@@ -101,9 +101,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   if(rigidJoints) {
     joint1->setForceLaw(new BilateralConstraint);
-    joint1->setImpactForceLaw(new BilateralImpact);
     joint2->setForceLaw(new BilateralConstraint);
-    joint2->setImpactForceLaw(new BilateralImpact);
   } 
   else {
     joint1->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));

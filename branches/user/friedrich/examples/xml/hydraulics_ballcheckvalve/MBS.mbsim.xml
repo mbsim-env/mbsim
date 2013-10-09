@@ -63,7 +63,7 @@
   </objects>
   <links>
     <Contact name="AnregungContact">
-      <contactForceLaw>
+      <normalForceLaw>
         <!--
         <UnilateralConstraint/>
         -->
@@ -75,16 +75,16 @@
             </LinearRegularizedUnilateralConstraint>
           </forceFunction>
         </RegularizedUnilateralConstraint>
-      </contactForceLaw>
-      <contactImpactLaw>
+      </normalForceLaw>
+      <normalImpactLaw>
         <!--
         <UnilateralNewtonImpact>
           <restitutionCoefficient>.1</restitutionCoefficient>
         </UnilateralNewtonImpact>
         -->
-      </contactImpactLaw>
-      <frictionForceLaw/>
-      <frictionImpactLaw/>
+      </normalImpactLaw>
+      <tangentialForceLaw/>
+      <tangentialImpactLaw/>
       <connect ref1="../Object[Anregung]/Contour[Line]" ref2="../Group[BallCheckvalveSystem]/Object[Piston]/Contour[Contour]"/>
     </Contact>
     <AbsolutePositionSensor name="AnregungPos" xmlns="http://mbsim.berlios.de/MBSimControl">

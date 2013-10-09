@@ -66,17 +66,17 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
 
   // contacts
   Contact *cr = new Contact("Contact");
-  cr->setContactForceLaw(new UnilateralConstraint);
-  cr->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cr->setFrictionForceLaw(new SpatialStribeckFriction(new Friction(mu0,mu1,mu2,kP)));
-  cr->setFrictionImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
+  cr->setNormalForceLaw(new UnilateralConstraint);
+  cr->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cr->setTangentialForceLaw(new SpatialStribeckFriction(new Friction(mu0,mu1,mu2,kP)));
+  cr->setTangentialImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
   cr->connect(pl,ball->getContour("Sphere"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
   aC_N->setEnable(false);
   cr->setOpenMBVNormalForceArrow(aC_N);
   OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-  cr->setOpenMBVFrictionArrow(aC_T);
+  cr->setOpenMBVTangentialForceArrow(aC_T);
   aC_T->setEnable(false);
 #endif
   this->addLink(cr);

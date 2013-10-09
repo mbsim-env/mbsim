@@ -113,14 +113,14 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   j23 = new Joint("xxxJ23");
   j23->setForceDirection(Mat("[0;1;0]"));
   j23->setForceLaw(new BilateralConstraint());
-  j23->setImpactForceLaw(new BilateralImpact());
   j23->connect(k2->getFrame("fTop"), k3->getFrame("fBottom"));
   addLink(j23);
 
   KineticExcitation *a = new KineticExcitation("Anregung");
   addLink(a);
   a->setFrameOfReference(k3->getFrame("fTop"));
-  a->setForce(Vec("[0;1;0]"), new ConstantFunction<VecV>("[-10]"));
+  a->setForceDirection(Vec("[0;1;0]"));
+  a->setForceFunction(new ConstantFunction<VecV>("[-10]"));
   a->connect(k3->getFrame("fTop"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

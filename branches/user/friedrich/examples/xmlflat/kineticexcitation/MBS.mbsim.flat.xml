@@ -60,37 +60,37 @@
   <links>
     <KineticExcitation name ="ex">
       <frameOfReference ref="../Frame[Wrot]"/>
-      <force>
-        <directionVectors>[1;0;0]</directionVectors>
-        <function>
-          <ConstantFunction>
-            <value>[10]</value>
-          </ConstantFunction>
-        </function>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.05</ombv:diameter>
-          <ombv:headDiameter>0.1</ombv:headDiameter>
-          <ombv:headLength>0.2</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.05</ombv:scaleLength>
-        </ombv:Arrow>
-      </force>
-      <moment>
-        <directionVectors>[0;0;1]</directionVectors>
-        <function>
-          <ConstantFunction>
-            <value>[10]</value>
-          </ConstantFunction>
-        </function>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.05</ombv:diameter>
-          <ombv:headDiameter>0.1</ombv:headDiameter>
-          <ombv:headLength>0.2</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.05</ombv:scaleLength>
-        </ombv:Arrow>
-      </moment>
+      <forceDirection>[1;0;0]</forceDirection>
+      <forceFunction>
+        <ConstantFunction>
+          <value>[10]</value>
+        </ConstantFunction>
+      </forceFunction>
+      <momentDirection>[0;0;1]</momentDirection>
+      <momentFunction>
+        <ConstantFunction>
+          <value>[10]</value>
+        </ConstantFunction>
+      </momentFunction>
       <connect ref="../Object[Box1]/Frame[C]"/>
+      <openMBVForceArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.05</ombv:diameter>
+          <ombv:headDiameter>0.1</ombv:headDiameter>
+          <ombv:headLength>0.2</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.05</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVForceArrow>
+      <openMBVMomentArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.05</ombv:diameter>
+          <ombv:headDiameter>0.1</ombv:headDiameter>
+          <ombv:headLength>0.2</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.05</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVMomentArrow>
     </KineticExcitation>
   </links>
   <environments>

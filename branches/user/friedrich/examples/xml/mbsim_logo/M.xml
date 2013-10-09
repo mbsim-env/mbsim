@@ -237,9 +237,23 @@
   </objects>
   <links>
     <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
-      <moment> 
-        <direction>[0; 0; 1]</direction>
-        <generalizedForceLaw>
+      <momentDirection>[0; 0; 1]</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>jc</stiffnessCoefficient>
+              <dampingCoefficient>jd</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
+      <connect ref1="../../Object[Carrier]/Frame[FM]" ref2="../Object[S1]/Frame[F1]"/>
+    </Joint>
+    <embed count="3" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Joint name="Joint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
+        <momentDirection>[0; 0; 1]</momentDirection>
+        <momentLaw>
           <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
             <forceFunction>
               <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -248,29 +262,7 @@
               </LinearRegularizedBilateralConstraint>
             </forceFunction>
           </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-        </generalizedImpactLaw>
-      </moment>
-      <connect ref1="../../Object[Carrier]/Frame[FM]" ref2="../Object[S1]/Frame[F1]"/>
-    </Joint>
-    <embed count="3" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <Joint name="Joint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
-        <moment> 
-          <direction>[0; 0; 1]</direction>
-          <generalizedForceLaw>
-            <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-              <forceFunction>
-                <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                  <stiffnessCoefficient>jc</stiffnessCoefficient>
-                  <dampingCoefficient>jd</dampingCoefficient>
-                </LinearRegularizedBilateralConstraint>
-              </forceFunction>
-            </RegularizedBilateralConstraint>
-          </generalizedForceLaw>
-          <generalizedImpactLaw>
-          </generalizedImpactLaw>
-        </moment>
+        </momentLaw>
         <connect ref1="../Object[S{nr}]/Frame[F2]" ref2="../Object[S{nr+1}]/Frame[F1]"/>
       </Joint>
     </embed>

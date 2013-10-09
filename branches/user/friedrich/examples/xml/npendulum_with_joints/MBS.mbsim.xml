@@ -18,15 +18,10 @@
   </objects>
   <links>
     <Joint name="Gelenk1">
-      <force>
-        <direction>[1,0 ; 0,1 ; 0,0]</direction>
-        <generalizedForceLaw>
-          <BilateralConstraint/>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-          <BilateralImpact/>
-        </generalizedImpactLaw>
-      </force>
+      <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
+      <forceLaw>
+        <BilateralConstraint/>
+      </forceLaw>
       <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[O]"/>
     </Joint>
     <pv:embed href="Joint_n.xml" count="N" counterName="n"/>
