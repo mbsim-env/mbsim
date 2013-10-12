@@ -51,7 +51,7 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
   property.push_back(new ConstantFunctionProperty("V"));
   property.push_back(new LinearFunctionProperty("V"));
   property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new SinusoidalFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty("V"));
   property.push_back(new LinearCombinationFunctionProperty("V"));
   property.push_back(new PiecewiseDefinedFunctionProperty("V"));
@@ -68,7 +68,7 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
   property.push_back(new ConstantFunctionProperty("V"));
   property.push_back(new LinearFunctionProperty("V"));
   property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new SinusoidalFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty("V"));
   property.push_back(new LinearCombinationFunctionProperty("V"));
   property.push_back(new PiecewiseDefinedFunctionProperty("V"));

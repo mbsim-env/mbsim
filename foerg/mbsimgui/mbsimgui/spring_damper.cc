@@ -27,7 +27,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), forceDirection(0,false), coilSpring(0,true) {
+SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), forceDirection(0,false), frameOfReference(0,false), coilSpring(0,true), forceArrow(0,false) {
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
@@ -39,9 +39,17 @@ SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, paren
   property.push_back(new SymbolicFunctionProperty("SSS",var));
   forceFunction.setProperty(new ChoiceProperty(MBSIMNS"forceFunction",property));
 
-  forceDirection.setProperty(new ForceDirectionProperty(this,MBSIMNS"projectionDirection"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"forceDirection"));
+  forceDirection.setProperty(new ExtPhysicalVarProperty(input));
+
+  frameOfReference.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
 
   coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET",getID()));
+  coilSpring.setXMLName(MBSIMNS"openMBVCoilSpring",false);
+
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  forceArrow.setXMLName(MBSIMNS"openMBVForceArrow",false);
 }
 
 SpringDamper::~SpringDamper() {
@@ -55,17 +63,21 @@ void SpringDamper::initialize() {
 void SpringDamper::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   Link::initializeUsingXML(element);
+  frameOfReference.initializeUsingXML(element);
   forceFunction.initializeUsingXML(element);
   forceDirection.initializeUsingXML(element);
   connections.initializeUsingXML(element);
   coilSpring.initializeUsingXML(element);
+  forceArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* SpringDamper::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
+  frameOfReference.writeXMLFile(ele0);
   forceFunction.writeXMLFile(ele0);
   forceDirection.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
   coilSpring.writeXMLFile(ele0);
+  forceArrow.writeXMLFile(ele0);
   return ele0;
 }

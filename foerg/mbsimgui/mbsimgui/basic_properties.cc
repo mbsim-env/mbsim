@@ -203,8 +203,6 @@ std::string RigidBodyOfReferenceProperty::getBody() const {
 
 TiXmlElement* RigidBodyOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = (xmlName=="")?parent:parent->FirstChildElement(xmlName);
-  cout << "RigidBodyOfReferenceProperty of name "<< xmlName << endl;
-  cout << e->Attribute("ref") << endl;
   if(e) body=e->Attribute("ref");
   return e;
 }

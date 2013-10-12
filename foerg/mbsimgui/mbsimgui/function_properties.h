@@ -310,11 +310,11 @@ class QuadraticFunctionProperty : public FunctionProperty {
     ExtProperty a0, a1, a2;
 };
 
-class SinusFunctionProperty : public FunctionProperty {
+class SinusoidalFunctionProperty : public FunctionProperty {
   public:
-    SinusFunctionProperty(const std::string &ext, int m=1);
-    virtual Property* clone() const {return new SinusFunctionProperty(*this);}
-    inline std::string getType() const { return "SinusFunction"; }
+    SinusoidalFunctionProperty(const std::string &ext, int m=1);
+    virtual Property* clone() const {return new SinusoidalFunctionProperty(*this);}
+    inline std::string getType() const { return "SinusoidalFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);

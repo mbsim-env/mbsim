@@ -275,31 +275,5 @@ class FrictionImpactLawChoiceWidget : public Widget {
     FrictionImpactLawWidget *frictionImpactLaw;
 };
 
-class ForceDirectionWidget : public Widget {
-
-  friend class ForceDirectionProperty;
-
-  public:
-    ForceDirectionWidget(Element *element);
-
-  protected:
-    QWidget *forceDirWidget;
-    Element *element;
-    ExtWidget *refFrame, *mat;
-};
-
-class GeneralizedForceDirectionWidget : public Widget {
-
-  friend class GeneralizedForceDirectionProperty;
-
-  public:
-    GeneralizedForceDirectionWidget();
-
-    int getSize() const;
-
-  protected:
-    ExtWidget *mat;
-};
-
 #endif
 

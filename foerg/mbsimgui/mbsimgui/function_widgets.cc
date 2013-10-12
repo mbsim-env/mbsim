@@ -44,7 +44,7 @@ Widget* FunctionWidgetFactory::createWidget() {
   widget.push_back(new ConstantFunctionWidget(tmp,n)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget(tmp,n)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget(tmp,n)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget(tmp,n)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget(tmp,n)); name.push_back("Sinus function");
   widget.push_back(new TabularFunctionWidget(tmp,n)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget(ext,n)); name.push_back("LinearCombination function");
   widget.push_back(new PiecewiseDefinedFunctionWidget(tmp,n)); name.push_back("Piecewise defined function");
@@ -171,7 +171,7 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
     widget.push_back(new ConstantFunctionWidget("V")); name.push_back("Constant function");
     widget.push_back(new LinearFunctionWidget("V")); name.push_back("Linear function v(t)");
     widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function");
-    widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function");
+    widget.push_back(new SinusoidalFunctionWidget("V")); name.push_back("Sinus function");
   }
   else if(ext[1]=='S' and ext[2]=='V') {
     var << "q";
@@ -183,7 +183,7 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
     widget.push_back(new ConstantFunctionWidget("S")); name.push_back("Constant function");
     widget.push_back(new LinearFunctionWidget("S")); name.push_back("Linear function");
     widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function");
-    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function");
+    widget.push_back(new SinusoidalFunctionWidget("S")); name.push_back("Sinus function");
   }
   fi = new ExtWidget("Inner function",new ChoiceWidget(widget,name));
   layout->addWidget(fi);
@@ -340,7 +340,7 @@ void QuadraticFunctionWidget::resize_(int m, int n) {
   }
 }
 
-SinusFunctionWidget::SinusFunctionWidget(const QString &ext, int m) : FunctionWidget(ext) {
+SinusoidalFunctionWidget::SinusoidalFunctionWidget(const QString &ext, int m) : FunctionWidget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -378,7 +378,7 @@ SinusFunctionWidget::SinusFunctionWidget(const QString &ext, int m) : FunctionWi
   layout->addWidget(o);
 }
 
-void SinusFunctionWidget::resize_(int m, int n) {
+void SinusoidalFunctionWidget::resize_(int m, int n) {
   if(ext[0]=='V') {
     if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
       ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
