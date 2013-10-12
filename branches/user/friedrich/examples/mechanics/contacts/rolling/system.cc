@@ -314,7 +314,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVspring->setSpringRadius(d/5.);
   openMBVspring->setCrossSectionRadius(d/50.);
   openMBVspring->setNumberOfCoils(5);
-  spring->setOpenMBVSpring(openMBVspring);
+  spring->setOpenMBVCoilSpring(openMBVspring);
 
   #endif
 }

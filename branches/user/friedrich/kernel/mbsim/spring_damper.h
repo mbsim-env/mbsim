@@ -68,21 +68,26 @@ namespace MBSim {
        */
       void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
-      /** \brief Set a projection direction of the applied force.
-       * If this function is not set, or frame is NULL, than force calculated by setForceFunction
+      /** \brief Set a direction of the applied force (optional).
+       * If frame of reference is set, than the force is applied on
+       * the two connected frames in the defined direction; (!) this might induce violation of the global 
+       * equality of torques (!). The direction vector dir is given in coordinates of the frame of
+       * reference. If frame of reference is not set, than the force 
        * is applied on the two connected frames in the direction of the two connected frames.
-       * If this function is set, than this force is first projected in direction dir and then applied on
-       * the two connected frames in the projected direction; (!) this might induce violation of the global equality of torques (!).
-       * The direction vector dir is given in coordinates of frame refFrame.
        */
-      void setProjectionDirection(Frame *refFrame_, fmatvec::Vec dir) { refFrame=refFrame_; forceDir=dir; }
+      void setForceDirection(const fmatvec::Vec3 &dir) { forceDir=dir; }
+
+      /** \brief Set the frame of reference (optional).
+       * \see setForceDirection
+       */
+      void setFrameOfReference(Frame *refFrame_) { refFrame=refFrame_; }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
-      void setOpenMBVSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
+      void setOpenMBVCoilSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
 
       /** \brief Visualize a force arrow acting on each of both connected frames */
       void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
@@ -92,7 +97,6 @@ namespace MBSim {
 #endif
     private:
       std::string saved_frameOfReference, saved_ref1, saved_ref2;
-      fmatvec::Vec saved_direction;
   };
 
 }

@@ -1710,6 +1710,22 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Gibt das KOS an, bezüglich dessen die Kraftwirkrichtung vorgegeben wird.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="forceDirection" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die Wirkrichtung der Kraftanregung(en).
+                Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkte
@@ -1718,32 +1734,6 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="projectionDirection" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn dieses Element nicht angegeben ist, so entspricht die Kraftwirkrichtung der
-                Verbindunglinie zwischen den Kraftangriffspunkten.
-                <p>Wenn diese Element angegeben ist, so wird die Kraftwirkrichtung durch den Benutzer
-                  vorgegeben; hierbei ist zu beachten, dass je nach Vorgabe das globale Momentengleichgewicht verletzt wird.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="frameOfReference">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Gibt das KOS an, bezüglich dessen der Kraftwirkrichtung vorgegeben wird.
-                  </xs:documentation></xs:annotation>
-                  <xs:complexType>
-                    <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-                  </xs:complexType> 
-                </xs:element>
-                <xs:element name="direction" type="pv:nounitVector">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Gibt den Kraftwirkrichtungsvektor im KOS <tt>frameOfReference</tt> an. Der Vektor
-                      sollte normiert sein, um eine Skalierung der Kraftfunktion zu umgehen.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -1757,15 +1747,25 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element ref="ombv:CoilSpring" minOccurs="0">
+          <xs:element name="openMBVCoilSpring" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:CoilSpring"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
-          <xs:element ref="ombv:Arrow" minOccurs="0">
+          <xs:element name="openMBVForceArrow" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
