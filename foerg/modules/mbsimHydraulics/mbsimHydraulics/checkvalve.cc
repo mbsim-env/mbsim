@@ -140,7 +140,8 @@ namespace MBSimHydraulics {
       maxContact->connect(ballSeat->getContour("ContourMaxOpening"), ball->getContour("ContourBall"));
 
       spring->connect(ball->getFrame("HighPressureSide"), ballSeat->getFrame("SpringMount"));
-      spring->setProjectionDirection(ballSeat->getFrame("C"), "[1; 0; 0]");
+      spring->setFrameOfReference(ballSeat->getFrame("C"));
+      spring->setForceDirection("[1; 0; 0]");
 
       xOpen->setObject(ball);
       xOpen->setIndex(0);
@@ -166,7 +167,7 @@ namespace MBSimHydraulics {
         springVisu->setSpringRadius(rBall/2.);
         springVisu->setCrossSectionRadius(.05*hMax);
         springVisu->setNumberOfCoils(5);
-        spring->setOpenMBVSpring(springVisu);
+        spring->setOpenMBVCoilSpring(springVisu);
       }
       if (openMBVArrows) {
         ((CircleSolid*)ball->getContour("ContourBall"))->enableOpenMBV(true);

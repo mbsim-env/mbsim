@@ -202,14 +202,16 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
-      <ombv:CoilSpring name="xxx">
-        <ombv:minimalColorValue>-88</ombv:minimalColorValue>
-        <ombv:maximalColorValue>-92</ombv:maximalColorValue>
-        <ombv:numberOfCoils>11</ombv:numberOfCoils>
-        <ombv:springRadius>.00525</ombv:springRadius>
-        <ombv:crossSectionRadius>.0006</ombv:crossSectionRadius>
-        <ombv:scaleFactor>1.</ombv:scaleFactor>
-      </ombv:CoilSpring>
+      <openMBVCoilSpring>
+        <ombv:CoilSpring name="xxx">
+          <ombv:minimalColorValue>-88</ombv:minimalColorValue>
+          <ombv:maximalColorValue>-92</ombv:maximalColorValue>
+          <ombv:numberOfCoils>11</ombv:numberOfCoils>
+          <ombv:springRadius>.00525</ombv:springRadius>
+          <ombv:crossSectionRadius>.0006</ombv:crossSectionRadius>
+          <ombv:scaleFactor>1.</ombv:scaleFactor>
+        </ombv:CoilSpring>
+      </openMBVCoilSpring>
     </SpringDamper>
     <h:EnvironmentNodeMec name="EnvironmentPressure">
       <h:inflow ref="../HLine[LeackageGap]"/>

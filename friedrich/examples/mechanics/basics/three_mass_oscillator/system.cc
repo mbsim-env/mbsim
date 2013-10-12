@@ -161,19 +161,19 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   sp01Visu->setSpringRadius(.75*.5*dDisk);
   sp01Visu->setCrossSectionRadius(.1*.25*dDisk);
   sp01Visu->setNumberOfCoils(5);
-  sp01->setOpenMBVSpring(sp01Visu);
+  sp01->setOpenMBVCoilSpring(sp01Visu);
 
   OpenMBV::CoilSpring *sp12Visu = new OpenMBV::CoilSpring();
   sp12Visu->setSpringRadius(.75*.5*dDisk);
   sp12Visu->setCrossSectionRadius(.1*.25*dDisk);
   sp12Visu->setNumberOfCoils(5);
-  sp12->setOpenMBVSpring(sp12Visu);
+  sp12->setOpenMBVCoilSpring(sp12Visu);
 
   OpenMBV::CoilSpring *sp23Visu = new OpenMBV::CoilSpring();
   sp23Visu->setSpringRadius(.75*.5*dDisk);
   sp23Visu->setCrossSectionRadius(.1*.25*dDisk);
   sp23Visu->setNumberOfCoils(5);
-  sp23->setOpenMBVSpring(sp23Visu);
+  sp23->setOpenMBVCoilSpring(sp23Visu);
 #endif
 
   if(type==1) 

@@ -81,13 +81,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVspring1->setSpringRadius(0.1);
   openMBVspring1->setCrossSectionRadius(0.01);
   openMBVspring1->setNumberOfCoils(5);
-  spring1->setOpenMBVSpring(openMBVspring1);
+  spring1->setOpenMBVCoilSpring(openMBVspring1);
   
   OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
   openMBVspring2->setSpringRadius(0.1);
   openMBVspring2->setCrossSectionRadius(0.01);
   openMBVspring2->setNumberOfCoils(5);
-  spring2->setOpenMBVSpring(openMBVspring2);
+  spring2->setOpenMBVCoilSpring(openMBVspring2);
 #endif
 }
 

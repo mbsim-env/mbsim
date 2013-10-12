@@ -180,14 +180,16 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Frame[I]" ref2="../Object[Piston]/Frame[CheckvalveF]"/>
-      <CoilSpring name="PistonSpringX" xmlns="http://openmbv.berlios.de/OpenMBV">
-        <minimalColorValue>-10</minimalColorValue>
-        <maximalColorValue>10</maximalColorValue>
-        <numberOfCoils>5</numberOfCoils>
-        <springRadius>.003</springRadius>
-        <crossSectionRadius>.0002</crossSectionRadius>
-        <scaleFactor>1.</scaleFactor>
-      </CoilSpring>
+      <openMBVCoilSpring>
+        <CoilSpring name="PistonSpringX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <minimalColorValue>-10</minimalColorValue>
+          <maximalColorValue>10</maximalColorValue>
+          <numberOfCoils>5</numberOfCoils>
+          <springRadius>.003</springRadius>
+          <crossSectionRadius>.0002</crossSectionRadius>
+          <scaleFactor>1.</scaleFactor>
+        </CoilSpring>
+      </openMBVCoilSpring>
     </SpringDamper>
     <RelativePositionSensor name="GapLength" xmlns="http://mbsim.berlios.de/MBSimControl">
       <frame ref="../Object[Housing]/Frame[PistonGap]" rel="../Object[Piston]/Frame[CheckvalveF]"/>

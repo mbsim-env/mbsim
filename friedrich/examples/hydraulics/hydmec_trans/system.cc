@@ -138,7 +138,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
       spVisu->setSpringRadius(.75*.5*dA);
       spVisu->setCrossSectionRadius(.1*.25*dA);
       spVisu->setNumberOfCoils(5);
-      sp->setOpenMBVSpring(spVisu);
+      sp->setOpenMBVCoilSpring(spVisu);
 #endif
     }
   }

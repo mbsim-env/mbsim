@@ -88,7 +88,7 @@ namespace MBSim {
   void SpringDamper::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
-        setProjectionDirection(getByPath<Frame>(saved_frameOfReference), saved_direction);
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       LinkMechanics::init(stage);
@@ -145,38 +145,30 @@ namespace MBSim {
   }
 
   void SpringDamper::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
     LinkMechanics::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReference");
+    if(e) saved_frameOfReference=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMNS"forceDirection");
+    if(e) setForceDirection(getVec(e,3));
     e=element->FirstChildElement(MBSIMNS"forceFunction");
     Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
-    e=element->FirstChildElement(MBSIMNS"projectionDirection");
-    if(e) {
-      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
-      saved_frameOfReference=ee->Attribute("ref");
-      ee=e->FirstChildElement(MBSIMNS"direction");
-      saved_direction=getVec(ee,3);
-    }
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    try { // e is of a type derived from CoilSpring or Arrow: if CoilSpring then ...
-      if(e) {
-        OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e);
-        setOpenMBVSpring(coilSpring);
-        coilSpring->initializeUsingXML(e);
-        e=e->NextSiblingElement();
-      }
+    e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
+    if(e) {
+      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
+      coilSpring->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVCoilSpring(coilSpring);
     }
-    catch(...) { // if not CoilSpring then check for Arrow ... (if not a error is thrown)
-      if(e) {
-        OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e);
-        arrow->initializeUsingXML(e); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVForceArrow(arrow);
-        e=e->NextSiblingElement();
-      }
+    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
     }
 #endif
   }
