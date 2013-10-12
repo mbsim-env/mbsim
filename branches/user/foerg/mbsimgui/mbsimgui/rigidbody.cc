@@ -77,7 +77,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new ConstantFunctionProperty("V",3));
   property.push_back(new LinearFunctionProperty("V",3));
   property.push_back(new QuadraticFunctionProperty("V",3));
-  property.push_back(new SinusFunctionProperty("V",3));
+  property.push_back(new SinusoidalFunctionProperty("V",3));
   var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));

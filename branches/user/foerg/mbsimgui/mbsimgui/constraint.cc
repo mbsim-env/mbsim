@@ -187,7 +187,7 @@ GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, 
   property.push_back(new ConstantFunctionProperty("V",1));
   property.push_back(new LinearFunctionProperty("V",1));
   property.push_back(new QuadraticFunctionProperty("V",1));
-  property.push_back(new SinusFunctionProperty("V",1));
+  property.push_back(new SinusoidalFunctionProperty("V",1));
   vector<string> var;
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
@@ -232,7 +232,7 @@ GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const strin
   property.push_back(new ConstantFunctionProperty("V",1));
   property.push_back(new LinearFunctionProperty("V",1));
   property.push_back(new QuadraticFunctionProperty("V",1));
-  property.push_back(new SinusFunctionProperty("V",1));
+  property.push_back(new SinusoidalFunctionProperty("V",1));
   vector<string> var;
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
@@ -295,9 +295,13 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
-  force.setProperty(new GeneralizedForceDirectionProperty(MBSIMNS"forceDirection"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));
+  force.setProperty(new ExtPhysicalVarProperty(input));
 
-  moment.setProperty(new GeneralizedForceDirectionProperty(MBSIMNS"momentDirection"));
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"momentDirection"));
+  moment.setProperty(new ExtPhysicalVarProperty(input));
 
   jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointForceArrow.setXMLName(MBSIMNS"openMBVJointForceArrow",false);
@@ -305,7 +309,7 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
   jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
 
-  vector<PhysicalVariableProperty> input;
+  input.clear();
   input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGuess"));
   q0.setProperty(new ExtPhysicalVarProperty(input));
 }

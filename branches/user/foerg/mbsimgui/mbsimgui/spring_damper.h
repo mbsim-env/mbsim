@@ -34,7 +34,7 @@ class SpringDamper : public Link {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   protected:
-    ExtProperty forceFunction, connections, forceDirection, coilSpring;
+    ExtProperty forceFunction, forceDirection, frameOfReference, connections, coilSpring, forceArrow;
 };
 
 #endif

@@ -336,7 +336,7 @@ class SpringDamperPropertyDialog : public LinkPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *forceFunction, *connections, *forceDirection, *coilSpring;
+    ExtWidget *forceFunction, *forceDirection, *frameOfReference, *connections, *coilSpring, *forceArrow;
 };
 
 class JointPropertyDialog : public LinkPropertyDialog {

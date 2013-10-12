@@ -62,7 +62,9 @@ TiXmlElement* GeneralizedCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
 
 AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
   frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROLNS"frame"));
-  direction.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"direction"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"direction"));
+  direction.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 void AbsoluteCoordinateSensor::initialize() {
@@ -88,7 +90,7 @@ FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str,
   property.push_back(new ConstantFunctionProperty("V"));
   property.push_back(new LinearFunctionProperty("V"));
   property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new SinusoidalFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty("V"));
   property.push_back(new LinearCombinationFunctionProperty("V"));
   vector<string> var;

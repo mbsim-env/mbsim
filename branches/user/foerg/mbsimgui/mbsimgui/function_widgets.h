@@ -259,12 +259,12 @@ class QuadraticFunctionWidget : public FunctionWidget {
     ExtWidget *a0, *a1, *a2;
 };
 
-class SinusFunctionWidget : public FunctionWidget {
+class SinusoidalFunctionWidget : public FunctionWidget {
 
-  friend class SinusFunctionProperty;
+  friend class SinusoidalFunctionProperty;
 
   public:
-    SinusFunctionWidget(const QString &ext, int m=1);
+    SinusoidalFunctionWidget(const QString &ext, int m=1);
     void resize_(int m, int n);
 
   protected:

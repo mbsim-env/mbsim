@@ -421,7 +421,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new ConstantFunctionWidget("V",3)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget("V",3)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",3)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",3)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget("V",3)); name.push_back("Sinus function");
   var.clear();
   var << "t";
   widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function");
@@ -720,7 +720,7 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
   widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget("V",1)); name.push_back("Sinus function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
 
   widgetConstraint.push_back(new ExtWidget("Function r=r(t)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("Time dependent constraint function");
@@ -779,7 +779,7 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
   widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget("V",1)); name.push_back("Sinus function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");
 
   widgetConstraint.push_back(new ExtWidget("Function r=r(t)",new ChoiceWidget(widget,name),true)); nameConstraint.push_back("Time dependent constraint function");
@@ -800,7 +800,7 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
 //  widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("ud=ud(t), Constant function");
 //  widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("ud=ud(t), Linear function");
 //  widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("ud=ud(t), Quadratic function");
-//  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("ud=ud(t), Sinus function");
+//  widget.push_back(new SinusoidalFunctionWidget("V",1)); name.push_back("ud=ud(t), Sinus function");
 //  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("ud=ud(t), Symbolic function");
 //  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("z"))); name.push_back("ud=ud(z), Symbolic function");
 //
@@ -861,10 +861,16 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,constraint));
   addToTab("Kinetics", connections);
 
-  force = new ExtWidget("Force",new GeneralizedForceDirectionWidget,true);
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  force = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", force);
 
-  moment = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
+  input.clear();
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
+  moment = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", moment);
 
   jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
@@ -873,7 +879,7 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
   jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",jointMomentArrow);
 
-  vector<PhysicalVariableWidget*> input;
+  input.clear();
   q0_ = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
   ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
@@ -1100,7 +1106,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget("V",1)); name.push_back("Sinus function");
   widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
   widget.push_back(new PiecewiseDefinedFunctionWidget("V",1)); name.push_back("Piecewise defined function");
@@ -1124,7 +1130,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget("V",1)); name.push_back("Sinus function");
   widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
   widget.push_back(new PiecewiseDefinedFunctionWidget("V",1)); name.push_back("Piecewise defined function");
@@ -1181,11 +1187,19 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   forceFunction = new ExtWidget("Force function",new ChoiceWidget(widget,name));
   addToTab("Kinetics", forceFunction);
 
-  forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
+  forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", forceDirection);
 
-  coilSpring = new ExtWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(springDamper,0),true);
+  addToTab("Kinetics", frameOfReference);
+
+  coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
   addToTab("Visualisation", coilSpring);
+
+  forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation", forceArrow);
 }
 
 void SpringDamperPropertyDialog::toWidget(Element *element) {
@@ -1193,7 +1207,9 @@ void SpringDamperPropertyDialog::toWidget(Element *element) {
   static_cast<SpringDamper*>(element)->connections.toWidget(connections);
   static_cast<SpringDamper*>(element)->forceFunction.toWidget(forceFunction);
   static_cast<SpringDamper*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<SpringDamper*>(element)->frameOfReference.toWidget(frameOfReference);
   static_cast<SpringDamper*>(element)->coilSpring.toWidget(coilSpring);
+  static_cast<SpringDamper*>(element)->forceArrow.toWidget(forceArrow);
 }
 
 void SpringDamperPropertyDialog::fromWidget(Element *element) {
@@ -1201,7 +1217,9 @@ void SpringDamperPropertyDialog::fromWidget(Element *element) {
   static_cast<SpringDamper*>(element)->connections.fromWidget(connections);
   static_cast<SpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
   static_cast<SpringDamper*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<SpringDamper*>(element)->frameOfReference.fromWidget(frameOfReference);
   static_cast<SpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
+  static_cast<SpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
 }
 
 JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
@@ -1323,10 +1341,16 @@ ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *pare
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
-  forceDir = new ExtWidget("Force",new GeneralizedForceDirectionWidget,true);
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  forceDir = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", forceDir);
 
-  momentDir = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
+  input.clear();
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
+  momentDir = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", momentDir);
 
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,actuator));
@@ -1511,7 +1535,11 @@ GeneralizedVelocitySensorPropertyDialog::GeneralizedVelocitySensorPropertyDialog
 AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0));
   addToTab("General", frame);
-  direction = new ExtWidget("Direction",new GeneralizedForceDirectionWidget);
+
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  direction = new ExtWidget("Direction",new ExtPhysicalVarWidget(input),true);
   addToTab("General", direction);
 }
 
@@ -1539,7 +1567,7 @@ FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *senso
   widget.push_back(new ConstantFunctionWidget("V",1)); name.push_back("Constant function");
   widget.push_back(new LinearFunctionWidget("V",1)); name.push_back("Linear function");
   widget.push_back(new QuadraticFunctionWidget("V",1)); name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",1)); name.push_back("Sinus function");
+  widget.push_back(new SinusoidalFunctionWidget("V",1)); name.push_back("Sinus function");
   widget.push_back(new TabularFunctionWidget("V",1)); name.push_back("Tabular function");
   widget.push_back(new LinearCombinationFunctionWidget("V",1)); name.push_back("Linear combination function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function");

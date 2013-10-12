@@ -27,9 +27,13 @@ using namespace MBXMLUtils;
 
 Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forceDir(0,false), momentDir(0,false), frameOfReference(0,false), actuatorForceArrow(0,false), actuatorMomentArrow(0,false) {
 
-  forceDir.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"forceDirection"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"forceDirection"));
+  forceDir.setProperty(new ExtPhysicalVarProperty(input));
 
-  momentDir.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"momentDirection"));
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"momentDirection"));
+  momentDir.setProperty(new ExtPhysicalVarProperty(input));
 
   frameOfReference.setProperty(new IntegerProperty(1,MBSIMCONTROLNS"referenceFrame")); 
 

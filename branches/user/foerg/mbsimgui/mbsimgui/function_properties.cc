@@ -46,7 +46,7 @@ Property* FunctionPropertyFactory::createProperty() {
   property.push_back(new ConstantFunctionProperty(tmp));
   property.push_back(new LinearFunctionProperty(tmp));
   property.push_back(new QuadraticFunctionProperty(tmp));
-  property.push_back(new SinusFunctionProperty(tmp));
+  property.push_back(new SinusoidalFunctionProperty(tmp));
   property.push_back(new TabularFunctionProperty(tmp));
   property.push_back(new LinearCombinationFunctionProperty(tmp));
   property.push_back(new PiecewiseDefinedFunctionProperty(tmp));
@@ -189,7 +189,7 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
     property.push_back(new ConstantFunctionProperty("V"));
     property.push_back(new LinearFunctionProperty("V"));
     property.push_back(new QuadraticFunctionProperty("V"));
-    property.push_back(new SinusFunctionProperty("V"));
+    property.push_back(new SinusoidalFunctionProperty("V"));
   }
   else if(ext[1]=='S' and ext[2]=='V') {
     var.push_back("q");
@@ -201,7 +201,7 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
     property.push_back(new ConstantFunctionProperty("S"));
     property.push_back(new LinearFunctionProperty("S"));
     property.push_back(new QuadraticFunctionProperty("S"));
-    property.push_back(new SinusFunctionProperty("S"));
+    property.push_back(new SinusoidalFunctionProperty("S"));
   }
   fi.setProperty(new ChoiceProperty(MBSIMNS"innerFunction",property));
 }
@@ -430,7 +430,7 @@ void QuadraticFunctionProperty::toWidget(QWidget *widget) {
   a2.toWidget(static_cast<QuadraticFunctionWidget*>(widget)->a2);
 }
 
-SinusFunctionProperty::SinusFunctionProperty(const string &ext, int m) : FunctionProperty(ext) {
+SinusoidalFunctionProperty::SinusoidalFunctionProperty(const string &ext, int m) : FunctionProperty(ext) {
 
   vector<PhysicalVariableProperty> input;
   if(ext[0]=='V')
@@ -461,7 +461,7 @@ SinusFunctionProperty::SinusFunctionProperty(const string &ext, int m) : Functio
   o.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* SinusFunctionProperty::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SinusoidalFunctionProperty::initializeUsingXML(TiXmlElement *element) {
   a.initializeUsingXML(element);
   f.initializeUsingXML(element);
   p.initializeUsingXML(element);
@@ -469,7 +469,7 @@ TiXmlElement* SinusFunctionProperty::initializeUsingXML(TiXmlElement *element) {
   return element;
 }
 
-TiXmlElement* SinusFunctionProperty::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* SinusoidalFunctionProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   a.writeXMLFile(ele0);
   f.writeXMLFile(ele0);
@@ -478,18 +478,18 @@ TiXmlElement* SinusFunctionProperty::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
-void SinusFunctionProperty::fromWidget(QWidget *widget) {
-  a.fromWidget(static_cast<SinusFunctionWidget*>(widget)->a);
-  f.fromWidget(static_cast<SinusFunctionWidget*>(widget)->f);
-  p.fromWidget(static_cast<SinusFunctionWidget*>(widget)->p);
-  o.fromWidget(static_cast<SinusFunctionWidget*>(widget)->o);
+void SinusoidalFunctionProperty::fromWidget(QWidget *widget) {
+  a.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->a);
+  f.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->f);
+  p.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->p);
+  o.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
 }
 
-void SinusFunctionProperty::toWidget(QWidget *widget) {
-  a.toWidget(static_cast<SinusFunctionWidget*>(widget)->a);
-  f.toWidget(static_cast<SinusFunctionWidget*>(widget)->f);
-  p.toWidget(static_cast<SinusFunctionWidget*>(widget)->p);
-  o.toWidget(static_cast<SinusFunctionWidget*>(widget)->o);
+void SinusoidalFunctionProperty::toWidget(QWidget *widget) {
+  a.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->a);
+  f.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->f);
+  p.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->p);
+  o.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
 }
 
 TabularFunctionProperty::TabularFunctionProperty(const string &ext) : FunctionProperty(ext), choice("",vector<Property*>(),2) {
