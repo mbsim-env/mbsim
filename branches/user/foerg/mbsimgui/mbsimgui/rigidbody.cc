@@ -31,7 +31,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
+RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
   Frame *C = new Frame("C",this);
   addFrame(C);
 
@@ -44,6 +44,8 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.clear();
   input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
+
+  frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForInertiaTensor"));
 
   vector<Property*> propertyTranslation;
 
@@ -71,7 +73,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("VVV",property_));
 
-  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentTranslation"));
+  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"stateDependentTranslation"));
 
   property.clear();
   property.push_back(new ConstantFunctionProperty("V",3));
@@ -94,14 +96,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("VVS",property_));
 
-  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentTranslation"));
+  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"timeDependentTranslation"));
 
   property.clear();
   var.clear();
   var.push_back("q");
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VVS",var));
-  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalTranslation"));
+  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"generalTranslation"));
 
   translation.setProperty(new ChoiceProperty("",propertyTranslation,2)); 
 
@@ -135,7 +137,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  propertyRotation.push_back(new ExtProperty(propertyContainer,false,MBSIMNS"stateDependentRotation"));
+  propertyRotation.push_back(new ExtProperty(propertyContainer,true,MBSIMNS"stateDependentRotation"));
 
   property.clear();
   property_.clear();
@@ -157,7 +159,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  propertyRotation.push_back(new ExtProperty(propertyContainer,false,MBSIMNS"timeDependentRotation"));
+  propertyRotation.push_back(new ExtProperty(propertyContainer,true,MBSIMNS"timeDependentRotation"));
 
   rotation.setProperty(new ChoiceProperty("",propertyRotation,2)); 
 
@@ -292,6 +294,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   mass.initializeUsingXML(element);
   inertia.initializeUsingXML(element);
+  frameForInertiaTensor.initializeUsingXML(element);
 
   translation.initializeUsingXML(element);
   rotation.initializeUsingXML(element);
@@ -321,6 +324,7 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
 
   mass.writeXMLFile(ele0);
   inertia.writeXMLFile(ele0);
+  frameForInertiaTensor.writeXMLFile(ele0);
 
   translation.writeXMLFile(ele0);
   rotation.writeXMLFile(ele0);

@@ -170,6 +170,18 @@ ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, 
   }
   setLayout(layout);
   layout->addWidget(widget);
+//  QPushButton *fold = new QPushButton("+");
+//  fold->setCheckable(true);
+//  layout->addWidget(fold);
+//  int w=QFontMetrics(fold->font()).width("+") * 1.2;
+//  int h=QFontMetrics(fold->font()).height() * 1.2;
+//  fold->setMinimumSize(w, h);
+//  fold->setMaximumSize(w, h);
+//  connect(fold, SIGNAL(toggled(bool)), widget, SLOT(setVisible(bool)));
+//  //layout->addStretch(0);
+//  layout->setAlignment(Qt::AlignLeft);
+////  fold->setChecked(true);
+//  widget->setVisible(false);
 }
 
 ContainerWidget::ContainerWidget() {

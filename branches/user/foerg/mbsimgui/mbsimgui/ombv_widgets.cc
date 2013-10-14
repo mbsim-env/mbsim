@@ -287,7 +287,7 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
   ombv = new ExtWidget("Body",new ChoiceWidget(widget,name));
 //  ombv = new OMBVBodyChoiceWidget("NOTSET");
 
-  ref=new ExtWidget("Frame of reference", new LocalFrameOfReferenceWidget(body));
+  ref=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true);
   layout->addWidget(ombv);
   layout->addWidget(ref);
 }

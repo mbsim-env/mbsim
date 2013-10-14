@@ -565,7 +565,7 @@ void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
   bodies.toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->bodies);
 }
 
-OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) {
+OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ref(0,false) {
   vector<Property*> property;
   property.push_back(new CubeProperty("NOTSET",body->getID()));
   property.push_back(new CuboidProperty("NOTSET",body->getID()));
@@ -575,24 +575,21 @@ OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) {
   property.push_back(new CompoundRigidBodyProperty("NOTSET",body->getID()));
   property.push_back(new InvisibleBodyProperty("NOTSET",body->getID()));
   ombv.setProperty(new ChoiceProperty("",property,0,OPENMBVNS));
-  ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,MBSIMNS"frameOfReference")); 
+  ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,MBSIMNS"openMBVFrameOfReference")); 
 }
 
 TiXmlElement* OMBVBodySelectionProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
-  if(e) {
-    ombv.initializeUsingXML(e);
-    ref.initializeUsingXML(e);
-  }
+  if(e) ombv.initializeUsingXML(e);
+  ref.initializeUsingXML(element);
   return e;
 }
 
 TiXmlElement* OMBVBodySelectionProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
   ombv.writeXMLFile(ele0);
-  if(static_cast<FrameOfReferenceProperty*>(ref.getProperty())->getFrame()!="Frame[C]")
-    ref.writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
+  ref.writeXMLFile(parent);
   return 0;
 }
 
