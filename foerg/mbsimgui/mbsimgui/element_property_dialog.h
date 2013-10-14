@@ -205,7 +205,7 @@ class RigidBodyPropertyDialog : public BodyPropertyDialog {
     int getqRelSize() const; 
     int getuRelSize() const; 
   protected:
-    ExtWidget *K, *mass, *inertia, *translation, *rotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
+    ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
     RigidBody *body;
 };
 

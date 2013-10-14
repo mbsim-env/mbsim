@@ -37,10 +37,10 @@ Contact::Contact(const string &str, Element *parent) : Link(str, parent), contac
   contactImpactLaw.setXMLName(MBSIMNS"normalImpactLaw");
 
   frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(""));
-  frictionForceLaw.setXMLName(MBSIMNS"tangentialForceLaw");
+  frictionForceLaw.setXMLName(MBSIMNS"tangentialForceLaw",false);
 
   frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
-  frictionImpactLaw.setXMLName(MBSIMNS"tangentialImpactLaw");
+  frictionImpactLaw.setXMLName(MBSIMNS"tangentialImpactLaw",false);
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
