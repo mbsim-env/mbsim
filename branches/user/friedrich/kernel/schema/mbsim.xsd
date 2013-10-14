@@ -1652,16 +1652,6 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
-            <xs:element name="openMBVForceArrow" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:Arrow"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
           </xs:sequence>
           <xs:sequence minOccurs="0">
             <xs:element name="momentDirection" type="pv:nounitMatrix">
@@ -1682,16 +1672,6 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
-            <xs:element name="openMBVMomentArrow" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:Arrow"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
           </xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1704,6 +1684,26 @@
               <xs:attribute name="ref1" type="FrameReferenceType"/>
               <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType> 
+          </xs:element>
+          <xs:element name="openMBVForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVMomentArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1755,16 +1755,6 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
@@ -1782,6 +1772,16 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="ombv:CoilSpring"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1869,16 +1869,6 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
-            <xs:element name="openMBVForceArrow" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:Arrow"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
           </xs:sequence>
           <xs:sequence minOccurs="0">
             <xs:element name="momentDirection" type="pv:nounitMatrix">
@@ -1896,16 +1886,6 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
-            <xs:element name="openMBVMomentArrow" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:Arrow"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
           </xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1915,6 +1895,26 @@
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
+          </xs:element>
+          <xs:element name="openMBVForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVMomentArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1956,16 +1956,6 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
           <xs:sequence minOccurs="0">
             <xs:element name="tangentialForceLaw">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1987,16 +1977,6 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
-            <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:Arrow"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
           </xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -2013,6 +1993,26 @@
                 Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
                 Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
             </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2054,16 +2054,6 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
           <xs:sequence minOccurs="0">
             <xs:element name="tangentialForceLaw">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -2086,16 +2076,6 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
           <xs:element name="connect" maxOccurs="unbounded">
            <xs:annotation>
              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -2114,6 +2094,26 @@
                 Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
                 Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
             </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
