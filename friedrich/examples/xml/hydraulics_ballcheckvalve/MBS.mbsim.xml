@@ -25,7 +25,6 @@
           [0; A*sin(2*pi*f*t + pi/2); 0]
         </SymbolicFunction>
       </timeDependentTranslation>
-      <generalRotation/>
       <frames>
         <FixedRelativeFrame name="LineF">
           <enableOpenMBV>
@@ -76,15 +75,13 @@
           </forceFunction>
         </RegularizedUnilateralConstraint>
       </normalForceLaw>
-      <normalImpactLaw>
         <!--
+      <normalImpactLaw>
         <UnilateralNewtonImpact>
           <restitutionCoefficient>.1</restitutionCoefficient>
         </UnilateralNewtonImpact>
-        -->
       </normalImpactLaw>
-      <tangentialForceLaw/>
-      <tangentialImpactLaw/>
+        -->
       <connect ref1="../Object[Anregung]/Contour[Line]" ref2="../Group[BallCheckvalveSystem]/Object[Piston]/Contour[Contour]"/>
     </Contact>
     <AbsolutePositionSensor name="AnregungPos" xmlns="http://mbsim.berlios.de/MBSimControl">

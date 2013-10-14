@@ -43,8 +43,6 @@
             <cSplineNatural/>
           </PiecewisePolynomFunction>
         </timeDependentTranslation>
-        <generalRotation>
-        </generalRotation>
         <frames>
         </frames>
         <contours>

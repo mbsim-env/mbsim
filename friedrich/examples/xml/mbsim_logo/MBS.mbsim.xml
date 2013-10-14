@@ -154,12 +154,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <normalImpactLaw>
-        </normalImpactLaw>
-        <tangentialForceLaw>
-        </tangentialForceLaw>
-        <tangentialImpactLaw>
-        </tangentialImpactLaw>
         <connect ref1="../Group[B]/Object[S10]/Contour[CSide]" ref2="../Group[S]/Object[S7]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
@@ -176,12 +170,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <normalImpactLaw>
-        </normalImpactLaw>
-        <tangentialForceLaw>
-        </tangentialForceLaw>
-        <tangentialImpactLaw>
-        </tangentialImpactLaw>
         <connect ref1="../Group[B]/Object[S1]/Contour[CSide]" ref2="../Group[M]/Object[S4]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
@@ -197,12 +185,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <normalImpactLaw>
-        </normalImpactLaw>
-        <tangentialForceLaw>
-        </tangentialForceLaw>
-        <tangentialImpactLaw>
-        </tangentialImpactLaw>
         <connect ref1="../Group[S]/Object[S9]/Contour[CTop]" ref2="../Group[i]/Object[S2]/Contour[CCircle]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>

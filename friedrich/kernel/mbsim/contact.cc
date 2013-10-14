@@ -784,33 +784,49 @@ namespace MBSim {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
 
-    /*Read Contact Force Law*/
+    //Set contact law
     e = element->FirstChildElement(MBSIMNS"normalForceLaw");
-
-    //Get contact force law
     GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
     setNormalForceLaw(gfl);
 
     //Get Impact law
-    e = e->NextSiblingElement();
-    if (e->FirstChildElement()) {
+    e = element->FirstChildElement(MBSIMNS"normalImpactLaw");
+    if (e) {
       GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
       setNormalImpactLaw(gifl);
-      e = e->NextSiblingElement();
     }
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
+    if (e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVNormalForceArrow(arrow);
+    }
+#endif
+
     //Get Friction Force Law
-    if (e->FirstChildElement()) {
+    e = element->FirstChildElement(MBSIMNS"tangentialForceLaw");
+    if (e) {
       FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
       setTangentialForceLaw(ffl);
-      e = e->NextSiblingElement();
     }
 
     //Get Friction Impact Law
-    if (e->FirstChildElement()) {
+    e = element->FirstChildElement(MBSIMNS"tangentialImpactLaw");
+    if (e) {
       FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
       setTangentialImpactLaw(fil);
     }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = element->FirstChildElement(MBSIMNS"openMBVTangentialForceArrow");
+    if (e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVTangentialForceArrow(arrow);
+    }
+#endif
 
     /*Read all contour pairings*/
     //Get all contours, that should be connected
@@ -838,18 +854,6 @@ namespace MBSim {
     //Get all drawing thingies
     if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
       enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
-    e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVNormalForceArrow(arrow);
-    }
-    e = element->FirstChildElement(MBSIMNS"openMBVTangentialForceArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVTangentialForceArrow(arrow);
-    }
 #endif
   }
 

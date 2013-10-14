@@ -208,10 +208,7 @@ namespace MBSim {
        * \param RThetaR  inertia tensor
        * \param frame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, Frame *frame=0) {
-        SThetaS = RThetaR;
-        frameForInertiaTensor = frame;
-      }
+      void setInertiaTensor(const fmatvec::SymMat3& RThetaR) { SThetaS = RThetaR; }
 
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
@@ -224,6 +221,8 @@ namespace MBSim {
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
        */
       void setFrameForKinematics(Frame *frame);
+
+      void setFrameForInertiaTensor(Frame *frame);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);

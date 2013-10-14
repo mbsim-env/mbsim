@@ -21,7 +21,6 @@
           [0; 2e-4*sin(2*pi*100*t); 0]
         </SymbolicFunction>
       </timeDependentTranslation>
-      <generalRotation/>
       <frames/>
       <contours/>
       <openMBVRigidBody>
