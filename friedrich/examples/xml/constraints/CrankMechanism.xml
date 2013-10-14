@@ -272,6 +272,7 @@
           <y>[0 .2 .1 .1]'</y>
         </TabularFunction>
       </momentFunction>
+      <connect ref="../Object[Motor]/Frame[C]"/>
       <openMBVMomentArrow>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
           <diffuseColor>[0.6666;1;0]</diffuseColor>
@@ -282,7 +283,6 @@
           <scaleLength>.1</scaleLength>
         </Arrow>
       </openMBVMomentArrow>
-      <connect ref="../Object[Motor]/Frame[C]"/>
     </KineticExcitation>
     <Joint xmlns="http://mbsim.berlios.de/MBSim" name="Friction_Crank_Rocker">
       <momentDirection>[0 0 1]'</momentDirection>
@@ -296,6 +296,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <connect ref1="../Object[Crank]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fCrank]"/>
       <openMBVMomentArrow>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
           <diffuseColor>[0.6666;1;0]</diffuseColor>
@@ -306,7 +307,6 @@
           <scaleLength>.1</scaleLength>
         </Arrow>
       </openMBVMomentArrow>
-      <connect ref1="../Object[Crank]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fCrank]"/>
     </Joint>
     <Joint xmlns="http://mbsim.berlios.de/MBSim" name="Friction_Rocker_Piston">
       <momentDirection>[0 0 1]'</momentDirection>
@@ -320,6 +320,7 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+      <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
       <openMBVMomentArrow>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
           <diffuseColor>[0.6666;1;0]</diffuseColor>
@@ -330,7 +331,6 @@
           <scaleLength>.1</scaleLength>
         </Arrow>
       </openMBVMomentArrow>
-      <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
     </Joint>
   </links>
 </Group>

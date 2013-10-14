@@ -69,15 +69,6 @@
           <restitutionCoefficient>0.0</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </normalImpactLaw>
-      <openMBVNormalForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.001</ombv:diameter>
-          <ombv:headDiameter>0.002</ombv:headDiameter>
-          <ombv:headLength>0.004</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.4</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVNormalForceArrow>
       <tangentialForceLaw>
         <SpatialCoulombFriction>
           <frictionCoefficient>0.2</frictionCoefficient>
@@ -88,6 +79,17 @@
           <frictionCoefficient>0.2</frictionCoefficient>
         </SpatialCoulombImpact>
       </tangentialImpactLaw>
+      <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
+      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
+      <openMBVNormalForceArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.001</ombv:diameter>
+          <ombv:headDiameter>0.002</ombv:headDiameter>
+          <ombv:headLength>0.004</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.4</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVNormalForceArrow>
       <openMBVTangentialForceArrow>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.001</ombv:diameter>
@@ -97,8 +99,6 @@
           <ombv:scaleLength>0.4</ombv:scaleLength>
         </ombv:Arrow>
       </openMBVTangentialForceArrow>
-      <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
-      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
     </Contact>
     <Contact name="Contact2">
       <normalForceLaw>
@@ -109,15 +109,6 @@
           <restitutionCoefficient>0.0</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </normalImpactLaw>
-      <openMBVNormalForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.001</ombv:diameter>
-          <ombv:headDiameter>0.002</ombv:headDiameter>
-          <ombv:headLength>0.004</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.4</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVNormalForceArrow>
       <tangentialForceLaw>
         <SpatialCoulombFriction>
           <frictionCoefficient>0.2</frictionCoefficient>
@@ -128,6 +119,17 @@
           <frictionCoefficient>0.2</frictionCoefficient>
         </SpatialCoulombImpact>
       </tangentialImpactLaw>
+      <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
+      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
+      <openMBVNormalForceArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.001</ombv:diameter>
+          <ombv:headDiameter>0.002</ombv:headDiameter>
+          <ombv:headLength>0.004</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.4</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVNormalForceArrow>
       <openMBVTangentialForceArrow>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.001</ombv:diameter>
@@ -137,8 +139,6 @@
           <ombv:scaleLength>0.4</ombv:scaleLength>
         </ombv:Arrow>
       </openMBVTangentialForceArrow>
-      <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
-      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
     </Contact>
   </links>
   <environments>
