@@ -153,6 +153,14 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"forceFunction");
     Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
+    }
+#endif
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
@@ -163,12 +171,6 @@ namespace MBSim {
       OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
       coilSpring->initializeUsingXML(e->FirstChildElement());
       setOpenMBVCoilSpring(coilSpring);
-    }
-    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
     }
 #endif
   }

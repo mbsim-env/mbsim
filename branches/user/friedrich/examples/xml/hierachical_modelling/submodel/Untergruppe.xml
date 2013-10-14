@@ -36,7 +36,6 @@
           </translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
-      <generalRotation/>
       <frames>
           <FixedRelativeFrame name="P1">
             <enableOpenMBV>
@@ -73,7 +72,6 @@
       <stateDependentTranslation>
         <TranslationAlongYAxis/>
       </stateDependentTranslation>
-      <generalRotation/>
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>
@@ -112,7 +110,6 @@
           <unloadedLength>l01</unloadedLength>
         </LinearSpringDamperForce>
       </forceFunction>
-      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
       <openMBVForceArrow>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.03*numHG</ombv:diameter>
@@ -122,6 +119,7 @@
           <ombv:scaleLength>0.005</ombv:scaleLength>
         </ombv:Arrow>
       </openMBVForceArrow>
+      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
     </SpringDamper>
     <SpringDamper name="Feder2">
       <forceFunction>

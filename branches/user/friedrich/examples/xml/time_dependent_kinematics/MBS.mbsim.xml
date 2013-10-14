@@ -39,7 +39,6 @@
                     <ombv:scaleFactor>1</ombv:scaleFactor>
                     <ombv:length>2</ombv:length>
                 </ombv:Cube>
-                <frameOfReference ref="Frame[C]" />
             </openMBVRigidBody>
         </RigidBody>
         <RigidBody name="Box1a">
@@ -73,7 +72,6 @@
                     <ombv:scaleFactor>1</ombv:scaleFactor>
                     <ombv:length>2</ombv:length>
                 </ombv:Cube>
-                <frameOfReference ref="Frame[C]" />
             </openMBVRigidBody>
         </RigidBody>
         <RigidBody name="Box2">
@@ -86,7 +84,6 @@
                 [5+cos(freq1*q); sin(freq1*q(1)); 0]
               </SymbolicFunction>
             </stateDependentTranslation>
-            <generalRotation/>
             <frames />
             <contours />
             <openMBVRigidBody>
@@ -96,7 +93,6 @@
                     <ombv:scaleFactor>1</ombv:scaleFactor>
                     <ombv:length>1</ombv:length>
                 </ombv:Cube>
-                <frameOfReference ref="Frame[C]" />
             </openMBVRigidBody>
         </RigidBody>
         <RigidBody name="Box3">
@@ -110,7 +106,6 @@
                [10+t+cos(freq1*q(1)); sin(freq1*q(1)); q(2)]
               </SymbolicFunction>
             </generalTranslation>
-            <generalRotation/>
             <frames />
             <contours />
             <openMBVRigidBody>
@@ -120,7 +115,6 @@
                     <ombv:scaleFactor>1</ombv:scaleFactor>
                     <ombv:length>1</ombv:length>
                 </ombv:Cube>
-                <frameOfReference ref="Frame[C]" />
             </openMBVRigidBody>
         </RigidBody>
     </objects>

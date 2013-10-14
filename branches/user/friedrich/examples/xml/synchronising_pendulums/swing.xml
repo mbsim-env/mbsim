@@ -43,8 +43,6 @@
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
-      <generalRotation>
-      </generalRotation>
       <frames>
         <FixedRelativeFrame name="fMountLeft">
           <!--
@@ -93,7 +91,6 @@
           <scaleFactor>1.</scaleFactor>
           <length>[swingL swingB swingH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
          -<enableOpenMBVFrameC>
@@ -109,7 +106,6 @@
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
       <inertiaTensor>suspensionTheta</inertiaTensor>
-      <generalTranslation/>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
@@ -148,7 +144,6 @@
           <scaleFactor>1.</scaleFactor>
           <length>[suspensionL suspensionB suspensionH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
          -<enableOpenMBVFrameC>
@@ -164,7 +159,6 @@
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
       <inertiaTensor>suspensionTheta</inertiaTensor>
-      <generalTranslation/>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
@@ -203,7 +197,6 @@
           <scaleFactor>1.</scaleFactor>
           <length>[suspensionL suspensionB suspensionH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
          -<enableOpenMBVFrameC>

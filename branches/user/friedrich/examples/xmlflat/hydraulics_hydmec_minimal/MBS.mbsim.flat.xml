@@ -18,7 +18,6 @@
           <translationVectors>[1; 0; 0]</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
-      <generalRotation/>
       <frames/>
       <contours/>
       <openMBVRigidBody>

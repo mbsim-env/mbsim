@@ -27,7 +27,6 @@
       <stateDependentTranslation>
         <TranslationAlongYAxis/>
       </stateDependentTranslation>
-      <generalRotation/>
       <frames/>
       <contours/>
       <openMBVRigidBody>

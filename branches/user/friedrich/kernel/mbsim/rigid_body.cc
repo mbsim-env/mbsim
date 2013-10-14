@@ -74,6 +74,11 @@ namespace MBSim {
     assert(K);
   }
 
+  void RigidBody::setFrameForInertiaTensor(Frame *frame) { 
+    frameForInertiaTensor = dynamic_cast<FixedRelativeFrame*>(frame); 
+    assert(frameForInertiaTensor);
+  }
+
   void RigidBody::updateh(double t, int j) {
 
     Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*C->getGyroscopicAccelerationOfTranslation(j);
@@ -716,6 +721,8 @@ namespace MBSim {
     setMass(getDouble(e));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
+    e=element->FirstChildElement(MBSIMNS"frameForInertiaTensor");
+    if(e) setFrameForInertiaTensor(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=element->FirstChildElement(MBSIMNS"generalTranslation");
     if(e && e->FirstChildElement()) {
       Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV,double)> >(e->FirstChildElement());
@@ -760,10 +767,9 @@ namespace MBSim {
       OpenMBV::RigidBody *rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->FirstChildElement());
       setOpenMBVRigidBody(rb);
       rb->initializeUsingXML(e->FirstChildElement());
-
-      if (e->FirstChildElement(MBSIMNS"frameOfReference"))
-        setOpenMBVFrameOfReference(getByPath<Frame>(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     }
+    e=element->FirstChildElement(MBSIMNS"openMBVFrameOfReference");
+    if(e) setOpenMBVFrameOfReference(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
     if(e) {

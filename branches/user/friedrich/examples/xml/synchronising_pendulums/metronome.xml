@@ -18,7 +18,6 @@
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
-      <generalRotation/>
       <frames>
         <FixedRelativeFrame name="fTop">
           <!--
@@ -56,7 +55,6 @@
           <scaleFactor>1.</scaleFactor>
           <length>[baseL baseB baseH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
       -<enableOpenMBVFrameC>
@@ -70,7 +68,6 @@
       <frameForKinematics ref="Frame[fBottom]"/>
       <mass>pendulumMass</mass>
       <inertiaTensor>pendulumTheta</inertiaTensor>
-      <generalTranslation/>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
@@ -114,7 +111,6 @@
           <innerBaseRadius>0</innerBaseRadius>
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
       -<enableOpenMBVFrameC>
@@ -128,8 +124,6 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>sphereMass</mass>
       <inertiaTensor>sphereTheta</inertiaTensor>
-      <generalTranslation/>
-      <generalRotation/>
       <frames/>
       <contours/>
       <openMBVRigidBody>
@@ -140,7 +134,6 @@
           <scaleFactor>1</scaleFactor>
           <radius>sphereD/2</radius>
         </Sphere>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
       -<enableOpenMBVFrameC>
@@ -195,7 +188,6 @@
           <y>[0      0  .05  0  0]'</y>
         </TabularFunction>
       </forceFunction>
-      <connect ref="../Object[Sphere]/Frame[C]"/>
       <openMBVForceArrow>
         <Arrow name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
           <diameter>pendulumD*2</diameter>
@@ -205,6 +197,7 @@
           <scaleLength>1.</scaleLength>
         </Arrow>
       </openMBVForceArrow>
+      <connect ref="../Object[Sphere]/Frame[C]"/>
     </KineticExcitation>
 
     <GeneralizedPositionSensor name="AngularSensor" xmlns="http://mbsim.berlios.de/MBSimControl">

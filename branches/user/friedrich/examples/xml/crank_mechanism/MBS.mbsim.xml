@@ -28,7 +28,6 @@
       <frameForKinematics ref="Frame[B2]"/>
       <mass>m2</mass>
       <inertiaTensor>J2*eye(3)</inertiaTensor>
-      <generalTranslation/>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
@@ -92,7 +91,6 @@
       <frameForKinematics ref="Frame[B4]"/>
       <mass>m4</mass>
       <inertiaTensor>J4*eye(3)</inertiaTensor>
-      <generalTranslation/>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
@@ -138,7 +136,6 @@
       <frameForKinematics ref="Frame[B3]"/>
       <mass>m3</mass>
       <inertiaTensor>J3*eye(3)</inertiaTensor>
-      <generalTranslation/>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
@@ -206,18 +203,6 @@
           <restitutionCoefficient>epsilon</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </normalImpactLaw>
-      <tangentialForceLaw>
-        <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
-          <frictionCoefficient>mu</frictionCoefficient>
-        </PlanarCoulombFriction>
-      </tangentialForceLaw>
-      <tangentialImpactLaw>
-        <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
-          <frictionCoefficient>mu</frictionCoefficient>
-        </PlanarCoulombImpact>
-      </tangentialImpactLaw>
-      <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
-      <enableOpenMBVContactPoints>fSize/4.</enableOpenMBVContactPoints> <!-- optional -->
       <openMBVNormalForceArrow> <!-- optional -->
         <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
           <minimalColorValue>0</minimalColorValue> <!-- optional -->
@@ -229,6 +214,16 @@
           <scaleLength>.01</scaleLength>
         </Arrow>
       </openMBVNormalForceArrow>
+      <tangentialForceLaw>
+        <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
+          <frictionCoefficient>mu</frictionCoefficient>
+        </PlanarCoulombFriction>
+      </tangentialForceLaw>
+      <tangentialImpactLaw>
+        <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
+          <frictionCoefficient>mu</frictionCoefficient>
+        </PlanarCoulombImpact>
+      </tangentialImpactLaw>
       <openMBVTangentialForceArrow> <!-- optional -->
         <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
           <minimalColorValue>-10</minimalColorValue> <!-- optional -->
@@ -240,6 +235,8 @@
           <scaleLength>.1</scaleLength>
         </Arrow>
       </openMBVTangentialForceArrow>
+      <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
+      <enableOpenMBVContactPoints>fSize/4.</enableOpenMBVContactPoints> <!-- optional -->
     </Contact>
   </links>
   <environments>

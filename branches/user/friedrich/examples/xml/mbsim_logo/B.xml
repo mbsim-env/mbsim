@@ -12,8 +12,6 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*y*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2, 0; 0, 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2]</inertiaTensor>
-      <generalTranslation>
-      </generalTranslation>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
@@ -69,8 +67,8 @@
           <innerBaseRadius>0</innerBaseRadius>
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
-        <frameOfReference ref="Frame[F1]"/> 
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[F1]"/> 
       <enableOpenMBVFrameC> 
         <size>frameSize</size>
         <offset>1.</offset>
@@ -83,8 +81,6 @@
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*c*x*rho</mass>
         <inertiaTensor>[1/2*(pi*r^2*c*x*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*c*x*rho)*r^2+1/12*(pi*r^2*c*x*rho)*(c*x)^2, 0; 0, 0, 1/4*(pi*r^2*c*x*rho)*r^2+1/12*(pi*r^2*c*x*rho)*(c*x)^2]</inertiaTensor>
-        <generalTranslation>
-        </generalTranslation>
         <stateDependentRotation>
           <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
             <axisOfRotation>[0; 0; 1]</axisOfRotation>
@@ -123,8 +119,8 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <frameOfReference ref="Frame[F1]"/> 
         </openMBVRigidBody>
+        <openMBVFrameOfReference ref="Frame[F1]"/> 
         <enableOpenMBVFrameC> 
           <size>frameSize</size>
           <offset>1.</offset>
@@ -138,8 +134,6 @@
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*h*rho</mass>
         <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
-        <generalTranslation>
-        </generalTranslation>
         <stateDependentRotation>
           <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
             <axisOfRotation>[0; 0; 1]</axisOfRotation>
@@ -178,8 +172,8 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <frameOfReference ref="Frame[F1]"/> 
         </openMBVRigidBody>
+        <openMBVFrameOfReference ref="Frame[F1]"/> 
         <enableOpenMBVFrameC> 
           <size>frameSize</size>
           <offset>1.</offset>
@@ -193,8 +187,6 @@
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*(c*y/4)*rho</mass>
         <inertiaTensor>[1/2*(pi*r^2*(c*y/4)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2, 0; 0, 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2]</inertiaTensor>
-        <generalTranslation>
-        </generalTranslation>
         <stateDependentRotation>
           <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
             <axisOfRotation>[0; 0; 1]</axisOfRotation>
@@ -241,8 +233,8 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <frameOfReference ref="Frame[F1]"/> 
         </openMBVRigidBody>
+        <openMBVFrameOfReference ref="Frame[F1]"/> 
         <enableOpenMBVFrameC> 
           <size>frameSize</size>
           <offset>1.</offset>

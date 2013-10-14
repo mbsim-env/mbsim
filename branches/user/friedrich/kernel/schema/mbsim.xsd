@@ -927,7 +927,17 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:choice>
+          <xs:element name="frameForInertiaTensor" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:choice minOccurs="0">
             <xs:element name="generalTranslation">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                   Gibt die Vorschrift zur Berechnung des Translationsvektors
@@ -940,7 +950,7 @@
               </xs:documentation></xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element ref="Function"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -956,7 +966,7 @@
               </xs:documentation></xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element ref="Function"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -972,12 +982,12 @@
               </xs:documentation></xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element ref="Function"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
           </xs:choice>
-          <xs:choice>
+          <xs:choice minOccurs="0">
             <xs:element name="generalRotation">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                   Gibt die Vorschrift zur Berechnung der Transformationsmatrix
@@ -989,7 +999,7 @@
               </xs:documentation></xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element ref="Function"/>
                   <xs:element name="translationDependent" minOccurs="0">
                     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       tbd
@@ -1014,7 +1024,7 @@
               </xs:documentation></xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element ref="Function"/>
                   <xs:element name="translationDependent" minOccurs="0">
                     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       tbd
@@ -1039,7 +1049,7 @@
               </xs:documentation></xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="Function" minOccurs="0"/>
+                  <xs:element ref="Function"/>
                   <xs:element name="translationDependent" minOccurs="0">
                     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       tbd
@@ -1099,30 +1109,32 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openMBVRigidBody" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:RigidBody"/>
-                <xs:element name="frameOfReference" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definiert das MBSim KOS, mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt.<br/>
-                      Wird
-                      dieses Element nicht angegeben, so wird das KOS "C" verwendet.
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="openMBVRigidBody">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:RigidBody"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVFrameOfReference" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das MBSim KOS, mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt.<br/>
+                  Wird
+                  dieses Element nicht angegeben, so wird das KOS "C" verwendet.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1621,42 +1633,66 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die Wirkrichtung der Kraftanregung(en).
-                Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
-                zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="forceFunction" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die Kraftfunktion in Abhängigkeit der Zeit.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die Wirkrichtung der Momentenanregung(en).
-                Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
-                im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
-                zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="momentFunction" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die Momentfunktion in Abhängigkeit der Zeit.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="forceDirection" type="pv:nounitMatrix">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert die Wirkrichtung der Kraftanregung(en).
+                  Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                  im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                  zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="forceFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert die Kraftfunktion in Abhängigkeit der Zeit.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVForceArrow" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Arrow"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:sequence minOccurs="0">
+            <xs:element name="momentDirection" type="pv:nounitMatrix">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert die Wirkrichtung der Momentenanregung(en).
+                  Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
+                  im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
+                  zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="momentFunction">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert die Momentfunktion in Abhängigkeit der Zeit.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVMomentArrow" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Arrow"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
@@ -1668,26 +1704,6 @@
               <xs:attribute name="ref1" type="FrameReferenceType"/>
               <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType> 
-          </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="openMBVMomentArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1710,22 +1726,24 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReference" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt das KOS an, bezüglich dessen die Kraftwirkrichtung vorgegeben wird.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="forceDirection" type="pv:nounitVector" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die Wirkrichtung der Kraftanregung(en).
-                Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
-                zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
-            </xs:documentation></xs:annotation>
-          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="frameOfReference">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Gibt das KOS an, bezüglich dessen die Kraftwirkrichtung vorgegeben wird.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+              </xs:complexType> 
+            </xs:element>
+            <xs:element name="forceDirection" type="pv:nounitVector">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert die Wirkrichtung der Kraftanregung(en).
+                  Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                  im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                  zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkte
@@ -1736,6 +1754,16 @@
                 <xs:element ref="Function"/>
               </xs:sequence>
             </xs:complexType> 
+          </xs:element>
+          <xs:element name="openMBVForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1754,16 +1782,6 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="ombv:CoilSpring"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1835,36 +1853,60 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="forceLaw" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das konstitutive Gesetz bez. der Zwangskräfte auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="momentLaw" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das konstitutive Gesetz bez. der Zwangsmomente auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="forceDirection" type="pv:nounitMatrix">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="forceLaw">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das konstitutive Gesetz bez. der Zwangskräfte auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="GeneralizedForceLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVForceArrow" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Arrow"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:sequence minOccurs="0">
+            <xs:element name="momentDirection" type="pv:nounitMatrix">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="momentLaw">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das konstitutive Gesetz bez. der Zwangsmomente auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="GeneralizedForceLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVMomentArrow" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Arrow"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Bindet zwei Koordinatensysteme an ein Gelenk. 
@@ -1873,26 +1915,6 @@
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
-          </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="openMBVMomentArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1924,36 +1946,58 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="normalImpactLaw">
+          <xs:element name="normalImpactLaw" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
+                <xs:element ref="GeneralizedImpactLaw"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="tangentialForceLaw">
+          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionForceLaw" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="tangentialImpactLaw">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="FrictionImpactLaw" minOccurs="0"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="tangentialForceLaw">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="FrictionForceLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="tangentialImpactLaw" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="FrictionImpactLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Arrow"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Bindet zwei Konturen an einen Kontakt. 
@@ -1969,26 +2013,6 @@
                 Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
                 Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
             </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2020,33 +2044,55 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="normalImpactLaw">
+          <xs:element name="normalImpactLaw" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
+                <xs:element ref="GeneralizedImpactLaw"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="tangentialForceLaw">
+          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionForceLaw" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="tangentialImpactLaw">
+          <xs:sequence minOccurs="0">
+            <xs:element name="tangentialForceLaw">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="FrictionForceLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="tangentialImpactLaw" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="FrictionImpactLaw"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionImpactLaw" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2068,26 +2114,6 @@
                 Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
                 Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
             </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>

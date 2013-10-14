@@ -12,8 +12,6 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(y)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2, 0; 0, 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2]</inertiaTensor>
-      <generalTranslation>
-      </generalTranslation>
       <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
@@ -56,8 +54,8 @@
           <innerBaseRadius>0</innerBaseRadius>
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
-        <frameOfReference ref="Frame[F1]"/> 
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[F1]"/> 
       <enableOpenMBVFrameC> 
         <size>frameSize</size>
         <offset>1.</offset>
@@ -74,8 +72,6 @@
           <translationVectors>[1; 0; 0]</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
-      <generalRotation>
-      </generalRotation>
       <frames>
       </frames>
       <contours>
@@ -92,7 +88,6 @@
           <scaleFactor>1</scaleFactor>
           <radius>2*r</radius>
         </Sphere>
-        <frameOfReference ref="Frame[C]"/> 
       </openMBVRigidBody>
       <enableOpenMBVFrameC> 
         <size>frameSize</size>
@@ -126,12 +121,6 @@
           </forceFunction>
         </RegularizedUnilateralConstraint>
       </normalForceLaw>
-      <normalImpactLaw>
-      </normalImpactLaw>
-      <tangentialForceLaw>
-      </tangentialForceLaw>
-      <tangentialImpactLaw>
-      </tangentialImpactLaw>
       <connect ref1="../Object[S1]/Contour[CTop]" ref2="../Object[S2]/Contour[CCircle]"/>
     </Contact>
   </links>
