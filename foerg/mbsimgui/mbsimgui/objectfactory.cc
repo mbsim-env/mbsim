@@ -153,6 +153,10 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new KineticExcitation(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"SpringDamper")
     return new SpringDamper(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"DirectionalSpringDamper")
+    return new DirectionalSpringDamper(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"RelativeRotationalSpringDamper")
+    return new RelativeRotationalSpringDamper(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"Joint")
     return new Joint(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"Contact")

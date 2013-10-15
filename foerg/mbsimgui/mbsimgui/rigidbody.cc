@@ -31,7 +31,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
+RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
   Frame *C = new Frame("C",this);
   addFrame(C);
 
@@ -129,15 +129,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVV",property_));
 
-  ContainerProperty *propertyContainer = new ContainerProperty;
-  propertyContainer->addProperty(new ChoiceProperty("",property));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
-  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
-  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  propertyRotation.push_back(new ExtProperty(propertyContainer,true,MBSIMNS"stateDependentRotation"));
+  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"stateDependentRotation"));
 
   property.clear();
   property_.clear();
@@ -151,17 +143,16 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MVS",property_));
 
-  propertyContainer = new ContainerProperty;
-  propertyContainer->addProperty(new ChoiceProperty("",property));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependent"));
-  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformation"));
-  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
-  propertyRotation.push_back(new ExtProperty(propertyContainer,true,MBSIMNS"timeDependentRotation"));
+  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"timeDependentRotation"));
 
   rotation.setProperty(new ChoiceProperty("",propertyRotation,2)); 
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependentRotation"));
+  translationDependentRotation.setProperty(new ExtPhysicalVarProperty(input)); 
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformationForRotation"));
+  coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
@@ -178,14 +169,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
 int RigidBody::getqRelSize() const {
   int nqT=0, nqR=0;
-  const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(translation.getProperty())->getProperty());
-  if(extProperty->isActive()) {
+  if(translation.isActive()) {
+    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(translation.getProperty())->getProperty());
     const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(extProperty->getProperty());
     nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
   }
-  extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(rotation.getProperty())->getProperty());
-  if(extProperty->isActive()) {
-    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<const ContainerProperty*>(extProperty->getProperty())->getProperty(0));
+  if(rotation.isActive()) {
+    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(rotation.getProperty())->getProperty());
+    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(extProperty->getProperty());
     nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
   }
   int nq = nqT + nqR;
@@ -298,6 +289,8 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   translation.initializeUsingXML(element);
   rotation.initializeUsingXML(element);
+  translationDependentRotation.initializeUsingXML(element);
+  coordinateTransformationForRotation.initializeUsingXML(element);
 
   ombvEditor.initializeUsingXML(element);
 
@@ -328,6 +321,8 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
 
   translation.writeXMLFile(ele0);
   rotation.writeXMLFile(ele0);
+  translationDependentRotation.writeXMLFile(ele0);
+  coordinateTransformationForRotation.writeXMLFile(ele0);
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
   for(int i=1; i<frame.size(); i++)

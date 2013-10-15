@@ -110,7 +110,7 @@ class JointConstraint : public Constraint {
     void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
-    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, jointForceArrow, jointMomentArrow, q0;
+    ExtProperty independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, refFrameID, force, moment, connections, jointForceArrow, jointMomentArrow, q0;
 
 };
 
