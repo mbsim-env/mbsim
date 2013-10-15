@@ -117,6 +117,11 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
+      /** \brief The frame of reference ID for the force/moment direction vectors.
+       * If ID=0 (default) the first frame, if ID=1 the second frame is used.
+       */
+      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
+
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
@@ -139,6 +144,12 @@ namespace MBSim {
 #endif
 
     protected:
+      /**
+       * \brief frame of reference the force is defined in
+       */
+      Frame *refFrame;
+      int refFrameID;
+
       /**
        * \brief indices of forces and torques
        */

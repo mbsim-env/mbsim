@@ -165,28 +165,23 @@ namespace MBSim {
        * \brief set Kinematic for general rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setGeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_, bool dep=false, bool ct=true) { 
-        fAPK = fAPK_; 
-        translationDependentRotation = dep; 
-        coordinateTransformation = ct;
-      }
+      void setGeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { fAPK = fAPK_; }
       /*!
        * \brief set Kinematic for only time dependent rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setTimeDependentRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_, bool dep=false, bool ct=true) { 
-        setGeneralRotation(new TimeDependentFunction<fmatvec::RotMat3>(fAPK_), dep, ct);
-      }
+      void setTimeDependentRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_) { setGeneralRotation(new TimeDependentFunction<fmatvec::RotMat3>(fAPK_)); }
       /*!
        * \brief set Kinematic for only state dependent rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setStateDependentRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_, bool dep=false, bool ct=true) { 
-        setGeneralRotation(new StateDependentFunction<fmatvec::RotMat3>(fAPK_), dep, ct);
-      }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_, bool dep=false, bool ct=true) { setGeneralRotation(fAPK_,dep,ct); }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_, bool dep=false, bool ct=true) { setTimeDependentRotation(fAPK_,dep,ct); }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_, bool dep=false, bool ct=true) { setStateDependentRotation(fAPK_,dep,ct); }
+      void setStateDependentRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setGeneralRotation(new StateDependentFunction<fmatvec::RotMat3>(fAPK_)); }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { setGeneralRotation(fAPK_); }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_) { setTimeDependentRotation(fAPK_); }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setStateDependentRotation(fAPK_); }
+
+      void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
+      void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
 
       /*!
        * \brief get Kinematic for translational motion

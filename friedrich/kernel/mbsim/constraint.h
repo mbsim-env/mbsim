@@ -243,8 +243,13 @@ namespace MBSim {
       void setIndependentBody(RigidBody* bi);
 
       virtual void setUpInverseKinetics();
-      void setForceDirection(const fmatvec::Mat3xV& d_) {dT = d_;}
-      void setMomentDirection(const fmatvec::Mat3xV& d_) {dR = d_;}
+      void setForceDirection(const fmatvec::Mat3xV& d_);
+      void setMomentDirection(const fmatvec::Mat3xV& d_);
+
+      /** \brief The frame of reference ID for the force/moment direction vectors.
+       * If ID=0 (default) the first frame, if ID=1 the second frame is used.
+       */
+      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
@@ -284,8 +289,13 @@ namespace MBSim {
 
       Frame *frame1,*frame2;
 
-      fmatvec::Mat3xV dT;
-      fmatvec::Mat3xV dR;
+      /**
+       * \brief frame of reference the force is defined in
+       */
+      Frame *refFrame;
+      int refFrameID;
+
+      fmatvec::Mat3xV dT, dR, forceDir, momentDir;
 
       std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
       int nq, nu, nh;

@@ -54,7 +54,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SXFunction foo2(t,fexp2);
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
-  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2) ,true);
+  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2));
+  body1->setTranslationDependentRotation(true);
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);

@@ -27,7 +27,7 @@ namespace MBSim {
   class Frame;
   class RigidBody;
   class Contact;
-  class SpringDamper;
+  class DirectionalSpringDamper;
   class GeneralizedImpactLaw;
   class GeneralizedForceLaw;
 }
@@ -71,7 +71,7 @@ namespace MBSimHydraulics {
       MBSim::RigidBody * getBall() {return ball; }
       MBSim::Contact * getSeatContact() {return seatContact; }
       MBSim::Contact * getMaximalContact() {return maxContact; }
-      MBSim::SpringDamper * getSpring() {return spring; }
+      MBSim::DirectionalSpringDamper * getSpring() {return spring; }
       MBSimControl::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
       
       void init(MBSim::InitStage stage);
@@ -84,7 +84,7 @@ namespace MBSimHydraulics {
       MBSim::RigidBody * ball;
       MBSim::Contact * seatContact;
       MBSim::Contact * maxContact;
-      MBSim::SpringDamper * spring;
+      MBSim::DirectionalSpringDamper * spring;
       MBSimControl::GeneralizedCoordinateSensor * xOpen;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
       double hMax, mBall;

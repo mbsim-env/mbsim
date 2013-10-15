@@ -38,9 +38,7 @@ namespace MBSim {
   class RelativeRotationalSpringDamper : public LinkMechanics {
     protected:
       fmatvec::Function<double(double,double)> *func;
-      Frame *refFrame;
       RigidBody *body;
-      fmatvec::Vec3 WtorqueDir;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
@@ -51,7 +49,7 @@ namespace MBSim {
       void updategd(double);
 
       /** \brief Connect the RelativeRotationalSpringDamper to frame1 and frame2 */
-      void connect(Frame *frame1, Frame* frame2);
+      //void connect(Frame *frame1, Frame* frame2);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
@@ -66,8 +64,6 @@ namespace MBSim {
        */
       void setMomentFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
-//      void setMomentDirection(const fmatvec::Vec3 &torqueDir_) { torqueDir=torqueDir_; }
-
       /** \brief Set a projection direction for the resulting torque
        * If this function is not set, or frame is NULL, than torque calculated by setForceFunction
        * is applied on the two connected frames in the direction of the two connected frames.
@@ -77,10 +73,10 @@ namespace MBSim {
        */
       void setRigidBody(RigidBody* body_) { body = body_; }
 
-      void setFrameOfReference(Frame *refFrame_) { refFrame=refFrame_; }
-
       void plot(double t, double dt=1);
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+
+      void updatehRef(const fmatvec::Vec &hParent, int j=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the RelativeRotationalSpringDamper using a OpenMBV::CoilSpring */
@@ -93,7 +89,7 @@ namespace MBSim {
       }
 #endif
     private:
-      std::string saved_frameOfReference, saved_ref1, saved_ref2, saved_body;
+      std::string saved_body;
   };
 
 }

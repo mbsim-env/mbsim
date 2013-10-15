@@ -180,7 +180,6 @@
       <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
     </Contact>
     <KineticExcitation name="KineticExcitation" xmlns="http://mbsim.berlios.de/MBSim">
-      <frameOfReference ref="../Object[Sphere]/Frame[C]"/>
       <forceDirection>[0 1 0]'</forceDirection>
       <forceFunction>
         <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">

@@ -58,7 +58,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SXFunction sangle(sq,al);
   SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(sangle);
-  body->setRotation(new NestedFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle) ,true);
+  body->setRotation(new NestedFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
+  body->setTranslationDependentRotation(true);
   
   body->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body->getFrame("C")->setPlotFeature(globalVelocity,enabled);

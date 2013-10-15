@@ -45,8 +45,8 @@
                   <SymbolicFunction arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction>
                 </innerFunction>
               </NestedFunction>
-              <translationDependent>true</translationDependent>
             </stateDependentRotation>
+            <translationDependentRotation>true</translationDependentRotation>
             <frames />
             <contours />
             <openMBVRigidBody>

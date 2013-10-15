@@ -75,7 +75,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Checkvalve, MBSIMHYDRAULICSNS"Checkvalve")
 
-  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
+  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new DirectionalSpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)
 #endif
@@ -140,7 +140,6 @@ namespace MBSimHydraulics {
       maxContact->connect(ballSeat->getContour("ContourMaxOpening"), ball->getContour("ContourBall"));
 
       spring->connect(ball->getFrame("HighPressureSide"), ballSeat->getFrame("SpringMount"));
-      spring->setFrameOfReference(ballSeat->getFrame("C"));
       spring->setForceDirection("[1; 0; 0]");
 
       xOpen->setObject(ball);

@@ -118,7 +118,6 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
 
   KineticExcitation *a = new KineticExcitation("Anregung");
   addLink(a);
-  a->setFrameOfReference(k3->getFrame("fTop"));
   a->setForceDirection(Vec("[0;1;0]"));
   a->setForceFunction(new ConstantFunction<VecV>("[-10]"));
   a->connect(k3->getFrame("fTop"));

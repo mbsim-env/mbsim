@@ -85,10 +85,10 @@ namespace MBSim {
       /** \brief see setForce */
       void setMomentFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
 
-      /** \brief The frame of reference for the force/moment direction vectors.
-       * If not given, the frame the excitation is connected to is used.
+      /** \brief The frame of reference ID for the force/moment direction vectors.
+       * If ID=0 the first frame, if ID=1 (default) the second frame is used.
        */
-      void setFrameOfReference(Frame *ref_) { refFrame=ref_; }
+      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
       using LinkMechanics::connect;
 
@@ -124,6 +124,7 @@ namespace MBSim {
        * \brief frame of reference the force is defined in
        */
       Frame *refFrame;
+      int refFrameID;
 
       /**
        * \brief directions of force and moment in frame of reference
@@ -141,7 +142,7 @@ namespace MBSim {
       Frame C;
 
     private:
-      std::string saved_frameOfReference, saved_ref, saved_ref1, saved_ref2;
+      std::string saved_ref, saved_ref1, saved_ref2;
   };
 
 }
