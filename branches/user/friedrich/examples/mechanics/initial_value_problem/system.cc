@@ -163,10 +163,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rocker->addContour(rockerContour);
 
   Contact * contactCamRocker = new Contact("Contact");
-  contactCamRocker->setContactForceLaw(new UnilateralConstraint);
-  contactCamRocker->setContactImpactLaw(new UnilateralNewtonImpact);
-  contactCamRocker->setFrictionForceLaw(new PlanarCoulombFriction(.1));
-  contactCamRocker->setFrictionImpactLaw(new PlanarCoulombImpact(.1));
+  contactCamRocker->setNormalForceLaw(new UnilateralConstraint);
+  contactCamRocker->setNormalImpactLaw(new UnilateralNewtonImpact);
+  contactCamRocker->setTangentialForceLaw(new PlanarCoulombFriction(.1));
+  contactCamRocker->setTangentialImpactLaw(new PlanarCoulombImpact(.1));
   contactCamRocker->connect(cam->getContour("Contour"), rocker->getContour("Contour"));
   addLink(contactCamRocker);
 

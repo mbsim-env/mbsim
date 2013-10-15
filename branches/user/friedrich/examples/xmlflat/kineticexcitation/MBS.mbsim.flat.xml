@@ -59,7 +59,7 @@
   </objects>
   <links>
     <KineticExcitation name ="ex">
-      <frameOfReference ref="../Frame[Wrot]"/>
+      <frameOfReferenceID>0</frameOfReferenceID>
       <forceDirection>[1;0;0]</forceDirection>
       <forceFunction>
         <ConstantFunction>
@@ -72,7 +72,7 @@
           <value>[10]</value>
         </ConstantFunction>
       </momentFunction>
-      <connect ref="../Object[Box1]/Frame[C]"/>
+      <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
       <openMBVForceArrow>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>

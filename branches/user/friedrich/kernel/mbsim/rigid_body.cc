@@ -48,7 +48,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidBody, MBSIMNS"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(false), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
 
     C=new FixedRelativeFrame("C");
     Body::addFrame(C);
@@ -753,14 +753,11 @@ namespace MBSim {
       Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV)> >(e->FirstChildElement());
       setStateDependentRotation(rot);
     }
-    if(e && fAPK) {
-      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"translationDependent");
-      if(ee) translationDependentRotation = getBool(ee);
-      ee=e->FirstChildElement(MBSIMNS"coordinateTransformation");
-      if(ee) coordinateTransformation = getBool(ee);
-    }
+    e=element->FirstChildElement(MBSIMNS"translationDependentRotation");
+    if(e) translationDependentRotation = getBool(e);
+    e=element->FirstChildElement(MBSIMNS"coordinateTransformationForRotation");
+    if(e) coordinateTransformation = getBool(e);
 
-    // END
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
     if(e) {

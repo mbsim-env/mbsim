@@ -36,7 +36,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpringDamper, MBSIMNS"SpringDamper")
 
-  SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL) 
+  SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
@@ -44,16 +44,12 @@ namespace MBSim {
 
   void SpringDamper::updateh(double t, int j) {
     la(0)=(*func)(g(0),gd(0));
-    if(refFrame==0 && dist<=epsroot() && abs(la(0))>epsroot())
+    if(dist<=epsroot() && abs(la(0))>epsroot())
       cerr<<"Warning! The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
-    if(refFrame==0) // Point to Point
-      WF[0]=n*la;
-    else // Directed
-      WF[0]=WforceDir*la; // projected force in direction of WforceDir
+    WF[0]=n*la;
     WF[1]=-WF[0];
-    for(unsigned int i=0; i<2; i++) {
+    for(unsigned int i=0; i<2; i++)
       h[j][i]+=frame[i]->getJacobianOfTranslation(j).T()*WF[i];
-    }
   }
 
   void SpringDamper::updateg(double) {
@@ -63,21 +59,12 @@ namespace MBSim {
       n=WrP0P1/dist;
     else
       n.init(0);
-    if(refFrame==0) // Point to Point
-      g(0)=dist;
-    else {
-      WforceDir=refFrame->getOrientation()*forceDir; // force direction in world system
-      g(0)=WrP0P1.T()*WforceDir;
-    }
+    g(0)=dist;
   } 
 
   void SpringDamper::updategd(double) {
     Vec3 Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
-    if(refFrame==0) // Point to Point
-      gd(0)=Wvrel.T()*n;
-    else {
-      gd(0)=Wvrel.T()*WforceDir;
-    }
+    gd(0)=Wvrel.T()*n;
   }
 
   void SpringDamper::connect(Frame *frame0, Frame* frame1) {
@@ -87,8 +74,6 @@ namespace MBSim {
 
   void SpringDamper::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       LinkMechanics::init(stage);
@@ -146,17 +131,149 @@ namespace MBSim {
 
   void SpringDamper::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e) saved_frameOfReference=e->Attribute("ref");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"forceFunction");
+    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    setForceFunction(f);
+    e=element->FirstChildElement(MBSIMNS"connect");
+    saved_ref1=e->Attribute("ref1");
+    saved_ref2=e->Attribute("ref2");
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
+    if(e) {
+      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
+      coilSpring->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVCoilSpring(coilSpring);
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
+    }
+#endif
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, DirectionalSpringDamper, MBSIMNS"DirectionalSpringDamper")
+
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL)
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    , coilspringOpenMBV(NULL)
+#endif
+  {}
+
+  void DirectionalSpringDamper::updateh(double t, int j) {
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
+
+    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+
+    la(0)=(*func)(g(0),gd(0));
+    WF[0]=WforceDir*la; // projected force in direction of WforceDir
+    WF[1]=-WF[0];
+    h[j][0]+=C.getJacobianOfTranslation(j).T()*WF[0];
+    h[j][1]+=frame[1]->getJacobianOfTranslation(j).T()*WF[1];
+  }
+
+  void DirectionalSpringDamper::updateg(double) {
+    WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
+
+    WforceDir=refFrame->getOrientation()*forceDir; // force direction in world system
+    g(0)=WrP0P1.T()*WforceDir;
+
+    C.setOrientation(frame[0]->getOrientation());
+    C.setPosition(frame[1]->getPosition() - WforceDir*g(0));
+  } 
+
+  void DirectionalSpringDamper::updategd(double) {
+    C.setAngularVelocity(frame[0]->getAngularVelocity());
+    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
+    Vec3 WvP0P1 = frame[1]->getVelocity()-C.getVelocity();
+    gd(0)=WvP0P1.T()*WforceDir;
+  }
+
+  void DirectionalSpringDamper::connect(Frame *frame0, Frame* frame1) {
+    LinkMechanics::connect(frame0);
+    LinkMechanics::connect(frame1);
+  }
+
+  void DirectionalSpringDamper::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(saved_ref1!="" && saved_ref2!="")
+        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      LinkMechanics::init(stage);
+    }
+    else if(stage==resize) {
+      LinkMechanics::init(stage);
+      g.resize(1);
+      gd.resize(1);
+      la.resize(1);
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures();
+      if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled) {
+          if(coilspringOpenMBV) {
+            coilspringOpenMBV->setName(name);
+            parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+          }
+        }
+#endif
+        LinkMechanics::init(stage);
+      }
+    }
+    else if(stage==unknownStage) {
+      refFrame=frame[0];
+      C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
+      C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
+      C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
+      C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
+      LinkMechanics::init(stage);
+    }
+    else
+      LinkMechanics::init(stage);
+  }
+
+  void DirectionalSpringDamper::plot(double t,double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled) {
+        if (coilspringOpenMBV) {
+          Vec3 WrOToPoint;
+          Vec3 WrOFromPoint;
+
+          WrOFromPoint = C.getPosition();
+          WrOToPoint   = frame[1]->getPosition();
+          vector<double> data;
+          data.push_back(t); 
+          data.push_back(WrOFromPoint(0));
+          data.push_back(WrOFromPoint(1));
+          data.push_back(WrOFromPoint(2));
+          data.push_back(WrOToPoint(0));
+          data.push_back(WrOToPoint(1));
+          data.push_back(WrOToPoint(2));
+          data.push_back(la(0));
+          coilspringOpenMBV->append(data);
+        }
+      }
+#endif
+      LinkMechanics::plot(t,dt);
+    }
+  }
+
+  void DirectionalSpringDamper::initializeUsingXML(TiXmlElement *element) {
+    LinkMechanics::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
     e=element->FirstChildElement(MBSIMNS"forceDirection");
-    if(e) setForceDirection(getVec(e,3));
+    setForceDirection(getVec(e,3));
     e=element->FirstChildElement(MBSIMNS"forceFunction");
     Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
-    e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
     if(e) {

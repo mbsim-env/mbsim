@@ -1000,16 +1000,6 @@
               <xs:complexType>
                 <xs:sequence>
                   <xs:element ref="Function"/>
-                  <xs:element name="translationDependent" minOccurs="0">
-                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      tbd
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
-                  <xs:element name="coordinateTransformation" minOccurs="0">
-                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      tbd
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -1025,16 +1015,6 @@
               <xs:complexType>
                 <xs:sequence>
                   <xs:element ref="Function"/>
-                  <xs:element name="translationDependent" minOccurs="0">
-                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      tbd
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
-                  <xs:element name="coordinateTransformation" minOccurs="0">
-                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      tbd
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -1050,20 +1030,20 @@
               <xs:complexType>
                 <xs:sequence>
                   <xs:element ref="Function"/>
-                  <xs:element name="translationDependent" minOccurs="0">
-                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      tbd
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
-                  <xs:element name="coordinateTransformation" minOccurs="0">
-                    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      tbd
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
           </xs:choice>
+          <xs:element name="translationDependentRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="coordinateTransformationForRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="rotationMapping" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
@@ -1540,22 +1520,25 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:choice>
-            <xs:element name="forceDirection" type="pv:nounitMatrix">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für translatorische Freiheitsgrade erzeugt werden soll.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element name="momentDirection" type="pv:nounitMatrix">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für rotatorische Freiheitsgrade erzeugt werden soll.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-          </xs:choice>
+          <xs:element name="frameOfReferenceID" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für translatorische Freiheitsgrade erzeugt werden soll.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für rotatorische Freiheitsgrade erzeugt werden soll.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="connect">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1625,13 +1608,10 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReference" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das KOS, bezüglich dem die Kraft-/Momentenrichtung der Anregung angegeben ist.
+               tbd
             </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
           </xs:element>
           <xs:sequence minOccurs="0">
             <xs:element name="forceDirection" type="pv:nounitMatrix">
@@ -1726,24 +1706,76 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:sequence minOccurs="0">
-            <xs:element name="frameOfReference">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Gibt das KOS an, bezüglich dessen die Kraftwirkrichtung vorgegeben wird.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-              </xs:complexType> 
-            </xs:element>
-            <xs:element name="forceDirection" type="pv:nounitVector">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Definiert die Wirkrichtung der Kraftanregung(en).
-                  Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                  im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
-                  zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:sequence>
+          <xs:element name="forceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkte
+                und der relativen Geschwindigkeit zwischen den Kraftangriffspunkten.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="openMBVCoilSpring" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:CoilSpring"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DirectionalSpringDamper" substitutionGroup="LinkMechanics" type="DirectionalSpringDamperType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
+        <p>
+          <i>Punkt-zu-Punkt-Verbindung.</i> Die Kraft des Feder-Dämpfer-Elements wird aus dem Abstand der verbundenen Punkte und der in diese Richtung projezierten relativen Geschwindigkeit berechnet. Der Abstand ist dabei immer positiv. Die Kraft wird ebenfalls in diese Richtung aufgebracht.
+        </p>
+        <p>
+          <i>Gerichtete Verbindung.</i> Die Kraft des Feder-Dämpfer-Elements wird aus dem in die Richtung der angegebenen Projektionsrichtung projezierten Verbindungsvektor der beiden verbundenen Punkte sowie der in diese Richtung projezierten Relativgeschwindigkeit berechnet. Die Kraft wird in der angegebenen Projektionsrichtung aufgebracht. <br/>
+          <b>Achtung!</b> Durch eine falsche Wahl der Projektionsrichtung wird unter Umständen das Momentengleichgewicht nicht mehr erfüllt.
+        </p>
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DirectionalSpringDamperType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="forceDirection" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die Wirkrichtung der Kraftanregung(en).
+                Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkte
@@ -1815,16 +1847,6 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="openMBVCoilSpring" minOccurs="0">
@@ -1915,6 +1937,11 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
+          <xs:element name="frameOfReferenceID" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:sequence minOccurs="0">
             <xs:element name="forceDirection" type="pv:nounitMatrix">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

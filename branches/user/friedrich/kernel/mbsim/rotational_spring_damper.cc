@@ -37,18 +37,32 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeRotationalSpringDamper, MBSIMNS"RelativeRotationalSpringDamper")
 
-  RelativeRotationalSpringDamper::RelativeRotationalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL), body(NULL)
+  RelativeRotationalSpringDamper::RelativeRotationalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), body(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
-  {}
+  {
+    WM.resize(2);
+    h[0].resize(2);
+    h[1].resize(2);
+  }
+
+  void RelativeRotationalSpringDamper::updatehRef(const Vec &hParent, int j) {
+    Index I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+    h[j][0]>>hParent(I);
+    I = Index(body->gethInd(j),body->gethInd(j)+body->gethSize(j)-1);
+    h[j][1]>>hParent(I);
+  } 
 
   void RelativeRotationalSpringDamper::updateh(double t, int j) {
     la(0) = (*func)(g(0),gd(0));
-    WM[0] =  WtorqueDir*la; // projected force in direction of WtorqueDir
-    WM[1] = -WM[0];
-    for(unsigned int i=0; i<2; i++) {
-      h[j][i]+=frame[i]->getJacobianOfRotation(j).T()*WM[i];
+    if(j==0)
+      h[j][1]-=body->getJRel(j).T()*la;
+    else {
+      WM[1] = body->getFrameOfReference()->getOrientation()*body->getPJR().col(0)*la; // projected force in direction of WtorqueDir
+      WM[0] = -WM[1];
+      h[j][0]-=body->getFrameOfReference()->getJacobianOfRotation(j).T()*WM[0];
+      h[j][1]-=body->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[1];
     }
   }
 
@@ -56,28 +70,18 @@ namespace MBSim {
 //    SqrMat       Arel = inv(frame[0]->getOrientation()) * frame[1]->getOrientation();
 //    Vec    Womega_rel = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
 
-      WtorqueDir=refFrame->getOrientation()*body->getPJR().col(0); // force direction in world system
-      g=body->getq().copy();
+      g=body->getq();
   } 
 
   void RelativeRotationalSpringDamper::updategd(double) {
 //    Vec Womega_rel = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
 //    gd(0)=trans(Womega_rel)*WtorqueDir;
-      gd=body->getu().copy();
-  }
-
-  void RelativeRotationalSpringDamper::connect(Frame *frame0, Frame* frame1) {
-    LinkMechanics::connect(frame0);
-    LinkMechanics::connect(frame1);
+      gd=body->getu();
   }
 
   void RelativeRotationalSpringDamper::init(InitStage stage) {
     assert(body->getRotation()!=NULL);
     if(stage==resolveXMLPath) {
-//      if(saved_frameOfReference!="")
-//        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      if(saved_ref1!="" && saved_ref2!="")
-        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(saved_body!="")
         setRigidBody(getByPath<RigidBody>(saved_body));
       LinkMechanics::init(stage);
@@ -101,12 +105,8 @@ namespace MBSim {
         LinkMechanics::init(stage);
       }
     }
-    else {
-      if(body) {
-        refFrame = body->getFrameOfReference();
-      }
+    else
       LinkMechanics::init(stage);
-    }
   }
 
   void RelativeRotationalSpringDamper::plot(double t,double dt) {
@@ -117,8 +117,8 @@ namespace MBSim {
         Vec WrOToPoint;
         Vec WrOFromPoint;
 
-        WrOFromPoint = frame[0]->getPosition();
-        WrOToPoint   = frame[1]->getPosition();
+        WrOFromPoint = body->getFrameOfReference()->getPosition();
+        WrOToPoint   = body->getFrameForKinematics()->getPosition();
         vector<double> data;
         data.push_back(t); 
         data.push_back(WrOFromPoint(0));
@@ -137,19 +137,11 @@ namespace MBSim {
 
   void RelativeRotationalSpringDamper::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
-//    TiXmlElement *e=e->FirstChildElement(MBSIMNS"frameOfReference");
-//    if(e) saved_frameOfReference=e->Attribute("ref");
-//    e=e->FirstChildElement(MBSIMNS"momentDirection");
-//    if(e) setMomentDirection(getVec(e,3));
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"momentFunction");
     Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
     setMomentFunction(f);
     e=element->FirstChildElement(MBSIMNS"rigidBody");
     saved_body=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1=e->Attribute("ref1");
-    saved_ref2=e->Attribute("ref2");
-    e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
     if(e) {

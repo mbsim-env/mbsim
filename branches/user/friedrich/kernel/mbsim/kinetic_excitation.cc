@@ -35,14 +35,12 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KineticExcitation, MBSIMNS"KineticExcitation")
 
-  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), F(NULL), M(NULL) {}
+  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {}
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(saved_ref!="")
         connect(getByPath<Frame>(saved_ref));
       else if(saved_ref1!="" && saved_ref2!="")
@@ -58,7 +56,7 @@ namespace MBSim {
       LinkMechanics::init(stage);
       if(F) assert((*F)(0).size()==forceDir.cols());
       if(M) assert((*M)(0).size()==momentDir.cols());
-      if(!refFrame) refFrame=frame[1];
+      refFrame=refFrameID?frame[1]:frame[0];
       C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
       C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
       C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
@@ -154,8 +152,8 @@ namespace MBSim {
 
   void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e) saved_frameOfReference=e->Attribute("ref");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    if(e) refFrameID=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e=element->FirstChildElement(MBSIMNS"forceFunction");

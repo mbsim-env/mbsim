@@ -38,7 +38,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Joint, MBSIMNS"Joint")
 
-  Joint::Joint(const string &name) : LinkMechanics(name), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
+  Joint::Joint(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
   }
 
   Joint::~Joint() {
@@ -54,7 +54,7 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t, int j) {
-    Mat3xV WJT = frame[0]->getOrientation()*JT;
+    Mat3xV WJT = refFrame->getOrientation()*JT;
     VecV sdT = WJT.T()*(WvP0P1);
 
     wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
@@ -87,11 +87,11 @@ namespace MBSim {
   }
 
   void Joint::updateg(double t) {
-    Wf = frame[0]->getOrientation()*forceDir;
-    Wm = frame[0]->getOrientation()*momentDir;
+    Wf = refFrame->getOrientation()*forceDir;
+    Wm = refFrame->getOrientation()*momentDir;
 
     WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
-    C.setOrientation(frame[0]->getOrientation());
+    C.setOrientation(refFrame->getOrientation());
     C.setPosition(frame[0]->getPosition() + WrP0P1);
 
     g(IT) = Wf.T()*WrP0P1;
@@ -179,12 +179,11 @@ namespace MBSim {
         JT.set(0, computeTangential(forceDir.col(0)));
         JT.set(1, crossProduct(forceDir.col(0),JT.col(0)));
       }
+      refFrame=refFrameID?frame[1]:frame[0];
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#endif
         if(getPlotFeature(generalizedLinkForce)==enabled) {
           for(int j=0; j<la.size(); ++j)
             plotColumns.push_back("la("+numtostr(j)+")");
@@ -570,7 +569,9 @@ namespace MBSim {
 
   void Joint::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"forceDirection");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    if(e) refFrameID=getDouble(e);
+    e=element->FirstChildElement(MBSIMNS"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e=element->FirstChildElement(MBSIMNS"forceLaw");
     if(e) setForceLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));

@@ -45,8 +45,8 @@
                   <SymbolicFunction arg1name="x" arg1dim="1">atan(-c*2*x)</SymbolicFunction>
                 </innerFunction>
               </NestedFunction>
-              <translationDependent>true</translationDependent>
             </stateDependentRotation>
+            <translationDependentRotation>true</translationDependentRotation>
             <frames />
             <contours />
             <openMBVRigidBody>

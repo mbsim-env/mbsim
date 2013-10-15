@@ -186,7 +186,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   KineticExcitation *MomentAnCrank = new KineticExcitation("MomentAnCrank");
   MomentAnCrank->setMomentDirection("[0;0;1]");
   MomentAnCrank->setMomentFunction(new ConstantFunction<VecV>("[109]"));
-  MomentAnCrank->setFrameOfReference(Crank->getFrameForKinematics());
   MomentAnCrank->connect(Crank->getFrameForKinematics());
 
   addLink(MomentAnCrank);

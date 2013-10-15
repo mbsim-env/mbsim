@@ -388,7 +388,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIMNS"JointConstraint")
 
-  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow = 0;
     MArrow = 0;
@@ -453,10 +453,7 @@ namespace MBSim {
         dependency.push_back(bi);
     } 
     else if(stage==unknownStage) {
-      if(!dT.cols()) 
-        dT.resize(0);
-      if(!dR.cols()) 
-        dR.resize(0);
+      refFrame=refFrameID?frame2:frame1;
     } else
       Constraint::init(stage);
   }
@@ -511,6 +508,9 @@ namespace MBSim {
   }
 
   void JointConstraint::updateStateDependentVariables(double t){
+    dT = refFrame->getOrientation()*forceDir;
+    dR = refFrame->getOrientation()*momentDir;
+
     Residuum* f = new Residuum(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
     MultiDimNewtonMethod newton(f);
     q = newton.solve(q);
@@ -581,10 +581,10 @@ namespace MBSim {
   void JointConstraint::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
-    if(dT.cols())
-      joint->setForceDirection(dT);
-    if(dR.cols())
-      joint->setMomentDirection(dR);
+    if(forceDir.cols())
+      joint->setForceDirection(forceDir);
+    if(momentDir.cols())
+      joint->setMomentDirection(momentDir);
     joint->connect(frame1,frame2);
     if(FArrow)
       joint->setOpenMBVForceArrow(FArrow);
@@ -611,12 +611,14 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"independentRigidBody");
     saved_IndependentBody=e->Attribute("ref");
+
+    e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    if(e) refFrameID=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"forceDirection");
-    if(e)
-      setForceDirection(getMat3xV(e,0));
+    if(e) setForceDirection(getMat3xV(e,0));
     e=element->FirstChildElement(MBSIMNS"momentDirection");
-    if(e)
-      setMomentDirection(getMat3xV(e,3));
+    if(e) setMomentDirection(getMat3xV(e,3));
+
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
@@ -685,5 +687,22 @@ namespace MBSim {
 
     return ele0;
   }
+
+  void JointConstraint::setForceDirection(const Mat3xV &fd) {
+
+    forceDir = fd;
+
+    for(int i=0; i<fd.cols(); i++)
+      forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
+  }
+
+  void JointConstraint::setMomentDirection(const Mat3xV &md) {
+
+    momentDir = md;
+
+    for(int i=0; i<md.cols(); i++)
+      momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
+  }
+
 
 }
