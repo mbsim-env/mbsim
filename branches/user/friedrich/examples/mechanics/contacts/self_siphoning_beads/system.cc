@@ -166,13 +166,10 @@ void System::addTrajectory(double tEnd) {
   if (elements) {
     Joint* joint = new Joint("Joint");
     joint->setForceDirection(Mat3x3(EYE));
-    if (not ODE) {
+    if (not ODE)
       joint->setForceLaw(new BilateralConstraint());
-      joint->setImpactForceLaw(new BilateralImpact());
-    }
-    else {
+    else
       joint->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(stiffness, damping)));
-    }
 
     joint->connect(leader->getFrameC(), balls[0]->getFrameC());
 
