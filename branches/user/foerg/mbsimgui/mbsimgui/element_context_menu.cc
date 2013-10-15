@@ -264,6 +264,12 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString 
   action = new QAction("Add spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   addAction(action);
+  action = new QAction("Add directional spring damper", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
+  addAction(action);
+  action = new QAction("Add relative rotational spring damper", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addRelativeRotationalSpringDamper()));
+  addAction(action);
   action = new QAction("Add joint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
   addAction(action);
@@ -283,6 +289,14 @@ void LinkContextContextMenu::addKineticExcitation() {
 
 void LinkContextContextMenu::addSpringDamper() {
   mw->addLink(new SpringDamper("SpringDamper",element));
+}
+
+void LinkContextContextMenu::addDirectionalSpringDamper() {
+  mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper",element));
+}
+
+void LinkContextContextMenu::addRelativeRotationalSpringDamper() {
+  mw->addLink(new RelativeRotationalSpringDamper("RelativeRotationalSpringDamper",element));
 }
 
 void LinkContextContextMenu::addJoint() {

@@ -26,22 +26,9 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), forceArrow(0,true), momentArrow(0,true), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), frameOfReference(0,false) {
+KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), forceArrow(0,true), momentArrow(0,true) {
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIMNS"openMBVForceArrow",false);
-
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  momentArrow.setXMLName(MBSIMNS"openMBVMomentArrow",false);
-
-  vector<Property*> widget;
-  widget.push_back(new ConnectFramesProperty(1,this));
-  widget.push_back(new ConnectFramesProperty(2,this));
-
-  connections.setProperty(new ChoiceProperty("",widget,2)); 
-
-  //force.setProperty(new ForceChoiceProperty(forceArrow,MBSIMNS"force"));
-  //moment.setProperty(new ForceChoiceProperty(momentArrow,MBSIMNS"moment"));
+  refFrameID.setProperty(new IntegerProperty(1,MBSIMNS"frameOfReferenceID"));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));
@@ -77,8 +64,17 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
   property.push_back(new SymbolicFunctionProperty("VS",var));
   momentFunction.setProperty(new ChoiceProperty(MBSIMNS"momentFunction",property));
 
-  frameOfReference.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
+  vector<Property*> widget;
+  widget.push_back(new ConnectFramesProperty(1,this));
+  widget.push_back(new ConnectFramesProperty(2,this));
 
+  connections.setProperty(new ChoiceProperty("",widget,2)); 
+
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  forceArrow.setXMLName(MBSIMNS"openMBVForceArrow",false);
+
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  momentArrow.setXMLName(MBSIMNS"openMBVMomentArrow",false);
 }
 
 void KineticExcitation::initialize() {
@@ -88,7 +84,7 @@ void KineticExcitation::initialize() {
 
 void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
-  frameOfReference.initializeUsingXML(element);
+  refFrameID.initializeUsingXML(element);
   forceDirection.initializeUsingXML(element);
   forceFunction.initializeUsingXML(element);
   momentDirection.initializeUsingXML(element);
@@ -100,7 +96,7 @@ void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
-  frameOfReference.writeXMLFile(ele0);
+  refFrameID.writeXMLFile(ele0);
   forceDirection.writeXMLFile(ele0);
   forceFunction.writeXMLFile(ele0);
   momentDirection.writeXMLFile(ele0);

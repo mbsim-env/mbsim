@@ -41,7 +41,7 @@ class RigidBody : public Body {
     ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
   protected:
     bool constrained;
-    ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow;
+    ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow;
 };
 
 #endif

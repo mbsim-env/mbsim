@@ -283,7 +283,7 @@ TiXmlElement* GeneralizedAccelerationConstraint::writeXMLFile(TiXmlNode *parent)
   return ele0;
 }
 
-JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), q0(0,false) {
+JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), refFrameID(0,false), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), q0(0,false) {
 
   independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"independentRigidBody"));
 
@@ -293,7 +293,7 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
   dependentBodiesSecondSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIMNS"dependentRigidBody"));
   dependentBodiesSecondSide.setXMLName(MBSIMNS"dependentRigidBodiesSecondSide");
 
-  connections.setProperty(new ConnectFramesProperty(2,this));
+  refFrameID.setProperty(new IntegerProperty(0,MBSIMNS"frameOfReferenceID"));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));
@@ -302,6 +302,8 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
   input.clear();
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"momentDirection"));
   moment.setProperty(new ExtPhysicalVarProperty(input));
+
+  connections.setProperty(new ConnectFramesProperty(2,this));
 
   jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointForceArrow.setXMLName(MBSIMNS"openMBVJointForceArrow",false);
@@ -360,6 +362,7 @@ void JointConstraint::initializeUsingXML(TiXmlElement *element) {
 
   independentBody.initializeUsingXML(element);
 
+  refFrameID.initializeUsingXML(element);
   force.initializeUsingXML(element);
   moment.initializeUsingXML(element);
 
@@ -379,6 +382,7 @@ TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
 
   independentBody.writeXMLFile(ele0);
 
+  refFrameID.writeXMLFile(ele0);
   force.writeXMLFile(ele0);
   moment.writeXMLFile(ele0);
 
