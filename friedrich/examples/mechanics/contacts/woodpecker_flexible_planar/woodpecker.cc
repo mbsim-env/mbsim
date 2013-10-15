@@ -198,9 +198,9 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   RelativeRotationalSpringDamper *feder = new RelativeRotationalSpringDamper("Drehfeder");
   feder->connect(muffe->getFrame("Drehpunkt"),specht->getFrame("D"));
-  feder->setRelativeBody(specht);
+  feder->setRigidBody(specht);
   double cDF = 0.5;
-  feder->setForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
+  feder->setMomentFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
   addLink(feder);
 
   Contact *contact = new Contact("SchnabelKontakt");

@@ -1790,6 +1790,68 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="RelativeRotationalSpringDamper" substitutionGroup="LinkMechanics" type="RelativeRotationalSpringDamperType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativeRotationalSpringDamperType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="momentFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="rigidBody">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="openMBVCoilSpring" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:CoilSpring"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVMomentArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="ExternGeneralizedIO" substitutionGroup="Link" type="ExternGeneralizedIOType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Kraftaufprägung von einem externem Programm auf eine generalisierte Koordinate.
