@@ -123,8 +123,8 @@ namespace MBSim {
   class TimeDependentKinematicConstraint : public KinematicConstraint {
 
     public:
-      TimeDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
-      TimeDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      TimeDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL), fd(NULL), fdd(NULL) {}
+      TimeDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL), fd(NULL), fdd(NULL) {}
 
       void init(InitStage stage);
 
@@ -151,8 +151,8 @@ namespace MBSim {
   class StateDependentKinematicConstraint : public KinematicConstraint {
 
     public:
-      StateDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
-      StateDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      StateDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL), fd(NULL) {}
+      StateDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL), fd(NULL) {}
 
       void init(InitStage stage);
 
