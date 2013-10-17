@@ -15,7 +15,9 @@
                 <TimeDependentTranslation>
                     <translationFunction>
                         <SymbolicFunction1_VS arg1name="t">
-                            [sin(freq1*t + pi/2); v0y*t; 0]
+                            % Test the access to the (locally) casadi object
+                            half=casadi.DMatrix(1, 1, 2.0);
+                            ret=[sin(freq1*t + pi/half); v0y*t; 0];
                         </SymbolicFunction1_VS>
                     </translationFunction>
                 </TimeDependentTranslation>
