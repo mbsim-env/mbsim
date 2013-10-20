@@ -76,7 +76,8 @@ mainOpts.add_argument("--action", default="report", type=str,
           'report': run examples and report results (default);
           'copyToReference': copy current results to reference directory;
           'updateReference[=URL|DIR]': update references from URL or DIR, use the build system if not given;
-          'pushReference=DIR': push references to DIR;''')
+          'pushReference=DIR': push references to DIR;
+          'list': list directories to be run;''')
 mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
 mainOpts.add_argument("--filter", default="True", type=str,
   help='''Filter the specifed directories using the given Python code. A directory is processed if the provided
@@ -147,7 +148,8 @@ def main():
   # check arguments
   if not (args.action=="report" or args.action=="copyToReference" or
           args.action=="updateReference" or args.action.startswith("updateReference=") or
-          args.action.startswith("pushReference=")):
+          args.action.startswith("pushReference=") or
+          args.action=="list"):
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
@@ -220,6 +222,11 @@ def main():
   # apply (unpack) a reference archive
   if args.action=="updateReference":
     updateReference()
+    return 0
+
+  # list directires to run
+  if args.action=="list":
+    listExamples()
     return 0
 
   if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
@@ -1017,6 +1024,13 @@ def updateReference():
         downloadFileIfDifferent(pj(example[0], "reference", fileName))
     except (myurllib.HTTPError, myurllib.URLError):
       pass
+
+
+
+def listExamples():
+  print('The following examples will be run:\n')
+  for example in directories:
+    print(example[0])
 
 
 
