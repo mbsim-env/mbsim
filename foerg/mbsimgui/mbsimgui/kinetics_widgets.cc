@@ -22,7 +22,6 @@
 #include "function_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "octaveutils.h"
 #include <QtGui>
 
 using namespace std;

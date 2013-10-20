@@ -20,8 +20,6 @@
 #include <config.h>
 #include <QApplication>
 #include "mainwindow.h"
-#include "octaveutils.h"
-#include <mbxmlutils/utils.h>
 #include <H5Cpp.h>
 #include <QLocale>
 
@@ -67,7 +65,6 @@ int main(int argc, char *argv[]) {
   // disalbe HDF5 error message print
   H5::Exception::dontPrint();
 
-  initializeOctave();
   QApplication app(argc, argv);
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
@@ -77,6 +74,5 @@ int main(int argc, char *argv[]) {
   //mainwindow->resize(1400, 900);
   //mainwindow->resize(1100, 700);
   int ret=app.exec();
-  MBXMLUtils::OctaveEvaluator::terminate();
   return ret;
 }
