@@ -129,8 +129,8 @@ namespace MBSim {
   class GeneralizedPositionConstraint : public KinematicConstraint {
 
     public:
-      GeneralizedPositionConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
-      GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      GeneralizedPositionConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL) {}
+      GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
 
       void init(InitStage stage);
 
@@ -152,8 +152,8 @@ namespace MBSim {
   class GeneralizedVelocityConstraint : public KinematicConstraint {
 
     public:
-      GeneralizedVelocityConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
-      GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      GeneralizedVelocityConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL) {}
+      GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
 
       void init(InitStage stage);
 
