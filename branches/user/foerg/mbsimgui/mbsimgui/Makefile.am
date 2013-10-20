@@ -34,7 +34,6 @@ mbsimgui_SOURCES = element.cc \
 		   observer.cc \
 		   integrator.cc \
 		   parameter.cc \
-		   octaveutils.cc \
 		   objectfactory.cc \
 		   treeitem.cc \
 		   treemodel.cc \

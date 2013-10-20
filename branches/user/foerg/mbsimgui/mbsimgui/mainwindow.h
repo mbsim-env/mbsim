@@ -26,6 +26,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <mbxmlutilstinyxml/tinyxml.h>
+#include <mbxmlutils/octeval.h>
 
 class QAction;
 class QLineEdit;
@@ -49,7 +50,7 @@ namespace OpenMBVGUI {
 }
 
 namespace MBXMLUtils {
-  class OctaveEvaluator;
+  class OctEval;
 }
 
 class MainWindow : public QMainWindow {
@@ -74,7 +75,8 @@ class MainWindow : public QMainWindow {
   public:
     MainWindow(QStringList &arg);
     ~MainWindow();
-    static MBXMLUtils::OctaveEvaluator *octEval;
+    static MBXMLUtils::OctEval *octEval;
+    static MBXMLUtils::NewParamLevel *octEvalParamLevel;
     void mbsimxml(int task);
     const QString& getUniqueTempDir() const {return uniqueTempDir;}
     void addFrame(Frame *frame);

@@ -19,9 +19,10 @@
 
 #include <config.h>
 #include "variable_widgets.h"
-#include "octaveutils.h"
 #include <vector>
 #include <QtGui>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 extern bool absolutePath;
@@ -581,7 +582,7 @@ void VecFromFileWidget::selectFile() {
 }
 
 QString VecFromFileWidget::getValue() const {
-  return QString::fromStdString(evalOctaveExpression("ret=load('" + getFile().toStdString() + "')"));
+  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
 }
 
 MatFromFileWidget::MatFromFileWidget() {
@@ -609,5 +610,5 @@ void MatFromFileWidget::selectFile() {
 }
 
 QString MatFromFileWidget::getValue() const {
-  return QString::fromStdString(evalOctaveExpression("ret=load('" + getFile().toStdString() + "')"));
+  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
 }

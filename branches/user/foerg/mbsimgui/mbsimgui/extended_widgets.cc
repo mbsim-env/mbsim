@@ -21,8 +21,9 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "dialogs.h"
-#include "octaveutils.h"
 #include <QtGui>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 
@@ -86,7 +87,7 @@ void ExtPhysicalVarWidget::setValue(const QString &str) {
 
 void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
-  QString str = QString::fromStdString(evalOctaveExpression(getValue().toStdString()));
+  QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
   str = removeWhiteSpace(str);
   vector<vector<QString> > A = strToMat(str);
   if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {

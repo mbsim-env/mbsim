@@ -28,18 +28,17 @@
 #include "integrator.h"
 #include "objectfactory.h"
 #include "parameter.h"
-#include "octaveutils.h"
 #include "widget.h"
 #include "treemodel.h"
 #include "treeitem.h"
 #include "element_view.h"
 #include "parameter_view.h"
 #include "integrator_view.h"
-#include <mbxmlutils/utils.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -72,7 +71,8 @@ bool removeDir(const QString &dirName) {
   return result;
 }
 
-MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
+MBXMLUtils::OctEval *MainWindow::octEval=NULL;
+MBXMLUtils::NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
 MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   mw = this;
@@ -92,7 +92,8 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 #endif
 
   MBSimObjectFactory::initialize();
-  octEval=new MBXMLUtils::OctaveEvaluator;
+  octEval=new MBXMLUtils::OctEval;
+  octEvalParamLevel=new NewParamLevel(*octEval);
 
   QMenu *GUIMenu=new QMenu("GUI", menuBar());
   menuBar()->addMenu(GUIMenu);
@@ -803,8 +804,12 @@ void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
   }
 
   try {
-    octEval->saveAndClearCurrentParam();
-    octEval->fillParam(ele0, false);
+    // remove all parameters from octave using delete and new NewParamLevel
+    // (this will not work for nested parameters in embed!???)
+    delete octEvalParamLevel;
+    octEvalParamLevel=new NewParamLevel(*octEval);
+    // add parameter
+    octEval->addParamSet(ele0);
     delete ele0;
   }
   catch(string e) {

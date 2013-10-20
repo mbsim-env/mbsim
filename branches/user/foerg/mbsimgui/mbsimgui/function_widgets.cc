@@ -23,8 +23,9 @@
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
-#include "octaveutils.h"
 #include <QtGui>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 
@@ -277,7 +278,7 @@ LinearTranslationWidget::LinearTranslationWidget(const QString &ext, int m, int 
 
 int LinearTranslationWidget::getArg1Size() const {
   if(ext[0]=='V') {
-    string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
+    string str = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }

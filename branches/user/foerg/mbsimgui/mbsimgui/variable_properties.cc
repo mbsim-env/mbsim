@@ -24,10 +24,11 @@
 #include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
-#include "octaveutils.h"
 #include <QDir>
 #include <mbxmlutilstinyxml/tinyxml.h>
 #include <mbxmlutilstinyxml/tinynamespace.h>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -243,7 +244,7 @@ void PhysicalVariableProperty::toWidget(QWidget *widget) {
 }
 
 string VecFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("ret=load('") + file + "')");
+  return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + file + "')"));
 }
 
 TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -280,7 +281,7 @@ void VecFromFileProperty::toWidget(QWidget *widget) {
 }
 
 string MatFromFileProperty::getValue() const {
-  return evalOctaveExpression("ret=load('" + file + "')");
+  return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + file + "')"));
 }
 
 TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {

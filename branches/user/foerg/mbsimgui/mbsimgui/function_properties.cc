@@ -25,8 +25,9 @@
 #include "basic_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
-#include "octaveutils.h"
 #include <QSpinBox>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -324,7 +325,7 @@ LinearTranslationProperty::LinearTranslationProperty(const string &ext, int m, i
 
 int LinearTranslationProperty::getArg1Size() const {
   if(ext[0]=='V') {
-    string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue());
+    string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }
