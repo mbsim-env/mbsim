@@ -105,7 +105,18 @@
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <generalTranslation>
               <SymbolicFunction arg1name="q" arg1dim="2" arg2name="t">
-               [10+t+cos(freq1*q(1)); sin(freq1*q(1)); q(2)]
+                <!-- SymbolicFunction does not distinguish between scalar, vector and matrix. Hence we can also write
+                     <xmlMatrix>
+                       <row><ele>x</ele></row>
+                       <row><ele>x</ele></row>
+                       <row><ele>x</ele></row>
+                     </xmlMatrix>
+                     here -->
+                <pv:xmlVector>
+                  <pv:ele>10+t+cos(freq1*q(1))</pv:ele>
+                  <pv:ele>sin(freq1*q(1))</pv:ele>
+                  <pv:ele>q(2)</pv:ele>
+                </pv:xmlVector>
               </SymbolicFunction>
             </generalTranslation>
             <frames />
