@@ -79,7 +79,7 @@ void VariableProperty::toWidget(QWidget *widget) {
 }
 
 TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  TiXmlText* text = element->FirstChildText();
   if(!text)
     return 0;
   setValue(text->Value());
@@ -93,7 +93,7 @@ TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 TiXmlElement* ScalarProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  TiXmlText* text = element->FirstChildText();
   if(!text)
     return 0;
   string str = text->Value();
@@ -248,7 +248,7 @@ string VecFromFileProperty::getValue() const {
 }
 
 TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  TiXmlText* text = element->FirstChildText();
   if(!text)
     return 0;
   string str = text->Value();
@@ -285,7 +285,7 @@ string MatFromFileProperty::getValue() const {
 }
 
 TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  TiXmlText* text = element->FirstChildText();
   if(!text)
     return 0;
   string str = text->Value();

@@ -344,7 +344,7 @@ void SignalOfReferenceProperty::toWidget(QWidget *widget) {
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
-    TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
+    TiXmlText *text = e->FirstChildText();
     if(text) {
       file = text->Value();
       file = file.substr(1,file.length()-2);
@@ -379,7 +379,7 @@ void FileProperty::toWidget(QWidget *widget) {
 TiXmlElement* IntegerProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
-    TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
+    TiXmlText *text = e->FirstChildText();
     if(text) {
       value = atoi(text->Value());
       return e;
@@ -408,7 +408,7 @@ void IntegerProperty::toWidget(QWidget *widget) {
 TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
-    TiXmlText *text_ = dynamic_cast<TiXmlText*>(e->FirstChild());
+    TiXmlText *text_ = e->FirstChildText();
     if(text_) {
       text = text_->Value();
       if(quote)
