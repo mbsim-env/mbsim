@@ -5,6 +5,7 @@
 #include "mbsim/gear.h"
 #include "mbsim/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/kinematic_functions.h"
 #include "mbsim/frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"

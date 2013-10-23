@@ -24,6 +24,7 @@
 #include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsim/utils/function_library.h"
+#include "mbsim/utils/tabular_functions.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 #include "mbsimHydraulics/defines.h"

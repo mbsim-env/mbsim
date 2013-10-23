@@ -1,6 +1,7 @@
 #include <config.h>
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/kinematic_functions.h"
 #include "mbsim/constraint.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
