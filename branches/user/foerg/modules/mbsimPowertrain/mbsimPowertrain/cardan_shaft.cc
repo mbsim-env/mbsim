@@ -1,6 +1,7 @@
 #include <config.h>
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/kinematic_functions.h"
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
