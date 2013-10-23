@@ -18,7 +18,6 @@
  */
 
 #include "mbsim/utils/function_library.h"
-#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -150,63 +149,21 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<double>, MBSIMNS"ConstantFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<VecV>, MBSIMNS"ConstantFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<Vec3>, MBSIMNS"ConstantFunction")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<double>, MBSIMNS"LinearFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<VecV>, MBSIMNS"LinearFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<Vec3>, MBSIMNS"LinearFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<VecV>, MBSIMNS"QuadraticFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<Vec3>, MBSIMNS"QuadraticFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<double>, MBSIMNS"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<VecV>, MBSIMNS"QuadraticFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusoidalFunction<VecV>, MBSIMNS"SinusoidalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusoidalFunction<Vec3>, MBSIMNS"SinusoidalFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusoidalFunction<double>, MBSIMNS"SinusoidalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusoidalFunction<VecV>, MBSIMNS"SinusoidalFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<VecV>, MBSIMNS"PositiveFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<Vec3>, MBSIMNS"PositiveFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<double>, MBSIMNS"PositiveFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<VecV>, MBSIMNS"PositiveFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<VecV>, MBSIMNS"StepFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<Vec3>, MBSIMNS"StepFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<double>, MBSIMNS"StepFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<VecV>, MBSIMNS"TabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<Vec3>, MBSIMNS"TabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<double>, MBSIMNS"TabularFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<VecV>, MBSIMNS"PeriodicTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<Vec3>, MBSIMNS"PeriodicTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<double>, MBSIMNS"PeriodicTabularFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongXAxis<VecV>, MBSIMNS"TranslationAlongXAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongXAxis<double>, MBSIMNS"TranslationAlongXAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongYAxis<VecV>, MBSIMNS"TranslationAlongYAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongYAxis<double>, MBSIMNS"TranslationAlongYAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongZAxis<VecV>, MBSIMNS"TranslationAlongZAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongZAxis<double>, MBSIMNS"TranslationAlongZAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXY<VecV>, MBSIMNS"TranslationAlongAxesXY")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesYZ<VecV>, MBSIMNS"TranslationAlongAxesYZ")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXZ<VecV>, MBSIMNS"TranslationAlongAxesXZ")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXYZ<VecV>, MBSIMNS"TranslationAlongAxesXYZ")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongFixedAxis<VecV>, MBSIMNS"TranslationAlongFixedAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongFixedAxis<double>, MBSIMNS"TranslationAlongFixedAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearTranslation<VecV>, MBSIMNS"LinearTranslation")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearTranslation<double>, MBSIMNS"LinearTranslation")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutXAxis<VecV>, MBSIMNS"RotationAboutXAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutXAxis<double>, MBSIMNS"RotationAboutXAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutYAxis<VecV>, MBSIMNS"RotationAboutYAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutYAxis<double>, MBSIMNS"RotationAboutYAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutZAxis<VecV>, MBSIMNS"RotationAboutZAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutZAxis<double>, MBSIMNS"RotationAboutZAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<VecV>, MBSIMNS"RotationAboutFixedAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<double>, MBSIMNS"RotationAboutFixedAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXY<VecV>, MBSIMNS"RotationAboutAxesXY")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesYZ<VecV>, MBSIMNS"RotationAboutAxesYZ")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXZ<VecV>, MBSIMNS"RotationAboutAxesXZ")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZ<VecV>, MBSIMNS"RotationAboutAxesXYZ")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<VecV>, MBSIMNS"StepFunction")
 
   // The following functions are created using ...create<Function<Vec3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
@@ -247,114 +204,4 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<VecV>, MBSIMNS"PolynomFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<Vec3>, MBSIMNS"PolynomFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<double>, MBSIMNS"PolynomFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction, MBSIMNS"TwoDimensionalTabularFunction")
-
-  TwoDimensionalTabularFunction::TwoDimensionalTabularFunction() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
-  }
-
-  void TwoDimensionalTabularFunction::calcIndex(const double * x, Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus) {
-    if (*x<=X(0)) {
-      *xIndexPlus=1;
-      *xIndexMinus=0;
-      cerr << "TwoDimensionalTabularFunction: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << endl;
-    }
-    else if (*x>=X(*xSize-1)) {
-      *xIndexPlus=*xSize-1;
-      *xIndexMinus=*xSize-2;
-      cerr << "TwoDimensionalTabularFunction: Value (" << *x << ") is greater than the greatest table value(" << X(*xSize-1) << ")!" << endl;
-    }
-    else {
-      if (*x<X(*xIndexPlus))
-        while(*x<X(*xIndexPlus-1)&&*xIndexPlus>1)
-          (*xIndexPlus)--;
-      else if (*x>X(*xIndexPlus))
-        while(*x>X(*xIndexPlus)&&*xIndexPlus<*xSize-1)
-          (*xIndexPlus)++;
-      *xIndexMinus=*xIndexPlus-1;
-    }
-  }
-
-  void TwoDimensionalTabularFunction::setXValues(Vec xVec_) {
-    xVec << xVec_;
-    xSize=xVec.size();
-
-    for (int i=1; i<xVec.size(); i++)
-      if (xVec(i-1)>=xVec(i))
-        throw MBSimError("xVec must be strictly monotonic increasing!");
-    xSize=xVec.size();
-  }
-
-  void TwoDimensionalTabularFunction::setYValues(Vec yVec_) {
-    yVec << yVec_;
-    ySize=yVec.size();
-
-    for (int i=1; i<yVec.size(); i++)
-      if (yVec(i-1)>=yVec(i))
-        throw MBSimError("yVec must be strictly monotonic increasing!");
-  }
-
-  void TwoDimensionalTabularFunction::setXYMat(Mat XY_) {
-    XY << XY_;
-
-    if(xSize==0)
-      cerr << "It is strongly recommended to set x file first! Continuing anyway." << endl;
-    else if(ySize==0)
-      cerr << "It is strongly recommended to set y file first! Continuing anyway." << endl;
-    else {
-      if(XY.cols()!=xSize)
-        throw MBSimError("Dimension missmatch in xSize");
-      else if(XY.rows()!=ySize)
-        throw MBSimError("Dimension missmatch in ySize");
-    }
-  }
-
-  double TwoDimensionalTabularFunction::operator()(const double& x, const double& y) {
-    calcIndex(&x, xVec, &xSize, &x0Index, &x1Index);
-    calcIndex(&y, yVec, &ySize, &y0Index, &y1Index);
-
-    xy(1)=x;
-    xy(2)=y;
-    xy(3)=x*y;
-    const double x0=xVec(x0Index);
-    const double x1=xVec(x1Index);
-    const double y0=yVec(y0Index);
-    const double y1=yVec(y1Index);
-    const double nenner=(x0-x1)*(y0-y1);
-    XYval(0)=XY(y0Index, x0Index);
-    XYval(1)=XY(y0Index, x1Index);
-    XYval(2)=XY(y1Index, x0Index);
-    XYval(3)=XY(y1Index, x1Index);
-    XYfac(0,0)=x1*y1;
-    XYfac(0,1)=-x0*y1;
-    XYfac(0,2)=-x1*y0;
-    XYfac(0,3)=x0*y0;
-    XYfac(1,0)=-y1;   
-    XYfac(1,1)=y1;   
-    XYfac(1,2)=y0;    
-    XYfac(1,3)=-y0;
-    XYfac(2,0)=-x1;   
-    XYfac(2,1)=x0;    
-    XYfac(2,2)=x1;    
-    XYfac(2,3)=-x0;
-    XYfac(3,0)=1.;    
-    XYfac(3,1)=-1.;   
-    XYfac(3,2)=-1.;  
-    XYfac(3,3)=1.;
-
-    return trans(1./nenner*XYfac*XYval)*xy;
-  }
-
-  void TwoDimensionalTabularFunction::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e = element->FirstChildElement(MBSIMNS"xValues");
-    Vec x_=Element::getVec(e);
-    setXValues(x_);
-    e = element->FirstChildElement(MBSIMNS"yValues");
-    Vec y_=Element::getVec(e);
-    setYValues(y_);
-    e = element->FirstChildElement(MBSIMNS"xyValues");
-    Mat xy_=Element::getMat(e, y_.size(), x_.size());
-    setXYMat(xy_);
-  }
-
 }

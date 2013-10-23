@@ -21,9 +21,7 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/body.h"
-#include "fmatvec/fmatvec.h"
-#include "fmatvec/function.h"
-#include "utils/function_library.h"
+#include "utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

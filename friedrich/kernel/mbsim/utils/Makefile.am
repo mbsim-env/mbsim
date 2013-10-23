@@ -3,12 +3,14 @@ libutils_la_SOURCES = colors.cc\
                       eps.cc\
                       nonlinear_algebra.cc\
                       nonsmooth_algebra.cc\
+                      function_library.cc\
+		      kinematic_functions.cc\
+                      tabular_functions.cc\
+                      symbolic_function.cc\
                       ppolynom.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
-                      symbolic_function.cc\
-                      function_library.cc\
                       stopwatch.cc\
                       ansatz_functions.cc
 
@@ -21,8 +23,10 @@ utilsinclude_HEADERS = colors.h\
                        eps.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
-                       symbolic_function.h\
                        function_library.h\
+		       kinematic_functions.h\
+		       tabular_functions.h\
+                       symbolic_function.h\
                        ppolynom.h\
                        contact_utils.h\
                        rotarymatrices.h\
