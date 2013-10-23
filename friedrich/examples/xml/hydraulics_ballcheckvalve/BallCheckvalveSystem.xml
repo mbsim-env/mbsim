@@ -225,7 +225,7 @@
       </enableOpenMBVArrows>
       <function>
         <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
-          <value>4e5</value>
+          <a0>4e5</a0>
         </ConstantFunction>
       </function>
     </ConstrainedNodeMec>
