@@ -64,8 +64,10 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        W[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]) + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]);
-        W[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]) + C[i].getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]);
+        Mat3xV WF = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i];
+        Mat3xV WM = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i];
+        W[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM;
+        W[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF + C[i].getJacobianOfRotation(j).T()*WM;
       }
     }
   }
@@ -78,8 +80,10 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la) + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la);
-        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la) + C[i].getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la);
+        Vec3 WF = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
+        Vec3 WM = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
+        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM;
+        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF + C[i].getJacobianOfRotation(j).T()*WM;
       }
     }
   }

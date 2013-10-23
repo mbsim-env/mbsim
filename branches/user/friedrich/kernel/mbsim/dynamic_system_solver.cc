@@ -1438,9 +1438,8 @@ namespace MBSim {
     // search first Environment element
     e = element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
 
-    Environment *env;
     while (e) {
-      env = ObjectFactory<Environment>::createAndInit<Environment>(e);
+      ObjectFactory<Environment>::createAndInit<Environment>(e);
       e = e->NextSiblingElement();
     }
 

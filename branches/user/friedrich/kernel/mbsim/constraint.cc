@@ -290,7 +290,11 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityConstraint::updateJacobians(double t, int jj) {
-    bd->getjRel() = f->parDer1(x,t)*xd + f->parDer2(x,t);
+    Mat3xV J = f->parDer1(x,t);
+    if(J.cols())
+      bd->getjRel() = J*xd + f->parDer2(x,t);
+    else
+      bd->getjRel() = f->parDer2(x,t);
   }
 
   void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement* element) {

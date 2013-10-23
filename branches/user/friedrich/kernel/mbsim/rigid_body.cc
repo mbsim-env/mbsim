@@ -22,14 +22,12 @@
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/joint.h"
-#include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"
 #include "mbsim/constraint.h"
-#include "mbsim/utils/utils.h"
+#include "mbsim/utils/kinematic_functions.h"
 #include "mbsim/contours/compound_contour.h"
-#include "mbsim/utils/symbolic_function.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/arrow.h>
