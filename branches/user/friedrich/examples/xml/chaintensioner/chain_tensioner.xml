@@ -230,7 +230,7 @@
       </h:enableOpenMBVArrows>
       <h:function>
         <ConstantFunction>
-          <value convertUnit="value*1e5">3.0</value>
+          <a0 convertUnit="value*1e5">3.0</a0>
         </ConstantFunction>
       </h:function>
     </h:ConstrainedNodeMec>

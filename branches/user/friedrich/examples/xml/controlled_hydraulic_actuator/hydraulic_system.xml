@@ -103,7 +103,7 @@
       <outflow ref="../HLine[lineP]"/>
       <function>
         <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
-          <value>40e5</value>
+          <a0>40e5</a0>
         </ConstantFunction>
       </function>
     </ConstrainedNode>

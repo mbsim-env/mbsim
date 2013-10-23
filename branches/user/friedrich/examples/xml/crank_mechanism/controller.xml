@@ -24,7 +24,7 @@
     <FunctionSensor name="crankReferenceSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
       <function>
         <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
-          <value>ReferenceSpeed</value>
+          <a0>ReferenceSpeed</a0>
         </ConstantFunction>
       </function>
     </FunctionSensor>

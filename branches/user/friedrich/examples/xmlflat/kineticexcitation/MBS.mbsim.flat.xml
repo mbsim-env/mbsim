@@ -63,13 +63,13 @@
       <forceDirection>[1;0;0]</forceDirection>
       <forceFunction>
         <ConstantFunction>
-          <value>[10]</value>
+          <a0>[10]</a0>
         </ConstantFunction>
       </forceFunction>
       <momentDirection>[0;0;1]</momentDirection>
       <momentFunction>
         <ConstantFunction>
-          <value>[10]</value>
+          <a0>[10]</a0>
         </ConstantFunction>
       </momentFunction>
       <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
