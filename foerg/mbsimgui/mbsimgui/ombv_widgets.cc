@@ -27,24 +27,51 @@
 
 using namespace std;
 
-class OmbvBodyWidgetFactory : public WidgetFactory {
-  public:
-    OmbvBodyWidgetFactory() { }
-    Widget* createWidget();
-};
-
-Widget* OmbvBodyWidgetFactory::createWidget() {
-
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new CubeWidget); name.push_back("Cube");
-  widget.push_back(new CuboidWidget); name.push_back("Cuboid");
-  widget.push_back(new FrustumWidget); name.push_back("Frustum");
-  widget.push_back(new SphereWidget); name.push_back("Sphere");
-  widget.push_back(new IvBodyWidget); name.push_back("IvBody");
-  widget.push_back(new InvisibleBodyWidget); name.push_back("InvisibleBody");
-  return new ChoiceWidget(widget,name);
+OMBVBodyWidgetFactory::OMBVBodyWidgetFactory() {
+  name.push_back("Cube");
+  name.push_back("Cuboid");
+  name.push_back("Frustum");
+  name.push_back("Sphere");
+  name.push_back("IvBody");
+  name.push_back("CompoundRigidBody");
+  name.push_back("InvisibleBody");
 }
+
+QWidget* OMBVBodyWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new CubeWidget;
+  if(i==1)
+    return new CuboidWidget;
+  if(i==2)
+    return new FrustumWidget;
+  if(i==3)
+    return new SphereWidget;
+  if(i==4)
+    return new IvBodyWidget;
+  if(i==5)
+    return new CompoundRigidBodyWidget;
+  if(i==6)
+    return new InvisibleBodyWidget;
+}
+
+//class OmbvBodyWidgetFactory : public WidgetFactory {
+//  public:
+//    OmbvBodyWidgetFactory() { }
+//    Widget* createWidget(int i);
+//};
+//
+//Widget* OmbvBodyWidgetFactory::createWidget(int i) {
+//
+//  vector<QWidget*> widget;
+//  vector<QString> name;
+//  widget.push_back(new CubeWidget); name.push_back("Cube");
+//  widget.push_back(new CuboidWidget); name.push_back("Cuboid");
+//  widget.push_back(new FrustumWidget); name.push_back("Frustum");
+//  widget.push_back(new SphereWidget); name.push_back("Sphere");
+//  widget.push_back(new IvBodyWidget); name.push_back("IvBody");
+//  widget.push_back(new InvisibleBodyWidget); name.push_back("InvisibleBody");
+//  return new ChoiceWidget(widget,name);
+//}
 
 OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
@@ -258,7 +285,7 @@ IvBodyWidget::IvBodyWidget(const QString &name) : OMBVBodyWidget(name) {
 }
 
 CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVBodyWidget(name) {
-  bodies = new ListWidget(new OmbvBodyWidgetFactory,"Body");
+  bodies = new ListWidget(0,"Body");
   layout->addWidget(bodies);
 }
 
@@ -268,24 +295,24 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new CubeWidget);
-  name.push_back("Cube");
-  widget.push_back(new CuboidWidget);
-  name.push_back("Cuboid");
-  widget.push_back(new FrustumWidget);
-  name.push_back("Frustum");
-  widget.push_back(new SphereWidget);
-  name.push_back("Sphere");
-  widget.push_back(new IvBodyWidget);
-  name.push_back("IvBody");
-  widget.push_back(new CompoundRigidBodyWidget);
-  name.push_back("CompoundRigidBody");
-  widget.push_back(new InvisibleBodyWidget);
-  name.push_back("InvisibleBody");
-  ombv = new ExtWidget("Body",new ChoiceWidget(widget,name));
-//  ombv = new OMBVBodyChoiceWidget("NOTSET");
+//  vector<QWidget*> widget;
+//  vector<QString> name;
+//  widget.push_back(new CubeWidget);
+//  name.push_back("Cube");
+//  widget.push_back(new CuboidWidget);
+//  name.push_back("Cuboid");
+//  widget.push_back(new FrustumWidget);
+//  name.push_back("Frustum");
+//  widget.push_back(new SphereWidget);
+//  name.push_back("Sphere");
+//  widget.push_back(new IvBodyWidget);
+//  name.push_back("IvBody");
+//  widget.push_back(new CompoundRigidBodyWidget);
+//  name.push_back("CompoundRigidBody");
+//  widget.push_back(new InvisibleBodyWidget);
+//  name.push_back("InvisibleBody");
+//  ombv = new ExtWidget("Body",new ChoiceWidget(widget,name));
+  ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVBodyWidgetFactory),true);
 
   ref=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true);
   layout->addWidget(ombv);

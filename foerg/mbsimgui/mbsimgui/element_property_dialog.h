@@ -47,7 +47,7 @@ class Link;
 class KineticExcitation;
 class SpringDamper;
 class DirectionalSpringDamper;
-class RelativeRotationalSpringDamper;
+class RelativeSpringDamper;
 class Joint;
 class Contact;
 class Actuator;
@@ -311,17 +311,8 @@ class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
     ExtWidget *signalRef;
 };
 
-class LinearTransferSystemPropertyDialog : public SignalProcessingSystemPropertyDialog {
-
-  public:
-    LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
-  protected:
-    ExtWidget *choice;
-};
-
 class KineticExcitationPropertyDialog : public LinkPropertyDialog {
+  Q_OBJECT
 
   public:
     KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -329,6 +320,8 @@ class KineticExcitationPropertyDialog : public LinkPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *refFrameID, *forceDirection, *forceFunction, *momentDirection, *momentFunction, *connections, *forceArrow, *momentArrow;
+  protected slots:
+    void resizeVariables();
 };
 
 class SpringDamperPropertyDialog : public LinkPropertyDialog {
@@ -351,14 +344,14 @@ class DirectionalSpringDamperPropertyDialog : public LinkPropertyDialog {
     ExtWidget *forceDirection, *forceFunction, *connections, *coilSpring, *forceArrow;
 };
 
-class RelativeRotationalSpringDamperPropertyDialog : public LinkPropertyDialog {
+class RelativeSpringDamperPropertyDialog : public LinkPropertyDialog {
 
   public:
-    RelativeRotationalSpringDamperPropertyDialog(RelativeRotationalSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    RelativeSpringDamperPropertyDialog(RelativeSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *momentFunction, *body, *connections, *coilSpring, *momentArrow;
+    ExtWidget *function, *body, *connections, *coilSpring, *forceArrow, *momentArrow;
 };
 
 class JointPropertyDialog : public LinkPropertyDialog {

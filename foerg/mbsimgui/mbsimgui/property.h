@@ -20,6 +20,8 @@
 #ifndef _PROPERTIES_H_
 #define _PROPERTIES_H_
 
+#include<string>
+
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
 #define MBSIMNS "{"MBSIMNS_"}"
 #define PARAMNS_ "http://openmbv.berlios.de/MBXMLUtils/parameter"
@@ -32,6 +34,13 @@
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
 #define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
 #define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
+
+namespace MBXMLUtils {
+  class TiXmlNode;
+  class TiXmlElement;
+}
+
+class QWidget;
 
 class PropertyInterface {
   public:
@@ -53,7 +62,9 @@ class Property : public PropertyInterface {
 
 class PropertyFactory {
   public:
-    virtual Property* createProperty() = 0;
+    virtual Property* createProperty(int i=0) = 0;
+    virtual std::string getName(int i=0) const { return ""; }
+    virtual int getSize() const { return 0; }
 };
 
 #endif

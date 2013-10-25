@@ -143,12 +143,13 @@ class LinkContextContextMenu : public QMenu {
   protected slots:
     void addSpringDamper();
     void addDirectionalSpringDamper();
-    void addRelativeRotationalSpringDamper();
+    void addRelativeSpringDamper();
     void addKineticExcitation();
     void addJoint();
     void addContact();
     void addActuator();
     void addSignal();
+    void addLinearTransferSystem();
 
   protected:
     Element *element;

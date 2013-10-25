@@ -20,8 +20,8 @@
 #include <config.h>
 #include "kinetic_excitation.h"
 #include "ombv_properties.h"
-//#include "kinetics_properties.h"
 #include "function_properties.h"
+#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -34,41 +34,20 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));
   forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  vector<Property*> property;
-  property.push_back(new ConstantFunctionProperty("V"));
-  property.push_back(new LinearFunctionProperty("V"));
-  property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusoidalFunctionProperty("V"));
-  property.push_back(new TabularFunctionProperty("V"));
-  property.push_back(new LinearCombinationFunctionProperty("V"));
-  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
-  vector<string> var;
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  forceFunction.setProperty(new ChoiceProperty(MBSIMNS"forceFunction",property));
+  forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMNS"forceFunction",0));
 
   input.clear();
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"momentDirection"));
   momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  property.clear();
-  property.push_back(new ConstantFunctionProperty("V"));
-  property.push_back(new LinearFunctionProperty("V"));
-  property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusoidalFunctionProperty("V"));
-  property.push_back(new TabularFunctionProperty("V"));
-  property.push_back(new LinearCombinationFunctionProperty("V"));
-  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
-  var.clear();
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  momentFunction.setProperty(new ChoiceProperty(MBSIMNS"momentFunction",property));
+  momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMNS"momentFunction",0));
 
-  vector<Property*> widget;
-  widget.push_back(new ConnectFramesProperty(1,this));
-  widget.push_back(new ConnectFramesProperty(2,this));
+ // vector<Property*> widget;
+ // widget.push_back(new ConnectFramesProperty(1,this));
+ // widget.push_back(new ConnectFramesProperty(2,this));
 
-  connections.setProperty(new ChoiceProperty("",widget,2)); 
+ // connections.setProperty(new ChoiceProperty2("",widget,2)); 
+  connections.setProperty(new ChoiceProperty2(new ConnectFramesPropertyFactory(this),"",4)); 
 
   forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   forceArrow.setXMLName(MBSIMNS"openMBVForceArrow",false);

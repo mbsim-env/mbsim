@@ -68,33 +68,58 @@ class ExtProperty : public Property {
     bool active, alwaysWriteXMLName;
 };
 
-class ChoiceProperty : public Property {
+//class ChoiceProperty : public Property {
+//
+//  public:
+//    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0, const std::string &xmlBase_=MBSIMNS) : property(property_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_) {}
+//    ChoiceProperty(const ChoiceProperty &p);
+//    ~ChoiceProperty();
+//    ChoiceProperty& operator=(const ChoiceProperty &p);
+//    virtual Property* clone() const {return new ChoiceProperty(*this);}
+//
+//    void initialize();
+//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//    void fromWidget(QWidget *widget);
+//    void toWidget(QWidget *widget);
+//    Property* getProperty(int i) const {return property[i];}
+//    Property* getProperty() const {return property[index];}
+//    void setProperty(const std::vector<Property*> &property_) {property = property_;}
+//
+//  protected:
+//    std::vector<Property*> property;
+//    int index, mode;
+//    std::string xmlName, xmlBase;
+//};
+
+class ChoiceProperty2 : public Property {
 
   public:
-    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0, const std::string &xmlBase_=MBSIMNS) : property(property_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_) {}
-    ChoiceProperty(const ChoiceProperty &p);
-    ~ChoiceProperty();
-    ChoiceProperty& operator=(const ChoiceProperty &p);
-    virtual Property* clone() const {return new ChoiceProperty(*this);}
+    ChoiceProperty2(PropertyFactory *factory_, const std::string &xmlName_, int mode_=0, const std::string &xmlBase_=MBSIMNS); 
+    ChoiceProperty2(const ChoiceProperty2 &p);
+    ~ChoiceProperty2();
+    ChoiceProperty2& operator=(const ChoiceProperty2 &p);
+    virtual Property* clone() const {return new ChoiceProperty2(*this);}
 
     void initialize();
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Property* getProperty(int i) const {return property[i];}
-    Property* getProperty() const {return property[index];}
-    void setProperty(const std::vector<Property*> &property_) {property = property_;}
+    Property* getProperty(int i) const {return property;}
+    Property* getProperty() const {return property;}
+    void setProperty(Property *property_) {property = property_;}
 
   protected:
-    std::vector<Property*> property;
+    PropertyFactory *factory;
+    Property *property;
     int index, mode;
     std::string xmlName, xmlBase;
 };
 
 class ContainerProperty : public Property {
   public:
-    ContainerProperty(const std::string &xmlName_="") : xmlName(xmlName_) {}
+    ContainerProperty(const std::string &xmlName_="", int mode_=1) : xmlName(xmlName_), mode(mode_) {}
     ContainerProperty(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), xmlName(xmlName_) {}
     ContainerProperty(const ContainerProperty &p);
     ~ContainerProperty();
@@ -112,6 +137,7 @@ class ContainerProperty : public Property {
   protected:
     std::vector<Property*> property;
     std::string xmlName;
+    int mode;
 };
 
 class ListProperty : public Property {

@@ -20,7 +20,7 @@
 #ifndef _FUNCTION_WIDGETS_H_
 #define _FUNCTION_WIDGETS_H_
 
-#include "widget.h"
+#include "function_widget.h"
 
 class ExtPhysicalVarWidget;
 class ExtWidget;
@@ -28,34 +28,19 @@ class ListWidget;
 class QVBoxLayout;
 class QComboBox;
 class ChoiceWidget;
+class ChoiceWidget2;
 class QListWidget;
 class QSpinBox;
-
-class FunctionWidget : public Widget {
-  Q_OBJECT
-  public:
-    FunctionWidget(const QString &ext_="") : ext(ext_) {}
-    virtual ~FunctionWidget() {}
-    virtual int getArg1Size() const {return 0;}
-    virtual int getArg2Size() const {return 0;}
-    virtual void setArg1Size(int i) {}
-  protected:
-    QString ext;
-  public slots:
-    virtual void resize_(int m, int n) {}
-  signals:
-    void arg1SizeChanged(int);
-};
 
 class ConstantFunctionWidget : public FunctionWidget {
 
   friend class ConstantFunctionProperty;
 
   public:
-    ConstantFunctionWidget(const QString &ext, int m=1);
+    ConstantFunctionWidget(int m=1);
     void resize_(int m, int n);
   protected:
-    ExtWidget *c;
+    ExtWidget *a0;
 };
 
 class LinearFunctionWidget : public FunctionWidget {
@@ -63,24 +48,75 @@ class LinearFunctionWidget : public FunctionWidget {
   friend class LinearFunctionProperty;
 
   public:
-    LinearFunctionWidget(const QString &ext, int m=1);
+    LinearFunctionWidget(int m=1);
     void resize_(int m, int n);
   protected:
-    ExtWidget *a, *b;
+    ExtWidget *a0, *a1;
 };
 
-class NestedFunctionWidget : public FunctionWidget {
-  Q_OBJECT
+class QuadraticFunctionWidget : public FunctionWidget {
 
-  friend class NestedFunctionProperty;
+  friend class QuadraticFunctionProperty;
 
   public:
-    NestedFunctionWidget(const QString &ext, const std::vector<QWidget*> &widget, const std::vector<QString> &name);
-    int getArg1Size() const;
+    QuadraticFunctionWidget(int m=1);
+    void resize_(int m, int n);
+
   protected:
-    ExtWidget *fo, *fi;
-  public slots:
-    void resizeVariables();
+    ExtWidget *a0, *a1, *a2;
+};
+
+class PolynomFunctionWidget : public FunctionWidget {
+
+  friend class PolynomFunctionProperty;
+
+  public:
+    PolynomFunctionWidget(int m=1);
+    void resize_(int m, int n);
+
+  protected:
+    ExtWidget *a;
+};
+
+class SinusoidalFunctionWidget : public FunctionWidget {
+
+  friend class SinusoidalFunctionProperty;
+
+  public:
+    SinusoidalFunctionWidget(int m=1);
+
+  protected:
+    ExtWidget *a, *f, *p, *o;
+};
+
+//class StepFunctionWidget : public FunctionWidget {
+//}
+
+//class PositiveFunctionWidget : public FunctionWidget {
+//}
+
+class ScaledFunctionWidget : public FunctionWidget {
+
+  friend class ScaledFunctionProperty;
+
+  public:
+    ScaledFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+  protected:
+    ExtWidget *function, *factor;
+};
+
+class SummationFunctionWidget : public FunctionWidget {
+
+  friend class SummationFunctionProperty;
+
+  public:
+    SummationFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+  protected:
+    ExtWidget *functions;
 };
 
 class VectorValuedFunctionWidget : public FunctionWidget {
@@ -92,7 +128,23 @@ class VectorValuedFunctionWidget : public FunctionWidget {
     void resize_(int m, int n);
 
   protected:
-    ListWidget *functions;
+    ExtWidget *functions;
+};
+
+class NestedFunctionWidget : public FunctionWidget {
+  Q_OBJECT
+
+  friend class NestedFunctionProperty;
+
+  public:
+//    NestedFunctionWidget(const QString &ext, const std::vector<QWidget*> &widget, const std::vector<QString> &name);
+    NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
+    int getArg1Size() const;
+  protected:
+    QString ext;
+    ExtWidget *fo, *fi;
+  public slots:
+    void resizeVariables();
 };
 
 class PiecewiseDefinedFunctionWidget : public FunctionWidget {
@@ -100,198 +152,12 @@ class PiecewiseDefinedFunctionWidget : public FunctionWidget {
   friend class PiecewiseDefinedFunctionProperty;
 
   public:
-    PiecewiseDefinedFunctionWidget(const QString &ext, int n=1);
+    PiecewiseDefinedFunctionWidget(int n=0);
     void resize_(int m, int n);
 
   protected:
-    ListWidget *functions;
+    ExtWidget *functions;
     ExtWidget *contDiff;
-};
-
-class TranslationAlongXAxisWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongXAxisWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-};
-
-class TranslationAlongYAxisWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongYAxisWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-};
-
-class TranslationAlongZAxisWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongZAxisWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-};
-
-class TranslationAlongAxesXYWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongAxesXYWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?2:0;}
-};
-
-class TranslationAlongAxesYZWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongAxesYZWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?2:0;}
-};
-
-class TranslationAlongAxesXZWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongAxesXZWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?2:0;}
-};
-
-class TranslationAlongAxesXYZWidget : public FunctionWidget {
-
-  public:
-    TranslationAlongAxesXYZWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?3:0;}
-};
-
-class TranslationAlongFixedAxisWidget : public FunctionWidget {
-
-  friend class TranslationAlongFixedAxisProperty;
-
-  public:
-    TranslationAlongFixedAxisWidget(const QString &ext);
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-  protected:
-    ExtWidget *a;
-};
-
-class LinearTranslationWidget : public FunctionWidget {
-
-  friend class LinearTranslationProperty;
-
-  public:
-    LinearTranslationWidget(const QString &ext, int m=1, int n=1);
-    int getArg1Size() const;
-    void resize_(int m, int n);
-  protected:
-    ExtWidget *A, *b;
-};
-
-class RotationAboutXAxisWidget : public FunctionWidget {
-
-  public:
-    RotationAboutXAxisWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-};
-
-class RotationAboutYAxisWidget : public FunctionWidget {
-
-  public:
-    RotationAboutYAxisWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-};
-
-class RotationAboutZAxisWidget : public FunctionWidget {
-
-  public:
-    RotationAboutZAxisWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-};
-
-class RotationAboutAxesXYWidget : public FunctionWidget {
-
-  public:
-    RotationAboutAxesXYWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?2:0;}
-};
-
-class RotationAboutAxesYZWidget : public FunctionWidget {
-
-  public:
-    RotationAboutAxesYZWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?2:0;}
-};
-
-class RotationAboutAxesXZWidget : public FunctionWidget {
-
-  public:
-    RotationAboutAxesXZWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?2:0;}
-};
-
-class RotationAboutAxesXYZWidget : public FunctionWidget {
-
-  public:
-    RotationAboutAxesXYZWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?3:0;}
-};
-
-class RotationAboutFixedAxisWidget : public FunctionWidget {
-
-  friend class RotationAboutFixedAxisProperty;
-
-  public:
-    RotationAboutFixedAxisWidget(const QString &ext);
-    int getArg1Size() const {return ext[0]=='V'?1:0;}
-  protected:
-    ExtWidget *a;
-};
-
-class TCardanAnglesWidget : public FunctionWidget {
-
-  public:
-    TCardanAnglesWidget(const QString &ext) : FunctionWidget(ext) { }
-    int getArg1Size() const {return ext[0]=='V'?3:0;}
-};
-
-class QuadraticFunctionWidget : public FunctionWidget {
-
-  friend class QuadraticFunctionProperty;
-
-  public:
-    QuadraticFunctionWidget(const QString &ext, int m=1);
-    void resize_(int m, int n);
-
-  protected:
-    ExtWidget *a0, *a1, *a2;
-};
-
-class SinusoidalFunctionWidget : public FunctionWidget {
-
-  friend class SinusoidalFunctionProperty;
-
-  public:
-    SinusoidalFunctionWidget(const QString &ext, int m=1);
-    void resize_(int m, int n);
-
-  protected:
-    ExtWidget *a, *f, *p, *o;
-};
-
-class TabularFunctionWidget : public FunctionWidget {
-
-  friend class TabularFunctionProperty;
-
-  public:
-    TabularFunctionWidget(const QString &ext, int n);
-
-  protected:
-    ChoiceWidget* choice;
-};
-
-class LinearCombinationFunctionWidget : public FunctionWidget {
-
-  friend class LinearCombinationFunctionProperty;
-
-  public:
-    LinearCombinationFunctionWidget(const QString &ext, int n);
-    void resize_(int m, int n);
-
-  protected:
-    ListWidget *functions;
 };
 
 class SymbolicFunctionWidget : public FunctionWidget {
@@ -299,13 +165,26 @@ class SymbolicFunctionWidget : public FunctionWidget {
   friend class SymbolicFunctionProperty;
 
   public:
-    SymbolicFunctionWidget(const QString &ext, const QStringList &var, int max=99);
+    SymbolicFunctionWidget(const QStringList &var, int max=99);
     int getArg1Size() const;
     int getArg2Size() const;
     void setArg1Size(int i);
+    void resize_(int m, int n);
+
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
+};
+
+class TabularFunctionWidget : public FunctionWidget {
+
+  friend class TabularFunctionProperty;
+
+  public:
+    TabularFunctionWidget(int n);
+
+  protected:
+    ChoiceWidget2* choice;
 };
 
 class LinearSpringDamperForceWidget : public FunctionWidget {

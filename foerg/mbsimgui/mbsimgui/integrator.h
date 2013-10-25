@@ -28,6 +28,17 @@ namespace MBXMLUtils {
   class TiXmlNode;
 }
 
+class TolerancePropertyFactory: public PropertyFactory {
+  public:
+    TolerancePropertyFactory(const std::string &type);
+    Property* createProperty(int i=0);
+    std::string getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::string> name;
+    std::string type;
+};
+
 class Integrator {
   friend class IntegratorPropertyDialog;
   protected:

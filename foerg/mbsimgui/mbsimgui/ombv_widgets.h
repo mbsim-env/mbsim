@@ -29,6 +29,16 @@ class QListWidget;
 class QComboBox;
 class RigidBody;
 
+class OMBVBodyWidgetFactory : public WidgetFactory {
+  public:
+    OMBVBodyWidgetFactory();
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<QString> name;
+};
+
 class OMBVObjectWidget : public Widget {
 
   public:

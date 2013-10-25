@@ -24,6 +24,7 @@
 #include "basic_properties.h"
 #include "kinetics_properties.h"
 #include "function_properties.h"
+#include "function_property_factory.h"
 #include "ombv_properties.h"
 
 using namespace std;
@@ -32,26 +33,26 @@ using namespace MBXMLUtils;
 class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
   public:
     RigidBodyOfReferencePropertyFactory(Element *element_, const string &xmlName_) : element(element_), xmlName(xmlName_) { }
-    Property* createProperty();
+    Property* createProperty(int i=0);
   protected:
     Element *element;
     string xmlName;
 };
 
-Property* RigidBodyOfReferencePropertyFactory::createProperty() {
+Property* RigidBodyOfReferencePropertyFactory::createProperty(int i) {
  return new RigidBodyOfReferenceProperty("",element,xmlName);
 }
 
 class GearConstraintPropertyFactory : public PropertyFactory {
   public:
     GearConstraintPropertyFactory(Element *element_, const string &xmlName_) : element(element_), xmlName(xmlName_) { }
-    Property* createProperty();
+    Property* createProperty(int i=0);
   protected:
     Element *element;
     string xmlName;
 };
 
-Property* GearConstraintPropertyFactory::createProperty() {
+Property* GearConstraintPropertyFactory::createProperty(int i) {
   ContainerProperty *property = new ContainerProperty;
   property->addProperty(new RigidBodyOfReferenceProperty("",element,xmlName));
   vector<PhysicalVariableProperty> input;
@@ -158,11 +159,7 @@ TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
 
 GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
 
-  vector<Property*> property;
-  vector<string> var;
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+  constraintFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMNS"constraintFunction"));
 }
 
 void GeneralizedPositionConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -181,27 +178,7 @@ TiXmlElement* GeneralizedPositionConstraint::writeXMLFile(TiXmlNode *parent) {
 
 GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
-  vector<Property*> propertyConstraint;
-
-  vector<Property*> property;
-  property.push_back(new ConstantFunctionProperty("V",1));
-  property.push_back(new LinearFunctionProperty("V",1));
-  property.push_back(new QuadraticFunctionProperty("V",1));
-  property.push_back(new SinusoidalFunctionProperty("V",1));
-  vector<string> var;
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentConstraintFunction"));
-
-  property.clear();
-  var.clear();
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentConstraintFunction"));
-
-//  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalConstraintFunction"));
-
-  constraintFunction.setProperty(new ChoiceProperty("",propertyConstraint,2)); 
+  constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory,"",3)); 
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialState"));
@@ -226,41 +203,7 @@ TiXmlElement* GeneralizedVelocityConstraint::writeXMLFile(TiXmlNode *parent) {
 
 GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
-  vector<Property*> propertyConstraint;
-
-  vector<Property*> property;
-  property.push_back(new ConstantFunctionProperty("V",1));
-  property.push_back(new LinearFunctionProperty("V",1));
-  property.push_back(new QuadraticFunctionProperty("V",1));
-  property.push_back(new SinusoidalFunctionProperty("V",1));
-  vector<string> var;
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"timeDependentConstraintFunction"));
-
-  property.clear();
-  var.clear();
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"stateDependentConstraintFunction"));
-
-//  propertyConstraint.push_back(new ExtProperty(new ChoiceProperty("",property),false,MBSIMNS"generalConstraintFunction"));
-
-  constraintFunction.setProperty(new ChoiceProperty("",propertyConstraint,2)); 
-
-//  vector<Property*> property;
-//  property.push_back(new ConstantFunctionProperty("V",1));
-//  property.push_back(new LinearFunctionProperty("V",1));
-//  property.push_back(new QuadraticFunctionProperty("V",1));
-//  property.push_back(new SinusFunctionProperty("V",1));
-//  vector<string> var;
-//  var.push_back("t");
-//  property.push_back(new SymbolicFunctionProperty("VS",var));
-//  var.clear();
-//  var.push_back("z");
-//  property.push_back(new SymbolicFunctionProperty("VV",var));
-//
-//  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+  constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory,"",3)); 
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialState"));
