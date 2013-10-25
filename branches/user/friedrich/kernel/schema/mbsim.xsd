@@ -1822,16 +1822,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RelativeRotationalSpringDamper" substitutionGroup="LinkMechanics" type="RelativeRotationalSpringDamperType">
+  <xs:element name="RelativeSpringDamper" substitutionGroup="LinkMechanics" type="RelativeSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="RelativeRotationalSpringDamperType">
+  <xs:complexType name="RelativeSpringDamperType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="momentFunction">
+          <xs:element name="function">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
             </xs:documentation></xs:annotation>
@@ -1856,6 +1856,16 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="ombv:CoilSpring"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Kraft-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
