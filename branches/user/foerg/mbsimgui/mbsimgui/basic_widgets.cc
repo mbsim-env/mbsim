@@ -94,6 +94,7 @@ LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Fram
   layout->addWidget(frame);
   selectedFrame = element->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+  updateWidget();
 }
 
 void LocalFrameOfReferenceWidget::updateWidget() {
@@ -140,6 +141,7 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Fr
   layout->addWidget(frame);
   selectedFrame = element->getParent()->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+  updateWidget();
 }
 
 void ParentFrameOfReferenceWidget::updateWidget() {
@@ -190,6 +192,7 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   QPushButton *button = new QPushButton(tr("Browse"));
   connect(button,SIGNAL(clicked(bool)),frameBrowser,SLOT(show()));
   layout->addWidget(button);
+  updateWidget();
 }
 
 void FrameOfReferenceWidget::updateWidget() {

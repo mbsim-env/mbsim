@@ -26,6 +26,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <mbxmlutilstinyxml/tinyxml.h>
+#include <casadi/symbolic/sx/sx.hpp>
 #include <mbxmlutils/octeval.h>
 
 class QAction;

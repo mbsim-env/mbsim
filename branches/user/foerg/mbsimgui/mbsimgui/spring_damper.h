@@ -51,18 +51,18 @@ class DirectionalSpringDamper : public Link {
     ExtProperty forceDirection, forceFunction, connections, coilSpring, forceArrow;
 };
 
-class RelativeRotationalSpringDamper : public Link {
-  friend class RelativeRotationalSpringDamperPropertyDialog;
+class RelativeSpringDamper : public Link {
+  friend class RelativeSpringDamperPropertyDialog;
   public:
-    RelativeRotationalSpringDamper(const std::string &str, Element *element);
-    ~RelativeRotationalSpringDamper();
-    std::string getType() const { return "RelativeRotationalSpringDamper"; }
+    RelativeSpringDamper(const std::string &str, Element *element);
+    ~RelativeSpringDamper();
+    std::string getType() const { return "RelativeSpringDamper"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new RelativeRotationalSpringDamperPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new RelativeSpringDamperPropertyDialog(this);}
   protected:
-    ExtProperty momentFunction, body, connections, coilSpring, momentArrow;
+    ExtProperty function, body, connections, coilSpring, forceArrow, momentArrow;
 };
 
 #endif

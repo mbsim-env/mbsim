@@ -268,7 +268,7 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString 
   connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
   addAction(action);
   action = new QAction("Add relative rotational spring damper", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addRelativeRotationalSpringDamper()));
+  connect(action,SIGNAL(triggered()),this,SLOT(addRelativeSpringDamper()));
   addAction(action);
   action = new QAction("Add joint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
@@ -281,6 +281,9 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString 
   addAction(action);
   QMenu *menu = new SignalContextContextMenu(element, "Add signal");
   addMenu(menu);
+  action = new QAction("Add linear transfer system", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
+  addAction(action);
 }
 
 void LinkContextContextMenu::addKineticExcitation() {
@@ -295,8 +298,8 @@ void LinkContextContextMenu::addDirectionalSpringDamper() {
   mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper",element));
 }
 
-void LinkContextContextMenu::addRelativeRotationalSpringDamper() {
-  mw->addLink(new RelativeRotationalSpringDamper("RelativeRotationalSpringDamper",element));
+void LinkContextContextMenu::addRelativeSpringDamper() {
+  mw->addLink(new RelativeSpringDamper("RelativeSpringDamper",element));
 }
 
 void LinkContextContextMenu::addJoint() {
@@ -314,6 +317,10 @@ void LinkContextContextMenu::addActuator() {
 void LinkContextContextMenu::addSignal() {
   SignalContextContextMenu menu(element);
   menu.exec(QCursor::pos());
+}
+
+void LinkContextContextMenu::addLinearTransferSystem() {
+  mw->addLink(new LinearTransferSystem("LTS",element));
 }
 
 ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

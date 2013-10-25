@@ -99,63 +99,114 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
-ChoiceWidget::ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir) {
-  QBoxLayout *layout = new QBoxLayout(dir);
+//ChoiceWidget::ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir) {
+//  QBoxLayout *layout = new QBoxLayout(dir);
+//  layout->setMargin(0);
+//  setLayout(layout);
+//
+//  comboBox = new QComboBox;
+//  for(int i=0; i<name.size(); i++)
+//    comboBox->addItem(name[i]);
+//  layout->addWidget(comboBox);
+//  stackedWidget = new QStackedWidget;
+//  stackedWidget->addWidget(widget[0]);
+//  for(int i=1; i<widget.size(); i++) {
+//    widget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//    stackedWidget->addWidget(widget[i]);
+//  }
+//  layout->addWidget(stackedWidget);
+//  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
+//}
+//
+//void ChoiceWidget::resize_(int m, int n) {
+////  for(int i=0; i<stackedWidget->count(); i++)
+////    dynamic_cast<WidgetInterface*>(getWidget(i))->resize_(m,n);
+//  
+//  dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
+//}
+//
+//void ChoiceWidget::updateWidget() {
+////  for(int i=0; i<stackedWidget->count(); i++)
+////    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+//
+//  dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
+//}
+//
+//QWidget* ChoiceWidget::getWidget() const {
+//  return stackedWidget->currentWidget();
+//}
+//
+//QWidget* ChoiceWidget::getWidget(int i) const {
+//  return stackedWidget->widget(i);
+//}
+//
+//QString ChoiceWidget::getName() const {
+//  return comboBox->currentText();
+//}
+//
+//QString ChoiceWidget::getName(int i) const {
+//  return comboBox->itemText(i);
+//}
+//
+//void ChoiceWidget::defineWidget(int index) {
+//  if (stackedWidget->currentWidget() !=0)
+//    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->setCurrentIndex(index);
+//  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//  adjustSize();
+//  emit widgetChanged();
+//  emit resize_();
+//  updateWidget();
+//}
+
+ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : factory(factory_), widget(0) {
+  layout = new QBoxLayout(dir);
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
-  for(int i=0; i<name.size(); i++)
-    comboBox->addItem(name[i]);
+  for(int i=0; i<factory->getSize(); i++)
+    comboBox->addItem(factory->getName(i));
   layout->addWidget(comboBox);
-  stackedWidget = new QStackedWidget;
-  stackedWidget->addWidget(widget[0]);
-  for(int i=1; i<widget.size(); i++) {
-    widget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    stackedWidget->addWidget(widget[i]);
-  }
-  layout->addWidget(stackedWidget);
+  defineWidget(0);
   connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
 }
 
-void ChoiceWidget::resize_(int m, int n) {
+void ChoiceWidget2::resize_(int m, int n) {
 //  for(int i=0; i<stackedWidget->count(); i++)
 //    dynamic_cast<WidgetInterface*>(getWidget(i))->resize_(m,n);
   
   dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
 }
 
-void ChoiceWidget::updateWidget() {
+void ChoiceWidget2::updateWidget() {
 //  for(int i=0; i<stackedWidget->count(); i++)
 //    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
 
   dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
 }
 
-QWidget* ChoiceWidget::getWidget() const {
-  return stackedWidget->currentWidget();
+QWidget* ChoiceWidget2::getWidget() const {
+  return widget;
 }
 
-QWidget* ChoiceWidget::getWidget(int i) const {
-  return stackedWidget->widget(i);
+QWidget* ChoiceWidget2::getWidget(int i) const {
+  return widget;
 }
 
-QString ChoiceWidget::getName() const {
+QString ChoiceWidget2::getName() const {
   return comboBox->currentText();
 }
 
-QString ChoiceWidget::getName(int i) const {
+QString ChoiceWidget2::getName(int i) const {
   return comboBox->itemText(i);
 }
 
-void ChoiceWidget::defineWidget(int index) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(index);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-  emit widgetChanged();
-  emit resize_();
+void ChoiceWidget2::defineWidget(int index) {
+  layout->removeWidget(widget);
+  delete widget;
+  widget = factory->createWidget(index);
+  layout->addWidget(widget);
   updateWidget();
 }
 
@@ -275,9 +326,9 @@ void ListWidget::addElements(int n, bool emitSignals) {
   for(int j=1; j<=n; j++) {
     list->addItem(name+" "+QString::number(i+j));
 
-    Widget *widget = factory->createWidget();
+    QWidget *widget = factory->createWidget();
     stackedWidget->addWidget(widget);
-    widget->updateWidget();
+    dynamic_cast<WidgetInterface*>(widget)->updateWidget();
     if(i>0)
       widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 

@@ -32,6 +32,24 @@ using namespace MBXMLUtils;
 
 extern MainWindow *mw;
 
+TolerancePropertyFactory::TolerancePropertyFactory(const string &type_) : type(type_) {
+  name.push_back(MBSIMINTNS+type+"ToleranceScalar");
+  name.push_back(MBSIMINTNS+type+"Tolerance");
+}
+
+Property* TolerancePropertyFactory::createProperty(int i) {
+  if(i==0) {
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS+type+"ToleranceScalar"));
+    return new ExtPhysicalVarProperty(input);
+  }
+  if(i==1) {
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS+type+"Tolerance"));
+    return new ExtPhysicalVarProperty(input);
+  }
+}
+
 Integrator::Integrator() : initialState(0,false) {
 
   vector<PhysicalVariableProperty> input;
@@ -101,28 +119,11 @@ void Integrator::writeXMLFile(const string &name) {
 }
 
 DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
+  absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
+
+  relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3)); 
+
   vector<PhysicalVariableProperty> input;
-  vector<Property*> property;
-  vector<string> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new ChoiceProperty("",property,2)); 
-
-  input.clear();
-  property.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  relTol.setProperty(new ChoiceProperty("",property,2)); 
-
-  input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
@@ -155,28 +156,11 @@ TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 RADAU5Integrator::RADAU5Integrator() {
+  absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
+
+  relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3)); 
+
   vector<PhysicalVariableProperty> input;
-  vector<Property*> property;
-  vector<string> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new ChoiceProperty("",property,2)); 
-
-  input.clear();
-  property.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  relTol.setProperty(new ChoiceProperty("",property,2)); 
-
-  input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
@@ -209,19 +193,9 @@ TiXmlElement* RADAU5Integrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 LSODEIntegrator::LSODEIntegrator() : stiff(0,false) {
-  vector<PhysicalVariableProperty> input;
-  vector<Property*> property;
-  vector<string> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new ChoiceProperty("",property,2)); 
+  absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
 
-  input.clear();
+  vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
@@ -270,19 +244,9 @@ TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 LSODARIntegrator::LSODARIntegrator() {
-  vector<PhysicalVariableProperty> input;
-  vector<Property*> property;
-  vector<string> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new ChoiceProperty("",property,2)); 
+  absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
 
-  input.clear();
+  vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 

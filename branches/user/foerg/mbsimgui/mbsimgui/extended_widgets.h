@@ -82,13 +82,39 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
     void resize_();
 };
 
-class ChoiceWidget : public Widget {
+//class ChoiceWidget : public Widget {
+//  Q_OBJECT
+//
+//  friend class ChoiceProperty;
+//
+//  public:
+//    ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
+//
+//    void resize_(int m, int n);
+//    QWidget* getWidget(int i) const;
+//    QWidget* getWidget() const;
+//    QString getName(int i) const;
+//    QString getName() const;
+//    void updateWidget();
+//  protected slots:
+//    void defineWidget(int);
+//
+//  protected:
+//    QComboBox *comboBox;
+//    QStackedWidget *stackedWidget;
+//
+//  signals:
+//    void resize_();
+//    void widgetChanged();
+//};
+
+class ChoiceWidget2 : public Widget {
   Q_OBJECT
 
-  friend class ChoiceProperty;
+  friend class ChoiceProperty2;
 
   public:
-    ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
+    ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
 
     void resize_(int m, int n);
     QWidget* getWidget(int i) const;
@@ -100,8 +126,11 @@ class ChoiceWidget : public Widget {
     void defineWidget(int);
 
   protected:
+    QBoxLayout *layout;
     QComboBox *comboBox;
-    QStackedWidget *stackedWidget;
+    QWidget *widget;
+    //QStackedWidget *stackedWidget;
+    WidgetFactory *factory;
 
   signals:
     void resize_();

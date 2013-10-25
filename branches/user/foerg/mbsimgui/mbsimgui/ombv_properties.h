@@ -23,8 +23,18 @@
 #include "basic_properties.h"
 #include "extended_properties.h"
 
-//class ExtProperty;
 class RigidBody;
+
+class OMBVBodyPropertyFactory: public PropertyFactory {
+  public:
+    OMBVBodyPropertyFactory(const std::string &ID);
+    Property* createProperty(int i=0);
+    std::string getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::string> name;
+    std::string ID;
+};
 
 class OMBVObjectProperty : public Property {
 

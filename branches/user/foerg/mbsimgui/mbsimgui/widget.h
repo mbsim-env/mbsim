@@ -42,7 +42,9 @@ class Widget : public QWidget, public WidgetInterface {
 
 class WidgetFactory {
   public:
-    virtual Widget* createWidget() = 0;
+    virtual QWidget* createWidget(int i=0) = 0;
+    virtual QString getName(int i=0) const { return ""; }
+    virtual int getSize() const { return 0; }
 };
 
 #endif

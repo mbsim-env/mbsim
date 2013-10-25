@@ -26,6 +26,7 @@
 #include "kinetics_widgets.h"
 #include "extended_widgets.h"
 #include "property.h"
+#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -33,12 +34,12 @@ using namespace MBXMLUtils;
 class SignalAdditionPropertyFactory : public PropertyFactory {
   public:
     SignalAdditionPropertyFactory(Element *element_) : element(element_) { }
-    Property* createProperty();
+    Property* createProperty(int i=0);
   protected:
     Element *element;
 };
 
-Property* SignalAdditionPropertyFactory::createProperty() {
+Property* SignalAdditionPropertyFactory::createProperty(int i) {
  return new SignalReferenceProperty(element);
 }
 
@@ -114,11 +115,12 @@ TiXmlElement* PIDController::writeXMLFile(TiXmlNode *parent) {
 UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
   sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
 
-  vector<Property*> property;
-  vector<string> var;
-  var.push_back("x");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-  f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
+//  vector<Property*> property;
+//  vector<string> var;
+//  var.push_back("x");
+//  property.push_back(new SymbolicFunctionProperty("VV",var));
+//  f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
+  f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"x")),MBSIMCONTROLNS"function"));
 }
 
 void UnarySignalOperation::initialize() {
@@ -143,12 +145,10 @@ BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent)
   s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"input1Signal"));
   s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"input2Signal"));
 
-  vector<Property*> property;
   vector<string> var;
   var.push_back("x1");
   var.push_back("x2");
-  property.push_back(new SymbolicFunctionProperty("VVV",var));
-  f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
+  f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVV",var),MBSIMCONTROLNS"function"));
 }
 
 void BinarySignalOperation::initialize() {

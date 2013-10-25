@@ -26,7 +26,9 @@
 #include "basic_properties.h"
 #include "kinematics_properties.h"
 #include "ombv_properties.h"
+#include "kinematic_functions_properties.h"
 #include "function_properties.h"
+#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -47,105 +49,11 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForInertiaTensor"));
 
-  vector<Property*> propertyTranslation;
-
   vector<Property*> property;
-  property.push_back(new TranslationAlongXAxisProperty("V"));
-  property.push_back(new TranslationAlongYAxisProperty("V"));
-  property.push_back(new TranslationAlongZAxisProperty("V"));
-  property.push_back(new TranslationAlongAxesXYProperty("V"));
-  property.push_back(new TranslationAlongAxesYZProperty("V"));
-  property.push_back(new TranslationAlongAxesXZProperty("V"));
-  property.push_back(new TranslationAlongAxesXYZProperty("V"));
-  property.push_back(new TranslationAlongFixedAxisProperty("V"));
-  property.push_back(new LinearTranslationProperty("V",3,1));
-  vector<string> var;
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("VV",var));
-  vector<Property*> property_;
-  property_.push_back(new TranslationAlongXAxisProperty("V"));
-  property_.push_back(new TranslationAlongYAxisProperty("V"));
-  property_.push_back(new TranslationAlongZAxisProperty("V"));
-  property_.push_back(new TranslationAlongAxesXYProperty("V"));
-  property_.push_back(new TranslationAlongAxesYZProperty("V"));
-  property_.push_back(new TranslationAlongAxesXZProperty("V"));
-  property_.push_back(new TranslationAlongAxesXYZProperty("V"));
-  property_.push_back(new TranslationAlongFixedAxisProperty("V"));
-  property.push_back(new NestedFunctionProperty("VVV",property_));
 
-  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"stateDependentTranslation"));
+  translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4,"",3)); 
 
-  property.clear();
-  property.push_back(new ConstantFunctionProperty("V",3));
-  property.push_back(new LinearFunctionProperty("V",3));
-  property.push_back(new QuadraticFunctionProperty("V",3));
-  property.push_back(new SinusoidalFunctionProperty("V",3));
-  var.clear();
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  property.push_back(new VectorValuedFunctionProperty(0));
-  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
-  property_.clear();
-  property_.push_back(new TranslationAlongXAxisProperty("V"));
-  property_.push_back(new TranslationAlongYAxisProperty("V"));
-  property_.push_back(new TranslationAlongZAxisProperty("V"));
-  property_.push_back(new TranslationAlongAxesXYProperty("V"));
-  property_.push_back(new TranslationAlongAxesYZProperty("V"));
-  property_.push_back(new TranslationAlongAxesXZProperty("V"));
-  property_.push_back(new TranslationAlongAxesXYZProperty("V"));
-  property_.push_back(new TranslationAlongFixedAxisProperty("V"));
-  property.push_back(new NestedFunctionProperty("VVS",property_));
-
-  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"timeDependentTranslation"));
-
-  property.clear();
-  var.clear();
-  var.push_back("q");
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VVS",var));
-  propertyTranslation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"generalTranslation"));
-
-  translation.setProperty(new ChoiceProperty("",propertyTranslation,2)); 
-
-  vector<Property*> propertyRotation;
-
-  property.clear();
-  property.push_back(new RotationAboutXAxisProperty("V"));
-  property.push_back(new RotationAboutYAxisProperty("V"));
-  property.push_back(new RotationAboutZAxisProperty("V"));
-  property.push_back(new RotationAboutAxesXYProperty("V"));
-  property.push_back(new RotationAboutAxesYZProperty("V"));
-  property.push_back(new RotationAboutAxesXZProperty("V"));
-  property.push_back(new RotationAboutAxesXYZProperty("V"));
-  property.push_back(new RotationAboutFixedAxisProperty("V"));
-  property_.clear();
-  property_.push_back(new RotationAboutXAxisProperty("V"));
-  property_.push_back(new RotationAboutYAxisProperty("V"));
-  property_.push_back(new RotationAboutZAxisProperty("V"));
-  property_.push_back(new RotationAboutAxesXYProperty("V"));
-  property_.push_back(new RotationAboutAxesYZProperty("V"));
-  property_.push_back(new RotationAboutAxesXZProperty("V"));
-  property_.push_back(new RotationAboutAxesXYZProperty("V"));
-  property_.push_back(new RotationAboutFixedAxisProperty("V"));
-  property.push_back(new NestedFunctionProperty("MVV",property_));
-
-  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"stateDependentRotation"));
-
-  property.clear();
-  property_.clear();
-  property_.push_back(new RotationAboutXAxisProperty("V"));
-  property_.push_back(new RotationAboutYAxisProperty("V"));
-  property_.push_back(new RotationAboutZAxisProperty("V"));
-  property_.push_back(new RotationAboutAxesXYProperty("V"));
-  property_.push_back(new RotationAboutAxesYZProperty("V"));
-  property_.push_back(new RotationAboutAxesXZProperty("V"));
-  property_.push_back(new RotationAboutAxesXYZProperty("V"));
-  property_.push_back(new RotationAboutFixedAxisProperty("V"));
-  property.push_back(new NestedFunctionProperty("MVS",property_));
-
-  propertyRotation.push_back(new ExtProperty(new ChoiceProperty("",property),true,MBSIMNS"timeDependentRotation"));
-
-  rotation.setProperty(new ChoiceProperty("",propertyRotation,2)); 
+  rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4,"",3)); 
 
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependentRotation"));
@@ -170,13 +78,13 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 int RigidBody::getqRelSize() const {
   int nqT=0, nqR=0;
   if(translation.isActive()) {
-    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(translation.getProperty())->getProperty());
-    const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(extProperty->getProperty());
+    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
+    const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
     nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
   }
   if(rotation.isActive()) {
-    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty*>(rotation.getProperty())->getProperty());
-    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(extProperty->getProperty());
+    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
+    const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
     nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
   }
   int nq = nqT + nqR;

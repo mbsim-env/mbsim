@@ -25,6 +25,7 @@
 #include "basic_widgets.h"
 #include "kinetics_widgets.h"
 #include "extended_widgets.h"
+#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -86,17 +87,17 @@ TiXmlElement* AbsoluteCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
 }
 
 FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  vector<Property*> property;
-  property.push_back(new ConstantFunctionProperty("V"));
-  property.push_back(new LinearFunctionProperty("V"));
-  property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusoidalFunctionProperty("V"));
-  property.push_back(new TabularFunctionProperty("V"));
-  property.push_back(new LinearCombinationFunctionProperty("V"));
-  vector<string> var;
-  var.push_back("t");
-  property.push_back(new SymbolicFunctionProperty("VS",var));
-  function.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
+//  vector<Property*> property;
+//  property.push_back(new ConstantFunctionProperty);
+//  property.push_back(new LinearFunctionProperty);
+//  property.push_back(new QuadraticFunctionProperty);
+//  property.push_back(new SinusoidalFunctionProperty);
+//  property.push_back(new TabularFunctionProperty);
+//  property.push_back(new SummationFunctionProperty);
+//  vector<string> var;
+//  var.push_back("t");
+//  property.push_back(new SymbolicFunctionProperty("VS",var));
+  function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMCONTROLNS"function"));
 }
 
 void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
