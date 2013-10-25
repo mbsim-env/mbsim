@@ -21,6 +21,7 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/frame.h"
+#include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/arrow.h>
@@ -286,6 +287,154 @@ namespace MBSim {
       OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
       setOpenMBVForceArrow(arrow);
+    }
+#endif
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeSpringDamper, MBSIMNS"RelativeSpringDamper")
+
+  RelativeSpringDamper::RelativeSpringDamper(const string &name) : LinkMechanics(name), func(NULL), body(NULL)
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    , coilspringOpenMBV(NULL)
+#endif
+  {
+    WF.resize(2);
+    WM.resize(2);
+    h[0].resize(2);
+    h[1].resize(2);
+  }
+
+  void RelativeSpringDamper::updatehRef(const Vec &hParent, int j) {
+    Index I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+    h[j][0]>>hParent(I);
+    I = Index(body->gethInd(j),body->gethInd(j)+body->gethSize(j)-1);
+    h[j][1]>>hParent(I);
+  } 
+
+  void RelativeSpringDamper::updateh(double t, int j) {
+    la(0) = (*func)(g(0),gd(0));
+    if(j==0)
+      h[j][1]-=body->getJRel(j).T()*la;
+    else {
+      WF[1] = body->getFrameOfReference()->getOrientation()*body->getPJT()*la; // projected force in direction of WtorqueDir
+      WF[0] = -WF[1];
+      WM[1] = body->getFrameOfReference()->getOrientation()*body->getPJR()*la; // projected force in direction of WtorqueDir
+      WM[0] = -WM[1];
+      h[j][0]-=C.getJacobianOfTranslation(j).T()*WF[0]+C.getJacobianOfRotation(j).T()*WM[0];
+      h[j][1]-=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[1]+body->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[1];
+    }
+  }
+
+  void RelativeSpringDamper::updateJacobians(double t, int j) {
+    Vec3 WrP0P1 = body->getFrameForKinematics()->getPosition()-body->getFrameOfReference()->getPosition();
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
+
+    C.setOrientation(body->getFrameOfReference()->getOrientation());
+    C.setPosition(body->getFrameOfReference()->getPosition() + WrP0P1);
+    C.setAngularVelocity(body->getFrameOfReference()->getAngularVelocity());
+    C.setVelocity(body->getFrameOfReference()->getVelocity() + crossProduct(body->getFrameOfReference()->getAngularVelocity(),WrP0P1));
+    C.setJacobianOfTranslation(body->getFrameOfReference()->getJacobianOfTranslation(j) - tWrP0P1*body->getFrameOfReference()->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(body->getFrameOfReference()->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(body->getFrameOfReference()->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*body->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j) + crossProduct(body->getFrameOfReference()->getAngularVelocity(),crossProduct(body->getFrameOfReference()->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(body->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
+  }
+
+  void RelativeSpringDamper::updateg(double) {
+//    SqrMat       Arel = inv(frame[0]->getOrientation()) * frame[1]->getOrientation();
+//    Vec    Womega_rel = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
+
+      g=body->getq();
+  } 
+
+  void RelativeSpringDamper::updategd(double) {
+//    Vec Womega_rel = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
+//    gd(0)=trans(Womega_rel)*WtorqueDir;
+      gd=body->getu();
+  }
+
+  void RelativeSpringDamper::init(InitStage stage) {
+    assert(body->getRotation()!=NULL);
+    if(stage==resolveXMLPath) {
+      if(saved_body!="")
+        setRigidBody(getByPath<RigidBody>(saved_body));
+      LinkMechanics::connect(body->getFrameOfReference());
+      LinkMechanics::connect(body->getFrameForKinematics());
+      LinkMechanics::init(stage);
+    }
+    else if(stage==resize) {
+      LinkMechanics::init(stage);
+      g.resize(1);
+      gd.resize(1);
+      la.resize(1);
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures();
+      plotColumns.push_back("la(0)");
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(coilspringOpenMBV) {
+          coilspringOpenMBV->setName(name);
+          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+        }
+  #endif
+        LinkMechanics::init(stage);
+      }
+    }
+    else
+      LinkMechanics::init(stage);
+  }
+
+  void RelativeSpringDamper::plot(double t,double dt) {
+    plotVector.push_back(la(0));
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if (coilspringOpenMBV) {
+        Vec WrOToPoint;
+        Vec WrOFromPoint;
+
+        WrOFromPoint = body->getFrameOfReference()->getPosition();
+        WrOToPoint   = body->getFrameForKinematics()->getPosition();
+        vector<double> data;
+        data.push_back(t); 
+        data.push_back(WrOFromPoint(0));
+        data.push_back(WrOFromPoint(1));
+        data.push_back(WrOFromPoint(2));
+        data.push_back(WrOToPoint(0));
+        data.push_back(WrOToPoint(1));
+        data.push_back(WrOToPoint(2));
+        data.push_back(la(0));
+        coilspringOpenMBV->append(data);
+      }
+#endif
+      LinkMechanics::plot(t,dt);
+    }
+  }
+
+  void RelativeSpringDamper::initializeUsingXML(TiXmlElement *element) {
+    LinkMechanics::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    setFunction(f);
+    e=element->FirstChildElement(MBSIMNS"rigidBody");
+    saved_body=e->Attribute("ref");
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
+    if(e) {
+      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
+      coilSpring->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVCoilSpring(coilSpring);
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVMomentArrow(arrow);
     }
 #endif
   }
