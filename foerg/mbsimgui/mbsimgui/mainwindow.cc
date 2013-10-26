@@ -1046,7 +1046,7 @@ QString Process::convertToHtml(QString &text) {
   text.replace(carriageReturn, "\\1\\2");
 
   // replace <FILE ...> to html reference
-  static QRegExp fileRE("<FILE path=\"(.+)\" line=\"([0-9]+)\">(.+)</FILE>");
+  static QRegExp fileRE("<FILE path=\"([^\"]+)\" line=\"([0-9]+)\">([^<]+)</FILE>");
   text.replace(fileRE, "<a href=\"\\1?line=\\2\">\\3</a>");
 
   // the following operations modify only the QString return value
