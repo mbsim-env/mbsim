@@ -122,12 +122,10 @@ TiXmlElement* VecProperty::initializeUsingXML(TiXmlElement *parent) {
   if(!element || element->ValueStr() != (PVNS"xmlVector"))
     return 0;
   TiXmlElement *ei=element->FirstChildElement();
-  int i=0;
   value.clear();
   while(ei && ei->ValueStr()==PVNS"ele") {
     value.push_back(ei->GetText());
     ei=ei->NextSiblingElement();
-    i++;
   }
   return element;
 }
@@ -205,6 +203,52 @@ void MatProperty::fromWidget(QWidget *widget) {
 
 void MatProperty::toWidget(QWidget *widget) {
   static_cast<BasicMatWidget*>(widget)->setMat(fromStdMat(getMat()));
+}
+
+CardanProperty::CardanProperty() : angles(3,"0") {
+}
+
+CardanProperty::~CardanProperty() {
+}
+
+TiXmlElement* CardanProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *element=parent->FirstChildElement();
+  if(!element || element->ValueStr() != (PVNS"cardan"))
+    return 0;
+  angles.clear();
+  TiXmlElement *ei=element->FirstChildElement(PVNS"alpha");
+  angles.push_back(ei->GetText());
+  ei=ei->NextSiblingElement();
+  angles.push_back(ei->GetText());
+  ei=ei->NextSiblingElement();
+  angles.push_back(ei->GetText());
+  return element;
+}
+
+TiXmlElement* CardanProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(PVNS"cardan");
+  TiXmlElement *elei = new TiXmlElement(PVNS"alpha");
+  TiXmlText *text = new TiXmlText(angles[0]);
+  elei->LinkEndChild(text);
+  ele->LinkEndChild(elei);
+  elei = new TiXmlElement(PVNS"beta");
+  text = new TiXmlText(angles[1]);
+  elei->LinkEndChild(text);
+  ele->LinkEndChild(elei);
+  elei = new TiXmlElement(PVNS"gamma");
+  text = new TiXmlText(angles[2]);
+  elei->LinkEndChild(text);
+  ele->LinkEndChild(elei);
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+void CardanProperty::fromWidget(QWidget *widget) {
+  setAngles(toStdVec(static_cast<CardanWidget*>(widget)->getAngles()));
+}
+
+void CardanProperty::toWidget(QWidget *widget) {
+  static_cast<CardanWidget*>(widget)->setAngles(fromStdVec(getAngles()));
 }
 
 TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
