@@ -494,7 +494,7 @@ bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
+CardanWidget::CardanWidget() {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -503,30 +503,11 @@ CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
   for(int i=0; i<3; i++) {
     box[i] = new QLineEdit(this);
     box[i]->setText("0");
-    if(transpose) 
-      layout->addWidget(box[i], 0, i);
-    else
-      layout->addWidget(box[i], i, 0);
+    layout->addWidget(box[i], i, 0);
   }
 }
 
-CardanWidget::CardanWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
-
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  box.resize(3);
-  for(int i=0; i<3; i++) {
-    box[i] = new QLineEdit(this);
-    box[i]->setText(x[i]);
-    if(transpose) 
-      layout->addWidget(box[i], 0, i);
-    else
-      layout->addWidget(box[i], i, 0);
-  }
-}
-
-vector<QString> CardanWidget::getCardan() const {
+vector<QString> CardanWidget::getAngles() const {
   vector<QString> x(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     x[i] = box[i]->text();
@@ -534,8 +515,8 @@ vector<QString> CardanWidget::getCardan() const {
   return x;
 }
 
-void CardanWidget::setCardan(const vector<QString> &x) {
-  for(unsigned int i=0; i<box.size(); i++) 
+void CardanWidget::setAngles(const vector<QString> &x) {
+  for(unsigned int i=0; i<box.size(); i++)
     box[i]->setText(x[i]);
 }
 
@@ -543,6 +524,14 @@ void CardanWidget::setReadOnly(bool flag) {
   for(unsigned int i=0; i<box.size(); i++) {
     box[i]->setReadOnly(flag);
   }
+}
+
+bool CardanWidget::validate(const vector<vector<QString> > &A) const {
+  if(size()!=A.size())
+    return false;
+  if(A.size() && A[0].size()!=1)
+    return false;
+  return true;
 }
 
 PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {

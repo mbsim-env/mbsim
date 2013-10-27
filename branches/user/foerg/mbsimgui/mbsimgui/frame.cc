@@ -97,6 +97,7 @@ FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Fra
 
   input.clear();
   input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"relativeOrientation"));
+  input.push_back(PhysicalVariableProperty(new CardanProperty,"",MBSIMNS"relativeOrientation"));
   orientation.setProperty(new ExtPhysicalVarProperty(input));
 
   refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));

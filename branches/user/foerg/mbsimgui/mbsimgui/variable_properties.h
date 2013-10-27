@@ -103,6 +103,25 @@ class MatProperty : public VariableProperty {
     void toWidget(QWidget *widget);
 };
 
+class CardanProperty : public VariableProperty {
+
+  private:
+    std::vector<std::string> angles;
+  public:
+    CardanProperty();
+    ~CardanProperty();
+    virtual Property* clone() const {return new CardanProperty(*this);}
+    std::vector<std::string> getAngles() const {return angles;}
+    void setAngles(const std::vector<std::string> &x) {angles = x;}
+    std::string getValue() const {return toStr(getAngles());}
+    void setValue(const std::string &str) {setAngles(strToVec(str));}
+    int size() const {return angles.size();}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+};
+
 class PhysicalVariableProperty : public Property {
   protected:
     VariableProperty* value;

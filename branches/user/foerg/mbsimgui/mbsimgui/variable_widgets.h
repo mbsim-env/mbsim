@@ -250,16 +250,17 @@ class CardanWidget : public VariableWidget {
 
   private:
     std::vector<QLineEdit*> box;
-    bool transpose;
   public:
-    CardanWidget(bool transpose=false);
-    CardanWidget(const std::vector<QString> &x, bool transpose=false);
-    std::vector<QString> getCardan() const;
-    void setCardan(const std::vector<QString> &x);
+    CardanWidget();
+    void resize_(int size);
+    std::vector<QString> getAngles() const;
+    void setAngles(const std::vector<QString> &x);
     void setReadOnly(bool flag);
-    QString getValue() const {return toQStr(getCardan());}
-    void setValue(const QString &str) {setCardan(strToVec(str));}
+    QString getValue() const {return toQStr(getAngles());}
+    void setValue(const QString &str) {setAngles(strToVec(str));}
+    int size() const {return box.size();}
     virtual QString getType() const {return "Cardan";}
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 };
 
 class PhysicalVariableWidget : public VariableWidget {

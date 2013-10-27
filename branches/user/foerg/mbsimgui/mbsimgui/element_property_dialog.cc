@@ -148,6 +148,7 @@ FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelative
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new CardanWidget,QStringList(),1));
   orientation = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinematics", orientation);
 
