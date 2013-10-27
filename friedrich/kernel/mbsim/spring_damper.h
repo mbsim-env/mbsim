@@ -146,7 +146,7 @@ namespace MBSim {
       std::string saved_ref1, saved_ref2;
   };
 
-  class RelativeSpringDamper : public LinkMechanics {
+  class GeneralizedSpringDamper : public LinkMechanics {
     protected:
       fmatvec::Function<double(double,double)> *func;
       RigidBody *body;
@@ -155,7 +155,7 @@ namespace MBSim {
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
     public:
-      RelativeSpringDamper(const std::string &name="");
+      GeneralizedSpringDamper(const std::string &name="");
       void updateh(double, int i=0);
       void updateJacobians(double t, int j=0);
       void updateg(double);
@@ -175,7 +175,7 @@ namespace MBSim {
        * The second input parameter to that function is the relative rotational velocity gd between frame2 and frame1.
        * The return value of that function is used as the torque of the RelativeRotationalSpringDamper.
        */
-      void setFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
       /** \brief Set a projection direction for the resulting torque
        * If this function is not set, or frame is NULL, than torque calculated by setForceFunction

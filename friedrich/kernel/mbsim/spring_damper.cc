@@ -291,9 +291,9 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeSpringDamper, MBSIMNS"RelativeSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedSpringDamper, MBSIMNS"GeneralizedSpringDamper")
 
-  RelativeSpringDamper::RelativeSpringDamper(const string &name) : LinkMechanics(name), func(NULL), body(NULL)
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : LinkMechanics(name), func(NULL), body(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
@@ -304,14 +304,14 @@ namespace MBSim {
     h[1].resize(2);
   }
 
-  void RelativeSpringDamper::updatehRef(const Vec &hParent, int j) {
+  void GeneralizedSpringDamper::updatehRef(const Vec &hParent, int j) {
     Index I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
     h[j][0]>>hParent(I);
     I = Index(body->gethInd(j),body->gethInd(j)+body->gethSize(j)-1);
     h[j][1]>>hParent(I);
   } 
 
-  void RelativeSpringDamper::updateh(double t, int j) {
+  void GeneralizedSpringDamper::updateh(double t, int j) {
     la(0) = (*func)(g(0),gd(0));
     if(j==0)
       h[j][1]-=body->getJRel(j).T()*la;
@@ -325,7 +325,7 @@ namespace MBSim {
     }
   }
 
-  void RelativeSpringDamper::updateJacobians(double t, int j) {
+  void GeneralizedSpringDamper::updateJacobians(double t, int j) {
     Vec3 WrP0P1 = body->getFrameForKinematics()->getPosition()-body->getFrameOfReference()->getPosition();
     Mat3x3 tWrP0P1 = tilde(WrP0P1);
 
@@ -339,20 +339,20 @@ namespace MBSim {
     C.setGyroscopicAccelerationOfRotation(body->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
   }
 
-  void RelativeSpringDamper::updateg(double) {
+  void GeneralizedSpringDamper::updateg(double) {
 //    SqrMat       Arel = inv(frame[0]->getOrientation()) * frame[1]->getOrientation();
 //    Vec    Womega_rel = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
 
       g=body->getq();
   } 
 
-  void RelativeSpringDamper::updategd(double) {
+  void GeneralizedSpringDamper::updategd(double) {
 //    Vec Womega_rel = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
 //    gd(0)=trans(Womega_rel)*WtorqueDir;
       gd=body->getu();
   }
 
-  void RelativeSpringDamper::init(InitStage stage) {
+  void GeneralizedSpringDamper::init(InitStage stage) {
     assert(body->getRotation()!=NULL);
     if(stage==resolveXMLPath) {
       if(saved_body!="")
@@ -384,7 +384,7 @@ namespace MBSim {
       LinkMechanics::init(stage);
   }
 
-  void RelativeSpringDamper::plot(double t,double dt) {
+  void GeneralizedSpringDamper::plot(double t,double dt) {
     plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -410,11 +410,11 @@ namespace MBSim {
     }
   }
 
-  void RelativeSpringDamper::initializeUsingXML(TiXmlElement *element) {
+  void GeneralizedSpringDamper::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"generalizedForceFunction");
     Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
-    setFunction(f);
+    setGeneralizedForceFunction(f);
     e=element->FirstChildElement(MBSIMNS"rigidBody");
     saved_body=e->Attribute("ref");
 #ifdef HAVE_OPENMBVCPPINTERFACE

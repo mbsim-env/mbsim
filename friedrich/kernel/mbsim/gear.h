@@ -55,7 +55,7 @@ namespace MBSim {
       virtual void calcgSize(int j);
       virtual void calcgdSize(int j);
 
-      void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
 

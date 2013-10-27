@@ -1822,16 +1822,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RelativeSpringDamper" substitutionGroup="LinkMechanics" type="RelativeSpringDamperType">
+  <xs:element name="GeneralizedSpringDamper" substitutionGroup="LinkMechanics" type="GeneralizedSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="RelativeSpringDamperType">
+  <xs:complexType name="GeneralizedSpringDamperType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="function">
+          <xs:element name="generalizedForceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
             </xs:documentation></xs:annotation>
