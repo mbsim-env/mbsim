@@ -33,19 +33,6 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-class ChoicePropertyFactory : public PropertyFactory {
-  public:
-    ChoicePropertyFactory(PropertyFactory *factory_, const std::string xmlName_) : factory(factory_), xmlName(xmlName_) { }
-    Property* createProperty(int i=0);
-  protected:
-    PropertyFactory *factory;
-    std::string xmlName;
-};
-
-Property* ChoicePropertyFactory::createProperty(int i) {
-  return new ChoiceProperty2(factory,xmlName,1);
-}
-
 class LimitedFunctionFunctionPropertyFactory : public PropertyFactory {
   public:
     LimitedFunctionFunctionPropertyFactory(PropertyFactory *factory_, const std::string xmlName_) : factory(factory_), xmlName(xmlName_) { }
@@ -446,12 +433,14 @@ void PiecewiseDefinedFunctionProperty::toWidget(QWidget *widget) {
   contDiff.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
 }
 
-SymbolicFunctionProperty::SymbolicFunctionProperty(const string &ext_, const vector<string> &var) : ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
+SymbolicFunctionProperty::SymbolicFunctionProperty(const string &ext_, const vector<string> &var, int m) : ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
   for(int i=1; i<ext.size(); i++) {
      argname[i-1].setProperty(new TextProperty(var[i-1],""));
      argdim[i-1].setProperty(new IntegerProperty(1,""));
   }
-  f.setProperty(new OctaveExpressionProperty);
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",""));
+  f.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 TiXmlElement* SymbolicFunctionProperty::initializeUsingXML(TiXmlElement *element) {

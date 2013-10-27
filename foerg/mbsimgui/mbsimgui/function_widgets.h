@@ -161,11 +161,12 @@ class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 };
 
 class SymbolicFunctionWidget : public FunctionWidget {
+  Q_OBJECT
 
   friend class SymbolicFunctionProperty;
 
   public:
-    SymbolicFunctionWidget(const QStringList &var, int max=99);
+    SymbolicFunctionWidget(const QStringList &var, int m, int max);
     int getArg1Size() const;
     int getArg2Size() const;
     void setArg1Size(int i);
@@ -174,6 +175,9 @@ class SymbolicFunctionWidget : public FunctionWidget {
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
+
+  signals:
+    void arg1SizeChanged(int i);
 };
 
 class TabularFunctionWidget : public FunctionWidget {

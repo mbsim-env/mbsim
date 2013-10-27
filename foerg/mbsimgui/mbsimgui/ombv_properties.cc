@@ -28,7 +28,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-OMBVBodyPropertyFactory::OMBVBodyPropertyFactory(const string &ID_) : ID(ID_) {
+OMBVBodyPropertyFactory::OMBVBodyPropertyFactory(const string &ID_) : ID(ID_), count(0) {
   name.push_back(OPENMBVNS"Cube");
   name.push_back(OPENMBVNS"Cuboid");
   name.push_back(OPENMBVNS"Frustum");
@@ -40,42 +40,20 @@ OMBVBodyPropertyFactory::OMBVBodyPropertyFactory(const string &ID_) : ID(ID_) {
 
 Property* OMBVBodyPropertyFactory::createProperty(int i) {
   if(i==0)
-    return new CubeProperty("Body",ID);
+    return new CubeProperty("Body"+toStr(count++),ID);
   if(i==1)
-    return new CuboidProperty("Body",ID);
+    return new CuboidProperty("Body"+toStr(count++),ID);
   if(i==2)
-    return new FrustumProperty("Body",ID);
+    return new FrustumProperty("Body"+toStr(count++),ID);
   if(i==3)
-    return new SphereProperty("Body",ID);
+    return new SphereProperty("Body"+toStr(count++),ID);
   if(i==4)
-    return new IvBodyProperty("Body",ID);
+    return new IvBodyProperty("Body"+toStr(count++),ID);
   if(i==5)
-    return new CompoundRigidBodyProperty("Body",ID);
+    return new CompoundRigidBodyProperty("Body"+toStr(count++),ID);
   if(i==6)
-    return new InvisibleBodyProperty("Body",ID);
+    return new InvisibleBodyProperty("Body"+toStr(count++),ID);
 }
-
-//class OmbvBodyPropertyFactory : public PropertyFactory {
-//  public:
-//    OmbvBodyPropertyFactory() : i(0) { }
-//    Property* createProperty(int i=0);
-//  private:
-//    int i;
-//};
-//
-//Property* OmbvBodyPropertyFactory::createProperty(int i) {
-//  string ID("10000");
-//  vector<Property*> property;
-//  property.push_back(new CubeProperty("Body"+toStr(i),ID));
-//  property.push_back(new CuboidProperty("Body"+toStr(i),ID));
-//  property.push_back(new FrustumProperty("Body"+toStr(i),ID));
-//  property.push_back(new SphereProperty("Body"+toStr(i),ID));
-//  property.push_back(new IvBodyProperty("Body"+toStr(i),ID));
-//  property.push_back(new InvisibleBodyProperty("Body"+toStr(i),ID));
-//
-//  i++;
-//  return new ChoiceProperty("",property,1,OPENMBVNS);
-//}
 
 void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
   if(!ID.empty()) {
@@ -567,7 +545,9 @@ void IvBodyProperty::toWidget(QWidget *widget) {
   boundaryEdges.toWidget(static_cast<IvBodyWidget*>(widget)->boundaryEdges);
 }
 
-CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVBodyProperty(name,ID), bodies(0,"") {
+CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  bodies.setProperty(new ListProperty(new ChoicePropertyFactory(new OMBVBodyPropertyFactory(ID),"",1),"",0,1));
+  //bodies.setXMLName(MBSIMNS"bodies");
 }
 
 TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *element) {

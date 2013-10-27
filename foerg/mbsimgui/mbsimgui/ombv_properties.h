@@ -34,6 +34,7 @@ class OMBVBodyPropertyFactory: public PropertyFactory {
   protected:
     std::vector<std::string> name;
     std::string ID;
+    int count;
 };
 
 class OMBVObjectProperty : public Property {
@@ -205,7 +206,7 @@ class CompoundRigidBodyProperty : public OMBVBodyProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ListProperty bodies;
+    ExtProperty bodies;
 };
 
 class OMBVBodySelectionProperty : public Property {

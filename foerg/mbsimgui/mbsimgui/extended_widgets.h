@@ -82,32 +82,6 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
     void resize_();
 };
 
-//class ChoiceWidget : public Widget {
-//  Q_OBJECT
-//
-//  friend class ChoiceProperty;
-//
-//  public:
-//    ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
-//
-//    void resize_(int m, int n);
-//    QWidget* getWidget(int i) const;
-//    QWidget* getWidget() const;
-//    QString getName(int i) const;
-//    QString getName() const;
-//    void updateWidget();
-//  protected slots:
-//    void defineWidget(int);
-//
-//  protected:
-//    QComboBox *comboBox;
-//    QStackedWidget *stackedWidget;
-//
-//  signals:
-//    void resize_();
-//    void widgetChanged();
-//};
-
 class ChoiceWidget2 : public Widget {
   Q_OBJECT
 
@@ -165,6 +139,7 @@ class ListWidget : public Widget {
 
     void resize_(int m, int n);
     int getSize() const;
+    void setSize(int m);
     QWidget* getWidget(int i) const;
 
   protected:
@@ -182,6 +157,14 @@ class ListWidget : public Widget {
     void currentIndexChanged(int idx);
   signals:
     void resize_();
+};
+
+class ChoiceWidgetFactory : public WidgetFactory {
+  public:
+    ChoiceWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
+    Widget* createWidget(int i=0);
+  protected:
+    WidgetFactory *factory;
 };
 
 #endif

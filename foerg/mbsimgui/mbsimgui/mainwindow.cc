@@ -728,6 +728,7 @@ void MainWindow::loadParameterList(const QString &file) {
       while(E) {
         Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
         parameter->initializeUsingXML(E);
+        cout << parameter->getValue() << endl;
         model->createParameterItem(parameter);
         E=E->NextSiblingElement();
       }

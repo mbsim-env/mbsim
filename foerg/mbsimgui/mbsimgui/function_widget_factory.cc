@@ -44,11 +44,11 @@ QWidget* FunctionWidgetFactory2::createWidget(int i) {
   if(i==6)
     return new SummationFunctionWidget;
   if(i==7)
-    return new VectorValuedFunctionWidget;
+    return new VectorValuedFunctionWidget(1,true);
   if(i==8)
     return new PiecewiseDefinedFunctionWidget;
   if(i==9)
-    return new SymbolicFunctionWidget(QStringList("t"));
+    return new SymbolicFunctionWidget(QStringList("t"),1,1);
   if(i==10)
     return new TabularFunctionWidget(1);
 }
@@ -89,7 +89,7 @@ QWidget* TranslationWidgetFactory2::createWidget(int i) {
   if(i==8)
     return new LinearTranslationWidget(3,1);
   if(i==9)
-    return new SymbolicFunctionWidget(QStringList("q"));
+    return new SymbolicFunctionWidget(QStringList("q"),3,1);
   if(i==10)
     return new NestedFunctionWidget(new TranslationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
 }
@@ -112,11 +112,11 @@ vector<QString> TranslationWidgetFactory2::getNames() {
 
 QWidget* TranslationWidgetFactory3::createWidget(int i) {
   if(i==0)
-    return new VectorValuedFunctionWidget;
+    return new VectorValuedFunctionWidget(1,true);
   if(i==1)
     return new NestedFunctionWidget(new TranslationWidgetFactory2, new FunctionWidgetFactory2);
   if(i==2)
-    return new SymbolicFunctionWidget(QStringList("t"));
+    return new SymbolicFunctionWidget(QStringList("t"),3,1);
   if(i==3)
     return new TabularFunctionWidget(1);
   if(i==4)
@@ -160,7 +160,7 @@ QWidget* RotationWidgetFactory2::createWidget(int i) {
   if(i==8)
     return new NestedFunctionWidget(new RotationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
   if(i==9)
-    return new SymbolicFunctionWidget(QStringList("q"));
+    return new SymbolicFunctionWidget(QStringList("q"),1,1);
 }
 
 vector<QString> RotationWidgetFactory2::getNames() {
@@ -182,7 +182,7 @@ QWidget* RotationWidgetFactory3::createWidget(int i) {
   if(i==0)
     return new NestedFunctionWidget(new RotationWidgetFactory2, new FunctionWidgetFactory2);
   if(i==1)
-    return new SymbolicFunctionWidget(QStringList("t"));
+    return new SymbolicFunctionWidget(QStringList("t"),1,1);
 }
 
 vector<QString> RotationWidgetFactory3::getNames() {
@@ -193,7 +193,7 @@ vector<QString> RotationWidgetFactory3::getNames() {
 }
 
 QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
-  return new SymbolicFunctionWidget(var);
+  return new SymbolicFunctionWidget(var,1,1);
 }
 
 vector<QString> SymbolicFunctionWidgetFactory2::getNames() {
@@ -289,6 +289,6 @@ QWidget* SpringDamperWidgetFactory::createWidget(int i) {
   if(i==1) {
     QStringList var;
     var << "g" << "gd";
-    return new SymbolicFunctionWidget(var,1);
+    return new SymbolicFunctionWidget(var,1,1);
   }
 }

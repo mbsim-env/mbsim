@@ -112,9 +112,9 @@ TiXmlElement* DirectionalSpringDamper::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-RelativeSpringDamper::RelativeSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
 
-  function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIMNS"function"));
+  function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIMNS"generalizedForceFunction"));
 
   body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"rigidBody"));
 
@@ -128,14 +128,14 @@ RelativeSpringDamper::RelativeSpringDamper(const string &str, Element *parent) :
   momentArrow.setXMLName(MBSIMNS"openMBVMomentArrow",false);
 }
 
-RelativeSpringDamper::~RelativeSpringDamper() {
+GeneralizedSpringDamper::~GeneralizedSpringDamper() {
 }
 
-void RelativeSpringDamper::initialize() {
+void GeneralizedSpringDamper::initialize() {
   Link::initialize();
 }
 
-void RelativeSpringDamper::initializeUsingXML(TiXmlElement *element) {
+void GeneralizedSpringDamper::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   Link::initializeUsingXML(element);
   function.initializeUsingXML(element);
@@ -145,7 +145,7 @@ void RelativeSpringDamper::initializeUsingXML(TiXmlElement *element) {
   momentArrow.initializeUsingXML(element);
 }
 
-TiXmlElement* RelativeSpringDamper::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* GeneralizedSpringDamper::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   function.writeXMLFile(ele0);
   body.writeXMLFile(ele0);

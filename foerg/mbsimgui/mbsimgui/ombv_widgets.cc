@@ -285,7 +285,7 @@ IvBodyWidget::IvBodyWidget(const QString &name) : OMBVBodyWidget(name) {
 }
 
 CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVBodyWidget(name) {
-  bodies = new ListWidget(0,"Body");
+  bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVBodyWidgetFactory),"Body",1,1));
   layout->addWidget(bodies);
 }
 
