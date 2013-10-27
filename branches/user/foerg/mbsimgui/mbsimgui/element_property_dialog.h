@@ -47,7 +47,7 @@ class Link;
 class KineticExcitation;
 class SpringDamper;
 class DirectionalSpringDamper;
-class RelativeSpringDamper;
+class GeneralizedSpringDamper;
 class Joint;
 class Contact;
 class Actuator;
@@ -344,10 +344,10 @@ class DirectionalSpringDamperPropertyDialog : public LinkPropertyDialog {
     ExtWidget *forceDirection, *forceFunction, *connections, *coilSpring, *forceArrow;
 };
 
-class RelativeSpringDamperPropertyDialog : public LinkPropertyDialog {
+class GeneralizedSpringDamperPropertyDialog : public LinkPropertyDialog {
 
   public:
-    RelativeSpringDamperPropertyDialog(RelativeSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:

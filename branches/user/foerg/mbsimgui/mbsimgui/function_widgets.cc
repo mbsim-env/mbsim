@@ -30,18 +30,6 @@
 
 using namespace std;
 
-class ChoiceWidgetFactory : public WidgetFactory {
-  public:
-    ChoiceWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
-    Widget* createWidget(int i=0);
-  protected:
-    WidgetFactory *factory;
-};
-
-Widget* ChoiceWidgetFactory::createWidget(int i) {
-  return new ChoiceWidget2(factory);
-}
-
 class LimitedFunctionWidgetFactory : public WidgetFactory {
   public:
    LimitedFunctionWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
@@ -260,7 +248,7 @@ VectorValuedFunctionWidget::VectorValuedFunctionWidget(int m, bool fixedSize) {
 }
 
 void VectorValuedFunctionWidget::resize_(int m, int n) {
-  functions->resize_(m,n);
+  static_cast<ListWidget*>(functions->getWidget())->setSize(m);
 }
 
 //NestedFunctionWidget::NestedFunctionWidget(const QString &ext_, const vector<QWidget*> &widget_, const vector<QString> &name_) : ext(ext_) {
@@ -333,7 +321,7 @@ void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
   functions->resize_(m,n);
 }
 
-SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int max) {
+SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -347,7 +335,9 @@ SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int max) 
       layout->addWidget(argdim[i],i,1);
     }
   }
-  f = new ExtWidget("Function",new OctaveExpressionWidget);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),1));
+  f = new ExtWidget("Function",new ExtPhysicalVarWidget(input));
   layout->addWidget(f,var.size(),0,1,2);
 }
 
@@ -364,8 +354,7 @@ void SymbolicFunctionWidget::setArg1Size(int i) {
 }
 
 void SymbolicFunctionWidget::resize_(int m, int n) {
-  for(int i=0; i<argdim.size(); i++)
-    static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(m);
+  static_cast<VecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->resize_(m);
 }
 
 TabularFunctionWidget::TabularFunctionWidget(int n) {

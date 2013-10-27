@@ -68,30 +68,6 @@ class ExtProperty : public Property {
     bool active, alwaysWriteXMLName;
 };
 
-//class ChoiceProperty : public Property {
-//
-//  public:
-//    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0, const std::string &xmlBase_=MBSIMNS) : property(property_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_) {}
-//    ChoiceProperty(const ChoiceProperty &p);
-//    ~ChoiceProperty();
-//    ChoiceProperty& operator=(const ChoiceProperty &p);
-//    virtual Property* clone() const {return new ChoiceProperty(*this);}
-//
-//    void initialize();
-//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-//    void fromWidget(QWidget *widget);
-//    void toWidget(QWidget *widget);
-//    Property* getProperty(int i) const {return property[i];}
-//    Property* getProperty() const {return property[index];}
-//    void setProperty(const std::vector<Property*> &property_) {property = property_;}
-//
-//  protected:
-//    std::vector<Property*> property;
-//    int index, mode;
-//    std::string xmlName, xmlBase;
-//};
-
 class ChoiceProperty2 : public Property {
 
   public:
@@ -142,7 +118,7 @@ class ContainerProperty : public Property {
 
 class ListProperty : public Property {
   public:
-    ListProperty(PropertyFactory *factory, const std::string &xmlName="", int m=0);
+    ListProperty(PropertyFactory *factory, const std::string &xmlName="", int m=0, int mode=0);
     ~ListProperty() { delete factory; }
     virtual Property* clone() const {return new ListProperty(*this);}
     int getSize() const { return property.size(); }
@@ -156,6 +132,17 @@ class ListProperty : public Property {
     std::vector<Property*> property;
     PropertyFactory *factory;
     std::string xmlName;
+    int mode;
+};
+
+class ChoicePropertyFactory : public PropertyFactory {
+  public:
+    ChoicePropertyFactory(PropertyFactory *factory_, const std::string xmlName_="", int mode_=1) : factory(factory_), xmlName(xmlName_), mode(mode_) { }
+    Property* createProperty(int i=0);
+  protected:
+    PropertyFactory *factory;
+    std::string xmlName;
+    int mode;
 };
 
 #endif

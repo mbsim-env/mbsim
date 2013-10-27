@@ -172,7 +172,7 @@ class PiecewiseDefinedFunctionProperty : public FunctionProperty {
 
 class SymbolicFunctionProperty : public FunctionProperty {
   public:
-    SymbolicFunctionProperty(const std::string &ext, const std::vector<std::string> &var);
+    SymbolicFunctionProperty(const std::string &ext, const std::vector<std::string> &var, int m);
     virtual Property* clone() const {return new SymbolicFunctionProperty(*this);}
     int getArg1Size() const;
     int getArg2Size() const;

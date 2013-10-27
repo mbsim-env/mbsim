@@ -164,7 +164,7 @@ class CompoundRigidBodyWidget : public OMBVBodyWidget {
   public:
     CompoundRigidBodyWidget(const QString &name="NOTSET");
   protected:
-    ListWidget *bodies; 
+    ExtWidget *bodies; 
 };
 
 class OMBVBodySelectionWidget : public Widget {

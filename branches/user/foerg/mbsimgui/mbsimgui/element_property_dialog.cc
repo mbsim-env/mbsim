@@ -879,13 +879,14 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
 
   momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",momentArrow);
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void KineticExcitationPropertyDialog::resizeVariables() {
-//  cout << "resizeVariables" << endl;
-//  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
-//  int size = refBody?refBody->getqRelSize():0;
-//  ((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
+  int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
+  cout << size << endl;
+  static_cast<ChoiceWidget2*>(forceFunction->getWidget())->resize_(size,1);
 }
 
 void KineticExcitationPropertyDialog::toWidget(Element *element) {
@@ -985,11 +986,11 @@ void DirectionalSpringDamperPropertyDialog::fromWidget(Element *element) {
   static_cast<DirectionalSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
 }
 
-RelativeSpringDamperPropertyDialog::RelativeSpringDamperPropertyDialog(RelativeSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
-  function = new ExtWidget("Function",new ChoiceWidget2(new SpringDamperWidgetFactory));
+  function = new ExtWidget("GeneralizedForceFunction",new ChoiceWidget2(new SpringDamperWidgetFactory));
   addToTab("Kinetics", function);
 
   body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(springDamper,0));
@@ -1005,22 +1006,22 @@ RelativeSpringDamperPropertyDialog::RelativeSpringDamperPropertyDialog(RelativeS
   addToTab("Visualisation", momentArrow);
 }
 
-void RelativeSpringDamperPropertyDialog::toWidget(Element *element) {
+void GeneralizedSpringDamperPropertyDialog::toWidget(Element *element) {
   LinkPropertyDialog::toWidget(element);
-  static_cast<RelativeSpringDamper*>(element)->function.toWidget(function);
-  static_cast<RelativeSpringDamper*>(element)->body.toWidget(body);
-  static_cast<RelativeSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
-  static_cast<RelativeSpringDamper*>(element)->forceArrow.toWidget(forceArrow);
-  static_cast<RelativeSpringDamper*>(element)->momentArrow.toWidget(momentArrow);
+  static_cast<GeneralizedSpringDamper*>(element)->function.toWidget(function);
+  static_cast<GeneralizedSpringDamper*>(element)->body.toWidget(body);
+  static_cast<GeneralizedSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
+  static_cast<GeneralizedSpringDamper*>(element)->forceArrow.toWidget(forceArrow);
+  static_cast<GeneralizedSpringDamper*>(element)->momentArrow.toWidget(momentArrow);
 }
 
-void RelativeSpringDamperPropertyDialog::fromWidget(Element *element) {
+void GeneralizedSpringDamperPropertyDialog::fromWidget(Element *element) {
   LinkPropertyDialog::fromWidget(element);
-  static_cast<RelativeSpringDamper*>(element)->function.fromWidget(function);
-  static_cast<RelativeSpringDamper*>(element)->body.fromWidget(body);
-  static_cast<RelativeSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
-  static_cast<RelativeSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
-  static_cast<RelativeSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
+  static_cast<GeneralizedSpringDamper*>(element)->function.fromWidget(function);
+  static_cast<GeneralizedSpringDamper*>(element)->body.fromWidget(body);
+  static_cast<GeneralizedSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
+  static_cast<GeneralizedSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
+  static_cast<GeneralizedSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
 }
 
 JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
