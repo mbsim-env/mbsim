@@ -313,14 +313,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
 
   // frames
   TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-  while(E && E->ValueStr()==MBSIMNS"frame") {
-    TiXmlElement *ec=E->FirstChildElement();
-    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"),this);
-    addFrame(f);
-    f->initializeUsingXML(ec);
-    f->initializeUsingXML2(E);
-    E=E->NextSiblingElement();
-  }
   Frame *f;
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
@@ -351,20 +343,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   // contours
   E=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
   Contour *c;
-  while(E && E->ValueStr()==MBSIMNS"contour") {
-    TiXmlElement *ec=E->FirstChildElement();
-    c=ObjectFactory::getInstance()->createContour(ec,this);
-    if(c) {
-      addContour(c);
-      c->initializeUsingXML(ec);
-    }
-    FixedRelativeFrame *f=new FixedRelativeFrame("ContourFrame"+toStr(int(contour.size())),this);
-    addFrame(f);
-    f->initializeUsingXML(ec);
-    f->initializeUsingXML2(E);
-    c->setSavedFrameOfReference(string("../Frame[")+f->getName()+"]");
-    E=E->NextSiblingElement();
-  }
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
       TiXmlElement *EE = 0;

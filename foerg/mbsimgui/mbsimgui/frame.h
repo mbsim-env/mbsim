@@ -54,7 +54,6 @@ class FixedRelativeFrame : public Frame {
     virtual Element* clone() const {return new FixedRelativeFrame(*this);}
     std::string getType() const { return "FixedRelativeFrame"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
