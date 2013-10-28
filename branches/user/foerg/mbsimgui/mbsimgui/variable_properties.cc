@@ -325,16 +325,15 @@ void VecFromFileProperty::toWidget(QWidget *widget) {
 }
 
 string MatFromFileProperty::getValue() const {
-  return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + file + "')"));
+  return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("'" + file + "'"));
 }
 
-TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = element->FirstChildText();
-  if(!text)
+TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *element=parent->FirstChildElement();
+  if(!element || element->ValueStr() != (PVNS"fromFile"))
     return 0;
-  string str = text->Value();
-  if(str.substr(0,8)!="ret=load")
-    return 0;
+
+  string str = element->Attribute("href");
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   file = str.substr(pos1+1,pos2-pos1-1).c_str();
@@ -343,10 +342,28 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   return element;
 }
 
+// TiXmlText* text = element->FirstChildText();
+//  if(!text)
+//    return 0;
+//  string str = text->Value();
+//  if(str.substr(0,8)!="ret=load")
+//    return 0;
+//  int pos1 = str.find_first_of('\''); 
+//  int pos2 = str.find_last_of('\''); 
+//  file = str.substr(pos1+1,pos2-pos1-1).c_str();
+//  QFileInfo fileInfo(QString::fromStdString(file));
+//  file = fileInfo.canonicalFilePath().toStdString();
+//  return element;
+//}
+
+
 TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
-  TiXmlText *text = new TiXmlText(filePath);
-  parent->LinkEndChild(text);
+  TiXmlElement *ele = new TiXmlElement(PVNS"fromFile");
+  string filePath = "'"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"'";
+//  TiXmlText *text = new TiXmlText(filePath);
+//  ele->LinkEndChild(text);
+  ele->SetAttribute("href",filePath);
+  parent->LinkEndChild(ele);
   return 0;
 }
 
@@ -358,4 +375,61 @@ void MatFromFileProperty::toWidget(QWidget *widget) {
   static_cast<MatFromFileWidget*>(widget)->blockSignals(true);
   static_cast<MatFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
   static_cast<MatFromFileWidget*>(widget)->blockSignals(false);
+}
+
+ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const string &xmlName_) : value(value_), name(2), unit(2,"m"), xmlName(xmlName_) {
+}
+
+ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const string &xmlName_, const vector<string> &unit_) : value(value_), name(2), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* ScalarPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new ScalarProperty(value), unit[0], xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
+}
+
+VecPropertyFactory::VecPropertyFactory(int m_, const string &xmlName_) : m(m_), name(2), unit(2,"m"), xmlName(xmlName_) {
+}
+
+VecPropertyFactory::VecPropertyFactory(int m_, const string &xmlName_, const vector<string> &unit_) : m(m_), name(2), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* VecPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new VecProperty(m), unit[0], xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
+}
+
+RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
+  unit[1] = "";
+}
+
+RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_, const vector<string> &unit_) : name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* RotMatPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new CardanProperty,unit[1],xmlName);
+  if(i==2)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+}
+
+MatPropertyFactory::MatPropertyFactory(const string &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
+}
+
+MatPropertyFactory::MatPropertyFactory(const vector<vector<string> > &A_, const string &xmlName_, const vector<string> &unit_) : A(A_), name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* MatPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new MatProperty(A),unit[0],xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new MatFromFileProperty,unit[1],xmlName);
+  if(i==2)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
 }

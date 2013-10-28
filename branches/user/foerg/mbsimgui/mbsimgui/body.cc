@@ -27,13 +27,9 @@ using namespace std;
 using namespace MBXMLUtils;
 
 Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false), u0(0,false), R(0,false) {
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
-  q0.setProperty(new ExtPhysicalVarProperty(input));
+  q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedPosition",vector<string>(2,"")),"",4));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
-  u0.setProperty(new ExtPhysicalVarProperty(input));
+  u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedVelocity",vector<string>(2,"")),"",4));
 
   R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
 }

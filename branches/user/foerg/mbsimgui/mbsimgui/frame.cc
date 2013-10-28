@@ -91,14 +91,9 @@ Element *Frame::getByPathSearch(string path) {
 
 FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIMNS"relativePosition"));
-  position.setProperty(new ExtPhysicalVarProperty(input));
+  position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMNS"relativePosition"),"",4));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"relativeOrientation"));
-  input.push_back(PhysicalVariableProperty(new CardanProperty,"",MBSIMNS"relativeOrientation"));
-  orientation.setProperty(new ExtPhysicalVarProperty(input));
+  orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIMNS"relativeOrientation"),"",4));
 
   refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
 }
@@ -126,21 +121,3 @@ TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
   orientation.writeXMLFile(ele0);
   return ele0;
 }
-
-void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
-  refFrame.initializeUsingXML(element);
-  string ref = ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->getFrame();
-  if(ref[0]=='F')
-    ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->setFrame(string("../")+ref);
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"position");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"position");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"orientation");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"orientation");
-  position.initializeUsingXML(element);
-  orientation.initializeUsingXML(element);
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"relativePosition");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"relativePosition");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"relativeOrientation");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"relativeOrientation");
-}
-

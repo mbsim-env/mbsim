@@ -177,5 +177,60 @@ class MatFromFileProperty : public VariableProperty {
     std::string file;
 };
 
+class ScalarPropertyFactory: public PropertyFactory {
+  public:
+    ScalarPropertyFactory(const std::string &value, const std::string &xmlName);
+    ScalarPropertyFactory(const std::string &value, const std::string &xmlName, const std::vector<std::string> &unit);
+    Property* createProperty(int i=0);
+    std::string getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::string value;
+    std::vector<std::string> name;
+    std::string xmlName;
+    std::vector<std::string> unit;
+};
+
+class VecPropertyFactory: public PropertyFactory {
+  public:
+    VecPropertyFactory(int m, const std::string &xmlName);
+    VecPropertyFactory(int m, const std::string &xmlName, const std::vector<std::string> &unit);
+    Property* createProperty(int i=0);
+    std::string getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    int m;
+    std::vector<std::string> name;
+    std::string xmlName;
+    std::vector<std::string> unit;
+};
+
+class RotMatPropertyFactory: public PropertyFactory {
+  public:
+    RotMatPropertyFactory(const std::string &xmlName);
+    RotMatPropertyFactory(const std::string &xmlName, const std::vector<std::string> &unit);
+    Property* createProperty(int i=0);
+    std::string getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::string> name;
+    std::string xmlName;
+    std::vector<std::string> unit;
+};
+
+class MatPropertyFactory: public PropertyFactory {
+  public:
+    MatPropertyFactory(const std::string &xmlName);
+    MatPropertyFactory(const std::vector<std::vector<std::string> > &A, const std::string &xmlName, const std::vector<std::string> &unit);
+    Property* createProperty(int i=0);
+    std::string getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::vector<std::string> > A;
+    std::vector<std::string> name;
+    std::string xmlName;
+    std::vector<std::string> unit;
+};
+
 #endif
 

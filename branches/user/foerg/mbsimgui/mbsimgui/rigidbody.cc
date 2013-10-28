@@ -39,13 +39,9 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForKinematics"));
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));
-  mass.setProperty(new ExtPhysicalVarProperty(input));
+  mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMNS"mass",vector<string>(2,"kg")),"",4));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
-  inertia.setProperty(new ExtPhysicalVarProperty(input));
+  inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIMNS"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
 
   frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForInertiaTensor"));
 
@@ -55,7 +51,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4,"",3)); 
 
-  input.clear();
+  vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependentRotation"));
   translationDependentRotation.setProperty(new ExtPhysicalVarProperty(input)); 
   input.clear();
@@ -110,14 +106,6 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   // frames
   e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-  while(e && e->ValueStr()==MBSIMNS"frame") {
-    TiXmlElement *ec=e->FirstChildElement();
-    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"),this);
-    addFrame(f);
-    f->initializeUsingXML(ec);
-    f->initializeUsingXML2(e);
-    e=e->NextSiblingElement();
-  }
   Frame *f;
   while(e) {
     if(e->ValueStr()==PVNS"embed") {
@@ -148,19 +136,6 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   // contours
   e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
   Contour *c;
-  while(e && e->ValueStr()==MBSIMNS"contour") {
-    TiXmlElement *ec=e->FirstChildElement();
-    c=ObjectFactory::getInstance()->createContour(ec,this);
-    if(c) {
-      addContour(c);
-      c->initializeUsingXML(ec);
-    }
-    FixedRelativeFrame *f=new FixedRelativeFrame("ContourFrame"+toStr(int(contour.size())),this);
-    addFrame(f);
-    f->initializeUsingXML2(e);
-    c->setSavedFrameOfReference(string("../Frame[")+f->getName()+"]");
-    e=e->NextSiblingElement();
-  }
   while(e) {
     if(e->ValueStr()==PVNS"embed") {
       TiXmlElement *ee = 0;

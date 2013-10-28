@@ -141,15 +141,10 @@ void FramePropertyDialog::fromWidget(Element *element) {
 FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
   addTab("Kinematics",1);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(3), lengthUnits(), 4));
-  position = new ExtWidget("Relative position", new ExtPhysicalVarWidget(input),true);
+  position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
   addToTab("Kinematics", position);
 
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
-  input.push_back(new PhysicalVariableWidget(new CardanWidget,QStringList(),1));
-  orientation = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
+  orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
   addToTab("Kinematics", orientation);
 
   refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true);
@@ -335,18 +330,10 @@ BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFl
   addTab("Kinematics");
   addTab("Initial conditions");
 
-  vector<PhysicalVariableWidget*> input;
-  q0_ = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
-  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-  q0 = new ExtWidget("Initial generalized position",var,true);
+  q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(2,QStringList()))),true);
   addToTab("Initial conditions", q0);
 
-  input.clear();
-  u0_ = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(u0_,QStringList(),1));
-  var = new ExtPhysicalVarWidget(input);  
-  u0 = new ExtWidget("Initial generalized velocity",var,true);
+  u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(2,QStringList()))),true);
   addToTab("Initial conditions", u0);
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -376,14 +363,10 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",K);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),massUnits(),2));
-  mass = new ExtWidget("Mass",new ExtPhysicalVarWidget(input));
+  mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()))));
   addToTab("General",mass);
 
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new SymMatWidget(getEye<QString>(3,3,"0.01","0")),inertiaUnits(),2));
-  inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
+  inertia = new ExtWidget("Mass",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2))));
   addToTab("General",inertia);
 
   frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
@@ -403,7 +386,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
 //  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
 //  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true); 
   addToTab("Kinematics", translationDependentRotation);
@@ -481,14 +464,14 @@ int RigidBodyPropertyDialog::getuRelSize() const {
 
 void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
   int size =  body->isConstrained() ? 0 : getqRelSize();
-  if(q0_ && q0_->size() != size)
-    q0_->resize_(size);
+  ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(q0->getWidget());
+  choice->resize_(size,1);
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
   int size =  body->isConstrained() ? 0 : getuRelSize();
-  if(u0_ && u0_->size() != size)
-    u0_->resize_(size);
+  ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(u0->getWidget());
+  choice->resize_(size,1);
 }
 
 ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {

@@ -191,18 +191,20 @@ VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(tran
 }
 
 void VecWidget::resize_(int size) {
-  for(unsigned int i=0; i<box.size(); i++) {
-    layout()->removeWidget(box[i]);
-    delete box[i];
-  }
-  box.resize(size);
-  for(int i=0; i<size; i++) {
-    box[i] = new QLineEdit(this);
-    box[i]->setText("0");
-    if(transpose) 
-      static_cast<QGridLayout*>(layout())->addWidget(box[i], 0, i);
-    else
-      static_cast<QGridLayout*>(layout())->addWidget(box[i], i, 0);
+  if(box.size()!=size) {
+    for(unsigned int i=0; i<box.size(); i++) {
+      layout()->removeWidget(box[i]);
+      delete box[i];
+    }
+    box.resize(size);
+    for(int i=0; i<size; i++) {
+      box[i] = new QLineEdit(this);
+      box[i]->setText("0");
+      if(transpose) 
+        static_cast<QGridLayout*>(layout())->addWidget(box[i], 0, i);
+      else
+        static_cast<QGridLayout*>(layout())->addWidget(box[i], i, 0);
+    }
   }
 }
 
@@ -599,5 +601,90 @@ void MatFromFileWidget::selectFile() {
 }
 
 QString MatFromFileWidget::getValue() const {
-  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
+  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("'" + getFile().toStdString() + "'")));
+}
+
+ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
+  name[0] = "Scalar";
+  name[1] = "Editor";
+}
+
+ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_) : value(value_), name(2), unit(unit_), defaultUnit(2,0) {
+  name[0] = "Scalar";
+  name[1] = "Editor";
+}
+
+ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+}
+
+QWidget* ScalarWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
+  if(i==1)
+    return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+}
+
+VecWidgetFactory::VecWidgetFactory(int m_) : m(m_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
+  name[0] = "Vector";
+  name[1] = "Editor";
+}
+
+VecWidgetFactory::VecWidgetFactory(int m_, const vector<QStringList> &unit_) : m(m_), name(2), unit(unit_), defaultUnit(2,0) {
+  name[0] = "Vector";
+  name[1] = "Editor";
+}
+
+VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+}
+
+QWidget* VecWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new PhysicalVariableWidget(new VecWidget(m), unit[0], defaultUnit[0]);
+  if(i==1)
+    return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+}
+
+RotMatWidgetFactory::RotMatWidgetFactory() : name(3), unit(3), defaultUnit(3,1) {
+  name[0] = "Matrix";
+  name[1] = "Cardan";
+  name[2] = "Editor";
+  unit[0] = noUnitUnits();
+  unit[1] = QStringList();
+  unit[2] = noUnitUnits();
+}
+
+RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+}
+
+QWidget* RotMatWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+  if(i==1)
+    return new PhysicalVariableWidget(new CardanWidget,unit[1],defaultUnit[1]);
+  if(i==2)
+    return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
+}
+
+SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+  name[0] = "Matrix";
+  name[1] = "File";
+  name[2] = "Editor";
+}
+
+SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+  name[0] = "Matrix";
+  name[1] = "File";
+  name[2] = "Editor";
+}
+
+SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+}
+
+QWidget* SymMatWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0]);
+  if(i==1)
+    return new PhysicalVariableWidget(new MatFromFileWidget, unit[1], defaultUnit[1]);
+  if(i==2)
+    return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
 }
