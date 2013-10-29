@@ -39,7 +39,7 @@ class Parameter : public TreeItemData {
   friend class ParameterPropertyDialog;
   public:
     Parameter(const std::string &name);
-    virtual ~Parameter();
+    virtual ~Parameter() {}
     virtual std::string getValue() const {return valuestr;}
     void setValue(const std::string &value) {valuestr = value;}
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -58,7 +58,7 @@ class StringParameter : public Parameter {
   friend class StringParameterPropertyDialog;
   public:
     StringParameter(const std::string &name);
-    virtual ~StringParameter();
+    virtual ~StringParameter() {}
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "stringParameter"; }
@@ -69,7 +69,7 @@ class ScalarParameter : public Parameter {
   friend class ScalarParameterPropertyDialog;
   public:
     ScalarParameter(const std::string &name);
-    virtual ~ScalarParameter();
+    virtual ~ScalarParameter() {}
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "scalarParameter"; }
@@ -80,7 +80,7 @@ class VectorParameter : public Parameter {
   friend class VectorParameterPropertyDialog;
   public:
     VectorParameter(const std::string &name);
-    virtual ~VectorParameter();
+    virtual ~VectorParameter() {}
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "vectorParameter"; }
@@ -91,7 +91,7 @@ class MatrixParameter : public Parameter {
   friend class MatrixParameterPropertyDialog;
   public:
     MatrixParameter(const std::string &name);
-    virtual ~MatrixParameter();
+    virtual ~MatrixParameter() {}
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "matrixParameter"; }
@@ -101,16 +101,12 @@ class MatrixParameter : public Parameter {
 class ParameterList {
   public:
     bool readXMLFile(const std::string &filename);
-    //virtual void writeXMLFile(const std::string &name);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) const;
     int getSize() const {return name.size();}
-    void addParameter(const std::string &name_, const std::string &value_) {name.push_back(name_); value.push_back(value_);}
+    void addParameter(const std::string &name, const std::string &value, const std::string &type);
     void addParameterList(const ParameterList &list); 
-    const std::string& getParameterName(int i) const {return name[i];}
-    const std::string& getParameterValue(int i) const {return value[i];}
-    //void printList() const;
-    //void clear() {name.clear(); value.clear();}
-      private:
-    std::vector<std::string> name, value;
+  private:
+    std::vector<std::string> name, value, type;
 };
 
 #endif

@@ -29,9 +29,6 @@ Parameter::Parameter(const string &name_) {
   name.setProperty(new TextProperty(name_,""));
 }
 
-Parameter::~Parameter() {
-}
-
   //return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
 
 void Parameter::initializeUsingXML(TiXmlElement *element) {
@@ -48,9 +45,6 @@ StringParameter::StringParameter(const string &name) : Parameter(name) {
 
   value.setProperty(new TextProperty("0","",true));
   setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
-}
-
-StringParameter::~StringParameter() {
 }
 
 void StringParameter::initializeUsingXML(TiXmlElement *element) {
@@ -75,9 +69,6 @@ ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
   setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
-ScalarParameter::~ScalarParameter() {
-}
-
 void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
   Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
@@ -98,9 +89,6 @@ VectorParameter::VectorParameter(const string &name) : Parameter(name) {
   input.push_back(PhysicalVariableProperty(new VecProperty(3),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
   setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
-}
-
-VectorParameter::~VectorParameter() {
 }
 
 void VectorParameter::initializeUsingXML(TiXmlElement *element) {
@@ -125,9 +113,6 @@ MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
   setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
-MatrixParameter::~MatrixParameter() {
-}
-
 void MatrixParameter::initializeUsingXML(TiXmlElement *element) {
   Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
@@ -142,9 +127,15 @@ TiXmlElement* MatrixParameter::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+void ParameterList::addParameter(const string &name_, const string &value_, const string &type_) {
+  name.push_back(name_); 
+  value.push_back(value_);
+  type.push_back(type_);
+}
+
 void ParameterList::addParameterList(const ParameterList &list) {
   for(int i=0; i<list.getSize(); i++)
-    addParameter(list.getParameterName(i),list.getParameterValue(i));
+    addParameter(list.name[i],list.value[i],list.type[i]);
 }
 
 bool ParameterList::readXMLFile(const string &filename) {
@@ -162,11 +153,21 @@ bool ParameterList::readXMLFile(const string &filename) {
     while(E) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
       parameter->initializeUsingXML(E);
-      addParameter(parameter->getName(),parameter->getValue());
+      addParameter(parameter->getName(),parameter->getValue(),parameter->getType());
       delete parameter;
       E=E->NextSiblingElement();
     }
     return true;
   }
   return false;
+}
+
+TiXmlElement* ParameterList::writeXMLFile(TiXmlNode *parent) const {
+  for(int i=0; i<getSize(); i++) {
+    TiXmlElement *p=new TiXmlElement(PARAMNS+type[i]);
+    parent->LinkEndChild(p);
+    p->SetAttribute("name", name[i]);
+    TiXmlText *t=new TiXmlText(value[i]);
+    p->LinkEndChild(t);
+  }
 }

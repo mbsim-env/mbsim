@@ -185,6 +185,6 @@ ParameterList Element::getParameterList(bool addCounter) const {
   if(isEmbedded() && e->hasParameterFile())
     list.readXMLFile(e->getParameterFile());
   if(addCounter && e->hasCounter())
-    list.addParameter(e->getCounterName(),"1"); 
+    list.addParameter(e->getCounterName(),"1","scalarParameter"); 
   return list;
 }
