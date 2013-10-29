@@ -3,7 +3,13 @@
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <position>[cot(2)/cot(2);0*det([4,5;6,3]);0]</position><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
-  <orientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</orientation>
+  <orientation>
+    <pv:cardan unit="degree">
+      <pv:alpha>0</pv:alpha>
+      <pv:beta>0</pv:beta>
+      <pv:gamma>-alphaUG*180/pi</pv:gamma>
+    </pv:cardan>
+  </orientation>
   <frames/>
   <contours/>
   <groups/>
@@ -81,7 +87,7 @@
           <relativePosition>[0;-h2/2;0]</relativePosition>
           <relativeOrientation>
             <pv:cardan>
-              <pv:alpha unit="degree">0</pv:alpha>
+              <pv:alpha>0</pv:alpha>
               <pv:beta>a=9;ret=0</pv:beta>
               <pv:gamma>0</pv:gamma>
             </pv:cardan>

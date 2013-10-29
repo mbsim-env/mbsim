@@ -5,7 +5,11 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <plotFeatureRecursive feature="+stateDerivative"/>
   <plotFeature feature="+separateFilePerGroup"/>
-  <position>[rHG(numHG);0;0]</position>
+  <position unit="mm">
+    <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <ele>rHG(numHG)*1000</ele><ele>0</ele><ele>0</ele>
+    </xmlVector>
+  </position>
   <orientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></orientation>
   <frames/>
   <contours/>
