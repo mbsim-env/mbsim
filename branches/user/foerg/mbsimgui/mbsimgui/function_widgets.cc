@@ -366,6 +366,19 @@ TabularFunctionWidget::TabularFunctionWidget(int n) {
   layout->addWidget(choice);
 }
 
+void TabularFunctionWidget::resize_(int m, int n) {
+  if(choice->getIndex()==0) {
+    ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+    if(choice_->getIndex()==0)
+      choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+  }
+  else {
+    ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+    if(choice_->getIndex()==0)
+      choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+  }
+}
+
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);

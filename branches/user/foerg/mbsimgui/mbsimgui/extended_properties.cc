@@ -94,10 +94,8 @@ TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
     if(mode<=1) {
       TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
       if(e) {
-        cout <<"e= "<< e->ValueStr() << endl;
         TiXmlElement* ee=(mode==0)?e->FirstChildElement():e;
         if(ee) {
-        cout <<"ee= "<< ee->ValueStr() << endl;
           for(int i=0; i<factory->getSize(); i++) {
             if(ee->ValueStr() == factory->getName(i)) {
               index = i;
@@ -113,13 +111,10 @@ TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
       TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
       if(e) {
         TiXmlElement* ee=(mode==2)?e->FirstChildElement():e;
-        cout <<"e= "<< e->ValueStr() << endl;
         if(ee) {
-        cout <<"ee= "<< ee->ValueStr() << endl;
           for(int i=0; i<factory->getSize(); i++) {
             TiXmlElement *eee=ee->FirstChildElement(factory->getName(i));
             if(eee) {
-        cout <<"eee= "<< eee->ValueStr() << endl;
               index = i;
               property = factory->createProperty(i);
               return property->initializeUsingXML(ee);

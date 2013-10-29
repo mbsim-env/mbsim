@@ -287,15 +287,15 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addTab("Solver parameters",2);
   addTab("Extra",3);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
-  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
+//  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
+//  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
+  environment = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits()))),true);
   addToTab("Environment", environment);
 
   solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
   addToTab("Solver parameters",solverParameters);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new BoolWidget("1"),QStringList(),1));
   inverseKinetics = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", inverseKinetics);
@@ -330,10 +330,10 @@ BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFl
   addTab("Kinematics");
   addTab("Initial conditions");
 
-  q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(2,QStringList()))),true);
+  q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
   addToTab("Initial conditions", q0);
 
-  u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(2,QStringList()))),true);
+  u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
   addToTab("Initial conditions", u0);
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));

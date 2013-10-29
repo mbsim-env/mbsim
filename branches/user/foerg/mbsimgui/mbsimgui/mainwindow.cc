@@ -189,6 +189,9 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
   integratorView = new IntegratorView;
 
+  action = new QAction("Add string parameter", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
+  parameterList->insertAction(0,action);
   action = new QAction("Add scalar parameter", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
   parameterList->insertAction(0,action);
@@ -665,6 +668,14 @@ void MainWindow::removeParameter() {
   updateOctaveParameters();
 }
 
+void MainWindow::addStringParameter() {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  QModelIndex index = QModelIndex();
+  StringParameter *parameter = new StringParameter("a"+toStr(model->getItem(index)->getID()));
+  model->createParameterItem(parameter,index);
+  updateOctaveParameters();
+}
+
 void MainWindow::addScalarParameter() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = QModelIndex();
@@ -728,7 +739,6 @@ void MainWindow::loadParameterList(const QString &file) {
       while(E) {
         Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
         parameter->initializeUsingXML(E);
-        cout << parameter->getValue() << endl;
         model->createParameterItem(parameter);
         E=E->NextSiblingElement();
       }

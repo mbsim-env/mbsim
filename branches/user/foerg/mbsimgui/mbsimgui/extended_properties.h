@@ -82,7 +82,6 @@ class ChoiceProperty2 : public Property {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Property* getProperty(int i) const {return property;}
     Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
 

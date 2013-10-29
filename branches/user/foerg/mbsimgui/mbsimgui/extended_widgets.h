@@ -91,10 +91,9 @@ class ChoiceWidget2 : public Widget {
     ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
 
     void resize_(int m, int n);
-    QWidget* getWidget(int i) const;
     QWidget* getWidget() const;
-    QString getName(int i) const;
     QString getName() const;
+    int getIndex() const;
     void updateWidget();
   protected slots:
     void defineWidget(int);

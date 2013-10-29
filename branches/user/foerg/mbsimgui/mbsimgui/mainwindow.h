@@ -124,6 +124,7 @@ class MainWindow : public QMainWindow {
     void saveOpenMBVXMLData(const QString &file);
     void saveOpenMBVH5Data(const QString &file);
     void removeParameter();
+    void addStringParameter();
     void addScalarParameter();
     void addVectorParameter();
     void addMatrixParameter();

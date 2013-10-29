@@ -23,6 +23,7 @@
 #include "property_dialog.h"
 
 class Parameter;
+class StringParameter;
 class ScalarParameter;
 class VectorParameter;
 class MatrixParameter;
@@ -40,6 +41,16 @@ class ParameterPropertyDialog : public PropertyDialog {
   protected:
     Parameter *parameter;
     ExtWidget *name;
+};
+
+class StringParameterPropertyDialog : public ParameterPropertyDialog {
+
+  public:
+    StringParameterPropertyDialog(StringParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    virtual void toWidget(Parameter *parameter);
+    virtual void fromWidget(Parameter *parameter);
+  protected:
+    ExtWidget *value;
 };
 
 class ScalarParameterPropertyDialog : public ParameterPropertyDialog {

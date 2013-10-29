@@ -44,6 +44,29 @@ TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+StringParameter::StringParameter(const string &name) : Parameter(name) {
+
+  value.setProperty(new TextProperty("0","",true));
+  setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
+}
+
+StringParameter::~StringParameter() {
+}
+
+void StringParameter::initializeUsingXML(TiXmlElement *element) {
+  Parameter::initializeUsingXML(element);
+  TextProperty *val = static_cast<TextProperty*>(value.getProperty());
+  val->initializeUsingXML(element);
+  setValue(val->getText());
+}
+
+TiXmlElement* StringParameter::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+  TextProperty *val = static_cast<TextProperty*>(value.getProperty());
+  val->writeXMLFile(ele0);
+  return ele0;
+}
+
 ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
 
   vector<PhysicalVariableProperty> input;

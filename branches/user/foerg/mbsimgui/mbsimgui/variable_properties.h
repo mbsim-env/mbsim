@@ -145,27 +145,27 @@ class PhysicalVariableProperty : public Property {
     void toWidget(QWidget *widget);
 };
 
-class VecFromFileProperty : public VariableProperty {
+//class VecFromFileProperty : public VariableProperty {
+//
+//  public:
+//    VecFromFileProperty(const std::string &file_="") : file(file_) {}
+//    virtual Property* clone() const {return new VecFromFileProperty(*this);}
+//    std::string getValue() const;
+//    void setValue(const std::string &str) {}
+//    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//    void fromWidget(QWidget *widget);
+//    void toWidget(QWidget *widget);
+//
+//  protected:
+//    std::string file;
+//};
+
+class FromFileProperty : public VariableProperty {
 
   public:
-    VecFromFileProperty(const std::string &file_="") : file(file_) {}
-    virtual Property* clone() const {return new VecFromFileProperty(*this);}
-    std::string getValue() const;
-    void setValue(const std::string &str) {}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    std::string file;
-};
-
-class MatFromFileProperty : public VariableProperty {
-
-  public:
-    MatFromFileProperty(const std::string &file_="") : file(file_) {}
-    virtual Property* clone() const {return new MatFromFileProperty(*this);}
+    FromFileProperty(const std::string &file_="") : file(file_) {}
+    virtual Property* clone() const {return new FromFileProperty(*this);}
     std::string getValue() const; 
     void setValue(const std::string &str) {}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -195,11 +195,12 @@ class VecPropertyFactory: public PropertyFactory {
   public:
     VecPropertyFactory(int m, const std::string &xmlName);
     VecPropertyFactory(int m, const std::string &xmlName, const std::vector<std::string> &unit);
+    VecPropertyFactory(const std::vector<std::string> &x, const std::string &xmlName, const std::vector<std::string> &unit);
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    int m;
+    std::vector<std::string> x;
     std::vector<std::string> name;
     std::string xmlName;
     std::vector<std::string> unit;

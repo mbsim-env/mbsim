@@ -54,6 +54,17 @@ class Parameter : public TreeItemData {
     std::string valuestr;
 };
 
+class StringParameter : public Parameter {
+  friend class StringParameterPropertyDialog;
+  public:
+    StringParameter(const std::string &name);
+    virtual ~StringParameter();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "stringParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new StringParameterPropertyDialog(this);}
+};
+
 class ScalarParameter : public Parameter {
   friend class ScalarParameterPropertyDialog;
   public:
