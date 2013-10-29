@@ -469,6 +469,18 @@ SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
   connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
 }
 
+ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  value = new QComboBox;
+  value->addItems(names);
+  value->setCurrentIndex(currentIndex);
+  layout->addWidget(value);
+  connect(value,SIGNAL(currentIndexChanged(int)),this,SIGNAL(valueChanged(int)));
+}
+
 TextWidget::TextWidget(const QString &text_, bool readOnly) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);

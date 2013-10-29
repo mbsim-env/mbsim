@@ -163,6 +163,7 @@ ScalarWidget::ScalarWidget(const QString &d) {
   layout->setMargin(0);
   setLayout(layout);
   box = new QLineEdit(this);
+  box->setPlaceholderText("0");
   setValue(d);
   layout->addWidget(box);
 }
@@ -223,7 +224,7 @@ void VecWidget::setVec(const vector<QString> &x) {
   if(x.size() != box.size())
     resize_(x.size());
   for(unsigned int i=0; i<box.size(); i++)
-    box[i]->setText(x[i]);
+    box[i]->setText(x[i]=="0"?"":x[i]);
 }
 
 void VecWidget::setReadOnly(bool flag) {
@@ -296,7 +297,7 @@ void MatWidget::setMat(const vector<vector<QString> > &A) {
     resize_(A.size(),A[0].size());
   for(unsigned int i=0; i<box.size(); i++) 
     for(unsigned int j=0; j<box[i].size(); j++)
-      box[i][j]->setText(A[i][j]);
+      box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
 }
 
 void MatWidget::setReadOnly(bool flag) {
@@ -372,7 +373,7 @@ void SymMatWidget::setMat(const vector<vector<QString> > &A) {
     resize_(A.size());
   for(unsigned int i=0; i<box.size(); i++) 
     for(unsigned int j=0; j<box.size(); j++) 
-      box[i][j]->setText(A[i][j]);
+      box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
 }
 
 void SymMatWidget::setReadOnly(bool flag) {
@@ -620,7 +621,8 @@ CardanWidget::CardanWidget() {
   box.resize(3);
   for(int i=0; i<3; i++) {
     box[i] = new QLineEdit(this);
-    box[i]->setText("0");
+    box[i]->setPlaceholderText("0");
+    //box[i]->setText("0");
     layout->addWidget(box[i], i, 0);
   }
 }
@@ -628,14 +630,15 @@ CardanWidget::CardanWidget() {
 vector<QString> CardanWidget::getAngles() const {
   vector<QString> x(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
-    x[i] = box[i]->text();
+    QString tmp = box[i]->text();
+    x[i] = tmp.isEmpty()?"0":tmp;
   }
   return x;
 }
 
 void CardanWidget::setAngles(const vector<QString> &x) {
   for(unsigned int i=0; i<box.size(); i++)
-    box[i]->setText(x[i]);
+    box[i]->setText(x[i]=="0"?"":x[i]);
 }
 
 void CardanWidget::setReadOnly(bool flag) {

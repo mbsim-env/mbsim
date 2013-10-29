@@ -82,8 +82,8 @@ class ScalarWidget : public VariableWidget {
   public:
     ScalarWidget(const QString &d="1");
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
-    QString getValue() const {return box->text();}
-    void setValue(const QString &str) {box->setText(str);}
+    QString getValue() const {return box->text().isEmpty()?"0":box->text();}
+    void setValue(const QString &str) {box->setText(str=="0"?"":str);}
     virtual QString getType() const {return "Scalar";}
     bool validate(const std::vector<std::vector<QString> > &A) const;
 };

@@ -286,6 +286,20 @@ class SpinBoxWidget : public IntegerWidget {
     void valueChanged(int);
 };
 
+class ComboBoxWidget : public IntegerWidget {
+  Q_OBJECT
+
+  public:
+    ComboBoxWidget(const QStringList &names, int currentIndex=0);
+    int getValue() {return value->currentIndex();}
+    void setValue(int val) {value->setCurrentIndex(val);}
+
+  protected:
+    QComboBox *value;
+  signals:
+    void valueChanged(int);
+};
+
 class BasicTextWidget : public Widget {
 
   public:

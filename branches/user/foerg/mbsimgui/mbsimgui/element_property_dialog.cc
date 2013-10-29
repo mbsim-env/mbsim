@@ -816,7 +816,9 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
-  refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,0,1),true);
+  QStringList names;
+  names << "Frame 1" << "Frame 2";
+  refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
   addToTab("Kinetics", refFrameID);
 
   vector<PhysicalVariableWidget*> input;
@@ -847,14 +849,6 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
 
   connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-//  vector<QWidget*> widget;
-//  vector<QString> name;
-//  name.push_back("1 frame");
-//  name.push_back("2 frames");
-//  widget.push_back(new ConnectFramesWidget(1,kineticExcitation));
-//  widget.push_back(new ConnectFramesWidget(2,kineticExcitation));
-//
-//  connections = new ExtWidget("Connections",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight));
   connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectFramesWidgetFactory(kineticExcitation)));
   addToTab("Kinetics",connections);
 
