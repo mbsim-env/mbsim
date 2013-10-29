@@ -138,6 +138,24 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   menuBar()->addMenu(menu);
 
   for (int i=0; i<maxRecentFiles; i++) {
+    recentParameterFileActs[i] = new QAction(this);
+    recentParameterFileActs[i]->setVisible(false);
+    connect(recentParameterFileActs[i], SIGNAL(triggered()), this, SLOT(openRecentParameterFile()));
+  }
+  menu=new QMenu("Parameters", menuBar());
+  menu->addAction("New", this, SLOT(newParameterList()));
+  menu->addAction("Load", this, SLOT(loadParameterList()));
+  menu->addAction("Save as", this, SLOT(saveParameterListAs()));
+  actionSaveParameterList = menu->addAction("Save", this, SLOT(saveParameterList()));
+  actionSaveParameterList->setDisabled(true);
+  menu->addSeparator();
+  for (int i = 0; i < maxRecentFiles; ++i)
+    menu->addAction(recentParameterFileActs[i]);
+  updateRecentParameterFileActions();
+  menu->addSeparator();
+  menuBar()->addMenu(menu);
+
+  for (int i=0; i<maxRecentFiles; i++) {
     recentIntegratorFileActs[i] = new QAction(this);
     recentIntegratorFileActs[i]->setVisible(false);
     connect(recentIntegratorFileActs[i], SIGNAL(triggered()), this, SLOT(openRecentIntegratorFile()));
@@ -153,24 +171,6 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   for (int i = 0; i < maxRecentFiles; ++i)
     menu->addAction(recentIntegratorFileActs[i]);
   updateRecentIntegratorFileActions();
-  menu->addSeparator();
-  menuBar()->addMenu(menu);
-
-  for (int i=0; i<maxRecentFiles; i++) {
-    recentParameterFileActs[i] = new QAction(this);
-    recentParameterFileActs[i]->setVisible(false);
-    connect(recentParameterFileActs[i], SIGNAL(triggered()), this, SLOT(openRecentParameterFile()));
-  }
-  menu=new QMenu("Parameter list", menuBar());
-  menu->addAction("New", this, SLOT(newParameterList()));
-  menu->addAction("Load", this, SLOT(loadParameterList()));
-  menu->addAction("Save as", this, SLOT(saveParameterListAs()));
-  actionSaveParameterList = menu->addAction("Save", this, SLOT(saveParameterList()));
-  actionSaveParameterList->setDisabled(true);
-  menu->addSeparator();
-  for (int i = 0; i < maxRecentFiles; ++i)
-    menu->addAction(recentParameterFileActs[i]);
-  updateRecentParameterFileActions();
   menu->addSeparator();
   menuBar()->addMenu(menu);
 
@@ -243,7 +243,7 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   fileMBS->setReadOnly(true);
   dockWidget1->setWidget(elementList);
 
-  QDockWidget *dockWidget3 = new QDockWidget("Parameter list");
+  QDockWidget *dockWidget3 = new QDockWidget("Parameters");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
   fileParameter = new QLineEdit("");
   fileParameter->setReadOnly(true);
@@ -508,28 +508,29 @@ void MainWindow::saveProjAs() {
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
-    TiXmlElement *ele0=new TiXmlElement(MBSIMNS"Project");
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS"MBSimProject");
     doc.LinkEndChild(ele0);
     ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSim");
     ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
 
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"MBS" );
+    TiXmlElement *ele1 = ele0;
+//    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"MBS" );
     TiXmlElement *ele2 = new TiXmlElement( PVNS"embed" );
     Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
     solver->writeXMLFile(ele2);
     ele1->LinkEndChild(ele2);
-    ele0->LinkEndChild(ele1);
-    ele1 = new TiXmlElement( MBSIMNS"Parameter" );
+//    ele0->LinkEndChild(ele1);
+//    ele1 = new TiXmlElement( MBSIMNS"Parameter" );
     ele2 = new TiXmlElement( PVNS"embed" );
     TiXmlElement *ele3=writeParameterList();
     ele2->LinkEndChild(ele3);
     ele1->LinkEndChild(ele2);
-    ele0->LinkEndChild(ele1);
-    ele1 = new TiXmlElement( MBSIMNS"Integrator" );
+//    ele0->LinkEndChild(ele1);
+//    ele1 = new TiXmlElement( MBSIMNS"Integrator" );
     ele2 = new TiXmlElement( PVNS"embed" );
     integratorView->getIntegrator()->writeXMLFile(ele2);
     ele1->LinkEndChild(ele2);
-    ele0->LinkEndChild(ele1);
+//    ele0->LinkEndChild(ele1);
     unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
     string name = (file.right(14)==".mbsimproj.xml"?file:file+".mbsimproj.xml").toStdString();
     doc.SaveFile((name.length()>14 && name.substr(name.length()-14,14)==".mbsimproj.xml")?name:name+".mbsimproj.xml");
@@ -867,19 +868,7 @@ void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
   TiXmlElement *ele0=NULL;
   ele0=writeParameterList();
 
-  // write/append additional paramters from paramList to XML structure
-  for(int i=0; i<paramList.getSize(); i++) {
-    //NOTE: we should NOT use <matrixParameter> here but the correct one. However in paramList the type of the
-    //      parameter is unknown and matrixParameter works for all except strings!!!!
-    //      (maybe it works also for strings due to an hidden (but unwanted) feature, so we should add the
-    //       parameter type to ParameterList)
-    //      Maybe the best would be to have a "TiXmlElement* writeXMLFile(TiXmlElement *parent)" function in ParameterList)
-    TiXmlElement *p=new TiXmlElement(PARAMNS"matrixParameter");
-    ele0->LinkEndChild(p);
-    p->SetAttribute("name", paramList.getParameterName(i));
-    TiXmlText *t=new TiXmlText(paramList.getParameterValue(i));
-    p->LinkEndChild(t);
-  }
+  paramList.writeXMLFile(ele0);
 
   try {
     // remove all parameters from octave using delete and new NewParamLevel
