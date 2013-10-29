@@ -69,13 +69,19 @@ class MainWindow : public QMainWindow {
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *separatorAct;
+    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
     std::string currentID;
     QString mPath;
     enum { maxRecentFiles = 5 };
-    QAction *recentFileActs[maxRecentFiles];
-    void setCurrentFile(const QString &fileName);
-    void updateRecentFileActions();
+    QAction *recentMBSFileActs[maxRecentFiles];
+    void setCurrentMBSFile(const QString &fileName);
+    void updateRecentMBSFileActions();
+    QAction *recentParameterFileActs[maxRecentFiles];
+    void setCurrentParameterFile(const QString &fileName);
+    void updateRecentParameterFileActions();
+    QAction *recentIntegratorFileActs[maxRecentFiles];
+    void setCurrentIntegratorFile(const QString &fileName);
+    void updateRecentIntegratorFileActions();
 
   public:
     MainWindow(QStringList &arg);
@@ -149,7 +155,9 @@ class MainWindow : public QMainWindow {
     void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void timeout();
     void timeout2();
-    void openRecentFile();
+    void openRecentMBSFile();
+    void openRecentParameterFile();
+    void openRecentIntegratorFile();
   protected:
     void closeEvent ( QCloseEvent * event );
     MBXMLUtils::TiXmlElement* writeParameterList();
