@@ -218,7 +218,7 @@ class IntegerProperty : public Property {
 class TextProperty : public Property {
 
   public:
-    TextProperty(const std::string &text_, const std::string &xmlName_, bool quote_=0) : text(text_), xmlName(xmlName_), quote(quote_) {}
+    TextProperty(const std::string &text_, const std::string &xmlName_, bool quote_=false) : text(text_), xmlName(xmlName_), quote(quote_) {}
     virtual Property* clone() const {return new TextProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

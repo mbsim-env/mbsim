@@ -113,16 +113,10 @@ ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir)
 }
 
 void ChoiceWidget2::resize_(int m, int n) {
-//  for(int i=0; i<stackedWidget->count(); i++)
-//    dynamic_cast<WidgetInterface*>(getWidget(i))->resize_(m,n);
-  
   dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
 }
 
 void ChoiceWidget2::updateWidget() {
-//  for(int i=0; i<stackedWidget->count(); i++)
-//    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
-
   dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
 }
 
@@ -130,16 +124,12 @@ QWidget* ChoiceWidget2::getWidget() const {
   return widget;
 }
 
-QWidget* ChoiceWidget2::getWidget(int i) const {
-  return widget;
-}
-
 QString ChoiceWidget2::getName() const {
   return comboBox->currentText();
 }
 
-QString ChoiceWidget2::getName(int i) const {
-  return comboBox->itemText(i);
+int ChoiceWidget2::getIndex() const {
+  return comboBox->currentIndex();
 }
 
 void ChoiceWidget2::defineWidget(int index) {

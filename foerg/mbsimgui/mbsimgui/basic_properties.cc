@@ -406,7 +406,7 @@ void IntegerProperty::toWidget(QWidget *widget) {
 }
 
 TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlText *text_ = e->FirstChildText();
     if(text_) {
@@ -420,11 +420,15 @@ TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  TiXmlElement *ele0;
+  if(xmlName!="") {
+    ele0 = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    ele0 = (TiXmlElement*)parent;
   TiXmlText *text_ = new TiXmlText(quote?("\""+text+"\""):text);
   ele0->LinkEndChild(text_);
-  parent->LinkEndChild(ele0);
-
   return 0;
 }
 

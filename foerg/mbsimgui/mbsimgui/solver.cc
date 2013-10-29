@@ -58,6 +58,7 @@ Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverPa
   g[2] = "0";
   input.push_back(PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
   environment.setProperty(new ExtPhysicalVarProperty(input));
+  environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIMNS"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
 
   solverParameters.setProperty(new SolverParametersProperty); 
 

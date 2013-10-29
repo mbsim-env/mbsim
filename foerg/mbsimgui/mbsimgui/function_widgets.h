@@ -186,6 +186,7 @@ class TabularFunctionWidget : public FunctionWidget {
 
   public:
     TabularFunctionWidget(int n);
+    void resize_(int m, int n);
 
   protected:
     ChoiceWidget2* choice;

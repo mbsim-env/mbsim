@@ -240,20 +240,12 @@ TabularFunctionWidgetFactory::TabularFunctionWidgetFactory() {
 QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
   if(i==0) {
     ContainerWidget *widgetContainer = new ContainerWidget;
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecFromFileWidget,QStringList(),0));
-    widgetContainer->addWidget(new ExtWidget("x",new ExtPhysicalVarWidget(input)));
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatFromFileWidget,QStringList(),0));
-    widgetContainer->addWidget(new ExtWidget("y",new ExtPhysicalVarWidget(input)));
-
+    widgetContainer->addWidget(new ExtWidget("X",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+    widgetContainer->addWidget(new ExtWidget("Y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
     return widgetContainer;
   }
   if(i==1) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new MatFromFileWidget,QStringList(),0));
-    return new ExtWidget("xy",new ExtPhysicalVarWidget(input));
+    return new ExtWidget("XY",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
   }
 }
 

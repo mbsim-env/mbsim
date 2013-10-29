@@ -287,48 +287,11 @@ void PhysicalVariableProperty::toWidget(QWidget *widget) {
   static_cast<PhysicalVariableWidget*>(widget)->setUnit(QString::fromStdString(getUnit()));
 }
 
-string VecFromFileProperty::getValue() const {
-  return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + file + "')"));
-}
-
-TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = element->FirstChildText();
-  if(!text)
-    return 0;
-  string str = text->Value();
-  if(str.substr(0,8)!="ret=load")
-    return 0;
-  int pos1 = str.find_first_of('\''); 
-  int pos2 = str.find_last_of('\''); 
-  file = str.substr(pos1+1,pos2-pos1-1).c_str();
-  QFileInfo fileInfo(QString::fromStdString(file));
-  file = fileInfo.canonicalFilePath().toStdString();
-
-  return element;
-}
-
-TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
-  TiXmlText *text = new TiXmlText(filePath);
-  parent->LinkEndChild(text);
-  return 0;
-}
-
-void VecFromFileProperty::fromWidget(QWidget *widget) {
-  file = static_cast<VecFromFileWidget*>(widget)->getFile().toStdString();
-}
-
-void VecFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<VecFromFileWidget*>(widget)->blockSignals(true);
-  static_cast<VecFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
-  static_cast<VecFromFileWidget*>(widget)->blockSignals(false);
-}
-
-string MatFromFileProperty::getValue() const {
+string FromFileProperty::getValue() const {
   return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("'" + file + "'"));
 }
 
-TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* FromFileProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"fromFile"))
     return 0;
@@ -357,24 +320,24 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *parent) {
 //}
 
 
-TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* FromFileProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(PVNS"fromFile");
   string filePath = "'"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"'";
-//  TiXmlText *text = new TiXmlText(filePath);
-//  ele->LinkEndChild(text);
+  //string filePath = file;
   ele->SetAttribute("href",filePath);
   parent->LinkEndChild(ele);
   return 0;
 }
 
-void MatFromFileProperty::fromWidget(QWidget *widget) {
-  file = static_cast<MatFromFileWidget*>(widget)->getFile().toStdString();
+void FromFileProperty::fromWidget(QWidget *widget) {
+  file = static_cast<FromFileWidget*>(widget)->getFile().toStdString();
+  cout << file << endl;
 }
 
-void MatFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<MatFromFileWidget*>(widget)->blockSignals(true);
-  static_cast<MatFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
-  static_cast<MatFromFileWidget*>(widget)->blockSignals(false);
+void FromFileProperty::toWidget(QWidget *widget) {
+  static_cast<FromFileWidget*>(widget)->blockSignals(true);
+  static_cast<FromFileWidget*>(widget)->setFile(QString::fromStdString(file));
+  static_cast<FromFileWidget*>(widget)->blockSignals(false);
 }
 
 ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const string &xmlName_) : value(value_), name(2), unit(2,"m"), xmlName(xmlName_) {
@@ -390,17 +353,22 @@ Property* ScalarPropertyFactory::createProperty(int i) {
     return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
 }
 
-VecPropertyFactory::VecPropertyFactory(int m_, const string &xmlName_) : m(m_), name(2), unit(2,"m"), xmlName(xmlName_) {
+VecPropertyFactory::VecPropertyFactory(int m, const string &xmlName_) : x(getScalars<string>(m,"0")), name(3), unit(3,"m"), xmlName(xmlName_) {
 }
 
-VecPropertyFactory::VecPropertyFactory(int m_, const string &xmlName_, const vector<string> &unit_) : m(m_), name(2), xmlName(xmlName_), unit(unit_) {
+VecPropertyFactory::VecPropertyFactory(int m, const string &xmlName_, const vector<string> &unit_) : x(getScalars<string>(m,"0")), name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+VecPropertyFactory::VecPropertyFactory(const vector<string> &x_, const string &xmlName_, const vector<string> &unit_) : x(x_), name(3), xmlName(xmlName_), unit(unit_) {
 }
 
 Property* VecPropertyFactory::createProperty(int i) {
   if(i==0)
-    return new PhysicalVariableProperty(new VecProperty(m), unit[0], xmlName);
+    return new PhysicalVariableProperty(new VecProperty(x), unit[0], xmlName);
   if(i==1)
-    return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
+    return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
+  if(i==2)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[2], xmlName);
 }
 
 RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
@@ -429,7 +397,7 @@ Property* MatPropertyFactory::createProperty(int i) {
   if(i==0)
     return new PhysicalVariableProperty(new MatProperty(A),unit[0],xmlName);
   if(i==1)
-    return new PhysicalVariableProperty(new MatFromFileProperty,unit[1],xmlName);
+    return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
   if(i==2)
     return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
 }
