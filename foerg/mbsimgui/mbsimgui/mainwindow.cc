@@ -118,12 +118,23 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   actionSaveProj->setDisabled(true);
   menuBar()->addMenu(ProjMenu);
 
+  for (int i=0; i<maxRecentFiles; i++) {
+    recentFileActs[i] = new QAction(this);
+    recentFileActs[i]->setVisible(false);
+    connect(recentFileActs[i], SIGNAL(triggered()), this, SLOT(openRecentFile()));
+  }
+
   QMenu *menu=new QMenu("MBS", menuBar());
   menu->addAction("New", this, SLOT(newMBS()));
   menu->addAction("Load", this, SLOT(loadMBS()));
   menu->addAction("Save as", this, SLOT(saveMBSAs()));
   actionSaveMBS = menu->addAction("Save", this, SLOT(saveMBS()));
   actionSaveMBS->setDisabled(true);
+  separatorAct = menu->addSeparator();
+  for (int i = 0; i < maxRecentFiles; ++i)
+    menu->addAction(recentFileActs[i]);
+  updateRecentFileActions();
+  menu->addSeparator();
   menuBar()->addMenu(menu);
 
   menu=new QMenu("Integrator", menuBar());
@@ -287,7 +298,7 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
     i++;
   }
   if(fileMBS.size())
-    loadMBS(fileMBS);
+    loadMBS(QDir::current().absoluteFilePath(fileMBS));
   else
     newMBS(false);
   if(fileParam.size())
@@ -533,6 +544,7 @@ void MainWindow::loadMBS(const QString &file) {
   actionSaveMBSimH5DataAs->setDisabled(true);
   actionSaveOpenMBVDataAs->setDisabled(true);
   if(file!="") {
+    setCurrentFile(file);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     if(model->rowCount(index))
@@ -547,6 +559,7 @@ void MainWindow::loadMBS(const QString &file) {
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+
 }
 
 void MainWindow::loadMBS() {
@@ -1224,3 +1237,48 @@ void MainWindow::dropEvent(QDropEvent *event) {
     }
   }
 }
+
+void MainWindow::openRecentFile() {
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    loadMBS(action->data().toString());
+}
+
+void MainWindow::setCurrentFile(const QString &fileName) {
+
+  QSettings settings;
+  QStringList files = settings.value("recentFileList").toStringList();
+  files.removeAll(fileName);
+  files.prepend(fileName);
+  while (files.size() > maxRecentFiles)
+    files.removeLast();
+
+  settings.setValue("recentFileList", files);
+
+  foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+    MainWindow *mainWin = qobject_cast<MainWindow *>(widget);
+    if (mainWin)
+      mainWin->updateRecentFileActions();
+  }
+}
+
+void MainWindow::updateRecentFileActions() {
+  QSettings settings;
+  QStringList files = settings.value("recentFileList").toStringList();
+
+  int numRecentFiles = qMin(files.size(), (int)maxRecentFiles);
+
+  for (int i = 0; i < numRecentFiles; ++i) {
+    cout << files[i].toStdString() << endl;
+    QString text = QDir::current().relativeFilePath(files[i]);
+//    QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
+    recentFileActs[i]->setText(text);
+    recentFileActs[i]->setData(files[i]);
+    recentFileActs[i]->setVisible(true);
+  }
+  for (int j = numRecentFiles; j < maxRecentFiles; ++j)
+    recentFileActs[j]->setVisible(false);
+
+  separatorAct->setVisible(numRecentFiles > 0);
+}
+
