@@ -205,7 +205,7 @@ void MatProperty::toWidget(QWidget *widget) {
   static_cast<BasicMatWidget*>(widget)->setMat(fromStdMat(getMat()));
 }
 
-CardanProperty::CardanProperty() : angles(3,"0") {
+CardanProperty::CardanProperty() : angles(3,"0"), unit("degree") {
 }
 
 CardanProperty::~CardanProperty() {
@@ -222,6 +222,8 @@ TiXmlElement* CardanProperty::initializeUsingXML(TiXmlElement *parent) {
   angles.push_back(ei->GetText());
   ei=ei->NextSiblingElement();
   angles.push_back(ei->GetText());
+  if(element->Attribute("unit"))
+    unit = element->Attribute("unit");
   return element;
 }
 
@@ -239,16 +241,20 @@ TiXmlElement* CardanProperty::writeXMLFile(TiXmlNode *parent) {
   text = new TiXmlText(angles[2]);
   elei->LinkEndChild(text);
   ele->LinkEndChild(elei);
+  if(unit!="")
+    ele->SetAttribute("unit", unit);
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void CardanProperty::fromWidget(QWidget *widget) {
   setAngles(toStdVec(static_cast<CardanWidget*>(widget)->getAngles()));
+  unit = static_cast<CardanWidget*>(widget)->getUnit().toStdString();
 }
 
 void CardanProperty::toWidget(QWidget *widget) {
   static_cast<CardanWidget*>(widget)->setAngles(fromStdVec(getAngles()));
+  static_cast<CardanWidget*>(widget)->setUnit(QString::fromStdString(unit));
 }
 
 TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
