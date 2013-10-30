@@ -273,6 +273,7 @@ class CardanWidget : public VariableWidget {
 
   private:
     std::vector<QLineEdit*> box;
+    QComboBox* unit;
   public:
     CardanWidget();
     void resize_(int size);
@@ -284,6 +285,8 @@ class CardanWidget : public VariableWidget {
     int size() const {return box.size();}
     virtual QString getType() const {return "Cardan";}
     bool validate(const std::vector<std::vector<QString> > &A) const;
+    QString getUnit() const {return unit->currentText();}
+    void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
 };
 
 class PhysicalVariableWidget : public VariableWidget {

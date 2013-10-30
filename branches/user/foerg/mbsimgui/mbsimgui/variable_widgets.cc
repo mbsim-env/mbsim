@@ -625,6 +625,10 @@ CardanWidget::CardanWidget() {
     //box[i]->setText("0");
     layout->addWidget(box[i], i, 0);
   }
+  unit = new QComboBox;
+  unit->addItems(angleUnits());
+  unit->setCurrentIndex(1);
+  layout->addWidget(unit);
 }
 
 vector<QString> CardanWidget::getAngles() const {

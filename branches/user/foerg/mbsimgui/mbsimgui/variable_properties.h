@@ -107,6 +107,7 @@ class CardanProperty : public VariableProperty {
 
   private:
     std::vector<std::string> angles;
+    std::string unit; 
   public:
     CardanProperty();
     ~CardanProperty();
