@@ -62,17 +62,20 @@ class MainWindow : public QMainWindow {
     ElementView *elementList;
     ParameterView *parameterList;
     IntegratorView *integratorView;
-    QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
+    QLineEdit *fileProject, *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
+    QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
     std::string currentID;
     QString mPath;
     enum { maxRecentFiles = 5 };
+    QAction *recentProjectFileActs[maxRecentFiles];
+    void setCurrentProjectFile(const QString &fileName);
+    void updateRecentProjectFileActions();
     QAction *recentMBSFileActs[maxRecentFiles];
     void setCurrentMBSFile(const QString &fileName);
     void updateRecentMBSFileActions();
@@ -98,16 +101,17 @@ class MainWindow : public QMainWindow {
     void addObserver(Observer *observer);
     void highlightObject(const std::string &ID);
     const std::string& getHighlightedObject() const {return currentID;}
-    void loadProj(const QString &file);
+    void loadProject(const QString &file);
     void loadMBS(const QString &file);
     void loadIntegrator(const QString &file);
     void loadParameterList(const QString &file);
   public slots:
     void elementListClicked();
     void parameterListClicked();
-    void loadProj();
-    void saveProjAs();
-    void saveProj();
+    void newProject(bool ask=true);
+    void loadProject();
+    void saveProjectAs();
+    void saveProject();
     void newMBS(bool ask=true);
     void loadMBS();
     void saveMBSAs();
@@ -123,7 +127,7 @@ class MainWindow : public QMainWindow {
     void loadIntegrator();
     void saveIntegratorAs();
     void saveIntegrator();
-    void newParameterList();
+    void newParameterList(bool ask=true);
     void loadParameterList();
     void saveParameterListAs();
     void saveParameterList(const QString &filename="");
@@ -155,6 +159,7 @@ class MainWindow : public QMainWindow {
     void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void timeout();
     void timeout2();
+    void openRecentProjectFile();
     void openRecentMBSFile();
     void openRecentParameterFile();
     void openRecentIntegratorFile();

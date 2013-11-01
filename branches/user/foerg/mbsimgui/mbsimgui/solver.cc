@@ -110,7 +110,7 @@ Solver* Solver::readXMLFile(const string &filename) {
     TiXml_PostLoadFile(&doc);
     TiXmlElement *e=doc.FirstChildElement();
     map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
+    incorporateNamespace(e, dummy);
     Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e,0));
     solver->initializeUsingXML(e);
     solver->initialize();
