@@ -71,7 +71,7 @@ class MainWindow : public QMainWindow {
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
     std::string currentID;
-    QString mPath;
+    QStringList mPath;
     enum { maxRecentFiles = 5 };
     QAction *recentProjectFileActs[maxRecentFiles];
     void setCurrentProjectFile(const QString &fileName);
