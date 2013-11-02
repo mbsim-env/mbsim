@@ -423,7 +423,8 @@ void MainWindow::changeWorkingDir() {
 }
 
 void MainWindow::changeOctavePath() {
-  mPath = QFileDialog::getExistingDirectory (0, "Path to octave m-files path", ".");
+  QString path = QFileDialog::getExistingDirectory (0, "Path to octave m-files path", ".");
+  if(not(path.isEmpty())) mPath << path;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -511,6 +512,7 @@ void MainWindow::newProject(bool ask) {
     selectDOPRI5Integrator();
     actionSaveProject->setDisabled(true);
     fileProject->setText("");
+    mPath.clear();
   }
 }
 
@@ -518,6 +520,7 @@ void MainWindow::loadProject(const QString &file) {
   if(file!="") {
     setCurrentProjectFile(file);
     fileProject->setText(file);
+    mPath.clear();
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     if(doc.LoadFile(file.toStdString())) {
@@ -528,46 +531,49 @@ void MainWindow::loadProject(const QString &file) {
       incorporateNamespace(ele0, dummy);
 
       TiXmlElement *ele1 = ele0->FirstChildElement(MBSIMNS"dynamicSystemSolver");
-      if(ele1) {
-        TiXmlElement *ele2 = ele1->FirstChildElement();
-        Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele2,0));
-        solver->initializeUsingXML(ele2);
-        solver->initialize();
-        ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-        QModelIndex index = model->index(0,0);
-        if(model->rowCount(index))
-          delete model->getItem(index)->getItemData();
-        model->removeRow(index.row(), index.parent());
-        model->createGroupItem(solver);
-      }
+      TiXmlElement *ele2 = ele1->FirstChildElement();
+      Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele2,0));
+      solver->initializeUsingXML(ele2);
+      solver->initialize();
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      QModelIndex index = model->index(0,0);
+      if(model->rowCount(index))
+        delete model->getItem(index)->getItemData();
+      model->removeRow(index.row(), index.parent());
+      model->createGroupItem(solver);
 
       ele1 = ele0->FirstChildElement(MBSIMNS"parameters");
-      if(ele1) {
-        TiXmlElement *ele2 = ele1->FirstChildElement();
-        ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-        QModelIndex index = pmodel->index(0,0);
-        for(int i=0; i<pmodel->rowCount(QModelIndex()); i++)
-          delete pmodel->getItem(index.sibling(i,0))->getItemData();
-        pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-        TiXmlElement *E=ele2->FirstChildElement();
-        vector<QString> refFrame;
-        while(E) {
-          Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-          parameter->initializeUsingXML(E);
-          pmodel->createParameterItem(parameter);
-          E=E->NextSiblingElement();
-        }
-        updateOctaveParameters();
+      ele2 = ele1->FirstChildElement();
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      index = pmodel->index(0,0);
+      for(int i=0; i<pmodel->rowCount(QModelIndex()); i++)
+        delete pmodel->getItem(index.sibling(i,0))->getItemData();
+      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+      TiXmlElement *E=ele2->FirstChildElement();
+      vector<QString> refFrame;
+      while(E) {
+        Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
+        parameter->initializeUsingXML(E);
+        pmodel->createParameterItem(parameter);
+        E=E->NextSiblingElement();
       }
+      updateOctaveParameters();
 
       ele1 = ele0->FirstChildElement(MBSIMNS"integrator");
-      if(ele1) {
-        TiXmlElement *ele2 = ele1->FirstChildElement();
-        Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
-        integrator->initializeUsingXML(ele2);
-        integratorView->setIntegrator(integrator);
+      ele2 = ele1->FirstChildElement();
+      Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
+      integrator->initializeUsingXML(ele2);
+      integratorView->setIntegrator(integrator);
+
+      ele1 = ele0->FirstChildElement(MBSIMNS"mPaths");
+      ele2=ele1->FirstChildElement();
+      while(ele2) {
+        mPath << ele2->Attribute("href");
+        ele2=ele2->NextSiblingElement();
       }
+
       actionSaveProject->setDisabled(false);
+
 #ifdef INLINE_OPENMBV
       mbsimxml(1);
 #endif
@@ -624,6 +630,13 @@ void MainWindow::saveProject() {
   ele2 = ele1;
   integratorView->getIntegrator()->writeXMLFile(ele2);
   //ele1->LinkEndChild(ele2);
+  ele0->LinkEndChild(ele1);
+  ele1 = new TiXmlElement( MBSIMNS"mPaths" );
+  for(int i=0; i<mPath.size(); i++) {
+    ele2 = new TiXmlElement( MBSIMNS"mPath" );
+    ele2->SetAttribute("href",mPath.at(i).toStdString());
+    ele1->LinkEndChild(ele2);
+  }
   ele0->LinkEndChild(ele1);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   QString file = fileProject->text();
@@ -1054,9 +1067,9 @@ void MainWindow::mbsimxml(int task) {
   QStringList arg;
   if(task==1)
     arg.append("--stopafterfirststep");
-  if(mPath!="") {
+  for(int i=0; i<mPath.size(); i++) {
     arg.append("--mpath");
-    arg.append(mPath);
+    arg.append(mPath.at(i));
   }
   arg.append("--mbsimparam");
   arg.append(paramFile);
@@ -1522,7 +1535,6 @@ void MainWindow::updateRecentIntegratorFileActions() {
   int numRecentFiles = qMin(files.size(), (int)maxRecentFiles);
 
   for (int i = 0; i < numRecentFiles; ++i) {
-    cout << files[i].toStdString() << endl;
     QString text = QDir::current().relativeFilePath(files[i]);
     recentIntegratorFileActs[i]->setText(text);
     recentIntegratorFileActs[i]->setData(files[i]);
