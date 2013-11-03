@@ -141,12 +141,15 @@ int main(int argc, char *argv[]) {
   
     // mpath
     vector<string> MPATH;
-    if((i=std::find(arg.begin(), arg.end(), "--mpath"))!=arg.end()) {
-      i2=i; i2++;
-      MPATH.push_back(*i);
-      MPATH.push_back(*i2);
-      arg.erase(i); arg.erase(i2);
+    do {
+      if((i=std::find(arg.begin(), arg.end(), "--mpath"))!=arg.end()) {
+        i2=i; i2++;
+        MPATH.push_back(*i);
+        MPATH.push_back(*i2);
+        arg.erase(i); arg.erase(i2);
+      }
     }
+    while(i!=arg.end());
   
     bool ONLYPP=false;
     if((i=std::find(arg.begin(), arg.end(), "--onlypreprocess"))!=arg.end()) {
