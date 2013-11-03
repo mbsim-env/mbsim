@@ -38,9 +38,9 @@
   <endTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</endTime>
   <plotStepSize xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</plotStepSize>
   <outputSignals>
-    <signal ref="/Group[MBS]/Signal[K1pxy]"/>
-    <signal ref="/Group[MBS]/Signal[K1vxy]"/>
-    <signal ref="/Group[MBS]/Signal[K2pxy]"/>
+    <signal ref="/Group[MBS]/Link[K1pxy]"/>
+    <signal ref="/Group[MBS]/Link[K1vxy]"/>
+    <signal ref="/Group[MBS]/Link[K2pxy]"/>
   </outputSignals>
   <inputSignals>
     <signal ref="/Group[MBS]/ExternSignalSource[Ext1]"/>

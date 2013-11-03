@@ -17,11 +17,11 @@
       <minimalRelativeAlpha>.05</minimalRelativeAlpha>
       <bilateralConstrained/>
       <offset>.05</offset>
-      <relativePosition ref="../../Group[Control]/Signal[PT1ControlvalveOutputLimitted]"/>
-      <inflowP ref="../HLine[lineP]"/>
-      <outflowA ref="../HLine[lineA]"/>
-      <outflowB ref="../HLine[lineB]"/>
-      <outflowT ref="../HLine[lineT]"/>
+      <relativePosition ref="../../Group[Control]/Link[PT1ControlvalveOutputLimitted]"/>
+      <inflowP ref="../Object[lineP]"/>
+      <outflowA ref="../Object[lineA]"/>
+      <outflowB ref="../Object[lineB]"/>
+      <outflowT ref="../Object[lineT]"/>
     </Controlvalve43>  
   </groups>
   <objects>
@@ -100,7 +100,7 @@
   </objects>
   <links>
     <ConstrainedNode name="sourceP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <outflow ref="../HLine[lineP]"/>
+      <outflow ref="../Object[lineP]"/>
       <function>
         <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
           <a0>40e5</a0>
@@ -108,7 +108,7 @@
       </function>
     </ConstrainedNode>
     <EnvironmentNode name="sourceT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <inflow ref="../HLine[lineT]"/>
+      <inflow ref="../Object[lineT]"/>
     </EnvironmentNode>
   </links>
 </Group>
