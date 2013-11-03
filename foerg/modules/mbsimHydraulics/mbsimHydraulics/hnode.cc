@@ -21,12 +21,10 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 #include "mbsimHydraulics/defines.h"
@@ -125,9 +123,9 @@ namespace MBSimHydraulics {
   void HNode::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       for (unsigned int i=0; i<refInflowString.size(); i++)
-        addInFlow(getByPath<HLine>(process_hline_string(refInflowString[i])));
+        addInFlow(getByPath<HLine>(refInflowString[i]));
       for (unsigned int i=0; i<refOutflowString.size(); i++)
-        addOutFlow(getByPath<HLine>(process_hline_string(refOutflowString[i])));
+        addOutFlow(getByPath<HLine>(refOutflowString[i]));
       Link::init(stage);
     }
     else if (stage==MBSim::resize) {
@@ -872,7 +870,7 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       HNode::init(stage);
       if (pSignalString!="")
-        setpSignal(getByPath<MBSimControl::Signal>(process_signal_string(pSignalString)));
+        setpSignal(getByPath<MBSimControl::Signal>(pSignalString));
     }
     else
       HNode::init(stage);

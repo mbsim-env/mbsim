@@ -23,7 +23,6 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -93,7 +92,7 @@ namespace MBSimHydraulics {
   void ClosableRigidLine::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if(refSignalString!="")
-        setSignal(getByPath<MBSimControl::Signal>(process_signal_string(refSignalString)));
+        setSignal(getByPath<MBSimControl::Signal>(refSignalString));
       RigidLine::init(stage);
     }
     else if (stage==MBSim::modelBuildup) {

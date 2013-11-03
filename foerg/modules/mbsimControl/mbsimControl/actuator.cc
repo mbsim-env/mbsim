@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimControl/obsolet_hint.h"
 #include "mbsim/frame.h"
 #include "mbsimControl/defines.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -66,7 +65,7 @@ namespace MBSimControl {
   void Actuator::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if(saved_inputSignal!="")
-        setSignal(getByPath<Signal>(process_signal_string(saved_inputSignal)));
+        setSignal(getByPath<Signal>(saved_inputSignal));
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       LinkMechanics::init(stage);

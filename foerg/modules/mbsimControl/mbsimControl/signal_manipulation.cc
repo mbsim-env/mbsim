@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/signal_manipulation.h"
-#include "mbsimControl/obsolet_hint.h"
 #include "mbsimControl/defines.h"
 #include "mbsim/utils/eps.h"
 #include <fmatvec/function.h>
@@ -48,7 +47,7 @@ namespace MBSimControl {
   void SignalAddition::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++)
-        addSignal(getByPath<Signal>(process_signal_string(signalString[i])), factorsTmp[i]);
+        addSignal(getByPath<Signal>(signalString[i]), factorsTmp[i]);
       signalString.clear();
       factorsTmp.clear();
       Signal::init(stage);
@@ -80,7 +79,7 @@ namespace MBSimControl {
 
   void SignalOffset::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
     else
@@ -106,7 +105,7 @@ namespace MBSimControl {
   void SignalMultiplication::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++)
-        addSignal(getByPath<Signal>(process_signal_string(signalString[i])), exponentsTmp[i]);
+        addSignal(getByPath<Signal>(signalString[i]), exponentsTmp[i]);
       signalString.clear();
       exponentsTmp.clear();
       Signal::init(stage);
@@ -147,7 +146,7 @@ namespace MBSimControl {
   void SignalMux::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++)
-        addSignal(getByPath<Signal>(process_signal_string(signalString[i])));
+        addSignal(getByPath<Signal>(signalString[i]));
       signalString.clear();
       Signal::init(stage);
     }
@@ -187,7 +186,7 @@ namespace MBSimControl {
         fmatvec::VecInt tmpI(tmp.size(), INIT, 0);
         for (int j=0; j<tmp.size(); j++)
           tmpI(j)=int(tmp(j));
-        addSignal(getByPath<Signal>(process_signal_string(signalString[i])), tmpI);
+        addSignal(getByPath<Signal>(signalString[i]), tmpI);
       }
       signalString.clear();
       Signal::init(stage);
@@ -232,7 +231,7 @@ namespace MBSimControl {
   void SignalLimitation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+        setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
     else
@@ -261,7 +260,7 @@ namespace MBSimControl {
   void SignalTimeDiscretization::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+        setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
     else
@@ -370,9 +369,9 @@ namespace MBSimControl {
   void SignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+        setSignal(getByPath<Signal>(signalString));
       if (signal2String!="")
-        setSecondSignal(getByPath<Signal>(process_signal_string(signal2String)));
+        setSecondSignal(getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
     else
@@ -486,9 +485,9 @@ namespace MBSimControl {
   void SpecialSignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+        setSignal(getByPath<Signal>(signalString));
       if (signal2String!="")
-        setSecondSignal(getByPath<Signal>(process_signal_string(signal2String)));
+        setSecondSignal(getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
     else
@@ -536,9 +535,9 @@ namespace MBSimControl {
   void PIDController::init(MBSim::InitStage stage) {
     if (stage==resolveXMLPath) {
       if (sString!="")
-        setInputSignal(getByPath<Signal>(process_signal_string(sString)));
+        setInputSignal(getByPath<Signal>(sString));
       if (sdString!="")
-        setDerivativeOfInputSignal(getByPath<Signal>(process_signal_string(sdString)));
+        setDerivativeOfInputSignal(getByPath<Signal>(sdString));
       Signal::init(stage);
     }
     else if (stage==MBSim::resize) {
@@ -596,7 +595,7 @@ namespace MBSimControl {
   void UnarySignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+        setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
     else
@@ -626,9 +625,9 @@ namespace MBSimControl {
   void BinarySignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signal1String!="")
-        setSignal1(getByPath<Signal>(process_signal_string(signal1String)));
+        setSignal1(getByPath<Signal>(signal1String));
       if (signal2String!="")
-        setSignal2(getByPath<Signal>(process_signal_string(signal2String)));
+        setSignal2(getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
     else

@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/function_sensor.h"
-#include "mbsimControl/obsolet_hint.h"
 #include "mbsimControl/defines.h"
 #include "mbsim/objectfactory.h"
 
@@ -64,7 +63,7 @@ namespace MBSimControl {
   void Function_SSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+        setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
     else
@@ -94,7 +93,7 @@ namespace MBSimControl {
   void Function_SSSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (signal1String!="")
-        setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
+        setSignals(getByPath<Signal>(signal1String), getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
     else

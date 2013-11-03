@@ -25,7 +25,6 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/eps.h"
 #include <fstream>
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
@@ -137,15 +136,15 @@ namespace MBSimHydraulics {
   void Controlvalve43::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (positionString!="")
-        setRelativePositionSignal(getByPath<Signal>(process_signal_string(positionString)));
+        setRelativePositionSignal(getByPath<Signal>(positionString));
       if (nPInflowString!="")
-        setPInflow(getByPath<HLine>(process_hline_string(nPInflowString)));
+        setPInflow(getByPath<HLine>(nPInflowString));
       if (nAOutflowString!="")
-        setAOutflow(getByPath<HLine>(process_hline_string(nAOutflowString)));
+        setAOutflow(getByPath<HLine>(nAOutflowString));
       if (nBOutflowString!="")
-        setBOutflow(getByPath<HLine>(process_hline_string(nBOutflowString)));
+        setBOutflow(getByPath<HLine>(nBOutflowString));
       if (nTOutflowString!="")
-        setTOutflow(getByPath<HLine>(process_hline_string(nTOutflowString)));
+        setTOutflow(getByPath<HLine>(nTOutflowString));
 
       checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAlphaPA", 1., 0., position, relAlphaPA);
       addLink(checkSizeSignalPA);

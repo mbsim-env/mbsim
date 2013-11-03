@@ -16,8 +16,7 @@ libmbsimHydraulics_la_SOURCES = \
   elastic_line_galerkin.cc \
   elastic_line_variational.cc \
   dimensionless_line.cc \
-  hydraulic_sensor.cc \
-  obsolet_hint.cc
+  hydraulic_sensor.cc
 
 libmbsimHydraulics_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
 libmbsimHydraulics_la_LIBADD = $(DEPS_LIBS)
