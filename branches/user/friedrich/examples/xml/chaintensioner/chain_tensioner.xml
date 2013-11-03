@@ -178,7 +178,7 @@
       <h:frameOfReference ref="../Object[Housing]/Frame[Bottom]"/>
       <h:direction>[0;1;0]</h:direction>
       <h:length unit="mm">7</h:length>
-      <h:firstSurfaceVelocity ref="../Signal[PistonVelocity]"/>
+      <h:firstSurfaceVelocity ref="../Link[PistonVelocity]"/>
       <h:innerRadius unit="mm">8</h:innerRadius>
       <h:height unit="mum">50</h:height>
       <h:circularLeakagePressureLoss>
@@ -211,7 +211,7 @@
       </openMBVCoilSpring>
     </SpringDamper>
     <h:EnvironmentNodeMec name="EnvironmentPressure">
-      <h:inflow ref="../HLine[LeackageGap]"/>
+      <h:inflow ref="../Object[LeackageGap]"/>
       <h:initialVolume>0</h:initialVolume>
       <h:translatorialBoundarySourface>
         <h:frameOfReference ref="../Object[Piston]/Frame[Top]"/>
@@ -223,7 +223,7 @@
       </h:enableOpenMBVArrows>
     </h:EnvironmentNodeMec>
     <h:ConstrainedNodeMec name="SupplyChamber">
-      <h:outflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <h:outflow ref="../Group[Checkvalve]/Object[Line]"/>
       <h:initialVolume>0</h:initialVolume>
       <h:enableOpenMBVArrows>
         <h:size>.001</h:size>
@@ -235,8 +235,8 @@
       </h:function>
     </h:ConstrainedNodeMec>
     <h:ElasticNodeMec name="HighPressureChamber">
-      <h:inflow ref="../Group[Checkvalve]/HLine[Line]"/>
-      <h:outflow ref="../HLine[LeackageGap]"/>
+      <h:inflow ref="../Group[Checkvalve]/Object[Line]"/>
+      <h:outflow ref="../Object[LeackageGap]"/>
       <h:initialVolume unit="mm^3">1000</h:initialVolume>
       <h:translatorialBoundarySourface>
         <h:frameOfReference ref="../Object[Piston]/Frame[Bottom]"/>

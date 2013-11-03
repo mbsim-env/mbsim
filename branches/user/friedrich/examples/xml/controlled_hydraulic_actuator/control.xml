@@ -7,7 +7,7 @@
   <objects/>
   <links>
     <LinearTransferSystem name="LTI" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Signal[DifferencePosition]"/>
+      <inputSignal ref="../Link[DifferencePosition]"/>
       <pidType>
         <P>1000</P>
         <I>100</I>
@@ -15,7 +15,7 @@
       </pidType>
     </LinearTransferSystem>
     <LinearTransferSystem name="PT1Controlvalve" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Signal[ControlOutputLimitted]"/>
+      <inputSignal ref="../Link[ControlOutputLimitted]"/>
       <pt1Type>
         <P>1</P>
         <T>1/25</T>
@@ -45,10 +45,10 @@
       </function>
     </FunctionSensor>
     <SignalAddition name="DifferencePosition" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Signal[DesiredPosition]">
+      <inputSignal ref="../Link[DesiredPosition]">
         <factor>-1.</factor>
       </inputSignal>
-      <inputSignal ref="../Signal[MassPosition]">
+      <inputSignal ref="../Link[MassPosition]">
         <factor>1.</factor>
       </inputSignal>
     </SignalAddition>
@@ -56,7 +56,7 @@
       <signalProcessingSystem ref="../Link[LTI]"/>
     </SignalProcessingSystemSensor>
     <SignalLimitation name="ControlOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Signal[ControlOutput]"/>
+      <inputSignal ref="../Link[ControlOutput]"/>
       <minimalValue>0-5</minimalValue>
       <maximalValue>1+5</maximalValue>
     </SignalLimitation>
@@ -64,7 +64,7 @@
       <signalProcessingSystem ref="../Link[PT1Controlvalve]"/>
     </SignalProcessingSystemSensor>
     <SignalLimitation name="PT1ControlvalveOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Signal[PT1ControlvalveOutput]"/>
+      <inputSignal ref="../Link[PT1ControlvalveOutput]"/>
       <minimalValue>0</minimalValue>
       <maximalValue>1</maximalValue>
     </SignalLimitation>

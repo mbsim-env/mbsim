@@ -144,9 +144,9 @@
       <height>40*gapDiameter</height>
       <pressureLoss>
         <EccentricCircularLeakagePressureLoss name="loss">
-          <firstSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[pistonSpeed]"/>
-          <secondSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[housingSpeed]"/>
-          <gapLength ref="/Group[BallCheckvalveSystem]/Signal[GapLength]"/>
+          <firstSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Link[pistonSpeed]"/>
+          <secondSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Link[housingSpeed]"/>
+          <gapLength ref="/Group[BallCheckvalveSystem]/Link[GapLength]"/>
           <eccentricity>0</eccentricity>
         </EccentricCircularLeakagePressureLoss>
       </pressureLoss>
@@ -158,8 +158,8 @@
       <direction>[0;1;0]</direction>
       -->
       <length>gapLength</length>
-      <firstSurfaceVelocity ref="../Signal[pistonSpeed]"/>
-      <secondSurfaceVelocity ref="../Signal[housingSpeed]"/>
+      <firstSurfaceVelocity ref="../Link[pistonSpeed]"/>
+      <secondSurfaceVelocity ref="../Link[housingSpeed]"/>
       <innerRadius>pistonRadius</innerRadius>
       <height>gapDiameter</height>
       <circularLeakagePressureLoss>
@@ -201,7 +201,7 @@
       <direction>[0;1;0]</direction>
     </AbsoluteVelocitySensor>
     <EnvironmentNodeMec name="nEnvironment" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <inflow ref="../HLine[circularLeakage]"/>
+      <inflow ref="../Object[circularLeakage]"/>
       <initialVolume>0</initialVolume>
       <translatorialBoundarySourface>
         <frameOfReference ref="../Object[Piston]/Frame[TopF]"/>
@@ -213,7 +213,7 @@
       </enableOpenMBVArrows>
     </EnvironmentNodeMec>
     <ConstrainedNodeMec name="nLPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <outflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <outflow ref="../Group[Checkvalve]/Object[Line]"/>
       <initialVolume>0</initialVolume>
       <translatorialBoundarySourface>
         <frameOfReference ref="../Object[Piston]/Frame[CheckvalveF]"/>
@@ -230,8 +230,8 @@
       </function>
     </ConstrainedNodeMec>
     <ElasticNodeMec name="nHPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <outflow ref="../HLine[circularLeakage]"></outflow>
-      <inflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <outflow ref="../Object[circularLeakage]"></outflow>
+      <inflow ref="../Group[Checkvalve]/Object[Line]"/>
       <initialVolume>hpcV0</initialVolume>
       <translatorialBoundarySourface>
         <frameOfReference ref="../Object[Piston]/Frame[CheckvalveF]"/>

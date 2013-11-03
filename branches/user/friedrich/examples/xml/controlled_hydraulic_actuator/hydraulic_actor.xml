@@ -151,9 +151,9 @@
   <links>
     <RigidNodeMec name="nA" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <!--
-      <outflow ref="../HLine[Leckage]"/>
+      <outflow ref="../Object[Leckage]"/>
       -->
-      <inflow ref="../../Group[HydraulicSystem]/HLine[lineA]"/>
+      <inflow ref="../../Group[HydraulicSystem]/Object[lineA]"/>
       <enableOpenMBVSphere>
         <size>.02</size>
         <minimalPressure unit="bar">10</minimalPressure>
@@ -180,9 +180,9 @@
     </RigidNodeMec>
     <RigidNodeMec name="nB" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <!--
-      <inflow ref="../HLine[Leckage]"/>
+      <inflow ref="../Object[Leckage]"/>
       -->
-      <inflow ref="../../Group[HydraulicSystem]/HLine[lineB]"/>
+      <inflow ref="../../Group[HydraulicSystem]/Object[lineB]"/>
       <enableOpenMBVSphere>
         <size>.02</size>
         <minimalPressure unit="bar">10</minimalPressure>
