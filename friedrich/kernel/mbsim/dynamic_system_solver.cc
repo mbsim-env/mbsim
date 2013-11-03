@@ -75,6 +75,7 @@ namespace MBSim {
   }
 
   DynamicSystemSolver::~DynamicSystemSolver() {
+    closePlot();
     H5::FileSerie::deletePIDFiles();
   }
 
