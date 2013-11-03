@@ -25,7 +25,6 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
@@ -89,11 +88,11 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       DimensionlessLine::init(stage);
       if (s1vPath!="")
-        setSurface1VelocitySignal(getByPath<Signal>(process_signal_string(s1vPath)));
+        setSurface1VelocitySignal(getByPath<Signal>(s1vPath));
       if (s2vPath!="")
-        setSurface2VelocitySignal(getByPath<Signal>(process_signal_string(s2vPath)));
+        setSurface2VelocitySignal(getByPath<Signal>(s2vPath));
       if (glPath!="")
-        setGapLengthSignal(getByPath<Signal>(process_signal_string(glPath)));
+        setGapLengthSignal(getByPath<Signal>(glPath));
     }
     else
       DimensionlessLine::init(stage);
