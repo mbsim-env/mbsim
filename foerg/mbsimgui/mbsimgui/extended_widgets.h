@@ -90,6 +90,8 @@ class ChoiceWidget2 : public Widget {
   public:
     ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
 
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
     void resize_(int m, int n);
     QWidget* getWidget() const;
     QString getName() const;

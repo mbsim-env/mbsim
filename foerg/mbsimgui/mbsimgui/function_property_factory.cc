@@ -257,7 +257,7 @@ Property* TabularFunctionPropertyFactory::createProperty(int i) {
 //    input.push_back(PhysicalVariableProperty(new VecFromFileProperty,"",MBSIMNS"x"));
 //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-   propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMNS"x",vector<string>(3,"")),"",4)));
+   propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMNS"x"),"",4)));
 
    propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,1,"1","0"),MBSIMNS"y",vector<string>(3,"")),"",4)));
 //    input.clear();

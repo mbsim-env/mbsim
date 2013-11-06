@@ -456,6 +456,14 @@ void FileWidget::selectFile() {
     setFile(file);
 }
 
+void IntegerWidget::fromProperty(Property *property) {
+  setInt(static_cast<IntegerProperty*>(property)->getInt());
+}
+
+void IntegerWidget::toProperty(Property *property) {
+  static_cast<IntegerProperty*>(property)->setInt(getInt());
+}
+
 SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
@@ -479,6 +487,14 @@ ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
   value->setCurrentIndex(currentIndex);
   layout->addWidget(value);
   connect(value,SIGNAL(currentIndexChanged(int)),this,SIGNAL(valueChanged(int)));
+}
+
+void BasicTextWidget::fromProperty(Property *property) {
+  setText(QString::fromStdString(static_cast<TextProperty*>(property)->getValue()));
+}
+
+void BasicTextWidget::toProperty(Property *property) {
+  static_cast<TextProperty*>(property)->setValue(getText().toStdString());
 }
 
 TextWidget::TextWidget(const QString &text_, bool readOnly) {
@@ -694,3 +710,39 @@ void ColorWidget::setColor() {
     updateWidget();
   }
 }
+
+UnitWidget::UnitWidget(const Units &units, int defaultUnit)  {
+  QHBoxLayout *layout = new QHBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+  unit = new QComboBox;
+  for(int i=0; i<units.getNumberOfUnits(); i++)
+    unit->addItem(QString::fromStdString(units.getUnit(i)));
+  unit->setCurrentIndex(defaultUnit);
+  layout->addWidget(unit);
+}
+
+void UnitWidget::fromProperty(Property *property) {
+  unit->setCurrentIndex(property->getCurrentUnit());
+}
+
+void UnitWidget::toProperty(Property *property) {
+  property->setCurrentUnit(unit->currentIndex());
+}
+
+DisablingWidget::DisablingWidget()  {
+  disabled = new QCheckBox;
+  QHBoxLayout* layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  layout->addWidget(disabled);
+}
+
+void DisablingWidget::fromProperty(Property *property) {
+  disabled->setCheckState(property->isDisabled()?Qt::Checked:Qt::Unchecked);
+}
+
+void DisablingWidget::toProperty(Property *property) {
+  property->setDisabled(disabled->checkState());
+}
+

@@ -236,7 +236,7 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
   dependentBodiesSecondSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIMNS"dependentRigidBody"));
   dependentBodiesSecondSide.setXMLName(MBSIMNS"dependentRigidBodiesSecondSide");
 
-  refFrameID.setProperty(new IntegerProperty(0,MBSIMNS"frameOfReferenceID"));
+  refFrameID.setProperty(new IntegerProperty("",0,MBSIMNS"frameOfReferenceID"));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));

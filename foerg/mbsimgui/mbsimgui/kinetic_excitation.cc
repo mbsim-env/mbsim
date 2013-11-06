@@ -28,7 +28,7 @@ using namespace MBXMLUtils;
 
 KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), forceArrow(0,true), momentArrow(0,true) {
 
-  refFrameID.setProperty(new IntegerProperty(1,MBSIMNS"frameOfReferenceID"));
+  refFrameID.setProperty(new IntegerProperty("",1,MBSIMNS"frameOfReferenceID"));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));

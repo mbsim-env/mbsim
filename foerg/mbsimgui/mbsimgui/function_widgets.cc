@@ -342,15 +342,15 @@ SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, in
 }
 
 int SymbolicFunctionWidget::getArg1Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
+  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getInt();
 }
 
 int SymbolicFunctionWidget::getArg2Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getValue();
+  return static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getInt();
 }
 
 void SymbolicFunctionWidget::setArg1Size(int i) {
-  static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->setValue(i);
+  static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->setInt(i);
 }
 
 void SymbolicFunctionWidget::resize_(int m, int n) {

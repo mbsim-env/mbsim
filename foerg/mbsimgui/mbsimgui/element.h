@@ -48,7 +48,8 @@ class Element : public TreeItemData {
     Element *parent;
     static int IDcounter;
     std::string ID;
-    ExtProperty name, embed;
+    ExtProperty embed;
+    std::vector<Property*> property;
   public:
     Element(const std::string &name, Element *parent);
     virtual Element* clone() const {return 0;}
@@ -62,8 +63,8 @@ class Element : public TreeItemData {
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize() {}
     virtual void deinitialize() {}
-    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
-    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
+    const std::string& getName() const {return property[0]->getValue();}
+    void setName(const std::string &str) {property[0]->setValue(str);}
     virtual std::string getType() const { return "Element"; }
     virtual std::string getNameSpace() const { return MBSIMNS; }
     std::string getValue() const { return getType(); }
@@ -100,8 +101,10 @@ class Element : public TreeItemData {
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
     virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
     Element* getRoot() {return parent?parent->getRoot():this;}
-    bool isEmbedded() const {return embed.isActive();}
+    bool isEmbedded() const {return false;}//embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
+    int getNumberOfProperties() const { return property.size(); }
+    Property* getProperty(int i) { return property[i]; }
 };
 
 template<class T>

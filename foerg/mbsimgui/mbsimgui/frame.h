@@ -37,13 +37,13 @@ class Frame : public Element {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile2(MBXMLUtils::TiXmlNode *element);
-    bool openMBVFrame() const {return visu.isActive();}
-    void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
+    bool openMBVFrame() const {return property[1]->isDisabled()==false;}
+    void setOpenMBVFrame(bool flag) {property[1]->setDisabled(flag==false);}
     virtual Element * getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FrameContextMenu(this);}
-  protected:
-    ExtProperty visu;
+//  protected:
+//    ExtProperty visu;
 };
 
 class FixedRelativeFrame : public Frame {
@@ -59,7 +59,7 @@ class FixedRelativeFrame : public Frame {
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
   protected:
-    ExtProperty refFrame, position, orientation;
+    ExtProperty refFrame, orientation;
 };
 
 #endif

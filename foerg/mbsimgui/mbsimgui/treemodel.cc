@@ -43,13 +43,13 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
     TreeItem *item = getItem(index);
     return item->getData(index.column());
   } 
-  else if(role==Qt::ForegroundRole) {
-    if(getItem(index)->getData1()=="") {
-      QPalette palette;
-      QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
-      return brush;
-    }
-  }
+//  else if(role==Qt::ForegroundRole) {
+//    if(getItem(index)->getData1()=="") {
+//      QPalette palette;
+//      QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
+//      return brush;
+//    }
+//  }
   return QVariant();
 }
 
@@ -116,34 +116,36 @@ int TreeModel::rowCount(const QModelIndex &parent) const {
   return getItem(parent)->childCount();
 }
 
-bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-  if(role != Qt::EditRole)
-    return false;
-
-  TreeItem *item = getItem(index);
-  if(index.column()==0)
-    item->setData0(value);
-
-  emit dataChanged(index, index);
-
-  return true;
-}
-
-bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
-    const QVariant &value, int role)
-{
-  if(role != Qt::EditRole || orientation != Qt::Horizontal)
-    return false;
-
-  if(section==0)
-    rootItem->setData0(value);
-  else
-    rootItem->setData1(value);
-
-  emit headerDataChanged(orientation, section, section);
-
-  return true;
-}
+//bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+//  cout << "------------------ setData --------------------- " << endl;
+//  if(role != Qt::EditRole)
+//    return false;
+//
+//  TreeItem *item = getItem(index);
+//  if(index.column()==0)
+//    item->setData0(value);
+//
+//  emit dataChanged(index, index);
+//
+//  return true;
+//}
+//
+//bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
+//    const QVariant &value, int role)
+//{
+//  cout << "------------------ setHeaderData --------------------- " << endl;
+//  if(role != Qt::EditRole || orientation != Qt::Horizontal)
+//    return false;
+//
+//  if(section==0)
+//    rootItem->setData0(value);
+//  else
+//    rootItem->setData1(value);
+//
+//  emit headerDataChanged(orientation, section, section);
+//
+//  return true;
+//}
 
 ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
 
@@ -283,4 +285,111 @@ void ParameterListModel::createParameterItem(Parameter *parameter, const QModelI
   parentItem->insertChildren(item,1);
   endInsertRows();
 }
+
+PropertyTreeModel::PropertyTreeModel(QObject *parent) : QAbstractItemModel(parent), rootItem(0) {
+  rootItem = new PropertyTreeItem(new BasicPropertyItemData("Name","Value","Unit","Evaluation"));
+}
+
+PropertyTreeModel::~PropertyTreeModel() {
+  delete rootItem;
+}
+
+QVariant PropertyTreeModel::data(const QModelIndex &index, int role) const {
+  if(role==Qt::DisplayRole || role==Qt::EditRole) {
+    PropertyTreeItem *item = getItem(index);
+    return item->getData(index.column());
+  } 
+  else if(role==Qt::ForegroundRole) {
+    if(getItem(index)->isDisabled()) {
+      QPalette palette;
+      QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
+      return brush;
+    }
+  }
+  return QVariant();
+}
+
+Qt::ItemFlags PropertyTreeModel::flags(const QModelIndex &index) const {
+  if(!index.isValid())
+    return 0;
+
+  return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+
+PropertyTreeItem *PropertyTreeModel::getItem(const QModelIndex &index) const {
+  if(index.isValid()) {
+    PropertyTreeItem *item = static_cast<PropertyTreeItem*>(index.internalPointer());
+    if(item) return item;
+  }
+  return rootItem;
+}
+
+QVariant PropertyTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if(orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    return rootItem->getData(section);
+
+  return QVariant();
+}
+
+QModelIndex PropertyTreeModel::index(int row, int column, const QModelIndex &parent) const {
+  if(parent.isValid() && parent.column() != 0)
+    return QModelIndex();
+
+  PropertyTreeItem *parentItem = getItem(parent);
+
+  PropertyTreeItem *childItem = parentItem->child(row);
+  if(childItem)
+    return createIndex(row, column, childItem);
+  else
+    return QModelIndex();
+}
+
+QModelIndex PropertyTreeModel::parent(const QModelIndex &index) const {
+  if(!index.isValid())
+    return QModelIndex();
+
+  PropertyTreeItem *childItem = getItem(index);
+  PropertyTreeItem *parentItem = childItem->parent();
+
+  if(parentItem == rootItem)
+    return QModelIndex();
+
+  return createIndex(parentItem->childNumber(), 0, parentItem);
+}
+
+bool PropertyTreeModel::removeRows(int position, int rows, const QModelIndex &parent) {
+  PropertyTreeItem *parentItem = getItem(parent);
+  bool success = true;
+
+  beginRemoveRows(parent, position, position + rows - 1);
+  success = parentItem->removeChildren(position, rows);
+  endRemoveRows();
+
+  return success;
+}
+
+int PropertyTreeModel::rowCount(const QModelIndex &parent) const {
+  return getItem(parent)->childCount();
+}
+
+void PropertyTreeModel::createPropertyItem(Property *property, const QModelIndex &parent) {
+
+  PropertyTreeItem *parentItem = getItem(parent);
+
+  int i = rowCount(parent);
+  beginInsertRows(parent, i, i);
+  PropertyTreeItem *item = new PropertyTreeItem(property,parentItem);
+  parentItem->insertChildren(item,1);
+  endInsertRows();
+
+  QModelIndex index;
+  if(parent.row()==-1)
+    index = this->index(i,0,parent);
+  else
+    index = parent.child(i,0);
+
+  for(int j=0; j<property->getNumberOfProperties(); j++)
+    createPropertyItem(property->getProperty(j),index);
+}
+
 

@@ -24,6 +24,7 @@
 #include <QModelIndex>
 #include <QVariant>
 
+class Element;
 class Frame;
 class Contour;
 class Group;
@@ -31,7 +32,9 @@ class Object;
 class Link;
 class Observer;
 class Parameter;
+class Property;
 class TreeItem;
+class PropertyTreeItem;
 
 class TreeModel : public QAbstractItemModel {
   public:
@@ -48,8 +51,8 @@ class TreeModel : public QAbstractItemModel {
     int columnCount(const QModelIndex &) const {return 2;}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
+//    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+//    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
 
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
@@ -78,6 +81,39 @@ class ParameterListModel : public TreeModel {
     ParameterListModel(QObject *parent = 0);
 
     void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
+};
+
+//class PropertyTreeModel : public TreeModel {
+//  public:
+//    PropertyTreeModel(QObject *parent = 0);
+//
+//    void createPropertyItem(Property *property, const QModelIndex &parent = QModelIndex());
+//};
+
+class PropertyTreeModel : public QAbstractItemModel {
+  public:
+    PropertyTreeModel(QObject *parent = 0);
+    ~PropertyTreeModel();
+
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex parent(const QModelIndex &index) const;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &) const {return 4;}
+
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+
+    bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
+
+    PropertyTreeItem *getItem(const QModelIndex &index) const;
+
+    void createPropertyItem(Property *property, const QModelIndex &parent = QModelIndex());
+
+ protected:
+    PropertyTreeItem *rootItem;
 };
 
 #endif

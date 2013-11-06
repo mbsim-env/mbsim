@@ -34,6 +34,7 @@
 #include "element_view.h"
 #include "parameter_view.h"
 #include "integrator_view.h"
+#include "property_view.h"
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include <openmbv/mainwindow.h>
 #include <utime.h>
@@ -206,31 +207,43 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   //actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
-  toolBar->addAction(actionSimulate);
+  //toolBar->addAction(actionSimulate);
   actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/openmbv.svg"),"OpenMBV");
   actionOpenMBV->setDisabled(true);
   connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
-  toolBar->addAction(actionOpenMBV);
+  //toolBar->addAction(actionOpenMBV);
   actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/h5plotserie.svg"),"H5plotserie");
   actionH5plotserie->setDisabled(true);
   connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
-  toolBar->addAction(actionH5plotserie);
+ // toolBar->addAction(actionH5plotserie);
+  QAction *actionUpdate3DView = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/h5plotserie.svg"),"Update 3D view");
+  connect(actionUpdate3DView,SIGNAL(triggered()),this,SLOT(update3DView()));
+//  toolBar->addAction(actionUpdate3DView);
 
   setWindowTitle("MBSim GUI");
 
   elementList = new ElementView;
   elementList->setModel(new ElementTreeModel);
-  //elementList->setItemDelegate(new ElementDelegate);
   elementList->setColumnWidth(0,250);
   elementList->setColumnWidth(1,200);
+  connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
 
   parameterList = new ParameterView;
   parameterList->setModel(new ParameterListModel);
-  //parameterList->setItemDelegate(new ParameterDelegate);
   parameterList->setColumnWidth(0,75);
   parameterList->setColumnWidth(1,125);
+  connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
 
   integratorView = new IntegratorView;
+
+  propertyList = new PropertyView;
+  propertyList->setModel(new PropertyTreeModel);
+  propertyList->setColumnWidth(0,75);
+  propertyList->setColumnWidth(1,75);
+  propertyList->setColumnWidth(2,75);
+  propertyList->setColumnWidth(3,75);
+  connect(propertyList,SIGNAL(pressed(QModelIndex)), this, SLOT(propertyListClicked()));
+  propertyList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
   action = new QAction("Add string parameter", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
@@ -245,9 +258,6 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
   parameterList->insertAction(0,action);
   parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
-
-  connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
-  connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
 
   fileProject = new QLineEdit("");
   fileProject->setReadOnly(true);
@@ -269,6 +279,10 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   fileIntegrator = new QLineEdit("");
   fileIntegrator->setReadOnly(true);
   dockWidget2->setWidget(integratorView);
+
+  QDockWidget *dockWidget4 = new QDockWidget("Properties");
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget4);
+  dockWidget4->setWidget(propertyList);
  
   //tabifyDockWidget(dockWidget1,dockWidget2);
   //tabifyDockWidget(dockWidget2,dockWidget3);
@@ -376,8 +390,8 @@ void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatu
 }
 
 void MainWindow::openPropertyDialog() {
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  elementList->openEditor();
+//  QModelIndex index = elementList->selectionModel()->currentIndex();
+//  elementList->openEditor();
 }
 
 void MainWindow::initInlineOpenMBV() {
@@ -466,6 +480,7 @@ void MainWindow::highlightObject(const string &ID) {
 }
 
 void MainWindow::selectionChanged() {
+  updatePropertyTree();
   QModelIndex index = elementList->selectionModel()->currentIndex();
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -477,8 +492,29 @@ void MainWindow::selectionChanged() {
 #endif
 }
 
+void MainWindow::updatePropertyTree() {
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+  PropertyTreeModel *propertyModel = static_cast<PropertyTreeModel*>(propertyList->model());
+  QModelIndex propertyIndex = propertyModel->index(0,0);
+  propertyModel->removeRows(propertyIndex.row(), propertyModel->rowCount(QModelIndex()), propertyIndex.parent());
+  if(element) {
+    for(int i=0; i<element->getNumberOfProperties(); i++) {
+      propertyModel->createPropertyItem(element->getProperty(i));
+    }
+  }
+}
+
 void MainWindow::elementListClicked() {
   selectionChanged();
+//  if(QApplication::mouseButtons()==Qt::LeftButton) {
+//    updatePropertyTree();
+////    for(int i=0; i<propertyModel->rowCount(QModelIndex()); i++)
+////      delete propertyModel->getItem(propertyIndex.sibling(i,0))->getItemData();
+//
+//    return;
+//  }
   if(QApplication::mouseButtons()==Qt::RightButton) {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     TreeItemData *itemData = static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData();
@@ -496,6 +532,18 @@ void MainWindow::parameterListClicked() {
     if(index.column()==0) {
       Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(parameterList->model())->getItem(index)->getItemData());
       QMenu *menu = parameter->createContextMenu();
+      menu->exec(QCursor::pos());
+      delete menu;
+    } 
+  }
+}
+
+void MainWindow::propertyListClicked() {
+  if(QApplication::mouseButtons()==Qt::RightButton) {
+    QModelIndex index = propertyList->selectionModel()->currentIndex();
+    if(index.column()==0) {
+      Property *property = static_cast<Property*>(static_cast<PropertyTreeModel*>(propertyList->model())->getItem(index)->getItemData());
+      QMenu *menu = property->createContextMenu();
       menu->exec(QCursor::pos());
       delete menu;
     } 
@@ -1091,6 +1139,10 @@ void MainWindow::simulate() {
   statusBar()->showMessage(tr("Simulating"));
 }
 
+void MainWindow::update3DView() {
+  mbsimxml(1);
+}
+
 void MainWindow::openmbv() {
   QString name = uniqueTempDir+"/out0.ombv.xml";
   if(QFile::exists(name)) {
@@ -1288,7 +1340,9 @@ void MainWindow::addFrame(Frame *frame) {
   model->createFrameItem(frame,containerIndex);
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
+  updatePropertyTree();
+  mbsimxml(1);
+//  elementList->openEditor();
 }
 
 void MainWindow::addContour(Contour *contour) {
@@ -1300,7 +1354,7 @@ void MainWindow::addContour(Contour *contour) {
   model->createContourItem(contour,containerIndex);
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
+//  elementList->openEditor();
 }
 
 void MainWindow::addGroup(Group *group) {
@@ -1312,7 +1366,7 @@ void MainWindow::addGroup(Group *group) {
   model->createGroupItem(group,containerIndex);
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
+//  elementList->openEditor();
 }
 
 void MainWindow::addObject(Object *object) {
@@ -1324,7 +1378,7 @@ void MainWindow::addObject(Object *object) {
   model->createObjectItem(object,containerIndex);
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
+//  elementList->openEditor();
 }
 
 void MainWindow::addLink(Link *link) {
@@ -1336,7 +1390,7 @@ void MainWindow::addLink(Link *link) {
   model->createLinkItem(link,containerIndex);
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
+//  elementList->openEditor();
 }
 
 void MainWindow::addObserver(Observer *observer) {
@@ -1348,7 +1402,7 @@ void MainWindow::addObserver(Observer *observer) {
   model->createObserverItem(observer,containerIndex);
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
+//  elementList->openEditor();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {

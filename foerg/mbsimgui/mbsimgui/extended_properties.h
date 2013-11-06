@@ -31,8 +31,8 @@ class ExtPhysicalVarProperty : public Property {
     const PhysicalVariableProperty& getCurrentPhysicalVariableProperty() {return inputProperty[currentInput];}
     const PhysicalVariableProperty& getCurrentPhysicalVariableProperty() const {return inputProperty[currentInput];}
     int getNumberOfInputs() const {return inputProperty.size();}
-    std::string getValue() const {return inputProperty[currentInput].getValue();}
-    void setValue(const std::string &str) {inputProperty[currentInput].setValue(str);}
+//    std::string getValue() const {return inputProperty[currentInput].getValue();}
+//    void setValue(const std::string &str) {inputProperty[currentInput].setValue(str);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -59,8 +59,8 @@ class ExtProperty : public Property {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     void initialize() {property->initialize();}
-    bool isActive() const {return active;}
-    void setActive(bool active_) {active = active_;}
+//    bool isActive() const {return active;}
+//    void setActive(bool active_) {active = active_;}
 
   protected:
     Property *property;
@@ -71,6 +71,7 @@ class ExtProperty : public Property {
 class ChoiceProperty2 : public Property {
 
   public:
+    ChoiceProperty2(const std::string &name, PropertyFactory *factory_, const std::string &xmlName_, int mode_=0, const std::string &xmlBase_=MBSIMNS); 
     ChoiceProperty2(PropertyFactory *factory_, const std::string &xmlName_, int mode_=0, const std::string &xmlBase_=MBSIMNS); 
     ChoiceProperty2(const ChoiceProperty2 &p);
     ~ChoiceProperty2();
@@ -84,6 +85,17 @@ class ChoiceProperty2 : public Property {
     void toWidget(QWidget *widget);
     Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
+    const std::string& getValue() const {return property->getValue();}
+    const std::string& getUnit() const {return property->getUnit();}
+    const std::string& getEvaluation() const {return property->getEvaluation();}
+    const Units& getUnits() const { return property->getUnits(); }
+    int getCurrentUnit() const { return property->getCurrentUnit(); }
+    void setCurrentUnit(int i) { property->setCurrentUnit(i); } 
+    //virtual PropertyPropertyDialog* createPropertyDialog() { return new PropertyPropertyDialog(this,new ChoiceWidget2); }
+    //virtual PropertyPropertyDialog* createUnitDialog() { return new PropertyPropertyDialog(this,new UnitWidget(angleUnits(),1)); }
+    Widget* createWidget() { return new ChoiceWidget2(factory->createWidgetFactory()); }
+    int getIndex() const { return index; }
+    void setIndex(int i); 
 
   protected:
     PropertyFactory *factory;

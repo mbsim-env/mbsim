@@ -45,6 +45,8 @@
 #include "integrator.h"
 #include "sensor.h"
 #include "function_widget_factory.h"
+#include "treemodel.h"
+#include "property_view.h"
 #include <QPushButton>
 
 using namespace std;
@@ -99,26 +101,29 @@ Widget* RigidBodyOfReferenceWidgetFactory::createWidget(int i) {
 
 ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), embed(0) {
   addTab("General");
-  name = new ExtWidget("Name",new TextWidget);
-  name->setToolTip("Set the name of the element");
-  addToTab("General", name);
-  if(embedding) {
-    addTab("Embedding");
-    embed = new ExtWidget("Embed", new EmbedWidget, true);
-    addToTab("Embedding",embed);
-  }
+//  name = new ExtWidget("Name",new TextWidget);
+//  name->setToolTip("Set the name of the element");
+//  addToTab("General", name);
+//  if(embedding) {
+//    addTab("Embedding");
+//    embed = new ExtWidget("Embed", new EmbedWidget, true);
+//    addToTab("Embedding",embed);
+//  }
+//  PropertyTreeModel *model = static_cast<PropertyTreeModel*>(treeView->model());
+//  for(int i=0; i<element->getNumberOfProperties(); i++)
+//    model->createPropertyItem(element->getProperty(i));
 }
 
 void ElementPropertyDialog::toWidget(Element *element) {
-  element->name.toWidget(name);
-  if(embed)
-    element->embed.toWidget(embed);
+//  element->name.toWidget(name);
+//  if(embed)
+//    element->embed.toWidget(embed);
 }
 
 void ElementPropertyDialog::fromWidget(Element *element) {
-  element->name.fromWidget(name);
-  if(embed)
-    element->embed.fromWidget(embed);
+//  element->name.fromWidget(name);
+//  if(embed)
+//    element->embed.fromWidget(embed);
 }
 
 FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(frame,parent,f,embedding) {
@@ -129,13 +134,13 @@ FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::Wind
 }
 
 void FramePropertyDialog::toWidget(Element *element) {
-  ElementPropertyDialog::toWidget(element);
-  static_cast<Frame*>(element)->visu.toWidget(visu);
+//  ElementPropertyDialog::toWidget(element);
+//  static_cast<Frame*>(element)->visu.toWidget(visu);
 }
 
 void FramePropertyDialog::fromWidget(Element *element) {
-  ElementPropertyDialog::fromWidget(element);
-  static_cast<Frame*>(element)->visu.fromWidget(visu);
+//  ElementPropertyDialog::fromWidget(element);
+//  static_cast<Frame*>(element)->visu.fromWidget(visu);
 }
 
 FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
@@ -152,17 +157,17 @@ FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelative
 }
 
 void FixedRelativeFramePropertyDialog::toWidget(Element *element) {
-  FramePropertyDialog::toWidget(element);
-  static_cast<FixedRelativeFrame*>(element)->position.toWidget(position);
-  static_cast<FixedRelativeFrame*>(element)->orientation.toWidget(orientation);
-  static_cast<FixedRelativeFrame*>(element)->refFrame.toWidget(refFrame);
+//  FramePropertyDialog::toWidget(element);
+//  static_cast<FixedRelativeFrame*>(element)->position.toWidget(position);
+//  static_cast<FixedRelativeFrame*>(element)->orientation.toWidget(orientation);
+//  static_cast<FixedRelativeFrame*>(element)->refFrame.toWidget(refFrame);
 }
 
 void FixedRelativeFramePropertyDialog::fromWidget(Element *element) {
-  FramePropertyDialog::fromWidget(element);
-  static_cast<FixedRelativeFrame*>(element)->position.fromWidget(position);
-  static_cast<FixedRelativeFrame*>(element)->orientation.fromWidget(orientation);
-  static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
+//  FramePropertyDialog::fromWidget(element);
+//  static_cast<FixedRelativeFrame*>(element)->position.fromWidget(position);
+//  static_cast<FixedRelativeFrame*>(element)->orientation.fromWidget(orientation);
+//  static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
 }
 
 ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
@@ -302,17 +307,17 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
 }
 
 void SolverPropertyDialog::toWidget(Element *element) {
-  GroupPropertyDialog::toWidget(element);
-  static_cast<Solver*>(element)->environment.toWidget(environment);
-  static_cast<Solver*>(element)->solverParameters.toWidget(solverParameters);
-  static_cast<Solver*>(element)->inverseKinetics.toWidget(inverseKinetics);
+//  GroupPropertyDialog::toWidget(element);
+//  static_cast<Solver*>(element)->environment.toWidget(environment);
+//  static_cast<Solver*>(element)->solverParameters.toWidget(solverParameters);
+//  static_cast<Solver*>(element)->inverseKinetics.toWidget(inverseKinetics);
 }
 
 void SolverPropertyDialog::fromWidget(Element *element) {
-  GroupPropertyDialog::fromWidget(element);
-  static_cast<Solver*>(element)->environment.fromWidget(environment);
-  static_cast<Solver*>(element)->solverParameters.fromWidget(solverParameters);
-  static_cast<Solver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
+//  GroupPropertyDialog::fromWidget(element);
+//  static_cast<Solver*>(element)->environment.fromWidget(environment);
+//  static_cast<Solver*>(element)->solverParameters.fromWidget(solverParameters);
+//  static_cast<Solver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
 }
 
 ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {

@@ -27,7 +27,7 @@ using namespace MBXMLUtils;
 
 Joint::Joint(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-  refFrameID.setProperty(new IntegerProperty(0,MBSIMNS"frameOfReferenceID"));
+  refFrameID.setProperty(new IntegerProperty("",0,MBSIMNS"frameOfReferenceID"));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));

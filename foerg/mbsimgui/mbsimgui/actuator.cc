@@ -35,7 +35,7 @@ Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forc
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"momentDirection"));
   momentDir.setProperty(new ExtPhysicalVarProperty(input));
 
-  frameOfReference.setProperty(new IntegerProperty(1,MBSIMCONTROLNS"referenceFrame")); 
+  frameOfReference.setProperty(new IntegerProperty("",1,MBSIMCONTROLNS"referenceFrame")); 
 
   inputSignal.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
   

@@ -46,8 +46,8 @@ class VariableWidget : public Widget {
 
   public:
     virtual void setReadOnly(bool flag) {}
-    virtual QString getValue() const = 0;
-    virtual void setValue(const QString &str) = 0;
+    virtual QString getValue() const {return "";}
+    virtual void setValue(const QString &str) {}
     virtual QString getType() const = 0;
     virtual bool validate(const std::vector<std::vector<QString> > &A) const {return true;}
 };
@@ -56,10 +56,12 @@ class BoolWidget : public VariableWidget {
 
   public:
     BoolWidget(const QString &b="0");
-    QString getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
+    QString getValue() const {return value->checkState()==Qt::Checked?"true":"false";}
     void setValue(const QString &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
     virtual QString getType() const {return "Boolean";}
     bool validate(const std::vector<std::vector<QString> > &A) const;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 
   protected:
     QCheckBox *value;
@@ -68,9 +70,11 @@ class BoolWidget : public VariableWidget {
 class OctaveExpressionWidget : public VariableWidget {
   public:
     OctaveExpressionWidget();
-    QString getValue() const { return value->toPlainText(); }
-    void setValue(const QString &str) { value->setPlainText(str); }
+    QString getExpression() const { return value->toPlainText(); }
+    void setExpression(const QString &str) { value->setPlainText(str); }
     virtual QString getType() const {return "Editor";}
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 
   private:
     QPlainTextEdit *value;
@@ -82,16 +86,20 @@ class ScalarWidget : public VariableWidget {
   public:
     ScalarWidget(const QString &d="1");
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
-    QString getValue() const {return box->text().isEmpty()?"0":box->text();}
-    void setValue(const QString &str) {box->setText(str=="0"?"":str);}
+    const QString getScalar() const {return box->text().isEmpty()?"0":box->text();}
+    void setScalar(const QString &str) {box->setText(str=="0"?"":str);}
     virtual QString getType() const {return "Scalar";}
     bool validate(const std::vector<std::vector<QString> > &A) const;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 };
 
 class BasicVecWidget : public VariableWidget {
   public:
     virtual std::vector<QString> getVec() const = 0;
     virtual void setVec(const std::vector<QString> &x) = 0;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 };
 
 class VecWidget : public BasicVecWidget {
@@ -99,7 +107,7 @@ class VecWidget : public BasicVecWidget {
     std::vector<QLineEdit*> box;
     bool transpose;
   public:
-    VecWidget(int size, bool transpose=false);
+    VecWidget(int size=1, bool transpose=false);
     VecWidget(const std::vector<QString> &x, bool transpose=false);
     void resize_(int size);
     void resize_(int rows, int cols) { resize_(rows); }
@@ -287,6 +295,8 @@ class CardanWidget : public VariableWidget {
     bool validate(const std::vector<std::vector<QString> > &A) const;
     QString getUnit() const {return unit->currentText();}
     void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 };
 
 class PhysicalVariableWidget : public VariableWidget {
@@ -362,7 +372,7 @@ class FromFileWidget : public VariableWidget {
 
 class ScalarWidgetFactory : public WidgetFactory {
   public:
-    ScalarWidgetFactory(const QString &value);
+    ScalarWidgetFactory(const QString &value="1");
     ScalarWidgetFactory(const QString &value, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
     ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit);
     QWidget* createWidget(int i=0);

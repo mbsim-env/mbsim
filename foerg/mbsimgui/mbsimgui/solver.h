@@ -39,7 +39,7 @@ class Environment : public QObject {
 class Solver : public Group {
   friend class SolverPropertyDialog;
   protected:
-    ExtProperty environment, solverParameters, inverseKinetics;
+    ExtProperty solverParameters, inverseKinetics;
   public:
     Solver(const std::string &str, Element *parent);
     virtual Element* clone() const {return new Solver(*this);}

@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "property_dialog.h"
+#include "property_view.h"
+#include "treemodel.h"
 #include "widget.h"
 #include <QGridLayout>
 #include <QDialogButtonBox>

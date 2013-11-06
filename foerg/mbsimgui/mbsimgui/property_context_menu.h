@@ -17,38 +17,22 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _XML_WIDGETS_H_
-#define _XML_WIDGETS_H_
+#ifndef _PROPERTY_CONTEXT_MENU_H_
+#define _PROPERTY_CONTEXT_MENU_H_
 
-#include <QWidget>
-
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
-}
+#include <QMenu>
 
 class Property;
 
-class WidgetInterface {
+class PropertyContextMenu : public QMenu {
 
+  Q_OBJECT
   public:
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-    virtual void resize_(int m, int n) {}
-    virtual void fromProperty(Property *property) {}
-    virtual void toProperty(Property *property) {}
-};
-
-class Widget : public QWidget, public WidgetInterface {
-  public:
-    Widget() {}
-};
-
-class WidgetFactory {
-  public:
-    virtual QWidget* createWidget(int i=0) = 0;
-    virtual QString getName(int i=0) const { return ""; }
-    virtual int getSize() const { return 0; }
+    PropertyContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+  protected slots:
+    void disableProperty(bool disable);
+  protected:
+    Property *property;
 };
 
 #endif

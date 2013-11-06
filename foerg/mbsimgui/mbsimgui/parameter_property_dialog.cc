@@ -53,7 +53,7 @@ void StringParameterPropertyDialog::toWidget(Parameter *parameter) {
 void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
   ParameterPropertyDialog::fromWidget(parameter);
   static_cast<StringParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
+  parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getValue());
 }
 
 ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {

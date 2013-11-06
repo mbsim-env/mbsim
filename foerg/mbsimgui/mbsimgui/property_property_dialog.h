@@ -17,38 +17,26 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _XML_WIDGETS_H_
-#define _XML_WIDGETS_H_
+#ifndef _PROPERTY_PROPERTY_DIALOG_H_
+#define _PROPERTY_PROPERTY_DIALOG_H_
 
-#include <QWidget>
-
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
-}
+#include "property_dialog.h"
 
 class Property;
+class Widget;
 
-class WidgetInterface {
+class PropertyPropertyDialog : public PropertyDialog {
 
   public:
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-    virtual void resize_(int m, int n) {}
-    virtual void fromProperty(Property *property) {}
-    virtual void toProperty(Property *property) {}
-};
-
-class Widget : public QWidget, public WidgetInterface {
-  public:
-    Widget() {}
-};
-
-class WidgetFactory {
-  public:
-    virtual QWidget* createWidget(int i=0) = 0;
-    virtual QString getName(int i=0) const { return ""; }
-    virtual int getSize() const { return 0; }
+    PropertyPropertyDialog(Property *property, Widget *widget1=0, Widget *widget2=0, Widget *widget3=0, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    virtual void toWidget(Property *property);
+    virtual void fromWidget(Property *property);
+    void toWidget() {toWidget(property);}
+    void fromWidget() {fromWidget(property);}
+    Property* getProperty() {return property;}
+  protected:
+    Property *property;
+    Widget *widget1, *widget2, *widget3;
 };
 
 #endif

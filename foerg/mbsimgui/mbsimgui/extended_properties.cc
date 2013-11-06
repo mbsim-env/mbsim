@@ -60,6 +60,9 @@ void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   inputProperty[currentInput].toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
 }
 
+ChoiceProperty2::ChoiceProperty2(const string &name, PropertyFactory *factory_, const std::string &xmlName_, int mode_, const std::string &xmlBase_) : Property(name), factory(factory_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_), property(factory->createProperty()) {
+}
+
 ChoiceProperty2::ChoiceProperty2(PropertyFactory *factory_, const std::string &xmlName_, int mode_, const std::string &xmlBase_) : factory(factory_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_), property(factory->createProperty()) {
 }
 
@@ -130,13 +133,10 @@ TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
         TiXmlElement* ee=e;
         if(ee) {
           for(int i=0; i<factory->getSize(); i++) {
-            TiXmlElement *eee=ee->FirstChildElement();
-            if(eee) {
-              index = i;
-              property = factory->createProperty(i);
-              if(property->initializeUsingXML(ee))
-                return eee;
-            }
+            index = i;
+            property = factory->createProperty(i);
+            if(property->initializeUsingXML(ee))
+              return ee;
           }
         }
       }
@@ -176,6 +176,14 @@ void ChoiceProperty2::toWidget(QWidget *widget) {
   static_cast<ChoiceWidget2*>(widget)->defineWidget(index);
   static_cast<ChoiceWidget2*>(widget)->blockSignals(false);
   property->toWidget(static_cast<ChoiceWidget2*>(widget)->getWidget());
+}
+
+void ChoiceProperty2::setIndex(int i) {
+  if(index != i) {
+    index = i;
+    delete property;
+    property = factory->createProperty(index);
+  }
 }
 
 TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
