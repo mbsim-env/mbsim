@@ -17,41 +17,31 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _PROPERTY_DIALOG_H_
-#define _PROPERTY_DIALOG_H_
+#ifndef _PROPERTY_VIEW__H_
+#define _PROPERTY_VIEW__H_
 
-#include <QScrollArea>
-#include <QTabWidget>
-#include <QDialog>
-#include <map>
+#include <QTreeView>
+#include <QModelIndex>
 
-class QVBoxLayout;
-class QDialogButtonBox;
-class QAbstractButton;
-class PropertyView;
+class Property;
+class Widget;
+class PropertyPropertyDialog;
 
-class PropertyDialog : public QDialog {
+class PropertyView : public QTreeView {
   Q_OBJECT
-
+  private:
+    QModelIndex index;
+    Property *property;
+    PropertyPropertyDialog *editor;
+    QWidget *unit;
   public:
-    PropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
-    ~PropertyDialog();
-    void setParentObject(QObject *obj);
-    void addToTab(const QString &name, QWidget* widget_);
-    void addTab(const QString &name, int i=-1);
-    void addStretch();
-    void updateWidget();
+    PropertyView(QWidget *parent=0) : QTreeView(parent), property(0), editor(0) {}
+    void openEditor();
   protected:
-    std::map<QString,QVBoxLayout*> layout;
-    std::vector<QWidget*> widget;
-    QTabWidget *tabWidget;
-    QDialogButtonBox *buttonBox;
-    QPushButton *buttonResize;
-  public slots:
-    void clicked(QAbstractButton *button);
-    virtual void toWidget() {}
-    virtual void fromWidget() {}
-  signals:
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+  protected slots:
+    void dialogFinished(int result);
     void apply();
 };
 

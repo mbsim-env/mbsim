@@ -22,6 +22,7 @@
 
 #include "basic_properties.h"
 #include "extended_properties.h"
+#include "ombv_widgets.h"
 
 class RigidBody;
 
@@ -40,11 +41,12 @@ class OMBVBodyPropertyFactory: public PropertyFactory {
 class OMBVObjectProperty : public Property {
 
   public:
-    OMBVObjectProperty(const std::string &name_="NOTSET", const std::string &ID_=0) : name(name_), ID(ID_) {}
+    OMBVObjectProperty(const std::string &name="", const std::string &ID_=0) : Property(name), ID(ID_) {}
+    OMBVObjectProperty(const std::string &name, const std::string &value, const std::string &ID_) : Property(name,value), ID(ID_) {}
     virtual std::string getType() const = 0;
-    void setName(const std::string &name_) {name = name_;}
+//    void setName(const std::string &name_) {name = name_;}
   protected:
-    std::string name;
+//    std::string name;
     std::string ID;
     void writeXMLFileID(MBXMLUtils::TiXmlNode *parent);
 };
@@ -59,8 +61,9 @@ class OMBVFrameProperty : public OMBVObjectProperty {
     virtual std::string getType() const { return "Frame"; }
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+//    Widget* createWidget() { return new OMBVFrameWidget; }
   protected:
-    ExtProperty size, offset;
+    //ExtProperty size, offset;
     std::string xmlName;
 };
 

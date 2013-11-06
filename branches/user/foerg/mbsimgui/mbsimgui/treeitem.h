@@ -28,6 +28,7 @@
 #include "element_context_menu.h"
 
 class Element;
+class Property;
 
 class BasicItemData : public TreeItemData {
   protected:
@@ -65,7 +66,6 @@ class GroupItemData : public BasicItemData {
     virtual QMenu* createContextMenu() {return new GroupContextContextMenu(element);}
 };
 
-
 class ObjectItemData : public BasicItemData {
   private:
     Element *element;
@@ -89,6 +89,15 @@ class ObserverItemData : public BasicItemData {
     ObserverItemData(Element *element_) : BasicItemData("observers",""), element(element_) {}
     virtual QMenu* createContextMenu() {return new ObserverContextContextMenu(element);}
 };
+
+//class PropertyItemData : public BasicItemData {
+//  private:
+//    Element *element;
+//  public:
+//    PropertyItemData(Element *element_) : BasicItemData("properties",""), element(element_) {}
+//    virtual QMenu* createContextMenu() {return 0;}
+////    virtual QMenu* createContextMenu() {return new ObserverContextContextMenu(element);}
+//};
 
 class TreeItem {
   public:
@@ -124,6 +133,59 @@ class TreeItem {
     QList<TreeItem*> childItems;
     TreeItemData *itemData;
     TreeItem *parentItem;
+    int ID;
+};
+
+class BasicPropertyItemData : public PropertyTreeItemData {
+  protected:
+    std::string name, value, unit, evaluation;
+  public:
+    BasicPropertyItemData(const std::string &name_, const std::string &value_, const std::string &unit_, const std::string &evaluation_) : name(name_), value(value_), unit(unit_), evaluation(evaluation_) {}
+    const std::string& getName() const {return name;}
+    const std::string& getValue() const {return value;}
+    const std::string& getUnit() const {return unit;}
+    const std::string& getEvaluation() const {return evaluation;}
+    void setName(const std::string &name_) {name = name_;}
+    void setValue(const std::string &value_) {value = value_;}
+    void setUnit(const std::string &unit_) {unit = unit_;}
+    void setEvaluation(const std::string &evaluation_) {evaluation = evaluation_;}
+    virtual QMenu* createContextMenu() {return new QMenu;}
+};
+
+class PropertyTreeItem {
+  public:
+
+    PropertyTreeItem(PropertyTreeItemData *itemData = 0, PropertyTreeItem *parent = 0, int ID_ = 1);
+    ~PropertyTreeItem();
+
+    PropertyTreeItem *child(int number) {return childItems.value(number);}
+    int childCount() const {return childItems.count();}
+
+    PropertyTreeItem *parent() {return parentItem;}
+    bool insertChildren(PropertyTreeItem *item, int count);
+    bool removeChildren(int position, int count);
+    int childNumber() const;
+    void setItemData(PropertyTreeItemData *data_) {itemData = data_;}
+    PropertyTreeItemData* getItemData() const {return itemData;}
+    QVariant getData0() const {return QString::fromStdString(itemData->getName());}
+    QVariant getData1() const {return QString::fromStdString(itemData->getValue());}
+    QVariant getData2() const {return QString::fromStdString(itemData->getUnit());}
+    QVariant getData3() const {return QString::fromStdString(itemData->getEvaluation());}
+    bool isDisabled() const {return itemData->isDisabled();}
+    void setData0(const QVariant &value) {itemData->setName(value.toString().toStdString());}
+    void setData1(const QVariant &value) {itemData->setValue(value.toString().toStdString());}
+    void setData2(const QVariant &value) {itemData->setUnit(value.toString().toStdString());}
+    void setData3(const QVariant &value) {itemData->setEvaluation(value.toString().toStdString());}
+    QVariant (PropertyTreeItem::*getData_[4])() const;
+    void (PropertyTreeItem::*setData_[4])(const QVariant &value);
+    QVariant getData(int column) const {return (this->*getData_[column])();}
+    void setData(int column, const QVariant &value) {(this->*setData_[column])(value);}
+    int getID() const {return ID;}
+
+  protected:
+    QList<PropertyTreeItem*> childItems;
+    PropertyTreeItemData *itemData;
+    PropertyTreeItem *parentItem;
     int ID;
 };
 

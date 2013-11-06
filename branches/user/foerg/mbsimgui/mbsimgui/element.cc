@@ -41,7 +41,11 @@ using namespace MBXMLUtils;
 int Element::IDcounter=0;
 
 Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
-  name.setProperty(new TextProperty(name_,""));
+  //name.setProperty(new TextProperty(name_,""));
+  property.push_back(new TextProperty("name",name_,""));
+//  property[1]=new IntegerProperty("integer",2,"");
+//  property[2]= new CardanProperty("relative orientation");
+//  property[3]= new ChoiceProperty2("mass",new ScalarPropertyFactory("1",MBSIMNS"mass",MassUnits()),"",4);
   embed.setProperty(new EmbedProperty(this));
   ID=toStr(IDcounter++);
 }
@@ -80,7 +84,7 @@ TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
 
 void Element::initializeUsingXMLEmbed(TiXmlElement *element) {
   embed.initializeUsingXML(element);
-  embed.setActive(true);
+//  embed.setActive(true);
 }
 
 TiXmlElement* Element::writeXMLFileEmbed(TiXmlNode *parent) {

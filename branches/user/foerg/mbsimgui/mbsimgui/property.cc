@@ -17,38 +17,26 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _XML_WIDGETS_H_
-#define _XML_WIDGETS_H_
+#include <config.h>
+#include "property.h"
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
-#include <QWidget>
+using namespace std;
+using namespace MBXMLUtils;
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+void PhysicalProperty::setValue(const string &data) { 
+  Property::setValue(data); 
+  setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
 }
 
-class Property;
+TiXmlElement* PhysicalProperty::initializeUsingXML(TiXmlElement *element) {
+  if(element->Attribute("unit"))
+    setCurrentUnit(units.find(element->Attribute("unit")));
+}
 
-class WidgetInterface {
+TiXmlElement* PhysicalProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = (TiXmlElement*)parent;
+  ele->SetAttribute("unit", getUnit());
+}
 
-  public:
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-    virtual void resize_(int m, int n) {}
-    virtual void fromProperty(Property *property) {}
-    virtual void toProperty(Property *property) {}
-};
-
-class Widget : public QWidget, public WidgetInterface {
-  public:
-    Widget() {}
-};
-
-class WidgetFactory {
-  public:
-    virtual QWidget* createWidget(int i=0) = 0;
-    virtual QString getName(int i=0) const { return ""; }
-    virtual int getSize() const { return 0; }
-};
-
-#endif

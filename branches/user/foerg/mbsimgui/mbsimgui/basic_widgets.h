@@ -23,6 +23,7 @@
 #include "extended_widgets.h"
 #include <QLineEdit>
 #include <QSpinBox>
+#include "units.h"
 
 class Element;
 class Object;
@@ -268,8 +269,10 @@ class FileWidget : public Widget {
 class IntegerWidget : public Widget {
 
   public:
-    virtual int getValue() = 0;
-    virtual void setValue(int val) = 0;
+    virtual int getInt() = 0;
+    virtual void setInt(int val) = 0;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 };
 
 class SpinBoxWidget : public IntegerWidget {
@@ -277,8 +280,8 @@ class SpinBoxWidget : public IntegerWidget {
 
   public:
     SpinBoxWidget(int val=0, int min=0, int max=99);
-    int getValue() {return value->value();}
-    void setValue(int val) {value->setValue(val);}
+    int getInt() {return value->value();}
+    void setInt(int val) {value->setValue(val);}
 
   protected:
     QSpinBox *value;
@@ -291,8 +294,8 @@ class ComboBoxWidget : public IntegerWidget {
 
   public:
     ComboBoxWidget(const QStringList &names, int currentIndex=0);
-    int getValue() {return value->currentIndex();}
-    void setValue(int val) {value->setCurrentIndex(val);}
+    int getInt() {return value->currentIndex();}
+    void setInt(int val) {value->setCurrentIndex(val);}
 
   protected:
     QComboBox *value;
@@ -305,6 +308,8 @@ class BasicTextWidget : public Widget {
   public:
     virtual QString getText() const = 0;
     virtual void setText(const QString &text) = 0;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 };
 
 class TextWidget : public BasicTextWidget {
@@ -444,6 +449,33 @@ class ColorWidget : public Widget {
 
   protected slots:
     void setColor(); 
+};
+
+class UnitWidget : public Widget {
+
+  public:
+    UnitWidget(const Units &units=NoUnitUnits(), int defaultUnit=0);
+
+    //const QStringList& getUnitList() const {return units;}
+    //int getDefaultUnit() const {return defaultUnit;}
+    //QString getUnit() const {return unit->currentText();}
+    //void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
+
+  protected:
+    QComboBox* unit;
+};
+
+class DisablingWidget : public Widget {
+
+  public:
+    DisablingWidget();
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
+
+  protected:
+    QCheckBox *disabled;
 };
 
 #endif

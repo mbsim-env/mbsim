@@ -19,9 +19,10 @@
 
 #include <config.h>
 #include "variable_widgets.h"
-#include "mainwindow.h"
+#include "variable_properties.h"
+//#include "mainwindow.h"
 #include "dialogs.h"
-#include <mbxmlutils/octeval.h>
+//#include <mbxmlutils/octeval.h>
 #include <vector>
 #include <QtGui>
 
@@ -142,6 +143,14 @@ bool BoolWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
+void BoolWidget::fromProperty(Property *property) {
+  setValue(QString::fromStdString(static_cast<ScalarProperty*>(property)->getValue()));
+}
+
+void BoolWidget::toProperty(Property *property) {
+  static_cast<ScalarProperty*>(property)->setValue(getValue().toStdString());
+}
+
 OctaveExpressionWidget::OctaveExpressionWidget() {
   QVBoxLayout *layout=new QVBoxLayout;
   layout->setMargin(0);
@@ -157,6 +166,14 @@ OctaveExpressionWidget::OctaveExpressionWidget() {
   layout->addWidget(value);
 }
 
+void OctaveExpressionWidget::fromProperty(Property *property) {
+  setExpression(QString::fromStdString(static_cast<OctaveExpressionProperty*>(property)->getValue()));
+}
+
+void OctaveExpressionWidget::toProperty(Property *property) {
+  static_cast<OctaveExpressionProperty*>(property)->setValue(getExpression().toStdString());
+}
+
 ScalarWidget::ScalarWidget(const QString &d) {
 
   QVBoxLayout *layout = new QVBoxLayout;
@@ -168,12 +185,28 @@ ScalarWidget::ScalarWidget(const QString &d) {
   layout->addWidget(box);
 }
 
+void ScalarWidget::fromProperty(Property *property) {
+  setScalar(QString::fromStdString(static_cast<ScalarProperty*>(property)->getValue()));
+}
+
+void ScalarWidget::toProperty(Property *property) {
+  static_cast<ScalarProperty*>(property)->setValue(getScalar().toStdString());
+}
+
 bool ScalarWidget::validate(const vector<vector<QString> > &A) const {
   if(A.size()!=1)
     return false;
   if(A[0].size()!=1)
     return false;
   return true;
+}
+
+void BasicVecWidget::fromProperty(Property *property) {
+  setVec(fromStdVec(static_cast<VecProperty*>(property)->getVec()));
+}
+
+void BasicVecWidget::toProperty(Property *property) {
+  static_cast<VecProperty*>(property)->setVec(toStdVec(getVec()));
 }
 
 VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
@@ -659,6 +692,14 @@ bool CardanWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
+void CardanWidget::fromProperty(Property *property) {
+  setAngles(fromStdVec(static_cast<CardanProperty*>(property)->getAngles()));
+}
+
+void CardanWidget::toProperty(Property *property) {
+  static_cast<CardanProperty*>(property)->setAngles(toStdVec(getAngles()));
+}
+
 PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
   QHBoxLayout *layout = new QHBoxLayout;
   setLayout(layout);
@@ -677,17 +718,17 @@ PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QS
 }
 
 void PhysicalVariableWidget::openEvalDialog() {
-  //evalInput = inputCombo->currentIndex();
-  QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
-  str = removeWhiteSpace(str);
-  vector<vector<QString> > A = strToMat(str);
-//  if(str=="" || (!inputWidget[0]->validate(A))) {
-//    QMessageBox::warning( this, "Validation", "Value not valid"); 
-//    return;
-//  }
-  evalDialog->setValue(A);
-  evalDialog->exec();
-  //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
+//  //evalInput = inputCombo->currentIndex();
+//  QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+//  str = removeWhiteSpace(str);
+//  vector<vector<QString> > A = strToMat(str);
+////  if(str=="" || (!inputWidget[0]->validate(A))) {
+////    QMessageBox::warning( this, "Validation", "Value not valid"); 
+////    return;
+////  }
+//  evalDialog->setValue(A);
+//  evalDialog->exec();
+//  //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
 FromFileWidget::FromFileWidget() {
@@ -715,7 +756,7 @@ void FromFileWidget::selectFile() {
 }
 
 QString FromFileWidget::getValue() const {
-  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
+//  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
 }
 
 ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
@@ -733,9 +774,11 @@ ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QSt
 
 QWidget* ScalarWidgetFactory::createWidget(int i) {
   if(i==0)
-    return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
+    //return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
+    return new ScalarWidget(value); //, unit[0], defaultUnit[0];
   if(i==1)
-    return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+    //return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+    return new OctaveExpressionWidget; //, unit[1], defaultUnit[1];
 }
 
 VecWidgetFactory::VecWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {
@@ -755,11 +798,14 @@ VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const v
 
 QWidget* VecWidgetFactory::createWidget(int i) {
   if(i==0)
-    return new PhysicalVariableWidget(new VecWidget(m), unit[0], defaultUnit[0]);
+    return new VecWidget(m);
+  //return new PhysicalVariableWidget(new VecWidget(m), unit[0], defaultUnit[0]);
   if(i==1)
-    return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+    return new FromFileWidget;
+  //return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
   if(i==2)
-    return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return new OctaveExpressionWidget;
+    //return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
 }
 
 VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {

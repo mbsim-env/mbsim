@@ -65,20 +65,19 @@ void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
 
 OMBVFrameProperty::OMBVFrameProperty(const string &name, const string &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), xmlName(xmlName_) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"size"));
-  size.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIMNS"offset"));
-  offset.setProperty(new ExtPhysicalVarProperty(input));
+  property.push_back(new ScalarProperty("size","1",LengthUnits()));
+  property.push_back(new ScalarProperty("offset","1",NoUnitUnits()));
 }
 
 TiXmlElement* OMBVFrameProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
-    size.initializeUsingXML(e);
-    offset.initializeUsingXML(e);
+    TiXmlElement *ee = e->FirstChildElement( MBSIMNS"size" );
+    property[0]->initializeUsingXML(ee);
+    ee = e->FirstChildElement( MBSIMNS"offset" );
+    property[1]->initializeUsingXML(ee);
+  //  size.initializeUsingXML(e);
+  //  offset.initializeUsingXML(e);
   }
   return e;
 }
@@ -88,26 +87,34 @@ TiXmlElement* OMBVFrameProperty::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *e=new TiXmlElement(xmlName);
     writeXMLFileID(e);
     parent->LinkEndChild(e);
-    size.writeXMLFile(e);
-    offset.writeXMLFile(e);
+    for(int i=0; i<property.size(); i++)
+      property[i]->writeXMLFile(e);
+  //  size.writeXMLFile(e);
+  //  offset.writeXMLFile(e);
     return e;
   }
   else {
     writeXMLFileID(parent);
-    size.writeXMLFile(parent);
-    offset.writeXMLFile(parent);
+    TiXmlElement *e=new TiXmlElement(MBSIMNS"size");
+    property[0]->writeXMLFile(e);
+    parent->LinkEndChild(e);
+    e=new TiXmlElement(MBSIMNS"offset");
+    property[1]->writeXMLFile(e);
+    parent->LinkEndChild(e);
+  //  size.writeXMLFile(parent);
+  //  offset.writeXMLFile(parent);
     return 0;
   }
 }
 
 void OMBVFrameProperty::fromWidget(QWidget *widget) {
-  size.fromWidget(static_cast<OMBVFrameWidget*>(widget)->size);
-  offset.fromWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
+ // size.fromWidget(static_cast<OMBVFrameWidget*>(widget)->size);
+ // offset.fromWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
 }
 
 void OMBVFrameProperty::toWidget(QWidget *widget) {
-  size.toWidget(static_cast<OMBVFrameWidget*>(widget)->size);
-  offset.toWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
+ // size.toWidget(static_cast<OMBVFrameWidget*>(widget)->size);
+ // offset.toWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
 }
 
 OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), diffuseColor(0,false), transparency(0,false), readXMLType(readXMLType_) {
@@ -179,11 +186,11 @@ OMBVArrowProperty::OMBVArrowProperty(const string &name, const std::string &ID, 
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBVNS"headLength"));
   headLength.setProperty(new ExtPhysicalVarProperty(input));
 
-  type.setProperty(new TextProperty("toHead", OPENMBVNS"type", true));
+  type.setProperty(new TextProperty("","toHead", OPENMBVNS"type", true));
 
-  referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", OPENMBVNS"referencePoint", true));
-  if(fromPoint)
-    referencePoint.setActive(true);
+  referencePoint.setProperty(new TextProperty("",fromPoint?"fromPoint":"toPoint", OPENMBVNS"referencePoint", true));
+//  if(fromPoint)
+//    referencePoint.setActive(true);
 
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"scaleLength"));
@@ -236,7 +243,7 @@ void OMBVArrowProperty::toWidget(QWidget *widget) {
 
 OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const std::string &ID) : OMBVObjectProperty(name,ID), crossSectionRadius(0,false), nominalLength(0,false) {
 
-  type.setProperty(new TextProperty("tube", OPENMBVNS"type", true));
+  type.setProperty(new TextProperty("","tube", OPENMBVNS"type", true));
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "-", OPENMBVNS"numberOfCoils"));
@@ -306,7 +313,7 @@ void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
 
 OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
 
-  transparency.setActive(true);
+//  transparency.setActive(true);
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBVNS"initialTranslation"));

@@ -62,6 +62,7 @@ class MainWindow : public QMainWindow {
     ElementView *elementList;
     ParameterView *parameterList;
     IntegratorView *integratorView;
+    PropertyView *propertyList;
     QLineEdit *fileProject, *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
@@ -106,8 +107,10 @@ class MainWindow : public QMainWindow {
     void loadIntegrator(const QString &file);
     void loadParameterList(const QString &file);
   public slots:
+    void updatePropertyTree();
     void elementListClicked();
     void parameterListClicked();
+    void propertyListClicked();
     void newProject(bool ask=true);
     void loadProject();
     void saveProjectAs();
@@ -145,6 +148,7 @@ class MainWindow : public QMainWindow {
     void simulate();
     void openmbv();
     void h5plotserie();
+    void update3DView();
     void help();
     void about();
     void updateOctaveParameters(const ParameterList &list=ParameterList());

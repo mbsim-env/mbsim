@@ -24,7 +24,6 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "mainwindow.h"
-#include <QEvent>
 
 extern MainWindow *mw;
 

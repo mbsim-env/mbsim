@@ -43,15 +43,15 @@ TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
 
 StringParameter::StringParameter(const string &name) : Parameter(name) {
 
-  value.setProperty(new TextProperty("0","",true));
-  setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
+  value.setProperty(new TextProperty("","0","",true));
+  setValue(static_cast<const TextProperty*>(value.getProperty())->getValue());
 }
 
 void StringParameter::initializeUsingXML(TiXmlElement *element) {
   Parameter::initializeUsingXML(element);
   TextProperty *val = static_cast<TextProperty*>(value.getProperty());
   val->initializeUsingXML(element);
-  setValue(val->getText());
+  setValue(val->getValue());
 }
 
 TiXmlElement* StringParameter::writeXMLFile(TiXmlNode *parent) {

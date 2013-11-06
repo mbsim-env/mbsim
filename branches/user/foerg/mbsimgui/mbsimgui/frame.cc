@@ -25,7 +25,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
+Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent) {
 
  // properties->addTab("Plotting");
  // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
@@ -35,7 +35,11 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
  // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
  // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
-  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV",getID()));
+//  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV",getID()));
+  //property.push_back(new OMBVFrameProperty("enable OpenMBV",grey?"":MBSIMNS"enableOpenMBV",getID()));
+  property.push_back(new OMBVFrameProperty("enable OpenMBV",grey?"":"",getID()));
+  property[1]->setDisabling(true);
+  property[1]->setDisabled(false);
 }
 
 Frame::~Frame() {
@@ -60,21 +64,27 @@ Frame* Frame::readXMLFile(const string &filename, Element *parent) {
 
 void Frame::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
-  visu.initializeUsingXML(element);
+  TiXmlElement *e = element->FirstChildElement( MBSIMNS"enableOpenMBV" );
+  if(e)
+    property[1]->initializeUsingXML(e);
 }
 
 TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  visu.writeXMLFile(ele0);
+  if(not(property[1]->isDisabled())) {
+    TiXmlElement *ele1=new TiXmlElement(MBSIMNS"enableOpenMBV");
+    property[1]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
   return ele0;
 }
 
 void Frame::initializeUsingXML2(TiXmlElement *element) {
-  visu.initializeUsingXML(element);
+  property[1]->initializeUsingXML(element);
 }
 
 TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
-  visu.writeXMLFile(parent);
+  property[1]->writeXMLFile(parent);
   return 0;
 }
 
@@ -89,9 +99,11 @@ Element *Frame::getByPathSearch(string path) {
   return NULL;
 }
 
-FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
+FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), orientation(0,false) {
 
-  position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMNS"relativePosition"),"",4));
+  property.push_back(new ChoiceProperty2("relative position",new VecPropertyFactory(3,"",LengthUnits()),"",4));
+  property[2]->setDisabling(true);
+  property[2]->setDisabled(true);
 
   orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIMNS"relativeOrientation"),"",4));
 
@@ -109,7 +121,11 @@ void FixedRelativeFrame::initialize() {
 void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
   Frame::initializeUsingXML(element);
   refFrame.initializeUsingXML(element);
-  position.initializeUsingXML(element);
+  TiXmlElement* ele1 = element->FirstChildElement( MBSIMNS"relativePosition" );
+  if(ele1) {
+    property[2]->initializeUsingXML(ele1);
+    property[2]->setDisabled(false);
+  }
   orientation.initializeUsingXML(element);
 }
 
@@ -117,7 +133,11 @@ TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Frame::writeXMLFile(parent);
   refFrame.writeXMLFile(ele0);
-  position.writeXMLFile(ele0);
+  if(not(property[2]->isDisabled())) {
+    TiXmlElement* ele1 = new TiXmlElement( MBSIMNS"relativePosition" );
+    property[2]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
   orientation.writeXMLFile(ele0);
   return ele0;
 }

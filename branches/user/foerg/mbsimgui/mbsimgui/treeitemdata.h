@@ -34,4 +34,19 @@ class TreeItemData {
     virtual QMenu* createContextMenu() = 0;
 };
 
+class PropertyTreeItemData {
+  public:
+    virtual ~PropertyTreeItemData() {}
+    virtual const std::string& getName() const = 0;
+    virtual const std::string& getValue() const = 0;
+    virtual const std::string& getUnit() const = 0;
+    virtual const std::string& getEvaluation() const = 0;
+    virtual void setName(const std::string &data) = 0;
+    virtual void setValue(const std::string &data) {}
+    virtual void setUnit(const std::string &data) {}
+    virtual void setEvaluation(const std::string &data) {}
+    virtual QMenu* createContextMenu() = 0;
+    virtual bool isDisabled() const {return false;}
+};
+
 #endif

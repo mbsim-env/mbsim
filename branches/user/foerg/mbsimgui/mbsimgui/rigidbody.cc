@@ -39,7 +39,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForKinematics"));
 
-  mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMNS"mass",vector<string>(2,"kg")),"",4));
+  mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMNS"mass",MassUnits()),"",4));
 
   inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIMNS"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
 
@@ -73,16 +73,16 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
 int RigidBody::getqRelSize() const {
   int nqT=0, nqR=0;
-  if(translation.isActive()) {
-    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
-    const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-    nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
-  }
-  if(rotation.isActive()) {
-    const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
-    const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-    nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
-  }
+  //if(translation.isActive()) {
+  //  const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
+  //  const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
+  //  nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
+  //}
+  //if(rotation.isActive()) {
+  //  const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
+  //  const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
+  //  nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
+  //}
   int nq = nqT + nqR;
   return nq;
 }

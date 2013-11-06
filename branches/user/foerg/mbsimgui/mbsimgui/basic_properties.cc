@@ -398,11 +398,11 @@ TiXmlElement* IntegerProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void IntegerProperty::fromWidget(QWidget *widget) {
-  value = static_cast<IntegerWidget*>(widget)->getValue();
+  value = static_cast<IntegerWidget*>(widget)->getInt();
 }
 
 void IntegerProperty::toWidget(QWidget *widget) {
-  static_cast<IntegerWidget*>(widget)->setValue(value);
+  static_cast<IntegerWidget*>(widget)->setInt(value);
 }
 
 TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
@@ -410,9 +410,9 @@ TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
   if(e) {
     TiXmlText *text_ = e->FirstChildText();
     if(text_) {
-      text = text_->Value();
+      setValue(text_->Value());
       if(quote)
-        text = text.substr(1,text.length()-2);
+        setValue(getValue().substr(1,getValue().length()-2));
       return e;
     }
   }
@@ -427,17 +427,17 @@ TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
   }
   else
     ele0 = (TiXmlElement*)parent;
-  TiXmlText *text_ = new TiXmlText(quote?("\""+text+"\""):text);
+  TiXmlText *text_ = new TiXmlText(quote?("\""+getValue()+"\""):getValue());
   ele0->LinkEndChild(text_);
   return 0;
 }
 
 void TextProperty::fromWidget(QWidget *widget) {
-  text = static_cast<BasicTextWidget*>(widget)->getText().toStdString();
+  setValue(static_cast<BasicTextWidget*>(widget)->getText().toStdString());
 }
 
 void TextProperty::toWidget(QWidget *widget) {
-  static_cast<BasicTextWidget*>(widget)->setText(QString::fromStdString(text));
+  static_cast<BasicTextWidget*>(widget)->setText(QString::fromStdString(getValue()));
 }
 
 ConnectFramesProperty::ConnectFramesProperty(int n, Element *element, const std::string &xmlName_) : xmlName(xmlName_)  {
@@ -705,49 +705,49 @@ void SolverParametersProperty::toWidget(QWidget *widget) {
 EmbedProperty::EmbedProperty(Element *element) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
   href.setProperty(new FileProperty(""));
   static_cast<FileProperty*>(href.getProperty())->setFile(element->getName()+".xml");
-  count.setProperty(new IntegerProperty(1,""));
-  counterName.setProperty(new TextProperty("n",""));
+  count.setProperty(new IntegerProperty("",1,""));
+  counterName.setProperty(new TextProperty("","n",""));
   parameterList.setProperty(new FileProperty(""));
 }
 
 TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
-  if(parent->Attribute("href")) {
-    href.setActive(true);
-    string file = parent->Attribute("href");
-    static_cast<FileProperty*>(href.getProperty())->setFile(file);
-  }
-  if(parent->Attribute("count")) {
-    count.setActive(true);
-    static_cast<IntegerProperty*>(count.getProperty())->setValue(atoi(parent->Attribute("count")));
-  }
-  if(parent->Attribute("counterName")) {
-    counterName.setActive(true);
-    static_cast<TextProperty*>(counterName.getProperty())->setText(parent->Attribute("counterName"));
-  }
-  TiXmlElement *ele = parent->FirstChildElement(PVNS+string("localParameter"));
-  if(ele) {
-    parameterList.setActive(true);
-    string file = ele->Attribute("href");
-    static_cast<FileProperty*>(parameterList.getProperty())->setFile(file);
-  }
+//  if(parent->Attribute("href")) {
+//    href.setActive(true);
+//    string file = parent->Attribute("href");
+//    static_cast<FileProperty*>(href.getProperty())->setFile(file);
+//  }
+//  if(parent->Attribute("count")) {
+//    count.setActive(true);
+//    static_cast<IntegerProperty*>(count.getProperty())->setInt(atoi(parent->Attribute("count")));
+//  }
+//  if(parent->Attribute("counterName")) {
+//    counterName.setActive(true);
+//    static_cast<TextProperty*>(counterName.getProperty())->setValue(parent->Attribute("counterName"));
+//  }
+//  TiXmlElement *ele = parent->FirstChildElement(PVNS+string("localParameter"));
+//  if(ele) {
+//    parameterList.setActive(true);
+//    string file = ele->Attribute("href");
+//    static_cast<FileProperty*>(parameterList.getProperty())->setFile(file);
+//  }
 }
 
 TiXmlElement* EmbedProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
-  if(href.isActive())
-    ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFile());
-  if(count.isActive())
-    ele0->SetAttribute("count", static_cast<IntegerProperty*>(count.getProperty())->getValue());
-  if(counterName.isActive())
-    ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
-  if(parameterList.isActive()) {
-    TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
-    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
-    ele1->SetAttribute("href", filePath);
-    ele0->LinkEndChild(ele1);
-  }
-  parent->LinkEndChild(ele0);
-  return ele0;
+//  TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
+//  if(href.isActive())
+//    ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFile());
+//  if(count.isActive())
+//    ele0->SetAttribute("count", static_cast<IntegerProperty*>(count.getProperty())->getValue());
+//  if(counterName.isActive())
+//    ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getValue());
+//  if(parameterList.isActive()) {
+//    TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
+//    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
+//    ele1->SetAttribute("href", filePath);
+//    ele0->LinkEndChild(ele1);
+//  }
+//  parent->LinkEndChild(ele0);
+//  return ele0;
 }
 
 void EmbedProperty::fromWidget(QWidget *widget) {

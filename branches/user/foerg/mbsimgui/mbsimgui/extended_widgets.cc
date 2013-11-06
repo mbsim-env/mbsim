@@ -112,6 +112,21 @@ ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir)
   connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
 }
 
+void ChoiceWidget2::fromProperty(Property *property) {
+  comboBox->blockSignals(true);
+  comboBox->setCurrentIndex(static_cast<ChoiceProperty2*>(property)->getIndex());
+  comboBox->blockSignals(false);
+  blockSignals(true);
+  defineWidget(getIndex());
+  blockSignals(false);
+  dynamic_cast<WidgetInterface*>(getWidget())->fromProperty(static_cast<ChoiceProperty2*>(property)->getProperty());
+}
+
+void ChoiceWidget2::toProperty(Property *property) {
+  static_cast<ChoiceProperty2*>(property)->setIndex(getIndex());
+  dynamic_cast<WidgetInterface*>(getWidget())->toProperty(static_cast<ChoiceProperty2*>(property)->getProperty());
+}
+
 void ChoiceWidget2::resize_(int m, int n) {
   dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
 }

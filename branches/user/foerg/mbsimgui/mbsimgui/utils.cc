@@ -191,6 +191,3 @@ QString removeWhiteSpace(const QString &str) {
   }
   return ret;
 }
-
-
-

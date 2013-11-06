@@ -45,8 +45,8 @@ class Parameter : public TreeItemData {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Parameter"; }
-    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
-    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
+    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getValue();}
+    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setValue(str);}
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
     virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
   protected:

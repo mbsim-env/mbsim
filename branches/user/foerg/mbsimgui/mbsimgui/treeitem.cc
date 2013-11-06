@@ -53,3 +53,44 @@ bool TreeItem::removeChildren(int position, int count) {
 
   return true;
 }
+
+PropertyTreeItem::PropertyTreeItem(PropertyTreeItemData *itemData, PropertyTreeItem *parent, int ID_) : itemData(itemData), parentItem(parent), ID(ID_) {
+      getData_[0] = &PropertyTreeItem::getData0;
+      getData_[1] = &PropertyTreeItem::getData1;
+      getData_[2] = &PropertyTreeItem::getData2;
+      getData_[3] = &PropertyTreeItem::getData3;
+      setData_[0] = &PropertyTreeItem::setData0;
+      setData_[1] = &PropertyTreeItem::setData1;
+      setData_[2] = &PropertyTreeItem::setData2;
+      setData_[3] = &PropertyTreeItem::setData3;
+    }
+PropertyTreeItem::~PropertyTreeItem() {
+  qDeleteAll(childItems);
+}
+
+int PropertyTreeItem::childNumber() const {
+  if (parentItem)
+    return parentItem->childItems.indexOf(const_cast<PropertyTreeItem*>(this));
+
+  return 0;
+}
+
+bool PropertyTreeItem::insertChildren(PropertyTreeItem *item, int count) {
+
+  ID++;
+
+  for (int row = 0; row < count; ++row)
+    childItems.insert(childItems.count(), item);
+
+  return true;
+}
+
+bool PropertyTreeItem::removeChildren(int position, int count) {
+  if (position < 0 || position + count > childItems.size())
+    return false;
+
+  for (int row = 0; row < count; ++row)
+    delete childItems.takeAt(position);
+
+  return true;
+}

@@ -259,6 +259,40 @@ inline std::vector<std::vector<QString> > strToMat(const QString &str) {
   return A;
 }
 
+inline std::vector<std::string> toStdVec(const std::vector<QString> &x) {
+  std::vector<std::string> y(x.size());
+  for(unsigned int i=0; i<x.size(); i++)
+    y[i] = x[i].toStdString();
+  return y;
+}
+
+inline std::vector<QString> fromStdVec(const std::vector<std::string> &x) {
+  std::vector<QString> y(x.size());
+  for(unsigned int i=0; i<x.size(); i++)
+    y[i] = QString::fromStdString(x[i]);
+  return y;
+}
+
+inline std::vector<std::vector<std::string> > toStdMat(const std::vector<std::vector<QString> > &A) {
+  std::vector<std::vector<std::string> > B(A.size());
+  for(unsigned int i=0; i<A.size(); i++) {
+    B[i].resize(A[i].size());
+    for(unsigned int j=0; j<A[i].size(); j++)
+      B[i][j] = A[i][j].toStdString();
+  }
+  return B;
+}
+
+inline std::vector<std::vector<QString> > fromStdMat(const std::vector<std::vector<std::string> > &A) {
+  std::vector<std::vector<QString> > B(A.size());
+  for(unsigned int i=0; i<A.size(); i++) {
+    B[i].resize(A[i].size());
+    for(unsigned int j=0; j<A[i].size(); j++)
+      B[i][j] = QString::fromStdString(A[i][j]);
+  }
+  return B;
+}
+
 template <class T>
 void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;

@@ -23,6 +23,8 @@
 #include <string>
 #include "utils.h"
 #include "extended_properties.h"
+#include "basic_widgets.h"
+#include "property_property_dialog.h"
 
 class Element;
 class Frame;
@@ -201,14 +203,17 @@ class FileProperty : public Property {
 class IntegerProperty : public Property {
 
   public:
-    IntegerProperty(int value_, const std::string &xmlName_) : value(value_), xmlName(xmlName_) {}
+    IntegerProperty(const std::string &name="", int value_=0, const std::string &xmlName_="") : Property(name,toStr(value_)), value(value_), xmlName(xmlName_) {}
     virtual Property* clone() const {return new IntegerProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    int getValue() const {return value;}
-    void setValue(int value_) {value = value_;}
+    int getInt() const {return value;}
+    void setInt(int value_) {value = value_; setValue(toStr(value));}
+//    std::string getValue() const { return toStr(value); }
+//    void setValue(const std::string &data) { value = atoi(data.c_str()); }
+    Widget* createWidget() { return new SpinBoxWidget; }
 
   protected:
     int value;
@@ -218,17 +223,19 @@ class IntegerProperty : public Property {
 class TextProperty : public Property {
 
   public:
-    TextProperty(const std::string &text_, const std::string &xmlName_, bool quote_=false) : text(text_), xmlName(xmlName_), quote(quote_) {}
+    TextProperty(const std::string &name="", const std::string &text="", const std::string &xmlName_="", bool quote_=false) : Property(name,text), xmlName(xmlName_), quote(quote_) {}
     virtual Property* clone() const {return new TextProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    const std::string& getText() const {return text;}
-    void setText(const std::string &text_) {text = text_;}
+    //const std::string& getText() const {return text;}
+    //void setText(const std::string &text_) {text = text_; setValue(text);}
+//    std::string getValue() const { return text; }
+//    void setValue(const std::string &data) { text = data; }
+    Widget* createWidget() { return new TextWidget("Text"); }
 
   protected:
-    std::string text;
     std::string xmlName;
     bool quote;
 };
@@ -322,11 +329,11 @@ class EmbedProperty : public Property {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    bool hasFile() const {return (href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFile()!="");}
+    bool hasFile() const {return false;}//(href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFile()!="");}
     std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFile();}
-    bool hasCounter() const {return counterName.isActive();}
-    std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
-    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFile()!="");}
+    bool hasCounter() const {return false;}//counterName.isActive();}
+    std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getValue();}
+    bool hasParameterFile() const {return false;}//(parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFile()!="");}
     std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getFile();}
 
   protected:

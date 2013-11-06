@@ -20,7 +20,12 @@
 #ifndef _PROPERTIES_H_
 #define _PROPERTIES_H_
 
-#include<string>
+#include <string>
+#include <vector>
+#include <cstdlib>
+#include "treeitemdata.h"
+#include "units.h"
+#include "property_context_menu.h"
 
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
 #define MBSIMNS "{"MBSIMNS_"}"
@@ -41,6 +46,10 @@ namespace MBXMLUtils {
 }
 
 class QWidget;
+class QMenu;
+class Widget;
+class WidgetFactory;
+class PropertyPropertyDialog;
 
 class PropertyInterface {
   public:
@@ -53,11 +62,60 @@ class PropertyInterface {
     virtual std::string getType() const {return "";}
 };
 
-class Property : public PropertyInterface {
+class Property : public PropertyTreeItemData, public PropertyInterface {
   public:
-    Property() {}
+    Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units()) : name(name_), value(value_), units(units_), disabl(false), disabled(false) { }
     virtual ~Property() {}
     virtual Property* clone() const {return 0;}
+    const std::string& getName() const { return name; }
+    const std::string& getValue() const { return value; }
+    const std::string& getUnit() const { return unit; }
+    const std::string& getEvaluation() const { return evaluation; }
+    void setName(const std::string &data) { name = data; } 
+    void setValue(const std::string &data) { value = data; }
+    void setUnit(const std::string &data) { unit = data; } 
+    void setEvaluation(const std::string &data) { evaluation = data; } 
+    QMenu* createContextMenu() {return new PropertyContextMenu(this);}
+    virtual PropertyPropertyDialog* createPropertyDialog() { return 0; }
+    virtual PropertyPropertyDialog* createUnitDialog() { return 0; }
+    virtual Widget* createWidget() { return 0; }
+    virtual const Units& getUnits() const { return units; }
+    virtual int getCurrentUnit() const { return -1; }
+    virtual void setCurrentUnit(int i) { } 
+    //bool isActive() const {return not(isDisabled());}
+    void setDisabling(bool disabl_) {disabl=disabl_;}
+    bool disabling() const {return disabl;}
+    void setDisabled(bool disabled_) {
+      disabled=disabled_;
+      for(int i=0; i<property.size(); i++)
+        property[i]->setDisabled(disabled);
+    }
+    bool isDisabled() const {return disabled;}
+    int getNumberOfProperties() const { return property.size(); }
+    Property* getProperty(int i) { return property[i]; }
+  protected:
+    std::string name, value, unit, evaluation;
+    Units units;
+    bool disabl, disabled;
+    std::vector<Property*> property;
+};
+
+class PhysicalProperty : public Property {
+  public:
+    PhysicalProperty(const std::string &name="", const std::string &value="", const Units &units=NoUnitUnits()) : Property(name,value,units) {
+      setCurrentUnit(units.getDefaultUnit());
+    }
+    PhysicalProperty(const std::string &name, const std::string &value, const Units &units, int defaultUnit) : Property(name,value,units) {
+      setCurrentUnit(defaultUnit);
+    }
+    void setValue(const std::string &data);
+    void setUnits(const Units &units_) { units = units_; currentUnit=units.getDefaultUnit(); }
+    void setCurrentUnit(int i) { currentUnit = i; setUnit(units.getUnit(currentUnit)); } 
+    int getCurrentUnit() const { return currentUnit; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+  protected:
+    int currentUnit;
 };
 
 class PropertyFactory {
@@ -65,6 +123,7 @@ class PropertyFactory {
     virtual Property* createProperty(int i=0) = 0;
     virtual std::string getName(int i=0) const { return ""; }
     virtual int getSize() const { return 0; }
+    virtual WidgetFactory* createWidgetFactory() { return 0; }
 };
 
 #endif

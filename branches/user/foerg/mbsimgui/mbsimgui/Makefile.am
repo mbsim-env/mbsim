@@ -37,6 +37,7 @@ mbsimgui_SOURCES = element.cc \
 		   objectfactory.cc \
 		   treeitem.cc \
 		   treemodel.cc \
+		   property.cc \
 		   basic_properties.cc \
 		   variable_properties.cc \
 		   kinetics_properties.cc \
@@ -60,11 +61,14 @@ mbsimgui_SOURCES = element.cc \
 		   element_property_dialog.cc \
 		   integrator_property_dialog.cc \
 		   parameter_property_dialog.cc \
+		   property_property_dialog.cc \
 		   element_context_menu.cc \
 		   parameter_context_menu.cc \
+		   property_context_menu.cc \
 		   element_view.cc \
 		   parameter_view.cc \
 		   integrator_view.cc \
+		   property_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
 		   mainwindow.cc \
@@ -85,10 +89,13 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   element_property_dialog.moc.cc \
 		   integrator_property_dialog.moc.cc \
 		   parameter_property_dialog.moc.cc \
+		   property_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \
+		   property_context_menu.moc.cc \
 		   element_view.moc.cc \
 		   parameter_view.moc.cc \
 		   integrator_view.moc.cc \
+		   property_view.moc.cc \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \
 		   parameter.moc.cc \

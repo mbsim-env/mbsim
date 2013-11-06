@@ -566,6 +566,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   }
 
   Frame *I = getFrame(0);
+  cout << I->openMBVFrame() << endl;
   if(I->openMBVFrame()) {
     ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
     I->writeXMLFile2(ele1);
