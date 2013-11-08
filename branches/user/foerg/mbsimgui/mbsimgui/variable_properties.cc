@@ -350,11 +350,7 @@ Property* VecPropertyFactory::createProperty(int i) {
     return new OctaveExpressionProperty("","",unit);
 }
 
-RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
-  unit[1] = "";
-}
-
-RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_, const vector<string> &unit_) : name(3), xmlName(xmlName_), unit(unit_) {
+RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_) : name(3), xmlName(xmlName_) {
 }
 
 Property* RotMatPropertyFactory::createProperty(int i) {

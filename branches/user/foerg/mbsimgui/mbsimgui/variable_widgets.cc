@@ -153,45 +153,44 @@ void BoolWidget::toProperty(Property *property) {
   static_cast<ScalarProperty*>(property)->setValue(getValue().toStdString());
 }
 
-OctaveExpressionWidget::OctaveExpressionWidget(const Units &unit) : VariableWidget(unit) {
-  QVBoxLayout *layout=new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+OctaveExpressionWidget::OctaveExpressionWidget(const QString &value_, const Units &unit) : VariableWidget(unit) {
   value=new QPlainTextEdit;
-  value->setMinimumHeight(value->sizeHint().height()/2);
-  value->setMaximumHeight(value->sizeHint().height()/2);
+//  value->setMinimumHeight(value->sizeHint().height()/2);
+//  value->setMaximumHeight(value->sizeHint().height()/2);
   new OctaveHighlighter(value->document());
   QFont font;
   font.setFamily("Monospace");
   value->setFont(font);
   value->setLineWrapMode(QPlainTextEdit::NoWrap);
-  layout->addWidget(value);
+  setExpression(value_);
+  varlayout->addWidget(value);
 }
 
 void OctaveExpressionWidget::fromProperty(Property *property) {
+  VariableWidget::fromProperty(property);
   setExpression(QString::fromStdString(static_cast<OctaveExpressionProperty*>(property)->getValue()));
 }
 
 void OctaveExpressionWidget::toProperty(Property *property) {
+  VariableWidget::toProperty(property);
   static_cast<OctaveExpressionProperty*>(property)->setValue(getExpression().toStdString());
 }
 
-ScalarWidget::ScalarWidget(const QString &d) {
+ScalarWidget::ScalarWidget(const QString &d, const Units &unit) : VariableWidget(unit) {
 
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
   box = new QLineEdit(this);
   box->setPlaceholderText("0");
-  setValue(d);
-  layout->addWidget(box);
+  setScalar(d);
+  varlayout->addWidget(box);
 }
 
 void ScalarWidget::fromProperty(Property *property) {
+  VariableWidget::fromProperty(property);
   setScalar(QString::fromStdString(static_cast<ScalarProperty*>(property)->getValue()));
 }
 
 void ScalarWidget::toProperty(Property *property) {
+  VariableWidget::toProperty(property);
   static_cast<ScalarProperty*>(property)->setValue(getScalar().toStdString());
 }
 
@@ -766,26 +765,21 @@ QString FromFileWidget::getValue() const {
 //  return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
 }
 
-ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
+ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const Units &unit_) : value(value_), name(2), unit(unit_) {
   name[0] = "Scalar";
   name[1] = "Editor";
 }
 
-ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_) : value(value_), name(2), unit(unit_), defaultUnit(2,0) {
-  name[0] = "Scalar";
-  name[1] = "Editor";
-}
-
-ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QString> &name_, const Units &unit_) : value(value_), name(name_), unit(unit_) {
 }
 
 QWidget* ScalarWidgetFactory::createWidget(int i) {
   if(i==0)
     //return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
-    return new ScalarWidget(value); //, unit[0], defaultUnit[0];
+    return new ScalarWidget(value,unit); //, unit[0], defaultUnit[0];
   if(i==1)
     //return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
-    return new OctaveExpressionWidget; //, unit[1], defaultUnit[1];
+    return new OctaveExpressionWidget(value,unit); //, unit[1], defaultUnit[1];
 }
 
 VecWidgetFactory::VecWidgetFactory(int m_, const Units &unit_) : m(m_), name(3), unit(unit_) {
@@ -805,7 +799,7 @@ QWidget* VecWidgetFactory::createWidget(int i) {
     return new FromFileWidget;
   //return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
   if(i==2)
-    return new OctaveExpressionWidget(unit);
+    return new OctaveExpressionWidget("",unit);
     //return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
 }
 

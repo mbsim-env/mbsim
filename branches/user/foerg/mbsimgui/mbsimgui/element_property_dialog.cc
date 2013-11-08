@@ -365,53 +365,53 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addTab("Visualisation");
   addTab("Extra");
 
-  K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
-  addToTab("Kinematics",K);
-
-  mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()))));
-  addToTab("General",mass);
-
-  inertia = new ExtWidget("Mass",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2))));
-  addToTab("General",inertia);
-
-  frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
-  addToTab("General",frameForInertiaTensor);
-
-  translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4),true);
-  addToTab("Kinematics", translation);
-
- // connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
- // connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
- // connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-  rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4),true);
-  addToTab("Kinematics", rotation);
-
-//  connect(static_cast<const ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget()),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-//  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-//  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-  translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true); 
-  addToTab("Kinematics", translationDependentRotation);
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-  coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true); 
-  addToTab("Kinematics", coordinateTransformationForRotation);
-
-  ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
-  addToTab("Visualisation", ombvEditor);
-
-  weightArrow = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
-  addToTab("Visualisation",weightArrow);
-
-  jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
-  addToTab("Visualisation",jointForceArrow);
-
-  jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  addToTab("Visualisation",jointMomentArrow);
-
+//  K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
+//  addToTab("Kinematics",K);
+//
+//  mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()))));
+//  addToTab("General",mass);
+//
+//  inertia = new ExtWidget("Mass",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2))));
+//  addToTab("General",inertia);
+//
+//  frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
+//  addToTab("General",frameForInertiaTensor);
+//
+//  translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4),true);
+//  addToTab("Kinematics", translation);
+//
+// // connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+// // connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+// // connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//
+//  rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4),true);
+//  addToTab("Kinematics", rotation);
+//
+////  connect(static_cast<const ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget()),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+////  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+////  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//
+//  vector<PhysicalVariableWidget*> input;
+//  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+//  translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true); 
+//  addToTab("Kinematics", translationDependentRotation);
+//  input.clear();
+//  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+//  coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true); 
+//  addToTab("Kinematics", coordinateTransformationForRotation);
+//
+//  ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
+//  addToTab("Visualisation", ombvEditor);
+//
+//  weightArrow = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
+//  addToTab("Visualisation",weightArrow);
+//
+//  jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+//  addToTab("Visualisation",jointForceArrow);
+//
+//  jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+//  addToTab("Visualisation",jointMomentArrow);
+//
 }
 
 void RigidBodyPropertyDialog::toWidget(Element *element) {
