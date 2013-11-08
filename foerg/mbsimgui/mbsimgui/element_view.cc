@@ -45,11 +45,12 @@ void ElementView::openEditor () {
 }
 
 void ElementView::mouseDoubleClickEvent ( QMouseEvent * event ) {
-  openEditor();
+  QTreeView::mouseDoubleClickEvent(event);
+//  openEditor();
 }
 
 void ElementView::mousePressEvent ( QMouseEvent * event ) {
-  if(!editor)
+//  if(!editor)
     QTreeView::mousePressEvent(event);
 }
 

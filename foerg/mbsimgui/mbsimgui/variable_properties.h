@@ -76,7 +76,7 @@ class VecProperty : public VariableProperty {
     std::vector<std::string> value;
   public:
     VecProperty(int size);
-    VecProperty(const std::vector<std::string> &x) : value(x) {}
+    VecProperty(const std::vector<std::string> &x) : VariableProperty("",toStr(x)), value(x) {}
     VecProperty(const std::string &name, const std::vector<std::string> &x, const Units &unit=NoUnitUnits()) : VariableProperty(name,toStr(x),unit), value(x) {}
     ~VecProperty();
     virtual Property* clone() const {return new VecProperty(*this);}
@@ -87,7 +87,7 @@ class VecProperty : public VariableProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Widget* createWidget() { return new VecWidget; }
+    Widget* createWidget() { return new VecWidget(1,false,units); }
 };
 
 class MatProperty : public VariableProperty {
@@ -96,10 +96,11 @@ class MatProperty : public VariableProperty {
     std::vector<std::vector<std::string> > value;
   public:
     MatProperty(int rows, int cols);
-    MatProperty(const std::vector<std::vector<std::string> > &A) : value(A) {}
+    MatProperty(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : VariableProperty("",toStr(A),unit), value(A) {}
+    MatProperty(const std::string &name, const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : VariableProperty(name,toStr(A),unit), value(A) {}
     virtual Property* clone() const {return new MatProperty(*this);}
     std::vector<std::vector<std::string> > getMat() const {return value;}
-    void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
+    void setMat(const std::vector<std::vector<std::string> > &A) {value = A; setValue(toStr(value));}
 //    std::string getValue() const {return toStr(getMat());}
 //    void setValue(const std::string &str) {setMat(strToMat(str));}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -108,6 +109,7 @@ class MatProperty : public VariableProperty {
     int cols() const {return value[0].size();}
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    Widget* createWidget() { return new MatWidget; }
 };
 
 class CardanProperty : public VariableProperty {
@@ -204,7 +206,7 @@ class VecPropertyFactory: public PropertyFactory {
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
-    WidgetFactory* createWidgetFactory() { return new VecWidgetFactory(x.size()); }
+    WidgetFactory* createWidgetFactory() { return new VecWidgetFactory(x.size(),unit); }
   protected:
     std::vector<std::string> x;
     std::vector<std::string> name;
@@ -219,6 +221,7 @@ class RotMatPropertyFactory: public PropertyFactory {
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
+    WidgetFactory* createWidgetFactory() { return new RotMatWidgetFactory; }
   protected:
     std::vector<std::string> name;
     std::string xmlName;

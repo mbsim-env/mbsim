@@ -21,6 +21,7 @@
 #define _XML_WIDGETS_H_
 
 #include <QWidget>
+#include "units.h"
 
 namespace MBXMLUtils {
   class TiXmlElement;
@@ -28,6 +29,8 @@ namespace MBXMLUtils {
 }
 
 class Property;
+class QGridLayout;
+class QComboBox;
 
 class WidgetInterface {
 
@@ -41,7 +44,12 @@ class WidgetInterface {
 
 class Widget : public QWidget, public WidgetInterface {
   public:
-    Widget() {}
+    Widget(const Units &units=Units(), int defaultUnit=0);
+    void fromProperty(Property *property);
+    void toProperty(Property *property); 
+  protected:
+    QComboBox* unit;
+    QGridLayout *varlayout;
 };
 
 class WidgetFactory {

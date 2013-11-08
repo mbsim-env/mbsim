@@ -20,12 +20,16 @@
 #include <config.h>
 #include "property_context_menu.h"
 #include "property.h"
-//#include "mainwindow.h"
+#include "mainwindow.h"
 
-//extern MainWindow *mw;
+extern MainWindow *mw;
 
 PropertyContextMenu::PropertyContextMenu(Property *property_, QWidget *parent, bool removable) : QMenu(parent), property(property_) {
+  QAction *action=new QAction("Edit", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(openPropertyDialog()));
+  addAction(action);
   if(property->disabling()) {
+    addSeparator();
     QAction *action=new QAction("Disabled", this);
     action->setCheckable(true);
     action->setChecked(property->isDisabled());
@@ -43,4 +47,5 @@ PropertyContextMenu::PropertyContextMenu(Property *property_, QWidget *parent, b
 
 void PropertyContextMenu::disableProperty(bool disable) {
   property->setDisabled(disable);
+  mw->mbsimxml(1);
 }

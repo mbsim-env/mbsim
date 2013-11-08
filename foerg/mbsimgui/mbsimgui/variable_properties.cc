@@ -83,6 +83,7 @@ TiXmlElement* ScalarProperty::writeXMLFile(TiXmlNode *parent) {
 VecProperty::VecProperty(int size) : value(size) {
   for(int i=0; i<size; i++)
     value[i] = "0";
+  setValue(toStr(value)); 
 }
 
 VecProperty::~VecProperty() {
@@ -131,6 +132,7 @@ MatProperty::MatProperty(int rows, int cols) {
    for(int j=0; j<cols; j++)
      value[i][j] = "0";
   }
+  setValue(toStr(value)); 
 }
 
 TiXmlElement* MatProperty::initializeUsingXML(TiXmlElement *parent) {
@@ -152,6 +154,7 @@ TiXmlElement* MatProperty::initializeUsingXML(TiXmlElement *parent) {
     i++;
     ei=ei->NextSiblingElement();
   }
+  setValue(toStr(value));
   return element;
 }
 
@@ -222,14 +225,14 @@ TiXmlElement* CardanProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void CardanProperty::fromWidget(QWidget *widget) {
-  setAngles(toStdVec(static_cast<CardanWidget*>(widget)->getAngles()));
-  unit = static_cast<CardanWidget*>(widget)->getUnit().toStdString();
-  //evaluation = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue()));
+//  setAngles(toStdVec(static_cast<CardanWidget*>(widget)->getAngles()));
+//  unit = static_cast<CardanWidget*>(widget)->getUnit().toStdString();
+//  //evaluation = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue()));
 }
 
 void CardanProperty::toWidget(QWidget *widget) {
-  static_cast<CardanWidget*>(widget)->setAngles(fromStdVec(getAngles()));
-  static_cast<CardanWidget*>(widget)->setUnit(QString::fromStdString(unit));
+//  static_cast<CardanWidget*>(widget)->setAngles(fromStdVec(getAngles()));
+//  static_cast<CardanWidget*>(widget)->setUnit(QString::fromStdString(unit));
 }
 
 TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
@@ -356,11 +359,11 @@ RotMatPropertyFactory::RotMatPropertyFactory(const string &xmlName_, const vecto
 
 Property* RotMatPropertyFactory::createProperty(int i) {
   if(i==0)
-    return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
+    return new CardanProperty("");
   if(i==1)
-    return new PhysicalVariableProperty(new CardanProperty,unit[1],xmlName);
+    return new MatProperty(getEye<string>(3,3,"1","0"));
   if(i==2)
-    return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+    return new OctaveExpressionProperty("","",NoUnitUnits());
 }
 
 MatPropertyFactory::MatPropertyFactory(const string &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
