@@ -144,14 +144,16 @@ bool BoolWidget::validate(const vector<vector<QString> > &A) const {
 }
 
 void BoolWidget::fromProperty(Property *property) {
+  VariableWidget::fromProperty(property);
   setValue(QString::fromStdString(static_cast<ScalarProperty*>(property)->getValue()));
 }
 
 void BoolWidget::toProperty(Property *property) {
+  VariableWidget::toProperty(property);
   static_cast<ScalarProperty*>(property)->setValue(getValue().toStdString());
 }
 
-OctaveExpressionWidget::OctaveExpressionWidget() {
+OctaveExpressionWidget::OctaveExpressionWidget(const Units &unit) : VariableWidget(unit) {
   QVBoxLayout *layout=new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -202,33 +204,39 @@ bool ScalarWidget::validate(const vector<vector<QString> > &A) const {
 }
 
 void BasicVecWidget::fromProperty(Property *property) {
+  VariableWidget::fromProperty(property);
   setVec(fromStdVec(static_cast<VecProperty*>(property)->getVec()));
 }
 
 void BasicVecWidget::toProperty(Property *property) {
+  VariableWidget::toProperty(property);
   static_cast<VecProperty*>(property)->setVec(toStdVec(getVec()));
 }
 
-VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
+VecWidget::VecWidget(int size, bool transpose_, const Units &unit) : BasicVecWidget(unit), transpose(transpose_) {
 
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+//  QGroupBox *box = new QGroupBox("Value");
+//  mainlayout->addWidget(box);
+//  varlayout = new QGridLayout;
+//  varlayout->setMargin(0);
+//  box->setLayout(varlayout);
   resize_(size);
 }
 
 VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
 
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+//  QGroupBox *box = new QGroupBox("Value");
+//  mainlayout->addWidget(box);
+//  varlayout = new QGridLayout;
+//  varlayout->setMargin(0);
+//  box->setLayout(varlayout);
   setVec(x);
 }
 
 void VecWidget::resize_(int size) {
   if(box.size()!=size) {
     for(unsigned int i=0; i<box.size(); i++) {
-      layout()->removeWidget(box[i]);
+      varlayout->removeWidget(box[i]);
       delete box[i];
     }
     box.resize(size);
@@ -237,9 +245,9 @@ void VecWidget::resize_(int size) {
       box[i]->setPlaceholderText("0");
 //      box[i]->setText("0");
       if(transpose) 
-        static_cast<QGridLayout*>(layout())->addWidget(box[i], 0, i);
+        varlayout->addWidget(box[i], 0, i);
       else
-        static_cast<QGridLayout*>(layout())->addWidget(box[i], i, 0);
+        varlayout->addWidget(box[i], i, 0);
     }
   }
 }
@@ -274,19 +282,23 @@ bool VecWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
+void BasicMatWidget::fromProperty(Property *property) {
+  VariableWidget::fromProperty(property);
+  setMat(fromStdMat(static_cast<MatProperty*>(property)->getMat()));
+}
+
+void BasicMatWidget::toProperty(Property *property) {
+  VariableWidget::toProperty(property);
+  static_cast<MatProperty*>(property)->setMat(toStdMat(getMat()));
+}
+
 MatWidget::MatWidget(int rows, int cols) {
 
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
   resize_(rows,cols);
 }
 
 MatWidget::MatWidget(const vector<vector<QString> > &A) {
 
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
   setMat(A);
 }
 
@@ -294,7 +306,7 @@ void MatWidget::resize_(int rows, int cols) {
   if(box.size()!=rows or (box.size() and box[0].size()!=cols)) {
     for(unsigned int i=0; i<box.size(); i++) {
       for(unsigned int j=0; j<box[i].size(); j++) {
-        layout()->removeWidget(box[i][j]);
+        varlayout->removeWidget(box[i][j]);
         delete box[i][j];
       }
     }
@@ -305,7 +317,7 @@ void MatWidget::resize_(int rows, int cols) {
         box[i][j] = new QLineEdit(this);
         box[i][j]->setPlaceholderText("0");
         //box[i][j]->setText("0");
-        static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
+        varlayout->addWidget(box[i][j], i, j);
       }
     }
   }
@@ -646,22 +658,15 @@ bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-CardanWidget::CardanWidget() {
+CardanWidget::CardanWidget() : VariableWidget(AngleUnits()) {
 
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
   box.resize(3);
   for(int i=0; i<3; i++) {
     box[i] = new QLineEdit(this);
     box[i]->setPlaceholderText("0");
     //box[i]->setText("0");
-    layout->addWidget(box[i], i, 0);
+    varlayout->addWidget(box[i], i, 0);
   }
-  unit = new QComboBox;
-  unit->addItems(angleUnits());
-  unit->setCurrentIndex(1);
-  layout->addWidget(unit);
 }
 
 vector<QString> CardanWidget::getAngles() const {
@@ -693,10 +698,12 @@ bool CardanWidget::validate(const vector<vector<QString> > &A) const {
 }
 
 void CardanWidget::fromProperty(Property *property) {
+  VariableWidget::fromProperty(property);
   setAngles(fromStdVec(static_cast<CardanProperty*>(property)->getAngles()));
 }
 
 void CardanWidget::toProperty(Property *property) {
+  VariableWidget::toProperty(property);
   static_cast<CardanProperty*>(property)->setAngles(toStdVec(getAngles()));
 }
 
@@ -781,30 +788,24 @@ QWidget* ScalarWidgetFactory::createWidget(int i) {
     return new OctaveExpressionWidget; //, unit[1], defaultUnit[1];
 }
 
-VecWidgetFactory::VecWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {
+VecWidgetFactory::VecWidgetFactory(int m_, const Units &unit_) : m(m_), name(3), unit(unit_) {
   name[0] = "Vector";
   name[1] = "File";
   name[2] = "Editor";
 }
 
-VecWidgetFactory::VecWidgetFactory(int m_, const vector<QStringList> &unit_) : m(m_), name(3), unit(unit_), defaultUnit(3,0) {
-  name[0] = "Vector";
-  name[1] = "File";
-  name[2] = "Editor";
-}
-
-VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const Units &unit_) : m(m_), name(name_), unit(unit_) {
 }
 
 QWidget* VecWidgetFactory::createWidget(int i) {
   if(i==0)
-    return new VecWidget(m);
+    return new VecWidget(m,false,unit);
   //return new PhysicalVariableWidget(new VecWidget(m), unit[0], defaultUnit[0]);
   if(i==1)
     return new FromFileWidget;
   //return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
   if(i==2)
-    return new OctaveExpressionWidget;
+    return new OctaveExpressionWidget(unit);
     //return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
 }
 
@@ -880,25 +881,22 @@ QWidget* MatRowsVarWidgetFactory::createWidget(int i) {
     return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
 }
 
-RotMatWidgetFactory::RotMatWidgetFactory() : name(3), unit(3), defaultUnit(3,1) {
-  name[0] = "Matrix";
+RotMatWidgetFactory::RotMatWidgetFactory() : name(3) {
   name[1] = "Cardan";
+  name[0] = "Matrix";
   name[2] = "Editor";
-  unit[0] = noUnitUnits();
-  unit[1] = QStringList();
-  unit[2] = noUnitUnits();
 }
 
-RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_) : name(name_) {
 }
 
 QWidget* RotMatWidgetFactory::createWidget(int i) {
   if(i==0)
-    return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+    return new CardanWidget;
   if(i==1)
-    return new PhysicalVariableWidget(new CardanWidget,unit[1],defaultUnit[1]);
+    return new MatWidget(getEye<QString>(3,3,"1","0"));
   if(i==2)
-    return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
+    return new OctaveExpressionWidget;
 }
 
 SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {

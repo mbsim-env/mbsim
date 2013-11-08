@@ -35,7 +35,8 @@ void PropertyView::openEditor () {
 
     property = dynamic_cast<Property*>(static_cast<PropertyTreeModel*>(model())->getItem(index)->getItemData());
     if(property) {
-      editor = new PropertyPropertyDialog(property,property->createWidget(),property->getUnits().getNumberOfUnits()?(new UnitWidget(property->getUnits(),property->getCurrentUnit())):0);
+      property->setDisabled(false);
+      editor = new PropertyPropertyDialog(property,property->createWidget());//,property->getUnits().getNumberOfUnits()?(new UnitWidget(property->getUnits(),property->getCurrentUnit())):0);
       //if(index.column()==1) {
       //  editor = new PropertyPropertyDialog(property);
       //}
@@ -79,10 +80,10 @@ void PropertyView::dialogFinished(int result) {
 }
 
 void PropertyView::apply() {
-  std::cout << index.column() << std::endl;
-  update(index);
-  update(index.sibling(index.row(),2));
-  update(index.sibling(index.row(),3));
+  //std::cout << index.column() << std::endl;
+  //update(index);
+  //update(index.sibling(index.row(),2));
+  //update(index.sibling(index.row(),3));
 //  if(element->isEmbedded())
 //    mw->updateOctaveParameters(element->getParameterList());
   mw->mbsimxml(1);

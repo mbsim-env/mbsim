@@ -101,7 +101,7 @@ class ChoiceWidget2 : public Widget {
     void defineWidget(int);
 
   protected:
-    QBoxLayout *layout;
+//    QBoxLayout *layout;
     QComboBox *comboBox;
     QWidget *widget;
     //QStackedWidget *stackedWidget;

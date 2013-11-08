@@ -59,7 +59,7 @@ class FixedRelativeFrame : public Frame {
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
   protected:
-    ExtProperty refFrame, orientation;
+    ExtProperty refFrame;
 };
 
 #endif

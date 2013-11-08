@@ -100,14 +100,16 @@ void ExtPhysicalVarWidget::openEvalDialog() {
 }
 
 ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : factory(factory_), widget(0) {
-  layout = new QBoxLayout(dir);
-  layout->setMargin(0);
-  setLayout(layout);
+  //QGroupBox *box = new QGroupBox("Value");
+  //mainlayout->addWidget(box);
+  //varlayout = new QBoxLayout(dir);
+  //layout->setMargin(0);
+  //box->setLayout(layout);
 
   comboBox = new QComboBox;
   for(int i=0; i<factory->getSize(); i++)
     comboBox->addItem(factory->getName(i));
-  layout->addWidget(comboBox);
+  varlayout->addWidget(comboBox);
   defineWidget(0);
   connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
 }
@@ -148,10 +150,10 @@ int ChoiceWidget2::getIndex() const {
 }
 
 void ChoiceWidget2::defineWidget(int index) {
-  layout->removeWidget(widget);
+  varlayout->removeWidget(widget);
   delete widget;
   widget = factory->createWidget(index);
-  layout->addWidget(widget);
+  varlayout->addWidget(widget);
   updateWidget();
 }
 

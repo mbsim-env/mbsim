@@ -712,14 +712,14 @@ void ColorWidget::setColor() {
 }
 
 UnitWidget::UnitWidget(const Units &units, int defaultUnit)  {
-  QHBoxLayout *layout = new QHBoxLayout;
-  setLayout(layout);
-  layout->setMargin(0);
-  unit = new QComboBox;
-  for(int i=0; i<units.getNumberOfUnits(); i++)
-    unit->addItem(QString::fromStdString(units.getUnit(i)));
-  unit->setCurrentIndex(defaultUnit);
-  layout->addWidget(unit);
+//  QHBoxLayout *layout = new QHBoxLayout;
+//  setLayout(layout);
+//  layout->setMargin(0);
+//  unit = new QComboBox;
+//  for(int i=0; i<units.getNumberOfUnits(); i++)
+//    unit->addItem(QString::fromStdString(units.getUnit(i)));
+//  unit->setCurrentIndex(defaultUnit);
+//  mainlayout->addWidget(unit);
 }
 
 void UnitWidget::fromProperty(Property *property) {

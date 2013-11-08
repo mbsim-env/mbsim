@@ -28,6 +28,7 @@
 #include <QPlainTextEdit>
 #include <QLineEdit>
 #include <QSyntaxHighlighter>
+#include <QGridLayout>
 
 class EvalDialog;
 class QLabel;
@@ -45,6 +46,7 @@ class OctaveHighlighter : public QSyntaxHighlighter {
 class VariableWidget : public Widget {
 
   public:
+    VariableWidget(const Units &unit=NoUnitUnits()) : Widget(unit) { }
     virtual void setReadOnly(bool flag) {}
     virtual QString getValue() const {return "";}
     virtual void setValue(const QString &str) {}
@@ -69,7 +71,7 @@ class BoolWidget : public VariableWidget {
 
 class OctaveExpressionWidget : public VariableWidget {
   public:
-    OctaveExpressionWidget();
+    OctaveExpressionWidget(const Units &unit=NoUnitUnits());
     QString getExpression() const { return value->toPlainText(); }
     void setExpression(const QString &str) { value->setPlainText(str); }
     virtual QString getType() const {return "Editor";}
@@ -96,6 +98,7 @@ class ScalarWidget : public VariableWidget {
 
 class BasicVecWidget : public VariableWidget {
   public:
+    BasicVecWidget(const Units &unit=NoUnitUnits()) : VariableWidget(unit) { }
     virtual std::vector<QString> getVec() const = 0;
     virtual void setVec(const std::vector<QString> &x) = 0;
     void fromProperty(Property *property);
@@ -104,10 +107,11 @@ class BasicVecWidget : public VariableWidget {
 
 class VecWidget : public BasicVecWidget {
   private:
+    //QGridLayout *layout;
     std::vector<QLineEdit*> box;
     bool transpose;
   public:
-    VecWidget(int size=1, bool transpose=false);
+    VecWidget(int size=1, bool transpose=false, const Units &unit=NoUnitUnits());
     VecWidget(const std::vector<QString> &x, bool transpose=false);
     void resize_(int size);
     void resize_(int rows, int cols) { resize_(rows); }
@@ -125,6 +129,8 @@ class BasicMatWidget : public VariableWidget {
   public:
     virtual std::vector<std::vector<QString> > getMat() const = 0;
     virtual void setMat(const std::vector<std::vector<QString> > &A) = 0;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 };
 
 class MatWidget : public BasicMatWidget {
@@ -132,7 +138,7 @@ class MatWidget : public BasicMatWidget {
   private:
     std::vector<std::vector<QLineEdit*> > box;
   public:
-    MatWidget(int rows, int cols);
+    MatWidget(int rows=1, int cols=1);
     MatWidget(const std::vector<std::vector<QString> > &A);
     void resize_(int rows, int cols);
     std::vector<std::vector<QString> > getMat() const;
@@ -281,7 +287,6 @@ class CardanWidget : public VariableWidget {
 
   private:
     std::vector<QLineEdit*> box;
-    QComboBox* unit;
   public:
     CardanWidget();
     void resize_(int size);
@@ -293,8 +298,6 @@ class CardanWidget : public VariableWidget {
     int size() const {return box.size();}
     virtual QString getType() const {return "Cardan";}
     bool validate(const std::vector<std::vector<QString> > &A) const;
-    QString getUnit() const {return unit->currentText();}
-    void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
     void fromProperty(Property *property);
     void toProperty(Property *property);
 };
@@ -387,17 +390,15 @@ class ScalarWidgetFactory : public WidgetFactory {
 
 class VecWidgetFactory : public WidgetFactory {
   public:
-    VecWidgetFactory(int m);
-    VecWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-    VecWidgetFactory(int m, const std::vector<QStringList> &unit);
+    VecWidgetFactory(int m, const std::vector<QString> &name, const Units &unit=NoUnitUnits());
+    VecWidgetFactory(int m, const Units &unit=NoUnitUnits());
     QWidget* createWidget(int i=0);
     QString getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
     int m;
     std::vector<QString> name;
-    std::vector<QStringList> unit;
-    std::vector<int> defaultUnit;
+    Units unit;
 };
 
 class VecSizeVarWidgetFactory : public WidgetFactory {
@@ -448,14 +449,12 @@ class MatRowsVarWidgetFactory : public WidgetFactory {
 class RotMatWidgetFactory : public WidgetFactory {
   public:
     RotMatWidgetFactory();
-    RotMatWidgetFactory(const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    RotMatWidgetFactory(const std::vector<QString> &name);
     QWidget* createWidget(int i=0);
     QString getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
     std::vector<QString> name;
-    std::vector<QStringList> unit;
-    std::vector<int> defaultUnit;
 };
 
 class SymMatWidgetFactory : public WidgetFactory {

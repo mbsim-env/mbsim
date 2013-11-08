@@ -391,7 +391,7 @@ void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatu
 
 void MainWindow::openPropertyDialog() {
 //  QModelIndex index = elementList->selectionModel()->currentIndex();
-//  elementList->openEditor();
+  propertyList->openEditor();
 }
 
 void MainWindow::initInlineOpenMBV() {
@@ -541,12 +541,10 @@ void MainWindow::parameterListClicked() {
 void MainWindow::propertyListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
     QModelIndex index = propertyList->selectionModel()->currentIndex();
-    if(index.column()==0) {
-      Property *property = static_cast<Property*>(static_cast<PropertyTreeModel*>(propertyList->model())->getItem(index)->getItemData());
-      QMenu *menu = property->createContextMenu();
-      menu->exec(QCursor::pos());
-      delete menu;
-    } 
+    Property *property = static_cast<Property*>(static_cast<PropertyTreeModel*>(propertyList->model())->getItem(index)->getItemData());
+    QMenu *menu = property->createContextMenu();
+    menu->exec(QCursor::pos());
+    delete menu;
   }
 }
 
