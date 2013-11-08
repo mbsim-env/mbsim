@@ -21,6 +21,7 @@
 #define _ELEMENT__H_
 
 #include "treeitemdata.h"
+#include "property.h"
 #include "basic_properties.h"
 #include "extended_properties.h"
 #include "element_property_dialog.h"

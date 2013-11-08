@@ -44,7 +44,7 @@ class WidgetInterface {
 
 class Widget : public QWidget, public WidgetInterface {
   public:
-    Widget(const Units &units=Units(), int defaultUnit=0);
+    Widget(const Units &units=Units(), int defaultUnit=-1);
     void fromProperty(Property *property);
     void toProperty(Property *property); 
   protected:

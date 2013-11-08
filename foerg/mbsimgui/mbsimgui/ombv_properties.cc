@@ -65,7 +65,7 @@ void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
 
 OMBVFrameProperty::OMBVFrameProperty(const string &name, const string &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), xmlName(xmlName_) {
 
-  property.push_back(new ScalarProperty("size","1",LengthUnits()));
+  property.push_back(new ChoiceProperty2("size",new ScalarPropertyFactory("1","",LengthUnits()),"",4));
   property.push_back(new ScalarProperty("offset","1",NoUnitUnits()));
 }
 

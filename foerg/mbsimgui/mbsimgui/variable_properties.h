@@ -68,7 +68,7 @@ class ScalarProperty : public VariableProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     //PropertyPropertyDialog* createPropertyDialog() { return new PropertyPropertyDialog(this,new ScalarWidget); }
     //PropertyPropertyDialog* createUnitDialog() { return new PropertyPropertyDialog(this,new UnitWidget(angleUnits(),1)); }
-    Widget* createWidget() { return new ScalarWidget; }
+    Widget* createWidget() { return new ScalarWidget("1",units); }
 };
 
 class VecProperty : public VariableProperty {
@@ -191,7 +191,7 @@ class ScalarPropertyFactory: public PropertyFactory {
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
-    WidgetFactory* createWidgetFactory() { return new ScalarWidgetFactory; }
+    WidgetFactory* createWidgetFactory() { return new ScalarWidgetFactory(QString::fromStdString(value),unit); }
   protected:
     std::string value;
     std::vector<std::string> name;
@@ -217,7 +217,6 @@ class VecPropertyFactory: public PropertyFactory {
 class RotMatPropertyFactory: public PropertyFactory {
   public:
     RotMatPropertyFactory(const std::string &xmlName);
-    RotMatPropertyFactory(const std::string &xmlName, const std::vector<std::string> &unit);
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
@@ -225,7 +224,6 @@ class RotMatPropertyFactory: public PropertyFactory {
   protected:
     std::vector<std::string> name;
     std::string xmlName;
-    std::vector<std::string> unit;
 };
 
 class MatPropertyFactory: public PropertyFactory {

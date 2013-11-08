@@ -71,7 +71,7 @@ class BoolWidget : public VariableWidget {
 
 class OctaveExpressionWidget : public VariableWidget {
   public:
-    OctaveExpressionWidget(const Units &unit=NoUnitUnits());
+    OctaveExpressionWidget(const QString &value="", const Units &unit=NoUnitUnits());
     QString getExpression() const { return value->toPlainText(); }
     void setExpression(const QString &str) { value->setPlainText(str); }
     virtual QString getType() const {return "Editor";}
@@ -86,7 +86,7 @@ class ScalarWidget : public VariableWidget {
   private:
     QLineEdit* box;
   public:
-    ScalarWidget(const QString &d="1");
+    ScalarWidget(const QString &d="1", const Units &unit=NoUnitUnits());
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     const QString getScalar() const {return box->text().isEmpty()?"0":box->text();}
     void setScalar(const QString &str) {box->setText(str=="0"?"":str);}
@@ -375,17 +375,15 @@ class FromFileWidget : public VariableWidget {
 
 class ScalarWidgetFactory : public WidgetFactory {
   public:
-    ScalarWidgetFactory(const QString &value="1");
-    ScalarWidgetFactory(const QString &value, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-    ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit);
+    ScalarWidgetFactory(const QString &value, const std::vector<QString> &name, const Units &unit=NoUnitUnits());
+    ScalarWidgetFactory(const QString &value="0", const Units &unit=NoUnitUnits());
     QWidget* createWidget(int i=0);
     QString getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
     QString value;
     std::vector<QString> name;
-    std::vector<QStringList> unit;
-    std::vector<int> defaultUnit;
+    Units unit;
 };
 
 class VecWidgetFactory : public WidgetFactory {
