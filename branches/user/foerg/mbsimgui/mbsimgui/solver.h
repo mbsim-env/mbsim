@@ -49,7 +49,7 @@ class Solver : public Group {
 
     static Solver* readXMLFile(const std::string &filename);
     void writeXMLFile(const std::string &name);
-    void writeXMLFile() { writeXMLFile(getName()); }
+    void writeXMLFile() { writeXMLFile(getValue()); }
 
 //    ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new SolverContextMenu(this);}

@@ -23,6 +23,8 @@
 #include "contour.h"
 #include "basic_properties.h"
 
+#define ifr 0
+
 using namespace std;
 using namespace MBXMLUtils;
 
@@ -32,9 +34,9 @@ Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false)
 //  u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedVelocity"),"",4));
 
   //R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
-  property.push_back(new FrameOfReferenceProperty("frame of feference",getParent()->getFrame(0)->getXMLPath(this,true),this));
-  property[1]->setDisabling(true);
-  property[1]->setDisabled(true);
+  property.push_back(new FrameOfReferenceProperty("frameOfReference",getParent()->getFrame(0)->getXMLPath(this,true),this));
+  property[ifr]->setDisabling(true);
+  property[ifr]->setDisabled(true);
 
 }
 
@@ -73,7 +75,7 @@ Body& Body::operator=(const Body &b) {
 }
 
 void Body::initialize() {
-  property[1]->initialize();
+  property[ifr]->initialize();
 }
 
 void Body::addFrame(Frame* frame_) {
@@ -130,8 +132,8 @@ void Body::initializeUsingXML(TiXmlElement *element) {
 //  u0.initializeUsingXML(element);
   TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"frameOfReference" );
   if(ele1) {
-    property[1]->initializeUsingXML(ele1);
-    property[1]->setDisabled(false);
+    property[ifr]->initializeUsingXML(ele1);
+    property[ifr]->setDisabled(false);
   }
 }
 
@@ -139,9 +141,9 @@ TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Object::writeXMLFile(parent);
  // q0.writeXMLFile(ele0);
  // u0.writeXMLFile(ele0);
-  if(not(property[1]->isDisabled())) {
+  if(not(property[ifr]->isDisabled())) {
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-    property[1]->writeXMLFile(ele1);
+    property[ifr]->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
   }
   return ele0;

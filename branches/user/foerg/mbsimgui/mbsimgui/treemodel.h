@@ -62,19 +62,19 @@ class TreeModel : public QAbstractItemModel {
     TreeItem *rootItem;
 };
 
-class ElementTreeModel : public TreeModel {
-  public:
-    ElementTreeModel(QObject *parent = 0);
-
-    void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
-    void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
-    void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
-    void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
-    void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
-    void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
-
-    std::map<std::string, QModelIndex> idEleMap;
-};
+//class ElementTreeModel : public TreeModel {
+//  public:
+//    ElementTreeModel(QObject *parent = 0);
+//
+//    void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
+//    void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
+//    void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
+//    void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
+//    void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
+//    void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
+//
+//    std::map<std::string, QModelIndex> idEleMap;
+//};
 
 class ParameterListModel : public TreeModel {
   public:
@@ -108,12 +108,20 @@ class PropertyTreeModel : public QAbstractItemModel {
 
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
-    PropertyTreeItem *getItem(const QModelIndex &index) const;
+    TreeItem *getItem(const QModelIndex &index) const;
 
     void createPropertyItem(Property *property, const QModelIndex &parent = QModelIndex());
+    void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
+    void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
+    void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
+    void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
+    void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
+    void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
+
+    std::map<std::string, QModelIndex> idEleMap;
 
  protected:
-    PropertyTreeItem *rootItem;
+    TreeItem *rootItem;
 };
 
 #endif

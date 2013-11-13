@@ -51,6 +51,9 @@ class Element : public TreeItemData {
     std::string ID;
     ExtProperty embed;
     std::vector<Property*> property;
+    std::string name, type; 
+    static std::string unit; 
+    static std::string evaluation; 
   public:
     Element(const std::string &name, Element *parent);
     virtual Element* clone() const {return 0;}
@@ -64,11 +67,13 @@ class Element : public TreeItemData {
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize() {}
     virtual void deinitialize() {}
-    const std::string& getName() const {return property[0]->getValue();}
-    void setName(const std::string &str) {property[0]->setValue(str);}
-    virtual std::string getType() const { return "Element"; }
+    const std::string& getName() const {return type;}
+    const std::string& getValue() const {return name;}
+    const std::string& getUnit() const {return unit;}
+    const std::string& getEvaluation() const {return evaluation;}
+    void setName(const std::string &str) { }
+    void setValue(const std::string &str) {name = str;}
     virtual std::string getNameSpace() const { return MBSIMNS; }
-    std::string getValue() const { return getType(); }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
     template<class T> T* getByPath(std::string path);

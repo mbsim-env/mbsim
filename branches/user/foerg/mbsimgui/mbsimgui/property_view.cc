@@ -20,6 +20,7 @@
 #include <config.h>
 #include "property_view.h"
 #include "property.h"
+#include "element.h"
 #include "treemodel.h"
 #include "treeitem.h"
 #include "property_property_dialog.h"
@@ -33,17 +34,22 @@ void PropertyView::openEditor () {
   if(!editor) {
     index = selectionModel()->currentIndex();
 
-    property = dynamic_cast<Property*>(static_cast<PropertyTreeModel*>(model())->getItem(index)->getItemData());
+    Property *property = dynamic_cast<Property*>(static_cast<PropertyTreeModel*>(model())->getItem(index)->getItemData());
     if(property) {
       property->setDisabled(false);
-      editor = new PropertyPropertyDialog(property,property->createWidget());//,property->getUnits().getNumberOfUnits()?(new UnitWidget(property->getUnits(),property->getCurrentUnit())):0);
-      //if(index.column()==1) {
-      //  editor = new PropertyPropertyDialog(property);
-      //}
-      //else if(index.column()==2)
-      //  editor = new PropertyPropertyDialog(property,new UnitWidget(property->getUnits(),property->getCurrentUnit()));
-      //else if(index.column()==4 and property->disabling())
-      //  editor = new PropertyPropertyDialog(property,new BoolWidget);
+      editor = new PropertyPropertyDialog(property,property->createWidget());
+      if(editor) {
+        editor->toWidget();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->show();
+        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+        return;
+      }
+    }
+    Element *element = dynamic_cast<Element*>(static_cast<PropertyTreeModel*>(model())->getItem(index)->getItemData());
+    if(element) {
+      editor = new PropertyPropertyDialog(NULL,new NameWidget(element));
       if(editor) {
         editor->toWidget();
         editor->setAttribute(Qt::WA_DeleteOnClose);
@@ -76,7 +82,6 @@ void PropertyView::dialogFinished(int result) {
     mw->mbsimxml(1);
   }
   editor = 0;
-  property = 0;
 }
 
 void PropertyView::apply() {

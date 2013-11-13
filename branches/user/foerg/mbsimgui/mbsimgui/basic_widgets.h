@@ -457,5 +457,17 @@ class ColorWidget : public Widget {
     void setColor(); 
 };
 
+class NameWidget : public Widget {
+
+  public:
+    NameWidget(Element *element);
+
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
+
+  protected:
+    QLineEdit *text;
+    Element *element;
+};
 
 #endif

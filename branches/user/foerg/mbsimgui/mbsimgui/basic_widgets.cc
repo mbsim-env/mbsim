@@ -727,4 +727,17 @@ void ColorWidget::setColor() {
   }
 }
 
+NameWidget::NameWidget(Element *element_) : element(element_) {
+  text = new QLineEdit;
+  varlayout->addWidget(text);
+}
+
+void NameWidget::fromProperty(Property *property) {
+  text->setText(QString::fromStdString(element->getValue()));
+}
+
+void NameWidget::toProperty(Property *property) {
+  cout << text->text().toStdString() << endl;
+  element->setValue(text->text().toStdString());
+}
 

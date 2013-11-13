@@ -28,7 +28,6 @@ class RigidBody : public Body {
   public:
     RigidBody(const std::string &str, Element *parent);
     virtual Element* clone() const {return new RigidBody(*this);}
-    std::string getType() const { return "RigidBody"; }
     int getqSize() const {return constrained?0:getqRelSize();}
     int getquize() const {return constrained?0:getuRelSize();}
     int getqRelSize() const;

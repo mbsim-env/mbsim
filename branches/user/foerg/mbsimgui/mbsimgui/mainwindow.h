@@ -59,7 +59,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   private:
-    ElementView *elementList;
+    PropertyView *elementList;
     ParameterView *parameterList;
     IntegratorView *integratorView;
     PropertyView *propertyList;

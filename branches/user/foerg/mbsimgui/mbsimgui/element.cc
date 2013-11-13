@@ -39,13 +39,11 @@ using namespace std;
 using namespace MBXMLUtils;
 
 int Element::IDcounter=0;
+string Element::unit="";
+string Element::evaluation="";
 
-Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
-  //name.setProperty(new TextProperty(name_,""));
-  property.push_back(new TextProperty("name",name_,""));
-//  property[1]=new IntegerProperty("integer",2,"");
-//  property[2]= new CardanProperty("relative orientation");
-//  property[3]= new ChoiceProperty2("mass",new ScalarPropertyFactory("1",MBSIMNS"mass",MassUnits()),"",4);
+Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false), name(name_), type("Element") {
+//  property.push_back(new TextProperty("name",name_,""));
   embed.setProperty(new EmbedProperty(this));
   ID=toStr(IDcounter++);
 }
@@ -73,9 +71,9 @@ void Element::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(getNameSpace()+getType());
+  TiXmlElement *ele0=new TiXmlElement(getNameSpace()+getName());
   //name->writeXMLFile(ele0);
-  ele0->SetAttribute("name", getName());
+  ele0->SetAttribute("name", getValue());
 //  for(unsigned int i=0; i<plotFeature.size(); i++)
 //    plotFeature[i]->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
@@ -128,7 +126,7 @@ string Element::getXMLPath(Element *ref, bool rel) {
     else if(dynamic_cast<Observer*>(this))
       type = "Observer";
     else 
-      type = getType();
+      type = getName();
     string str = type + "[" + getName() + "]";
     for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
       if(dynamic_cast<Group*>(*i1))
@@ -160,7 +158,7 @@ string Element::getXMLPath(Element *ref, bool rel) {
     else if(dynamic_cast<Observer*>(this))
       type = "Observer";
     else 
-      type = getType();
+      type = getName();
     string str = type + "[" + getName() + "]";
     Element* element = parent;
     while(!dynamic_cast<Solver*>(element)) {

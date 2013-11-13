@@ -31,11 +31,10 @@ class PropertyView : public QTreeView {
   Q_OBJECT
   private:
     QModelIndex index;
-    Property *property;
     PropertyPropertyDialog *editor;
     QWidget *unit;
   public:
-    PropertyView(QWidget *parent=0) : QTreeView(parent), property(0), editor(0) {}
+    PropertyView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
     void openEditor();
   protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
