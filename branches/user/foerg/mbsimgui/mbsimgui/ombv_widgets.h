@@ -22,6 +22,7 @@
 
 #include "widget.h"
 #include "basic_widgets.h"
+#include "property_context_menu.h"
 
 class ExtWidget;
 class QVBoxLayout;
@@ -197,6 +198,26 @@ class OMBVPlaneWidget : public OMBVObjectWidget {
 
   protected:
     ExtWidget *size, *numberOfLines;
+};
+
+class OpenMBVRigidBodyChoiceWidget : public Widget {
+  public:
+    OpenMBVRigidBodyChoiceWidget();
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
+  protected:
+    QComboBox *comboBox;
+};
+
+class OpenMBVRigidBodyChoiceContextMenu : public PropertyContextMenu {
+
+  Q_OBJECT
+  public:
+    OpenMBVRigidBodyChoiceContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+  protected:
+    std::map<QAction*,int> actions;
+  protected slots:
+    void setOpenMBVRigidBody(QAction*);
 };
 
 #endif

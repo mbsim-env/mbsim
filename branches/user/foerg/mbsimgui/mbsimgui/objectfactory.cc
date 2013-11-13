@@ -36,7 +36,8 @@
 #include "parameter.h"
 #include "observer.h"
 #include "integrator.h"
-#include <string>
+#include "ombv_properties.h"
+#include "kinematic_functions_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -284,4 +285,61 @@ ObjectFactoryBase::M_NSPRE ObjectFactory::getNamespacePrefixMapping() {
   return nsprefix;
 }
 
+OMBVBodyFactory::OMBVBodyFactory() {
+  names.push_back("Cube");
+  names.push_back("Cuboid");
+  names.push_back("Sphere");
+}
+
+OMBVBodyProperty* OMBVBodyFactory::createBody(const std::string &name, const std::string &ID) {
+  for(int i=0; i<names.size(); i++)
+    if(name==names[i])
+      return createBody(i,ID);
+}
+
+OMBVBodyProperty* OMBVBodyFactory::createBody(TiXmlElement *element, const std::string &ID) {
+  for(int i=0; i<names.size(); i++)
+    if(element->ValueStr()==(OPENMBVNS+names[i]))
+      return createBody(i,ID);
+}
+
+OMBVBodyProperty* OMBVBodyFactory::createBody(int i, const std::string &ID) {
+  if(i==0)
+    return new CubeProperty(names[i],ID);
+  else if(i==1)
+    return new CuboidProperty(names[i],ID);
+  else if(i==2)
+    return new SphereProperty(names[i],ID);
+  else
+    return 0;
+}
+
+FunctionFactory::FunctionFactory() {
+  names.push_back("TranslationAlongXAxis");
+  names.push_back("TranslationAlongYAxis");
+  names.push_back("TranslationAlongZAxis");
+}
+
+FunctionProperty* FunctionFactory::createFunction(const std::string &name) {
+  for(int i=0; i<names.size(); i++)
+    if(name==names[i])
+      return createFunction(i);
+}
+
+FunctionProperty* FunctionFactory::createFunction(TiXmlElement *element) {
+  for(int i=0; i<names.size(); i++)
+    if(element->ValueStr()==(MBSIMNS+names[i]))
+      return createFunction(i);
+}
+
+FunctionProperty* FunctionFactory::createFunction(int i) {
+  if(i==0)
+    return new TranslationAlongXAxisProperty(names[i]);
+  else if(i==1)
+    return new TranslationAlongYAxisProperty(names[i]);
+  else if(i==2)
+    return new TranslationAlongZAxisProperty(names[i]);
+  else
+    return 0;
+}
 

@@ -40,12 +40,12 @@ TolerancePropertyFactory::TolerancePropertyFactory(const string &type_) : type(t
 Property* TolerancePropertyFactory::createProperty(int i) {
   if(i==0) {
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS+type+"ToleranceScalar"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("","1e-6",Units()),"",MBSIMINTNS+type+"ToleranceScalar"));
     return new ExtPhysicalVarProperty(input);
   }
   if(i==1) {
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS+type+"Tolerance"));
+    input.push_back(PhysicalVariableProperty(new VecProperty(0,Units()),"",MBSIMINTNS+type+"Tolerance"));
     return new ExtPhysicalVarProperty(input);
   }
 }
@@ -53,15 +53,15 @@ Property* TolerancePropertyFactory::createProperty(int i) {
 Integrator::Integrator() : initialState(0,false) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"startTime"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("","0",TimeUnits()),"s",MBSIMINTNS"startTime"));
   startTime.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"s",MBSIMINTNS"endTime"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("","1",TimeUnits()),"s",MBSIMINTNS"endTime"));
   endTime.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-2"),"s",MBSIMINTNS"plotStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("","1e-2",TimeUnits()),"s",MBSIMINTNS"plotStepSize"));
   plotStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
@@ -124,15 +124,15 @@ DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
   relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3)); 
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("","0",TimeUnits()),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("","0",TimeUnits()),"s",MBSIMINTNS"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("","0",Units()),"",MBSIMINTNS"maximalNumberOfSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 

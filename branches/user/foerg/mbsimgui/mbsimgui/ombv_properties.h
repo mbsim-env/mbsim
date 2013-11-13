@@ -45,6 +45,7 @@ class OMBVObjectProperty : public Property {
     OMBVObjectProperty(const std::string &name, const std::string &value, const std::string &ID_) : Property(name,value), ID(ID_) {}
     virtual std::string getType() const = 0;
 //    void setName(const std::string &name_) {name = name_;}
+    const std::string& getID() const { return ID; }
   protected:
 //    std::string name;
     std::string ID;
@@ -59,11 +60,7 @@ class OMBVFrameProperty : public OMBVObjectProperty {
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Frame"; }
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-//    Widget* createWidget() { return new OMBVFrameWidget; }
   protected:
-    //ExtProperty size, offset;
     std::string xmlName;
 };
 
@@ -75,8 +72,8 @@ class OMBVDynamicColoredObjectProperty : public OMBVObjectProperty {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-  protected:
-    ExtProperty minimalColorValue, maximalColorValue, diffuseColor, transparency;
+//  protected:
+//    ExtProperty minimalColorValue, maximalColorValue, diffuseColor, transparency;
     bool readXMLType;
 };
 
@@ -118,8 +115,10 @@ class OMBVBodyProperty : public OMBVDynamicColoredObjectProperty {
     virtual std::string getType() const = 0;
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-  protected:
-    ExtProperty trans, rot, scale;
+    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
+    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
+//  protected:
+//    ExtProperty trans, rot, scale;
 };
 
 class InvisibleBodyProperty : public OMBVBodyProperty {
@@ -140,8 +139,8 @@ class CubeProperty : public OMBVBodyProperty {
     virtual std::string getType() const { return "Cube"; }
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-  protected:
-    ExtProperty length;
+//  protected:
+//    ExtProperty length;
 };
 
 class CuboidProperty : public OMBVBodyProperty {
@@ -258,5 +257,21 @@ class OMBVPlaneProperty : public OMBVObjectProperty {
     ExtProperty size, numberOfLines;
     std::string xmlName;
 };
+
+//class OpenMBVRigidBodyChoiceProperty : public Property {
+//  public:
+//    OpenMBVRigidBodyChoiceProperty(const std::string &name="", const std::string &ID="");
+//    int getIndex() const { return index; }
+//    void setIndex(int i);
+//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+//    const std::string& getName() const {return property->getName();}
+//    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
+//    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
+//  protected:
+//    Property *property;
+//    int index;
+//    std::string ID;
+//};
 
 #endif

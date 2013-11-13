@@ -29,6 +29,15 @@
 #include "kinematic_functions_properties.h"
 #include "function_properties.h"
 #include "function_property_factory.h"
+#include "kinematics_properties.h"
+
+#define iK 2
+#define im 3
+#define ii 4
+#define ifi 5
+#define it 6
+#define io 7
+#define ifo 8
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -37,17 +46,21 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   Frame *C = new Frame("C",this);
   addFrame(C);
 
-  K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForKinematics"));
+  property.push_back(new LocalFrameOfReferenceProperty("frame for kinematics","Frame[C]",this)); 
+  property[iK]->setDisabling(true);
+  property[iK]->setDisabled(true);
 
-  mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMNS"mass",MassUnits()),"",4));
+  property.push_back(new ChoiceProperty2("mass",new ScalarPropertyFactory("1",MassUnits()),"",4));
 
-  inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIMNS"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
+  property.push_back(new ChoiceProperty2("inertia tensor",new SymMatPropertyFactory(getEye<string>(3,3,"0.01","0"),InertiaUnits()),"",4));
 
-  frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForInertiaTensor"));
+  property.push_back(new LocalFrameOfReferenceProperty("frame for inertia tensor","Frame[C]",this)); 
+  property[ifi]->setDisabling(true);
+  property[ifi]->setDisabled(true);
 
-  vector<Property*> property;
-
-  translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4,"",3)); 
+  property.push_back(new StateDependentTranslation("state dependent translation"));
+  property[it]->setDisabling(true);
+  property[it]->setDisabled(true);
 
   rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4,"",3)); 
 
@@ -58,7 +71,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformationForRotation"));
   coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
-  ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
+  property.push_back(new Property("openMBV rigid body"));
+  property[io]->setDisabling(true);
+  OMBVBodyFactory factory;
+  property[io]->addProperty(factory.createBody(0,ID));
+
+  property.push_back(new LocalFrameOfReferenceProperty("openMBV frame of reference","Frame[C]",this)); 
+  property[ifo]->setDisabling(true);
+  property[ifo]->setDisabled(true);
 
   weightArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   weightArrow.setXMLName(MBSIMNS"openMBVWeightArrow",false);
@@ -164,31 +184,54 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     e=e->NextSiblingElement();
   }
 
-  K.initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"frameForKinematics" );
+  if(ele1) {
+    property[iK]->initializeUsingXML(ele1);
+    property[iK]->setDisabled(false);
+  }
 
-  mass.initializeUsingXML(element);
-  inertia.initializeUsingXML(element);
-  frameForInertiaTensor.initializeUsingXML(element);
+  ele1 = element->FirstChildElement( MBSIMNS"mass" );
+  property[im]->initializeUsingXML(ele1);
+  ele1 = element->FirstChildElement( MBSIMNS"inertiaTensor" );
+  property[ii]->initializeUsingXML(ele1);
+  ele1 = element->FirstChildElement( MBSIMNS"frameForInertiaTensor" );
+  if(ele1) {
+    property[ifi]->initializeUsingXML(ele1);
+    property[ifi]->setDisabled(false);
+  }
 
-  translation.initializeUsingXML(element);
-  rotation.initializeUsingXML(element);
-  translationDependentRotation.initializeUsingXML(element);
-  coordinateTransformationForRotation.initializeUsingXML(element);
+  ele1 = element->FirstChildElement( MBSIMNS"stateDependentTranslation" );
+  if(ele1) {
+    property[it]->initializeUsingXML(ele1);
+    property[it]->setDisabled(false);
+  }
 
-  ombvEditor.initializeUsingXML(element);
-
-  e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
-  if(e)
-    getFrame(0)->initializeUsingXML2(e);
-  else
-    getFrame(0)->setOpenMBVFrame(false);
-
-  weightArrow.initializeUsingXML(element);
-
-  jointForceArrow.initializeUsingXML(element);
-  jointMomentArrow.initializeUsingXML(element);
-
-  Body::initializeUsingXML(element);
+//  translation.initializeUsingXML(element);
+//  rotation.initializeUsingXML(element);
+//  translationDependentRotation.initializeUsingXML(element);
+//  coordinateTransformationForRotation.initializeUsingXML(element);
+//
+  ele1 = element->FirstChildElement( MBSIMNS"openMBVRigidBody" );
+  if(ele1) {
+    OMBVBodyFactory factory;
+    delete property[io]->getProperty();
+    property[io]->setProperty(factory.createBody(ele1->FirstChildElement(),ID));
+    property[io]->initializeUsingXML(ele1->FirstChildElement());
+    property[io]->setDisabled(false);
+  }
+//
+////  e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+////  if(e)
+////    getFrame(0)->initializeUsingXML2(e);
+////  else
+////    getFrame(0)->setOpenMBVFrame(false);
+//
+//  weightArrow.initializeUsingXML(element);
+//
+//  jointForceArrow.initializeUsingXML(element);
+//  jointMomentArrow.initializeUsingXML(element);
+//
+//  Body::initializeUsingXML(element);
 }
 
 TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
@@ -196,13 +239,30 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Body::writeXMLFile(parent);
   TiXmlElement *ele1;
 
-  K.writeXMLFile(ele0);
+  if(not(property[iK]->isDisabled())) {
+    ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
+    property[iK]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
 
-  mass.writeXMLFile(ele0);
-  inertia.writeXMLFile(ele0);
-  frameForInertiaTensor.writeXMLFile(ele0);
+  ele1 = new TiXmlElement( MBSIMNS"mass" );
+  property[im]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
+  ele1 = new TiXmlElement( MBSIMNS"inertiaTensor" );
+  property[ii]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
+  if(not(property[ifi]->isDisabled())) {
+    ele1 = new TiXmlElement( MBSIMNS"frameForInertiaTensor" );
+    property[ifi]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
 
-  translation.writeXMLFile(ele0);
+  if(not(property[it]->isDisabled())) {
+    ele1 = new TiXmlElement( MBSIMNS"stateDependentTranslation" );
+    property[it]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
+
   rotation.writeXMLFile(ele0);
   translationDependentRotation.writeXMLFile(ele0);
   coordinateTransformationForRotation.writeXMLFile(ele0);
@@ -223,7 +283,16 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
       contour[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
-  ombvEditor.writeXMLFile(ele0);
+  if(not(property[io]->isDisabled())) {
+    ele1 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
+    property[io]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
+//  if(not(property[6]->isDisabled())) {
+//    ele1 = new TiXmlElement( MBSIMNS"openMBVFrameOfReference" );
+//    property[6]->writeXMLFile(ele1);
+//    ele0->LinkEndChild(ele1);
+//  }
 
   Frame *C = getFrame(0);
   if(C->openMBVFrame()) {

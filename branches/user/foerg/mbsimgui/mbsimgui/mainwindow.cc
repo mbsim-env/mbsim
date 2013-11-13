@@ -238,7 +238,7 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
   propertyList = new PropertyView;
   propertyList->setModel(new PropertyTreeModel);
-  propertyList->setColumnWidth(0,75);
+  propertyList->setColumnWidth(0,125);
   propertyList->setColumnWidth(1,75);
   propertyList->setColumnWidth(2,75);
   propertyList->setColumnWidth(3,75);
@@ -280,15 +280,6 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   fileIntegrator->setReadOnly(true);
   dockWidget2->setWidget(integratorView);
 
-  QDockWidget *dockWidget4 = new QDockWidget("Properties");
-  addDockWidget(Qt::LeftDockWidgetArea,dockWidget4);
-  dockWidget4->setWidget(propertyList);
- 
-  //tabifyDockWidget(dockWidget1,dockWidget2);
-  //tabifyDockWidget(dockWidget2,dockWidget3);
-  //QList<QTabBar *> tabList = findChildren<QTabBar *>();
-  //tabBar = tabList.at(0);
-
   QWidget *centralWidget = new QWidget;  
   setCentralWidget(centralWidget);
   QHBoxLayout *mainlayout = new QHBoxLayout;
@@ -305,6 +296,15 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   mbsim->getProcess()->setProcessEnvironment(env);
   mbsimDW->setWidget(mbsim); 
   connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int,QProcess::ExitStatus)));
+
+  QDockWidget *dockWidget4 = new QDockWidget("Properties");
+  addDockWidget(Qt::BottomDockWidgetArea,dockWidget4);
+  dockWidget4->setWidget(propertyList);
+ 
+  tabifyDockWidget(mbsimDW,dockWidget4);
+  //QList<QTabBar *> tabList = findChildren<QTabBar *>();
+  //tabBar = tabList.at(0);
+
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -480,7 +480,7 @@ void MainWindow::highlightObject(const string &ID) {
 }
 
 void MainWindow::selectionChanged() {
-  updatePropertyTree();
+  cout << "selection Changed" << endl;
   QModelIndex index = elementList->selectionModel()->currentIndex();
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -493,6 +493,7 @@ void MainWindow::selectionChanged() {
 }
 
 void MainWindow::updatePropertyTree() {
+  cout << "update property tree" << endl;
   QModelIndex index = elementList->selectionModel()->currentIndex();
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -507,6 +508,7 @@ void MainWindow::updatePropertyTree() {
 }
 
 void MainWindow::elementListClicked() {
+  updatePropertyTree();
   selectionChanged();
 //  if(QApplication::mouseButtons()==Qt::LeftButton) {
 //    updatePropertyTree();
@@ -745,8 +747,9 @@ void MainWindow::loadMBS(const QString &file) {
     model->createGroupItem(sys);
     //((Integrator*)integratorView->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
+    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+    updatePropertyTree();
   }
-
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
@@ -1161,13 +1164,12 @@ void MainWindow::h5plotserie() {
 }
 
 void MainWindow::selectElement(string ID) {
-  //map<string, Element*>::iterator it=Element::idEleMap.find(ID);
+  cout << "select Element" << endl;
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
   if(it!=model->idEleMap.end()) {
-   //QModelIndex index = elementList->selectionModel()->currentIndex();
    elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
-   //elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
+   updatePropertyTree();
   }
 #ifdef INLINE_OPENMBV
   highlightObject(ID);
@@ -1594,6 +1596,27 @@ void MainWindow::updateRecentIntegratorFileActions() {
   }
   for (int j = numRecentFiles; j < maxRecentFiles; ++j)
     recentIntegratorFileActs[j]->setVisible(false);
+}
+
+void MainWindow::changePropertyItem(Property *property) {
+  PropertyTreeModel *model = static_cast<PropertyTreeModel*>(propertyList->model());
+  QModelIndex index = propertyList->selectionModel()->currentIndex();
+  QModelIndex parentIndex = index.parent();
+//  Property *property = static_cast<Property*>(model->getItem(index)->getItemData());
+  model->removeRow(index.row(), parentIndex);
+  model->createPropertyItem(property,parentIndex);
+}
+
+void MainWindow::removeProperty() {
+  PropertyTreeModel *model = static_cast<PropertyTreeModel*>(propertyList->model());
+  QModelIndex index = propertyList->selectionModel()->currentIndex();
+//  Property *property = static_cast<Property*>(model->getItem(index)->getItemData());
+  //property->getParent()->removeProperty(property);
+  model->removeRow(index.row(), index.parent());
+
+  //delete model->getItem(index)->getItemData();
+  //model->removeRow(index.row(), index.parent());
+  //updateOctaveParameters();
 }
 
 

@@ -28,7 +28,7 @@ using namespace std;
 using namespace MBXMLUtils;
 
 Contour::Contour(const string &str, Element *parent) : Element(str,parent), refFrame(0,false) {
-  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new ParentFrameOfReferenceProperty("",getParent()->getFrame(0)->getXMLPath(this,true),this));
 }
 
 Contour::~Contour() {

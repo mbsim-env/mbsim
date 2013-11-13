@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "function_property.h"
+#include "kinematic_functions_properties.h"
 #include <mbxmlutilstinyxml/tinyxml.h>
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
@@ -30,3 +31,32 @@ TiXmlElement* FunctionProperty::writeXMLFile(TiXmlNode *parent) {
   parent->LinkEndChild(ele0);
   return ele0;
 }
+
+//FunctionChoiceProperty::FunctionChoiceProperty(const string &name) : Property(name), index(0) {
+//  //property.push_back(new TranslationAlongXAxisProperty);
+//  property = new TranslationAlongXAxisProperty;
+//}
+//
+//void FunctionChoiceProperty::setIndex(int i) {
+//  if(index != i) {
+//    index = i;
+//    delete property;
+//    if(i==0)
+//      property = new TranslationAlongXAxisProperty;
+//    else
+//      property = new TranslationAlongYAxisProperty;
+//  }
+//}
+//
+//TiXmlElement* FunctionChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+////  ele1 = element->FirstChildElement( MBSIMNS"mass" );
+//  property->initializeUsingXML(element);
+//}
+//
+//TiXmlElement* FunctionChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+////  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"mass" );
+//  property->writeXMLFile(parent);
+////  parent->LinkEndChild(ele1);
+//}
+
+

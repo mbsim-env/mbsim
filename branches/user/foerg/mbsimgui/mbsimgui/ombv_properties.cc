@@ -24,6 +24,9 @@
 #include "ombv_widgets.h"
 #include "rigidbody.h"
 #include "frame.h"
+#include "mainwindow.h"
+
+extern MainWindow *mw;
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -65,8 +68,8 @@ void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
 
 OMBVFrameProperty::OMBVFrameProperty(const string &name, const string &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), xmlName(xmlName_) {
 
-  property.push_back(new ChoiceProperty2("size",new ScalarPropertyFactory("1","",LengthUnits()),"",4));
-  property.push_back(new ScalarProperty("offset","1",NoUnitUnits()));
+  property.push_back(new ChoiceProperty2("size",new ScalarPropertyFactory("1",LengthUnits()),"",4));
+  property.push_back(new ChoiceProperty2("offset",new ScalarPropertyFactory("1",NoUnitUnits()),"",4));
 }
 
 TiXmlElement* OMBVFrameProperty::initializeUsingXML(TiXmlElement *element) {
@@ -76,8 +79,6 @@ TiXmlElement* OMBVFrameProperty::initializeUsingXML(TiXmlElement *element) {
     property[0]->initializeUsingXML(ee);
     ee = e->FirstChildElement( MBSIMNS"offset" );
     property[1]->initializeUsingXML(ee);
-  //  size.initializeUsingXML(e);
-  //  offset.initializeUsingXML(e);
   }
   return e;
 }
@@ -89,8 +90,6 @@ TiXmlElement* OMBVFrameProperty::writeXMLFile(TiXmlNode *parent) {
     parent->LinkEndChild(e);
     for(int i=0; i<property.size(); i++)
       property[i]->writeXMLFile(e);
-  //  size.writeXMLFile(e);
-  //  offset.writeXMLFile(e);
     return e;
   }
   else {
@@ -101,47 +100,34 @@ TiXmlElement* OMBVFrameProperty::writeXMLFile(TiXmlNode *parent) {
     e=new TiXmlElement(MBSIMNS"offset");
     property[1]->writeXMLFile(e);
     parent->LinkEndChild(e);
-  //  size.writeXMLFile(parent);
-  //  offset.writeXMLFile(parent);
     return 0;
   }
 }
 
-void OMBVFrameProperty::fromWidget(QWidget *widget) {
- // size.fromWidget(static_cast<OMBVFrameWidget*>(widget)->size);
- // offset.fromWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
-}
+OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), readXMLType(readXMLType_) {
 
-void OMBVFrameProperty::toWidget(QWidget *widget) {
- // size.toWidget(static_cast<OMBVFrameWidget*>(widget)->size);
- // offset.toWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
-}
-
-OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), diffuseColor(0,false), transparency(0,false), readXMLType(readXMLType_) {
-
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "-", OPENMBVNS"minimalColorValue"));
-  minimalColorValue.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"maximalColorValue"));
-  maximalColorValue.setProperty(new ExtPhysicalVarProperty(input));
-
-  diffuseColor.setProperty(new ColorProperty(OPENMBVNS"diffuseColor"));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", OPENMBVNS"transparency"));
-  transparency.setProperty(new ExtPhysicalVarProperty(input));
+  property.push_back(new ChoiceProperty2("minimal color value",new ScalarPropertyFactory("0",NoUnitUnits()),"",4));
+  property[0]->setDisabling(true);
+  property[0]->setDisabled(true);
+  property.push_back(new ChoiceProperty2("maximal color value",new ScalarPropertyFactory("1",NoUnitUnits()),"",4));
+  property[1]->setDisabling(true);
+  property[1]->setDisabled(true);
+//
+//  diffuseColor.setProperty(new ColorProperty(OPENMBVNS"diffuseColor"));
+//
+//  input.clear();
+//  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", OPENMBVNS"transparency"));
+//  transparency.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=readXMLType?element->FirstChildElement(OPENMBVNS+getType()):element;
-  if(e) {
-    minimalColorValue.initializeUsingXML(e);
-    maximalColorValue.initializeUsingXML(e);
-    diffuseColor.initializeUsingXML(e);
-    transparency.initializeUsingXML(e);
-  }
+//  if(e) {
+//    minimalColorValue.initializeUsingXML(e);
+//    maximalColorValue.initializeUsingXML(e);
+//    diffuseColor.initializeUsingXML(e);
+//    transparency.initializeUsingXML(e);
+//  }
   return e;
 }
 
@@ -150,25 +136,35 @@ TiXmlElement* OMBVDynamicColoredObjectProperty::writeXMLFile(TiXmlNode *parent) 
   parent->LinkEndChild(e);
   e->SetAttribute("name", name);
   writeXMLFileID(e);
-  minimalColorValue.writeXMLFile(e);
-  maximalColorValue.writeXMLFile(e);
-  diffuseColor.writeXMLFile(e);
-  transparency.writeXMLFile(e);
+  if(not(property[0]->isDisabled())) {
+    TiXmlElement *ee=new TiXmlElement(OPENMBVNS"minimalColorValue");
+    property[0]->writeXMLFile(ee);
+    e->LinkEndChild(ee);
+  }
+  if(not(property[1]->isDisabled())) {
+    TiXmlElement *ee=new TiXmlElement(OPENMBVNS"maximalColorValue");
+    property[1]->writeXMLFile(ee);
+    e->LinkEndChild(ee);
+  }
+//  minimalColorValue.writeXMLFile(e);
+//  maximalColorValue.writeXMLFile(e);
+//  diffuseColor.writeXMLFile(e);
+//  transparency.writeXMLFile(e);
   return e;
 }
 
 void OMBVDynamicColoredObjectProperty::fromWidget(QWidget *widget) {
-  minimalColorValue.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->minimalColorValue);
-  maximalColorValue.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
-  diffuseColor.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
-  transparency.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
+//  minimalColorValue.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->minimalColorValue);
+//  maximalColorValue.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
+//  diffuseColor.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
+//  transparency.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
 }
 
 void OMBVDynamicColoredObjectProperty::toWidget(QWidget *widget) {
-  minimalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->minimalColorValue);
-  maximalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
-  diffuseColor.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
-  transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
+//  minimalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->minimalColorValue);
+//  maximalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
+//  diffuseColor.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
+//  transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
 }
 
 OMBVArrowProperty::OMBVArrowProperty(const string &name, const std::string &ID, bool fromPoint) : OMBVDynamicColoredObjectProperty(name,ID), referencePoint(0,false) {
@@ -315,136 +311,184 @@ OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : 
 
 //  transparency.setActive(true);
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBVNS"initialTranslation"));
-  trans.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(3), "rad", OPENMBVNS"initialRotation"));
-  rot.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"scaleFactor"));
-  scale.setProperty(new ExtPhysicalVarProperty(input));
+  property.push_back(new ChoiceProperty2("initial translation",new VecPropertyFactory(3,LengthUnits()),"",4));
+  property.push_back(new ChoiceProperty2("initial rotation",new VecPropertyFactory(3,AngleUnits()),"",4));
+  property.push_back(new ChoiceProperty2("scale factor",new ScalarPropertyFactory("1",NoUnitUnits()),"",4));
+//  vector<PhysicalVariableProperty> input;
+//  input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBVNS"initialTranslation"));
+//  trans.setProperty(new ExtPhysicalVarProperty(input));
+//
+//  input.clear();
+//  input.push_back(PhysicalVariableProperty(new VecProperty(3), "rad", OPENMBVNS"initialRotation"));
+//  rot.setProperty(new ExtPhysicalVarProperty(input));
+//
+//  input.clear();
+//  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"scaleFactor"));
+//  scale.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 TiXmlElement* OMBVBodyProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
-  if(e) {
-    trans.initializeUsingXML(e);
-    rot.initializeUsingXML(e);
-    scale.initializeUsingXML(e);
-  }
+//  if(e) {
+//    trans.initializeUsingXML(e);
+//    rot.initializeUsingXML(e);
+//    scale.initializeUsingXML(e);
+//  }
   return e;
 }
 
 TiXmlElement* OMBVBodyProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
-  trans.writeXMLFile(e);
-  rot.writeXMLFile(e);
-  scale.writeXMLFile(e);
+  TiXmlElement *ee=new TiXmlElement(OPENMBVNS"initialTranslation");
+  property[2]->writeXMLFile(ee);
+  e->LinkEndChild(ee);
+  ee=new TiXmlElement(OPENMBVNS"initialRotation");
+  property[3]->writeXMLFile(ee);
+  e->LinkEndChild(ee);
+  ee=new TiXmlElement(OPENMBVNS"scaleFactor");
+  property[4]->writeXMLFile(ee);
+  e->LinkEndChild(ee);
+//  trans.writeXMLFile(e);
+//  rot.writeXMLFile(e);
+//  scale.writeXMLFile(e);
   return e;
 }
 
 void OMBVBodyProperty::fromWidget(QWidget *widget) {
-  OMBVDynamicColoredObjectProperty::fromWidget(widget);
-  trans.fromWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
-  rot.fromWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
-  scale.fromWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
+//  OMBVDynamicColoredObjectProperty::fromWidget(widget);
+//  trans.fromWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
+//  rot.fromWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
+//  scale.fromWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
 }
 
 void OMBVBodyProperty::toWidget(QWidget *widget) {
-  OMBVDynamicColoredObjectProperty::toWidget(widget);
-  trans.toWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
-  rot.toWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
-  scale.toWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
+//  OMBVDynamicColoredObjectProperty::toWidget(widget);
+//  trans.toWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
+//  rot.toWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
+//  scale.toWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
 }
 
-CubeProperty::CubeProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+//OpenMBVRigidBodyChoiceProperty::OpenMBVRigidBodyChoiceProperty(const string &name, const string &ID_) : Property(name), property(0), index(-1), ID(ID_) {
+//  setIndex(0);
+//}
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"length"));
-  length.setProperty(new ExtPhysicalVarProperty(input));
+//void OMBVBodyProperty::setIndex(int i) {
+//  if(index != i) {
+//    index = i;
+//    Property *parent = getParent();
+//    delete parent->getProperty(0);
+//    if(i==0)
+//      parent->setProperty(new CubeProperty("Cube",ID));
+//    else
+//      parent->setProperty(new CuboidProperty("Cuboid",ID));
+//    mw->removeProperty();
+////    Property::property.clear();
+////    for(int i=0; i<property->getNumberOfProperties(); i++)
+////      addProperty(property->getProperty(i));
+//  }
+//}
+
+CubeProperty::CubeProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  property.push_back(new ChoiceProperty2("length",new ScalarPropertyFactory("1",LengthUnits()),"",4));
 }
 
 TiXmlElement* CubeProperty::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
-  length.initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement(OPENMBVNS"length");
+  property[5]->initializeUsingXML(ele1);
   return element;
 }
 
 TiXmlElement* CubeProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
-  length.writeXMLFile(e);
+  TiXmlElement *ee=new TiXmlElement(OPENMBVNS"length");
+  property[5]->writeXMLFile(ee);
+  e->LinkEndChild(ee);
   return e;
 }
 
 void CubeProperty::fromWidget(QWidget *widget) {
-  OMBVBodyProperty::fromWidget(widget);
-  length.fromWidget(static_cast<CubeWidget*>(widget)->length);
+//  OMBVBodyProperty::fromWidget(widget);
+//  length.fromWidget(static_cast<CubeWidget*>(widget)->length);
 }
 
 void CubeProperty::toWidget(QWidget *widget) {
-  OMBVBodyProperty::toWidget(widget);
-  length.toWidget(static_cast<CubeWidget*>(widget)->length);
+//  OMBVBodyProperty::toWidget(widget);
+//  length.toWidget(static_cast<CubeWidget*>(widget)->length);
 }
 
 CuboidProperty::CuboidProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "m", OPENMBVNS"length"));
-  length.setProperty(new ExtPhysicalVarProperty(input));
+  property.push_back(new ChoiceProperty2("length",new VecPropertyFactory(getScalars<string>(3,"1"),LengthUnits()),"",4));
+
+//  vector<PhysicalVariableProperty> input;
+//  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "m", OPENMBVNS"length"));
+//  length.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 TiXmlElement* CuboidProperty::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
-  length.initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement(OPENMBVNS"length");
+  property[5]->initializeUsingXML(ele1);
   return element;
 }
 
 TiXmlElement* CuboidProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
-  length.writeXMLFile(e);
+  TiXmlElement *ee=new TiXmlElement(OPENMBVNS"length");
+  property[5]->writeXMLFile(ee);
+  e->LinkEndChild(ee);
+//  length.writeXMLFile(e);
   return e;
 }
 
 void CuboidProperty::fromWidget(QWidget *widget) {
-  OMBVBodyProperty::fromWidget(widget);
-  length.fromWidget(static_cast<CuboidWidget*>(widget)->length);
+//  OMBVBodyProperty::fromWidget(widget);
+//  length.fromWidget(static_cast<CuboidWidget*>(widget)->length);
 }
 
 void CuboidProperty::toWidget(QWidget *widget) {
-  OMBVBodyProperty::toWidget(widget);
-  length.toWidget(static_cast<CuboidWidget*>(widget)->length);
+//  OMBVBodyProperty::toWidget(widget);
+//  length.toWidget(static_cast<CuboidWidget*>(widget)->length);
 }
 
 SphereProperty::SphereProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"radius"));
-  radius.setProperty(new ExtPhysicalVarProperty(input));
+  property.push_back(new ChoiceProperty2("radius",new ScalarPropertyFactory("1",LengthUnits()),"",4));
+
+ // vector<PhysicalVariableProperty> input;
+ // input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"radius"));
+ // radius.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 TiXmlElement* SphereProperty::initializeUsingXML(TiXmlElement *element) {
-  OMBVBodyProperty::initializeUsingXML(element);
-  radius.initializeUsingXML(element);
+  TiXmlElement *ele0 = OMBVBodyProperty::initializeUsingXML(element);
+  cout << element->ValueStr() << endl;
+  cout << ele0->ValueStr() << endl;
+  TiXmlElement *ele1 = element->FirstChildElement(OPENMBVNS"radius");
+  property[5]->initializeUsingXML(ele1);
   return element;
+//  OMBVBodyProperty::initializeUsingXML(element);
+//  radius.initializeUsingXML(element);
+//  return element;
 }
 
 TiXmlElement* SphereProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
-  radius.writeXMLFile(e);
+  TiXmlElement *ee=new TiXmlElement(OPENMBVNS"radius");
+  property[5]->writeXMLFile(ee);
+  e->LinkEndChild(ee);
   return e;
 }
 
 void SphereProperty::fromWidget(QWidget *widget) {
-  OMBVBodyProperty::fromWidget(widget);
-  radius.fromWidget(static_cast<SphereWidget*>(widget)->radius);
+//  OMBVBodyProperty::fromWidget(widget);
+//  radius.fromWidget(static_cast<SphereWidget*>(widget)->radius);
 }
 
 void SphereProperty::toWidget(QWidget *widget) {
-  OMBVBodyProperty::toWidget(widget);
-  radius.toWidget(static_cast<SphereWidget*>(widget)->radius);
+//  OMBVBodyProperty::toWidget(widget);
+//  radius.toWidget(static_cast<SphereWidget*>(widget)->radius);
 }
 
 FrustumProperty::FrustumProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
@@ -581,7 +625,7 @@ void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
 
 OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv(0,true), ref(0,false) {
   ombv.setProperty(new ChoiceProperty2(new OMBVBodyPropertyFactory(body->getID()),MBSIMNS"openMBVRigidBody"));
-  ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,MBSIMNS"openMBVFrameOfReference")); 
+  ref.setProperty(new LocalFrameOfReferenceProperty("","Frame[C]",body)); 
 }
 
 TiXmlElement* OMBVBodySelectionProperty::initializeUsingXML(TiXmlElement *element) {
@@ -655,3 +699,32 @@ void OMBVPlaneProperty::toWidget(QWidget *widget) {
   size.toWidget(static_cast<OMBVPlaneWidget*>(widget)->size);
   numberOfLines.toWidget(static_cast<OMBVPlaneWidget*>(widget)->numberOfLines);
 }
+
+//OpenMBVRigidBodyChoiceProperty::OpenMBVRigidBodyChoiceProperty(const string &name, const string &ID_) : Property(name), property(0), index(-1), ID(ID_) {
+//  setIndex(0);
+//}
+//
+//void OpenMBVRigidBodyChoiceProperty::setIndex(int i) {
+//  if(index != i) {
+//    index = i;
+//    delete property;
+//    if(i==0)
+//      property = new CubeProperty("Cube",ID);
+//    else
+//      property = new CuboidProperty("Cuboid",ID);
+//    mw->removeProperty();
+//    Property::property.clear();
+//    for(int i=0; i<property->getNumberOfProperties(); i++)
+//      addProperty(property->getProperty(i));
+//  }
+//}
+//
+//TiXmlElement* OpenMBVRigidBodyChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+//  property->initializeUsingXML(element);
+//}
+//
+//TiXmlElement* OpenMBVRigidBodyChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+//  property->writeXMLFile(parent);
+//}
+//
+//

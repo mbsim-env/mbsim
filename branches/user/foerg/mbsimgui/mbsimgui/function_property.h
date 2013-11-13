@@ -21,11 +21,11 @@
 #define _FUNCTION_PROPERTY_H_
 
 #include "property.h"
+#include "function_widget.h"
 
 class FunctionProperty : public Property {
   public:
-    FunctionProperty() {}
-    virtual ~FunctionProperty() {}
+    FunctionProperty(const std::string &name="") : Property(name) {}
     virtual int getArg1Size() const {return 0;}
     virtual int getArg2Size() const {return 0;}
     virtual std::string getType() const { return "Function"; }
@@ -33,7 +33,24 @@ class FunctionProperty : public Property {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
     void fromWidget(QWidget *widget) { }
     void toWidget(QWidget *widget) { }
+    Widget* createWidget() { return new FunctionChoiceWidget; }
+    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
 };
+
+// class FunctionChoiceProperty : public Property {
+//   public:
+//     FunctionChoiceProperty(const std::string &name="");
+//     int getIndex() const { return index; }
+//     void setIndex(int i);
+//     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+//     const std::string& getName() const {return property->getName();}
+//     Widget* createWidget() { return new FunctionChoiceWidget; }
+//     QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
+//   protected:
+//     Property *property;
+//     int index;
+// };
 
 #endif
 

@@ -25,6 +25,16 @@
 using namespace std;
 using namespace MBXMLUtils;
 
+TiXmlElement* Property::initializeUsingXML(TiXmlElement *element) {
+  for(int i=0; i<property.size(); i++)
+    property[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* Property::writeXMLFile(TiXmlNode *element) {
+  for(int i=0; i<property.size(); i++)
+    property[i]->writeXMLFile(element);
+}
+
 void PhysicalProperty::setValue(const string &data) { 
   Property::setValue(data); 
   setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
@@ -36,7 +46,9 @@ TiXmlElement* PhysicalProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* PhysicalProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = (TiXmlElement*)parent;
-  ele->SetAttribute("unit", getUnit());
+  if(units.getNumberOfUnits()) {
+    TiXmlElement *ele = (TiXmlElement*)parent;
+    ele->SetAttribute("unit", getUnit());
+  }
 }
 

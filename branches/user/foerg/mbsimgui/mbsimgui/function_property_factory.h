@@ -21,6 +21,7 @@
 #define _FUNCTION_PROPERTY_FACTORY_H_
 
 #include "property.h"
+#include "function_widget_factory.h"
 #include <vector>
 
 class Element;
@@ -70,6 +71,7 @@ class TranslationPropertyFactory2 : public PropertyFactory {
     static std::vector<std::string> getNames();
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
+    WidgetFactory* createWidgetFactory() { return new TranslationWidgetFactory2; }
   protected:
     std::vector<std::string> name;
 };

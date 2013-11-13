@@ -18,8 +18,11 @@
 */
 
 #include <set>
-#include <iostream>
 #include <map>
+#include <vector>
+#include <string>
+#include <iostream>
+
 class Element;
 class Frame;
 class Contour;
@@ -30,7 +33,9 @@ class Observer;
 class Integrator;
 class Parameter;
 class Environment;
-class TreeItem;
+class OMBVBodyProperty;
+class FunctionProperty;
+
 namespace MBXMLUtils {
   class TiXmlElement;
 }
@@ -83,7 +88,6 @@ class ObjectFactory : public ObjectFactoryBase {
     M_NSPRE getNamespacePrefixMapping();
 };
 
-
 class MBSimObjectFactory : protected ObjectFactoryBase  {
   private:
     static MBSimObjectFactory *instance;
@@ -101,6 +105,29 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
     Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
     Parameter* createParameter(MBXMLUtils::TiXmlElement *element);
-    Environment *getEnvironment(MBXMLUtils::TiXmlElement *element);
+    Environment* getEnvironment(MBXMLUtils::TiXmlElement *element);
 };
 
+class OMBVBodyFactory {
+  protected:
+    std::vector<std::string> names;
+  public:
+    OMBVBodyFactory();
+    OMBVBodyProperty* createBody(int i, const std::string &ID); 
+    OMBVBodyProperty* createBody(const std::string &name, const std::string &ID); 
+    OMBVBodyProperty* createBody(MBXMLUtils::TiXmlElement *element, const std::string &ID); 
+    const std::string& getName(int i) const { return names[i]; }
+    int size() const { return names.size(); }
+};
+
+class FunctionFactory {
+  protected:
+    std::vector<std::string> names;
+  public:
+    FunctionFactory();
+    FunctionProperty* createFunction(int i); 
+    FunctionProperty* createFunction(const std::string &name); 
+    FunctionProperty* createFunction(MBXMLUtils::TiXmlElement *element); 
+    const std::string& getName(int i) const { return names[i]; }
+    int size() const { return names.size(); }
+};

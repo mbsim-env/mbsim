@@ -21,7 +21,6 @@
 #define _GROUP__H_
 
 #include "element.h"
-#include "extended_properties.h"
 class Frame;
 class Contour;
 class Object;
@@ -82,7 +81,6 @@ class Group : public Element {
     void addLink(Link *link);
     void addObserver(Observer *observer);
     void removeElement(Element *element);
-    ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
     QMenu* createContextMenu() {return new GroupContextMenu(this);}
 };
 

@@ -19,11 +19,16 @@
 
 #include <config.h>
 #include "ombv_widgets.h"
+#include "ombv_properties.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "rigidbody.h"
 #include "frame.h"
+#include "mainwindow.h"
+#include "objectfactory.h"
 #include <QtGui>
+
+extern MainWindow *mw;
 
 using namespace std;
 
@@ -339,4 +344,70 @@ OMBVPlaneWidget::OMBVPlaneWidget(const QString &name) : OMBVObjectWidget(name) {
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("10"), QStringList(), 0));
   numberOfLines = new ExtWidget("Number of lines",new ExtPhysicalVarWidget(input));
   layout->addWidget(numberOfLines);
+}
+
+OpenMBVRigidBodyChoiceWidget::OpenMBVRigidBodyChoiceWidget() {
+//  comboBox = new QComboBox;
+//  QStringList list;
+//  list << "Cube" << "Cuboid" << "Sphere";
+//  comboBox->addItems(list);
+//  varlayout->addWidget(comboBox);
+}
+
+void OpenMBVRigidBodyChoiceWidget::fromProperty(Property *property) {
+//  QStringList list;
+//  list << "Cube" << "Cuboid" << "Sphere";
+//  for(int i=0; i<list.size(); i++) {
+//   if(property->getName()==list[i].toStdString()) {
+//      comboBox->setCurrentIndex(i);
+//      break;  
+//   }
+//  }
+// //comboBox->setCurrentIndex(static_cast<OpenMBVRigidBodyChoiceProperty*>(property)->getIndex());
+}
+
+void OpenMBVRigidBodyChoiceWidget::toProperty(Property *property) {
+//  int i = comboBox->currentIndex();
+//  string ID =  static_cast<OMBVBodyProperty*>(property)->getID();
+//  Property *parent = property->getParent();
+//  delete property;
+//  if(i==0)
+//    parent->setProperty(new CubeProperty("Cube",ID));
+//  else if(i==1)
+//    parent->setProperty(new CuboidProperty("Cuboid",ID));
+//  else
+//    parent->setProperty(new SphereProperty("Sphere",ID));
+//  mw->changePropertyItem(parent->getProperty());
+//  mw->mbsimxml(1);
+// // static_cast<OpenMBVRigidBodyChoiceProperty*>(property)->setIndex(comboBox->currentIndex());
+}
+
+OpenMBVRigidBodyChoiceContextMenu::OpenMBVRigidBodyChoiceContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
+  addSeparator();
+  OMBVBodyFactory factory;
+  QActionGroup *actionGroup = new QActionGroup(this);
+  Property *p = property->getParent();
+  for(int i=0; i<factory.size(); i++) {
+    QAction *action=new QAction(QString::fromStdString(factory.getName(i)), this);
+    action->setCheckable(true);
+    actionGroup->addAction(action);
+    addAction(action);
+    actions[action]=i;
+    if(property->getName()==factory.getName(i))
+      action->setChecked(true);
+  }
+  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setOpenMBVRigidBody(QAction*)));
+}
+
+void OpenMBVRigidBodyChoiceContextMenu::setOpenMBVRigidBody(QAction *action) {
+  int i = actions[action];
+  string ID =  static_cast<OMBVBodyProperty*>(property)->getID();
+  Property *parent = property->getParent();
+  delete property;
+
+  OMBVBodyFactory factory;
+  OMBVBodyProperty* body = factory.createBody(i,ID);
+  parent->setProperty(body);
+  mw->changePropertyItem(parent->getProperty());
+  mw->mbsimxml(1);
 }

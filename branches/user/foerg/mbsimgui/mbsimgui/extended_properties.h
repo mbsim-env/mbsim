@@ -96,6 +96,8 @@ class ChoiceProperty2 : public Property {
     Widget* createWidget() { return new ChoiceWidget2(factory->createWidgetFactory()); }
     int getIndex() const { return index; }
     void setIndex(int i); 
+    QMenu* createContextMenu() {return new ChoiceProperty2ContextMenu(this);}
+    PropertyFactory* getPropertyFactory() const { return factory; }
 
   protected:
     PropertyFactory *factory;

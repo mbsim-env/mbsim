@@ -35,4 +35,24 @@ class PropertyContextMenu : public QMenu {
     Property *property;
 };
 
+class ChoiceProperty2ContextMenu : public PropertyContextMenu {
+
+  Q_OBJECT
+  public:
+    ChoiceProperty2ContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+  protected slots:
+    void selectProperty();
+};
+
+// class FunctionChoiceContextMenu : public PropertyContextMenu {
+// 
+//   Q_OBJECT
+//   public:
+//     FunctionChoiceContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+//   protected:
+//     std::map<QAction*,int> actions;
+//   protected slots:
+//     void setFunction(QAction*);
+// };
+
 #endif

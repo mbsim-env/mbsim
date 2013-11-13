@@ -257,9 +257,9 @@ Property* TabularFunctionPropertyFactory::createProperty(int i) {
 //    input.push_back(PhysicalVariableProperty(new VecFromFileProperty,"",MBSIMNS"x"));
 //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-   propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMNS"x"),"",4)));
+   propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3),"",4)));
 
-   propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,1,"1","0"),MBSIMNS"y",vector<string>(3,"")),"",4)));
+   propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,1,"1","0")),"",4)));
 //    input.clear();
 //    input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"y"));
 //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
@@ -270,7 +270,7 @@ Property* TabularFunctionPropertyFactory::createProperty(int i) {
     //vector<PhysicalVariableProperty> input;
     //input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
     //return new ExtProperty(new ExtPhysicalVarProperty(input));
-    return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0"),MBSIMNS"xy",vector<string>(3,"")),"",4));
+    return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0")),"",4));
   }
 }
 

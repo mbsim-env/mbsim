@@ -21,7 +21,6 @@
 #define _SOLVER__H_
 
 #include "group.h"
-#include "extended_properties.h"
 #include <string>
 
 class Environment : public QObject {
@@ -52,7 +51,7 @@ class Solver : public Group {
     void writeXMLFile(const std::string &name);
     void writeXMLFile() { writeXMLFile(getName()); }
 
-    ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
+//    ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new SolverContextMenu(this);}
 };
 

@@ -25,7 +25,7 @@
 
 class TranslationAlongXAxisProperty: public FunctionProperty {
   public:
-    TranslationAlongXAxisProperty() { }
+    TranslationAlongXAxisProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongXAxisProperty(*this);}
     int getArg1Size() const {return 1;}
     inline std::string getType() const { return "TranslationAlongXAxis"; }
@@ -33,7 +33,7 @@ class TranslationAlongXAxisProperty: public FunctionProperty {
 
 class TranslationAlongYAxisProperty: public FunctionProperty {
   public:
-    TranslationAlongYAxisProperty() { }
+    TranslationAlongYAxisProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongYAxisProperty(*this);}
     int getArg1Size() const {return 1;}
     inline std::string getType() const { return "TranslationAlongYAxis"; }
@@ -41,7 +41,7 @@ class TranslationAlongYAxisProperty: public FunctionProperty {
 
 class TranslationAlongZAxisProperty: public FunctionProperty {
   public:
-    TranslationAlongZAxisProperty() { }
+    TranslationAlongZAxisProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongZAxisProperty(*this);}
     int getArg1Size() const {return 1;}
     inline std::string getType() const { return "TranslationAlongZAxis"; }

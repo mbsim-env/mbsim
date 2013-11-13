@@ -41,12 +41,10 @@ namespace MBXMLUtils {
 
 class LocalFrameOfReferenceProperty : public Property {
   protected:
-    std::string frame;
     Frame *framePtr;
     Element* element;
-    std::string xmlName;
   public:
-    LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="");
+    LocalFrameOfReferenceProperty(const std::string &name="", const std::string &frame_="", Element* element_=0);
     virtual Property* clone() const {return new LocalFrameOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
@@ -54,16 +52,16 @@ class LocalFrameOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setFrame(const std::string &str);
     std::string getFrame() const;
+    Frame* getFramePtr() const { return framePtr; }
+    Widget* createWidget() { return new LocalFrameOfReferenceWidget(element,element); }
 };
 
 class ParentFrameOfReferenceProperty : public Property {
   protected:
-    std::string frame;
     Frame *framePtr;
     Element* element;
-    std::string xmlName;
   public:
-    ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="");
+    ParentFrameOfReferenceProperty(const std::string &name="", const std::string &frame_="", Element* element_=0);
     virtual Property* clone() const {return new ParentFrameOfReferenceProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -72,16 +70,16 @@ class ParentFrameOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setFrame(const std::string &str);
     std::string getFrame() const;
+    Frame* getFramePtr() const { return framePtr; }
+    Widget* createWidget() { return new ParentFrameOfReferenceWidget(element,element); }
 };
 
 class FrameOfReferenceProperty : public Property {
   protected:
-    std::string frame;
     Frame *framePtr;
     Element* element;
-    std::string xmlName;
   public:
-    FrameOfReferenceProperty(const std::string &frame="", Element* element=0, const std::string &xmlName=""); 
+    FrameOfReferenceProperty(const std::string &name="", const std::string &frame="", Element* element=0); 
     virtual Property* clone() const {return new FrameOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
@@ -90,6 +88,8 @@ class FrameOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setFrame(const std::string &str);
     std::string getFrame() const;
+    Frame* getFramePtr() const { return framePtr; }
+    Widget* createWidget() { return new FrameOfReferenceWidget(element,0); }
 };
 
 class ContourOfReferenceProperty : public Property {

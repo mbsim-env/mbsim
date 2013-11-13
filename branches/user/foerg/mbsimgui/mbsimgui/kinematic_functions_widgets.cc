@@ -29,13 +29,10 @@ using namespace std;
 
 TranslationAlongFixedAxisWidget::TranslationAlongFixedAxisWidget() {
 
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new VecWidget(3),QStringList(),0));
   a = new ExtWidget("Axis of translation",new ExtPhysicalVarWidget(input));
-  layout->addWidget(a);
+  varlayout->addWidget(a);
 }
 
 LinearTranslationWidget::LinearTranslationWidget(int m, int n) {
@@ -47,20 +44,17 @@ LinearTranslationWidget::LinearTranslationWidget(int m, int n) {
 //  QObject::connect(m, SIGNAL(sizeChanged(int)), this, SIGNAL(translationChanged()));
 //  QObject::connect(mat_, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
 
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
   vector<PhysicalVariableWidget*> input;
   MatColsVarWidget *a_ = new MatColsVarWidget(m,1,1,3);
   input.push_back(new PhysicalVariableWidget(a_,QStringList(),0));
   connect(a_,SIGNAL(sizeChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
   A = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));
-  layout->addWidget(A);
+  varlayout->addWidget(A);
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
   b = new ExtWidget("Intercept",new ExtPhysicalVarWidget(input),true);
-  layout->addWidget(b);
+  varlayout->addWidget(b);
 }
 
 int LinearTranslationWidget::getArg1Size() const {
