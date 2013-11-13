@@ -49,79 +49,34 @@
         jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
         Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
         <dl>
-          <dt>plotRecursive</dt> <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
-          <dt>separateFilePerGroup</dt>
-          <dd>Erzeugt ein eigenes H5 File für diese Gruppe [-]</dd>
-          <dt>state</dt>
-          <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
-          <dt>stateDerivative</dt>
-          <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
-          <dt>notMinimalState</dt>
-          <dd>TODO</dd>
-          <dt>rightHandSide</dt>
-          <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
-          <dt>globalPosition</dt>
-          <dd>Globale (world) Positionen und Orientierungen plotten [-]</dd>
-          <dt>energy</dt>
-          <dd>Energie plotten [-]</dd>
-          <dt>openMBV</dt>
-          <dd>OpenMBV Visualisierung ausgeben [+]</dd>
-          <dt>generalizedLinkForce</dt> <dd>Glatte und nicht glatte generalisierte Link Kräfte plotten (l) [+]</dd>
-          <dt>linkKinematics</dt>
-          <dd>Kinematic der Links plotten (g, gd) [+]</dd>
-          <dt>stopVector</dt>
-          <dd>Stopvektor der Schaltpunktsuche ausgeben [-]</dd>
-          <dt>debug</dt>
-          <dd>interne Größen ausgeben [-]</dd>
+          <dt>plotRecursive</dt>       <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
+          <dt>separateFilePerGroup</dt><dd>Erzeugt ein eigenes H5 File für diese Gruppe [-]</dd>
+          <dt>state</dt>               <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
+          <dt>stateDerivative</dt>     <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
+          <dt>notMinimalState</dt>     <dd>TODO</dd>
+          <dt>rightHandSide</dt>       <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
+          <dt>globalPosition</dt>      <dd>Globale (world) Positionen und Orientierungen plotten [-]</dd>
+          <dt>globalVelocity</dt>      <dd>Globale (world) Geschwindigkeiten plotten [-]</dd>
+          <dt>globalAcceleration</dt>  <dd>Globale (world) Beschleunigen plotten [-]</dd>
+          <dt>energy</dt>              <dd>Energie plotten [-]</dd>
+          <dt>openMBV</dt>             <dd>OpenMBV Visualisierung ausgeben [+]</dd>
+          <dt>generalizedLinkForce</dt><dd>Glatte und nicht glatte generalisierte Link Kräfte plotten (l) [+]</dd>
+          <dt>linkKinematics</dt>      <dd>Kinematic der Links plotten (g, gd) [+]</dd>
+          <dt>stopVector</dt>          <dd>Stopvektor der Schaltpunktsuche ausgeben [-]</dd>
+          <dt>debug</dt>               <dd>interne Größen ausgeben [-]</dd>
         </dl>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="xs:token">
-      <xs:enumeration value="+plotRecursive"/>
-      <xs:enumeration value="-plotRecursive"/>
-      <xs:enumeration value="+separateFilePerGroup"/>
-      <xs:enumeration value="-separateFilePerGroup"/>
-      <xs:enumeration value="+state"/>
-      <xs:enumeration value="-state"/>
-      <xs:enumeration value="+stateDerivative"/>
-      <xs:enumeration value="-stateDerivative"/>
-      <xs:enumeration value="+notMinimalState"/>
-      <xs:enumeration value="-notMinimalState"/>
-      <xs:enumeration value="+rightHandSide"/>
-      <xs:enumeration value="-rightHandSide"/>
-      <xs:enumeration value="+globalPosition"/>
-      <xs:enumeration value="-globalPosition"/>
-      <xs:enumeration value="+globalVelocity"/>
-      <xs:enumeration value="-globalVelocity"/>
-      <xs:enumeration value="+globalAcceleration"/>
-      <xs:enumeration value="-globalAcceleration"/>
-      <xs:enumeration value="+energy"/>
-      <xs:enumeration value="-energy"/>
-      <xs:enumeration value="+openMBV"/>
-      <xs:enumeration value="-openMBV"/>
-      <xs:enumeration value="+generalizedLinkForce"/>
-      <xs:enumeration value="-generalizedLinkForce"/>
-      <xs:enumeration value="+linkKinematics"/>
-      <xs:enumeration value="-linkKinematics"/>
-      <xs:enumeration value="+stopVector"/>
-      <xs:enumeration value="-stopVector"/>
-      <xs:enumeration value="+debug"/>
-      <xs:enumeration value="-debug"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> im aktuellen Kontext.
-        Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:name">Element-Namen</a> des
+        Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:partialOctaveType">Element-Namen</a> des
         zu referenzierenden Frames darstellt.
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="Frame\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference to a Frame at the parent -->
@@ -129,16 +84,11 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> des Vorgängers
         des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <tt>../Frame[X]</tt>, wobei <tt>X</tt> den
-        <a class="link" href="pv:name">Element-Namen</a> des Frames des Vorgangers darstellt.
+        <a class="link" href="pv:partialOctaveType">Element-Namen</a> des Frames des Vorgangers darstellt.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="\.\./Frame\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="\.\./Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference from a Link|Object to a Frame somewhere in the hierarchy -->
@@ -146,7 +96,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</tt>, wobei <tt>X</tt>,
-        <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
+        <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil
         <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
         <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
         <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann der <tt>Frame Z</tt> des
@@ -157,12 +107,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Frame\[X\]|Object\[X\]/Frame\[X\])" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*(Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference form a Link|Object to a Contour somewhere in the hierarchy -->
@@ -170,7 +115,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einer <a class="link" href="mbsim:Contour"><tt>&lt;Contour&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</tt>, wobei <tt>X</tt>,
-        <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
+        <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil
         <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
         <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
         <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann die <tt>Contour Z</tt> des
@@ -181,12 +126,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Contour\[X\]|Object\[X\]/Contour\[X\])" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*(Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
@@ -194,7 +134,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Object"><tt>&lt;Object&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]</tt>, wobei <tt>X</tt> und
-        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        <tt>Y</tt> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
         kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
         Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
@@ -203,12 +143,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Object\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Link somewhere in the hierarchy -->
@@ -216,7 +151,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Link"><tt>&lt;Link&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Link[Y]</tt>, wobei <tt>X</tt> und
-        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        <tt>Y</tt> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
         kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
         Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Link Y</tt> ausgewählt. Alternativ kann die
@@ -225,12 +160,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Link\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
@@ -238,7 +168,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Contact"><tt>&lt;Contact&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Contact[Y]</tt>, wobei <tt>X</tt> und
-        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        <tt>Y</tt> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt> kann
         beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
         Element-Namen <tt>X</tt>. Als letzter Pfadteil wird der <tt>Contact Y</tt> ausgewählt. Alternativ kann die
@@ -247,12 +177,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Contact\[X\]|Link\[X\])" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*(Contact\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|)"/>
-    </xs:restriction>
+    <xs:restriction base="pv:partialOctaveType"/>
   </xs:simpleType>
 
 
@@ -293,7 +218,7 @@
         </xs:element>  
       </xs:choice> 
     </xs:sequence> <!-- a workaround for xmllint -->
-    <xs:attribute name="name" type="pv:name" use="required"/>
+    <xs:attribute name="name" type="pv:partialOctaveType" use="required"/>
   </xs:complexType> 
 
   <xs:element name="EmptyGroup" abstract="true" substitutionGroup="Element" type="EmptyGroupType"/>
@@ -2184,7 +2109,7 @@
              <xs:complexType>  
                <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
                <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-               <xs:attribute name="name" type="pv:name" use="optional"/>
+               <xs:attribute name="name" type="pv:partialOctaveType" use="optional"/>
              </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
