@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "property_context_menu.h"
-#include "property.h"
+#include "function_property.h"
 #include "mainwindow.h"
 
 extern MainWindow *mw;
@@ -49,3 +49,38 @@ void PropertyContextMenu::disableProperty(bool disable) {
   property->setDisabled(disable);
   mw->mbsimxml(1);
 }
+
+ChoiceProperty2ContextMenu::ChoiceProperty2ContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
+  addSeparator();
+  PropertyFactory *factory = static_cast<ChoiceProperty2*>(property)->getPropertyFactory();
+  for(int i=0; i<factory->getSize(); i++) {
+    QAction *action=new QAction(QString::fromStdString(factory->getName(i)), this);
+    connect(action,SIGNAL(triggered()),this,SLOT(selectProperty()));
+    addAction(action);
+  }
+}
+
+void ChoiceProperty2ContextMenu::selectProperty() {
+}
+
+//FunctionChoiceContextMenu::FunctionChoiceContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
+//  addSeparator();
+//  QStringList list;
+//  list << "translation x" << "translation y";
+//  QActionGroup *actionGroup = new QActionGroup(this);
+//  for(int i=0; i<list.size(); i++) {
+//    QAction *action=new QAction(list[i], this);
+//    action->setCheckable(true);
+//    actionGroup->addAction(action);
+//    addAction(action);
+//    actions[action]=i;
+//    if(i==static_cast<FunctionChoiceProperty*>(property)->getIndex())
+//      action->setChecked(true);
+//  }
+//  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
+//}
+//
+//void FunctionChoiceContextMenu::setFunction(QAction *action) {
+//  static_cast<FunctionChoiceProperty*>(property)->setIndex(actions[action]);
+//  mw->mbsimxml(1);
+//}

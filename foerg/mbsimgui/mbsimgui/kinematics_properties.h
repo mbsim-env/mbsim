@@ -20,9 +20,17 @@
 #ifndef _KINEMATICS_PROPERTIES_H_
 #define _KINEMATICS_PROPERTIES_H_
 
+#include "property.h"
 #include <string>
-#include "utils.h"
-#include "extended_properties.h"
+
+class StateDependentTranslation : public Property {
+
+  public:
+    StateDependentTranslation(const std::string &name="");
+    Property* clone() const {return new StateDependentTranslation(*this);}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+};
 
 //namespace MBXMLUtils {
 //  class TiXmlElement;

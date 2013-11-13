@@ -21,7 +21,6 @@
 #define _FRAME__H_
 
 #include "element.h"
-#include "extended_properties.h"
 
 class ExtWidget;
 
@@ -40,7 +39,6 @@ class Frame : public Element {
     bool openMBVFrame() const {return property[1]->isDisabled()==false;}
     void setOpenMBVFrame(bool flag) {property[1]->setDisabled(flag==false);}
     virtual Element * getByPathSearch(std::string path);
-    ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FrameContextMenu(this);}
 //  protected:
 //    ExtProperty visu;
@@ -56,10 +54,7 @@ class FixedRelativeFrame : public Frame {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
-  protected:
-    ExtProperty refFrame;
 };
 
 #endif

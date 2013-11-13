@@ -84,14 +84,10 @@ void ParentFrameComboBox::highlightObject(const QString &frame) {
     mw->highlightObject(selection->getID());
 }
 
-LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
+LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Element* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
   frame = new LocalFrameComboBox(element);
   frame->setEditable(true);
-  layout->addWidget(frame);
+  varlayout->addWidget(frame);
   selectedFrame = element->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
   updateWidget();
@@ -131,14 +127,21 @@ QString LocalFrameOfReferenceWidget::getFrame() const {
   return frame->currentText();
 }
 
-ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+void LocalFrameOfReferenceWidget::fromProperty(Property *property) {
+  Widget::fromProperty(property);
+  setFrame(QString::fromStdString(static_cast<LocalFrameOfReferenceProperty*>(property)->getFrame()),static_cast<LocalFrameOfReferenceProperty*>(property)->getFramePtr());
+  updateWidget();
+}
 
+void LocalFrameOfReferenceWidget::toProperty(Property *property) {
+  Widget::toProperty(property);
+  static_cast<LocalFrameOfReferenceProperty*>(property)->setFrame(getFrame().toStdString());
+}
+
+ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Element* omitFrame_) : element(element_), omitFrame(omitFrame_), selectedFrame(0) {
   frame = new ParentFrameComboBox(element);
   frame->setEditable(true);
-  layout->addWidget(frame);
+  varlayout->addWidget(frame);
   selectedFrame = element->getParent()->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
   updateWidget();
@@ -178,20 +181,27 @@ QString ParentFrameOfReferenceWidget::getFrame() const {
   return frame->currentText();
 }
 
-FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+void ParentFrameOfReferenceWidget::fromProperty(Property *property) {
+  Widget::fromProperty(property);
+  setFrame(QString::fromStdString(static_cast<ParentFrameOfReferenceProperty*>(property)->getFrame()),static_cast<ParentFrameOfReferenceProperty*>(property)->getFramePtr());
+  updateWidget();
+}
 
+void ParentFrameOfReferenceWidget::toProperty(Property *property) {
+  Widget::toProperty(property);
+  static_cast<ParentFrameOfReferenceProperty*>(property)->setFrame(getFrame().toStdString());
+}
+
+FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
   frame = new QLineEdit;
   if(selectedFrame)
     frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
   frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
   connect(frameBrowser,SIGNAL(accepted()),this,SLOT(setFrame()));
-  layout->addWidget(frame);
+  varlayout->addWidget(frame);
   QPushButton *button = new QPushButton(tr("Browse"));
   connect(button,SIGNAL(clicked(bool)),frameBrowser,SLOT(show()));
-  layout->addWidget(button);
+  varlayout->addWidget(button);
   updateWidget();
 }
 
@@ -217,6 +227,17 @@ void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
 
 QString FrameOfReferenceWidget::getFrame() const {
   return frame->text();
+}
+
+void FrameOfReferenceWidget::fromProperty(Property *property) {
+  Widget::fromProperty(property);
+  setFrame(QString::fromStdString(static_cast<FrameOfReferenceProperty*>(property)->getFrame()),static_cast<FrameOfReferenceProperty*>(property)->getFramePtr());
+  updateWidget();
+}
+
+void FrameOfReferenceWidget::toProperty(Property *property) {
+  Widget::toProperty(property);
+  static_cast<FrameOfReferenceProperty*>(property)->setFrame(getFrame().toStdString());
 }
 
 ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
@@ -490,22 +511,20 @@ ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
 }
 
 void BasicTextWidget::fromProperty(Property *property) {
+  Widget::fromProperty(property);
   setText(QString::fromStdString(static_cast<TextProperty*>(property)->getValue()));
 }
 
 void BasicTextWidget::toProperty(Property *property) {
+  Widget::toProperty(property);
   static_cast<TextProperty*>(property)->setValue(getText().toStdString());
 }
 
 TextWidget::TextWidget(const QString &text_, bool readOnly) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
   text = new QLineEdit;
   text->setText(text_);
   text->setReadOnly(readOnly);
-  layout->addWidget(text);
+  varlayout->addWidget(text);
 }
 
 TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num) { 
@@ -513,10 +532,7 @@ TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num) {
   for(unsigned int i=0; i<list.size(); i++)
     text->addItem(list[i]);
   text->setCurrentIndex(num);
-  QHBoxLayout* layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  layout->addWidget(text);
+  varlayout->addWidget(text);
 }
 
 ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
@@ -711,38 +727,4 @@ void ColorWidget::setColor() {
   }
 }
 
-UnitWidget::UnitWidget(const Units &units, int defaultUnit)  {
-//  QHBoxLayout *layout = new QHBoxLayout;
-//  setLayout(layout);
-//  layout->setMargin(0);
-//  unit = new QComboBox;
-//  for(int i=0; i<units.getNumberOfUnits(); i++)
-//    unit->addItem(QString::fromStdString(units.getUnit(i)));
-//  unit->setCurrentIndex(defaultUnit);
-//  mainlayout->addWidget(unit);
-}
-
-void UnitWidget::fromProperty(Property *property) {
-  unit->setCurrentIndex(property->getCurrentUnit());
-}
-
-void UnitWidget::toProperty(Property *property) {
-  property->setCurrentUnit(unit->currentIndex());
-}
-
-DisablingWidget::DisablingWidget()  {
-  disabled = new QCheckBox;
-  QHBoxLayout* layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  layout->addWidget(disabled);
-}
-
-void DisablingWidget::fromProperty(Property *property) {
-  disabled->setCheckState(property->isDisabled()?Qt::Checked:Qt::Unchecked);
-}
-
-void DisablingWidget::toProperty(Property *property) {
-  property->setDisabled(disabled->checkState());
-}
 

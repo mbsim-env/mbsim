@@ -55,8 +55,8 @@ class PropertyInterface {
   public:
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) = 0;
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) = 0;
-    virtual void fromWidget(QWidget *widget) = 0;
-    virtual void toWidget(QWidget *widget) = 0;
+    virtual void fromWidget(QWidget *widget) {}
+    virtual void toWidget(QWidget *widget) {}
     virtual void initialize() {}
     virtual void deinitialize() {}
     virtual std::string getType() const {return "";}
@@ -64,9 +64,11 @@ class PropertyInterface {
 
 class Property : public PropertyTreeItemData, public PropertyInterface {
   public:
-    Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units()) : name(name_), value(value_), units(units_), disabl(false), disabled(false) { }
+    Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units()) : name(name_), value(value_), units(units_), disabl(false), disabled(false), parent(0) { }
     virtual ~Property() {}
     virtual Property* clone() const {return 0;}
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     const std::string& getName() const { return name; }
     const std::string& getValue() const { return value; }
     const std::string& getUnit() const { return unit; }
@@ -92,21 +94,28 @@ class Property : public PropertyTreeItemData, public PropertyInterface {
     }
     bool isDisabled() const {return disabled;}
     int getNumberOfProperties() const { return property.size(); }
-    Property* getProperty(int i) { return property[i]; }
+    Property* getProperty(int i=0) const { return property[i]; }
+    Property* setProperty(Property *property_, int i=0) { property[i] = property_; property_->setParent(this); }
+    void addProperty(Property *property_) { property.push_back(property_); property_->setParent(this); }
+    Property* getParent() const { return parent; }
+    void setParent(Property *parent_) { parent = parent_; }
   protected:
     std::string name, value, unit, evaluation;
     Units units;
     bool disabl, disabled;
     std::vector<Property*> property;
+    Property *parent;
 };
 
 class PhysicalProperty : public Property {
   public:
     PhysicalProperty(const std::string &name="", const std::string &value="", const Units &units=NoUnitUnits()) : Property(name,value,units) {
-      setCurrentUnit(units.getDefaultUnit());
+      if(units.getNumberOfUnits())
+        setCurrentUnit(units.getDefaultUnit());
     }
     PhysicalProperty(const std::string &name, const std::string &value, const Units &units, int defaultUnit) : Property(name,value,units) {
-      setCurrentUnit(defaultUnit);
+      if(units.getNumberOfUnits())
+        setCurrentUnit(defaultUnit);
     }
     void setValue(const std::string &data);
     void setUnits(const Units &units_) { units = units_; currentUnit=units.getDefaultUnit(); }

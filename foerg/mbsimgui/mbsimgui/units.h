@@ -70,6 +70,13 @@ class MassUnits : public Units {
     }
 };
 
+class InertiaUnits : public Units {
+  public:
+    InertiaUnits(int defaultUnit=0) : Units(defaultUnit) {
+      unit.push_back("kg*m^2");
+    }
+};
+
 class LengthUnits : public Units {
   public:
     LengthUnits(int defaultUnit=4) : Units(defaultUnit) {

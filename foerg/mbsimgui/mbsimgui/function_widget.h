@@ -21,20 +21,41 @@
 #define _FUNCTION_WIDGET_H_
 
 #include "widget.h"
+#include "property_context_menu.h"
+
+class QComboBox;
 
 class FunctionWidget : public Widget {
   Q_OBJECT
   public:
-    FunctionWidget() {}
-    virtual ~FunctionWidget() {}
     virtual int getArg1Size() const {return 0;}
     virtual int getArg2Size() const {return 0;}
     virtual void setArg1Size(int i) {}
-  protected:
   public slots:
     virtual void resize_(int m, int n) {}
   signals:
     void arg1SizeChanged(int);
 };
+
+class FunctionChoiceWidget : public Widget {
+  public:
+    FunctionChoiceWidget();
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
+  protected:
+    QComboBox *comboBox;
+};
+
+class FunctionChoiceContextMenu : public PropertyContextMenu {
+
+  Q_OBJECT
+  public:
+    FunctionChoiceContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+  protected:
+    std::map<QAction*,int> actions;
+  protected slots:
+    void setFunction(QAction*);
+};
+
 
 #endif

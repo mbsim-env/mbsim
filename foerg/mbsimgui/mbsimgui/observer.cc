@@ -59,7 +59,7 @@ Element * Observer::getByPathSearch(string path) {
 
 CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false) {
 
-  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("","",this));//,MBSIMNS"frame"));
 
   position.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   position.setXMLName(MBSIMNS"openMBVPositionArrow",false);
@@ -96,7 +96,7 @@ TiXmlElement* CoordinatesObserver::writeXMLFile(TiXmlNode *parent) {
 
 KinematicsObserver::KinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
-  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("","",this));//,MBSIMNS"frame"));
 
   position.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   position.setXMLName(MBSIMNS"openMBVPositionArrow",false);
@@ -143,7 +143,7 @@ TiXmlElement* KinematicsObserver::writeXMLFile(TiXmlNode *parent) {
 
 RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str, Element *parent) : KinematicsObserver(str, parent) {
 
-  refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new FrameOfReferenceProperty("","",this));//,MBSIMNS"frameOfReference"));
 }
 
 void RelativeKinematicsObserver::initialize() {

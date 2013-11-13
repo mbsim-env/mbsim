@@ -241,7 +241,7 @@ QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
   if(i==0) {
     ContainerWidget *widgetContainer = new ContainerWidget;
     widgetContainer->addWidget(new ExtWidget("X",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
-    widgetContainer->addWidget(new ExtWidget("Y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
+    widgetContainer->addWidget(new ExtWidget("Y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"1","0"),NoUnitUnits()))));
     return widgetContainer;
   }
   if(i==1) {

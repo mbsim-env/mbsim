@@ -80,11 +80,5 @@ void PropertyView::dialogFinished(int result) {
 }
 
 void PropertyView::apply() {
-  //std::cout << index.column() << std::endl;
-  //update(index);
-  //update(index.sibling(index.row(),2));
-  //update(index.sibling(index.row(),3));
-//  if(element->isEmbedded())
-//    mw->updateOctaveParameters(element->getParameterList());
   mw->mbsimxml(1);
 }

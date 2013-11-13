@@ -154,6 +154,8 @@ class MainWindow : public QMainWindow {
     void updateOctaveParameters(const ParameterList &list=ParameterList());
     void removeElement();
     void saveElementAs();
+    void removeProperty();
+    void changePropertyItem(Property *property);
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

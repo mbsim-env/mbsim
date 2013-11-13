@@ -37,114 +37,108 @@ using namespace MBXMLUtils;
 extern bool absolutePath;
 extern QDir mbsDir;
 
-LocalFrameOfReferenceProperty::LocalFrameOfReferenceProperty(const std::string &frame_, Element* element_, const std::string &xmlName_): frame(frame_), framePtr(element_->getFrame(frame.substr(6, frame.length()-7))), element(element_), xmlName(xmlName_) {
+LocalFrameOfReferenceProperty::LocalFrameOfReferenceProperty(const std::string &name, const std::string &frame, Element* element_) : Property(name), framePtr(element_->getFrame(frame.substr(6, frame.length()-7))), element(element_) {
+  setValue(frame);
 }
 
 void LocalFrameOfReferenceProperty::setFrame(const std::string &str) {
-  frame = str;
-  framePtr=element->getFrame(frame.substr(6, frame.length()-7));
+  setValue(str);
+  framePtr=element->getFrame(value.substr(6, value.length()-7));
 }
 
 std::string LocalFrameOfReferenceProperty::getFrame() const {
-  return framePtr?("Frame[" + framePtr->getName() + "]"):frame;
+  return framePtr?("Frame[" + framePtr->getName() + "]"):value;
 }
 
 TiXmlElement* LocalFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) setFrame(e->Attribute("ref"));
-  return e;
+  setFrame(parent->Attribute("ref"));
+  return parent;
 }
 
 TiXmlElement* LocalFrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", getFrame());
-  parent->LinkEndChild(ele);
+  static_cast<TiXmlElement*>(parent)->SetAttribute("ref", getFrame());
   return 0;
 }
 
 void LocalFrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<LocalFrameOfReferenceWidget*>(widget)->getFrame().toStdString());
+//  setFrame(static_cast<LocalFrameOfReferenceWidget*>(widget)->getFrame().toStdString());
 }
 
 void LocalFrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
-  static_cast<LocalFrameOfReferenceWidget*>(widget)->updateWidget();
+//  static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
+//  static_cast<LocalFrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
-ParentFrameOfReferenceProperty::ParentFrameOfReferenceProperty(const std::string &frame_, Element* element_, const std::string &xmlName_): frame(frame_), framePtr(element_->getParent()->getFrame(frame.substr(9, frame.length()-10))), element(element_), xmlName(xmlName_) {
+ParentFrameOfReferenceProperty::ParentFrameOfReferenceProperty(const std::string &name, const std::string &frame, Element* element_) : Property(name), framePtr(element_->getParent()->getFrame(frame.substr(9, frame.length()-10))), element(element_) {
+  setValue(frame);
 }
 
 void ParentFrameOfReferenceProperty::initialize() {
-  framePtr=element->getParent()->getFrame((frame.substr(0,2)=="..")?frame.substr(9, frame.length()-10):frame.substr(6, frame.length()-7));
+  framePtr=element->getParent()->getFrame((value.substr(0,2)=="..")?value.substr(9, value.length()-10):value.substr(6, value.length()-7));
 }
 
 void ParentFrameOfReferenceProperty::setFrame(const std::string &str) {
-  frame = str;
-  framePtr=element->getParent()->getFrame(frame.substr(9, frame.length()-10));
+  setValue(str);
+  framePtr=element->getParent()->getFrame(value.substr(9, value.length()-10));
 }
 
 std::string ParentFrameOfReferenceProperty::getFrame() const {
-  return framePtr?("../Frame[" + framePtr->getName() + "]"):frame;
+  return framePtr?("../Frame[" + framePtr->getName() + "]"):value;
 }
 
 TiXmlElement* ParentFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) frame = e->Attribute("ref");
-  return e;
+  setFrame(parent->Attribute("ref"));
+  return parent;
 }
 
 TiXmlElement* ParentFrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", getFrame());
-  parent->LinkEndChild(ele);
+  static_cast<TiXmlElement*>(parent)->SetAttribute("ref", getFrame());
   return 0;
 }
 
 void ParentFrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<ParentFrameOfReferenceWidget*>(widget)->getFrame().toStdString());
+//  setFrame(static_cast<ParentFrameOfReferenceWidget*>(widget)->getFrame().toStdString());
 }
 
 void ParentFrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
-  static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
+//  static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(value),framePtr);
+//  static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
-FrameOfReferenceProperty::FrameOfReferenceProperty(const std::string &frame_, Element* element_, const std::string &xmlName_) : frame(frame_), framePtr(element_->getByPath<Frame>(frame)), element(element_), xmlName(xmlName_) {
+FrameOfReferenceProperty::FrameOfReferenceProperty(const std::string &name, const std::string &frame, Element* element_) : Property(name), framePtr(element_->getByPath<Frame>(frame)), element(element_) {
+  setValue(frame);
 }
 
 void FrameOfReferenceProperty::initialize() {
-  framePtr=element->getByPath<Frame>(frame);
+  framePtr=element->getByPath<Frame>(value);
 }
 
 void FrameOfReferenceProperty::setFrame(const std::string &str) {
-  frame = str;
-  framePtr=element->getByPath<Frame>(frame);
+  setValue(str);
+  framePtr=element->getByPath<Frame>(value);
 }
 
 std::string FrameOfReferenceProperty::getFrame() const {
-  return framePtr?framePtr->getXMLPath(element,true):frame;
+  return framePtr?framePtr->getXMLPath(element,true):value;
 }
 
 TiXmlElement* FrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) frame=e->Attribute("ref");
-  return e;
+  setFrame(parent->Attribute("ref"));
+  return parent;
 }
 
 TiXmlElement* FrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", getFrame());
-  parent->LinkEndChild(ele);
+  static_cast<TiXmlElement*>(parent)->SetAttribute("ref", getFrame());
   return 0;
 }
 
 void FrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<FrameOfReferenceWidget*>(widget)->getFrame().toStdString());
+//  setFrame(static_cast<FrameOfReferenceWidget*>(widget)->getFrame().toStdString());
 }
 
 void FrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
-  static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
+//  static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(value),framePtr);
+//  static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
 ContourOfReferenceProperty::ContourOfReferenceProperty(const std::string &contour_, Element* element_, const std::string &xmlName_) : contour(contour_), contourPtr(element_->getByPath<Contour>(contour)), element(element_), xmlName(xmlName_) {
@@ -446,7 +440,7 @@ ConnectFramesProperty::ConnectFramesProperty(int n, Element *element, const std:
     string xmlName = MBSIMNS"ref";
     if(n>1)
       xmlName += toStr(i+1);
-    frame.push_back(FrameOfReferenceProperty("",element,xmlName));
+    frame.push_back(FrameOfReferenceProperty("","",element));//,xmlName));
   }
 }
 

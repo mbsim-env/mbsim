@@ -27,11 +27,15 @@ using namespace std;
 using namespace MBXMLUtils;
 
 Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false), u0(0,false), R(0,false) {
-  q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedPosition"),"",4));
+//  q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedPosition"),"",4));
 
-  u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedVelocity"),"",4));
+//  u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedVelocity"),"",4));
 
-  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  //R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  property.push_back(new FrameOfReferenceProperty("frame of feference",getParent()->getFrame(0)->getXMLPath(this,true),this));
+  property[1]->setDisabling(true);
+  property[1]->setDisabled(true);
+
 }
 
 Body::Body(const Body &b) : Object(b), R(b.R) {
@@ -69,7 +73,7 @@ Body& Body::operator=(const Body &b) {
 }
 
 void Body::initialize() {
-  R.initialize();
+  property[1]->initialize();
 }
 
 void Body::addFrame(Frame* frame_) {
@@ -122,16 +126,24 @@ Contour* Body::getContour(const string &name) {
 
 void Body::initializeUsingXML(TiXmlElement *element) {
   Object::initializeUsingXML(element);
-  q0.initializeUsingXML(element);
-  u0.initializeUsingXML(element);
-  R.initializeUsingXML(element);
+//  q0.initializeUsingXML(element);
+//  u0.initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"frameOfReference" );
+  if(ele1) {
+    property[1]->initializeUsingXML(ele1);
+    property[1]->setDisabled(false);
+  }
 }
 
 TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Object::writeXMLFile(parent);
-  q0.writeXMLFile(ele0);
-  u0.writeXMLFile(ele0);
-  R.writeXMLFile(ele0);
+ // q0.writeXMLFile(ele0);
+ // u0.writeXMLFile(ele0);
+  if(not(property[1]->isDisabled())) {
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+    property[1]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
   return ele0;
 }
 

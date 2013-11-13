@@ -99,19 +99,20 @@ Element *Frame::getByPathSearch(string path) {
   return NULL;
 }
 
-FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false) {
+FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false) {
 
-  property.push_back(new ChoiceProperty2("relative position",new VecPropertyFactory(3,"",LengthUnits()),"",4));
+  property.push_back(new ChoiceProperty2("relative position",new VecPropertyFactory(3,LengthUnits()),"",4));
   property[2]->setDisabling(true);
   property[2]->setDisabled(true);
 
-  property.push_back(new ChoiceProperty2("relative orientation",new RotMatPropertyFactory(""),"",4));
+  property.push_back(new ChoiceProperty2("relative orientation",new RotMatPropertyFactory,"",4));
   property[3]->setDisabling(true);
   property[3]->setDisabled(true);
 
-//  orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIMNS"relativeOrientation"),"",4));
-
-  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  //refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  property.push_back(new ParentFrameOfReferenceProperty("frame of reference",getParent()->getFrame(0)->getXMLPath(this,true),this));
+  property[4]->setDisabling(true);
+  property[4]->setDisabled(true);
 }
 
 FixedRelativeFrame::~FixedRelativeFrame() {
@@ -119,13 +120,17 @@ FixedRelativeFrame::~FixedRelativeFrame() {
 
 void FixedRelativeFrame::initialize() {
   Frame::initialize();
-  refFrame.initialize();
+  property[4]->initialize();
 }
 
 void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
   Frame::initializeUsingXML(element);
-  refFrame.initializeUsingXML(element);
-  TiXmlElement* ele1 = element->FirstChildElement( MBSIMNS"relativePosition" );
+  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"frameOfReference" );
+  if(ele1) {
+    property[4]->initializeUsingXML(ele1);
+    property[4]->setDisabled(false);
+  }
+  ele1 = element->FirstChildElement( MBSIMNS"relativePosition" );
   if(ele1) {
     property[2]->initializeUsingXML(ele1);
     property[2]->setDisabled(false);
@@ -140,14 +145,18 @@ void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Frame::writeXMLFile(parent);
-  refFrame.writeXMLFile(ele0);
+  if(not(property[4]->isDisabled())) {
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+    property[4]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
   if(not(property[2]->isDisabled())) {
-    TiXmlElement* ele1 = new TiXmlElement( MBSIMNS"relativePosition" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"relativePosition" );
     property[2]->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
   }
   if(not(property[3]->isDisabled())) {
-    TiXmlElement* ele1 = new TiXmlElement( MBSIMNS"relativeOrientation" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"relativeOrientation" );
     property[3]->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
   }

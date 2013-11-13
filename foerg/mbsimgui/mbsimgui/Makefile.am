@@ -46,9 +46,11 @@ mbsimgui_SOURCES = element.cc \
 		   kinematic_functions_properties.cc \
 		   function_property_factory.cc \
 		   ombv_properties.cc \
+		   kinematics_properties.cc \
 		   extended_properties.cc \
 		   integrator_properties.cc \
 		   widget.cc \
+		   function_widget.cc \
 		   basic_widgets.cc \
 		   variable_widgets.cc \
 		   function_widgets.cc \

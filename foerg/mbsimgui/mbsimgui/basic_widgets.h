@@ -76,16 +76,18 @@ class LocalFrameOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
+    LocalFrameOfReferenceWidget(Element* element, Element* omitFrame=0);
 
     void updateWidget();
     QString getFrame() const;
     void setFrame(const QString &str, Frame *framePtr);
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 
   protected:
     QComboBox *frame;
-    Element* element;
-    Frame *selectedFrame, *omitFrame;
+    Element *element, *omitFrame;
+    Frame *selectedFrame;
 
   protected slots:
     void setFrame(const QString &str);
@@ -95,16 +97,18 @@ class ParentFrameOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
+    ParentFrameOfReferenceWidget(Element* element, Element* omitFrame=0);
 
     void updateWidget();
     QString getFrame() const; 
     void setFrame(const QString &str, Frame *framePtr);
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 
   protected:
     QComboBox *frame;
-    Element* element;
-    Frame *selectedFrame, *omitFrame;
+    Element *element, *omitFrame;
+    Frame *selectedFrame;
 
   protected slots:
     void setFrame(const QString &str);
@@ -119,6 +123,8 @@ class FrameOfReferenceWidget : public Widget {
     void updateWidget();
     void setFrame(const QString &str, Frame *framePtr);
     QString getFrame() const;
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 
   protected:
     QLineEdit *frame;
@@ -451,31 +457,5 @@ class ColorWidget : public Widget {
     void setColor(); 
 };
 
-class UnitWidget : public Widget {
-
-  public:
-    UnitWidget(const Units &units=NoUnitUnits(), int defaultUnit=0);
-
-    //const QStringList& getUnitList() const {return units;}
-    //int getDefaultUnit() const {return defaultUnit;}
-    //QString getUnit() const {return unit->currentText();}
-    //void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
-    void fromProperty(Property *property);
-    void toProperty(Property *property);
-
-  protected:
-    QComboBox* unit;
-};
-
-class DisablingWidget : public Widget {
-
-  public:
-    DisablingWidget();
-    void fromProperty(Property *property);
-    void toProperty(Property *property);
-
-  protected:
-    QCheckBox *disabled;
-};
 
 #endif

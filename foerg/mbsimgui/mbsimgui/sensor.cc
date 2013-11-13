@@ -62,7 +62,7 @@ TiXmlElement* GeneralizedCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
 }
 
 AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROLNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("","",this));//,MBSIMCONTROLNS"frame"));
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"direction"));
   direction.setProperty(new ExtPhysicalVarProperty(input));

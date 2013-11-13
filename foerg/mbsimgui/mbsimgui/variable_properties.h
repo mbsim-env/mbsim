@@ -75,7 +75,7 @@ class VecProperty : public VariableProperty {
   private:
     std::vector<std::string> value;
   public:
-    VecProperty(int size);
+    VecProperty(int size, const Units &unit=NoUnitUnits());
     VecProperty(const std::vector<std::string> &x) : VariableProperty("",toStr(x)), value(x) {}
     VecProperty(const std::string &name, const std::vector<std::string> &x, const Units &unit=NoUnitUnits()) : VariableProperty(name,toStr(x),unit), value(x) {}
     ~VecProperty();
@@ -187,7 +187,7 @@ class FromFileProperty : public VariableProperty {
 
 class ScalarPropertyFactory: public PropertyFactory {
   public:
-    ScalarPropertyFactory(const std::string &value, const std::string &xmlName, const Units &unit=NoUnitUnits());
+    ScalarPropertyFactory(const std::string &value, const Units &unit=NoUnitUnits());
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
@@ -195,14 +195,13 @@ class ScalarPropertyFactory: public PropertyFactory {
   protected:
     std::string value;
     std::vector<std::string> name;
-    std::string xmlName;
     Units unit;
 };
 
 class VecPropertyFactory: public PropertyFactory {
   public:
-    VecPropertyFactory(int m, const std::string &xmlName, const Units &unit=NoUnitUnits());
-    VecPropertyFactory(const std::vector<std::string> &x, const std::string &xmlName, const Units &unit=NoUnitUnits());
+    VecPropertyFactory(int m, const Units &unit=NoUnitUnits());
+    VecPropertyFactory(const std::vector<std::string> &x, const Units &unit=NoUnitUnits());
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
@@ -210,35 +209,41 @@ class VecPropertyFactory: public PropertyFactory {
   protected:
     std::vector<std::string> x;
     std::vector<std::string> name;
-    std::string xmlName;
     Units unit;
 };
 
 class RotMatPropertyFactory: public PropertyFactory {
   public:
-    RotMatPropertyFactory(const std::string &xmlName);
+    RotMatPropertyFactory();
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
     WidgetFactory* createWidgetFactory() { return new RotMatWidgetFactory; }
   protected:
     std::vector<std::string> name;
-    std::string xmlName;
 };
 
 class MatPropertyFactory: public PropertyFactory {
   public:
-    MatPropertyFactory(const std::string &xmlName);
-    MatPropertyFactory(const std::vector<std::vector<std::string> > &A, const std::string &xmlName, const std::vector<std::string> &unit);
+    MatPropertyFactory(const Units &unit=NoUnitUnits());
+    MatPropertyFactory(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits());
     Property* createProperty(int i=0);
     std::string getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
+    WidgetFactory* createWidgetFactory() { return new MatWidgetFactory(fromStdMat(A),unit); }
   protected:
     std::vector<std::vector<std::string> > A;
     std::vector<std::string> name;
-    std::string xmlName;
-    std::vector<std::string> unit;
+    Units unit;
 };
+
+class SymMatPropertyFactory: public MatPropertyFactory {
+  public:
+    SymMatPropertyFactory(const Units &unit=NoUnitUnits()) : MatPropertyFactory(unit) { }
+    SymMatPropertyFactory(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : MatPropertyFactory(A,unit) { }
+    WidgetFactory* createWidgetFactory() { return new SymMatWidgetFactory(fromStdMat(A),unit); }
+};
+
 
 #endif
 
