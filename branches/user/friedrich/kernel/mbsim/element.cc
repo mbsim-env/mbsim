@@ -208,23 +208,34 @@ namespace MBSim {
                 e->ValueStr()==MBSIMNS"plotFeatureForChildren" ||
                 e->ValueStr()==MBSIMNS"plotFeatureRecursive")) {
       PlotFeatureStatus status;
-      if(e->Attribute("feature")[0]=='+') status=enabled; else status=disabled;
+      if(e->Attribute("feature")[0]=='+') status=enabled;
+      else if(e->Attribute("feature")[0]=='-') status=disabled;
+      else {
+        ostringstream str;
+        str<<"Plot feature must start with '+' or '-' but is "<<e->Attribute("feature");
+        throw MBSimErrorInXML(str.str(), e);
+      }
       PlotFeature feature=plotRecursive;
-      if(string(e->Attribute("feature")).substr(1)=="plotRecursive") feature=plotRecursive;
-      if(string(e->Attribute("feature")).substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
-      if(string(e->Attribute("feature")).substr(1)=="state") feature=state;
-      if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
-      if(string(e->Attribute("feature")).substr(1)=="notMinimalState") feature=notMinimalState;
-      if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
-      if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
-      if(string(e->Attribute("feature")).substr(1)=="globalVelocity") feature=globalVelocity;
-      if(string(e->Attribute("feature")).substr(1)=="globalAcceleration") feature=globalAcceleration;
-      if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
-      if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
-      if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;
-      if(string(e->Attribute("feature")).substr(1)=="linkKinematics") feature=linkKinematics;
-      if(string(e->Attribute("feature")).substr(1)=="stopVector") feature=stopVector;
-      if(string(e->Attribute("feature")).substr(1)=="debug") feature=debug;
+      if     (string(e->Attribute("feature")).substr(1)=="plotRecursive") feature=plotRecursive;
+      else if(string(e->Attribute("feature")).substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
+      else if(string(e->Attribute("feature")).substr(1)=="state") feature=state;
+      else if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
+      else if(string(e->Attribute("feature")).substr(1)=="notMinimalState") feature=notMinimalState;
+      else if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
+      else if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
+      else if(string(e->Attribute("feature")).substr(1)=="globalVelocity") feature=globalVelocity;
+      else if(string(e->Attribute("feature")).substr(1)=="globalAcceleration") feature=globalAcceleration;
+      else if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
+      else if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
+      else if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;
+      else if(string(e->Attribute("feature")).substr(1)=="linkKinematics") feature=linkKinematics;
+      else if(string(e->Attribute("feature")).substr(1)=="stopVector") feature=stopVector;
+      else if(string(e->Attribute("feature")).substr(1)=="debug") feature=debug;
+      else {
+        ostringstream str;
+        str<<"Unknown plot feature: "<<e->Attribute("feature");
+        throw MBSimErrorInXML(str.str(), e);
+      }
       if(e->ValueStr()==MBSIMNS"plotFeature") setPlotFeature(feature, status);
       if(e->ValueStr()==MBSIMNS"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
       if(e->ValueStr()==MBSIMNS"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
