@@ -3,7 +3,7 @@
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:p="http://openmbv.berlios.de/MBXMLUtils/parameter"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <plotFeatureRecursive feature="+stateDerivative"/>
+  <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}state{plotSubType}"/>
   <plotFeature feature="+separateFilePerGroup"/>
   <position unit="mm">
     <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">

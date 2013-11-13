@@ -25,4 +25,6 @@
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>
+  <stringParameter name="plotSubType">'Derivative'</stringParameter>
+  <stringParameter name="plotSubTypeEnabled">true</stringParameter>
 </parameter>
