@@ -31,34 +31,35 @@
 #include "function_property_factory.h"
 #include "kinematics_properties.h"
 
-#define iK 2
-#define im 3
-#define ii 4
-#define ifi 5
-#define it 6
-#define io 7
-#define ifo 8
+#define iK 1
+#define im 2
+#define ii 3
+#define ifi 4
+#define it 5
+#define io 6
+#define ifo 7
 
 using namespace std;
 using namespace MBXMLUtils;
 
 RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
   Frame *C = new Frame("C",this);
+  type = "RigidBody";
   addFrame(C);
 
-  property.push_back(new LocalFrameOfReferenceProperty("frame for kinematics","Frame[C]",this)); 
+  property.push_back(new LocalFrameOfReferenceProperty("frameForKinematics","Frame[C]",this)); 
   property[iK]->setDisabling(true);
   property[iK]->setDisabled(true);
 
   property.push_back(new ChoiceProperty2("mass",new ScalarPropertyFactory("1",MassUnits()),"",4));
 
-  property.push_back(new ChoiceProperty2("inertia tensor",new SymMatPropertyFactory(getEye<string>(3,3,"0.01","0"),InertiaUnits()),"",4));
+  property.push_back(new ChoiceProperty2("inertiaTensor",new SymMatPropertyFactory(getEye<string>(3,3,"0.01","0"),InertiaUnits()),"",4));
 
-  property.push_back(new LocalFrameOfReferenceProperty("frame for inertia tensor","Frame[C]",this)); 
+  property.push_back(new LocalFrameOfReferenceProperty("frameForInertiaTensor","Frame[C]",this)); 
   property[ifi]->setDisabling(true);
   property[ifi]->setDisabled(true);
 
-  property.push_back(new StateDependentTranslation("state dependent translation"));
+  property.push_back(new StateDependentTranslation("stateDependentTranslation"));
   property[it]->setDisabling(true);
   property[it]->setDisabled(true);
 
@@ -71,12 +72,12 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformationForRotation"));
   coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
-  property.push_back(new Property("openMBV rigid body"));
+  property.push_back(new Property("openMBVRigidBody"));
   property[io]->setDisabling(true);
   OMBVBodyFactory factory;
   property[io]->addProperty(factory.createBody(0,ID));
 
-  property.push_back(new LocalFrameOfReferenceProperty("openMBV frame of reference","Frame[C]",this)); 
+  property.push_back(new LocalFrameOfReferenceProperty("openMBVFrameOfReference","Frame[C]",this)); 
   property[ifo]->setDisabling(true);
   property[ifo]->setDisabled(true);
 

@@ -50,6 +50,7 @@ Environment::~Environment() {}
 Environment *Environment::instance=NULL;
 
 Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
+  type = "DynamicSystemSolver";
 
   vector<PhysicalVariableProperty> input;
   vector<string> g(3);
@@ -58,7 +59,7 @@ Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverPa
   g[2] = "0";
 //  input.push_back(PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
 //  environment.setProperty(new ExtPhysicalVarProperty(input));
-  property.push_back(new ChoiceProperty2("acceleration of gravity",new VecPropertyFactory(g,AccelerationUnits()),"",4));
+  property.push_back(new ChoiceProperty2("accelerationOfGravity",new VecPropertyFactory(g,AccelerationUnits()),"",4));
 //  environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIMNS"accelerationOfGravity",AccelerationUnits()),MBSIMNS"accelerationOfGravity",0));
 
   solverParameters.setProperty(new SolverParametersProperty); 
@@ -78,7 +79,7 @@ void Solver::initializeUsingXML(TiXmlElement *element) {
   while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
     env->initializeUsingXML(e);
     TiXmlElement* ele1 = e->FirstChildElement( MBSIMNS"accelerationOfGravity" );
-    property[1]->initializeUsingXML(ele1);
+    property[0]->initializeUsingXML(ele1);
     e=e->NextSiblingElement();
   }
 
@@ -95,7 +96,7 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
   TiXmlElement* ele3 = new TiXmlElement( MBSIMNS"accelerationOfGravity" );
-  property[1]->writeXMLFile(ele3);
+  property[0]->writeXMLFile(ele3);
   ele2->LinkEndChild(ele3);
   ele1->LinkEndChild( ele2 );
   ele0->LinkEndChild( ele1 );

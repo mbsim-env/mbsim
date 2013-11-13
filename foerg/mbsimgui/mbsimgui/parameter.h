@@ -40,7 +40,9 @@ class Parameter : public TreeItemData {
   public:
     Parameter(const std::string &name);
     virtual ~Parameter() {}
-    virtual std::string getValue() const {return valuestr;}
+    const std::string& getValue() const {return valuestr;}
+    const std::string& getUnit() const {return unit;}
+    const std::string& getEvaluation() const {return evaluation;}
     void setValue(const std::string &value) {valuestr = value;}
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -52,6 +54,8 @@ class Parameter : public TreeItemData {
   protected:
     ExtProperty name, value;
     std::string valuestr;
+    static std::string unit; 
+    static std::string evaluation; 
 };
 
 class StringParameter : public Parameter {

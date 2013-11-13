@@ -147,12 +147,12 @@ int TreeModel::rowCount(const QModelIndex &parent) const {
 //  return true;
 //}
 
-ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
+//PropertyTreeModel::PropertyTreeModel(QObject *parent) : TreeModel(parent) {
+//
+//  rootItem = new TreeItem(new BasicItemData("Name","Type"));
+//}
 
-  rootItem = new TreeItem(new BasicItemData("Name","Type"));
-}
-
-void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
+void PropertyTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -163,9 +163,18 @@ void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) 
   endInsertRows();
 
   idEleMap.insert(make_pair(frame->getID(), parent.child(i,0)));
+
+  QModelIndex index;
+  if(parent.row()==-1)
+    index = this->index(i,0,parent);
+  else
+    index = parent.child(i,0);
+
+  for(int j=0; j<frame->getNumberOfProperties(); j++)
+    createPropertyItem(frame->getProperty(j),index);
 }
 
-void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
+void PropertyTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -176,9 +185,18 @@ void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &pa
   endInsertRows();
 
   idEleMap.insert(make_pair(contour->getID(), parent.child(i,0)));
+
+  QModelIndex index;
+  if(parent.row()==-1)
+    index = this->index(i,0,parent);
+  else
+    index = parent.child(i,0);
+
+  for(int j=0; j<contour->getNumberOfProperties(); j++)
+    createPropertyItem(contour->getProperty(j),index);
 }
 
-void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
+void PropertyTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -216,9 +234,12 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
     createLinkItem(group->getLink(i),index.child(4,0));
   for(int i=0; i<group->getNumberOfObservers(); i++)
     createObserverItem(group->getObserver(i),index.child(5,0));
+
+  for(int j=0; j<group->getNumberOfProperties(); j++)
+    createPropertyItem(group->getProperty(j),index);
 }
 
-void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
+void PropertyTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -242,9 +263,12 @@ void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &paren
     createFrameItem(object->getFrame(i),index.child(0,0));
   for(int i=0; i<object->getNumberOfContours(); i++)
     createContourItem(object->getContour(i),index.child(1,0));
+
+  for(int j=0; j<object->getNumberOfProperties(); j++)
+    createPropertyItem(object->getProperty(j),index);
 }
 
-void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
+void PropertyTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -255,24 +279,42 @@ void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
   endInsertRows();
 
   idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
+
+  QModelIndex index;
+  if(parent.row()==-1)
+    index = this->index(i,0,parent);
+  else
+    index = parent.child(i,0);
+
+  for(int j=0; j<link->getNumberOfProperties(); j++)
+    createPropertyItem(link->getProperty(j),index);
 }
 
-void ElementTreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
+void PropertyTreeModel::createObserverItem(Observer *observer, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
   int i = rowCount(parent);
   beginInsertRows(parent, i, i);
-  TreeItem *item = new TreeItem(link,parentItem);
+  TreeItem *item = new TreeItem(observer,parentItem);
   parentItem->insertChildren(item,1);
   endInsertRows();
 
-  idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
+  idEleMap.insert(make_pair(observer->getID(), parent.child(i,0)));
+
+  QModelIndex index;
+  if(parent.row()==-1)
+    index = this->index(i,0,parent);
+  else
+    index = parent.child(i,0);
+
+  for(int j=0; j<observer->getNumberOfProperties(); j++)
+    createPropertyItem(observer->getProperty(j),index);
 }
 
 ParameterListModel::ParameterListModel(QObject *parent) : TreeModel(parent) {
 
-  rootItem = new TreeItem(new BasicItemData("Name","Value"));
+  rootItem = new TreeItem(new BasicItemData("Name","Value","",""));
 }
 
 void ParameterListModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
@@ -287,7 +329,7 @@ void ParameterListModel::createParameterItem(Parameter *parameter, const QModelI
 }
 
 PropertyTreeModel::PropertyTreeModel(QObject *parent) : QAbstractItemModel(parent), rootItem(0) {
-  rootItem = new PropertyTreeItem(new BasicPropertyItemData("Name","Value","Unit","Evaluation"));
+  rootItem = new TreeItem(new BasicItemData("Name","Value","Unit","Evaluation"));
 }
 
 PropertyTreeModel::~PropertyTreeModel() {
@@ -296,7 +338,7 @@ PropertyTreeModel::~PropertyTreeModel() {
 
 QVariant PropertyTreeModel::data(const QModelIndex &index, int role) const {
   if(role==Qt::DisplayRole || role==Qt::EditRole) {
-    PropertyTreeItem *item = getItem(index);
+    TreeItem *item = getItem(index);
     return item->getData(index.column());
   } 
   else if(role==Qt::ForegroundRole) {
@@ -316,9 +358,9 @@ Qt::ItemFlags PropertyTreeModel::flags(const QModelIndex &index) const {
   return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-PropertyTreeItem *PropertyTreeModel::getItem(const QModelIndex &index) const {
+TreeItem *PropertyTreeModel::getItem(const QModelIndex &index) const {
   if(index.isValid()) {
-    PropertyTreeItem *item = static_cast<PropertyTreeItem*>(index.internalPointer());
+    TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
     if(item) return item;
   }
   return rootItem;
@@ -335,9 +377,9 @@ QModelIndex PropertyTreeModel::index(int row, int column, const QModelIndex &par
   if(parent.isValid() && parent.column() != 0)
     return QModelIndex();
 
-  PropertyTreeItem *parentItem = getItem(parent);
+  TreeItem *parentItem = getItem(parent);
 
-  PropertyTreeItem *childItem = parentItem->child(row);
+  TreeItem *childItem = parentItem->child(row);
   if(childItem)
     return createIndex(row, column, childItem);
   else
@@ -348,8 +390,8 @@ QModelIndex PropertyTreeModel::parent(const QModelIndex &index) const {
   if(!index.isValid())
     return QModelIndex();
 
-  PropertyTreeItem *childItem = getItem(index);
-  PropertyTreeItem *parentItem = childItem->parent();
+  TreeItem *childItem = getItem(index);
+  TreeItem *parentItem = childItem->parent();
 
   if(parentItem == rootItem)
     return QModelIndex();
@@ -358,7 +400,7 @@ QModelIndex PropertyTreeModel::parent(const QModelIndex &index) const {
 }
 
 bool PropertyTreeModel::removeRows(int position, int rows, const QModelIndex &parent) {
-  PropertyTreeItem *parentItem = getItem(parent);
+  TreeItem *parentItem = getItem(parent);
   bool success = true;
 
   beginRemoveRows(parent, position, position + rows - 1);
@@ -374,11 +416,11 @@ int PropertyTreeModel::rowCount(const QModelIndex &parent) const {
 
 void PropertyTreeModel::createPropertyItem(Property *property, const QModelIndex &parent) {
 
-  PropertyTreeItem *parentItem = getItem(parent);
+  TreeItem *parentItem = getItem(parent);
 
   int i = rowCount(parent);
   beginInsertRows(parent, i, i);
-  PropertyTreeItem *item = new PropertyTreeItem(property,parentItem);
+  TreeItem *item = new TreeItem(property,parentItem);
   parentItem->insertChildren(item,1);
   endInsertRows();
 

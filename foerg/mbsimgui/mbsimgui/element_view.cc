@@ -30,7 +30,7 @@ extern MainWindow *mw;
 void ElementView::openEditor () {
   if(!editor) {
     index = selectionModel()->currentIndex();
-    element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
+    element = dynamic_cast<Element*>(static_cast<TreeModel*>(model())->getItem(index)->getItemData());
     if(element) {
       if(element->isEmbedded())
         mw->updateOctaveParameters(element->getParameterList());

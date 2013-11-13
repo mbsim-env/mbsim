@@ -62,7 +62,7 @@ class PropertyInterface {
     virtual std::string getType() const {return "";}
 };
 
-class Property : public PropertyTreeItemData, public PropertyInterface {
+class Property : public TreeItemData, public PropertyInterface {
   public:
     Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units()) : name(name_), value(value_), units(units_), disabl(false), disabled(false), parent(0) { }
     virtual ~Property() {}

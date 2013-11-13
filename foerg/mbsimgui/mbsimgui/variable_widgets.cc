@@ -865,8 +865,8 @@ QWidget* MatRowsVarWidgetFactory::createWidget(int i) {
 }
 
 RotMatWidgetFactory::RotMatWidgetFactory() : name(3) {
-  name[1] = "Cardan";
-  name[0] = "Matrix";
+  name[0] = "Cardan";
+  name[1] = "Matrix";
   name[2] = "Editor";
 }
 

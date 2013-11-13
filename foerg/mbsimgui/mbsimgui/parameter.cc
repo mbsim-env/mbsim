@@ -25,6 +25,9 @@
 using namespace std;
 using namespace MBXMLUtils;
 
+string Parameter::unit="";
+string Parameter::evaluation="";
+
 Parameter::Parameter(const string &name_) {
   name.setProperty(new TextProperty(name_,""));
 }
