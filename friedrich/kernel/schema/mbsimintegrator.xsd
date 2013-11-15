@@ -92,7 +92,7 @@
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="maximalNumberOfSteps" type="xs:nonNegativeInteger" minOccurs="0"> 
+          <xs:element name="maximalNumberOfSteps" type="pv:integerFullOctEval" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
@@ -146,7 +146,7 @@
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="maximalNumberOfSteps" type="xs:nonNegativeInteger" minOccurs="0"> 
+          <xs:element name="maximalNumberOfSteps" type="pv:integerFullOctEval" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
@@ -197,7 +197,7 @@
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="numberOfMaximalSteps" type="xs:nonNegativeInteger">
+          <xs:element name="numberOfMaximalSteps" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
@@ -253,7 +253,7 @@
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="plotOnRoot" type="xs:boolean">
+          <xs:element name="plotOnRoot" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
             </xs:documentation></xs:annotation>
@@ -306,7 +306,7 @@
                 minimale Zeitschrittweite (default: sqrt(eps))
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="outputInterpolation" type="xs:boolean" minOccurs="0"> 
+          <xs:element name="outputInterpolation" type="pv:booleanFullOctEval" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 flag zur Steuerung, ob für die Plotausgabe die vom Integrator angefahrenen Zeitpunkte verwendet werden oder ob auf die vorgegebenen Plotzeitpunkte interpoliert werden soll (default: false)
             </xs:documentation></xs:annotation>
@@ -361,7 +361,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="order" type="xs:positiveInteger">
+                <xs:element name="order" type="pv:integerFullOctEval">
                   <xs:annotation>
                     <xs:documentation>
                       maximale Integrationsordnung: default: 1; 1,2,3 bei Fehlerschätzung mittels Extrapolation; 1 ..4 bei embedded Verfahren 
@@ -462,7 +462,7 @@
           <xs:element name="advancedOptions" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                  <xs:element name="deactivateSSC" type="xs:boolean" minOccurs="0"> 
+                  <xs:element name="deactivateSSC" type="pv:booleanFullOctEval" minOccurs="0"> 
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Deaktivieren der Schrittweitenkontrolle und Umschalten auf konstante Zeitschrittweite
                   </xs:documentation></xs:annotation>
@@ -504,12 +504,12 @@
                 Integrationsschrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="theta" type="xs:double"> 
+          <xs:element name="theta" type="pv:nounitScalar"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Gewichtungsfaktor des implizit ermittelten Systemzustandes. Wert zwischen 0 (voll explizit) und 1 (voll implizit).
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="driftCompensation" type="xs:boolean"> 
+          <xs:element name="driftCompensation" type="pv:booleanFullOctEval"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Driftkompensation
             </xs:documentation></xs:annotation>

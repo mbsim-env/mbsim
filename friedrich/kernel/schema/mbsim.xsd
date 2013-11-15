@@ -66,7 +66,7 @@
           <dt>debug</dt>               <dd>interne Größen ausgeben [-]</dd>
         </dl>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference to a Frame at the same hierarchy -->
@@ -76,7 +76,7 @@
         Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:partialOctaveType">Element-Namen</a> des
         zu referenzierenden Frames darstellt.
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference to a Frame at the parent -->
@@ -88,7 +88,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference from a Link|Object to a Frame somewhere in the hierarchy -->
@@ -107,7 +107,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link|Object to a Contour somewhere in the hierarchy -->
@@ -126,7 +126,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
@@ -143,7 +143,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Link somewhere in the hierarchy -->
@@ -160,7 +160,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
@@ -177,7 +177,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveType"/>
+    <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
 
@@ -218,7 +218,7 @@
         </xs:element>  
       </xs:choice> 
     </xs:sequence> <!-- a workaround for xmllint -->
-    <xs:attribute name="name" type="pv:partialOctaveType" use="required"/>
+    <xs:attribute name="name" type="pv:stringPartialOctEval" use="required"/>
   </xs:complexType> 
 
   <xs:element name="EmptyGroup" abstract="true" substitutionGroup="Element" type="EmptyGroupType"/>
@@ -675,7 +675,7 @@
                     </xs:choice>
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="numberOfMaximalIterations" type="xs:nonNegativeInteger" minOccurs="0">
+                <xs:element name="numberOfMaximalIterations" type="pv:integerFullOctEval" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Maximale Iterationszahl der Löser bis zum Abruch.
@@ -1819,7 +1819,7 @@
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
-          <xs:element name="type" minOccurs="0">
+          <xs:element name="type" minOccurs="0" type="pv:stringFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               <p>Definiert, wie die aufzuprägende Kraft während der Simulation in abhängigkeit der
               dynamischen Parameter berechnet wird.</p>
@@ -1831,12 +1831,6 @@
                   </dd>
               </dl>
             </xs:documentation></xs:annotation>
-            <xs:simpleType>
-              <xs:restriction base="xs:token">
-                <xs:enumeration value="&quot;constant&quot;"/>
-                <xs:enumeration value="&quot;linear&quot;"/>
-              </xs:restriction>
-            </xs:simpleType>
           </xs:element>
           <xs:element name="connectedObject">
             <xs:complexType>
@@ -2109,7 +2103,7 @@
              <xs:complexType>  
                <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
                <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-               <xs:attribute name="name" type="pv:partialOctaveType" use="optional"/>
+               <xs:attribute name="name" type="pv:stringPartialOctEval" use="optional"/>
              </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
@@ -2436,7 +2430,7 @@
               <xs:sequence>
                 <xs:element name="size" type="pv:lengthScalar">
                 </xs:element>
-                <xs:element name="number" type="xs:nonNegativeInteger">
+                <xs:element name="number" type="pv:integerFullOctEval">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2474,7 +2468,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="numberOfLines" type="xs:positiveInteger">
+                <xs:element name="numberOfLines" type="pv:integerFullOctEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Anzahl der Gitterlinien.
