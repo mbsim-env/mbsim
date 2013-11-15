@@ -309,17 +309,6 @@ $HOME/MBSim/mbsim/mbsimxml/xmldoc
 \end{verbatim}
 invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
 
-\subsubsection{MBSimAddOns}
-At the institute further modules can be found in \texttt{MBSimAddOn}: mechanical components~(\texttt{mbsimMechAdd}), hydraulic components~(\texttt{mbsimHydraulics}), and an interface for co-simulationen~(\texttt{mbsimCosim}). For installation one types
-\begin{verbatim}
- svn checkout http://zeiss/repos/SVN--rep//AM-software/mbsimAddOn/trunk mbsimAddOn
-\end{verbatim}
-in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, configure} for dynamic compilation with the prefix
-\begin{verbatim}
---prefix=$HOME/MBSim/Install
-\end{verbatim}
-and \textsc{install} in the subdirectories of \texttt{MBSim/mbsimAddOn}.
-
 \subsubsection{\MBSim Examples}
 The examples are used for testing successful installation. There are two possibilities:
 \begin{enumerate}
