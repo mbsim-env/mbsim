@@ -224,8 +224,8 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
   elementList = new PropertyView;
   elementList->setModel(new PropertyTreeModel);
-  elementList->setColumnWidth(0,75);
-  elementList->setColumnWidth(1,75);
+  elementList->setColumnWidth(0,150);
+  elementList->setColumnWidth(1,150);
   elementList->setColumnWidth(2,75);
   elementList->setColumnWidth(3,75);
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
@@ -373,7 +373,6 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 }
 
 void MainWindow::timeout() {
-  cout << "utime" << endl;
   QString str = uniqueTempDir+"/out1.ombv.xml";
   utime(str.toStdString().c_str(),0);
   str = uniqueTempDir+"/out1.ombv.h5";
@@ -392,7 +391,7 @@ void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatu
 }
 
 void MainWindow::openPropertyDialog() {
-//  QModelIndex index = elementList->selectionModel()->currentIndex();
+//  QModelIndex index = elementList->currentIndex();
   propertyList->openEditor();
 }
 
@@ -482,8 +481,7 @@ void MainWindow::highlightObject(const string &ID) {
 }
 
 void MainWindow::selectionChanged() {
-  cout << "selection Changed" << endl;
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
 #ifdef INLINE_OPENMBV
@@ -496,7 +494,7 @@ void MainWindow::selectionChanged() {
 
 void MainWindow::updatePropertyTree() {
 //  cout << "update property tree" << endl;
-//  QModelIndex index = elementList->selectionModel()->currentIndex();
+//  QModelIndex index = elementList->currentIndex();
 //  PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
 //  Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
 //  PropertyTreeModel *propertyModel = static_cast<PropertyTreeModel*>(propertyList->model());
@@ -520,7 +518,7 @@ void MainWindow::elementListClicked() {
 //    return;
 //  }
   if(QApplication::mouseButtons()==Qt::RightButton) {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex index = elementList->currentIndex();
     TreeItemData *itemData = static_cast<PropertyTreeModel*>(elementList->model())->getItem(index)->getItemData();
     if(itemData && index.column()==0) {
       QMenu *menu = itemData->createContextMenu();
@@ -532,7 +530,7 @@ void MainWindow::elementListClicked() {
 
 void MainWindow::parameterListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
-    QModelIndex index = parameterList->selectionModel()->currentIndex();
+    QModelIndex index = parameterList->currentIndex();
     if(index.column()==0) {
       Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(parameterList->model())->getItem(index)->getItemData());
       QMenu *menu = parameter->createContextMenu();
@@ -544,7 +542,7 @@ void MainWindow::parameterListClicked() {
 
 void MainWindow::propertyListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
-    QModelIndex index = propertyList->selectionModel()->currentIndex();
+    QModelIndex index = propertyList->currentIndex();
     Property *property = static_cast<Property*>(static_cast<PropertyTreeModel*>(propertyList->model())->getItem(index)->getItemData());
     QMenu *menu = property->createContextMenu();
     menu->exec(QCursor::pos());
@@ -874,7 +872,7 @@ void MainWindow::saveIntegrator() {
 
 void MainWindow::removeParameter() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-  QModelIndex index = parameterList->selectionModel()->currentIndex();
+  QModelIndex index = parameterList->currentIndex();
   delete model->getItem(index)->getItemData();
   model->removeRow(index.row(), index.parent());
   updateOctaveParameters();
@@ -1148,13 +1146,10 @@ void MainWindow::update3DView() {
 
 void MainWindow::openmbv() {
   QString name = uniqueTempDir+"/out0.ombv.xml";
-  cout << "starting openmbv 1" << endl;
-  cout << name.toStdString() << endl;
   if(QFile::exists(name)) {
     QStringList arg;
     arg.append("--autoreload");
     arg.append(name);
-    cout << "starting openmbv 2" << endl;
     QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/openmbv").c_str(), arg);
   }
 }
@@ -1169,7 +1164,6 @@ void MainWindow::h5plotserie() {
 }
 
 void MainWindow::selectElement(string ID) {
-  cout << "select Element" << endl;
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
   map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
   if(it!=model->idEleMap.end()) {
@@ -1319,7 +1313,7 @@ void Process::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
 
 void MainWindow::removeElement() {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
   element->getParent()->removeElement(element);
   model->removeRow(index.row(), index.parent());
@@ -1330,7 +1324,7 @@ void MainWindow::removeElement() {
 
 void MainWindow::saveElementAs() {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".xml", "XML files (*.xml)");
   if(file!="")
     static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFile(file.toStdString());
@@ -1338,7 +1332,7 @@ void MainWindow::saveElementAs() {
 
 void MainWindow::addFrame(Frame *frame) {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QModelIndex containerIndex = index.data().toString()=="frames"?index:index.child(0,0); 
   frame->setName(frame->getName()+toStr(model->getItem(containerIndex)->getID()));
   frame->getParent()->addFrame(frame);
@@ -1352,7 +1346,7 @@ void MainWindow::addFrame(Frame *frame) {
 
 void MainWindow::addContour(Contour *contour) {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
   contour->setName(contour->getName()+toStr(model->getItem(containerIndex)->getID()));
   contour->getParent()->addContour(contour);
@@ -1364,7 +1358,7 @@ void MainWindow::addContour(Contour *contour) {
 
 void MainWindow::addGroup(Group *group) {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
   group->setName(group->getName()+toStr(model->getItem(containerIndex)->getID()));
   group->getParent()->addGroup(group);
@@ -1376,7 +1370,7 @@ void MainWindow::addGroup(Group *group) {
 
 void MainWindow::addObject(Object *object) {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QModelIndex containerIndex = (index.row()==0)?index.child(3,0):index;
   object->setName(object->getName()+toStr(model->getItem(containerIndex)->getID()));
   object->getParent()->addObject(object);
@@ -1388,7 +1382,7 @@ void MainWindow::addObject(Object *object) {
 
 void MainWindow::addLink(Link *link) {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
   link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
   link->getParent()->addLink(link);
@@ -1400,7 +1394,7 @@ void MainWindow::addLink(Link *link) {
 
 void MainWindow::addObserver(Observer *observer) {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = elementList->currentIndex();
   QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
   observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
   observer->getParent()->addObserver(observer);
@@ -1604,17 +1598,15 @@ void MainWindow::updateRecentIntegratorFileActions() {
 }
 
 void MainWindow::changePropertyItem(Property *property) {
-  PropertyTreeModel *model = static_cast<PropertyTreeModel*>(propertyList->model());
-  QModelIndex index = propertyList->selectionModel()->currentIndex();
-  QModelIndex parentIndex = index.parent();
-//  Property *property = static_cast<Property*>(model->getItem(index)->getItemData());
-  model->removeRow(index.row(), parentIndex);
+  PropertyTreeModel *model = static_cast<PropertyTreeModel*>(elementList->model());
+  QModelIndex parentIndex = elementList->currentIndex();
+  model->removeRow(0, parentIndex);
   model->createPropertyItem(property,parentIndex);
 }
 
 void MainWindow::removeProperty() {
   PropertyTreeModel *model = static_cast<PropertyTreeModel*>(propertyList->model());
-  QModelIndex index = propertyList->selectionModel()->currentIndex();
+  QModelIndex index = propertyList->currentIndex();
 //  Property *property = static_cast<Property*>(model->getItem(index)->getItemData());
   //property->getParent()->removeProperty(property);
   model->removeRow(index.row(), index.parent());

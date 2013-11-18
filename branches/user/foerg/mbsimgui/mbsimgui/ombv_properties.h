@@ -115,10 +115,8 @@ class OMBVBodyProperty : public OMBVDynamicColoredObjectProperty {
     virtual std::string getType() const = 0;
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
-    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
-//  protected:
-//    ExtProperty trans, rot, scale;
+//    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
+//    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
 };
 
 class InvisibleBodyProperty : public OMBVBodyProperty {
@@ -258,20 +256,11 @@ class OMBVPlaneProperty : public OMBVObjectProperty {
     std::string xmlName;
 };
 
-//class OpenMBVRigidBodyChoiceProperty : public Property {
-//  public:
-//    OpenMBVRigidBodyChoiceProperty(const std::string &name="", const std::string &ID="");
-//    int getIndex() const { return index; }
-//    void setIndex(int i);
-//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//    const std::string& getName() const {return property->getName();}
-//    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
-//    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
-//  protected:
-//    Property *property;
-//    int index;
-//    std::string ID;
-//};
+class OpenMBVRigidBodyChoiceProperty : public Property {
+  public:
+    OpenMBVRigidBodyChoiceProperty(const std::string &name="") : Property(name) { }
+    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
+    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
+};
 
 #endif

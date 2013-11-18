@@ -21,6 +21,7 @@
 #define _KINEMATICS_PROPERTIES_H_
 
 #include "property.h"
+#include "function_widget.h"
 #include <string>
 
 class StateDependentTranslation : public Property {
@@ -30,6 +31,7 @@ class StateDependentTranslation : public Property {
     Property* clone() const {return new StateDependentTranslation(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
 };
 
 //namespace MBXMLUtils {

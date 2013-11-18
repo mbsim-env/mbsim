@@ -33,8 +33,6 @@ class FunctionProperty : public Property {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
     void fromWidget(QWidget *widget) { }
     void toWidget(QWidget *widget) { }
-    Widget* createWidget() { return new FunctionChoiceWidget; }
-    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
 };
 
 // class FunctionChoiceProperty : public Property {
