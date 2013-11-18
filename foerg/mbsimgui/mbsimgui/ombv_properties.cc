@@ -699,32 +699,3 @@ void OMBVPlaneProperty::toWidget(QWidget *widget) {
   size.toWidget(static_cast<OMBVPlaneWidget*>(widget)->size);
   numberOfLines.toWidget(static_cast<OMBVPlaneWidget*>(widget)->numberOfLines);
 }
-
-//OpenMBVRigidBodyChoiceProperty::OpenMBVRigidBodyChoiceProperty(const string &name, const string &ID_) : Property(name), property(0), index(-1), ID(ID_) {
-//  setIndex(0);
-//}
-//
-//void OpenMBVRigidBodyChoiceProperty::setIndex(int i) {
-//  if(index != i) {
-//    index = i;
-//    delete property;
-//    if(i==0)
-//      property = new CubeProperty("Cube",ID);
-//    else
-//      property = new CuboidProperty("Cuboid",ID);
-//    mw->removeProperty();
-//    Property::property.clear();
-//    for(int i=0; i<property->getNumberOfProperties(); i++)
-//      addProperty(property->getProperty(i));
-//  }
-//}
-//
-//TiXmlElement* OpenMBVRigidBodyChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-//  property->initializeUsingXML(element);
-//}
-//
-//TiXmlElement* OpenMBVRigidBodyChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-//  property->writeXMLFile(parent);
-//}
-//
-//

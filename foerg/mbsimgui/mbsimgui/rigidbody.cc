@@ -72,7 +72,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformationForRotation"));
   coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
-  property.push_back(new Property("openMBVRigidBody"));
+  property.push_back(new OpenMBVRigidBodyChoiceProperty("openMBVRigidBody"));
   property[io]->setDisabling(true);
   OMBVBodyFactory factory;
   property[io]->addProperty(factory.createBody(0,ID));

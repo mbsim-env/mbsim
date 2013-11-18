@@ -47,14 +47,13 @@ FunctionChoiceContextMenu::FunctionChoiceContextMenu(Property *property, QWidget
   addSeparator();
   FunctionFactory factory;
   QActionGroup *actionGroup = new QActionGroup(this);
-  Property *p = property->getParent();
   for(int i=0; i<factory.size(); i++) {
     QAction *action=new QAction(QString::fromStdString(factory.getName(i)), this);
     action->setCheckable(true);
     actionGroup->addAction(action);
     addAction(action);
     actions[action]=i;
-    if(property->getName()==factory.getName(i))
+    if(property->getProperty()->getName()==factory.getName(i))
       action->setChecked(true);
   }
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
@@ -62,12 +61,11 @@ FunctionChoiceContextMenu::FunctionChoiceContextMenu(Property *property, QWidget
 
 void FunctionChoiceContextMenu::setFunction(QAction *action) {
   int i = actions[action];
-  Property *parent = property->getParent();
-  delete property;
+  delete property->getProperty();
 
   FunctionFactory factory;
   FunctionProperty* body = factory.createFunction(i);
-  parent->setProperty(body);
-  mw->changePropertyItem(parent->getProperty());
+  property->setProperty(body);
+  mw->changePropertyItem(body);
   mw->mbsimxml(1);
 }
