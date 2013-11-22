@@ -20,11 +20,12 @@
 #include <config.h>
 #include "variable_widgets.h"
 #include "variable_properties.h"
-//#include "mainwindow.h"
 #include "dialogs.h"
-//#include <mbxmlutils/octeval.h>
 #include <vector>
+#include "mainwindow.h"
 #include <QtGui>
+
+extern MainWindow *mw;
 
 using namespace std;
 extern bool absolutePath;
@@ -166,12 +167,26 @@ OctaveExpressionWidget::OctaveExpressionWidget(const QString &value_, const Unit
   varlayout->addWidget(value);
 }
 
-void OctaveExpressionWidget::fromProperty(Property *property) {
+OctaveExpressionWidget::OctaveExpressionWidget(Property *property_, const Units &unit) : VariableWidget(unit), property(property_) {
+  value=new QPlainTextEdit;
+//  value->setMinimumHeight(value->sizeHint().height()/2);
+//  value->setMaximumHeight(value->sizeHint().height()/2);
+  new OctaveHighlighter(value->document());
+  QFont font;
+  font.setFamily("Monospace");
+  value->setFont(font);
+  value->setLineWrapMode(QPlainTextEdit::NoWrap);
+  varlayout->addWidget(value);
+}
+
+void OctaveExpressionWidget::fromProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::fromProperty(property);
   setExpression(QString::fromStdString(static_cast<OctaveExpressionProperty*>(property)->getValue()));
 }
 
-void OctaveExpressionWidget::toProperty(Property *property) {
+void OctaveExpressionWidget::toProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::toProperty(property);
   static_cast<OctaveExpressionProperty*>(property)->setValue(getExpression().toStdString());
 }
@@ -281,14 +296,21 @@ bool VecWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-void BasicMatWidget::fromProperty(Property *property) {
+void BasicMatWidget::fromProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::fromProperty(property);
   setMat(fromStdMat(static_cast<MatProperty*>(property)->getMat()));
 }
 
-void BasicMatWidget::toProperty(Property *property) {
+void BasicMatWidget::toProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::toProperty(property);
   static_cast<MatProperty*>(property)->setMat(toStdMat(getMat()));
+}
+
+MatWidget::MatWidget(Property *property) : BasicMatWidget(property) {
+
+  resize_(1,1);
 }
 
 MatWidget::MatWidget(int rows, int cols, const Units &unit) : BasicMatWidget(unit) {
@@ -651,7 +673,7 @@ bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-CardanWidget::CardanWidget() : VariableWidget(AngleUnits()) {
+CardanWidget::CardanWidget(Property *property_) : VariableWidget(AngleUnits()), property(property_) {
 
   box.resize(3);
   for(int i=0; i<3; i++) {
@@ -690,12 +712,14 @@ bool CardanWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-void CardanWidget::fromProperty(Property *property) {
+void CardanWidget::fromProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::fromProperty(property);
   setAngles(fromStdVec(static_cast<CardanProperty*>(property)->getAngles()));
 }
 
-void CardanWidget::toProperty(Property *property) {
+void CardanWidget::toProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::toProperty(property);
   static_cast<CardanProperty*>(property)->setAngles(toStdVec(getAngles()));
 }
@@ -904,4 +928,30 @@ QWidget* SymMatWidgetFactory::createWidget(int i) {
     return new FromFileWidget;
   if(i==2)
     return new OctaveExpressionWidget("",unit);
+}
+
+RotMatChoiceContextMenu::RotMatChoiceContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
+  addSeparator();
+  vector<string> name;
+  name.push_back("xmlMatrix");
+  name.push_back("cardan");
+  name.push_back("plain");
+  QActionGroup *actionGroup = new QActionGroup(this);
+  for(int i=0; i<name.size(); i++) {
+    QAction *action=new QAction(QString::fromStdString(name[i]), this);
+    action->setCheckable(true);
+    actionGroup->addAction(action);
+    addAction(action);
+    actions[action]=i;
+    if(static_cast<RotMatProperty*>(property)->getIndex()==i)
+      action->setChecked(true);
+  }
+  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setVariable(QAction*)));
+}
+
+void RotMatChoiceContextMenu::setVariable(QAction *action) {
+  int i = actions[action];
+
+  static_cast<RotMatProperty*>(property)->setIndex(i);
+  mw->mbsimxml(1);
 }

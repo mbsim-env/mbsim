@@ -35,6 +35,7 @@ class Parameter;
 class Environment;
 class OMBVBodyProperty;
 class FunctionProperty;
+class VariableProperty;
 
 namespace MBXMLUtils {
   class TiXmlElement;
@@ -128,6 +129,18 @@ class FunctionFactory {
     FunctionProperty* createFunction(int i); 
     FunctionProperty* createFunction(const std::string &name); 
     FunctionProperty* createFunction(MBXMLUtils::TiXmlElement *element); 
+    const std::string& getName(int i) const { return names[i]; }
+    int size() const { return names.size(); }
+};
+
+class VariableFactory {
+  protected:
+    std::vector<std::string> names;
+  public:
+    VariableFactory();
+    VariableProperty* createVariable(int i); 
+    VariableProperty* createVariable(const std::string &name); 
+    VariableProperty* createVariable(MBXMLUtils::TiXmlElement *element); 
     const std::string& getName(int i) const { return names[i]; }
     int size() const { return names.size(); }
 };

@@ -29,6 +29,7 @@
 #include <QLineEdit>
 #include <QSyntaxHighlighter>
 #include <QGridLayout>
+#include "property_context_menu.h"
 
 class EvalDialog;
 class QLabel;
@@ -72,6 +73,7 @@ class BoolWidget : public VariableWidget {
 class OctaveExpressionWidget : public VariableWidget {
   public:
     OctaveExpressionWidget(const QString &value="", const Units &unit=NoUnitUnits());
+    OctaveExpressionWidget(Property *property, const Units &unit=NoUnitUnits());
     QString getExpression() const { return value->toPlainText(); }
     void setExpression(const QString &str) { value->setPlainText(str); }
     virtual QString getType() const {return "Editor";}
@@ -80,6 +82,7 @@ class OctaveExpressionWidget : public VariableWidget {
 
   private:
     QPlainTextEdit *value;
+    Property *property;
 };
 
 class ScalarWidget : public VariableWidget {
@@ -126,8 +129,11 @@ class VecWidget : public BasicVecWidget {
 };
 
 class BasicMatWidget : public VariableWidget {
+  protected:
+    Property *property;
   public:
-    BasicMatWidget(const Units &unit=NoUnitUnits()) : VariableWidget(unit) { }
+    BasicMatWidget(const Units &unit=NoUnitUnits()) : VariableWidget(unit), property(0) { }
+    BasicMatWidget(Property *property_, const Units &unit=NoUnitUnits()) : VariableWidget(unit), property(property_) { }
     virtual std::vector<std::vector<QString> > getMat() const = 0;
     virtual void setMat(const std::vector<std::vector<QString> > &A) = 0;
     void fromProperty(Property *property);
@@ -141,6 +147,7 @@ class MatWidget : public BasicMatWidget {
   public:
     MatWidget(int rows=1, int cols=1, const Units &unit=NoUnitUnits());
     MatWidget(const std::vector<std::vector<QString> > &A, const Units &unit=NoUnitUnits());
+    MatWidget(Property *property); 
     void resize_(int rows, int cols);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
@@ -288,8 +295,9 @@ class CardanWidget : public VariableWidget {
 
   private:
     std::vector<QLineEdit*> box;
+    Property *property;
   public:
-    CardanWidget();
+    CardanWidget(Property *property=0);
     void resize_(int size);
     std::vector<QString> getAngles() const;
     void setAngles(const std::vector<QString> &x);
@@ -461,6 +469,17 @@ class SymMatWidgetFactory : public MatWidgetFactory {
     SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const Units &unit=NoUnitUnits()) : MatWidgetFactory(A,unit) { }
     SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const Units &unit=NoUnitUnits()) : MatWidgetFactory(A,name,unit) { }
     QWidget* createWidget(int i=0);
+};
+
+class RotMatChoiceContextMenu : public PropertyContextMenu {
+
+  Q_OBJECT
+  public:
+    RotMatChoiceContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+  protected:
+    std::map<QAction*,int> actions;
+  protected slots:
+    void setVariable(QAction*);
 };
 
 #endif
