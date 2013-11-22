@@ -343,3 +343,30 @@ FunctionProperty* FunctionFactory::createFunction(int i) {
     return 0;
 }
 
+VariableFactory::VariableFactory() {
+  names.push_back("xmlMatrix");
+  names.push_back("cardan");
+  names.push_back("plain");
+}
+
+VariableProperty* VariableFactory::createVariable(const std::string &name) {
+  for(int i=0; i<names.size(); i++)
+    if(name==names[i])
+      return createVariable(i);
+}
+
+VariableProperty* VariableFactory::createVariable(TiXmlElement *element) {
+  for(int i=0; i<names.size(); i++)
+    if(element->ValueStr()==(PVNS+names[i]))
+      return createVariable(i);
+}
+
+VariableProperty* VariableFactory::createVariable(int i) {
+  if(i==0)
+    return new MatProperty(3,3);
+  else if(i==1)
+    return new CardanProperty();
+  else
+    return new OctaveExpressionProperty(names[i]);
+}
+

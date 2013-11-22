@@ -44,16 +44,9 @@ class OctaveExpressionProperty : public VariableProperty {
   public:
     OctaveExpressionProperty(const std::string &name="", const std::string &scalar="1", const Units &unit=NoUnitUnits()) : VariableProperty(name,scalar,unit) {}
     virtual Property* clone() const {return new OctaveExpressionProperty(*this);}
-//    std::string getValue() const { return value; }
-//    void setValue(const std::string &str) { value = str; }
-//    const std::string& getExpression() const {return expression;}
-//    void setExpression(const std::string &x) {expression = x; setValue(expression);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    Widget* createWidget() { return new OctaveExpressionWidget; }
-
-//  private:
-//    std::string expression;
+    Widget* createWidget() { return new OctaveExpressionWidget(this); }
 };
 
 class ScalarProperty : public VariableProperty {
@@ -109,7 +102,7 @@ class MatProperty : public VariableProperty {
     int cols() const {return value[0].size();}
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Widget* createWidget() { return new MatWidget; }
+    Widget* createWidget() { return new MatWidget(this); }
 };
 
 class CardanProperty : public VariableProperty {
@@ -127,7 +120,7 @@ class CardanProperty : public VariableProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Widget* createWidget() { return new CardanWidget; }
+    Widget* createWidget() { return new CardanWidget(this); }
 };
 
 class PhysicalVariableProperty : public Property {
@@ -244,6 +237,26 @@ class SymMatPropertyFactory: public MatPropertyFactory {
     WidgetFactory* createWidgetFactory() { return new SymMatWidgetFactory(fromStdMat(A),unit); }
 };
 
+
+class RotMatProperty : public VariableProperty {
+
+  private:
+    std::vector<Property*> property;
+    int index;
+  public:
+    RotMatProperty(const std::string &name, std::vector<Property*> property_=std::vector<Property*>(0), int index_=0) : VariableProperty(name), property(property_), index(index_) { }
+    const std::string& getValue() const {return property[index]->getValue();}
+    const std::string& getUnit() const {return property[index]->getUnit();}
+    const std::string& getEvaluation() const {return property[index]->getEvaluation();}
+    const Units& getUnits() const { return property[index]->getUnits(); }
+    virtual Property* clone() const {return new RotMatProperty(*this);}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    Widget* createWidget() { return property[index]->createWidget(); }
+    QMenu* createContextMenu() {return new RotMatChoiceContextMenu(this);}
+    int getIndex() const { return index; }
+    void setIndex(int index_) { index = index_; }
+};
 
 #endif
 

@@ -203,6 +203,7 @@ TiXmlElement* CardanProperty::initializeUsingXML(TiXmlElement *parent) {
   angles.push_back(ei->GetText());
   if(element->Attribute("unit"))
     unit = element->Attribute("unit");
+  setValue(toStr(angles));
   return element;
 }
 
@@ -350,6 +351,21 @@ Property* VecPropertyFactory::createProperty(int i) {
     return new OctaveExpressionProperty("","",unit);
 }
 
+MatPropertyFactory::MatPropertyFactory(const Units &unit_) : name(3), unit(unit_) {
+}
+ 
+MatPropertyFactory::MatPropertyFactory(const vector<vector<string> > &A_, const Units &unit_) : A(A_), name(3), unit(unit_) {
+}
+ 
+Property* MatPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new MatProperty(A,unit);
+  if(i==1)
+    return new FromFileProperty;
+  if(i==2)
+    return new OctaveExpressionProperty("","",unit);
+}
+
 RotMatPropertyFactory::RotMatPropertyFactory() : name(3) {
 }
 
@@ -362,17 +378,19 @@ Property* RotMatPropertyFactory::createProperty(int i) {
     return new OctaveExpressionProperty("","",NoUnitUnits());
 }
 
-MatPropertyFactory::MatPropertyFactory(const Units &unit_) : name(3), unit(unit_) {
+TiXmlElement* RotMatProperty::initializeUsingXML(TiXmlElement *parent) {
+  index = -1;
+  for(int i=0; i<property.size(); i++)
+    if(property[i]->initializeUsingXML(parent))
+      index = i;
+  if(index == -1) {
+    cout << "Mist" << endl;
+    throw;
+  }
 }
 
-MatPropertyFactory::MatPropertyFactory(const vector<vector<string> > &A_, const Units &unit_) : A(A_), name(3), unit(unit_) {
+TiXmlElement* RotMatProperty::writeXMLFile(TiXmlNode *parent) {
+  return property[index]->writeXMLFile(parent);
 }
 
-Property* MatPropertyFactory::createProperty(int i) {
-  if(i==0)
-    return new MatProperty(A,unit);
-  if(i==1)
-    return new FromFileProperty;
-  if(i==2)
-    return new OctaveExpressionProperty("","",unit);
-}
+
