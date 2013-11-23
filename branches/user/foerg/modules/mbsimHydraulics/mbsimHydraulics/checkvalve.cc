@@ -26,7 +26,7 @@
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/utils/kinematic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
