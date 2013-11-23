@@ -17,7 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#include "mbsim/utils/kinematic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 using namespace std;
 using namespace MBXMLUtils;

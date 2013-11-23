@@ -17,7 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#include "mbsim/utils/tabular_functions.h"
+#include "mbsim/functions/tabular_functions.h"
 
 using namespace std;
 using namespace MBXMLUtils;
