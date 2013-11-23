@@ -24,7 +24,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #include <map>
 

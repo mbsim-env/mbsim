@@ -1,4 +1,4 @@
-SUBDIRS =  numerics utils integrators contact_kinematics contours observers .
+SUBDIRS =  numerics utils integrators contact_kinematics contours functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
@@ -39,6 +39,7 @@ libmbsim_la_LIBADD += utils/libutils.la
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
 libmbsim_la_LIBADD += contours/libcontour.la 
 libmbsim_la_LIBADD += numerics/libnumerics.la 
+libmbsim_la_LIBADD += functions/libfunction.la 
 libmbsim_la_LIBADD += observers/libobserver.la 
 libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 

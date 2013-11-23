@@ -17,8 +17,8 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#ifndef _KINEMATICS_FUNCTIONS_H_
-#define _KINEMATICS_FUNCTIONS_H_
+#ifndef _KINEMATIC_FUNCTIONS_H_
+#define _KINEMATIC_FUNCTIONS_H_
 
 #include "fmatvec/function.h"
 #include "mbsim/objectfactory.h"

@@ -26,7 +26,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"
 #include "mbsim/constraint.h"
-#include "mbsim/utils/kinematic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/contours/compound_contour.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
