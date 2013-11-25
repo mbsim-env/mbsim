@@ -148,10 +148,13 @@ done
 # copy includes
 TMPINCFILE=$DISTBASEDIR/tmp/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbvcppinterfacetinyxml/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutils/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbv/\|/openmbvcppinterfacetinyxml/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
-for FSRC in $(i686-w64-mingw32-g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimxml mbxmlutils openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++"); do
+TMPDEPFILE=$DISTBASEDIR/tmp/distribute.dep
+rm -f $TMPDEPFILE
+i686-w64-mingw32-g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimInterface mbsimxml mbxmlutils openmbv openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++" > $TMPDEPFILE
+for FSRC in $(cat $TMPDEPFILE); do
   FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
   
   if echo $FDST | grep "^/" > /dev/null; then
@@ -206,11 +209,11 @@ if %1!==! (
 
 set INSTDIR=%~pd0..
 
-rem pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
-rem pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+rem pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+rem pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 
-set CFLAGS=-m32 -DTIXML_USE_STL -DHAVE_BOOST_FILE_LOCK -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp" -I"%INSTDIR%\include\fmatvec"
-set LIBS=-m32 -Wl,--no-undefined -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface -lfmatvec
+set CFLAGS=-m32 -DHAVE_BOOST_FILE_LOCK -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -DHAVE_NURBS -DHAVE_ISO_FRIEND_DECL -DHAS_COMPLEX_ABS -DHAS_COMPLEX_CONJ -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp"
+set LIBS=-m32 -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lz -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lgfortran -lmingw32 -lmoldname -lmingwex -lmsvcrt -lquadmath -lm -ladvapi32 -lshell32 -luser32 -lkernel32
  
 if "%1" == "--cflags" (
   echo %CFLAGS%
