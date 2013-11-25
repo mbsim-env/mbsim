@@ -406,7 +406,7 @@ def update(nr, tool, buildTools):
     print("Updating "+str(nr)+"/"+str(len(toolDependencies))+": "+tool)
 
     try:
-      output=subprocess.check_output(["svn", "update"], stderr=svnFD)
+      output=subprocess.check_output(["svn", "update", "--non-interactive"], stderr=svnFD)
     except subprocess.CalledProcessError as ex:
       output=b""
       ret=1

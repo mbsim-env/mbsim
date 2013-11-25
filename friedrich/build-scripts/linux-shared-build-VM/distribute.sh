@@ -143,10 +143,13 @@ fi
 # copy includes
 TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbvcppinterfacetinyxml/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutils/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbv/\|/openmbvcppinterfacetinyxml/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
-for FSRC in $(g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimxml mbxmlutils openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++"); do
+TMPDEPFILE=$DISTBASEDIR/distribute.dep
+rm -f $TMPDEPFILE
+g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimInterface mbsimxml mbxmlutils openmbv openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++" > $TMPDEPFILE
+for FSRC in $(cat $TMPDEPFILE); do
   FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
   
   if echo $FDST | grep "^/" > /dev/null; then
@@ -228,10 +231,10 @@ fi
 
 INSTDIR="\$(readlink -f \$(dirname \$0)/..)"
 
-# pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
-# pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
-CFLAGS="-m32 -DTIXML_USE_STL -DHAVE_BOOST_FILE_LOCK -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I\$INSTDIR/include -I\$INSTDIR/include/fmatvec"
-LIBS="-m32 -Wl,--no-undefined -L\$INSTDIR/lib -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface -lopenmbvcppinterfacetinyxml -lfmatvec -llapack -lblas -lquadmath -lhdf5serie -lhdf5_cpp -lhdf5 -lf77blas -lcblas -latlas -lgfortran"
+# pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+# pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+CFLAGS="-m32 -DHAVE_BOOST_FILE_LOCK -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -DHAVE_NURBS -DHAVE_ISO_FRIEND_DECL -DHAS_COMPLEX_ABS -DHAS_COMPLEX_CONJ -I\$INSTDIR/include -I\$INSTDIR/include/cpp"
+LIBS="-m32 -Li\$INSTDIR/lib -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -ldl -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lz -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lpthread -lgfortran -lm -lquadmath"
 
 if [ "_\$1" = "_--cflags" ]; then
   echo "\$CFLAGS"
