@@ -264,6 +264,7 @@ This binary Linux build requires a Linux distribution with glibc >= 2.15.
 - Test the installation:
   1)Run the program <install-dir>/mbsim/bin/mbsim-test to check the
     installation. This will run the MBSim example xmlflat/hierachical_modelling,
+    xml/hydraulics_ballcheckvalve,
     the xml/hierachical_modelling example, the h5plotserie program as well as
     the openmbv program.
   2)If you have a compiler (GNU gcc) installed you can also run
@@ -287,6 +288,7 @@ mkdir -p $DISTDIR/examples
 (cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics/basics/hierachical_modelling mechanics/basics/hierachical_modelling)
 (cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat/hierachical_modelling xmlflat/hierachical_modelling)
 (cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hierachical_modelling xml/hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hydraulics_ballcheckvalve xml/hydraulics_ballcheckvalve)
 mkdir -p $DISTDIR/examples/compile_test_all
 cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 #include <openmbvcppinterface/cube.h>
@@ -350,6 +352,12 @@ echo "DONE"
 echo "XML_HIERACHICAL_MODELLING"
 cd xml/hierachical_modelling
 \$INSTDIR/bin/mbsimxml --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles || exit
+cd ../..
+echo "DONE"
+
+echo "XML_HYDRAULICS_BALLCHECKVALVE"
+cd xml/hydraulics_ballcheckvalve
+\$INSTDIR/bin/mbsimxml --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml || exit
 cd ../..
 echo "DONE"
 
