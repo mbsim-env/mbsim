@@ -3,9 +3,6 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-SCHEMA=../http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd
-NAMESPACE=http://mbsim.berlios.de/MBSimFlexibleBody
-
 Name: mbsimFlexibleBody
 Description: mbsimFlexibleBody is an add-on for flexible bodies to the mbsim-kernel
 Requires: @requires@

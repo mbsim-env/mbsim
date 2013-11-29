@@ -59,6 +59,22 @@ class ObjectFactory {
       registerXMLName(name, &singleton<CreateType>, NULL);
     }
 
+    /** Deregister the class CreateType.
+     * You should not use this function directly but
+     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
+    template<class CreateType>
+    static void deregisterXMLName(const std::string &name) {
+      deregisterXMLName(name, &allocate<CreateType>);
+    }
+
+    /** Deregister the class CreateType.
+     * You should not use this function directly but
+     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
+    template<class CreateType>
+    static void deregisterXMLNameAsSingleton(const std::string &name) {
+      deregisterXMLName(name, &singleton<CreateType>);
+    }
+
     /** Create an object corresponding to the XML element element and return a pointer of type ContainerType.
      * Throws if the created object is not of type ContainerType.
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
@@ -116,6 +132,16 @@ class ObjectFactory {
       instance().registeredType.insert(std::make_pair(name, std::make_pair(alloc, dealloc)));
     }
 
+    static void deregisterXMLName(const std::string &name, allocateFkt alloc) {
+      // search all registered funcs of name
+      std::pair<MapIt, MapIt> range=instance().registeredType.equal_range(name);
+      for(MapIt it=range.first; it!=range.second; it++)
+        if(it->second.first==alloc) {
+          instance().registeredType.erase(it);
+          return;
+        }
+    }
+
     // create an singleton instance of the object factory.
     // only declaration here and defition and explicit instantation for all BaseType in objectfactory.cc (required for Windows)
     static ObjectFactory<BaseType>& instance();
@@ -151,9 +177,17 @@ class ObjectFactoryRegisterXMLNameHelper {
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterXMLNameHelper(const std::string &name) {
+    ObjectFactoryRegisterXMLNameHelper(const std::string &name_) : name(name_) {
       ObjectFactory<BaseType>::template registerXMLName<CreateType>(name);
     };
+
+    /** dtor deregistring the type */
+    ~ObjectFactoryRegisterXMLNameHelper() {
+      ObjectFactory<BaseType>::template deregisterXMLName<CreateType>(name);
+    };
+
+  private:
+    std::string name;
 
 };
 
@@ -166,9 +200,17 @@ class ObjectFactoryRegisterXMLNameHelperAsSingleton {
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterXMLNameHelperAsSingleton(const std::string &name) {
+    ObjectFactoryRegisterXMLNameHelperAsSingleton(const std::string &name_) : name(name_) {
       ObjectFactory<BaseType>::template registerXMLNameAsSingleton<CreateType>(name);
     };
+
+    /** dtor deregistring the type */
+    ~ObjectFactoryRegisterXMLNameHelperAsSingleton() {
+      ObjectFactory<BaseType>::template deregisterXMLNameAsSingleton<CreateType>(name);
+    };
+
+  private:
+    std::string name;
 
 };
 

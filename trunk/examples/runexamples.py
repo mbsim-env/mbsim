@@ -175,7 +175,7 @@ def main():
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
   global ombvSchema, mbsimSchema, intSchema
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
-  mbsimSchema=pj(schemaDir, "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xsd")
+  mbsimSchema=".mbsimxml.xsd" # use the generated schema from the current directory
   intSchema  =pj(schemaDir, "http___mbsim_berlios_de_MBSim", "mbsimintegrator.xsd")
   # set global dirs
   global mbsimBinDir
