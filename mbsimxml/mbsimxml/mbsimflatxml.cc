@@ -19,7 +19,7 @@
 #ifndef _WIN32
 #  include <dlfcn.h>
 #else
-#  include <Windows.h>
+#  include <windows.h>
 #endif
 
 using namespace std;

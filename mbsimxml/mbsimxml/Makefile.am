@@ -10,7 +10,7 @@ mbsimxmlinclude_HEADERS = mbsimflatxml.h
 bin_PROGRAMS = mbsimflatxml mbsimxml
 
 # generate PIC code also for the mbsimflatxml executable: this is required for dlopen with RTLD_DEEPBIND!!!
-mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS) -fPIC
+mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBSIMXML_MINGW)
 mbsimflatxml_LDFLAGS = -L. -Wl,-rpath -Wl,\$$ORIGIN/../lib
 mbsimflatxml_LDADD = $(DEPS_LIBS) ./libmbsimflatxml.la -lmbsim
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc

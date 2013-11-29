@@ -14,7 +14,11 @@ PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
+  MBSIMXML_MINGW=""
+else
+  MBSIMXML_MINGW="-fPIC"
 fi
+AC_SUBST([MBSIMFLATXML_CFLAGS])
 
 dnl boost
 AC_CHECK_HEADERS([boost/filesystem.hpp], [], [AC_MSG_ERROR(boost/filesystem.hpp not found.)])
