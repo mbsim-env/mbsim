@@ -80,34 +80,6 @@ AC_SUBST([native_MBXMLUTILSSCHEMA])
 
 
 
-
-
-dnl Get all mbsim*.pc files in $prefix/lib/pkgconfig and $PKG_CONFIG_PATH directory
-OLDPWD=$(pwd)
-cd $prefix/lib/pkgconfig; ALLMBSIMMODULES=$(ls -1 mbsim*.pc | grep -v mbsimxml.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p")
-ALLMBSIMMODULES="$ALLMBSIMMODULES $(for i in $(echo $PKG_CONFIG_PATH | tr ':' ' '); do cd $i; ls -1 mbsim*.pc | grep -v mbsimxml.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p"; done)"
-ALLMBSIMMODULES=$(echo $ALLMBSIMMODULES | tr ' ' '\n' | sort | uniq)
-cd $OLDPWD
-dnl Check for all found mbsim*.pc modules
-for MBSIMMODULE in $ALLMBSIMMODULES; do
-  SCHEMA=$(pkg-config $MBSIMMODULE --variable SCHEMA)
-  NAMESPACE=$(pkg-config $MBSIMMODULE --variable NAMESPACE)
-  if test -z "$SCHEMA" -o -z "$NAMESPACE"; then
-    AC_MSG_WARN([MBSim module $MBSIMMODULE is not able to work with XML!])
-    continue
-  fi
-  AC_MSG_NOTICE([MBSim module $MBSIMMODULE added])
-  MBSIMMODULES_IMPORT="$MBSIMMODULES_IMPORT <xs:import namespace=\"$NAMESPACE\" schemaLocation=\"$SCHEMA\"/>"
-  MBSIMMODULES_NAME="$MBSIMMODULES_NAME $MBSIMMODULE"
-  AC_SUBST([MBSIMMODULES_IMPORT])
-done
-if test ! -z "$MBSIMMODULES_NAME"; then
-  PKG_CHECK_MODULES(MBSIMMODULES, $MBSIMMODULES_NAME)
-fi
-AC_SUBST([MBSIMMODULES_NAME])
-
-
-
 dnl MBXMLUtilsDOCDIR
 MBXMLUTILSDOCDIR=$(pkg-config mbxmlutils --variable DOCDIR)
 AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
@@ -118,7 +90,7 @@ CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl mbsimxml/env.h])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl mbsimxml/env.h])
 
 AC_OUTPUT
 
