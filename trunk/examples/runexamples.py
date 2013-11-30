@@ -156,6 +156,17 @@ def main():
     args.pushDIR=args.action[14:]
     args.action="pushReference"
 
+  # fix arguments
+  args.reportOutDir=os.path.abspath(args.reportOutDir)
+  if args.prefixSimulation!=None:
+    args.prefixSimulation=args.prefixSimulation.split(' ')
+  else:
+    args.prefixSimulation=[]
+
+  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
+  os.makedirs(args.reportOutDir)
+  os.makedirs(pj(args.reportOutDir, "tmp"))
+
   # check if the numpy and h5py modules exists. If not disable compare
   try: 
     import numpy
@@ -171,22 +182,17 @@ def main():
   xmllint=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "xmllint")
   if not os.path.isfile(xmllint):
     xmllint="xmllint"
+  # set global dirs
+  global mbsimBinDir
+  mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
   global ombvSchema, mbsimSchema, intSchema
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
-  mbsimSchema=".mbsimxml.xsd" # use the generated schema from the current directory
   intSchema  =pj(schemaDir, "http___mbsim_berlios_de_MBSim", "mbsimintegrator.xsd")
-  # set global dirs
-  global mbsimBinDir
-  mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
-
-  # fix arguments
-  args.reportOutDir=os.path.abspath(args.reportOutDir)
-  if args.prefixSimulation!=None:
-    args.prefixSimulation=args.prefixSimulation.split(' ')
-  else:
-    args.prefixSimulation=[]
+  # create mbsimxml schema
+  mbsimSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
+  subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimSchema])
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -216,8 +222,6 @@ def main():
     updateReference()
     return 0
 
-  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
-  os.makedirs(args.reportOutDir)
   # write empty RSS feed
   writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
   # create index.html

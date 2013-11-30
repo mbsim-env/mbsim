@@ -1,8 +1,39 @@
-docdir = @MBXMLUTILSDOCDIR@/http___mbsim_berlios_de_MBSimXML
+docdir = $(MBXMLUTILSDOCDIR)/http___mbsim_berlios_de_MBSimXML
 doc_DATA = mbsimxml.xhtml
 
-mbsimxml.xhtml: genContent.xsl @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd
-	@XSLTPROC@ --novalid --output mbsimxml.xhtml --param DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" --param MBSIMXMLVERSION "'@VERSION@'" genContent.xsl @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd
-	@XMLLINT@ --noout --schema @MBXMLUTILSSCHEMA@/http___openmbv_berlios_de_MBXMLUtils/xhtml1-transitional.xsd mbsimxml.xhtml || rm mbsimxml.xhtml
+# none mbsim modules xsd files
+XSDFILES = http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd\
+  http___mbsim_berlios_de_MBSim/mbsim.xsd\
+  http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\
+  http___openmbv_berlios_de_OpenMBV/openmbv.xsd
+
+all: mbsimxml.xhtml
+
+# list of all xsd files: variables XSDFILES and all modules (plugins)
+.DELETE_ON_ERROR: xsdfiles.txt
+.INTERMEDIATE: xsdfiles.txt
+xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*
+	grep -hE ".*\.xsd$$" $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/* > xsdfiles.txt
+	echo $(XSDFILES) >> xsdfiles.txt
+
+# XML representation of all xsd files
+.DELETE_ON_ERROR: files.xml
+.INTERMEDIATE: files.xml
+files.xml: xsdfiles.txt
+	echo "<files base=\"$(MBXMLUTILSSCHEMA)\">" > files.xml
+	for F in $$(cat xsdfiles.txt); do echo "<file base=\"$$(dirname $$F)\" name=\"$$(basename $$F)\"/>" >> files.xml; done
+	echo "</files>" >> files.xml
+
+# generate combined schema (root element xs:dummyRoot)
+.DELETE_ON_ERROR: combindedSchema.xsd
+.INTERMEDIATE: combindedSchema.xsd
+combindedSchema.xsd: genCombindedSchema.xsl files.xml
+	@XSLTPROC@ --novalid --output combindedSchema.xsd genCombindedSchema.xsl files.xml
+
+# generate the documentation
+.DELETE_ON_ERROR: mbsimxml.xhtml
+mbsimxml.xhtml: genContent.xsl combindedSchema.xsd
+	@XSLTPROC@ --novalid --output mbsimxml.xhtml --param DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" --param MBSIMXMLVERSION "'@VERSION@'" genContent.xsl combindedSchema.xsd
+	@XMLLINT@ --noout --schema $(MBXMLUTILSSCHEMA)/http___openmbv_berlios_de_MBXMLUtils/xhtml1-transitional.xsd mbsimxml.xhtml
 
 CLEANFILES=mbsimxml.xhtml

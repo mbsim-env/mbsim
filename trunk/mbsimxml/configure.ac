@@ -64,24 +64,6 @@ dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 
-dnl Helper functions to convert path to windows
-dirtowin() {
-  echo $(cd $1 && pwd -W 2> /dev/null)
-}
-dnl Convert to Windows path
-win_MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
-AC_SUBST([win_MBXMLUTILSSCHEMA])
-mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
-BINDIR=$(eval echo $(eval echo $prefix/bin))
-AC_SUBST([BINDIR])
-dnl Convert to native path
-if pwd -W &> /dev/null; then
-  native_MBXMLUTILSSCHEMA=$win_MBXMLUTILSSCHEMA
-else
-  native_MBXMLUTILSSCHEMA=$MBXMLUTILSSCHEMA
-fi
-AC_SUBST([native_MBXMLUTILSSCHEMA])
-
 
 
 dnl MBXMLUtilsDOCDIR
@@ -94,7 +76,7 @@ CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl mbsimxml/env.h])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimxml.pc mbsimxml/env.h])
 
 AC_OUTPUT
 
