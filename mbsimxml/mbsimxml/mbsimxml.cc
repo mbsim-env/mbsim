@@ -112,17 +112,17 @@ int main(int argc, char *argv[]) {
     for(int i=1; i<argc; i++)
       arg.push_back(argv[i]);
 
-    bool ONLYGENERATESCHEMA=false;
+    string ONLYGENERATESCHEMA;
     if((i=std::find(arg.begin(), arg.end(), "--onlyGenerateSchema"))!=arg.end())
-      ONLYGENERATESCHEMA=true;
+      ONLYGENERATESCHEMA=*++i;
   
     // help
-    if((arg.size()<=1 && !ONLYGENERATESCHEMA) ||
-       (i=std::find(arg.begin(), arg.end(), "-h"))!=arg.end() ||
-       (i=std::find(arg.begin(), arg.end(), "--help"))!=arg.end() ||
-       (i=std::find(arg.begin(), arg.end(), "-?"))!=arg.end()) {
+    if(arg.size()<2 ||
+       std::find(arg.begin(), arg.end(), "-h")!=arg.end() ||
+       std::find(arg.begin(), arg.end(), "--help")!=arg.end() ||
+       std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
-          <<"                 --autoreload|--onlyGenerateSchema]"<<endl
+          <<"                 --autoreload|--onlyGenerateSchema <file>]"<<endl
           <<"                [--mpath <dir> [--mpath <dir>]]"<<endl
           <<"                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"<<endl
           <<"                [--intparam <integratorparameterfile>] <integratorfile>"<<endl
@@ -176,9 +176,13 @@ int main(int argc, char *argv[]) {
     // parse parameters
 
     // generate mbsimxml.xsd
-    bfs::path mbsimxml_xsd=".mbsimxml.xsd";
+    bfs::path mbsimxml_xsd;
+    if(ONLYGENERATESCHEMA.empty())
+      mbsimxml_xsd=".mbsimxml.xsd";
+    else
+      mbsimxml_xsd=ONLYGENERATESCHEMA;
     generateMBSimXMLSchema(mbsimxml_xsd, MBXMLUTILSSCHEMA);
-    if(ONLYGENERATESCHEMA)
+    if(!ONLYGENERATESCHEMA.empty())
       return 0;
   
     // mpath
