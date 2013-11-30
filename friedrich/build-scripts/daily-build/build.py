@@ -412,9 +412,9 @@ def update(nr, tool, buildTools):
     except subprocess.CalledProcessError as ex:
       output=b""
       ret=1
-    if re.search("\nUpdated to revision [0-9]+.\n$", output.decode("utf-8"))!=None:
+    if re.search("\nUpdated to revision [0-9]+.\n", output.decode("utf-8"))!=None:
       buildTools.add(tool)
-    if re.search("\nSummary of conflicts:\n$", output.decode("utf-8"))!=None:
+    if re.search("\nSummary of conflicts:\n", output.decode("utf-8"))!=None:
       ret=1
   else:
     output=b"Update disabled"
@@ -437,6 +437,9 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
   savedDir=os.getcwd()
   os.chdir(pj(args.sourceDir, tool))
 
+  ret=0
+  retRunExamples=0
+
   # print svn update
   print('<tr>', file=mainFD)
   if toolDependencies[tool][0]==False:
@@ -445,15 +448,13 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
     print('<td><span style="color:gray">'+tool+'</span></td>', file=mainFD)
   if tool in updateFailed:
     print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:red">failed</span></a></td>', file=mainFD)
+    ret+=1
   else:
     if tool in updatedTools:
       print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">updated, rebuild required</span></a></td>', file=mainFD)
     else:
       print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">up to date, rebuild required</span></a></td>', file=mainFD)
   mainFD.flush()
-
-  ret=0
-  retRunExamples=0
 
   if tool==pj("mbsim", "examples"):
     print("runexamples.py", end=""); sys.stdout.flush()

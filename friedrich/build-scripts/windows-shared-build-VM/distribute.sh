@@ -49,6 +49,7 @@ hdf5serie
 mbxmlutils
 openmbv
 mbsimgui
+mbsimxml
 "
 
 OCTAVEVERSION=$($PREFIX/bin/octave-config.exe --version | dos2unix)

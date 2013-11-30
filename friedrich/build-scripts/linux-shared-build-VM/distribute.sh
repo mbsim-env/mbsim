@@ -46,6 +46,7 @@ hdf5serie
 mbxmlutils
 openmbv
 mbsimgui
+mbsimxml
 "
 
 OCTAVEMDIR="/usr/share/octave/$(octave-config --version)/m"
