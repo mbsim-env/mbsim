@@ -10,6 +10,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include <mbxmlutilstinyxml/last_write_time.h>
+#include <mbsim/element.h>
+#include <mbsim/integrators/integrator.h>
 #include <stdio.h>
 #if !defined _WIN32
 #  include <spawn.h>
@@ -75,15 +77,17 @@ void createOrTouch(const string &filename) {
 }
 
 void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const string &MBXMLUTILSSCHEMA) {
-  vector<string> schema;
+  vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
   // read plugins
-  string line;
+  string ns, loc;
   for(bfs::directory_iterator it=bfs::directory_iterator(MBXMLUtils::getInstallPath()+"/share/mbsimxml/plugins"); it!=bfs::directory_iterator(); it++) {
     bfs::ifstream plugin(*it);
     // read up to the first empty line
-    for(getline(plugin, line); !line.empty(); getline(plugin, line))
-      schema.push_back(line);
+    for(getline(plugin, ns); !ns.empty(); getline(plugin, ns)) {
+      getline(plugin, loc);
+      schema.push_back(make_pair(ns, loc));
+    }
   }
 
   // write schema
@@ -95,11 +99,15 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const string &MBXMLUT
   file<<"  xmlns=\"http://mbsim.berlios.de/MBSimXML\""<<endl;
   file<<"  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"<<endl;
   file<<endl;
-  file<<"  <xs:import schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/http___mbsim_berlios_de_MBSim/mbsim.xsd\"/>"<<endl;
-  file<<"  <xs:import schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\"/>"<<endl;
+  file<<"  <xs:import namespace=\""<<MBSIMNS_<<"\""<<endl;
+  file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/http___mbsim_berlios_de_MBSim/mbsim.xsd\"/>"<<endl;
+  file<<"  <xs:import namespace=\""<<MBSIMINTNS_<<"\""<<endl;
+  file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\"/>"<<endl;
   file<<endl;
-  for(vector<string>::iterator it=schema.begin(); it!=schema.end(); it++)
-    file<<"  <xs:import schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/"<<*it<<"\"/>"<<endl;
+  for(vector<pair<string, string> >::iterator it=schema.begin(); it!=schema.end(); it++) {
+    file<<"  <xs:import namespace=\""<<it->first<<"\""<<endl;
+    file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/"<<it->second<<"\"/>"<<endl;
+  }
   file<<"</xs:schema>"<<endl;
 }
 
