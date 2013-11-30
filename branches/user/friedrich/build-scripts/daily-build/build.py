@@ -123,18 +123,20 @@ def main():
     pj('mbsim', 'modules', 'mbsimControl'): [False, set([ # depends on
         pj('mbsim', 'kernel')
       ])],
-    pj('mbsim', 'modules', 'mbsimInterface'): [True, set([ # depends on
+    pj('mbsim', 'modules', 'mbsimInterface'): [False, set([ # depends on
         pj('mbsim', 'kernel')
       ])],
     pj('mbsim', 'mbsimxml'): [False, set([ # depends on
         pj('mbsim', 'kernel'),
         pj('openmbv', 'openmbvcppinterface'),
         pj('openmbv', 'mbxmlutils'),
+        # dependencies to mbsim modules (plugins) are only required for correct xmldoc generation 
         pj('mbsim', 'modules', 'mbsimHydraulics'),
         pj('mbsim', 'modules', 'mbsimFlexibleBody'),
         pj('mbsim', 'modules', 'mbsimPowertrain'),
         pj('mbsim', 'modules', 'mbsimElectronics'),
-        pj('mbsim', 'modules', 'mbsimControl')
+        pj('mbsim', 'modules', 'mbsimControl'),
+        pj('mbsim', 'modules', 'mbsimInterface')
       ])],
     pj('mbsim', 'mbsimgui'): [False, set([ # depends on
         pj('openmbv', 'openmbv'),
