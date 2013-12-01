@@ -235,7 +235,7 @@ INSTDIR="\$(readlink -f \$(dirname \$0)/..)"
 # pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 # pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 CFLAGS="-m32 -DHAVE_BOOST_FILE_LOCK -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -DHAVE_NURBS -DHAVE_ISO_FRIEND_DECL -DHAS_COMPLEX_ABS -DHAS_COMPLEX_CONJ -I\$INSTDIR/include -I\$INSTDIR/include/cpp"
-LIBS="-m32 -Li\$INSTDIR/lib -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -ldl -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lz -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lpthread -lgfortran -lm -lquadmath"
+LIBS="-m32 -L\$INSTDIR/lib -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -ldl -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lpthread -lgfortran -lm -lquadmath"
 
 if [ "_\$1" = "_--cflags" ]; then
   echo "\$CFLAGS"
