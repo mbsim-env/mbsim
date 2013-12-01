@@ -18,7 +18,6 @@ DISTBASEDIR=/home/user/MBSimWindows/dist_mbsim
 
 PREFIX=/home/user/MBSimWindows/local
 
-# Note: libmbsimElectronics-0.dll libmbsimPowertrain-0.dll in not linked by mbsimflatxml.exe (no XML avaiable)
 BINFILES="
 $PREFIX/bin/h5dumpserie.exe
 $PREFIX/bin/h5lsserie.exe
@@ -42,6 +41,12 @@ $PREFIX/bin/octave.exe
 $PREFIX/bin/libmbsimElectronics-0.dll
 $PREFIX/bin/libmbsimPowertrain-0.dll
 "
+# Note: all mbsim modules are not linked with mbsimflatxml (plugins). Hence we add all *-0.dll files in local/bin
+# to BINFILES, but only those which hava a corresponding *.dll.a file in local/lib. This is required since we copy all files in
+# local/lib but not all in local/bin (hence the *-0.dll files are not included if we dont do so)
+for F in $(cd $PREFIX/lib -name; find -name "*.dll.a" | sed -re "s|(.*)\.dll.a$|$PREFIX/bin/\1-0.dll|"); do
+  ls $F 2> /dev/null && BINFILES="$BINFILES $F"
+done
 
 SHAREDIRS="
 doc
@@ -214,7 +219,7 @@ rem pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics m
 rem pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 
 set CFLAGS=-m32 -DHAVE_BOOST_FILE_LOCK -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -DHAVE_NURBS -DHAVE_ISO_FRIEND_DECL -DHAS_COMPLEX_ABS -DHAS_COMPLEX_CONJ -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp"
-set LIBS=-m32 -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lz -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lgfortran -lmingw32 -lmoldname -lmingwex -lmsvcrt -lquadmath -lm -ladvapi32 -lshell32 -luser32 -lkernel32
+set LIBS=-m32 -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lgfortran -lmingw32 -lmoldname -lmingwex -lmsvcrt -lquadmath -lm -ladvapi32 -lshell32 -luser32 -lkernel32
  
 if "%1" == "--cflags" (
   echo %CFLAGS%
@@ -309,7 +314,8 @@ set PATH=%INSTDIR%\bin;%PATH%
 
 if %CXX%!==! goto skipgcc
   set CXXBINDIR=%~dp1
-  set PATH=%CXXBINDIR%;%PATH%
+  rem INSTDIR/bin must come before the compiler binary dir
+  set PATH=%INSTDIR%\bin;%CXXBINDIR%;%PATH%
 
   echo COMPILE_TEST_ALL
   cd compile_test_all
