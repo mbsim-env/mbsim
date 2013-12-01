@@ -39,7 +39,7 @@ namespace MBSim {
    * \todo add deletes TODO
    * 
    * Spline / PP-Form info
-   * Piecewise polynomial: c0* xloc^n + c1* xloc^(n-1) + c2* xloc^(n-2) + ... + cn
+   * Piecewise polynomial: \f$ c0 xloc^n + c1 xloc^{n-1} + c2 xloc^{n-2} + \dots + cn \f$
    * with [c0 c1 c2 ... cn] ith row vector of coefs-matrix 
    * breaks(i) << x << breaks(i+1) defines i and xloc = x-breaks(i)
 
@@ -47,11 +47,11 @@ namespace MBSim {
    * breaks= [0; 0.3; 0.5]
    * coefs= [d1 c1 b1 a1;  
    *       d2 c2 b2 a2]
-   * -> S(x) = a1 + b1*xloc + c1*xloc^2 + d1*xloc^3 for x\in[0;0.3] and x_loc = x
-   * -> S(x) = a2 + b2*xloc + c2*xloc^2 + d2*xloc^3 for x\in[0.3;0.5] and xloc = x - 0.3;
+   * \f[ S(x) = a1 + b1 xloc + c1 xloc^2 + d1 xloc^3 for x\in[0;0.3] \text{and} x_loc = x \f]
+   * \f[ S(x) = a2 + b2 xloc + c2 xloc^2 + d2 xloc^3 for x\in[0.3;0.5] \text{and} xloc = x - 0.3 \f]
 
    * Cubic spline
-   * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 3 yielding a global C^2 curve
+   * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 3 yielding a global \f$ C^2 \f$ curve
    * for uniqueness TWO additional boundary conditions are necessary (periodic / natural)
    * 
    * Piecewise linear polynomial
