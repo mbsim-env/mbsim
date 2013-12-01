@@ -105,7 +105,7 @@ namespace MBSim {
     if(stage==preInit) {
       Object::init(stage);
       if(!R)
-        R = dynamic_cast<DynamicSystem*>(parent)->getFrameI();
+        R = static_cast<DynamicSystem*>(parent)->getFrameI();
       Body* obj = dynamic_cast<Body*>(R->getParent());
       if(obj)
         dependency.push_back(obj);

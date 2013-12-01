@@ -14,7 +14,11 @@ PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
+  MBSIMXML_MINGW=""
+else
+  MBSIMXML_MINGW="-fPIC"
 fi
+AC_SUBST([MBSIMFLATXML_CFLAGS])
 
 dnl boost
 AC_CHECK_HEADERS([boost/filesystem.hpp], [], [AC_MSG_ERROR(boost/filesystem.hpp not found.)])
@@ -60,52 +64,6 @@ dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 
-dnl Helper functions to convert path to windows
-dirtowin() {
-  echo $(cd $1 && pwd -W 2> /dev/null)
-}
-dnl Convert to Windows path
-win_MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
-AC_SUBST([win_MBXMLUTILSSCHEMA])
-mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
-BINDIR=$(eval echo $(eval echo $prefix/bin))
-AC_SUBST([BINDIR])
-dnl Convert to native path
-if pwd -W &> /dev/null; then
-  native_MBXMLUTILSSCHEMA=$win_MBXMLUTILSSCHEMA
-else
-  native_MBXMLUTILSSCHEMA=$MBXMLUTILSSCHEMA
-fi
-AC_SUBST([native_MBXMLUTILSSCHEMA])
-
-
-
-
-
-dnl Get all mbsim*.pc files in $prefix/lib/pkgconfig and $PKG_CONFIG_PATH directory
-OLDPWD=$(pwd)
-cd $prefix/lib/pkgconfig; ALLMBSIMMODULES=$(ls -1 mbsim*.pc | grep -v mbsimxml.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p")
-ALLMBSIMMODULES="$ALLMBSIMMODULES $(for i in $(echo $PKG_CONFIG_PATH | tr ':' ' '); do cd $i; ls -1 mbsim*.pc | grep -v mbsimxml.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p"; done)"
-ALLMBSIMMODULES=$(echo $ALLMBSIMMODULES | tr ' ' '\n' | sort | uniq)
-cd $OLDPWD
-dnl Check for all found mbsim*.pc modules
-for MBSIMMODULE in $ALLMBSIMMODULES; do
-  SCHEMA=$(pkg-config $MBSIMMODULE --variable SCHEMA)
-  NAMESPACE=$(pkg-config $MBSIMMODULE --variable NAMESPACE)
-  if test -z "$SCHEMA" -o -z "$NAMESPACE"; then
-    AC_MSG_WARN([MBSim module $MBSIMMODULE is not able to work with XML!])
-    continue
-  fi
-  AC_MSG_NOTICE([MBSim module $MBSIMMODULE added])
-  MBSIMMODULES_IMPORT="$MBSIMMODULES_IMPORT <xs:import namespace=\"$NAMESPACE\" schemaLocation=\"$SCHEMA\"/>"
-  MBSIMMODULES_NAME="$MBSIMMODULES_NAME $MBSIMMODULE"
-  AC_SUBST([MBSIMMODULES_IMPORT])
-done
-if test ! -z "$MBSIMMODULES_NAME"; then
-  PKG_CHECK_MODULES(MBSIMMODULES, $MBSIMMODULES_NAME)
-fi
-AC_SUBST([MBSIMMODULES_NAME])
-
 
 
 dnl MBXMLUtilsDOCDIR
@@ -118,7 +76,7 @@ CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl mbsimxml/env.h])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimxml.pc mbsimxml/env.h])
 
 AC_OUTPUT
 

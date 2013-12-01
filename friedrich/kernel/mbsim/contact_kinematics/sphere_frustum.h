@@ -46,7 +46,7 @@ namespace MBSim {
       //virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
       /***************************************************/
 
-    private:
+    protected:
       /**
        * \brief contour index
        */
