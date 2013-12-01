@@ -9,6 +9,9 @@ DIST_SUBDIRS = mbsimHydraulics schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimHydraulics.pc
 
+plugindir = $(datadir)/mbsimxml/plugins
+plugin_DATA = mbsimHydraulics.plugin
+
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc install-xmldoc uninstall-xmldoc
 

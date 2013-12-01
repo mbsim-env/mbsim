@@ -9,6 +9,9 @@ DIST_SUBDIRS = mbsimFlexibleBody schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimFlexibleBody.pc
 
+plugindir = $(datadir)/mbsimxml/plugins
+plugin_DATA = mbsimFlexibleBody.plugin
+
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc intall-xmldoc uninstall-xmldoc
 
