@@ -227,6 +227,11 @@ namespace MBSim {
         return x;
       }
 
+      if (isnan(nrmf)) {
+        info = -1;
+        return xold;
+      }
+
       if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1]) < macheps()) {
         info = -1; //divergence --> stop
         return x;
@@ -236,7 +241,7 @@ namespace MBSim {
 
     info = 1; //convergence (needs to be true for all steps)
     for (size_t i = 1; i < norms.size(); i++) {
-      if (norms[i - 1] <= norms[i]) { //divergence
+      if (norms[i - 1] <= norms[i] or isnan(norms[i])) { //divergence
         info = -1;
         break;
       }

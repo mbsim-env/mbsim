@@ -3,6 +3,8 @@
 #include <iostream>
 #include "mbxmlutilstinyxml/tinyxml.h"
 #include "mbxmlutilstinyxml/tinynamespace.h"
+#include <mbxmlutilstinyxml/getinstallpath.h>
+#include <mbxmlutilstinyxml/last_write_time.h>
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
@@ -12,8 +14,112 @@
 #define BOOST_CHRONO_HEADER_ONLY
 #include <boost/chrono.hpp>
 
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#ifndef _WIN32
+#  include <dlfcn.h>
+#else
+#  include <windows.h>
+#endif
+
 using namespace std;
 using namespace MBXMLUtils;
+
+namespace {
+
+class SharedLibrary {
+  public:
+    SharedLibrary(const boost::filesystem::path &file_);
+    SharedLibrary(const SharedLibrary& src);
+    ~SharedLibrary();
+    const boost::filesystem::path file;
+    const boost::posix_time::ptime writeTime;
+    bool operator<(const SharedLibrary& b) const { return file<b.file; }
+  private:
+    void init();
+#ifndef _WIN32
+    void* handle;
+#else
+    HMODULE handle;
+#endif
+};
+
+SharedLibrary::SharedLibrary(const boost::filesystem::path &file_) : file(file_),
+  writeTime(boost::myfilesystem::last_write_time(file.generic_string())) {
+  init();
+}
+
+SharedLibrary::SharedLibrary(const SharedLibrary& src) : file(src.file), writeTime(src.writeTime) {
+  init();
+}
+
+void SharedLibrary::init() {
+#ifndef _WIN32
+  handle=dlopen(file.generic_string().c_str(), RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND);
+#else
+  handle=LoadLibraryEx(file.generic_string().c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+#endif
+  if(!handle)
+    throw runtime_error("Unable to load the MBSim module: Library '"+file.generic_string()+"' not found.");
+}
+
+SharedLibrary::~SharedLibrary() {
+#ifndef _WIN32
+  dlclose(handle);
+#else
+  FreeLibrary(handle);
+#endif
+}
+
+// return the full relative path of a shared library (relative to the install directory, hance including the lib or bin subdir).
+// the library base filename 'base' is given with the prefix (lib on Linux) and without the extension.
+boost::filesystem::path relLibName(const string &base) {
+#ifndef _WIN32
+  static const boost::filesystem::path subDir("lib");
+  return subDir/("lib"+base+".so.0");
+#else
+  static const boost::filesystem::path subDir("bin");
+  return subDir/("lib"+base+"-0.dll");
+#endif
+}
+
+// load all MBSim module plugins:
+// If a module plugin (shared library) is already loaded but the file has a newer last write time than the
+// last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
+void loadPlugins() {
+  static const boost::filesystem::path installDir(MBXMLUtils::getInstallPath());
+  set<boost::filesystem::path> pluginLibFile;
+
+  // read plugins
+  string line;
+  for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimxml"/"plugins");
+      it!=boost::filesystem::directory_iterator(); it++) {
+    boost::filesystem::ifstream plugin(*it);
+    // read up to (including) the first empty line
+    do { getline(plugin, line); } while(!line.empty());
+    // read up to eof
+    while(!getline(plugin, line).eof())
+      pluginLibFile.insert(installDir/relLibName(line));
+  }
+
+  static set<SharedLibrary> loadedPlugin;
+
+  // unload no longer existing plugins or plugins with newer write time
+  for(set<SharedLibrary>::iterator it=loadedPlugin.begin(); it!=loadedPlugin.end(); it++)
+    if(pluginLibFile.count(it->file)==0 || boost::myfilesystem::last_write_time(it->file.generic_string())>it->writeTime) {
+      set<SharedLibrary>::iterator it2=it; it2--;
+      loadedPlugin.erase(it);
+      it=it2;
+    }
+
+  // load plugins which are not already loaded
+  for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
+    loadedPlugin.insert(SharedLibrary(*it));
+}
+
+}
 
 namespace MBSim {
 
@@ -55,6 +161,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
   if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
 
+  loadPlugins();
 
   // load MBSim XML document
   TiXmlDocument *doc=new TiXmlDocument;

@@ -246,13 +246,13 @@ namespace MBSim {
           cout << "Using Lemke Algorithm with maximal number of steps as fallback." << endl;
         }
 
-        if (strategy == ReformulatedFixpointOnly or strategy == ReformulatedNewtonOnly or strategy == ReformulatedStandard) {
-          // If reformulated routines fails: assume that they will fail in the future and switch back to standard solution
-          strategy = Standard;
-          if (DEBUGLEVEL >= 1) {
-            cout << "Switching back to standard solution strategy!" << endl;
-          }
-        }
+//        if (strategy == ReformulatedFixpointOnly or strategy == ReformulatedNewtonOnly or strategy == ReformulatedStandard) {
+//          // If reformulated routines fails: assume that they will fail in the future and switch back to standard solution
+//          strategy = Standard;
+//          if (DEBUGLEVEL >= 1) {
+//            cout << "Switching back to standard solution strategy!" << endl;
+//          }
+//        }
       }
       else if(lemkeSolver.getInfo() != 0) {
         //Switch back strategy in case shortened Lemke has failed but reformulated were succesfull

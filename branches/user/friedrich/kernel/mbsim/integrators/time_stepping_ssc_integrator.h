@@ -124,6 +124,8 @@ namespace MBSim {
       bool FlagPlotIntegrationSum;
       /** Flag: write integration info (integ. summary) to cout  (default true)*/
       bool FlagCoutInfo;
+      /** Flag: write output info to cout only for plot-time-instances (default false)*/
+      bool FlagOutputOnlyAtTPlot;
       /** every successful integration step is ploted (set dtPlot=0 to activate FlagPlotEveryStep) (default false)*/
       bool FlagPlotEveryStep;
       /** Flag interpolate z and la for plotting (default true)*/
@@ -184,7 +186,9 @@ namespace MBSim {
       void setOutputInterpolation(bool flag=true) {outputInterpolation = flag;}
       /*! set Flag for  writing integrator info at each step to a file (default true)*/
       void setFlagPlotIntegrator(bool flag=true) {FlagPlotIntegrator = flag;}
-      /*! Set Flag to optimise dt for minmal penetration of unilateral links;
+      /*! set Flag for writing output only at tPlot-Time instances or not (default false)*/
+      void setFlagOutputOnlyAtTPlot(bool flag=true) {FlagOutputOnlyAtTPlot = flag;}
+/*! Set Flag to optimise dt for minmal penetration of unilateral links;
        *  choose strategy for Gap Control (1:maximal Stepsize to  4:minimal Penetration) 
        *   1: uses biggest root (maximal dt)
        *   2: score for all roots are evaluated

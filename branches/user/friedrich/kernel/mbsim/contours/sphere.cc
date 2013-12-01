@@ -26,6 +26,7 @@
 #endif
 
 using namespace std;
+using namespace fmatvec;
 using namespace MBXMLUtils;
 
 namespace MBSim {
@@ -70,6 +71,7 @@ namespace MBSim {
 #endif
     return ele0;
   }
+
 
 }
 

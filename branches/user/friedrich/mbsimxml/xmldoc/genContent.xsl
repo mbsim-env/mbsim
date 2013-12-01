@@ -13,9 +13,6 @@
     doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
-  <!-- all nodes of all imported schemas -->
-  <xsl:param name="ALLNODES" select="document(/xs:schema/xs:import/@schemaLocation)|document('@native_MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd')|document('@native_MBXMLUTILSSCHEMA@/http___openmbv_berlios_de_OpenMBV/openmbv.xsd')"/>
-
   <!-- generate html link form a attribute -->
   <xsl:template mode="GENLINK" match="@*">
     <xsl:param name="V1" select="../namespace::*[name()=substring-before(current(),':')]"/>
@@ -67,25 +64,18 @@
     <h1>MBSimXML - XML Documentation</h1>
     <p>This is the entry point for the documentation of MBSimXML. Below is a list of all relevant documentations for MBSimXML.</p>
     <ul>
-      <li>
-        <a class="namespace" href="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/index.xhtml">http://openmbv.berlios.de/MBXMLUtils/physicalvariable</a>
-      </li>
-      <li>
-        <a class="namespace" href="../http___openmbv_berlios_de_OpenMBV/index.xhtml">http://openmbv.berlios.de/OpenMBV</a>
-      </li>
-      <li>
-        <a class="namespace" href="../http___mbsim_berlios_de_MBSimIntegrator/index.xhtml">http://mbsim.berlios.de/MBSimIntegrator</a>
-      </li>
-      <xsl:for-each select="/xs:schema/xs:import">
-        <xsl:sort select="@namespace"/>
-        <li><a class="namespace" href="../{translate(@namespace,'.:/','___')}/index.xhtml"><xsl:value-of select="@namespace"/></a></li>
+      <xsl:for-each select="document('files.xml')/files/file">
+        <xsl:sort select="@base"/>
+        <li><a class="namespace" href="../{@base}/index.xhtml">
+          <xsl:value-of select="document(concat(document('files.xml')/files/@base, '/', @base, '/', @name))/xs:schema/@targetNamespace"/>
+        </a></li>
       </xsl:for-each>
     </ul>
 
     <h2>All Elements</h2>
     <p>Below is a list of all known element from MBSimXML, MBSimXML-Integrator, OpenMBV and the MBSimXML-Modules.</p>
     <ul class="content">
-      <xsl:apply-templates mode="CONTENT" select="$ALLNODES/xs:schema/xs:element[not(@substitutionGroup)]">
+      <xsl:apply-templates mode="CONTENT" select="/xs:dummyRoot/xs:schema/xs:element[not(@substitutionGroup)]">
         <xsl:sort select="@name"/>
       </xsl:apply-templates>
     </ul>
@@ -93,7 +83,7 @@
     <h2>All Simple Types</h2>
     <p>Below is a list of all known simple types from MBSimXML, MBSimXML-Integrator, OpenMBV and the MBSimXML-Modules.</p>
     <ul class="content">
-      <xsl:apply-templates mode="CONTENT" select="$ALLNODES/xs:schema/xs:simpleType">
+      <xsl:apply-templates mode="CONTENT" select="/xs:dummyRoot/xs:schema/xs:simpleType">
         <xsl:sort select="@name"/>
       </xsl:apply-templates>
     </ul>
@@ -110,7 +100,7 @@
     </body></html>
   </xsl:template>
 
-  <xsl:template mode="CONTENT" match="/xs:schema/xs:element">
+  <xsl:template mode="CONTENT" match="/xs:dummyRoot/xs:schema/xs:element">
     <xsl:param name="NS_NAME" select="namespace::*[name()=substring-before(current()/@name,':')]"/>
     <xsl:param name="NAME_NAME" select="translate(substring(@name,string-length(substring-before(@name,':'))+1),':','')"/>
     <li><span class="expandcollapsecontent" onclick="expandcollapsecontent(this)">- </span>
@@ -118,11 +108,11 @@
         <xsl:attribute name="href"><xsl:apply-templates mode="GENLINK" select="@name"/></xsl:attribute>
         &lt;<xsl:value-of select="$NAME_NAME"/>&gt;</a>
       <xsl:text> </xsl:text><span class="namespaceSmall"><xsl:value-of select="$NS_NAME"/></span>
-      <xsl:if test="$ALLNODES/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS_NAME,'}',$NAME_NAME)]">
-        <!-- this if is equal to test="/xs:schema/xs:element[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
+      <xsl:if test="/xs:dummyRoot/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS_NAME,'}',$NAME_NAME)]">
+        <!-- this if is equal to test="/xs:dummyRoot/xs:schema/xs:element[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
         <ul class="content">
-          <xsl:apply-templates mode="CONTENT" select="$ALLNODES/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS_NAME,'}',$NAME_NAME)]">
-            <!-- this apply-templates is equal to select="/xs:schema/xs:element[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
+          <xsl:apply-templates mode="CONTENT" select="/xs:dummyRoot/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS_NAME,'}',$NAME_NAME)]">
+            <!-- this apply-templates is equal to select="/xs:dummyRoot/xs:schema/xs:element[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
             <xsl:sort select="@name"/>
           </xsl:apply-templates>
         </ul>
@@ -130,7 +120,7 @@
     </li>
   </xsl:template>
 
-  <xsl:template mode="CONTENT" match="/xs:schema/xs:simpleType">
+  <xsl:template mode="CONTENT" match="/xs:dummyRoot/xs:schema/xs:simpleType">
     <xsl:param name="NS_NAME" select="namespace::*[name()=substring-before(current()/@name,':')]"/>
     <xsl:param name="NAME_NAME" select="translate(substring(@name,string-length(substring-before(@name,':'))+1),':','')"/>
     <li>
