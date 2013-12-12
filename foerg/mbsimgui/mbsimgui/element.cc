@@ -49,7 +49,7 @@ Element::Element(const string &name_, Element *parent_) : parent(parent_), embed
 }
 
 string Element::getPath() {
- return parent?(parent->getPath()+"."+getName()):getName();
+ return parent?(parent->getPath()+"."+getValue()):getValue();
 }
 
 void Element::writeXMLFile(const string &name) {
@@ -127,16 +127,16 @@ string Element::getXMLPath(Element *ref, bool rel) {
       type = "Observer";
     else 
       type = getName();
-    string str = type + "[" + getName() + "]";
+    string str = type + "[" + getValue() + "]";
     for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
       if(dynamic_cast<Group*>(*i1))
-        str = string("Group[") + (*i1)->getName() + "]/" + str;
+        str = string("Group[") + (*i1)->getValue() + "]/" + str;
       else if(dynamic_cast<Object*>(*i1))
-        str = string("Object[") + (*i1)->getName() + "]/" + str;
+        str = string("Object[") + (*i1)->getValue() + "]/" + str;
       else if(dynamic_cast<Link*>(*i1))
-        str = string("Link[") + (*i1)->getName() + "]/" + str;
+        str = string("Link[") + (*i1)->getValue() + "]/" + str;
       else if(dynamic_cast<Observer*>(*i1))
-        str = string("Observer[") + (*i1)->getName() + "]/" + str;
+        str = string("Observer[") + (*i1)->getValue() + "]/" + str;
       else
         str = "";
     }
@@ -159,17 +159,17 @@ string Element::getXMLPath(Element *ref, bool rel) {
       type = "Observer";
     else 
       type = getName();
-    string str = type + "[" + getName() + "]";
+    string str = type + "[" + getValue() + "]";
     Element* element = parent;
     while(!dynamic_cast<Solver*>(element)) {
       if(dynamic_cast<Group*>(element))
-        str = string("Group[") + element->getName() + "]/" + str;
+        str = string("Group[") + element->getValue() + "]/" + str;
       else if(dynamic_cast<Object*>(element))
-        str = string("Object[") + element->getName() + "]/" + str;
+        str = string("Object[") + element->getValue() + "]/" + str;
       else if(dynamic_cast<Link*>(element))
-        str = string("Link[") + element->getName() + "]/" + str;
+        str = string("Link[") + element->getValue() + "]/" + str;
       else if(dynamic_cast<Observer*>(element))
-        str = string("Observer[") + element->getName() + "]/" + str;
+        str = string("Observer[") + element->getValue() + "]/" + str;
       else
         str = "";
       element = element->getParent();

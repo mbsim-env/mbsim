@@ -23,6 +23,9 @@
 #include "function_property.h"
 #include "extended_properties.h"
 
+class VecProperty;
+class IntegerProperty;
+
 class ConstantFunctionProperty : public FunctionProperty {
   public:
     ConstantFunctionProperty(int m=1);
@@ -171,20 +174,24 @@ class PiecewiseDefinedFunctionProperty : public FunctionProperty {
 };
 
 class SymbolicFunctionProperty : public FunctionProperty {
+  friend class SymbolicFunctionWidget;
   public:
-    SymbolicFunctionProperty(const std::string &ext, const std::vector<std::string> &var, int m);
+    SymbolicFunctionProperty(const std::string &name, const std::vector<std::string> &var, int m);
     virtual Property* clone() const {return new SymbolicFunctionProperty(*this);}
     int getArg1Size() const;
     int getArg2Size() const;
+    const std::string& getValue() const {return f->getValue();}
     inline std::string getType() const { return "SymbolicFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    //Widget* createWidget() { return f->createWidget(); }
+    Widget* createWidget();
   protected:
-    std::string ext;
-    ExtProperty f;
-    std::vector<ExtProperty> argname, argdim;
+    VecProperty *f;
+    std::vector<std::string> argname;
+    std::vector<IntegerProperty*> argdim;
 };
 
 class TabularFunctionProperty : public FunctionProperty {

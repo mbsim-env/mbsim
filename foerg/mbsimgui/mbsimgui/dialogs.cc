@@ -305,7 +305,7 @@ void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
   if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele) || dynamic_cast<Frame*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
-    item->setText(0,QString::fromStdString(ele->getName()));
+    item->setText(0,QString::fromStdString(ele->getValue()));
 
     if(ele == selection)
       savedItem = item;

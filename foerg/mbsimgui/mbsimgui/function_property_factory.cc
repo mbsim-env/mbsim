@@ -96,8 +96,8 @@ Property* TranslationPropertyFactory2::createProperty(int i) {
     return new TranslationAlongAxesXYZProperty;
   if(i==7)
     return new TranslationAlongFixedAxisProperty;
-  if(i==8)
-    return new LinearTranslationProperty(3,1);
+//  if(i==8)
+//    return new LinearTranslationProperty(3,1);
   if(i==9)
     return new SymbolicFunctionProperty("VV",vector<string>(1,"q"),3);
   if(i==10)

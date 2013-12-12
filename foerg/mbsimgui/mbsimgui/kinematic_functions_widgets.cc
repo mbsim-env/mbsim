@@ -45,7 +45,7 @@ LinearTranslationWidget::LinearTranslationWidget(int m, int n) {
 //  QObject::connect(mat_, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
 
   vector<PhysicalVariableWidget*> input;
-  MatColsVarWidget *a_ = new MatColsVarWidget(m,1,1,3);
+  MatColsVarWidget *a_ = new MatColsVarWidget(0,m,1,1,3);
   input.push_back(new PhysicalVariableWidget(a_,QStringList(),0));
   connect(a_,SIGNAL(sizeChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
   A = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));

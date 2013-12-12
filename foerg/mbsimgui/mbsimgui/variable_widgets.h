@@ -33,6 +33,7 @@
 
 class EvalDialog;
 class QLabel;
+class VariableProperty;
 
 class OctaveHighlighter : public QSyntaxHighlighter {
 
@@ -73,7 +74,7 @@ class BoolWidget : public VariableWidget {
 class OctaveExpressionWidget : public VariableWidget {
   public:
     OctaveExpressionWidget(const QString &value="", const Units &unit=NoUnitUnits());
-    OctaveExpressionWidget(Property *property, const Units &unit=NoUnitUnits());
+    OctaveExpressionWidget(Property *property);
     QString getExpression() const { return value->toPlainText(); }
     void setExpression(const QString &str) { value->setPlainText(str); }
     virtual QString getType() const {return "Editor";}
@@ -88,8 +89,10 @@ class OctaveExpressionWidget : public VariableWidget {
 class ScalarWidget : public VariableWidget {
   private:
     QLineEdit* box;
+    Property *property;
   public:
     ScalarWidget(const QString &d="1", const Units &unit=NoUnitUnits());
+    ScalarWidget(Property *property);
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     const QString getScalar() const {return box->text().isEmpty()?"0":box->text();}
     void setScalar(const QString &str) {box->setText(str=="0"?"":str);}
@@ -100,8 +103,11 @@ class ScalarWidget : public VariableWidget {
 };
 
 class BasicVecWidget : public VariableWidget {
+  protected:
+    Property *property;
   public:
-    BasicVecWidget(const Units &unit=NoUnitUnits()) : VariableWidget(unit) { }
+    BasicVecWidget(const Units &unit=NoUnitUnits()) : VariableWidget(unit), property(0) { }
+    BasicVecWidget(Property *property_, const Units &unit=NoUnitUnits()) : VariableWidget(unit), property(property_) { }
     virtual std::vector<QString> getVec() const = 0;
     virtual void setVec(const std::vector<QString> &x) = 0;
     void fromProperty(Property *property);
@@ -114,8 +120,9 @@ class VecWidget : public BasicVecWidget {
     std::vector<QLineEdit*> box;
     bool transpose;
   public:
-    VecWidget(int size=1, bool transpose=false, const Units &unit=NoUnitUnits());
+    VecWidget(int size=3, bool transpose=false, const Units &unit=NoUnitUnits());
     VecWidget(const std::vector<QString> &x, bool transpose=false, const Units &unit=NoUnitUnits());
+    VecWidget(Property *property);
     void resize_(int size);
     void resize_(int rows, int cols) { resize_(rows); }
     std::vector<QString> getVec() const;
@@ -167,6 +174,7 @@ class SymMatWidget : public BasicMatWidget {
   public:
     SymMatWidget(int rows, const Units &unit=NoUnitUnits());
     SymMatWidget(const std::vector<std::vector<QString> > &A, const Units &unit=NoUnitUnits());
+    SymMatWidget(Property *property); 
     void resize_(int rows);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
@@ -216,7 +224,7 @@ class MatColsVarWidget : public BasicMatWidget {
     QSpinBox* colsCombo;
     int minCols, maxCols;
   public:
-    MatColsVarWidget(int rows, int cols, int minCols, int maxCols);
+    MatColsVarWidget(Property *property=0, int rows=3, int cols=1, int minCols=1, int maxCols=3);
     std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
     void setMat(const std::vector<std::vector<QString> > &A);
     void resize_(int rows, int cols);
@@ -471,11 +479,11 @@ class SymMatWidgetFactory : public MatWidgetFactory {
     QWidget* createWidget(int i=0);
 };
 
-class RotMatChoiceContextMenu : public PropertyContextMenu {
+class VariableChoiceContextMenu : public PropertyContextMenu {
 
   Q_OBJECT
   public:
-    RotMatChoiceContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+    VariableChoiceContextMenu(VariableProperty *property, QWidget * parent = 0, bool removable=false);
   protected:
     std::map<QAction*,int> actions;
   protected slots:

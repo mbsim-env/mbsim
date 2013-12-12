@@ -35,7 +35,7 @@ class Parameter;
 class Environment;
 class OMBVBodyProperty;
 class FunctionProperty;
-class VariableProperty;
+class PhysicalProperty;
 
 namespace MBXMLUtils {
   class TiXmlElement;
@@ -125,12 +125,23 @@ class FunctionFactory {
   protected:
     std::vector<std::string> names;
   public:
-    FunctionFactory();
-    FunctionProperty* createFunction(int i); 
+    virtual FunctionProperty* createFunction(int i) = 0; 
     FunctionProperty* createFunction(const std::string &name); 
     FunctionProperty* createFunction(MBXMLUtils::TiXmlElement *element); 
     const std::string& getName(int i) const { return names[i]; }
     int size() const { return names.size(); }
+};
+
+class FunctionFactory1 : public FunctionFactory {
+  public:
+    FunctionFactory1();
+    FunctionProperty* createFunction(int i); 
+};
+
+class FunctionFactory2 : public FunctionFactory {
+  public:
+    FunctionFactory2();
+    FunctionProperty* createFunction(int i); 
 };
 
 class VariableFactory {
@@ -138,9 +149,9 @@ class VariableFactory {
     std::vector<std::string> names;
   public:
     VariableFactory();
-    VariableProperty* createVariable(int i); 
-    VariableProperty* createVariable(const std::string &name); 
-    VariableProperty* createVariable(MBXMLUtils::TiXmlElement *element); 
+    PhysicalProperty* createVariable(int i); 
+    PhysicalProperty* createVariable(const std::string &name); 
+    PhysicalProperty* createVariable(MBXMLUtils::TiXmlElement *element); 
     const std::string& getName(int i) const { return names[i]; }
     int size() const { return names.size(); }
 };

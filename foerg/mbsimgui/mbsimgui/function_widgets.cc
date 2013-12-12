@@ -20,6 +20,7 @@
 #include <config.h>
 #include "basic_widgets.h"
 #include "function_widgets.h"
+#include "function_properties.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
@@ -321,40 +322,48 @@ void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
   functions->resize_(m,n);
 }
 
-SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max) {
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+SymbolicFunctionWidget::SymbolicFunctionWidget(Property *property_, const QStringList &var, int m, int max) : property(property_) {
   for(int i=0; i<var.size(); i++) {
-    argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
-    layout->addWidget(argname[i],i,0);
+    argname.push_back(new TextWidget(var[i]));
+    varlayout->addWidget(argname[i]);
 
-    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
+    argdim.push_back(new SpinBoxWidget(1,1,max));
     if(var[i]!="t") {
-      connect(argdim[i]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
-      layout->addWidget(argdim[i],i,1);
+      connect(argdim[i],SIGNAL(valueChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
+      varlayout->addWidget(argdim[i]);
     }
   }
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),1));
-  f = new ExtWidget("Function",new ExtPhysicalVarWidget(input));
-  layout->addWidget(f,var.size(),0,1,2);
+  f = new VecWidget(static_cast<SymbolicFunctionProperty*>(property)->f);
+  varlayout->addWidget(f);
 }
 
 int SymbolicFunctionWidget::getArg1Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getInt();
+  return argdim[0]->getInt();
 }
 
 int SymbolicFunctionWidget::getArg2Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getInt();
+  return argdim[1]->getInt();
 }
 
 void SymbolicFunctionWidget::setArg1Size(int i) {
-  static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->setInt(i);
+  argdim[0]->setInt(i);
 }
 
 void SymbolicFunctionWidget::resize_(int m, int n) {
-  static_cast<VecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->resize_(m);
+//  static_cast<VecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->resize_(m);
+}
+
+void SymbolicFunctionWidget::fromProperty(Property *property_) {
+  Widget::fromProperty(property);
+//  for(int i=0; i<argname.size(); i++)
+//    argdim[i]->fromProperty(static_cast<SymbolicFunctionProperty*>(property)->argdim[i]);
+  f->fromProperty(static_cast<SymbolicFunctionProperty*>(property)->f);
+}
+
+void SymbolicFunctionWidget::toProperty(Property *property_) {
+  Widget::toProperty(property);
+  f->toProperty(static_cast<SymbolicFunctionProperty*>(property)->f);
+//  static_cast<TextProperty*>(property)->setValue(getText().toStdString());
 }
 
 TabularFunctionWidget::TabularFunctionWidget(int n) {

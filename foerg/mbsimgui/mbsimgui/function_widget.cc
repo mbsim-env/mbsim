@@ -45,7 +45,7 @@ void FunctionChoiceWidget::toProperty(Property *property) {
 
 FunctionChoiceContextMenu::FunctionChoiceContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
   addSeparator();
-  FunctionFactory factory;
+  FunctionFactory1 factory;
   QActionGroup *actionGroup = new QActionGroup(this);
   for(int i=0; i<factory.size(); i++) {
     QAction *action=new QAction(QString::fromStdString(factory.getName(i)), this);
@@ -63,7 +63,7 @@ void FunctionChoiceContextMenu::setFunction(QAction *action) {
   int i = actions[action];
   delete property->getProperty();
 
-  FunctionFactory factory;
+  FunctionFactory1 factory;
   FunctionProperty* body = factory.createFunction(i);
   property->setProperty(body);
   mw->changePropertyItem(body);

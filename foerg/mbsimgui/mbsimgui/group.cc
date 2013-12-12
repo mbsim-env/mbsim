@@ -630,7 +630,7 @@ Element* Group::getByPathSearch(string path) {
 Frame* Group::getFrame(const string &name) {
   int i;
   for(i=0; i<frame.size(); i++) {
-    if(frame[i]->getName() == name)
+    if(frame[i]->getValue() == name)
       return frame[i];
   }
   return NULL;
@@ -639,7 +639,7 @@ Frame* Group::getFrame(const string &name) {
 Contour* Group::getContour(const string &name) {
   int i;
   for(i=0; i<contour.size(); i++) {
-    if(contour[i]->getName() == name)
+    if(contour[i]->getValue() == name)
       return contour[i];
   }
   return NULL;
@@ -648,7 +648,7 @@ Contour* Group::getContour(const string &name) {
 Group* Group::getGroup(const string &name) {
   int i;
   for(i=0; i<group.size(); i++) {
-    if(group[i]->getName() == name)
+    if(group[i]->getValue() == name)
       return group[i];
   }
   return NULL;
@@ -657,7 +657,7 @@ Group* Group::getGroup(const string &name) {
 Object* Group::getObject(const string &name) {
   int i;
   for(i=0; i<object.size(); i++) {
-    if(object[i]->getName() == name)
+    if(object[i]->getValue() == name)
       return object[i];
   }
   return NULL;
@@ -666,7 +666,7 @@ Object* Group::getObject(const string &name) {
 Link* Group::getLink(const string &name) {
   int i;
   for(i=0; i<link.size(); i++) {
-    if(link[i]->getName() == name)
+    if(link[i]->getValue() == name)
       return link[i];
   }
   return NULL;
@@ -675,7 +675,7 @@ Link* Group::getLink(const string &name) {
 Observer* Group::getObserver(const string &name) {
   int i;
   for(i=0; i<observer.size(); i++) {
-    if(observer[i]->getName() == name)
+    if(observer[i]->getValue() == name)
       return observer[i];
   }
   return NULL;

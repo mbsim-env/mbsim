@@ -34,21 +34,21 @@ using namespace MBXMLUtils;
 extern QDir mbsDir;
 extern bool absolutePath;
 
-//void VariableProperty::setValue(const string &str) {
-//  Property::setValue(str);
-//  setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
+////void PhysicalProperty::setValue(const string &str) {
+////  Property::setValue(str);
+////  setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
+////}
+//
+//void PhysicalProperty::fromWidget(QWidget *widget) {
+//  setValue(static_cast<VariableWidget*>(widget)->getValue().toStdString());
+//}
+//
+//void PhysicalProperty::toWidget(QWidget *widget) {
+//  static_cast<VariableWidget*>(widget)->setValue(QString::fromStdString(getValue()));
 //}
 
-void VariableProperty::fromWidget(QWidget *widget) {
-  setValue(static_cast<VariableWidget*>(widget)->getValue().toStdString());
-}
-
-void VariableProperty::toWidget(QWidget *widget) {
-  static_cast<VariableWidget*>(widget)->setValue(QString::fromStdString(getValue()));
-}
-
 TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
-  VariableProperty::initializeUsingXML(element);
+  PhysicalProperty::initializeUsingXML(element);
   TiXmlText* text = element->FirstChildText();
   if(!text)
     return 0;
@@ -57,14 +57,14 @@ TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element
 }
 
 TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
-  VariableProperty::writeXMLFile(parent);
+  PhysicalProperty::writeXMLFile(parent);
   TiXmlText *text = new TiXmlText(getValue());
   parent->LinkEndChild(text);
   return 0;
 }
 
 TiXmlElement* ScalarProperty::initializeUsingXML(TiXmlElement *element) {
-  VariableProperty::initializeUsingXML(element);
+  PhysicalProperty::initializeUsingXML(element);
   TiXmlText* text = element->FirstChildText();
   if(!text)
     return 0;
@@ -76,13 +76,13 @@ TiXmlElement* ScalarProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* ScalarProperty::writeXMLFile(TiXmlNode *parent) {
-  VariableProperty::writeXMLFile(parent);
+  PhysicalProperty::writeXMLFile(parent);
   TiXmlText *text = new TiXmlText(getValue());
   parent->LinkEndChild(text);
   return 0;
 }
 
-VecProperty::VecProperty(int size, const Units &unit) : VariableProperty("","",unit), value(size) {
+VecProperty::VecProperty(int size, const Units &unit) : PhysicalProperty("","",unit), value(size) {
   for(int i=0; i<size; i++)
     value[i] = "0";
   setValue(toStr(value)); 
@@ -92,7 +92,7 @@ VecProperty::~VecProperty() {
 }
 
 TiXmlElement* VecProperty::initializeUsingXML(TiXmlElement *parent) {
-  VariableProperty::initializeUsingXML(parent);
+  PhysicalProperty::initializeUsingXML(parent);
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlVector"))
     return 0;
@@ -107,7 +107,7 @@ TiXmlElement* VecProperty::initializeUsingXML(TiXmlElement *parent) {
 }
 
 TiXmlElement* VecProperty::writeXMLFile(TiXmlNode *parent) {
-  VariableProperty::writeXMLFile(parent);
+  PhysicalProperty::writeXMLFile(parent);
   TiXmlElement *ele = new TiXmlElement(PVNS"xmlVector");
   for(unsigned int i=0; i<size(); i++) {
     TiXmlElement *elei = new TiXmlElement(PVNS"ele");
@@ -184,7 +184,7 @@ void MatProperty::toWidget(QWidget *widget) {
   static_cast<BasicMatWidget*>(widget)->setMat(fromStdMat(getMat()));
 }
 
-CardanProperty::CardanProperty(const string &name) : VariableProperty(name,"[0;0;0]",AngleUnits()), angles(3,"0") {
+CardanProperty::CardanProperty(const string &name) : PhysicalProperty(name,"[0;0;0]",AngleUnits()), angles(3,"0") {
 }
 
 CardanProperty::~CardanProperty() {
@@ -378,19 +378,86 @@ Property* RotMatPropertyFactory::createProperty(int i) {
     return new OctaveExpressionProperty("","",NoUnitUnits());
 }
 
-TiXmlElement* RotMatProperty::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* VariableProperty::initializeUsingXML(TiXmlElement *parent) {
   index = -1;
-  for(int i=0; i<property.size(); i++)
-    if(property[i]->initializeUsingXML(parent))
+  for(int i=0; i<property.size(); i++) {
+    if(property[i]->initializeUsingXML(parent)) {
       index = i;
+      break;
+    }
+  }
   if(index == -1) {
     cout << "Mist" << endl;
     throw;
   }
 }
 
-TiXmlElement* RotMatProperty::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* VariableProperty::writeXMLFile(TiXmlNode *parent) {
   return property[index]->writeXMLFile(parent);
 }
 
+Scalar_Property::Scalar_Property(const string &name_, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new ScalarProperty("","1",unit));
+  property.push_back(new OctaveExpressionProperty("","1",unit));
+  name.push_back("xmlScalar");
+  name.push_back("plain");
+}
+
+Vec_Property::Vec_Property(const string &name_, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new VecProperty(3,unit));
+  property.push_back(new OctaveExpressionProperty("","[0;0;0]",unit));
+  name.push_back("xmlVector");
+  name.push_back("plain");
+}
+
+Vec_Property::Vec_Property(const string &name_, const vector<string> &x, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new VecProperty("",x,unit));
+  property.push_back(new OctaveExpressionProperty("",toStr(x),unit));
+  name.push_back("xmlVector");
+  name.push_back("plain");
+}
+
+Mat_Property::Mat_Property(const string &name_, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new MatProperty(3,1));
+  property.push_back(new OctaveExpressionProperty("","[0;0;0]",unit));
+  name.push_back("xmlVector");
+  name.push_back("plain");
+}
+
+Mat_Property::Mat_Property(const string &name_, const vector<vector<string> > &A, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new MatProperty("",A,unit));
+  property.push_back(new OctaveExpressionProperty("",toStr(A),unit));
+  name.push_back("xmlVector");
+  name.push_back("plain");
+}
+
+SymMat_Property::SymMat_Property(const string &name_, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new SymMatProperty(getEye<string>(3,3,"0.01","0"),unit));
+  property.push_back(new OctaveExpressionProperty("","0.01*eye(3)",unit));
+  name.push_back("xmlMatrix");
+  name.push_back("plain");
+}
+
+RotMatProperty::RotMatProperty(const string &name_) : VariableProperty(name_) {
+  property.push_back(new MatProperty(getEye<string>(3,3,"1","0")));
+  property.push_back(new CardanProperty);
+  property.push_back(new OctaveExpressionProperty("","eye(3)"));
+  name.push_back("xmlMatrix");
+  name.push_back("cardan");
+  name.push_back("plain");
+}
+
+VarMat_Property::VarMat_Property(const string &name_, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new VarMatProperty(3,1));
+  property.push_back(new OctaveExpressionProperty("","[0;0;0]",unit));
+  name.push_back("xmlVector");
+  name.push_back("plain");
+}
+
+VarMat_Property::VarMat_Property(const string &name_, const vector<vector<string> > &A, const Units &unit) : VariableProperty(name_) {
+  property.push_back(new VarMatProperty("",A,unit));
+  property.push_back(new OctaveExpressionProperty("",toStr(A),unit));
+  name.push_back("xmlVector");
+  name.push_back("plain");
+}
 

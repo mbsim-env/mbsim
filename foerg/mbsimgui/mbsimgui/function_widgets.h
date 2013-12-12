@@ -31,6 +31,9 @@ class ChoiceWidget;
 class ChoiceWidget2;
 class QListWidget;
 class QSpinBox;
+class VecWidget;
+class TextWidget;
+class SpinBoxWidget;
 
 class ConstantFunctionWidget : public FunctionWidget {
 
@@ -166,15 +169,19 @@ class SymbolicFunctionWidget : public FunctionWidget {
   friend class SymbolicFunctionProperty;
 
   public:
-    SymbolicFunctionWidget(const QStringList &var, int m, int max);
+    SymbolicFunctionWidget(Property *property, const QStringList &var, int m, int max);
     int getArg1Size() const;
     int getArg2Size() const;
     void setArg1Size(int i);
     void resize_(int m, int n);
+    void fromProperty(Property *property);
+    void toProperty(Property *property);
 
   protected:
-    ExtWidget *f;
-    std::vector<ExtWidget*> argname, argdim;
+    VecWidget *f;
+    std::vector<TextWidget*> argname;
+    std::vector<SpinBoxWidget*> argdim;
+    Property *property;
 
   signals:
     void arg1SizeChanged(int i);

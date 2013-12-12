@@ -38,6 +38,7 @@
 #include "integrator.h"
 #include "ombv_properties.h"
 #include "kinematic_functions_properties.h"
+#include "function_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -314,12 +315,6 @@ OMBVBodyProperty* OMBVBodyFactory::createBody(int i, const std::string &ID) {
     return 0;
 }
 
-FunctionFactory::FunctionFactory() {
-  names.push_back("TranslationAlongXAxis");
-  names.push_back("TranslationAlongYAxis");
-  names.push_back("TranslationAlongZAxis");
-}
-
 FunctionProperty* FunctionFactory::createFunction(const std::string &name) {
   for(int i=0; i<names.size(); i++)
     if(name==names[i])
@@ -332,13 +327,52 @@ FunctionProperty* FunctionFactory::createFunction(TiXmlElement *element) {
       return createFunction(i);
 }
 
-FunctionProperty* FunctionFactory::createFunction(int i) {
+FunctionFactory1::FunctionFactory1() {
+  names.push_back("TranslationAlongXAxis");
+  names.push_back("TranslationAlongYAxis");
+  names.push_back("TranslationAlongZAxis");
+  names.push_back("TranslationAlongAxesXY");
+  names.push_back("TranslationAlongAxesYZ");
+  names.push_back("TranslationAlongAxesXZ");
+  names.push_back("TranslationAlongAxesXYZ");
+  names.push_back("TranslationAlongFixedAxis");
+  names.push_back("LinearTranslation");
+  names.push_back("SymbolicFunction");
+//  names.push_back("NestedFunction");
+}
+
+FunctionProperty* FunctionFactory1::createFunction(int i) {
   if(i==0)
     return new TranslationAlongXAxisProperty(names[i]);
   else if(i==1)
     return new TranslationAlongYAxisProperty(names[i]);
   else if(i==2)
     return new TranslationAlongZAxisProperty(names[i]);
+  else if(i==3)
+    return new TranslationAlongAxesXYProperty(names[i]);
+  else if(i==4)
+    return new TranslationAlongAxesYZProperty(names[i]);
+  else if(i==5)
+    return new TranslationAlongAxesXZProperty(names[i]);
+  else if(i==6)
+    return new TranslationAlongAxesXYZProperty(names[i]);
+  else if(i==7)
+    return new TranslationAlongFixedAxisProperty(names[i]);
+  else if(i==8)
+    return new LinearTranslationProperty(names[i]);
+  else if(i==9)
+    return new SymbolicFunctionProperty(names[i],vector<string>(1,"q"),1);
+  else
+    return 0;
+}
+
+FunctionFactory2::FunctionFactory2() {
+  names.push_back("SymbolicFunction");
+}
+
+FunctionProperty* FunctionFactory2::createFunction(int i) {
+  if(i==0)
+    return new SymbolicFunctionProperty(names[i],vector<string>(1,"t"),1);
   else
     return 0;
 }
@@ -349,19 +383,19 @@ VariableFactory::VariableFactory() {
   names.push_back("plain");
 }
 
-VariableProperty* VariableFactory::createVariable(const std::string &name) {
+PhysicalProperty* VariableFactory::createVariable(const std::string &name) {
   for(int i=0; i<names.size(); i++)
     if(name==names[i])
       return createVariable(i);
 }
 
-VariableProperty* VariableFactory::createVariable(TiXmlElement *element) {
+PhysicalProperty* VariableFactory::createVariable(TiXmlElement *element) {
   for(int i=0; i<names.size(); i++)
     if(element->ValueStr()==(PVNS+names[i]))
       return createVariable(i);
 }
 
-VariableProperty* VariableFactory::createVariable(int i) {
+PhysicalProperty* VariableFactory::createVariable(int i) {
   if(i==0)
     return new MatProperty(3,3);
   else if(i==1)

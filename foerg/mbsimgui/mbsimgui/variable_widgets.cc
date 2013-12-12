@@ -167,7 +167,7 @@ OctaveExpressionWidget::OctaveExpressionWidget(const QString &value_, const Unit
   varlayout->addWidget(value);
 }
 
-OctaveExpressionWidget::OctaveExpressionWidget(Property *property_, const Units &unit) : VariableWidget(unit), property(property_) {
+OctaveExpressionWidget::OctaveExpressionWidget(Property *property_) : VariableWidget(property_->getUnits()), property(property_) {
   value=new QPlainTextEdit;
 //  value->setMinimumHeight(value->sizeHint().height()/2);
 //  value->setMaximumHeight(value->sizeHint().height()/2);
@@ -199,12 +199,21 @@ ScalarWidget::ScalarWidget(const QString &d, const Units &unit) : VariableWidget
   varlayout->addWidget(box);
 }
 
-void ScalarWidget::fromProperty(Property *property) {
+ScalarWidget::ScalarWidget(Property *property_) : VariableWidget(property_->getUnits()), property(property_) {
+
+  box = new QLineEdit(this);
+  box->setPlaceholderText("0");
+  varlayout->addWidget(box);
+}
+
+void ScalarWidget::fromProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::fromProperty(property);
   setScalar(QString::fromStdString(static_cast<ScalarProperty*>(property)->getValue()));
 }
 
-void ScalarWidget::toProperty(Property *property) {
+void ScalarWidget::toProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::toProperty(property);
   static_cast<ScalarProperty*>(property)->setValue(getScalar().toStdString());
 }
@@ -217,14 +226,21 @@ bool ScalarWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-void BasicVecWidget::fromProperty(Property *property) {
+void BasicVecWidget::fromProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::fromProperty(property);
   setVec(fromStdVec(static_cast<VecProperty*>(property)->getVec()));
 }
 
-void BasicVecWidget::toProperty(Property *property) {
+void BasicVecWidget::toProperty(Property *property_) {
+  Property *property = this->property?this->property:property_;
   VariableWidget::toProperty(property);
   static_cast<VecProperty*>(property)->setVec(toStdVec(getVec()));
+}
+
+VecWidget::VecWidget(Property *property) : BasicVecWidget(property,property->getUnits()), transpose(false) {
+
+  resize_(1);
 }
 
 VecWidget::VecWidget(int size, bool transpose_, const Units &unit) : BasicVecWidget(unit), transpose(transpose_) {
@@ -308,7 +324,7 @@ void BasicMatWidget::toProperty(Property *property_) {
   static_cast<MatProperty*>(property)->setMat(toStdMat(getMat()));
 }
 
-MatWidget::MatWidget(Property *property) : BasicMatWidget(property) {
+MatWidget::MatWidget(Property *property) : BasicMatWidget(property,property->getUnits()) {
 
   resize_(1,1);
 }
@@ -378,6 +394,11 @@ bool MatWidget::validate(const vector<vector<QString> > &A) const {
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   return true;
+}
+
+SymMatWidget::SymMatWidget(Property *property) : BasicMatWidget(property,property->getUnits()) {
+
+  resize_(1);
 }
 
 SymMatWidget::SymMatWidget(int rows, const Units &unit) : BasicMatWidget(unit) {
@@ -505,15 +526,13 @@ bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
   return true;
 }
 
-MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
+MatColsVarWidget::MatColsVarWidget(Property *property, int rows, int cols, int minCols_, int maxCols_) : BasicMatWidget(property,property->getUnits()), minCols(minCols_), maxCols(maxCols_) {
 
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
   QWidget *box = new QWidget;
   QHBoxLayout *hbox = new QHBoxLayout;
   box->setLayout(hbox);
   hbox->setMargin(0);
-  layout->addWidget(box);
+  varlayout->addWidget(box);
   rowsLabel = new QLabel(QString::number(rows));
   hbox->addWidget(rowsLabel);
   hbox->addWidget(new QLabel("x"));
@@ -523,9 +542,8 @@ MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols
   QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
   hbox->addWidget(colsCombo);
   hbox->addStretch(2);
-  widget = new MatWidget(rows,cols);
-  layout->addWidget(widget);
-  setLayout(layout);
+  widget = new MatWidget(rows,cols,property->getUnits());
+  varlayout->addWidget(widget);
 }
 
 void MatColsVarWidget::setMat(const std::vector<std::vector<QString> > &A) {
@@ -930,28 +948,28 @@ QWidget* SymMatWidgetFactory::createWidget(int i) {
     return new OctaveExpressionWidget("",unit);
 }
 
-RotMatChoiceContextMenu::RotMatChoiceContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
+VariableChoiceContextMenu::VariableChoiceContextMenu(VariableProperty *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
   addSeparator();
-  vector<string> name;
-  name.push_back("xmlMatrix");
-  name.push_back("cardan");
-  name.push_back("plain");
+//  vector<string> name;
+//  name.push_back("xmlMatrix");
+//  name.push_back("cardan");
+//  name.push_back("plain");
   QActionGroup *actionGroup = new QActionGroup(this);
-  for(int i=0; i<name.size(); i++) {
-    QAction *action=new QAction(QString::fromStdString(name[i]), this);
+  for(int i=0; i<property->getSize(); i++) {
+    QAction *action=new QAction(QString::fromStdString(property->getName(i)), this);
     action->setCheckable(true);
     actionGroup->addAction(action);
     addAction(action);
     actions[action]=i;
-    if(static_cast<RotMatProperty*>(property)->getIndex()==i)
+    if(property->getIndex()==i)
       action->setChecked(true);
   }
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setVariable(QAction*)));
 }
 
-void RotMatChoiceContextMenu::setVariable(QAction *action) {
+void VariableChoiceContextMenu::setVariable(QAction *action) {
   int i = actions[action];
 
-  static_cast<RotMatProperty*>(property)->setIndex(i);
+  static_cast<VariableProperty*>(property)->setIndex(i);
   mw->mbsimxml(1);
 }

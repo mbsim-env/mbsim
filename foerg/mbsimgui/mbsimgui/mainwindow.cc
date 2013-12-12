@@ -1242,6 +1242,7 @@ void Process::updateOutputAndError() {
   QByteArray errArray=process->readAllStandardError();
   if(errArray.size()!=0) {
     errText+=errArray.data();
+    cout << errText.toStdString() << endl;
     err->setHtml(convertToHtml(errText));
     err->moveCursor(QTextCursor::Start);
   }

@@ -58,6 +58,7 @@ mbsimgui_SOURCES = element.cc \
 		   function_widget_factory.cc \
 		   kinetics_widgets.cc \
 		   ombv_widgets.cc \
+		   kinematics_widgets.cc \
 		   extended_widgets.cc \
 		   integrator_widgets.cc \
 		   property_dialog.cc \
@@ -87,6 +88,7 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   function_widgets.moc.cc \
 		   kinetics_widgets.moc.cc \
 		   ombv_widgets.moc.cc \
+		   kinematics_widgets.moc.cc \
 		   extended_widgets.moc.cc \
 		   property_dialog.moc.cc  \
 		   element_property_dialog.moc.cc \

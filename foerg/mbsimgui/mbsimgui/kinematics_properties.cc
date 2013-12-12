@@ -27,7 +27,7 @@ using namespace std;
 using namespace MBXMLUtils;
 
 StateDependentTranslation::StateDependentTranslation(const string &name) : Property(name) {
-  FunctionFactory factory;
+  FunctionFactory1 factory;
   addProperty(factory.createFunction(0));
 }
 
@@ -38,3 +38,38 @@ TiXmlElement* StateDependentTranslation::initializeUsingXML(TiXmlElement *elemen
 TiXmlElement* StateDependentTranslation::writeXMLFile(TiXmlNode *parent) {
   property[0]->writeXMLFile(parent);
 }
+
+Translation::Translation(const std::string &name) : Property(name) { 
+ // addProperty(new StateDependentTranslation("stateDependentTranslation"));
+ // property[0]->setDisabling(true);
+ // property[0]->setDisabled(true);
+  FunctionFactory1 factory;
+  addProperty(factory.createFunction(0));
+}
+
+TiXmlElement* Translation::initializeUsingXML(TiXmlElement *parent) {
+  return property[0]->initializeUsingXML(parent);
+}
+
+TiXmlElement* Translation::writeXMLFile(TiXmlNode *parent) {
+  return property[0]->writeXMLFile(parent);
+}
+
+//TiXmlElement* Translation::initializeUsingXML(TiXmlElement *parent) {
+//  index = -1;
+//  for(int i=0; i<property.size(); i++) {
+//    if(property[i]->initializeUsingXML(parent)) {
+//      index = i;
+//      break;
+//    }
+//  }
+//  if(index == -1) {
+//    cout << "Mist" << endl;
+//    throw;
+//  }
+//}
+//
+//TiXmlElement* Translation::writeXMLFile(TiXmlNode *parent) {
+//  return property[index]->writeXMLFile(parent);
+//}
+//

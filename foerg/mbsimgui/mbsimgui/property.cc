@@ -37,7 +37,12 @@ TiXmlElement* Property::writeXMLFile(TiXmlNode *element) {
 
 void PhysicalProperty::setValue(const string &data) { 
   Property::setValue(data); 
+  try {
   setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
+  }
+  catch(...) {
+    cout << "an execption was thrown" << endl;
+  }
 }
 
 TiXmlElement* PhysicalProperty::initializeUsingXML(TiXmlElement *element) {

@@ -21,6 +21,7 @@
 #define _KINEMATICS_PROPERTIES_H_
 
 #include "property.h"
+#include "kinematics_widgets.h"
 #include "function_widget.h"
 #include <string>
 
@@ -33,6 +34,36 @@ class StateDependentTranslation : public Property {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
 };
+
+class Translation : public Property {
+
+  public:
+    Translation(const std::string &name="");
+    virtual Property* clone() const {return new Translation(*this);}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    QMenu* createContextMenu() {return new TranslationChoiceContextMenu(this);}
+};
+
+//class Translation : public Property {
+//
+//  protected:
+//    std::vector<Property*> property;
+//    int index;
+//  public:
+//    Translation(const std::string &name="");
+//    virtual Property* clone() const {return new Translation(*this);}
+//    const std::string& getValue() const {return property[index]->getValue();}
+//    const std::string& getUnit() const {return property[index]->getUnit();}
+//    const std::string& getEvaluation() const {return property[index]->getEvaluation();}
+//    const Units& getUnits() const { return property[index]->getUnits(); }
+//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//    Widget* createWidget() { return property[index]->createWidget(); }
+//    QMenu* createContextMenu() {return new TranslationChoiceContextMenu(this);}
+//    int getIndex() const { return index; }
+//    void setIndex(int index_) { index = index_; }
+//};
 
 //namespace MBXMLUtils {
 //  class TiXmlElement;
