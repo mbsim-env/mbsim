@@ -688,13 +688,13 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
   addToTab("Kinetics", refFrameID);
 
   vector<PhysicalVariableWidget*> input;
-  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
   force = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", force);
 
   input.clear();
-  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
   moment = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", moment);
@@ -827,7 +827,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   addToTab("Kinetics", refFrameID);
 
   vector<PhysicalVariableWidget*> input;
-  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
   forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics",forceDirection);
@@ -841,7 +841,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   input.clear();
-  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
   momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics",momentDirection);
@@ -1015,7 +1015,7 @@ JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::Wind
   addToTab("Kinetics", refFrameID);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(0,3,1,1,3),noUnitUnits(),1));
   forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", forceDirection);
 
@@ -1023,7 +1023,7 @@ JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::Wind
   addToTab("Kinetics", forceLaw);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(0,3,1,1,3),noUnitUnits(),1));
   momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", momentDirection);
 
@@ -1126,13 +1126,13 @@ ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *pare
   addTab("Visualisation",2);
 
   vector<PhysicalVariableWidget*> input;
-  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
   forceDir = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", forceDir);
 
   input.clear();
-  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
   momentDir = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", momentDir);
@@ -1321,7 +1321,7 @@ AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(A
   addToTab("General", frame);
 
   vector<PhysicalVariableWidget*> input;
-  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(0,3,1,1,3);
   input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
   direction = new ExtWidget("Direction",new ExtPhysicalVarWidget(input),true);
   addToTab("General", direction);

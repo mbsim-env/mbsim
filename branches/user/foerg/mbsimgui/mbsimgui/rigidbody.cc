@@ -51,15 +51,16 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property[iK]->setDisabling(true);
   property[iK]->setDisabled(true);
 
-  property.push_back(new ChoiceProperty2("mass",new ScalarPropertyFactory("1",MassUnits()),"",4));
+  property.push_back(new Scalar_Property("mass",MassUnits()));
 
-  property.push_back(new ChoiceProperty2("inertiaTensor",new SymMatPropertyFactory(getEye<string>(3,3,"0.01","0"),InertiaUnits()),"",4));
+  property.push_back(new SymMat_Property("inertiaTensor",InertiaUnits()));
 
   property.push_back(new LocalFrameOfReferenceProperty("frameForInertiaTensor","Frame[C]",this)); 
   property[ifi]->setDisabling(true);
   property[ifi]->setDisabled(true);
 
-  property.push_back(new StateDependentTranslation("stateDependentTranslation"));
+//  property.push_back(new StateDependentTranslation("stateDependentTranslation"));
+  property.push_back(new Translation("stateDependentTranslation"));
   property[it]->setDisabling(true);
   property[it]->setDisabled(true);
 
@@ -259,7 +260,7 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   }
 
   if(not(property[it]->isDisabled())) {
-    ele1 = new TiXmlElement( MBSIMNS"stateDependentTranslation" );
+    ele1 = new TiXmlElement( MBSIMNS+property[it]->getName() );
     property[it]->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
   }

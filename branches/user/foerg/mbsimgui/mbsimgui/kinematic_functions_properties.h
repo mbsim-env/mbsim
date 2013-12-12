@@ -49,7 +49,7 @@ class TranslationAlongZAxisProperty: public FunctionProperty {
 
 class TranslationAlongAxesXYProperty: public FunctionProperty {
   public:
-    TranslationAlongAxesXYProperty() { }
+    TranslationAlongAxesXYProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongAxesXYProperty(*this);}
     int getArg1Size() const {return 2;}
     inline std::string getType() const { return "TranslationAlongAxesXY"; }
@@ -57,7 +57,7 @@ class TranslationAlongAxesXYProperty: public FunctionProperty {
 
 class TranslationAlongAxesYZProperty: public FunctionProperty {
   public:
-    TranslationAlongAxesYZProperty() { }
+    TranslationAlongAxesYZProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongAxesYZProperty(*this);}
     int getArg1Size() const {return 2;}
     inline std::string getType() const { return "TranslationAlongAxesYZ"; }
@@ -65,7 +65,7 @@ class TranslationAlongAxesYZProperty: public FunctionProperty {
 
 class TranslationAlongAxesXZProperty: public FunctionProperty {
   public:
-    TranslationAlongAxesXZProperty() { }
+    TranslationAlongAxesXZProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongAxesXZProperty(*this);}
     int getArg1Size() const {return 2;}
     inline std::string getType() const { return "TranslationAlongAxesXZ"; }
@@ -73,7 +73,7 @@ class TranslationAlongAxesXZProperty: public FunctionProperty {
 
 class TranslationAlongAxesXYZProperty: public FunctionProperty {
   public:
-    TranslationAlongAxesXYZProperty() { }
+    TranslationAlongAxesXYZProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongAxesXYZProperty(*this);}
     int getArg1Size() const {return 3;}
     inline std::string getType() const { return "TranslationAlongAxesXYZ"; }
@@ -81,7 +81,7 @@ class TranslationAlongAxesXYZProperty: public FunctionProperty {
 
 class TranslationAlongFixedAxisProperty : public FunctionProperty {
   public:
-    TranslationAlongFixedAxisProperty();
+    TranslationAlongFixedAxisProperty(const std::string &name="");
     virtual Property* clone() const {return new TranslationAlongFixedAxisProperty(*this);}
     int getArg1Size() const {return 1;}
     inline std::string getType() const { return "TranslationAlongFixedAxis"; }
@@ -89,13 +89,11 @@ class TranslationAlongFixedAxisProperty : public FunctionProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-  protected:
-    ExtProperty a;
 };
 
 class LinearTranslationProperty : public FunctionProperty {
   public:
-    LinearTranslationProperty(int m=1, int n=1);
+    LinearTranslationProperty(const std::string &name="");
     virtual Property* clone() const {return new LinearTranslationProperty(*this);}
     int getArg1Size() const;
     inline std::string getType() const { return "LinearTranslation"; }
@@ -103,8 +101,6 @@ class LinearTranslationProperty : public FunctionProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-  protected:
-    ExtProperty A, b;
 };
 
 class RotationAboutXAxisProperty : public FunctionProperty {

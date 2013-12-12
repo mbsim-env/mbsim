@@ -20,6 +20,24 @@
 #ifndef _KINEMATICS_WIDGETS_H_
 #define _KINEMATICS_WIDGETS_H_
 
+#include "property_context_menu.h"
+
+class Translation;
+class StateDependentTranslation;
+
+class TranslationChoiceContextMenu : public PropertyContextMenu {
+
+  Q_OBJECT
+  public:
+    TranslationChoiceContextMenu(Translation *property, QWidget * parent = 0, bool removable=false);
+  protected:
+    std::map<QAction*,int> actions;
+    std::vector<std::string> name;
+  protected slots:
+    void setTranslation(QAction*);
+    void setFunction(QAction*);
+};
+
 
 #endif
 

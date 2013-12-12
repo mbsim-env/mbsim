@@ -108,16 +108,17 @@ Element *Frame::getByPathSearch(string path) {
 FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false) {
   type = "FixedRelativeFrame";
 
-  property.push_back(new ChoiceProperty2("relativePosition",new VecPropertyFactory(3,LengthUnits()),"",4));
+  //property.push_back(new ChoiceProperty2("relativePosition",new VecPropertyFactory(3,LengthUnits()),"",4));
+  property.push_back(new Vec_Property("relativePosition",LengthUnits()));
   property[irP]->setDisabling(true);
   property[irP]->setDisabled(true);
 
-  //property.push_back(new ChoiceProperty2("relativeOrientation",new RotMatPropertyFactory,"",4));
-  vector<Property*> p;
-  p.push_back(new MatProperty(getEye<string>(3,3,"1","0")));
-  p.push_back(new CardanProperty);
-  p.push_back(new OctaveExpressionProperty("","eye(3)"));
-  property.push_back(new RotMatProperty("relativeOrientation",p,1));
+  //vector<Property*> p;
+  //p.push_back(new MatProperty(getEye<string>(3,3,"1","0")));
+  //p.push_back(new CardanProperty);
+  //p.push_back(new OctaveExpressionProperty("","eye(3)"));
+  //property.push_back(new VariableProperty("relativeOrientation",p,1));
+  property.push_back(new RotMatProperty("relativeOrientation"));
   property[irO]->setDisabling(true);
   property[irO]->setDisabled(true);
 

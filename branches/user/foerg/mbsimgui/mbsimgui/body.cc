@@ -111,7 +111,7 @@ void Body::removeElement(Element* element) {
 Frame* Body::getFrame(const string &name) {
   int i;
   for(i=0; i<frame.size(); i++) {
-    if(frame[i]->getName() == name)
+    if(frame[i]->getValue() == name)
       return frame[i];
   }
   return NULL;
@@ -120,7 +120,7 @@ Frame* Body::getFrame(const string &name) {
 Contour* Body::getContour(const string &name) {
   int i;
   for(i=0; i<contour.size(); i++) {
-    if(contour[i]->getName() == name)
+    if(contour[i]->getValue() == name)
       return contour[i];
   }
   return NULL;

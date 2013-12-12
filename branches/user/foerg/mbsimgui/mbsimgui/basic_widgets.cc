@@ -486,15 +486,11 @@ void IntegerWidget::toProperty(Property *property) {
 }
 
 SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
   value = new QSpinBox;
   value->setValue(val);
   value->setMinimum(min);
   value->setMaximum(max);
-  layout->addWidget(value);
+  varlayout->addWidget(value);
   connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
 }
 

@@ -33,27 +33,20 @@ namespace MBXMLUtils {
   class TiXmlNode;
 }
 
-class VariableProperty : public PhysicalProperty {
+class OctaveExpressionProperty : public PhysicalProperty {
   public:
-    VariableProperty(const std::string &name="", const std::string &value="", const Units &unit=NoUnitUnits()) : PhysicalProperty(name,value,unit) {}
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-};
-
-class OctaveExpressionProperty : public VariableProperty {
-  public:
-    OctaveExpressionProperty(const std::string &name="", const std::string &scalar="1", const Units &unit=NoUnitUnits()) : VariableProperty(name,scalar,unit) {}
+    OctaveExpressionProperty(const std::string &name="", const std::string &scalar="1", const Units &unit=NoUnitUnits()) : PhysicalProperty(name,scalar,unit) {}
     virtual Property* clone() const {return new OctaveExpressionProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     Widget* createWidget() { return new OctaveExpressionWidget(this); }
 };
 
-class ScalarProperty : public VariableProperty {
+class ScalarProperty : public PhysicalProperty {
   protected:
     std::string scalar;
   public:
-    ScalarProperty(const std::string &name="", const std::string &scalar="1", const Units &unit=NoUnitUnits()) : VariableProperty(name,scalar,unit) {}
+    ScalarProperty(const std::string &name="", const std::string &scalar="1", const Units &unit=NoUnitUnits()) : PhysicalProperty(name,scalar,unit) {}
     virtual Property* clone() const {return new ScalarProperty(*this);}
 //    const std::string& getScalar() const {return scalar;}
 //    void setScalar(const std::string &x) {scalar = x; setValue(scalar);}
@@ -61,16 +54,16 @@ class ScalarProperty : public VariableProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     //PropertyPropertyDialog* createPropertyDialog() { return new PropertyPropertyDialog(this,new ScalarWidget); }
     //PropertyPropertyDialog* createUnitDialog() { return new PropertyPropertyDialog(this,new UnitWidget(angleUnits(),1)); }
-    Widget* createWidget() { return new ScalarWidget("1",units); }
+    Widget* createWidget() { return new ScalarWidget(this); }
 };
 
-class VecProperty : public VariableProperty {
+class VecProperty : public PhysicalProperty {
   private:
     std::vector<std::string> value;
   public:
     VecProperty(int size, const Units &unit=NoUnitUnits());
-    VecProperty(const std::vector<std::string> &x) : VariableProperty("",toStr(x)), value(x) {}
-    VecProperty(const std::string &name, const std::vector<std::string> &x, const Units &unit=NoUnitUnits()) : VariableProperty(name,toStr(x),unit), value(x) {}
+    VecProperty(const std::vector<std::string> &x) : PhysicalProperty("",toStr(x)), value(x) {}
+    VecProperty(const std::string &name, const std::vector<std::string> &x, const Units &unit=NoUnitUnits()) : PhysicalProperty(name,toStr(x),unit), value(x) {}
     ~VecProperty();
     virtual Property* clone() const {return new VecProperty(*this);}
     std::vector<std::string> getVec() const {return value;}
@@ -80,17 +73,17 @@ class VecProperty : public VariableProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Widget* createWidget() { return new VecWidget(1,false,units); }
+    Widget* createWidget() { return new VecWidget(this); }
 };
 
-class MatProperty : public VariableProperty {
+class MatProperty : public PhysicalProperty {
 
   private:
     std::vector<std::vector<std::string> > value;
   public:
     MatProperty(int rows, int cols);
-    MatProperty(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : VariableProperty("",toStr(A),unit), value(A) {}
-    MatProperty(const std::string &name, const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : VariableProperty(name,toStr(A),unit), value(A) {}
+    MatProperty(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : PhysicalProperty("",toStr(A),unit), value(A) {}
+    MatProperty(const std::string &name, const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : PhysicalProperty(name,toStr(A),unit), value(A) {}
     virtual Property* clone() const {return new MatProperty(*this);}
     std::vector<std::vector<std::string> > getMat() const {return value;}
     void setMat(const std::vector<std::vector<std::string> > &A) {value = A; setValue(toStr(value));}
@@ -105,7 +98,22 @@ class MatProperty : public VariableProperty {
     Widget* createWidget() { return new MatWidget(this); }
 };
 
-class CardanProperty : public VariableProperty {
+class VarMatProperty : public MatProperty {
+  public:
+    VarMatProperty(int rows, int cols) : MatProperty(rows,cols) { }
+    VarMatProperty(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : MatProperty(A,unit) { }
+    VarMatProperty(const std::string &name, const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : MatProperty(name,A,unit) { }
+    Widget* createWidget() { return new MatColsVarWidget(this); }
+};
+
+class SymMatProperty : public MatProperty {
+
+  public:
+    SymMatProperty(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits()) : MatProperty(A,unit) {}
+    Widget* createWidget() { return new SymMatWidget(this); }
+};
+
+class CardanProperty : public PhysicalProperty {
 
   private:
     std::vector<std::string> angles;
@@ -125,19 +133,19 @@ class CardanProperty : public VariableProperty {
 
 class PhysicalVariableProperty : public Property {
   protected:
-    VariableProperty* value;
+    PhysicalProperty* value;
     std::string xmlName;
   public:
-    PhysicalVariableProperty(VariableProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : Property("",""), value(value_), xmlName(xmlName_) {}
-    PhysicalVariableProperty(const PhysicalVariableProperty &p) : value(static_cast<VariableProperty*>(p.value->clone())), xmlName(p.xmlName) {}
+    PhysicalVariableProperty(PhysicalProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : Property("",""), value(value_), xmlName(xmlName_) {}
+    PhysicalVariableProperty(const PhysicalVariableProperty &p) : value(static_cast<PhysicalProperty*>(p.value->clone())), xmlName(p.xmlName) {}
     ~PhysicalVariableProperty() {delete value;}
-    PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<VariableProperty*>(p.value->clone()); xmlName=p.xmlName;}
+    PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<PhysicalProperty*>(p.value->clone()); xmlName=p.xmlName;}
     virtual Property* clone() const {return new PhysicalVariableProperty(*this);}
 //    std::string getValue() const {return value->getValue();}
 //    void setValue(const std::string &str) {value->setValue(str);}
 //    std::string getUnit() const {return unit;}
 //    void setUnit(const std::string &unit_) {unit = unit_;}
-    virtual VariableProperty* getProperty() {return value;}
+    virtual PhysicalProperty* getProperty() {return value;}
     const std::string& getXmlName() const {return xmlName;}
     void setXmlName(const std::string &name) {xmlName = name;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -146,7 +154,7 @@ class PhysicalVariableProperty : public Property {
     void toWidget(QWidget *widget);
 };
 
-//class VecFromFileProperty : public VariableProperty {
+//class VecFromFileProperty : public PhysicalProperty {
 //
 //  public:
 //    VecFromFileProperty(const std::string &file_="") : file(file_) {}
@@ -162,7 +170,7 @@ class PhysicalVariableProperty : public Property {
 //    std::string file;
 //};
 
-class FromFileProperty : public VariableProperty {
+class FromFileProperty : public PhysicalProperty {
 
   public:
     FromFileProperty(const std::string &file_="") : file(file_) {}
@@ -237,25 +245,66 @@ class SymMatPropertyFactory: public MatPropertyFactory {
     WidgetFactory* createWidgetFactory() { return new SymMatWidgetFactory(fromStdMat(A),unit); }
 };
 
+class VariableProperty : public PhysicalProperty {
 
-class RotMatProperty : public VariableProperty {
-
-  private:
+  protected:
     std::vector<Property*> property;
     int index;
+    std::vector<std::string> name;
   public:
-    RotMatProperty(const std::string &name, std::vector<Property*> property_=std::vector<Property*>(0), int index_=0) : VariableProperty(name), property(property_), index(index_) { }
+    VariableProperty(const std::string &name, std::vector<Property*> property_=std::vector<Property*>(0), int index_=0) : PhysicalProperty(name), property(property_), index(index_) { }
     const std::string& getValue() const {return property[index]->getValue();}
     const std::string& getUnit() const {return property[index]->getUnit();}
     const std::string& getEvaluation() const {return property[index]->getEvaluation();}
     const Units& getUnits() const { return property[index]->getUnits(); }
-    virtual Property* clone() const {return new RotMatProperty(*this);}
+    virtual Property* clone() const {return new VariableProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     Widget* createWidget() { return property[index]->createWidget(); }
-    QMenu* createContextMenu() {return new RotMatChoiceContextMenu(this);}
+    QMenu* createContextMenu() {return new VariableChoiceContextMenu(this);}
     int getIndex() const { return index; }
     void setIndex(int index_) { index = index_; }
+    const std::string& getName(int i) const { return name[i]; }
+    int getSize() const { return name.size(); }
+};
+
+class Scalar_Property : public VariableProperty {
+
+  public:
+    Scalar_Property(const std::string &name, const Units &unit=NoUnitUnits());
+};
+
+class Vec_Property : public VariableProperty {
+
+  public:
+    Vec_Property(const std::string &name, const Units &unit=NoUnitUnits());
+    Vec_Property(const std::string &name, const std::vector<std::string> &x, const Units &unit=NoUnitUnits());
+};
+
+class Mat_Property : public VariableProperty {
+
+  public:
+    Mat_Property(const std::string &name, const Units &unit=NoUnitUnits());
+    Mat_Property(const std::string &name, const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits());
+};
+
+class SymMat_Property : public VariableProperty {
+
+  public:
+    SymMat_Property(const std::string &name, const Units &unit=NoUnitUnits());
+};
+
+class RotMatProperty : public VariableProperty {
+
+  public:
+    RotMatProperty(const std::string &name);
+};
+
+class VarMat_Property : public VariableProperty {
+
+  public:
+    VarMat_Property(const std::string &name, const Units &unit=NoUnitUnits());
+    VarMat_Property(const std::string &name, const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits());
 };
 
 #endif

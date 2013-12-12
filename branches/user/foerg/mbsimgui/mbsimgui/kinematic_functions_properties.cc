@@ -27,68 +27,63 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty() {
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIMNS"axisOfTranslation"));
-  a.setProperty(new ExtPhysicalVarProperty(input));
+TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty(const string &name) : FunctionProperty(name) {
+  vector<string> x = getVec<string>(3,"0");
+  x[0] = "1";
+  property.push_back(new Vec_Property("axisOfTranslation",x));
 }
 
 TiXmlElement* TranslationAlongFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
-  a.initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"axisOfTranslation" );
+  property[0]->initializeUsingXML(ele1);
   return element;
 }
 
 TiXmlElement* TranslationAlongFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
-  a.writeXMLFile(ele0);
+  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"axisOfTranslation" );
+  property[0]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
   return ele0;
 } 
 
 void TranslationAlongFixedAxisProperty::fromWidget(QWidget *widget) {
-  a.fromWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
 }
 
 void TranslationAlongFixedAxisProperty::toWidget(QWidget *widget) {
-  a.toWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
 }
 
-LinearTranslationProperty::LinearTranslationProperty(int m, int n) : b(0,false) {
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"translationVectors"));
-  A.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"offset"));
-  b.setProperty(new ExtPhysicalVarProperty(input));
+LinearTranslationProperty::LinearTranslationProperty(const string &name) : FunctionProperty(name) {
+  vector<vector<string> > A = getMat<string>(3,1,"0");
+  A[0][0] = "1";
+  property.push_back(new VarMat_Property("translationVectors",A,Units()));
+  property.push_back(new Vec_Property("offset",Units()));
 }
 
 int LinearTranslationProperty::getArg1Size() const {
-  string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
-  vector<vector<string> > A = strToMat(str);
-  return A.size()?A[0].size():0;
+//  string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
+//  vector<vector<string> > A = strToMat(str);
+//  return A.size()?A[0].size():0;
 }
 
 TiXmlElement* LinearTranslationProperty::initializeUsingXML(TiXmlElement *element) {
-  A.initializeUsingXML(element);
-  b.initializeUsingXML(element);
-  return element;
 }
 
 TiXmlElement* LinearTranslationProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
-  A.writeXMLFile(ele0);
-  b.writeXMLFile(ele0);
+  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"translationVectors" );
+  property[0]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
+  ele1 = new TiXmlElement( MBSIMNS"offset" );
+  property[1]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
   return ele0;
 } 
 
 void LinearTranslationProperty::fromWidget(QWidget *widget) {
-  A.fromWidget(static_cast<LinearTranslationWidget*>(widget)->A);
-  b.fromWidget(static_cast<LinearTranslationWidget*>(widget)->b);
 }
 
 void LinearTranslationProperty::toWidget(QWidget *widget) {
-  A.toWidget(static_cast<LinearTranslationWidget*>(widget)->A);
-  b.toWidget(static_cast<LinearTranslationWidget*>(widget)->b);
 }
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
