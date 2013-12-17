@@ -28,6 +28,8 @@
 #include <mbxmlutilstinyxml/tinyxml.h>
 #include <casadi/symbolic/sx/sx.hpp>
 #include <mbxmlutils/octeval.h>
+#include <boost/function.hpp>
+#include <boost/filesystem.hpp>
 
 class QAction;
 class QLineEdit;
@@ -69,7 +71,9 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
-    QString uniqueTempDir, absoluteMBSFilePath;
+    boost::filesystem::path uniqueTempDir;
+    QString absoluteMBSFilePath;
+//    QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
     std::string currentID;
     QStringList mPath;
@@ -93,7 +97,8 @@ class MainWindow : public QMainWindow {
     static MBXMLUtils::OctEval *octEval;
     static MBXMLUtils::NewParamLevel *octEvalParamLevel;
     void mbsimxml(int task);
-    const QString& getUniqueTempDir() const {return uniqueTempDir;}
+    //const QString& getUniqueTempDir() const {return uniqueTempDir;}
+    const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
     void addFrame(Frame *frame);
     void addContour(Contour *contour);
     void addGroup(Group *group);
@@ -156,6 +161,7 @@ class MainWindow : public QMainWindow {
     void saveElementAs();
     void removeProperty();
     void changePropertyItem(Property *property);
+    void changePropertyItem2(Property *property);
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

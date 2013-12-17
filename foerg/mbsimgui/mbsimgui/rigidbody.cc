@@ -207,6 +207,16 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     property[it]->initializeUsingXML(ele1);
     property[it]->setDisabled(false);
   }
+  ele1 = element->FirstChildElement( MBSIMNS"timeDependentTranslation" );
+  if(ele1) {
+    property[it]->setName("timeDependentTranslation");
+    FunctionFactory *factory = new FunctionFactory2;
+    FunctionProperty* function = factory->createFunction(0);
+    function->setFactory(factory);
+    property[it]->setProperty(function);
+    property[it]->initializeUsingXML(ele1);
+    property[it]->setDisabled(false);
+  }
 
 //  translation.initializeUsingXML(element);
 //  rotation.initializeUsingXML(element);

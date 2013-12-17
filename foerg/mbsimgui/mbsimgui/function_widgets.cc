@@ -355,15 +355,16 @@ void SymbolicFunctionWidget::resize_(int m, int n) {
 
 void SymbolicFunctionWidget::fromProperty(Property *property_) {
   Widget::fromProperty(property);
-//  for(int i=0; i<argname.size(); i++)
-//    argdim[i]->fromProperty(static_cast<SymbolicFunctionProperty*>(property)->argdim[i]);
+  for(int i=0; i<argname.size(); i++)
+    argdim[i]->fromProperty(static_cast<SymbolicFunctionProperty*>(property)->argdim[i]);
   f->fromProperty(static_cast<SymbolicFunctionProperty*>(property)->f);
 }
 
 void SymbolicFunctionWidget::toProperty(Property *property_) {
   Widget::toProperty(property);
+  for(int i=0; i<argname.size(); i++)
+    argdim[i]->toProperty(static_cast<SymbolicFunctionProperty*>(property)->argdim[i]);
   f->toProperty(static_cast<SymbolicFunctionProperty*>(property)->f);
-//  static_cast<TextProperty*>(property)->setValue(getText().toStdString());
 }
 
 TabularFunctionWidget::TabularFunctionWidget(int n) {

@@ -25,6 +25,8 @@
 class Translation;
 class StateDependentTranslation;
 
+class FunctionFactory;
+
 class TranslationChoiceContextMenu : public PropertyContextMenu {
 
   Q_OBJECT
@@ -33,6 +35,7 @@ class TranslationChoiceContextMenu : public PropertyContextMenu {
   protected:
     std::map<QAction*,int> actions;
     std::vector<std::string> name;
+    std::vector<FunctionFactory*> factory;
   protected slots:
     void setTranslation(QAction*);
     void setFunction(QAction*);

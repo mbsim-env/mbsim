@@ -43,17 +43,19 @@ void FunctionChoiceWidget::toProperty(Property *property) {
 //  static_cast<FunctionChoiceProperty*>(property)->setIndex(comboBox->currentIndex());
 }
 
-FunctionChoiceContextMenu::FunctionChoiceContextMenu(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
+FunctionChoiceContextMenu::FunctionChoiceContextMenu(FunctionProperty *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
   addSeparator();
-  FunctionFactory1 factory;
+  FunctionFactory* factory = property->getFactory();
   QActionGroup *actionGroup = new QActionGroup(this);
-  for(int i=0; i<factory.size(); i++) {
-    QAction *action=new QAction(QString::fromStdString(factory.getName(i)), this);
+  for(int i=0; i<factory->size(); i++) {
+    QAction *action=new QAction(QString::fromStdString(factory->getName(i)), this);
     action->setCheckable(true);
     actionGroup->addAction(action);
     addAction(action);
     actions[action]=i;
-    if(property->getProperty()->getName()==factory.getName(i))
+    if(i==4)
+      action->setDisabled(true);
+    if(property->getName()==factory->getName(i))
       action->setChecked(true);
   }
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
@@ -61,11 +63,15 @@ FunctionChoiceContextMenu::FunctionChoiceContextMenu(Property *property, QWidget
 
 void FunctionChoiceContextMenu::setFunction(QAction *action) {
   int i = actions[action];
-  delete property->getProperty();
 
-  FunctionFactory1 factory;
-  FunctionProperty* body = factory.createFunction(i);
-  property->setProperty(body);
-  mw->changePropertyItem(body);
+  Property *parent = property->getParent();
+  FunctionProperty* function = static_cast<FunctionProperty*>(property)->getFactory()->createFunction(i);
+  function->setFactory(static_cast<FunctionProperty*>(property)->getFactory());
+  parent->setProperty(function);
+  if(parent->sendSignal)
+    parent->sendSignal();
+  mw->changePropertyItem2(function);
   mw->mbsimxml(1);
+
+  delete property;
 }

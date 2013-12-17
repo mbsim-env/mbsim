@@ -60,7 +60,7 @@ LinearTranslationProperty::LinearTranslationProperty(const string &name) : Funct
   property.push_back(new Vec_Property("offset",Units()));
 }
 
-int LinearTranslationProperty::getArg1Size() const {
+int LinearTranslationProperty::getArgSize(int i) const {
 //  string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
 //  vector<vector<string> > A = strToMat(str);
 //  return A.size()?A[0].size():0;

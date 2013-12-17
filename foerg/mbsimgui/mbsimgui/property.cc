@@ -35,6 +35,14 @@ TiXmlElement* Property::writeXMLFile(TiXmlNode *element) {
     property[i]->writeXMLFile(element);
 }
 
+void Property::update() {
+  cout << "updating property" << name << endl;
+//  for(int i=0; i<propertyToUpdate.size(); i++)
+//    propertyToUpdate[i]->update();
+  for(int i=0; i<property.size(); i++)
+    property[i]->update();
+}
+
 void PhysicalProperty::setValue(const string &data) { 
   Property::setValue(data); 
   try {

@@ -389,7 +389,7 @@ void OMBVBodyProperty::toWidget(QWidget *widget) {
 //}
 
 CubeProperty::CubeProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
-  property.push_back(new ChoiceProperty2("length",new ScalarPropertyFactory("1",LengthUnits()),"",4));
+  property.push_back(new Scalar_Property("length",LengthUnits()));
 }
 
 TiXmlElement* CubeProperty::initializeUsingXML(TiXmlElement *element) {
@@ -419,7 +419,8 @@ void CubeProperty::toWidget(QWidget *widget) {
 
 CuboidProperty::CuboidProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
-  property.push_back(new ChoiceProperty2("length",new VecPropertyFactory(getScalars<string>(3,"1"),LengthUnits()),"",4));
+  //property.push_back(new ChoiceProperty2("length",new VecPropertyFactory(getScalars<string>(3,"1"),LengthUnits()),"",4));
+  property.push_back(new Vec_Property("length",getScalars<string>(3,"1"),LengthUnits()));
 
 //  vector<PhysicalVariableProperty> input;
 //  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "m", OPENMBVNS"length"));
@@ -454,7 +455,7 @@ void CuboidProperty::toWidget(QWidget *widget) {
 
 SphereProperty::SphereProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
-  property.push_back(new ChoiceProperty2("radius",new ScalarPropertyFactory("1",LengthUnits()),"",4));
+  property.push_back(new Scalar_Property("radius",LengthUnits()));
 
  // vector<PhysicalVariableProperty> input;
  // input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"radius"));

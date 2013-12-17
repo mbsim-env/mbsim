@@ -24,6 +24,7 @@
 #include "property_context_menu.h"
 
 class QComboBox;
+class FunctionProperty;
 
 class FunctionWidget : public Widget {
   Q_OBJECT
@@ -50,7 +51,7 @@ class FunctionChoiceContextMenu : public PropertyContextMenu {
 
   Q_OBJECT
   public:
-    FunctionChoiceContextMenu(Property *property, QWidget * parent = 0, bool removable=false);
+    FunctionChoiceContextMenu(FunctionProperty *property, QWidget * parent = 0, bool removable=false);
   protected:
     std::map<QAction*,int> actions;
   protected slots:
