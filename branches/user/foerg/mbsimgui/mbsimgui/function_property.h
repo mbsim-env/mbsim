@@ -23,16 +23,22 @@
 #include "property.h"
 #include "function_widget.h"
 
+class FunctionFactory;
+
 class FunctionProperty : public Property {
+  private:
+    FunctionFactory *factory;
   public:
-    FunctionProperty(const std::string &name="") : Property(name) {}
-    virtual int getArg1Size() const {return 0;}
-    virtual int getArg2Size() const {return 0;}
+    FunctionProperty(const std::string &name="", FunctionFactory *factory_=0) : Property(name), factory(factory_) {}
+    virtual int getArgSize(int i=0) const {return 0;}
     virtual std::string getType() const { return "Function"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) { return element; }
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
     void fromWidget(QWidget *widget) { }
     void toWidget(QWidget *widget) { }
+    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
+    FunctionFactory* getFactory() const { return factory; }
+    void setFactory(FunctionFactory *factory_) { factory = factory_; }
 };
 
 // class FunctionChoiceProperty : public Property {

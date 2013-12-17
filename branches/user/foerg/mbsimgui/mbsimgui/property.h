@@ -26,6 +26,7 @@
 #include "treeitemdata.h"
 #include "units.h"
 #include "property_context_menu.h"
+#include <boost/function.hpp>
 
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
 #define MBSIMNS "{"MBSIMNS_"}"
@@ -99,6 +100,8 @@ class Property : public TreeItemData, public PropertyInterface {
     void addProperty(Property *property_) { property.push_back(property_); property_->setParent(this); }
     Property* getParent() const { return parent; }
     void setParent(Property *parent_) { parent = parent_; }
+    virtual void update();
+    boost::function<void()> sendSignal;
   protected:
     std::string name, value, unit, evaluation;
     Units units;

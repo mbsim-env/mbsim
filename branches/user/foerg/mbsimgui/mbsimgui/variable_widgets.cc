@@ -193,6 +193,7 @@ void OctaveExpressionWidget::toProperty(Property *property_) {
 
 ScalarWidget::ScalarWidget(const QString &d, const Units &unit) : VariableWidget(unit) {
 
+  throw;
   box = new QLineEdit(this);
   box->setPlaceholderText("0");
   setScalar(d);

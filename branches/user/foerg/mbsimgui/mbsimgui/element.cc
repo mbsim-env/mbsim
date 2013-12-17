@@ -90,7 +90,8 @@ TiXmlElement* Element::writeXMLFileEmbed(TiXmlNode *parent) {
   if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
     writeXMLFile(ele);
   else 
-    writeXMLFile(absolutePath?(mw->getUniqueTempDir().toStdString()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
+    //writeXMLFile(absolutePath?(mw->getUniqueTempDir().toStdString()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
+    writeXMLFile(absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
   return ele;
 }
 
@@ -190,3 +191,13 @@ ParameterList Element::getParameterList(bool addCounter) const {
     list.addParameter(e->getCounterName(),"1","scalarParameter"); 
   return list;
 }
+
+void Element::update() {
+  cout << "updating element" << name << endl;
+  for(int i=0; i<property.size(); i++)
+    property[i]->update();
+  for(int i=0; i<getNumberOfObjects(); i++)
+    getObject(i)->update();
+}
+
+

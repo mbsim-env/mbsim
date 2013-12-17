@@ -40,15 +40,18 @@ TiXmlElement* StateDependentTranslation::writeXMLFile(TiXmlNode *parent) {
 }
 
 Translation::Translation(const std::string &name) : Property(name) { 
- // addProperty(new StateDependentTranslation("stateDependentTranslation"));
- // property[0]->setDisabling(true);
- // property[0]->setDisabled(true);
-  FunctionFactory1 factory;
-  addProperty(factory.createFunction(0));
+  FunctionFactory1 *factory = new FunctionFactory1;
+  FunctionProperty *function = factory->createFunction(0);
+  function->setFactory(factory);
+  addProperty(function);
 }
 
 TiXmlElement* Translation::initializeUsingXML(TiXmlElement *parent) {
-  return property[0]->initializeUsingXML(parent);
+  FunctionProperty* function = static_cast<FunctionProperty*>(property[0])->getFactory()->createFunction(parent->FirstChildElement());
+  function->setFactory(static_cast<FunctionProperty*>(property[0])->getFactory());
+  delete property[0];
+  setProperty(function);
+  return property[0]->initializeUsingXML(parent->FirstChildElement());
 }
 
 TiXmlElement* Translation::writeXMLFile(TiXmlNode *parent) {

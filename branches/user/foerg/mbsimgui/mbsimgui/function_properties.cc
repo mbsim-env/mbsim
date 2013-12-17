@@ -26,9 +26,11 @@
 #include "extended_widgets.h"
 #include "utils.h"
 #include "function_property_factory.h"
+#include "objectfactory.h"
 #include <QSpinBox>
 #include "mainwindow.h"
 #include <mbxmlutils/octeval.h>
+#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -270,8 +272,8 @@ ScaledFunctionProperty::ScaledFunctionProperty() : factor(0,false) {
   factor.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-int ScaledFunctionProperty::getArg1Size() const {
-  return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+int ScaledFunctionProperty::getArgSize(int i) const {
+  return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArgSize(i);
 }
 
 TiXmlElement* ScaledFunctionProperty::initializeUsingXML(TiXmlElement *element) {
@@ -368,36 +370,65 @@ void VectorValuedFunctionProperty::toWidget(QWidget *widget) {
 //  fi.setProperty(new ChoiceProperty(MBSIMNS"innerFunction",property));
 //}
 
-NestedFunctionProperty::NestedFunctionProperty(PropertyFactory *factoryo, PropertyFactory *factoryi) {
-  fo.setProperty(new ChoiceProperty2(factoryo,MBSIMNS"outerFunction",0));
-  fi.setProperty(new ChoiceProperty2(factoryi,MBSIMNS"innerFunction",0));
+NestedFunctionProperty::NestedFunctionProperty(const string &name) : FunctionProperty(name) {
+  Property *outer = new Property("outerFunction");
+  addProperty(outer);
+  FunctionFactory1 *factory1 = new FunctionFactory1;
+  FunctionProperty *function = factory1->createFunction(0);
+  function->setFactory(factory1);
+  outer->addProperty(function);
+
+  Property *inner = new Property("innerFunction");
+  addProperty(inner);
+  FunctionFactory3 *factory2 = new FunctionFactory3;
+  function = factory2->createFunction(0);
+  function->setFactory(factory2);
+  inner->addProperty(function);
+
+  outer->sendSignal = boost::bind(&NestedFunctionProperty::update, this);
+//  outer->addPropertyToUpdate(inner);
+//  fo.setProperty(new ChoiceProperty2(factoryo,MBSIMNS"outerFunction",0));
+//  fi.setProperty(new ChoiceProperty2(factoryi,MBSIMNS"innerFunction",0));
 }
 
-int NestedFunctionProperty::getArg1Size() const {
-  //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArg1Size();
+int NestedFunctionProperty::getArgSize(int i) const {
+  //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArgSize(i);
 }
 
 TiXmlElement* NestedFunctionProperty::initializeUsingXML(TiXmlElement *element) {
-  fo.initializeUsingXML(element);
-  fi.initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"outerFunction" );
+
+  FunctionProperty* function = static_cast<FunctionProperty*>(property[0]->getProperty())->getFactory()->createFunction(ele1->FirstChildElement());
+  function->setFactory(static_cast<FunctionProperty*>(property[0]->getProperty())->getFactory());
+  delete property[0]->getProperty();
+  property[0]->setProperty(function);
+  property[0]->initializeUsingXML(ele1->FirstChildElement());
+
+  ele1 = element->FirstChildElement( MBSIMNS"innerFunction" );
+  property[1]->initializeUsingXML(ele1->FirstChildElement());
   return element;
 }
 
 TiXmlElement* NestedFunctionProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
-  fo.writeXMLFile(ele0);
-  fi.writeXMLFile(ele0);
+  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"outerFunction" );
+  property[0]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
+  ele1 = new TiXmlElement( MBSIMNS"innerFunction" );
+  property[1]->writeXMLFile(ele1);
+  ele0->LinkEndChild(ele1);
   return ele0;
 } 
 
 void NestedFunctionProperty::fromWidget(QWidget *widget) {
-  fo.fromWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
-  fi.fromWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
 }
 
 void NestedFunctionProperty::toWidget(QWidget *widget) {
-  fo.toWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
-  fi.toWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
+}
+
+void NestedFunctionProperty::update() {
+  static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->resizeRet(static_cast<FunctionProperty*>(property[0]->getProperty(0))->getArgSize(0));
+  static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->resizeArg(0,static_cast<FunctionProperty*>(property[0]->getProperty(0))->getArgSize());
 }
 
 PiecewiseDefinedFunctionProperty::PiecewiseDefinedFunctionProperty() {
@@ -438,20 +469,20 @@ SymbolicFunctionProperty::SymbolicFunctionProperty(const string &name, const vec
      argname[i] = var[i];
      argdim[i] = new IntegerProperty("",1);
   }
-  f = new VecProperty(3,Units());
+  f = new VecProperty(m,Units());
 }
 
 TiXmlElement* SymbolicFunctionProperty::initializeUsingXML(TiXmlElement *element) {
-//  f.initializeUsingXML(element);
-//  for(int i=1; i<ext.size(); i++) {
-//    string str = "arg"+toStr(i)+"name";
-//    if(element->Attribute(str))
-//      static_cast<TextProperty*>(argname[i-1].getProperty())->setValue(element->Attribute(str.c_str()));
-//    str = "arg"+toStr(i)+"dim";
-//    if(element->Attribute(str))
-//      static_cast<IntegerProperty*>(argdim[i-1].getProperty())->setInt(atoi(element->Attribute(str.c_str())));
-//  }
-//  return element;
+  f->initializeUsingXML(element);
+  for(int i=0; i<argname.size(); i++) {
+    string str = "arg"+toStr(i+1)+"name";
+    if(element->Attribute(str))
+      argname[i] = element->Attribute(str.c_str());
+    str = "arg"+toStr(i+1)+"dim";
+    if(element->Attribute(str))
+      static_cast<IntegerProperty*>(argdim[i])->setInt(atoi(element->Attribute(str.c_str())));
+  }
+  return element;
 }
 
 TiXmlElement* SymbolicFunctionProperty::writeXMLFile(TiXmlNode *parent) {
@@ -467,27 +498,21 @@ TiXmlElement* SymbolicFunctionProperty::writeXMLFile(TiXmlNode *parent) {
 } 
 
 void SymbolicFunctionProperty::fromWidget(QWidget *widget) {
-//  for(int i=0; i<argname.size(); i++) {
-//    argname[i].fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->argname[i]);
-//    argdim[i].fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->argdim[i]);
-//  }
-//  f.fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->f);
 }
 
 void SymbolicFunctionProperty::toWidget(QWidget *widget) {
-//  for(int i=0; i<argname.size(); i++) {
-//    argname[i].toWidget(static_cast<SymbolicFunctionWidget*>(widget)->argname[i]);
-//    argdim[i].toWidget(static_cast<SymbolicFunctionWidget*>(widget)->argdim[i]);
-//  }
-//  f.toWidget(static_cast<SymbolicFunctionWidget*>(widget)->f);
 }
 
-int SymbolicFunctionProperty::getArg1Size() const {
-//  return static_cast<const IntegerProperty*>(argdim[0].getProperty())->getInt();
+int SymbolicFunctionProperty::getArgSize(int i) const {
+  return static_cast<IntegerProperty*>(argdim[i])->getInt();
 }
 
-int SymbolicFunctionProperty::getArg2Size() const {
-//  return static_cast<const IntegerProperty*>(argdim[1].getProperty())->getInt();
+void SymbolicFunctionProperty::resizeArg(int i, int size) {
+  static_cast<IntegerProperty*>(argdim[i])->setInt(size);
+}
+
+void SymbolicFunctionProperty::resizeRet(int size) {
+  f->setVec(getVec<string>(size,"0"));
 }
 
 Widget* SymbolicFunctionProperty::createWidget() {

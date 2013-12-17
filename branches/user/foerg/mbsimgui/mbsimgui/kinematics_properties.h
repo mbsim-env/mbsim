@@ -32,7 +32,7 @@ class StateDependentTranslation : public Property {
     Property* clone() const {return new StateDependentTranslation(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
-    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
+//    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
 };
 
 class Translation : public Property {

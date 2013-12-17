@@ -111,6 +111,7 @@ class Element : public TreeItemData {
     ParameterList getParameterList(bool addCounter=true) const;
     int getNumberOfProperties() const { return property.size(); }
     Property* getProperty(int i) { return property[i]; }
+    void update();
 };
 
 template<class T>

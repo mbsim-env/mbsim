@@ -338,7 +338,7 @@ FunctionFactory1::FunctionFactory1() {
   names.push_back("TranslationAlongFixedAxis");
   names.push_back("LinearTranslation");
   names.push_back("SymbolicFunction");
-//  names.push_back("NestedFunction");
+  names.push_back("NestedFunction");
 }
 
 FunctionProperty* FunctionFactory1::createFunction(int i) {
@@ -361,7 +361,9 @@ FunctionProperty* FunctionFactory1::createFunction(int i) {
   else if(i==8)
     return new LinearTranslationProperty(names[i]);
   else if(i==9)
-    return new SymbolicFunctionProperty(names[i],vector<string>(1,"q"),1);
+    return new SymbolicFunctionProperty(names[i],vector<string>(1,"q"),3);
+  else if(i==10)
+    return new NestedFunctionProperty(names[i]);
   else
     return 0;
 }
@@ -372,7 +374,18 @@ FunctionFactory2::FunctionFactory2() {
 
 FunctionProperty* FunctionFactory2::createFunction(int i) {
   if(i==0)
-    return new SymbolicFunctionProperty(names[i],vector<string>(1,"t"),1);
+    return new SymbolicFunctionProperty(names[i],vector<string>(1,"t"),3);
+  else
+    return 0;
+}
+
+FunctionFactory3::FunctionFactory3() {
+  names.push_back("SymbolicFunction");
+}
+
+FunctionProperty* FunctionFactory3::createFunction(int i) {
+  if(i==0)
+    return new SymbolicFunctionProperty(names[i],vector<string>(1,"q"),1);
   else
     return 0;
 }

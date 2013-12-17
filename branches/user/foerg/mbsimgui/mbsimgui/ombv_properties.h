@@ -117,7 +117,7 @@ class OMBVBodyProperty : public OMBVDynamicColoredObjectProperty {
     void toWidget(QWidget *widget);
 //    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
 //    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
-};
+   QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }};
 
 class InvisibleBodyProperty : public OMBVBodyProperty {
 
@@ -259,8 +259,8 @@ class OMBVPlaneProperty : public OMBVObjectProperty {
 class OpenMBVRigidBodyChoiceProperty : public Property {
   public:
     OpenMBVRigidBodyChoiceProperty(const std::string &name="") : Property(name) { }
-    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
-    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
+//    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
+//    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
 };
 
 #endif

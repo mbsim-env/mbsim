@@ -392,7 +392,8 @@ OpenMBVRigidBodyChoiceContextMenu::OpenMBVRigidBodyChoiceContextMenu(Property *p
     actionGroup->addAction(action);
     addAction(action);
     actions[action]=i;
-    if(property->getProperty()->getName()==factory.getName(i))
+    //if(property->getProperty()->getName()==factory.getName(i))
+    if(property->getName()==factory.getName(i))
       action->setChecked(true);
   }
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setOpenMBVRigidBody(QAction*)));
@@ -400,12 +401,24 @@ OpenMBVRigidBodyChoiceContextMenu::OpenMBVRigidBodyChoiceContextMenu(Property *p
 
 void OpenMBVRigidBodyChoiceContextMenu::setOpenMBVRigidBody(QAction *action) {
   int i = actions[action];
-  string ID =  static_cast<OMBVBodyProperty*>(property->getProperty())->getID();
-  delete property->getProperty();
+  string ID =  static_cast<OMBVBodyProperty*>(property)->getID();
 
   OMBVBodyFactory factory;
   OMBVBodyProperty* body = factory.createBody(i,ID);
-  property->setProperty(body);
-  mw->changePropertyItem(body);
+  property->getParent()->setProperty(body);
+  mw->changePropertyItem2(body);
   mw->mbsimxml(1);
+  delete property;
 }
+
+//void OpenMBVRigidBodyChoiceContextMenu::setOpenMBVRigidBody(QAction *action) {
+//  int i = actions[action];
+//  string ID =  static_cast<OMBVBodyProperty*>(property->getProperty())->getID();
+//  delete property->getProperty();
+//
+//  OMBVBodyFactory factory;
+//  OMBVBodyProperty* body = factory.createBody(i,ID);
+//  property->setProperty(body);
+//  mw->changePropertyItem(body);
+//  mw->mbsimxml(1);
+//}

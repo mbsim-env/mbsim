@@ -144,6 +144,12 @@ class FunctionFactory2 : public FunctionFactory {
     FunctionProperty* createFunction(int i); 
 };
 
+class FunctionFactory3 : public FunctionFactory {
+  public:
+    FunctionFactory3();
+    FunctionProperty* createFunction(int i); 
+};
+
 class VariableFactory {
   protected:
     std::vector<std::string> names;

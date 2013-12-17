@@ -104,7 +104,7 @@ class ScaledFunctionProperty : public FunctionProperty {
   public:
     ScaledFunctionProperty();
     virtual Property* clone() const {return new ScaledFunctionProperty(*this);}
-    int getArg1Size() const;
+    int getArgSize(int i=0) const;
     inline std::string getType() const { return "ScaledFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -146,17 +146,15 @@ class VectorValuedFunctionProperty : public FunctionProperty {
 class NestedFunctionProperty : public FunctionProperty {
   public:
     //NestedFunctionProperty(const std::string &ext, const std::vector<Property*> &property);
-    NestedFunctionProperty(PropertyFactory *factoryo, PropertyFactory *factoryi);
+    NestedFunctionProperty(const std::string &name);
     virtual Property* clone() const {return new NestedFunctionProperty(*this);}
-    int getArg1Size() const;
+    int getArgSize(int i=0) const;
     inline std::string getType() const { return "NestedFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-  protected:
-    std::string ext;
-    ExtProperty fo, fi;
+    void update();
 };
 
 class PiecewiseDefinedFunctionProperty : public FunctionProperty {
@@ -178,8 +176,9 @@ class SymbolicFunctionProperty : public FunctionProperty {
   public:
     SymbolicFunctionProperty(const std::string &name, const std::vector<std::string> &var, int m);
     virtual Property* clone() const {return new SymbolicFunctionProperty(*this);}
-    int getArg1Size() const;
-    int getArg2Size() const;
+    int getArgSize(int i=0) const;
+    void resizeArg(int i, int size);
+    void resizeRet(int size);
     const std::string& getValue() const {return f->getValue();}
     inline std::string getType() const { return "SymbolicFunction"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);

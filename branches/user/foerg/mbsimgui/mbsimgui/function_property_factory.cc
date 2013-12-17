@@ -100,8 +100,8 @@ Property* TranslationPropertyFactory2::createProperty(int i) {
 //    return new LinearTranslationProperty(3,1);
   if(i==9)
     return new SymbolicFunctionProperty("VV",vector<string>(1,"q"),3);
-  if(i==10)
-    return new NestedFunctionProperty(new TranslationPropertyFactory2, new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")));
+//  if(i==10)
+//    return new NestedFunctionProperty(new TranslationPropertyFactory2, new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")));
 }
 
 vector<string> TranslationPropertyFactory2::getNames() {
@@ -123,8 +123,8 @@ vector<string> TranslationPropertyFactory2::getNames() {
 Property* TranslationPropertyFactory3::createProperty(int i) {
   if(i==0)
     return new VectorValuedFunctionProperty;
-  if(i==1)
-    return new NestedFunctionProperty(new TranslationPropertyFactory2, new FunctionPropertyFactory2);
+//  if(i==1)
+//    return new NestedFunctionProperty(new TranslationPropertyFactory2, new FunctionPropertyFactory2);
   if(i==2)
     return new SymbolicFunctionProperty("VS",vector<string>(1,"t"),3);
   if(i==3)
@@ -167,8 +167,8 @@ Property* RotationPropertyFactory2::createProperty(int i) {
     return new RotationAboutAxesXYZProperty;
   if(i==7)
     return new RotationAboutFixedAxisProperty;
-  if(i==8)
-    return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
+//  if(i==8)
+//    return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
   if(i==9)
     return new SymbolicFunctionProperty("MV",vector<string>(1,"q"),1);
 }
@@ -189,8 +189,8 @@ vector<string> RotationPropertyFactory2::getNames() {
 }
 
 Property* RotationPropertyFactory3::createProperty(int i) {
-  if(i==0)
-    return new NestedFunctionProperty(new RotationPropertyFactory2, new FunctionPropertyFactory2);
+//  if(i==0)
+//    return new NestedFunctionProperty(new RotationPropertyFactory2, new FunctionPropertyFactory2);
   if(i==1)
     return new SymbolicFunctionProperty("MS",vector<string>(1,"t"),1);
 }
