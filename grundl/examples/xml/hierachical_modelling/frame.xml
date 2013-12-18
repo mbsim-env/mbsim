@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<frame xmlns="http://mbsim.berlios.de/MBSim">
-  <Frame name="P2"/>
-  <position>[0;h1/2;0]</position>
-  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-</frame>
