@@ -1,0 +1,322 @@
+<Group name="B" xmlns="http://mbsim.berlios.de/MBSim">
+  <frames>
+  </frames>
+  <contours>
+  </contours>
+  <groups>
+  </groups>
+  <objects>
+    <RigidBody name="S1" xmlns="http://mbsim.berlios.de/MBSim">
+      <initialGeneralizedPosition>pi/2</initialGeneralizedPosition>
+      <frameOfReference ref="../../Object[Carrier]/Frame[FB]"/>
+      <frameForKinematics ref="Frame[F1]"/>
+      <mass>pi*r^2*y*rho</mass>
+      <inertiaTensor>[1/2*(pi*r^2*y*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2, 0; 0, 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2]</inertiaTensor>
+      <translation>
+      </translation>
+      <rotation>
+        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </rotation>
+      <frames>
+        <frame>
+          <Frame name="F1">
+            <enableOpenMBV> 
+              <size>frameSize</size>
+              <offset>1.</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[C]"/> 
+          <position>[-y/2; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="F2">
+            <enableOpenMBV> 
+              <size>frameSize</size>
+              <offset>1.</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[C]"/> 
+          <position>[0; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="F3">
+            <enableOpenMBV> 
+              <size>frameSize</size>
+              <offset>1.</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[C]"/> 
+          <position>[y/2; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours>
+        <contour xmlns="http://mbsim.berlios.de/MBSim">
+          <Line name="CSide"/>
+          <frameOfReference ref="Frame[C]"/> 
+          <position>[0;r;0]</position>
+          <orientation>rotateAboutZ(pi/2)</orientation>
+        </contour>
+      </contours>
+      <openMBVRigidBody> 
+        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <initialTranslation>[0; 0; 0]</initialTranslation>
+          <initialRotation>[0; -pi/2; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>r</baseRadius>
+          <topRadius>r</topRadius>
+          <height>y</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
+        <frameOfReference ref="Frame[F1]"/> 
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC> 
+        <size>frameSize</size>
+        <offset>1.</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+    <embed count="3" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <RigidBody name="S{nr+1}" xmlns="http://mbsim.berlios.de/MBSim">
+        <initialGeneralizedPosition>-pi/2</initialGeneralizedPosition>
+        <frameOfReference ref="../Object[S1]/Frame[F{nr}]"/>
+        <frameForKinematics ref="Frame[F1]"/>
+        <mass>pi*r^2*c*x*rho</mass>
+        <inertiaTensor>[1/2*(pi*r^2*c*x*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*c*x*rho)*r^2+1/12*(pi*r^2*c*x*rho)*(c*x)^2, 0; 0, 0, 1/4*(pi*r^2*c*x*rho)*r^2+1/12*(pi*r^2*c*x*rho)*(c*x)^2]</inertiaTensor>
+        <translation>
+        </translation>
+        <rotation>
+          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+            <axisOfRotation>[0; 0; 1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </rotation>
+        <frames>
+          <frame>
+            <Frame name="F1">
+              <enableOpenMBV> 
+                <size>frameSize</size>
+                <offset>1.</offset>
+              </enableOpenMBV>
+            </Frame>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[-c*x/2; 0; 0]</position>
+            <orientation>eye(3)</orientation>
+          </frame>
+          <frame>
+            <Frame name="F2">
+              <enableOpenMBV> 
+                <size>frameSize</size>
+                <offset>1.</offset>
+              </enableOpenMBV>
+            </Frame>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[c*x/2; 0; 0]</position>
+            <orientation>eye(3)</orientation>
+          </frame>
+        </frames>
+        <contours>
+        </contours>
+        <openMBVRigidBody> 
+          <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+            <initialTranslation>[0; 0; 0]</initialTranslation>
+            <initialRotation>[0; -pi/2; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>r</baseRadius>
+            <topRadius>r</topRadius>
+            <height>c*x</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <frameOfReference ref="Frame[F1]"/> 
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC> 
+          <size>frameSize</size>
+          <offset>1.</offset>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+    </embed>
+    <embed count="4" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <RigidBody name="S{nr+4}" xmlns="http://mbsim.berlios.de/MBSim">
+        <initialGeneralizedPosition>[1;-1;1;-1](nr)*atan(hy/hx)</initialGeneralizedPosition>
+        <frameOfReference ref="../Object[S{[2;3;3;4](nr)}]/Frame[F2]"/>
+        <frameForKinematics ref="Frame[F1]"/>
+        <mass>pi*r^2*h*rho</mass>
+        <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
+        <translation>
+        </translation>
+        <rotation>
+          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+            <axisOfRotation>[0; 0; 1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </rotation>
+        <frames>
+          <frame>
+            <Frame name="F1">
+              <enableOpenMBV> 
+                <size>frameSize</size>
+                <offset>1.</offset>
+              </enableOpenMBV>
+            </Frame>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[-h/2; 0; 0]</position>
+            <orientation>eye(3)</orientation>
+          </frame>
+          <frame>
+            <Frame name="F2">
+              <enableOpenMBV> 
+                <size>frameSize</size>
+                <offset>1.</offset>
+              </enableOpenMBV>
+            </Frame>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[h/2; 0; 0]</position>
+            <orientation>eye(3)</orientation>
+          </frame>
+        </frames>
+        <contours>
+        </contours>
+        <openMBVRigidBody> 
+          <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+            <initialTranslation>[0; 0; 0]</initialTranslation>
+            <initialRotation>[0; -pi/2; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>r</baseRadius>
+            <topRadius>r</topRadius>
+            <height>h</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <frameOfReference ref="Frame[F1]"/> 
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC> 
+          <size>frameSize</size>
+          <offset>1.</offset>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+    </embed>
+    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <RigidBody name="S{[9,10](nr)}" xmlns="http://mbsim.berlios.de/MBSim">
+        <initialGeneralizedPosition>pi/2-atan(hy/hx)</initialGeneralizedPosition>
+        <frameOfReference ref="../Object[S{[5;7](nr)}]/Frame[F2]"/>
+        <frameForKinematics ref="Frame[F1]"/>
+        <mass>pi*r^2*(c*y/4)*rho</mass>
+        <inertiaTensor>[1/2*(pi*r^2*(c*y/4)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2, 0; 0, 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2]</inertiaTensor>
+        <translation>
+        </translation>
+        <rotation>
+          <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+            <axisOfRotation>[0; 0; 1]</axisOfRotation>
+          </RotationAboutFixedAxis>
+        </rotation>
+        <frames>
+          <frame>
+            <Frame name="F1">
+              <enableOpenMBV> 
+                <size>frameSize</size>
+                <offset>1.</offset>
+              </enableOpenMBV>
+            </Frame>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[-(c*y/4)/2; 0; 0]</position>
+            <orientation>eye(3)</orientation>
+          </frame>
+          <frame>
+            <Frame name="F2">
+              <enableOpenMBV> 
+                <size>frameSize</size>
+                <offset>1.</offset>
+              </enableOpenMBV>
+            </Frame>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[(c*y/4)/2; 0; 0]</position>
+            <orientation>eye(3)</orientation>
+          </frame>
+        </frames>
+        <contours>
+          <contour xmlns="http://mbsim.berlios.de/MBSim">
+            <Line name="CSide"/>
+            <frameOfReference ref="Frame[C]"/> 
+            <position>[0;-r;0]</position>
+            <orientation>rotateAboutZ(-pi/2)</orientation>
+          </contour>
+        </contours>
+        <openMBVRigidBody> 
+          <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+            <initialTranslation>[0; 0; 0]</initialTranslation>
+            <initialRotation>[0; -pi/2; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>r</baseRadius>
+            <topRadius>r</topRadius>
+            <height>(c*y/4)</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <frameOfReference ref="Frame[F1]"/> 
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC> 
+          <size>frameSize</size>
+          <offset>1.</offset>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+    </embed>
+  </objects>
+  <links>
+    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Joint name="Constraint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
+        <force> 
+          <direction>[1, 0; 0, 1; 0, 0]</direction>
+          <generalizedForceLaw>
+            <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+          </generalizedForceLaw>
+          <generalizedImpactLaw>
+            <BilateralImpact xmlns="http://mbsim.berlios.de/MBSim"/>
+          </generalizedImpactLaw>
+        </force>
+        <connect ref1="../Object[S{[9,10](nr)}]/Frame[F2]" ref2="../Object[S{[6,8](nr)}]/Frame[F2]"/>
+      </Joint>
+    </embed>
+    <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
+      <moment> 
+        <direction>[0; 0; 1]</direction>
+        <generalizedForceLaw>
+          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+            <forceFunction>
+              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+                <stiffnessCoefficient>jc</stiffnessCoefficient>
+                <dampingCoefficient>jd</dampingCoefficient>
+              </LinearRegularizedBilateralConstraint>
+            </forceFunction>
+          </RegularizedBilateralConstraint>
+        </generalizedForceLaw>
+        <generalizedImpactLaw>
+        </generalizedImpactLaw>
+      </moment>
+      <connect ref1="../../Object[Carrier]/Frame[FB]" ref2="../Object[S1]/Frame[F1]"/>
+    </Joint>
+    <embed count="11" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Joint name="Joint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
+        <moment> 
+          <direction>[0; 0; 1]</direction>
+          <generalizedForceLaw>
+            <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <forceFunction>
+                <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+                  <stiffnessCoefficient>jc</stiffnessCoefficient>
+                  <dampingCoefficient>jd</dampingCoefficient>
+                </LinearRegularizedBilateralConstraint>
+              </forceFunction>
+            </RegularizedBilateralConstraint>
+          </generalizedForceLaw>
+          <generalizedImpactLaw>
+          </generalizedImpactLaw>
+        </moment>
+        <connect ref1="../Object[S{[1,1,1,2,3,3,4,5,6,7,8](nr)}]/Frame[F{[1,2,3,2,2,2,2,2,2,2,2](nr)}]" ref2="../Object[S{[2,3,4,5,6,7,8,9,9,10,10](nr)}]/Frame[F{[1,1,1,1,1,1,1,1,2,1,2](nr)}]"/>
+      </Joint>
+    </embed>
+  </links>
+</Group>
+
