@@ -1,0 +1,28 @@
+<!--
+   -<TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+   -  <startTime>0</startTime>
+   -  <endTime>1</endTime>
+   -  <plotStepSize>1./16384.</plotStepSize>
+   -  <stepSize>1./16384./20.</stepSize>
+   -</TimeSteppingIntegrator>
+   -
+   -->
+<TimeSteppingSSCIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <startTime>0</startTime>
+  <endTime>2</endTime>
+  <plotStepSize>1./16384</plotStepSize>
+  <initialStepSize>1/16384/20</initialStepSize>
+  <maximalStepSize>1e-2</maximalStepSize>
+  <minimalStepSize>1/16384/200</minimalStepSize>
+  <maximalOrder>
+    <order>2</order>
+    <method>
+      <extrapolation/>
+    </method>
+  </maximalOrder>
+  <absoluteTolerance>1e-6</absoluteTolerance>
+  <relativeTolerance>1e-6</relativeTolerance>
+  <advancedOptions>
+    <!--<deactivateSSC>true</deactivateSSC>-->
+  </advancedOptions>
+</TimeSteppingSSCIntegrator>
