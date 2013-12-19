@@ -464,8 +464,6 @@ SphereProperty::SphereProperty(const string &name, const std::string &ID) : OMBV
 
 TiXmlElement* SphereProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *ele0 = OMBVBodyProperty::initializeUsingXML(element);
-  cout << element->ValueStr() << endl;
-  cout << ele0->ValueStr() << endl;
   TiXmlElement *ele1 = element->FirstChildElement(OPENMBVNS"radius");
   property[5]->initializeUsingXML(ele1);
   return element;

@@ -93,6 +93,7 @@ class MatProperty : public PhysicalProperty {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     int rows() const {return value.size();}
     int cols() const {return value[0].size();}
+    int size(int i=0) { return (i==0)?rows():cols(); }
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     Widget* createWidget() { return new MatWidget(this); }
@@ -248,11 +249,11 @@ class SymMatPropertyFactory: public MatPropertyFactory {
 class VariableProperty : public PhysicalProperty {
 
   protected:
-    std::vector<Property*> property;
+    std::vector<PhysicalProperty*> property;
     int index;
     std::vector<std::string> name;
   public:
-    VariableProperty(const std::string &name, std::vector<Property*> property_=std::vector<Property*>(0), int index_=0) : PhysicalProperty(name), property(property_), index(index_) { }
+    VariableProperty(const std::string &name, std::vector<PhysicalProperty*> property_=std::vector<PhysicalProperty*>(0), int index_=0) : PhysicalProperty(name), property(property_), index(index_) { }
     const std::string& getValue() const {return property[index]->getValue();}
     const std::string& getUnit() const {return property[index]->getUnit();}
     const std::string& getEvaluation() const {return property[index]->getEvaluation();}
@@ -265,7 +266,8 @@ class VariableProperty : public PhysicalProperty {
     int getIndex() const { return index; }
     void setIndex(int index_) { index = index_; }
     const std::string& getName(int i) const { return name[i]; }
-    int getSize() const { return name.size(); }
+    int getNumberOfInputs() const { return name.size(); }
+    int size(int i=0) { return property[index]->size(i); }
 };
 
 class Scalar_Property : public VariableProperty {

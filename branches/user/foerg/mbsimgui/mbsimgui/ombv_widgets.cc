@@ -370,7 +370,6 @@ void OpenMBVRigidBodyChoiceWidget::toProperty(Property *property) {
 //  int i = comboBox->currentIndex();
 //  string ID =  static_cast<OMBVBodyProperty*>(property)->getID();
 //  Property *parent = property->getParent();
-//  delete property;
 //  if(i==0)
 //    parent->setProperty(new CubeProperty("Cube",ID));
 //  else if(i==1)
@@ -387,38 +386,36 @@ OpenMBVRigidBodyChoiceContextMenu::OpenMBVRigidBodyChoiceContextMenu(Property *p
   OMBVBodyFactory factory;
   QActionGroup *actionGroup = new QActionGroup(this);
   for(int i=0; i<factory.size(); i++) {
-    QAction *action=new QAction(QString::fromStdString(factory.getName(i)), this);
+    QAction *action=new QAction(QString::fromStdString("Set "+factory.getName(i)), this);
     action->setCheckable(true);
     actionGroup->addAction(action);
     addAction(action);
     actions[action]=i;
-    //if(property->getProperty()->getName()==factory.getName(i))
-    if(property->getName()==factory.getName(i))
+    if(property->getProperty()->getName()==factory.getName(i))
+    //if(property->getName()==factory.getName(i))
       action->setChecked(true);
   }
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setOpenMBVRigidBody(QAction*)));
 }
 
-void OpenMBVRigidBodyChoiceContextMenu::setOpenMBVRigidBody(QAction *action) {
-  int i = actions[action];
-  string ID =  static_cast<OMBVBodyProperty*>(property)->getID();
-
-  OMBVBodyFactory factory;
-  OMBVBodyProperty* body = factory.createBody(i,ID);
-  property->getParent()->setProperty(body);
-  mw->changePropertyItem2(body);
-  mw->mbsimxml(1);
-  delete property;
-}
-
 //void OpenMBVRigidBodyChoiceContextMenu::setOpenMBVRigidBody(QAction *action) {
 //  int i = actions[action];
-//  string ID =  static_cast<OMBVBodyProperty*>(property->getProperty())->getID();
-//  delete property->getProperty();
+//  string ID =  static_cast<OMBVBodyProperty*>(property)->getID();
 //
 //  OMBVBodyFactory factory;
 //  OMBVBodyProperty* body = factory.createBody(i,ID);
-//  property->setProperty(body);
-//  mw->changePropertyItem(body);
+//  property->getParent()->setProperty(body);
+//  mw->changePropertyItem2(body);
 //  mw->mbsimxml(1);
 //}
+
+void OpenMBVRigidBodyChoiceContextMenu::setOpenMBVRigidBody(QAction *action) {
+  int i = actions[action];
+  string ID =  static_cast<OMBVBodyProperty*>(property->getProperty())->getID();
+
+  OMBVBodyFactory factory;
+  OMBVBodyProperty* body = factory.createBody(i,ID);
+  property->setProperty(body);
+  mw->changePropertyItem(body);
+  mw->mbsimxml(1);
+}

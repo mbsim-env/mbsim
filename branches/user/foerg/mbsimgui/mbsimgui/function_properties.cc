@@ -30,7 +30,7 @@
 #include <QSpinBox>
 #include "mainwindow.h"
 #include <mbxmlutils/octeval.h>
-#include <boost/bind.hpp>
+//#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -371,7 +371,7 @@ void VectorValuedFunctionProperty::toWidget(QWidget *widget) {
 //}
 
 NestedFunctionProperty::NestedFunctionProperty(const string &name) : FunctionProperty(name) {
-  Property *outer = new Property("outerFunction");
+  Property *outer = new FunctionChoiceProperty("outerFunction");
   addProperty(outer);
   FunctionFactory1 *factory1 = new FunctionFactory1;
   FunctionProperty *function = factory1->createFunction(0);
@@ -385,10 +385,8 @@ NestedFunctionProperty::NestedFunctionProperty(const string &name) : FunctionPro
   function->setFactory(factory2);
   inner->addProperty(function);
 
-  outer->sendSignal = boost::bind(&NestedFunctionProperty::update, this);
-//  outer->addPropertyToUpdate(inner);
-//  fo.setProperty(new ChoiceProperty2(factoryo,MBSIMNS"outerFunction",0));
-//  fi.setProperty(new ChoiceProperty2(factoryi,MBSIMNS"innerFunction",0));
+//  outer->sendSignal = boost::bind(&NestedFunctionProperty::update, this);
+//  outer->setSignal(boost::bind(&NestedFunctionProperty::update, this));
 }
 
 int NestedFunctionProperty::getArgSize(int i) const {
@@ -427,6 +425,8 @@ void NestedFunctionProperty::toWidget(QWidget *widget) {
 }
 
 void NestedFunctionProperty::update() {
+  cout << "NestedFunctionProperty::update" << endl;
+  FunctionProperty::update();
   static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->resizeRet(static_cast<FunctionProperty*>(property[0]->getProperty(0))->getArgSize(0));
   static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->resizeArg(0,static_cast<FunctionProperty*>(property[0]->getProperty(0))->getArgSize());
 }

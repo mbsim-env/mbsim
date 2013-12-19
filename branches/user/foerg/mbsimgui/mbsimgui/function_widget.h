@@ -58,5 +58,16 @@ class FunctionChoiceContextMenu : public PropertyContextMenu {
     void setFunction(QAction*);
 };
 
+class FunctionChoiceContextMenu2 : public PropertyContextMenu {
+
+  Q_OBJECT
+  public:
+    FunctionChoiceContextMenu2(Property *property, QWidget * parent = 0, bool removable=false);
+  protected:
+    std::map<QAction*,int> actions;
+  protected slots:
+    void setFunction(QAction*);
+};
+
 
 #endif

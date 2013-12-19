@@ -956,7 +956,7 @@ VariableChoiceContextMenu::VariableChoiceContextMenu(VariableProperty *property,
 //  name.push_back("cardan");
 //  name.push_back("plain");
   QActionGroup *actionGroup = new QActionGroup(this);
-  for(int i=0; i<property->getSize(); i++) {
+  for(int i=0; i<property->getNumberOfInputs(); i++) {
     QAction *action=new QAction(QString::fromStdString(property->getName(i)), this);
     action->setCheckable(true);
     actionGroup->addAction(action);

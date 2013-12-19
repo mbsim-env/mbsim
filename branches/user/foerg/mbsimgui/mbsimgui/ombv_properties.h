@@ -260,7 +260,7 @@ class OpenMBVRigidBodyChoiceProperty : public Property {
   public:
     OpenMBVRigidBodyChoiceProperty(const std::string &name="") : Property(name) { }
 //    Widget* createWidget() { return new OpenMBVRigidBodyChoiceWidget; }
-//    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
+    QMenu* createContextMenu() { return new OpenMBVRigidBodyChoiceContextMenu(this); }
 };
 
 #endif

@@ -226,7 +226,6 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   ele1 = element->FirstChildElement( MBSIMNS"openMBVRigidBody" );
   if(ele1) {
     OMBVBodyFactory factory;
-    delete property[io]->getProperty();
     property[io]->setProperty(factory.createBody(ele1->FirstChildElement(),ID));
     property[io]->initializeUsingXML(ele1->FirstChildElement());
     property[io]->setDisabled(false);
