@@ -12,6 +12,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/cube.h"
+#include <openmbvcppinterface/arrow.h> // Contact
 #endif
 
 using namespace MBSimFlexibleBody;
@@ -127,6 +128,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
     contact[k]->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
+    OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
+    //a_n->setHeadDiameter(tP*0.05);
+    //a_n->setHeadLength(tP*0.07);
+    //a_n->setDiameter(tP*0.02);
+    //a_n->setScaleLength(tP*0.1);
+    //a_n->setEnable(false);
+    contact[k]->setOpenMBVNormalForceArrow(a_n);
+    OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
+    //a_t->setHeadDiameter(tP*0.05);
+    //a_t->setHeadLength(tP*0.07);
+    //a_t->setDiameter(tP*0.02);
+    //a_t->setScaleLength(tP*0.1);
+    //a_t->setEnable(false);
+    contact[k]->setOpenMBVFrictionArrow(a_t);
+    contact[k]->enableOpenMBVContactPoints();
+
     this->addLink(contact[k]);
   }
 

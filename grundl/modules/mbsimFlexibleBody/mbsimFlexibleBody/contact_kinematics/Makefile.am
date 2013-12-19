@@ -4,7 +4,8 @@ libcontactkinematics_la_SOURCES = circlehollow_cylinderflexible.cc\
 																	circlesolid_flexibleband.cc\
 																	point_cylinderflexible.cc\
 																	point_flexibleband.cc\
-																	point_nurbsdisk2s.cc
+																	point_nurbsdisk2s.cc\
+																	point_contour2s.cc
 
 
 contactkinematicsincludedir = $(includedir)/mbsimFlexibleBody/contact_kinematics
@@ -17,5 +18,6 @@ contactkinematicsinclude_HEADERS = circlehollow_cylinderflexible.h\
 																	 circlesolid_flexibleband.h\
 																	 point_cylinderflexible.h\
 																	 point_flexibleband.h\
-																	 point_nurbsdisk2s.h
+																	 point_nurbsdisk2s.h\
+																	 point_contour2s.h
 

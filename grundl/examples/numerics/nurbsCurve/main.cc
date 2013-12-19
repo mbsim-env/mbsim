@@ -17,14 +17,14 @@ int main(int argc, char* argv[]) {
 
 
 
-#ifdef HAVE_NURBS
+//#ifdef HAVE_NURBS
 
   cout << setprecision(3) << fixed << scientific;
 
   StopWatch sw;
 
   int degU = 3;
-  int Elements = 30;
+  int Elements = 10;
   int uPoints = 100;
 
   double radius = 1;
@@ -33,6 +33,11 @@ int main(int argc, char* argv[]) {
   MatVx3 pointsClosed(Elements, INIT, 0.);
   std::vector<double> uvec;
   std::vector<double> uvecClosed;
+
+  GeneralMatrix<Vec3> GM(3,4);
+  GM(0,0) = Vec3("[1; 2; 3]");
+  GM(2,2) = Vec3("[3; 3; 3]");
+  cout << GM(2,2);
 
   for (int i = 0; i < Elements; i++) {
     double phi = i * M_PI / Elements;
@@ -48,7 +53,7 @@ int main(int argc, char* argv[]) {
     uvecClosed.push_back(((double) i) / (Elements - 1));
   }
 
-  if(0) {
+  if(1) {
     cout << "Original Points: " << endl;
     ostringstream xStream;
     xStream << " x = [";
@@ -179,20 +184,20 @@ int main(int argc, char* argv[]) {
     cout << x.str() << y.str();
   }
 
-  if(0) {
+  if(1) {
     cout << "Control Points Open:" << endl;
     cout << "PLIB " << plcurve.ctrlPnts() << endl;
     cout << "MBSIM " << mbsimcurve.ctrlPnts() << endl;
   }
 
-  if(0) {
+  if(1) {
     cout << "Control Points Closed:" << endl;
     cout << "PLIB " << plcurveClosed.ctrlPnts() << endl;
     cout << "MBSIM " << mbsimcurveClosed.ctrlPnts() << endl;
   }
 
 
-  if(0) {
+  if(1) {
     cout << "Error in Control-Points Open" << endl;
     for(int i = 0; i < Elements; i++) {
       for(int j = 0; j < 4; j++) {
@@ -202,7 +207,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  if(0) {
+  if(1) {
     cout << "Error in Control-Points Closed" << endl;
     for(int i = 0; i < Elements; i++) {
       for(int j = 0; j < 4; j++) {
@@ -212,7 +217,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  if(0) {
+  if(1) {
     for(int degDer = 0; degDer < 3; degDer++) {
       cout << "Comparing derivatives Open with degree = " << degDer << endl;
       for (double u = uvec[0]; u < uvec[uvec.size() - 1]; u += 1e-2) {
@@ -224,7 +229,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  if(0) {
+  if(1) {
   cout << "Normals-Error: " << endl;
 
   for (double u = uvec[0]; u < uvec[uvec.size() - 1]; u += 1e-2) {
@@ -233,9 +238,9 @@ int main(int argc, char* argv[]) {
     << fabs(mbsimcurve.normal(u, Vec3("[0;0;1]"))(2) - plcurve.normal(u,Point3Dd(0,0,1)).z()) << endl;
   }
   }
-#else
-  cout << "This examples only works with a installed nurbs-library..." << endl;
-#endif
+//#else
+//  cout << "This examples only works with a installed nurbs-library..." << endl;
+//#endif
 
   return 0;
 

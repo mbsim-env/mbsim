@@ -23,6 +23,11 @@
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsim/contour.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_factory.h"
+#endif
+
 namespace MBSimFlexibleBody {
 
   /**
@@ -39,12 +44,15 @@ namespace MBSimFlexibleBody {
        * \param name of contour
        */
       FlexibleBand(const std::string& name);
+      FlexibleBand(const std::string& name, bool openStructure_);
 
       /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBand"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
+      virtual void init(MBSim::InitStage stage);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::FrameFeature ff);   
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual fmatvec::Vec3 computePosition(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::position_cosy); return cp.getFrameOfReference().getPosition(); }
@@ -52,8 +60,11 @@ namespace MBSimFlexibleBody {
       /***************************************************/
       
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::position); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::firstTangent); }
+//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::position); }
+//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::firstTangent); }
+      // they are the same as the original ones.
+//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { neutral->updateKinematicsForFrame(cp, MBSim::position); }
+//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { neutral->updateKinematicsForFrame(cp, MBSim::firstTangent); }
       /***************************************************/
       
       /* GETTER / SETTER */
@@ -72,6 +83,17 @@ namespace MBSimFlexibleBody {
        */
       double getNormalDistance() {return nDist;};
       double getWidth() const; 
+
+      bool isOpenStructure() const { return openStructure; }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body, Contour1sNeutralFactory * openMBVneutralFibre_) { openMBVBody=body; openMBVNeturalFibre = openMBVneutralFibre_;}
+#endif
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
+      OpenMBV::Body* getOpenMBVBody() { return openMBVBody; }
+#endif
       /***************************************************/
 
     private:
@@ -89,6 +111,24 @@ namespace MBSimFlexibleBody {
        * \brief distance from the referencing neutral fibre in direction of given normal
        */
       double nDist; 
+
+      /**
+       * \brief open or closed beam structure
+       */
+      bool openStructure;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Body* openMBVBody;
+      OpenMBV::Group* openMBVGrp;
+#endif
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /*!
+       * \brief contour for the spine extrusion
+       */
+      Contour1sNeutralFactory* openMBVNeturalFibre;
+#endif
+
   };
 
   inline void FlexibleBand::setWidth(double width_) { width = width_; }

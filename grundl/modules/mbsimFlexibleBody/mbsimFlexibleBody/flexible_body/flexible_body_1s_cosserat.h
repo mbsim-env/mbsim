@@ -18,6 +18,7 @@
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_rotation.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
+
 #endif
 
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
@@ -39,7 +40,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-
+  class Contour1sNeutralCosserat;
   class FlexibleBody1sCosserat: public FlexibleBodyContinuum<double>{
     public:
 
@@ -100,12 +101,13 @@ namespace MBSimFlexibleBody {
       void setCuboid(double cuboidBreadth_,double cuboidHeight_);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body, Contour1sNeutralCosserat * openMBVneutralFibre_) { openMBVBody=body; openMBVNeturalFibre = openMBVneutralFibre_;}
 #endif
 
-      int getNumberElements() const { return Elements; }
-      double getLength() const { return L; }
-      bool isOpenStructure() const { return openStructure; }
+      virtual int getNumberOfElementDOF() const {throw MBSim::MBSimError("ERROR(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");}
+      virtual int getNumberElements() const { return Elements; }
+      virtual double getLength() const { return L; }
+      virtual bool isOpenStructure() const { return openStructure; }
       /***************************************************/
 
       /**
@@ -125,6 +127,14 @@ namespace MBSimFlexibleBody {
        */
       virtual void initInfo()=0;
 
+      /**
+       * \brief detect current finite element (translation)
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      virtual void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation) = 0;
+
     protected:
 
       /**
@@ -143,16 +153,9 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::Vec> uRotationElement;
 
       /**
-       * \brief contours
-       */
-      CylinderFlexible *cylinder;
-      FlexibleBand *top, *bottom, *left, *right;
-      Contour1sFlexible *neutralFibre;
-
-      /**
        * \brief angle parametrisation
        */
-      CardanPtr angle;
+      CardanPtr ANGLE;
 
       /**
        * \brief number of translational elements
@@ -229,23 +232,16 @@ namespace MBSimFlexibleBody {
        */
       double cuboidBreadth, cuboidHeight, cylinderRadius;
 
-      /**
-       * \brief contour for state description
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /*!
+       * \brief contour for the spine extrusion
        */
-      NurbsCurve1s *curve;
-
+      Contour1sNeutralCosserat* openMBVNeturalFibre;
+#endif
 
       FlexibleBody1sCosserat(); // standard constructor
       FlexibleBody1sCosserat(const FlexibleBody1sCosserat&); // copy constructor
       FlexibleBody1sCosserat& operator=(const FlexibleBody1sCosserat&); // assignment operator
-
-      /**
-       * \brief detect current finite element (translation)
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      virtual void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation)=0;
 
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition

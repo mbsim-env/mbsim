@@ -33,6 +33,7 @@
 #include "mbsim/contours/face.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/plane.h"
+#include "mbsim/contours/contour2s.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/contours/contour_interpolation.h"
 #include "mbsim/contours/contour_quad.h"
@@ -112,6 +113,53 @@ namespace MBSim {
       Contour1s *contour;
       Point *point;
 
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
+  };
+
+  /*!
+   * \brief root function for pairing Contour2s and Point
+   * \author Zhan Wang
+   * \date 2013-12-05
+   */
+  class FuncPairContour2sPoint : public DistanceFunction<fmatvec::Vec,fmatvec::Vec> {
+    public:
+      /**
+       * \brief constructor
+       * \param point contour
+       * \param contour contour2s surface
+       */
+      FuncPairContour2sPoint(Point* point_, Contour2s *contour_) : contour(contour_), point(point_),cp(fmatvec::VecV(2)) {}
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      fmatvec::Vec operator()(const fmatvec::Vec &alpha, const void * =NULL) {  // Vec2: U and V direction
+        fmatvec::Vec3 Wd = computeWrD(alpha);
+        fmatvec::Vec3 Wt1 = cp.getFrameOfReference().getOrientation().col(1);
+        fmatvec::Vec3 Wt2 = cp.getFrameOfReference().getOrientation().col(2);
+        fmatvec::Vec Wt(2,fmatvec::NONINIT);  // TODO:: check this?
+        Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
+        Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
+        return Wt;
+      }
+
+      fmatvec::Vec3 computeWrD(const fmatvec::Vec &alpha) {
+        cp.getLagrangeParameterPosition()(0) = alpha(0);
+        cp.getLagrangeParameterPosition()(1) = alpha(1);
+        contour->computeRootFunctionPosition(cp);
+        contour->computeRootFunctionFirstTangent(cp); // TODO:: move these two line into operator() ?? maybe not possible, as when opertor[] is called, the orientation need to be updated
+        contour->computeRootFunctionSecondTangent(cp);
+        return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
+      }
+      /*************************************************/
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour2s *contour;
+      Point *point;
       /**
        * \brief contour point data for saving old values
        */
@@ -199,7 +247,7 @@ namespace MBSim {
       Point *point;
   };
 
-  /*! 
+  /*!
    * \brief base root function for planar pairing ConeSection and Circle 
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
@@ -590,6 +638,93 @@ namespace MBSim {
       bool searchAll;
   };
 
+   /*!
+   * \brief general class for contact search with respect to two contour-parameter
+   * \author Zhan Wang
+   *
+   * General remarks:
+   * - both operators () and [] are necessary to calculate the root-function "()" and the distance of possible contact points "[]"
+   * - then it is possible to compare different root-values during
+   */
+  class Contact2sSearch {
+    public:
+      /*!
+       * \brief constructor
+       * \param root function
+       * \default numerical Jacobian evaluation
+       * \default only local search
+       */
+      Contact2sSearch(DistanceFunction<fmatvec::Vec,fmatvec::Vec> *func_) : func(func_), jac(0), s0(2), searchAll(false) {}
+
+      /*!
+       * \brief constructor
+       * \param root function
+       * \param Jacobian evaluation
+       * \default only local search
+       */
+      Contact2sSearch(DistanceFunction<fmatvec::Vec,fmatvec::Vec> *func_, Function1<fmatvec::Mat,fmatvec::Mat> *jac_) : func(func_), jac(jac_), s0(2), searchAll(false) {}
+
+      /* GETTER / SETTER */
+      void setInitialValue(const fmatvec::Vec2 &s0_ ) { s0=s0_; }
+//      void setNodes(const fmatvec::Vec &nodes_) {nodes=nodes_;}
+      void setSearchAll(bool searchAll_) { searchAll=searchAll_; }
+      /*************************************************/
+
+      /*!
+       * \brief set equally distanced nodes
+       * \param number of search areas in U direction
+       * \param number of search areas in V direction
+       * \param beginning parameter of U direction
+       * \param beginning parameter of V direction
+       * \param increment length of the U direction search
+       * \param increment length of the V direction search
+       */
+      void setEqualSpacing(const int nU, const int nV, const double U0, const double V0, const double dU, const double dV);
+
+      /*!
+       * \brief solve for the one potential contact point with minimal distance (might be negative)
+       * \return point with minimal distance at contour-parameter
+       */
+      fmatvec::Vec2 slv();
+
+//      /*!
+//       * \brief solve for all potential contact points
+//       * \return matrix holding LagrangeParameterPosition in col(0) and respective distances in col(1)
+//       */
+//      fmatvec::Mat slvAll();
+
+    protected:
+      /**
+       * \brief search all possible contact point along the V direction
+       */
+      std::vector<double> searchVdirection();
+
+    private:
+      /**
+       * \brief distance-function holding all information for contact-search
+       */
+      DistanceFunction<fmatvec::Vec,fmatvec::Vec> *func;
+
+      /**
+       * \brief Jacobian of root function part of distance function
+       */
+      Function1<fmatvec::Mat,fmatvec::Mat> *jac;  // TODO::check the template type
+
+      /**
+       * \brief initial value for Newton method
+       */
+      fmatvec::Vec2 s0;
+
+      /**
+       * nodes defining search-areas for Regula-Falsi
+       */
+      fmatvec::Vec nodesU, nodesV;
+
+      /**
+       * \brief all area searching by Regular-Falsi or known initial value for Newton-Method?
+       */
+      bool searchAll;
+  };
 }
 
 #endif /* FUNCTIONS_CONTACT_H_ */

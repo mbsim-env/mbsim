@@ -904,25 +904,25 @@ void NurbsSurface<T,N>::globalInterp(const Matrix< Point_nD<T,N> >& Q, int pU, i
   
 
   Vector< HPoint_nD<T,N> > Pts(Q.rows()) ;
-  NurbsCurve<T,N> R ;
+  NurbsCurve<T,N> RU, RV ;
   
   int i,j ;
 
   for(j=0;j<Q.cols();j++){
     for(i=0;i<Q.rows();i++)
       Pts[i] = Q(i,j) ;
-    R.globalInterpH(Pts,uk,U,pU);
+    RU.globalInterpH(Pts,uk,U,pU);
     for(i=0;i<Q.rows();i++)
-      P(i,j) = R.ctrlPnts(i) ;
+      P(i,j) = RU.ctrlPnts(i) ;
   }
 
   Pts.resize(Q.cols()) ;
   for(i=0;i<Q.rows();i++){
     for(j=0;j<Q.cols();j++)
       Pts[j] = P(i,j) ;
-    R.globalInterpH(Pts,vk,V,pV) ;
+    RV.globalInterpH(Pts,vk,V,pV) ;
     for(j=0;j<Q.cols();j++)
-      P(i,j) = R.ctrlPnts(j) ;
+      P(i,j) = RV.ctrlPnts(j) ;
   }
 }
 
@@ -948,25 +948,25 @@ void NurbsSurface<T,N>::globalInterpH(const Matrix< HPoint_nD<T,N> >& Q, int pU,
   
 
   Vector< HPoint_nD<T,N> > Pts(Q.rows()) ;
-  NurbsCurve<T,N> R ;
+  NurbsCurve<T,N> RU, RV ;
   
   int i,j ;
 
   for(j=0;j<Q.cols();j++){
     for(i=0;i<Q.rows();i++)
       Pts[i] = Q(i,j) ;
-    R.globalInterpH(Pts,uk,U,pU);
+    RU.globalInterpH(Pts,uk,U,pU);
     for(i=0;i<Q.rows();i++)
-      P(i,j) = R.ctrlPnts(i) ;
+      P(i,j) = RU.ctrlPnts(i) ;
   }
 
   Pts.resize(Q.cols()) ;
   for(i=0;i<Q.rows();i++){
     for(j=0;j<Q.cols();j++)
       Pts[j] = P(i,j) ;
-    R.globalInterpH(Pts,vk,V,pV) ;
+    RV.globalInterpH(Pts,vk,V,pV) ;
     for(j=0;j<Q.cols();j++)
-      P(i,j) = R.ctrlPnts(j) ;
+      P(i,j) = RV.ctrlPnts(j) ;
   }
 }
 
@@ -1982,6 +1982,7 @@ HPoint_nD<T,N> NurbsSurface<T,N>::operator()(T u, T v) const{
       temp[l] += Nu[k]*P(uspan-degU+k,vspan-degV+l) ;
     }
   }
+
   HPoint_nD<T,N> sp(0,0,0,0) ;
   for(l=0;l<=degV;l++){
     sp += Nv[l]*temp[l] ;
@@ -4531,27 +4532,28 @@ void NurbsSurface<T,N>::globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q, in
 
 
   Vector< HPoint_nD<T,N> > Pts(Q.cols()) ;
-  NurbsCurve<T,N> R ;
+  NurbsCurve<T,N> RU , RV;
   
   int i,j ;
   for(i=0;i<Q.rows();i++){
     for(j=0;j<Q.cols();j++)
       Pts[j] = Q(i,j) ;
-    R.globalInterpH(Pts,vk,V,pV) ;
+    RV.globalInterpH(Pts,vk,V,pV) ;
     for(j=0;j<Q.cols();j++)
-      P(i,j) = R.ctrlPnts(j) ;
+      P(i,j) = RV.ctrlPnts(j) ;
   }
-  
+//  cout << "Plb_suface: control points after interpolating in V direction " << P << endl;
   Pts.resize(Q.rows()) ;
   for(j=0;j<Q.cols();j++){
     for(i=0;i<Q.rows();i++)
       Pts[i] = P(i,j) ;
-    
-    R.globalInterpClosedH(Pts,uk,U,pU);
+//    cout << "Plb_suface: control points for interpolating in U direction " << Pts << endl;
+    RU.globalInterpClosedH(Pts,uk,U,pU);
     for(i=0;i<Q.rows();i++)
-      P(i,j) = R.ctrlPnts(i) ;
+      P(i,j) = RU.ctrlPnts(i) ;
   }
 
+// cout << "Plb_suface: final control points for U and V direction" << P << endl;
 }
 
 /*!
@@ -4651,25 +4653,25 @@ void NurbsSurface<T,N>::globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, 
   knotAveraging(vk,pV,V) ;
   
   Vector< HPoint_nD<T,N> > Pts(Q.rows()) ;
-  NurbsCurve<T,N> R ;
+  NurbsCurve<T,N> RU, RV ;
   
   int i,j ;
 
   for(j=0;j<Q.cols();j++){
     for(i=0;i<Q.rows();i++)
       Pts[i] = Q(i,j) ;
-    R.globalInterpH(Pts,uk,U,pU);
+    RU.globalInterpH(Pts,uk,U,pU);
     for(i=0;i<Q.rows();i++)
-      P(i,j) = R.ctrlPnts(i) ;
+      P(i,j) = RU.ctrlPnts(i) ;
   }
 
   Pts.resize(Q.cols()) ;
   for(i=0;i<Q.rows();i++){
     for(j=0;j<Q.cols();j++)
       Pts[j] = P(i,j) ;
-    R.globalInterpClosedH(Pts,vk,V,pV) ;
+    RV.globalInterpClosedH(Pts,vk,V,pV) ;
     for(j=0;j<Q.cols();j++)
-      P(i,j) = R.ctrlPnts(j) ;
+      P(i,j) = RV.ctrlPnts(j) ;
   }
 }
 

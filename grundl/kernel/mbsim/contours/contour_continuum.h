@@ -71,7 +71,8 @@ namespace MBSim {
 
       protected:
         AT as, ae;
-        std::vector<AT> nodes;
+        std::vector<AT> nodes;  // stores the largrange positions of contour nodes, transfer to the Contact1sSearch: search.setNodes(band->getNodes())
+        // transNodes and rotNodes in the neutral contour factory, store index of nodes.
     };
 
 }

@@ -42,13 +42,6 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) :
       FlexibleBody1sCosserat(name, openStructure_), JInterp(false), PODreduced(false), U(), qFull(), uFull(), hFull() {
-    addContour(cylinder);
-    addContour(top);
-    addContour(bottom);
-    addContour(left);
-    addContour(right);
-    addContour(neutralFibre);
-    addContour(curve);
   }
 
   FlexibleBody1s21Cosserat::~FlexibleBody1s21Cosserat() {
@@ -220,28 +213,29 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
-      curve->updateJacobiansForFrame(cp);
-    }
-    else if (cp.getContourParameterType() == NODE) { // force on node
+//    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+//      curve->updateJacobiansForFrame(cp);
+//    }
+//    else
+    if (cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
       /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
-      Mat Jacobian_trans(qFull.size(), 3, INIT, 0.);
-      Jacobian_trans(3 * node, 0) = 1;
-      Jacobian_trans(3 * node + 1, 1) = 1;
+      Mat3xV Jacobian_trans(qFull.size(), INIT, 0.);
+      Jacobian_trans(0, 3 * node) = 1;
+      Jacobian_trans(1, 3 * node + 1) = 1;
 
-      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans.T());
+      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
     }
     else if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
       /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
-      Mat Jacobian_rot(qFull.size(), 3, INIT, 0.);
-      Jacobian_rot(3 * node + 2, 2) = 1;
+      Mat3xV Jacobian_rot(qFull.size(), INIT, 0.);
+      Jacobian_rot(2, 3 * node + 2) = 1;
 
-      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot.T());
+      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'ROTNODE'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -295,7 +289,9 @@ namespace MBSimFlexibleBody {
 
       initialised = true;
 
-      /* cylinder */
+
+      /*
+      // cylinder
       cylinder->setAlphaStart(0.);
       cylinder->setAlphaEnd(L);
 
@@ -311,7 +307,7 @@ namespace MBSimFlexibleBody {
 
       cylinder->setRadius(cylinderRadius);
 
-      /* cuboid */
+      // cuboid
       top->setCn(Vec("[1.;0.]"));
       bottom->setCn(Vec("[-1.;0.]"));
       left->setCn(Vec("[0.;-1.]"));
@@ -329,10 +325,10 @@ namespace MBSimFlexibleBody {
       right->setAlphaStart(0.);
       right->setAlphaEnd(L);
 
-      /* neutral fibre  */
-      neutralFibre->getFrame()->setOrientation(R->getOrientation());
-      neutralFibre->setAlphaStart(0.);
-      neutralFibre->setAlphaEnd(L);
+      // neutral fibre
+//      neutralFibre->getFrame()->setOrientation(R->getOrientation());
+//      neutralFibre->setAlphaStart(0.);
+//      neutralFibre->setAlphaEnd(L);
 
       if (userContourNodes.size() == 0) {
         Vec contourNodes(Elements + 1);
@@ -342,14 +338,14 @@ namespace MBSimFlexibleBody {
         bottom->setNodes(contourNodes);
         left->setNodes(contourNodes);
         right->setNodes(contourNodes);
-        neutralFibre->setNodes(contourNodes);
+//        neutralFibre->setNodes(contourNodes);
       }
       else {
         top->setNodes(userContourNodes);
         bottom->setNodes(userContourNodes);
         left->setNodes(userContourNodes);
         right->setNodes(userContourNodes);
-        neutralFibre->setNodes(userContourNodes);
+//        neutralFibre->setNodes(userContourNodes);
       }
 
       top->setWidth(cuboidBreadth);
@@ -360,6 +356,7 @@ namespace MBSimFlexibleBody {
       right->setWidth(cuboidHeight);
       left->setNormalDistance(0.5 * cuboidBreadth);
       right->setNormalDistance(0.5 * cuboidBreadth);
+      */
 
       Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
@@ -386,7 +383,7 @@ namespace MBSimFlexibleBody {
     else
       FlexibleBodyContinuum<double>::init(stage);
 
-    curve->initContourFromBody(stage);
+    //curve->initContourFromBody(stage);
   }
 
   double FlexibleBody1s21Cosserat::computePotentialEnergy() {
@@ -438,12 +435,14 @@ namespace MBSimFlexibleBody {
       qFull >> q;
       uFull >> u;
     }
+    /*
     curve->computeCurveTranslations();
     curve->computeCurveVelocities();
     if (not JInterp) {
       curve->computeCurveJacobians();
       JInterp = true;
     }
+    */
 
     FlexibleBodyContinuum<double>::updateStateDependentVariables(t); //TODO: was at first line before??
   }
@@ -583,7 +582,7 @@ namespace MBSimFlexibleBody {
     }
     BuildElements();
 
-    curve->initContourFromBody(resize);
+    //curve->initContourFromBody(resize);
   }
 
   void FlexibleBody1s21Cosserat::BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation) {

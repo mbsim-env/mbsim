@@ -820,7 +820,7 @@ void NurbsCurve<T,N>::deriveAt(T u, int d, int span, Vector< Point_nD<T,N> >& de
 template<>
 template <class T, int N>
 Point_nD<T,N> NurbsCurve<T,N>::normal(T u, const Point_nD<T,N>& v) const{
-  return crossProduct(firstDn(u),v) ;
+  return crossProduct(firstDn(u),v) ;   // this normal point inwards if  v = (0,0,1) is used for the xy-plane curve
 }
 
 /*!
@@ -3189,7 +3189,7 @@ Matrix<T> NurbsCurve<T,D>::computeInverseClosed(const Vector<T> &v, const Vector
     for(j=span-p;j<=span;j++) 
       A(i,j%(iN+1)) = (double)N[j-span+p] ;
   }
-
+//  cout << "Plb: A =" << A << endl << endl;
   Inverse = inverse(A);
 
 //  LUMatrix<T> lu(A);
@@ -6829,6 +6829,10 @@ void NurbsCurve<T,D>::globalInterpClosedH(const Vector< HPoint_nD<T,D> >& Qw,
     for(j=0;j<D+1;j++)
       P[xx.rows()+i].data[j] = (T)xx(i,j) ;
   }
+//  cout << "plb_surface: inverse =" << Inverse << endl;
+//  cout << "plb_surface: qq =" << qq << endl;
+//  cout << "plb_surface: P =" << P << endl;
+
 }
 
 /*!
@@ -6937,7 +6941,7 @@ template <class T>
 void knotAveragingClosed(const Vector<T>& uk, int deg, Vector<T>& U){
 
   U.resize(uk.n()+deg+1) ;
-
+  U.reset(0);  // the original nubrs++ did not initialize the U, and also did not set value for U[degU]
   int i, j ;
   int index;
   int iN = uk.n() - deg - 1;

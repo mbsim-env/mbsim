@@ -39,13 +39,13 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) :
       FlexibleBody1sCosserat(name, openStructure_), JTransInterp(false), I2(0.), I0(0.), R2(0.), cEps2D(0.) {
-    addContour(cylinder);
-    addContour(top);
-    addContour(bottom);
-    addContour(left);
-    addContour(right);
-    addContour(neutralFibre);
-    addContour(curve);
+//    addContour(cylinder);
+//    addContour(top);
+//    addContour(bottom);
+//    addContour(left);
+//    addContour(right);
+//    addContour(neutralFibre);
+//    addContour(curve);
   }
 
   FlexibleBody1s33Cosserat::~FlexibleBody1s33Cosserat() {
@@ -158,45 +158,56 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      double sLocalTranslation;
-      int currentElementTranslation;
-      BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
-      curve->setNormalRotationGrid(R->getOrientation() * angle->computen(q(6 * currentElementTranslation + 3, 6 * currentElementTranslation + 5))); // normal
-      curve->updateKinematicsForFrame(cp, ff);
+    /*    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+     double sLocalTranslation;
+     int currentElementTranslation;
+     BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
+     curve->setNormalRotationGrid(R->getOrientation() * angle->computen(q(6 * currentElementTranslation + 3, 6 * currentElementTranslation + 5))); // normal
+     curve->updateKinematicsForFrame(cp, ff);
 
-      Vec3 phiTmp;
-      if (ff == firstTangent || ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0), q); // interpolate angles linearly
+     Vec3 phiTmp;
+     if (ff == firstTangent || ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+     phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0), q); // interpolate angles linearly
 
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(phiTmp)); // tangent
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * angle->computen(phiTmp)); // normal
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
-    }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
-      int node = cp.getNodeNumber(); // TODO open structure different?
-
-      Vec3 angles(computeAngles(node * l0, q));
-      Vec3 omega(computeAngles(node * l0, u));
-
+     if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+     cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(phiTmp)); // tangent
+     if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+     cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * angle->computen(phiTmp)); // normal
+     if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+     cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
+     }
+     else*/
+    if (cp.getContourParameterType() == NODE) { // frame on node
+      int node = cp.getNodeNumber();
       if (ff == position || ff == position_cosy || ff == all)
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * q(6 * node + 0, 6 * node + 2));
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(angles)); // tangent
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * angle->computen(angles)); // normal
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
       if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
         cp.getFrameOfReference().setVelocity(R->getOrientation() * u(6 * node + 0, 6 * node + 2));
+
+    }
+    else if (cp.getContourParameterType() == STAGGEREDNODE) {
+      int node = cp.getNodeNumber(); // TODO open structure different?
+//	    Vec3 angles(computeAngles(node * l0, q));
+//	    Vec3 omega(computeAngles(node * l0, u)); // TODO: change the name of omega to dotAngles
+      Vec3 angles = q(6 * node + 3, 6 * node + 5);
+      Vec3 dotAngles = u(6 * node + 3, 6 * node + 5); //TODO
+
+      if (ff == MBSim::angle || ff == all)
+        cp.getFrameOfReference().setAnglesOfOrientation(R->getOrientation() * angles);
+      if (ff == dotAngle || ff == all)
+        cp.getFrameOfReference().setDotAnglesOfOrientation(R->getOrientation() * dotAngles);
+      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * ANGLE->computen(angles)); // normal
+      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * ANGLE->computet(angles)); // tangent
+      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+        //cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
+        cp.getFrameOfReference().getOrientation().set(2, R->getOrientation() * ANGLE->computeb(angles)); // binormal (cartesian system)
       if (ff == angularVelocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * angle->computeOmega(angles, omega));
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * ANGLE->computeOmega(angles, dotAngles));
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'TRANSNODE' or 'ROTNODE'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -207,28 +218,29 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
-      curve->updateJacobiansForFrame(cp);
-    }
-    else if (cp.getContourParameterType() == NODE) { // force on node
+//    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+//      curve->updateJacobiansForFrame(cp);
+//    }
+//    else
+    if (cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
-      Mat Jacobian_trans(qSize, 3, INIT, 0.);
+      Mat3xV Jacobian_trans(qSize, INIT, 0.);
 
-      Jacobian_trans(Index(6 * node, 6 * node + 2), Index(0, 2)) << SqrMat(3, EYE); // translation
+      Jacobian_trans.set(Index(0, 2), Index(6 * node, 6 * node + 2), SqrMat(3, EYE)); // translation
 
-      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans.T());
+      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
     }
     else if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
-      Mat Jacobian_rot(qSize, 3, INIT, 0.); // TODO open structure
+      Mat3xV Jacobian_rot(qSize, INIT, 0.); // TODO open structure
       Vec p = q(6 * node + 3, 6 * node + 5);
 
-      Jacobian_rot(Index(6 * node + 3, 6 * node + 5), Index(0, 2)) = angle->computeT(p); // rotation
+      Jacobian_rot.set(Index(0, 2), Index(6 * node + 3, 6 * node + 5), ANGLE->computeT(p)); // rotation
 
-      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot.T());
+      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'ROTNODE' or 'CONTINUUM'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -251,77 +263,80 @@ namespace MBSimFlexibleBody {
 
       initialised = true;
 
-      /* cylinder */
-      cylinder->setAlphaStart(0.);
-      cylinder->setAlphaEnd(L);
+      /*
+       // cylinder
+       cylinder->setAlphaStart(0.);
+       cylinder->setAlphaEnd(L);
 
-      if (userContourNodes.size() == 0) {
-        Vec contourNodes(Elements + 1);
-        for (int i = 0; i <= Elements; i++)
-          contourNodes(i) = L / Elements * i; // own search area for each element
-        cylinder->setNodes(contourNodes);
-      }
-      else {
-        cylinder->setNodes(userContourNodes);
-      }
+       if (userContourNodes.size() == 0) {
+       Vec contourNodes(Elements + 1);
+       for (int i = 0; i <= Elements; i++)
+       contourNodes(i) = L / Elements * i; // own search area for each element
+       cylinder->setNodes(contourNodes);
+       }
+       else {
+       cylinder->setNodes(userContourNodes);
+       }
 
-      cylinder->setRadius(cylinderRadius);
+       cylinder->setRadius(cylinderRadius);
 
-      /* cuboid */
-      top->setCn(Vec("[1.;0.]"));
-      bottom->setCn(Vec("[-1.;0.]"));
-      left->setCn(Vec("[0.;-1.]"));
-      right->setCn(Vec("[0.;1.]"));
+       // cuboid
+       top->setCn(Vec("[1.;0.]"));
+       bottom->setCn(Vec("[-1.;0.]"));
+       left->setCn(Vec("[0.;-1.]"));
+       right->setCn(Vec("[0.;1.]"));
 
-      top->setAlphaStart(0.);
-      top->setAlphaEnd(L);
+       top->setAlphaStart(0.);
+       top->setAlphaEnd(L);
 
-      bottom->setAlphaStart(0.);
-      bottom->setAlphaEnd(L);
+       bottom->setAlphaStart(0.);
+       bottom->setAlphaEnd(L);
 
-      left->setAlphaStart(0.);
-      left->setAlphaEnd(L);
+       left->setAlphaStart(0.);
+       left->setAlphaEnd(L);
 
-      right->setAlphaStart(0.);
-      right->setAlphaEnd(L);
+       right->setAlphaStart(0.);
+       right->setAlphaEnd(L);
 
-      /* neutral fibre  */
-      neutralFibre->getFrame()->setOrientation(R->getOrientation());
-      neutralFibre->setAlphaStart(0.);
-      neutralFibre->setAlphaEnd(L);
+       // neutral fibre
+       // move outside
+       //      neutralFibre->getFrame()->setOrientation(R->getOrientation());
+       //      neutralFibre->setAlphaStart(0.);
+       //      neutralFibre->setAlphaEnd(L);
 
-      if (userContourNodes.size() == 0) {
-        Vec contourNodes(Elements + 1);
-        for (int i = 0; i <= Elements; i++)
-          contourNodes(i) = L / Elements * i;
-        top->setNodes(contourNodes);
-        bottom->setNodes(contourNodes);
-        left->setNodes(contourNodes);
-        right->setNodes(contourNodes);
-        neutralFibre->setNodes(contourNodes);
-      }
-      else {
-        top->setNodes(userContourNodes);
-        bottom->setNodes(userContourNodes);
-        left->setNodes(userContourNodes);
-        right->setNodes(userContourNodes);
-        neutralFibre->setNodes(userContourNodes);
-      }
+       if (userContourNodes.size() == 0) {
+       Vec contourNodes(Elements + 1);
+       for (int i = 0; i <= Elements; i++)
+       contourNodes(i) = L / Elements * i;
+       top->setNodes(contourNodes);
+       bottom->setNodes(contourNodes);
+       left->setNodes(contourNodes);
+       right->setNodes(contourNodes);
+       //        neutralFibre->setNodes(contourNodes);
+       }
+       else {
+       top->setNodes(userContourNodes);
+       bottom->setNodes(userContourNodes);
+       left->setNodes(userContourNodes);
+       right->setNodes(userContourNodes);
+       //        neutralFibre->setNodes(userContourNodes);
+       }
 
-      top->setWidth(cuboidBreadth);
-      bottom->setWidth(cuboidBreadth);
-      top->setNormalDistance(0.5 * cuboidHeight);
-      bottom->setNormalDistance(0.5 * cuboidHeight);
-      left->setWidth(cuboidHeight);
-      right->setWidth(cuboidHeight);
-      left->setNormalDistance(0.5 * cuboidBreadth);
-      right->setNormalDistance(0.5 * cuboidBreadth);
+       top->setWidth(cuboidBreadth);
+       bottom->setWidth(cuboidBreadth);
+       top->setNormalDistance(0.5 * cuboidHeight);
+       bottom->setNormalDistance(0.5 * cuboidHeight);
+       left->setWidth(cuboidHeight);
+       right->setWidth(cuboidHeight);
+       left->setNormalDistance(0.5 * cuboidBreadth);
+       right->setNormalDistance(0.5 * cuboidBreadth);
+       */
 
       Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
       /* translational elements */
       for (int i = 0; i < Elements; i++) {
-        discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, angle));
+        discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, ANGLE));
         qElement.push_back(Vec(discretization[i]->getqSize(), INIT, 0.));
         uElement.push_back(Vec(discretization[i]->getuSize(), INIT, 0.));
         static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements * cEps0D, cEps1D, cEps2D);
@@ -329,7 +344,7 @@ namespace MBSimFlexibleBody {
 
       /* rotational elements */
       for (int i = 0; i < rotationalElements; i++) {
-        rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
+        rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, ANGLE));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(), INIT, 0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(), INIT, 0.));
         if (fabs(R1) > epsroot() || fabs(R2) > epsroot())
@@ -342,7 +357,7 @@ namespace MBSimFlexibleBody {
     else
       FlexibleBodyContinuum<double>::init(stage);
 
-    curve->initContourFromBody(stage);
+    //curve->initContourFromBody(stage);
   }
 
   double FlexibleBody1s33Cosserat::computePotentialEnergy() {
@@ -376,11 +391,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateStateDependentVariables(double t) {
-    curve->computeCurveTranslations(JTransInterp);
-    curve->computeCurveVelocities(JTransInterp);
-    curve->computeCurveJacobians(true, true, JTransInterp);
-    curve->computeCurveJacobians(not JTransInterp, true, JTransInterp);
-    JTransInterp = true;
+//    curve->computeCurveTranslations(JTransInterp);
+//    curve->computeCurveVelocities(JTransInterp);
+//    curve->computeCurveJacobians(true, true, JTransInterp);
+//    curve->computeCurveJacobians(not JTransInterp, true, JTransInterp);
+//    JTransInterp = true;
 
     FlexibleBodyContinuum<double>::updateStateDependentVariables(t);
   }
@@ -392,9 +407,21 @@ namespace MBSimFlexibleBody {
 
         vector<double> data;
         data.push_back(t);
-        double ds = openStructure ? L / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 1) : L / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 2);
+        Vec X(6, INIT, 0.);
+        double uMin = openMBVNeturalFibre->getuMin();
+        double uMax = openMBVNeturalFibre->getuMax();
+
+        double ds = openStructure ? (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 1) : (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 2);
         for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints(); i++) {
-          Vec X = computeState(ds * i);
+
+          // Get continous information from neutral fibre
+          ContourPointData cp(uMin + ds * i);
+
+          openMBVNeturalFibre->updateKinematicsForFrame(cp, position);
+          openMBVNeturalFibre->updateKinematicsForFrame(cp, MBSim::angle);
+          X(0, 2) = cp.getFrameOfReference().getPosition();
+          X(3, 5) = cp.getFrameOfReference().getAnglesOfOrientation();
+
           Vec pos = R->getPosition() + R->getOrientation() * X(0, 2);
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
@@ -448,11 +475,19 @@ namespace MBSimFlexibleBody {
     Vec temp(12, INIT, 0.);
     ContourPointData cp(sGlobal);
 
-    updateKinematicsForFrame(cp, position);
-    temp(0, 2) = cp.getFrameOfReference().getPosition();
-    temp(3, 5) = computeAngles(sGlobal, q);
+//    updateKinematicsForFrame(cp, position);
+//    temp(0, 2) = cp.getFrameOfReference().getPosition();
+//    temp(3, 5) = computeAngles(sGlobal, q);
+//
+//    updateKinematicsForFrame(cp, velocities);
+//    temp(6, 8) = cp.getFrameOfReference().getVelocity();
+//    temp(9, 11) = cp.getFrameOfReference().getAngularVelocity();
 
-    updateKinematicsForFrame(cp, velocities);
+    openMBVNeturalFibre->updateKinematicsForFrame(cp, position);
+    openMBVNeturalFibre->updateKinematicsForFrame(cp, MBSim::angle);
+    openMBVNeturalFibre->updateKinematicsForFrame(cp, velocities);
+    temp(0, 2) = cp.getFrameOfReference().getPosition();
+    temp(3, 5) = cp.getFrameOfReference().getAnglesOfOrientation();
     temp(6, 8) = cp.getFrameOfReference().getVelocity();
     temp(9, 11) = cp.getFrameOfReference().getAngularVelocity();
 
@@ -499,20 +534,20 @@ namespace MBSimFlexibleBody {
 
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
-      discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, angle));
+      discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, ANGLE));
       qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
       uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
     }
 
     /* rotational elements */
     for (int i = 0; i < rotationalElements; i++) {
-      rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
+      rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, ANGLE));
       qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(), INIT, 0.));
       uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(), INIT, 0.));
     }
     BuildElements();
 
-    curve->initContourFromBody(resize);
+    //curve->initContourFromBody(resize);
   }
 
   void FlexibleBody1s33Cosserat::BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation) {

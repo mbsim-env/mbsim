@@ -252,11 +252,19 @@ namespace MBSimFlexibleBody {
           FlexibleBody::addFrame(frame,cp);
         }
 
+        void setNodeOffset(const AT nodeOffset_){ nodeOffset = nodeOffset_;}  // TODO:: call this function in the init() of flexible body.
+        AT getNodeOffset() const { return nodeOffset;}
+
       protected:
         /**
          * \brief grid for contact point detection
          */
         std::vector<AT> userContourNodes;
+
+        /**
+         * \brief offset of the ROTNODE from the TRANSNODE
+         */
+        AT nodeOffset;
     };
 }
 
