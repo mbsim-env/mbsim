@@ -2,6 +2,8 @@
 #define NURBS_DEFS_H_
 
 #include <fmatvec/fmatvec.h>
+#include <mbsim/mbsim_event.h>
+#include <iostream>
 
 namespace fmatvec {
   /*!
@@ -29,7 +31,6 @@ namespace fmatvec {
   Point<N>::Point(Vector<Fixed<N>, double> pnt) :
       Vector<Fixed<N>, double>(pnt) {
   }
-
 
   template <int N>
   Point<N>::~Point() {
@@ -95,6 +96,122 @@ namespace fmatvec {
     for (int i = 0; i < N; i++)
       pnt(i) = hPnt(i) / hPnt.w();
     return pnt;
+  }
+//  /*!
+//   * \brief wrapper class for nurbs surface interpolating data point
+//   */
+
+  template <typename T>
+  class GeneralMatrix {
+    public:
+      GeneralMatrix();
+      GeneralMatrix(int nrows_, int ncols_);
+      GeneralMatrix(const GeneralMatrix<T>& m);
+      ~GeneralMatrix();
+
+      GeneralMatrix<T>& operator=(const GeneralMatrix<T>& m);
+
+      T& operator()(int i, int j);
+      T const& operator()(int i, int j) const;
+      int rows() const;
+      int cols() const;
+      void resize(int nrows_, int ncols_);
+      template <typename J>
+      friend std::ostream& operator<<(std::ostream &os, const GeneralMatrix<J> &A);
+    private:
+      int nrows, ncols;
+      T* data;
+  };
+
+  template <typename T>
+  inline GeneralMatrix<T>::GeneralMatrix() :
+      nrows(0), ncols(0), data(NULL) {
+  }
+
+  template <typename T>
+  inline GeneralMatrix<T>::GeneralMatrix(int nrows_, int ncols_) :
+      nrows(nrows_), ncols(ncols_) {
+    if (nrows_ == 0 || ncols_ == 0)
+      throw MBSim::MBSimError("ERROR(GeneralMatrix:: The number of rows or columns of the matrix is zero!)");
+    data = new T[nrows_ * ncols_];
+  }
+  template <typename T>
+  inline GeneralMatrix<T>::GeneralMatrix(const GeneralMatrix<T>& m) :
+      nrows(m.nrows), ncols(m.ncols) {
+    data = new T[nrows * ncols];
+    std::copy(m.data, m.data + nrows * ncols, data);
+  }
+
+  template <typename T>
+  inline GeneralMatrix<T>::~GeneralMatrix() {
+    delete[] data;
+  }
+
+  template <typename T>
+  inline GeneralMatrix<T>& GeneralMatrix<T>::operator=(const GeneralMatrix<T>& m) {
+    nrows = m.nrows;
+    ncols = m.ncols;
+    data = m.data;
+    return *this;
+  }
+
+  template <typename T>
+  inline T& GeneralMatrix<T>::operator()(int row, int col) {
+    if (row >= nrows || col >= ncols)
+      throw MBSim::MBSimError("ERROR(GeneralMatrix::operator(): trying to access data out of range of the GeneralMatrix!)");
+    return data[row * ncols + col];
+  }
+
+  template <typename T>
+  inline T const& GeneralMatrix<T>::operator()(int row, int col) const {
+    if (row >= nrows || col >= ncols)
+      throw MBSim::MBSimError("ERROR(GeneralMatrix::operator(): trying to access data out of range of the GeneralMatrix!)");
+    return data[row * ncols + col];
+  }
+
+  template <typename T>
+  inline int GeneralMatrix<T>::rows() const {
+    return nrows;
+  }
+
+  template <typename T>
+  inline int GeneralMatrix<T>::cols() const {
+    return ncols;
+  }
+
+  template <typename T>
+  void GeneralMatrix<T>::resize(int nrows_, int ncols_) {
+
+    if (nrows_ <= 0 || ncols_ <= 0) {
+      throw MBSim::MBSimError("ERROR(GeneralMatrix::resize(): non-positive resize number of rows or columns!)");
+      return;
+    }
+
+    if (nrows_ == nrows && ncols_ == ncols)
+      return;
+
+    T* newData = new T[nrows_ * ncols_];
+
+    delete[] data;
+    data = newData;
+    nrows = nrows_;
+    ncols = ncols_;
+  }
+
+  template <typename T>
+  std::ostream& operator<<(std::ostream &os, const GeneralMatrix<T> &A) {
+    os << A.rows() << " x " << A.cols() << std::endl;
+    os << " = " << std::endl;
+    os << "[ ";
+    for (int i = 0; i < A.rows(); ++i) {
+      for (int j = 0; j < A.cols(); ++j) {
+        os << trans(A.data[i * A.ncols + j]);
+      }
+      if (i != A.rows() - 1)
+        os << std::endl << "  ";
+    }
+    os << " ];";
+    return os;
   }
 
 }

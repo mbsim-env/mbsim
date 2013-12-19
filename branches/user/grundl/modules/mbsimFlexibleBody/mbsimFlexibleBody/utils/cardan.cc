@@ -279,4 +279,52 @@ namespace MBSimFlexibleBody {
     return btilq2.copy();
   }
 
+  Vec Cardan::computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const{
+
+    fmatvec::SqrMat G(3, INIT, 0);
+
+    double sinalpha = sin(q(0));
+    double cosalpha = cos(q(0));
+    double sinbeta  = sin(q(1));
+    double cosbeta  = cos(q(1));
+ //   double singamma = sin(q(2));
+ //   double cosgamma = cos(q(2));
+
+    G(0, 0) = 1;
+    G(0, 1) = 0;
+    G(0, 2) = sinbeta;
+    G(1, 0) = 0;
+    G(1, 1) = cosalpha;
+    G(1, 2) = -sinalpha * cosbeta;
+    G(2, 0) = 0;
+    G(2, 1) = sinalpha;
+    G(2, 2) = cosalpha * cosbeta;
+
+    Vec omega = G * qt;
+
+    return omega;
+  }
+
+  SqrMat Cardan::computeT(const fmatvec::Vec& q) const{
+    fmatvec::SqrMat G(3, INIT, 0);
+
+    double sinalpha = sin(q(0));
+    double cosalpha = cos(q(0));
+    double sinbeta  = sin(q(1));
+    double cosbeta  = cos(q(1));
+  //  double singamma = sin(q(2));
+  //  double cosgamma = cos(q(2));
+
+    G(0, 0) = 1;
+    G(0, 1) = 0;
+    G(0, 2) = sinbeta;
+    G(1, 0) = 0;
+    G(1, 1) = cosalpha;
+    G(1, 2) = -sinalpha * cosbeta;
+    G(2, 0) = 0;
+    G(2, 1) = sinalpha;
+    G(2, 2) = cosalpha * cosbeta;
+
+    return G;
+  }
 }

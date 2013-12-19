@@ -62,6 +62,21 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Mat computentilq2(const fmatvec::Vec& q) const;		
       virtual fmatvec::Mat computebtilq2(const fmatvec::Vec& q) const;
       /********************************************************/
+
+      /* OVERWRITE FUNCTIONS OF ANGLES */
+      /**
+       * \param angles
+       * \param derivative of angles
+       * \return angular velocity
+       */
+      virtual fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
+
+      /**
+       * \param angles
+       * \return T-matrix (transformation matrix from differentiated angles to angular velocity omega)
+       */
+      virtual fmatvec::SqrMat computeT(const fmatvec::Vec& q) const;
+      /********************************************************/
   };
 
 }

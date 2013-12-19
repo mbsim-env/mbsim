@@ -105,12 +105,7 @@ namespace MBSimFlexibleBody {
       void setMomentsInertia(double I1_);
       void setCurlRadius(double R1_);
       void setMaterialDamping(double cEps0D_, double cEps1D_);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) {
-        openMBVBody = body;
-      }
-#endif
+      virtual int getNumberOfElementDOF() const { return 3;}
 
       int getNumberElements() const {
         return Elements;
@@ -145,6 +140,15 @@ namespace MBSimFlexibleBody {
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
       void initInfo();
+
+      /**
+       * \brief detect current finite element (translation)
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
 
     protected:
 
@@ -192,14 +196,6 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s21Cosserat(); // standard constructor
       FlexibleBody1s21Cosserat(const FlexibleBody1s21Cosserat&); // copy constructor
       FlexibleBody1s21Cosserat& operator=(const FlexibleBody1s21Cosserat&); // assignment operator
-
-      /**
-       * \brief detect current finite element (translation)
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
 
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition

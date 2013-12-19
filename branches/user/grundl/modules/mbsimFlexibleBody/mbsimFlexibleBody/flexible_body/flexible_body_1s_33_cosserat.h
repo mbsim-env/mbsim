@@ -23,17 +23,18 @@
 #include "flexible_body_1s_cosserat.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
-#include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
+//#include "mbsimFlexibleBody/contours/flexible_band.h"
+//#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
+#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
 #endif
 
 namespace MBSimFlexibleBody {
 
-  class NurbsCurve1s;
+//  class NurbsCurve1s;
 
   /**
    * \brief finite element for spatial beam using Cosserat model
@@ -107,10 +108,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double R1_,double R2_);
       void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);
 
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
-#endif
+      virtual int getNumberOfElementDOF() const { return 6;}
 
       int getNumberElements() const { return Elements; }   	
       int getNumberDOFs() const { return qSize; }
@@ -135,6 +133,14 @@ namespace MBSimFlexibleBody {
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
       void initInfo();
+
+      /**
+       * \brief detect current finite element (translation)
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
 
     protected:
 
@@ -163,18 +169,11 @@ namespace MBSimFlexibleBody {
        */
       double cEps2D;
 
-
       FlexibleBody1s33Cosserat(); // standard constructor
       FlexibleBody1s33Cosserat(const FlexibleBody1s33Cosserat&); // copy constructor
       FlexibleBody1s33Cosserat& operator=(const FlexibleBody1s33Cosserat&); // assignment operator
 
-      /**
-       * \brief detect current finite element (translation)
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
 
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition

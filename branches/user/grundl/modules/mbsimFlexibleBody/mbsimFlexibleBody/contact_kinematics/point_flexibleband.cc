@@ -63,20 +63,25 @@ namespace MBSimFlexibleBody {
       cpData[icontour].getLagrangeParameterPosition() = Vec(2,NONINIT);
     }
 
-    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
+    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fiber, only in the x direction.
+
+    double ts = cpData[icontour].getLagrangeParameterPosition()(0);
+    cout << "ts = " << ts << endl;
+
     cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
 
     if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd()) g(0) = 1.;
     else {
       band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-      Vec Wd =  cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-      Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
+      Vec3 Wd =  cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
+      Vec3 Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
       cpData[icontour].getLagrangeParameterPosition()(1) = Wb.T()*Wd; // get contact parameter of second tangential direction
-
+                                                                      // wb.T()*Wd actually is value the position(in xyz space) in the z direction,
+                                                                      // storing into largrangeParameterPosition(1) is to avoid overwriting the position of the contact point on the neutral firbre.
       double width = band->getWidth();
       if(cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width || - cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width) g(0) = 1.;
       else { // calculate the normal distance
-        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1)*Wb; 
+        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
         cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
         cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
         cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));

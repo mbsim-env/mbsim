@@ -27,7 +27,7 @@ namespace MBSim {
 
   class Point;
 
-  enum ContourParameterType { NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL };
+  enum ContourParameterType { NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL, FFRORIGIN};
 
   /**
    * \brief struct for data-management for single point on a contour to describe contact kinematics

@@ -215,13 +215,13 @@ namespace MBSimFlexibleBody {
        * \param derivative of angles
        * \return angular velocity
        */
-      fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
+      virtual fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
 
       /**
        * \param angles
        * \return T-matrix (transformation matrix from differentiated angles to angular velocity omega)
        */
-       fmatvec::SqrMat computeT(const fmatvec::Vec& q) const;
+      virtual fmatvec::SqrMat computeT(const fmatvec::Vec& q) const; // JacobianOfRotation = G
       /********************************************************/
   };
 

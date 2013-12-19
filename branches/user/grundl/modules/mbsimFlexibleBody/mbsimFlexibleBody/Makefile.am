@@ -14,5 +14,5 @@ libmbsimFlexibleBody_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS
 
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
 mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
-  functions_contact.h \
-  pointer.h
+  								   functions_contact.h \
+  								   pointer.h
