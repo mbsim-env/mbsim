@@ -36,7 +36,7 @@ class FunctionProperty : public Property {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
     void fromWidget(QWidget *widget) { }
     void toWidget(QWidget *widget) { }
-    QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
+ //   QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
     FunctionFactory* getFactory() const { return factory; }
     void setFactory(FunctionFactory *factory_) { factory = factory_; }
 };
@@ -55,6 +55,12 @@ class FunctionProperty : public Property {
 //     Property *property;
 //     int index;
 // };
+
+class FunctionChoiceProperty : public Property {
+  public:
+    FunctionChoiceProperty(const std::string &name="") : Property(name) {}
+    QMenu* createContextMenu() { return new FunctionChoiceContextMenu2(this); }
+};
 
 #endif
 

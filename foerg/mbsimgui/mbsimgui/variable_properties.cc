@@ -449,6 +449,7 @@ RotMatProperty::RotMatProperty(const string &name_) : VariableProperty(name_) {
 
 VarMat_Property::VarMat_Property(const string &name_, const Units &unit) : VariableProperty(name_) {
   property.push_back(new VarMatProperty(3,1));
+  property[0]->setParent(this);
   property.push_back(new OctaveExpressionProperty("","[0;0;0]",unit));
   name.push_back("xmlVector");
   name.push_back("plain");
@@ -456,6 +457,7 @@ VarMat_Property::VarMat_Property(const string &name_, const Units &unit) : Varia
 
 VarMat_Property::VarMat_Property(const string &name_, const vector<vector<string> > &A, const Units &unit) : VariableProperty(name_) {
   property.push_back(new VarMatProperty("",A,unit));
+  property[0]->setParent(this);
   property.push_back(new OctaveExpressionProperty("",toStr(A),unit));
   name.push_back("xmlVector");
   name.push_back("plain");

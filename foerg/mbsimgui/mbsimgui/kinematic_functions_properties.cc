@@ -56,14 +56,12 @@ void TranslationAlongFixedAxisProperty::toWidget(QWidget *widget) {
 LinearTranslationProperty::LinearTranslationProperty(const string &name) : FunctionProperty(name) {
   vector<vector<string> > A = getMat<string>(3,1,"0");
   A[0][0] = "1";
-  property.push_back(new VarMat_Property("translationVectors",A,Units()));
-  property.push_back(new Vec_Property("offset",Units()));
+  addProperty(new VarMat_Property("translationVectors",A,Units()));
+  addProperty(new Vec_Property("offset",Units()));
 }
 
 int LinearTranslationProperty::getArgSize(int i) const {
-//  string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
-//  vector<vector<string> > A = strToMat(str);
-//  return A.size()?A[0].size():0;
+  return static_cast<VarMat_Property*>(property[0])->size(1);
 }
 
 TiXmlElement* LinearTranslationProperty::initializeUsingXML(TiXmlElement *element) {

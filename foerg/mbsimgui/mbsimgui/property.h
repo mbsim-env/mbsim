@@ -65,7 +65,7 @@ class PropertyInterface {
 
 class Property : public TreeItemData, public PropertyInterface {
   public:
-    Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units()) : name(name_), value(value_), units(units_), disabl(false), disabled(false), parent(0) { }
+    Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units());
     virtual ~Property() {}
     virtual Property* clone() const {return 0;}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
@@ -88,20 +88,16 @@ class Property : public TreeItemData, public PropertyInterface {
     //bool isActive() const {return not(isDisabled());}
     void setDisabling(bool disabl_) {disabl=disabl_;}
     bool disabling() const {return disabl;}
-    void setDisabled(bool disabled_) {
-      disabled=disabled_;
-      for(int i=0; i<property.size(); i++)
-        property[i]->setDisabled(disabled);
-    }
+    void setDisabled(bool disabled_);
     bool isDisabled() const {return disabled;}
     int getNumberOfProperties() const { return property.size(); }
     Property* getProperty(int i=0) const { return property[i]; }
-    Property* setProperty(Property *property_, int i=0) { property[i] = property_; property_->setParent(this); }
-    void addProperty(Property *property_) { property.push_back(property_); property_->setParent(this); }
+    Property* setProperty(Property *property_, int i=0);
+    void addProperty(Property *property_); 
     Property* getParent() const { return parent; }
-    void setParent(Property *parent_) { parent = parent_; }
-    virtual void update();
-    boost::function<void()> sendSignal;
+    void setParent(Property *parent_);
+    virtual void update() { if(signal) signal(); }
+    boost::function<void()> signal, slot;
   protected:
     std::string name, value, unit, evaluation;
     Units units;
@@ -126,6 +122,7 @@ class PhysicalProperty : public Property {
     int getCurrentUnit() const { return currentUnit; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual int size(int i=0) { return 1; }
   protected:
     int currentUnit;
 };

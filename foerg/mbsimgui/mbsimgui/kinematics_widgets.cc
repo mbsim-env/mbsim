@@ -48,18 +48,18 @@ TranslationChoiceContextMenu::TranslationChoiceContextMenu(Translation *property
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setTranslation(QAction*)));
   factory[0] = new FunctionFactory1;
   factory[1] = new FunctionFactory2;
-//  addSeparator();
-//  actionGroup = new QActionGroup(this);
-//  for(int i=0; i<factory[index]->size(); i++) {
-//    QAction *action=new QAction(QString::fromStdString(factory[index]->getName(i)), this);
-//    action->setCheckable(true);
-//    actionGroup->addAction(action);
-//    addAction(action);
-//    actions[action]=i;
-//    if(property->getProperty()->getName()==factory[index]->getName(i))
-//      action->setChecked(true);
-//  }
-//  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
+  addSeparator();
+  actionGroup = new QActionGroup(this);
+  for(int i=0; i<factory[index]->size(); i++) {
+    QAction *action=new QAction(QString::fromStdString("Set "+factory[index]->getName(i)), this);
+    action->setCheckable(true);
+    actionGroup->addAction(action);
+    addAction(action);
+    actions[action]=i;
+    if(property->getProperty()->getName()==factory[index]->getName(i))
+      action->setChecked(true);
+  }
+  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
 }
 
 void TranslationChoiceContextMenu::setTranslation(QAction *action) {
@@ -75,11 +75,14 @@ void TranslationChoiceContextMenu::setTranslation(QAction *action) {
 
 void TranslationChoiceContextMenu::setFunction(QAction *action) {
   int i = actions[action];
-  delete property->getProperty();
   int j=(name[0]=="stateDependentTranslation")?0:1;
 
   Property* function = factory[j]->createFunction(i);
   property->setProperty(function);
+//  if(function->getParent()->sendSignal)
+//    function->setSignal(function->getParent()->sendSignal);
+//  if(function->sendSignal)
+//    function->sendSignal();
   mw->changePropertyItem(function);
   mw->mbsimxml(1);
 }

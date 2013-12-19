@@ -21,9 +21,14 @@
 #include "property.h"
 #include "mainwindow.h"
 #include <mbxmlutils/octeval.h>
+#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
+
+Property::Property(const std::string &name_, const std::string &value_, const Units &units_) : name(name_), value(value_), units(units_), disabl(false), disabled(false), parent(0) { 
+  slot = boost::bind(&Property::update,this); 
+}
 
 TiXmlElement* Property::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i<property.size(); i++)
@@ -35,22 +40,38 @@ TiXmlElement* Property::writeXMLFile(TiXmlNode *element) {
     property[i]->writeXMLFile(element);
 }
 
-void Property::update() {
-  cout << "updating property" << name << endl;
-//  for(int i=0; i<propertyToUpdate.size(); i++)
-//    propertyToUpdate[i]->update();
+void Property::setDisabled(bool disabled_) {
+  disabled=disabled_;
   for(int i=0; i<property.size(); i++)
-    property[i]->update();
+    property[i]->setDisabled(disabled);
+}
+
+Property* Property::setProperty(Property *property_, int i) { 
+  delete property[i];
+  property[i] = property_; 
+  property_->setParent(this);  
+}
+
+void Property::addProperty(Property *property_) { 
+  property.push_back(property_); 
+  property_->setParent(this); 
+}
+
+void Property::setParent(Property *parent_) { 
+  parent = parent_; 
+  signal=parent->slot;
 }
 
 void PhysicalProperty::setValue(const string &data) { 
   Property::setValue(data); 
   try {
-  setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
+    setEvaluation(OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue())));
   }
   catch(...) {
     cout << "an execption was thrown" << endl;
   }
+  if(signal)
+    signal();
 }
 
 TiXmlElement* PhysicalProperty::initializeUsingXML(TiXmlElement *element) {
@@ -64,4 +85,3 @@ TiXmlElement* PhysicalProperty::writeXMLFile(TiXmlNode *parent) {
     ele->SetAttribute("unit", getUnit());
   }
 }
-
