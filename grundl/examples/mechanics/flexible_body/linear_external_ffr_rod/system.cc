@@ -37,7 +37,7 @@ System::System(const string &projectName, const std::string & inputFilesPath) :
 
 //  setPlotFeature(plotRecursive, disabled);
 
-  rod->readFEMData(inputFilesPath);
+  rod->readFEMData(inputFilesPath, true);
 
 //  int elements = beam->getNumberElements();
   int nf = rod->getNumberModes();

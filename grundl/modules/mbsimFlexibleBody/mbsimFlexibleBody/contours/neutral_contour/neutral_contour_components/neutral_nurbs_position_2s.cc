@@ -50,23 +50,23 @@ namespace MBSimFlexibleBody {
     cp.getFrameOfReference().getOrientation().set(1, Tmpv);
 
     // debug
-    double u = cp.getLagrangeParameterPosition()(0);
-    double v = cp.getLagrangeParameterPosition()(1);
-    cout << "u, v =" << u << ", "<< v << endl;
-    Vec3 TmpvT = surface.normal(u, v);  // TODO: check whether this normal point outwards of the material. In the nurbs_disk_2s, the normal is been reversed manually.
-    cout << "normal at position2s:\n" << TmpvT;
-    GeneralMatrix<Vec3> sklT;
-    surface.deriveAt(u, v, 1, sklT);
-    cout << "\n derive at position2s:\n" << sklT << endl << endl;
-
-    TmpvT = TmpvT / nrm2(TmpvT);  // normalize the normal vector
-    cout << "normal after normalization:\n" << TmpvT << endl;
-    TmpvT = sklT(1,0);
-    TmpvT = TmpvT / nrm2(TmpvT);  // normalize the vector
-    cout << "first Tangent after normalization:\n" << TmpvT<< endl;
-    TmpvT = sklT(0,1);
-    TmpvT = TmpvT / nrm2(TmpvT);  // normalize the vector
-    cout << "second Tangent after normalization:\n" << TmpvT << endl;
+//    double u = cp.getLagrangeParameterPosition()(0);
+//    double v = cp.getLagrangeParameterPosition()(1);
+//    cout << "u, v =" << u << ", "<< v << endl;
+//    Vec3 TmpvT = surface.normal(u, v);  // TODO: check whether this normal point outwards of the material. In the nurbs_disk_2s, the normal is been reversed manually.
+//    cout << "normal at position2s:\n" << TmpvT;
+//    GeneralMatrix<Vec3> sklT;
+//    surface.deriveAt(u, v, 1, sklT);
+//    cout << "\n derive at position2s:\n" << sklT << endl << endl;
+//
+//    TmpvT = TmpvT / nrm2(TmpvT);  // normalize the normal vector
+//    cout << "normal after normalization:\n" << TmpvT << endl;
+//    TmpvT = sklT(1,0);
+//    TmpvT = TmpvT / nrm2(TmpvT);  // normalize the vector
+//    cout << "first Tangent after normalization:\n" << TmpvT<< endl;
+//    TmpvT = sklT(0,1);
+//    TmpvT = TmpvT / nrm2(TmpvT);  // normalize the vector
+//    cout << "second Tangent after normalization:\n" << TmpvT << endl;
   }
 
   // TODO : this only works fore the xy plane surface.
@@ -87,7 +87,7 @@ namespace MBSimFlexibleBody {
         static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsForFrame(contourPoints(i, j), position);
         Nodelist(i,j) = contourPoints(i, j).getFrameOfReference().getPosition();
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
-        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
+//        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
       }
 //    cout << "neutralPosition2s"<< Nodelist << endl << endl;
     }

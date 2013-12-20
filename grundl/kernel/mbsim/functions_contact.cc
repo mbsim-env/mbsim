@@ -217,11 +217,6 @@ namespace MBSim {
           }
         }
       } // end of search in U direction
-
-      // for closed structure, need to search the area between last nodes and the first nodes
-//      if (!openStructure)
-
-
     } // end of search all
 
 

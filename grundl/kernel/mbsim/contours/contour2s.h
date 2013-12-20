@@ -31,6 +31,12 @@ namespace MBSim {
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
   class Contour2s : public ContourContinuum<fmatvec::Vec> {
+    protected:
+     /**
+       * \brief the lagrange parameters in U and V direction for the contact2ssearch
+       */
+      fmatvec::Vec nodesU, nodesV;
+
     public:
       /**
        * \brief constructor
@@ -43,6 +49,26 @@ namespace MBSim {
        * \param Lagrangian position
        */
       virtual fmatvec::Mat3x2 computeTangentialPlane(fmatvec::Vec alpha) { ContourPointData cp(alpha); updateKinematicsForFrame(cp,cosy); return cp.getFrameOfReference().getOrientation()(fmatvec::Range<fmatvec::Fixed<0>,fmatvec::Fixed<2> >(),fmatvec::Range<fmatvec::Fixed<1>,fmatvec::Fixed<2> >()); }
+
+      /**
+       * \return nodes lagrange parameters for contact2sSearch in U direction
+       */
+      const fmatvec::Vec getNodesU() const { return nodesU; }
+
+      /**
+       * \return nodes lagrange parameters for contact2sSearch in V direction
+       */
+      const fmatvec::Vec getNodesV() const { return nodesU; }
+
+      /**
+       * \set nodes lagrange parameters for contact2sSearch in U direction
+       */
+      void setNodesU(const fmatvec::Vec& nodesU_) { nodesU = nodesU_; }
+
+      /**
+       * \set nodes lagrange parameters for contact2sSearch in V direction
+       */
+      void setNodesV(const fmatvec::Vec& nodesV_) { nodesV = nodesV_; }
   };
 
 }

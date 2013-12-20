@@ -37,7 +37,7 @@ System::System(const string &projectName, const std::string & inputFilesPath) :
 
 //  setPlotFeature(plotRecursive, disabled);
 
-  beam->readFEMData(inputFilesPath);
+  beam->readFEMData(inputFilesPath, false);
 
 //  int elements = beam->getNumberElements();
   int nf = beam->getNumberModes();
@@ -113,9 +113,18 @@ System::System(const string &projectName, const std::string & inputFilesPath) :
   ncc->setFrameOfReference(beam->getFrameOfReference());
   ncc->setAlphaStart(Vec(2, INIT, 0));
   ncc->setAlphaEnd(Vec(2, INIT, 1));
-
-//  double b0 = 20;
-//  int elements = 10;
+  // set the grid for contact2Ssearch, if these nodes vector is not given, the Contact2sSearch::setEqualSpacing() will be called
+  // in pointContour2s to create a default grid for the initial searching.
+  Vec nodesU(numOfTransNodesU,NONINIT);
+  Vec nodesV(numOfTransNodesV,NONINIT);
+  for (int i = 0; i < numOfTransNodesU; i++)
+    nodesU(i) = 1./(numOfTransNodesU-1) * i;
+  for (int i = 0; i < numOfTransNodesV; i++)
+    nodesV(i) = 1./(numOfTransNodesV-1) * i;
+  ncc->setNodesU(nodesU);
+  ncc->setNodesV(nodesV);
+  cout << "nodesU:" << nodesU << endl;
+  cout << "nodesV:" << nodesV << endl;
 
 //  FlexibleBand * top = new FlexibleBand("Top", true);
 //  top->setWidth(b0);
