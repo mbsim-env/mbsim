@@ -16,9 +16,10 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 //  RADAU5Integrator integrator;
-  integrator.setEndTime(1.0);
-  integrator.setStepSize(1e-3);
-  integrator.setPlotStepSize(1e-2);
+  integrator.setEndTime(1.);
+  integrator.setStepSize(1e-5);
+  integrator.setPlotStepSize(1e-3);
+  sys->setFlushEvery(10);
 
   integrator.integrate(*sys);
 

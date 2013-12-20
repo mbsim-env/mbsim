@@ -55,8 +55,11 @@ namespace MBSimFlexibleBody {
 
     // contact search on cylinder flexible
     Contact2sSearch search(func);
-//    search.setNodes(nurbs2s->getNodes());
-    search.setEqualSpacing(12, 4, 0, 0, 1./12., 0.25);  // TODO: make the parameter to be modified by the user.
+    // if the search grid is given by user, use that; otherwise call setEqualspacing to create a 11 * 11 grid to for initial searching.
+    if ((contour2s->getNodesU().size() != 0) && (contour2s->getNodesV().size() != 0))
+      search.setNodes(contour2s->getNodesU(), contour2s->getNodesV());
+    else
+      search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
     if(cpData[icontour2s].getLagrangeParameterPosition().size() == 2) {
       search.setInitialValue(cpData[icontour2s].getLagrangeParameterPosition());
@@ -84,9 +87,9 @@ namespace MBSimFlexibleBody {
       cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour2s].getFrameOfReference().getOrientation().col(1));
       cpData[ipoint].getFrameOfReference().getOrientation().set(2,  cpData[icontour2s].getFrameOfReference().getOrientation().col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
-      cout << "Normale: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(0) << endl;
-      cout << "1.Tangente: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(1) << endl;
-      cout << "2.Tangente: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(2) << endl;
+//      cout << "Normale: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(0) << endl;
+//      cout << "1.Tangente: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(1) << endl;
+//      cout << "2.Tangente: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(2) << endl;
 
       g(0) = cpData[icontour2s].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour2s].getFrameOfReference().getPosition());
 

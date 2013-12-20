@@ -45,10 +45,10 @@ namespace MBSimFlexibleBody {
 
     ContourPointData cp(0, FFRORIGIN);
     addFrame(FFR, cp);
+    FFR->enableOpenMBV(1e-2);
   }
   
   FlexibleBodyLinearExternalFFR::~FlexibleBodyLinearExternalFFR() {
-    
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage) {
@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
         int nodeNumber = visNodelist[index];
         Frame * refFrame = new Frame("RefFrame" + numtostr(nodeNumber));
         addFrame(refFrame, nodeNumber);
-        refFrame->enableOpenMBV(1);
+        refFrame->enableOpenMBV(1e-3); //TODO: set this value
       }
     }
     else if (stage == resize) {
@@ -115,15 +115,19 @@ namespace MBSimFlexibleBody {
     uSize[j] = 6 + nf;
   }
 
-  void FlexibleBodyLinearExternalFFR::readFEMData(string inFilePath) {
+  void FlexibleBodyLinearExternalFFR::readFEMData(string inFilePath, const bool millimeterUnits) {
     // read mij
+    double power = 1;
+    if (millimeterUnits)
+      power = 1000;
+
     ifstream mijInfile((inFilePath + "mij.dat").c_str());
     if (!mijInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "mij.dat" << endl;
       throw 1;
     }
     for (double a; mijInfile >> a;)
-      mij.push_back(a);
+      mij.push_back(a * power);
     
     // read u0
     ifstream u0Infile((inFilePath + "u0.dat").c_str());
@@ -138,7 +142,7 @@ namespace MBSimFlexibleBody {
       for (double temp; sin >> temp; i++) {
         u0Line(i) = temp;
       }
-      u0.push_back(u0Line);
+      u0.push_back(u0Line / power);
     }
     
     // get the number of lumped nodes(nj) = number of numOfElements in the model
@@ -171,7 +175,7 @@ namespace MBSimFlexibleBody {
       istringstream sin(s);  // TODO: use sin.clear() to avoid creating sin every time
       int i = 0;
       for (double temp; sin >> temp; i++)
-        phi(row, i) = temp;
+        phi(row, i) = temp / power;
     }
 
     // read stiffness matrix
@@ -187,7 +191,7 @@ namespace MBSimFlexibleBody {
       for (string tempxx; getline(sin, tempxx, ',');) {
         KLine.push_back(atof(tempxx.c_str()));  // atof()change char to double
       }
-      KFull(3 * KLine[0] + KLine[1] - 4, 3 * KLine[2] + KLine[3] - 4) = KLine[4];
+      KFull(3 * KLine[0] + KLine[1] - 4, 3 * KLine[2] + KLine[3] - 4) = KLine[4] * power;
     }
     
     K.resize(6 + nf, INIT, 0);
@@ -196,8 +200,7 @@ namespace MBSimFlexibleBody {
 
     for (int i = 6; i < 6 + nf; i++)
       for (int j = i; j < 6 + nf; j++)
-        K(i, j) = Kff(i - 6, j - 6);   //TODO:  correct?   STOPPED Here,
-      //TODO: resize K
+        K(i, j) = Kff(i - 6, j - 6);
 
     if (DEBUG) {
 
@@ -487,12 +490,6 @@ namespace MBSimFlexibleBody {
 
   //TODO: should we add updateAGbarGbardot() before updateKinematics and updateJacobian.
   void FlexibleBodyLinearExternalFFR::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-//    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum  ---> frame not on the lumped node
-////#ifdef HAVE_NURBS
-////       contour->updateKinematicsForFrame(cp,ff);  // TODO
-////#endif
-//    }
-//    else
     if (cp.getContourParameterType() == NODE) { // frame on the lumped node
       const int node = cp.getNodeNumber();
 
@@ -502,7 +499,7 @@ namespace MBSimFlexibleBody {
 //        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
 //        u_bar += q(0, 2); // r_p = R + A*U_bar: add the translational displacement of FFR (based on the reference frame R) to the local position vector expressed in Reference Frame R
 
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * (q(0,2) + A * u_bar)); // transformation from Reference Frame R into world frame
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * (q(0, 2) + A * u_bar)); // transformation from Reference Frame R into world frame
         // TODO:  why in cosserat is there not  plus R->getPosition() ?
       }
 
@@ -560,8 +557,34 @@ namespace MBSimFlexibleBody {
       }
 
       if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
-        Vec omega_ref = A * G_bar * u(3, 5);
+        Vec3 omega_ref = A * G_bar * u(3, 5);
 
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * omega_ref);
+      }
+
+    }
+    else if (cp.getContourParameterType() == FIXEDRELATIVEFRAME) { // origin of Floating frame
+      FixedRelativeFrame * frf = static_cast<FixedRelativeFrame*>(frame);
+      if (ff == position || ff == position_cosy || ff == all) {
+        cp.getFrameOfReference().setPosition(R->getPosition() +  R->getOrientation() * (q(0,2) +  A * frf->getRelativePosition())); // frf->getRelativePosition() is expressed in FFR frame, and FFR position is expressed in the inertial frame.
+      }
+
+      SqrMat3 wA(R->getOrientation() * A * frf->getRelativeOrientation());
+      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+        cp.getFrameOfReference().getOrientation().set(0, wA.col(0));
+      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+        cp.getFrameOfReference().getOrientation().set(1, wA.col(1));
+      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+        cp.getFrameOfReference().getOrientation().set(2, wA.col(2));
+
+      if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+        Vec3 u_bar = frf->getRelativePosition();
+        Vec3 u_ref_1 = -A * tilde(u_bar) * G_bar * u(3, 5);
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * (u(0, 2) + u_ref_1));  // Schabana 5.15
+      }
+
+      if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+        Vec3 omega_ref = A * G_bar * u(3, 5);
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * omega_ref);
       }
 
@@ -578,12 +601,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-//    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
-////#ifdef HAVE_NURBS
-////        contour->updateJacobiansForFrame(cp);
-////#endif
-//    }
-//    else
     if (cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
 
@@ -592,11 +609,8 @@ namespace MBSimFlexibleBody {
 
       // translational DOFs (d/dR)
       Jactmp_trans(Index(0, 2), Index(0, 2)) = SqrMat(3, EYE); // ref
-
       Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape() * q(6, 5 + nf);
-
       Jactmp_trans(Index(0, 2), Index(3, 5)) = -A * tilde(u_bar) * G_bar;
-
       Jactmp_rot(Index(0, 2), Index(3, 5)) = A * G_bar;
 
       // elastic DOFs
@@ -615,13 +629,27 @@ namespace MBSimFlexibleBody {
       Mat3xV Jactmp_rot(6 + nf, INIT, 0.);
 
       Jactmp_trans.set(Index(0, 2), Index(0, 2), Mat3x3(EYE));
+
+      Jactmp_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
+
+      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jactmp_trans);
+      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jactmp_rot);
+    }
+    else if (cp.getContourParameterType() == FIXEDRELATIVEFRAME) {
+      FixedRelativeFrame * frf = static_cast<FixedRelativeFrame*>(frame);
+
+      Mat3xV Jactmp_trans(6 + nf, INIT, 0.);
+      Mat3xV Jactmp_rot(6 + nf, INIT, 0.);
+
+      Jactmp_trans.set(Index(0, 2), Index(0, 2), Mat3x3(EYE));
+      Jactmp_trans.set(Index(0, 2), Index(3, 5), -A * tilde(frf->getRelativePosition()) * G_bar);
       Jactmp_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
 
       cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jactmp_trans);
       cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jactmp_rot);
     }
     else
-      throw MBSimError("ERROR(FlexibleBodyLinearExternalFFR::updateJacobiansForFrame): ContourPointDataType should be 'TRANSNODE' or 'FFRORIGIN'");
+      throw MBSimError("ERROR(FlexibleBodyLinearExternalFFR::updateJacobiansForFrame): ContourPointDataType should be 'TRANSNODE', 'FFRORIGIN' or 'FIXEDRELATIVEFRAME'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -640,8 +668,13 @@ namespace MBSimFlexibleBody {
     FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
   }
 
-  const Vec3 FlexibleBodyLinearExternalFFR::getModeShapeVector(int node, int column) const{
-   return static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape().col(column);
+  const Vec3 FlexibleBodyLinearExternalFFR::getModeShapeVector(int node, int column) const {
+    return static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape().col(column);
+  }
+
+  void FlexibleBodyLinearExternalFFR::addFrame(FixedRelativeFrame * frame) {
+    ContourPointData cp(0, FIXEDRELATIVEFRAME);
+    addFrame(frame, cp);
   }
 }
 

@@ -124,10 +124,12 @@ namespace MBSimFlexibleBody {
 //      void setDensity(double rho_) { rho = rho_; }
       /***************************************************/
 
+      void addFrame(MBSim::FixedRelativeFrame * frame);
+
       /*!
        * \brief  read u0, mij, mode shape matrix and stiffness matrix form the input file
        */
-      void readFEMData(const std::string inFilePath);
+      void readFEMData(std::string inFilePath, const bool millimeterUnits);
 
 //      friend class unitTest::linearExternalFFRTest;
 
