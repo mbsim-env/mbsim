@@ -136,6 +136,7 @@ class FunctionFactory1 : public FunctionFactory {
   public:
     FunctionFactory1();
     FunctionProperty* createFunction(int i); 
+    using FunctionFactory::createFunction;
 };
 
 class FunctionFactory2 : public FunctionFactory {

@@ -25,7 +25,7 @@
 
 class TranslationAlongXAxisProperty: public FunctionProperty {
   public:
-    TranslationAlongXAxisProperty(const std::string &name="", FunctionFactory *factory=0) : FunctionProperty(name,factory) { }
+    TranslationAlongXAxisProperty(const std::string &name="") : FunctionProperty(name) { }
     virtual Property* clone() const {return new TranslationAlongXAxisProperty(*this);}
     int getArgSize(int i=0) const {return 1;}
     inline std::string getType() const { return "TranslationAlongXAxis"; }

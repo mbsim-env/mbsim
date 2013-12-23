@@ -23,13 +23,9 @@
 #include "property.h"
 #include "function_widget.h"
 
-class FunctionFactory;
-
 class FunctionProperty : public Property {
-  private:
-    FunctionFactory *factory;
   public:
-    FunctionProperty(const std::string &name="", FunctionFactory *factory_=0) : Property(name), factory(factory_) {}
+    FunctionProperty(const std::string &name="") : Property(name) {}
     virtual int getArgSize(int i=0) const {return 0;}
     virtual std::string getType() const { return "Function"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) { return element; }
@@ -37,24 +33,7 @@ class FunctionProperty : public Property {
     void fromWidget(QWidget *widget) { }
     void toWidget(QWidget *widget) { }
  //   QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
-    FunctionFactory* getFactory() const { return factory; }
-    void setFactory(FunctionFactory *factory_) { factory = factory_; }
 };
-
-// class FunctionChoiceProperty : public Property {
-//   public:
-//     FunctionChoiceProperty(const std::string &name="");
-//     int getIndex() const { return index; }
-//     void setIndex(int i);
-//     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//     const std::string& getName() const {return property->getName();}
-//     Widget* createWidget() { return new FunctionChoiceWidget; }
-//     QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }
-//   protected:
-//     Property *property;
-//     int index;
-// };
 
 class FunctionChoiceProperty : public Property {
   public:

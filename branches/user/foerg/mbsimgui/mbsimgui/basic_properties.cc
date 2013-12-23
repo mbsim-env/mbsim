@@ -47,7 +47,7 @@ void LocalFrameOfReferenceProperty::setFrame(const std::string &str) {
 }
 
 std::string LocalFrameOfReferenceProperty::getFrame() const {
-  return framePtr?("Frame[" + framePtr->getName() + "]"):value;
+  return framePtr?("Frame[" + framePtr->getValue() + "]"):value;
 }
 
 TiXmlElement* LocalFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
@@ -83,7 +83,7 @@ void ParentFrameOfReferenceProperty::setFrame(const std::string &str) {
 }
 
 std::string ParentFrameOfReferenceProperty::getFrame() const {
-  return framePtr?("../Frame[" + framePtr->getName() + "]"):value;
+  return framePtr?("../Frame[" + framePtr->getValue() + "]"):value;
 }
 
 TiXmlElement* ParentFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {

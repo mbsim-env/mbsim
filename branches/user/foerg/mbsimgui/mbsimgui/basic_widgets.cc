@@ -100,7 +100,7 @@ void LocalFrameOfReferenceWidget::updateWidget() {
   QString oldText = frame->currentText();
   for(int i=0, k=0; i<element->getNumberOfFrames(); i++) {
     if(omitFrame!=element->getFrame(i)) {
-      frame->addItem("Frame["+QString::fromStdString(element->getFrame(i)->getName())+"]");
+      frame->addItem("Frame["+QString::fromStdString(element->getFrame(i)->getValue())+"]");
       if(element->getFrame(i) == selectedFrame)
         oldIndex = k;
       k++;
@@ -154,7 +154,7 @@ void ParentFrameOfReferenceWidget::updateWidget() {
   QString oldText = frame->currentText();
   for(int i=0, k=0; i<element->getParent()->getNumberOfFrames(); i++) {
     if(omitFrame!=element->getParent()->getFrame(i)) {
-      frame->addItem("../Frame["+QString::fromStdString(element->getParent()->getFrame(i)->getName())+"]");
+      frame->addItem("../Frame["+QString::fromStdString(element->getParent()->getFrame(i)->getValue())+"]");
       if(element->getParent()->getFrame(i) == selectedFrame)
         oldIndex = k;
       k++;

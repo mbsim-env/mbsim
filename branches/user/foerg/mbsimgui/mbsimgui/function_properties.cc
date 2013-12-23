@@ -375,14 +375,14 @@ NestedFunctionProperty::NestedFunctionProperty(const string &name) : FunctionPro
   addProperty(outer);
   FunctionFactory1 *factory1 = new FunctionFactory1;
   FunctionProperty *function = factory1->createFunction(0);
-  function->setFactory(factory1);
+  delete factory1;
   outer->addProperty(function);
 
   Property *inner = new Property("innerFunction");
   addProperty(inner);
   FunctionFactory3 *factory2 = new FunctionFactory3;
   function = factory2->createFunction(0);
-  function->setFactory(factory2);
+  delete factory2;
   inner->addProperty(function);
 
 //  outer->sendSignal = boost::bind(&NestedFunctionProperty::update, this);
@@ -390,14 +390,15 @@ NestedFunctionProperty::NestedFunctionProperty(const string &name) : FunctionPro
 }
 
 int NestedFunctionProperty::getArgSize(int i) const {
-  //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArgSize(i);
+  return static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->getArgSize(i);
 }
 
 TiXmlElement* NestedFunctionProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"outerFunction" );
 
-  FunctionProperty* function = static_cast<FunctionProperty*>(property[0]->getProperty())->getFactory()->createFunction(ele1->FirstChildElement());
-  function->setFactory(static_cast<FunctionProperty*>(property[0]->getProperty())->getFactory());
+  FunctionFactory1 *factory1 = new FunctionFactory1;
+  FunctionProperty *function = factory1->createFunction(0);
+  delete factory1;
   delete property[0]->getProperty();
   property[0]->setProperty(function);
   property[0]->initializeUsingXML(ele1->FirstChildElement());
@@ -425,10 +426,9 @@ void NestedFunctionProperty::toWidget(QWidget *widget) {
 }
 
 void NestedFunctionProperty::update() {
-  cout << "NestedFunctionProperty::update" << endl;
-  FunctionProperty::update();
   static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->resizeRet(static_cast<FunctionProperty*>(property[0]->getProperty(0))->getArgSize(0));
   static_cast<SymbolicFunctionProperty*>(property[1]->getProperty(0))->resizeArg(0,static_cast<FunctionProperty*>(property[0]->getProperty(0))->getArgSize());
+  FunctionProperty::update();
 }
 
 PiecewiseDefinedFunctionProperty::PiecewiseDefinedFunctionProperty() {

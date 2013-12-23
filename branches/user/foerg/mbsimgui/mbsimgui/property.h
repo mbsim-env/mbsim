@@ -123,6 +123,7 @@ class PhysicalProperty : public Property {
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual int size(int i=0) { return 1; }
+    virtual void setSize(int i=0, int size=0) { }
   protected:
     int currentUnit;
 };

@@ -32,6 +32,7 @@ class TranslationChoiceContextMenu : public PropertyContextMenu {
   Q_OBJECT
   public:
     TranslationChoiceContextMenu(Translation *property, QWidget * parent = 0, bool removable=false);
+    ~TranslationChoiceContextMenu();
   protected:
     std::map<QAction*,int> actions;
     std::vector<std::string> name;
