@@ -99,7 +99,7 @@ namespace MBSim {
         fmatvec::Vec3 r;
         fmatvec::Mat3xV A;
       public:
-        TranslationAlongAxesYZ() : A(2) { A.e(1,1) = 1; A.e(2,2) = 1; }
+        TranslationAlongAxesYZ() : A(2) { A.e(1,0) = 1; A.e(2,1) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
         fmatvec::Vec3 operator()(const Arg &q) { 
           r.e(1) = q.e(0);
@@ -117,7 +117,7 @@ namespace MBSim {
         fmatvec::Vec3 r;
         fmatvec::Mat3xV A;
       public:
-        TranslationAlongAxesXZ() : A(2) { A.e(0,0) = 1; A.e(2,2) = 1; }
+        TranslationAlongAxesXZ() : A(2) { A.e(0,0) = 1; A.e(2,1) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
         fmatvec::Vec3 operator()(const Arg &q) { 
           r.e(0) = q.e(0);
