@@ -68,7 +68,8 @@ class VecProperty : public PhysicalProperty {
     virtual Property* clone() const {return new VecProperty(*this);}
     std::vector<std::string> getVec() const {return value;}
     void setVec(const std::vector<std::string> &x) {value = x; setValue(toStr(value));}
-    int size() const {return value.size();}
+    int size(int i=0) const {return value.size();}
+    void setSize(int i=0, int size=0) { if(value.size()!=size) setVec(::getVec<std::string>(size,"0")); }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -268,6 +269,7 @@ class VariableProperty : public PhysicalProperty {
     const std::string& getName(int i) const { return name[i]; }
     int getNumberOfInputs() const { return name.size(); }
     int size(int i=0) { return property[index]->size(i); }
+    void setSize(int i=0, int size=0) { property[index]->setSize(i,size); }
 };
 
 class Scalar_Property : public VariableProperty {

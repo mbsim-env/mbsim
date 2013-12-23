@@ -44,35 +44,35 @@ void FunctionChoiceWidget::toProperty(Property *property) {
 }
 
 FunctionChoiceContextMenu::FunctionChoiceContextMenu(FunctionProperty *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {
-  addSeparator();
-  FunctionFactory* factory = property->getFactory();
-  QActionGroup *actionGroup = new QActionGroup(this);
-  for(int i=0; i<factory->size(); i++) {
-    QAction *action=new QAction(QString::fromStdString(factory->getName(i)), this);
-    action->setCheckable(true);
-    actionGroup->addAction(action);
-    addAction(action);
-    actions[action]=i;
-    if(i==4)
-      action->setDisabled(true);
-    if(property->getName()==factory->getName(i))
-      action->setChecked(true);
-  }
-  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
+//  addSeparator();
+//  FunctionFactory* factory = property->getFactory();
+//  QActionGroup *actionGroup = new QActionGroup(this);
+//  for(int i=0; i<factory->size(); i++) {
+//    QAction *action=new QAction(QString::fromStdString(factory->getName(i)), this);
+//    action->setCheckable(true);
+//    actionGroup->addAction(action);
+//    addAction(action);
+//    actions[action]=i;
+//    if(i==4)
+//      action->setDisabled(true);
+//    if(property->getName()==factory->getName(i))
+//      action->setChecked(true);
+//  }
+//  connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
 }
 
 void FunctionChoiceContextMenu::setFunction(QAction *action) {
-  int i = actions[action];
+ // int i = actions[action];
 
-  Property *parent = property->getParent();
-  FunctionProperty* function = static_cast<FunctionProperty*>(property)->getFactory()->createFunction(i);
-  function->setFactory(static_cast<FunctionProperty*>(property)->getFactory());
-  parent->setProperty(function);
-//  function->setSignal(parent->sendSignal);
-//  if(parent->sendSignal)
-//    parent->sendSignal();
-  mw->changePropertyItem2(function);
-  mw->mbsimxml(1);
+ // Property *parent = property->getParent();
+ // FunctionProperty* function = static_cast<FunctionProperty*>(property)->getFactory()->createFunction(i);
+ // function->setFactory(static_cast<FunctionProperty*>(property)->getFactory());
+ // parent->setProperty(function);
+////  function->setSignal(parent->sendSignal);
+////  if(parent->sendSignal)
+////    parent->sendSignal();
+ // mw->changePropertyItem2(function);
+ // mw->mbsimxml(1);
 }
 
 FunctionChoiceContextMenu2::FunctionChoiceContextMenu2(Property *property, QWidget *parent, bool removable) : PropertyContextMenu(property,parent,removable) {

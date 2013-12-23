@@ -26,30 +26,21 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-StateDependentTranslation::StateDependentTranslation(const string &name) : Property(name) {
-  FunctionFactory1 factory;
-  addProperty(factory.createFunction(0));
-}
-
-TiXmlElement* StateDependentTranslation::initializeUsingXML(TiXmlElement *element) {
-  property[0]->initializeUsingXML(element);
-}
-
-TiXmlElement* StateDependentTranslation::writeXMLFile(TiXmlNode *parent) {
-  property[0]->writeXMLFile(parent);
-}
-
 Translation::Translation(const std::string &name) : Property(name) { 
   FunctionFactory1 *factory = new FunctionFactory1;
   FunctionProperty *function = factory->createFunction(0);
-  function->setFactory(factory);
+  delete factory;
   addProperty(function);
 }
 
 TiXmlElement* Translation::initializeUsingXML(TiXmlElement *parent) {
-  FunctionProperty* function = static_cast<FunctionProperty*>(property[0])->getFactory()->createFunction(parent->FirstChildElement());
-  function->setFactory(static_cast<FunctionProperty*>(property[0])->getFactory());
-  delete property[0];
+  FunctionFactory *factory;
+  if(name=="stateDependentTranslation")
+    factory = new FunctionFactory1;
+  else
+    factory = new FunctionFactory2;
+  FunctionProperty *function = factory->createFunction(parent->FirstChildElement());
+  delete factory;
   setProperty(function);
   return property[0]->initializeUsingXML(parent->FirstChildElement());
 }
@@ -58,21 +49,10 @@ TiXmlElement* Translation::writeXMLFile(TiXmlNode *parent) {
   return property[0]->writeXMLFile(parent);
 }
 
-//TiXmlElement* Translation::initializeUsingXML(TiXmlElement *parent) {
-//  index = -1;
-//  for(int i=0; i<property.size(); i++) {
-//    if(property[i]->initializeUsingXML(parent)) {
-//      index = i;
-//      break;
-//    }
-//  }
-//  if(index == -1) {
-//    cout << "Mist" << endl;
-//    throw;
-//  }
-//}
-//
-//TiXmlElement* Translation::writeXMLFile(TiXmlNode *parent) {
-//  return property[index]->writeXMLFile(parent);
-//}
-//
+int Translation::getqSize() const {
+  return name=="stateDependentTranslation"?static_cast<FunctionProperty*>(property[0])->getArgSize():0;
+}
+
+int Translation::getuSize() const {
+  return name=="stateDependentTranslation"?static_cast<FunctionProperty*>(property[0])->getArgSize():0;
+}

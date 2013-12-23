@@ -25,7 +25,12 @@ using namespace std;
 using namespace MBXMLUtils;
 
 Object::Object(const string &str, Element *parent) : Element(str,parent) {
-
+  property.push_back(new Vec_Property("initialGeneralizedPosition",vector<string>(1,"0"),Units()));
+  property[0]->setDisabling(true);
+  property[0]->setDisabled(true);
+  property.push_back(new Vec_Property("initialGeneralizedVelocity",vector<string>(1,"0"),Units()));
+  property[1]->setDisabling(true);
+  property[1]->setDisabled(true);
 }
 
 Object* Object::readXMLFile(const string &filename, Element *parent) {
@@ -47,10 +52,20 @@ Object* Object::readXMLFile(const string &filename, Element *parent) {
 
 void Object::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
+  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"initialGeneralizedPosition" );
+  if(ele1) {
+    property[0]->initializeUsingXML(ele1);
+    property[0]->setDisabled(false);
+  }
 }
 
 TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {    
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
+  if(not(property[0]->isDisabled())) {
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"initialGeneralizedPosition" );
+    property[0]->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
   return ele0;
 }
 

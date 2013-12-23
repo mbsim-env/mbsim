@@ -30,14 +30,15 @@
 #include "function_properties.h"
 #include "function_property_factory.h"
 #include "kinematics_properties.h"
+#include <boost/bind.hpp>
 
-#define iK 1
-#define im 2
-#define ii 3
-#define ifi 4
-#define it 5
-#define io 6
-#define ifo 7
+#define iK 3
+#define im 4
+#define ii 5
+#define ifi 6
+#define it 7
+#define io 8
+#define ifo 9
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -59,7 +60,6 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property[ifi]->setDisabling(true);
   property[ifi]->setDisabled(true);
 
-//  property.push_back(new StateDependentTranslation("stateDependentTranslation"));
   property.push_back(new Translation("stateDependentTranslation"));
   property[it]->setDisabling(true);
   property[it]->setDisabled(true);
@@ -91,6 +91,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
 
+  property[it]->signal = boost::bind(&RigidBody::update,this);
 }
 
 int RigidBody::getqRelSize() const {
@@ -210,15 +211,11 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   ele1 = element->FirstChildElement( MBSIMNS"timeDependentTranslation" );
   if(ele1) {
     property[it]->setName("timeDependentTranslation");
-    FunctionFactory *factory = new FunctionFactory2;
-    FunctionProperty* function = factory->createFunction(0);
-    function->setFactory(factory);
-    property[it]->setProperty(function);
     property[it]->initializeUsingXML(ele1);
     property[it]->setDisabled(false);
   }
+  update();
 
-//  translation.initializeUsingXML(element);
 //  rotation.initializeUsingXML(element);
 //  translationDependentRotation.initializeUsingXML(element);
 //  coordinateTransformationForRotation.initializeUsingXML(element);
@@ -318,4 +315,9 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   jointMomentArrow.writeXMLFile(ele0);
 
   return ele0;
+}
+
+void RigidBody::update() {
+  static_cast<Vec_Property*>(property[0])->setSize(0,static_cast<Translation*>(property[it])->getqSize());
+  static_cast<Vec_Property*>(property[1])->setSize(0,static_cast<Translation*>(property[it])->getuSize());
 }

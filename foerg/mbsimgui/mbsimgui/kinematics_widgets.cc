@@ -62,13 +62,18 @@ TranslationChoiceContextMenu::TranslationChoiceContextMenu(Translation *property
   connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(setFunction(QAction*)));
 }
 
+TranslationChoiceContextMenu::~TranslationChoiceContextMenu() {
+  delete factory[0];
+  delete factory[1];
+}
+
 void TranslationChoiceContextMenu::setTranslation(QAction *action) {
   int i = actions[action];
 
   property->setName(name[i]);
   FunctionProperty* function = factory[i]->createFunction(0);
-  function->setFactory(factory[i]);
   property->setProperty(function);
+  property->signal();
   mw->changePropertyItem(function);
   mw->mbsimxml(1);
 }
@@ -79,10 +84,7 @@ void TranslationChoiceContextMenu::setFunction(QAction *action) {
 
   Property* function = factory[j]->createFunction(i);
   property->setProperty(function);
-//  if(function->getParent()->sendSignal)
-//    function->setSignal(function->getParent()->sendSignal);
-//  if(function->sendSignal)
-//    function->sendSignal();
+  property->signal();
   mw->changePropertyItem(function);
   mw->mbsimxml(1);
 }

@@ -23,7 +23,7 @@
 #include "contour.h"
 #include "basic_properties.h"
 
-#define ifr 0
+#define ifr 2
 
 using namespace std;
 using namespace MBXMLUtils;
