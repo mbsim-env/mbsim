@@ -33,13 +33,16 @@ canCompare=True # True if numpy and h5py are found
 xmllint=None
 ombvSchema =None
 mbsimSchema=None
-intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
 # pj('xml', 'time_dependent_kinematics')
   pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD')
 ])
+
+# MBSim Modules
+mbsimModules=["mbsimControl", "mbsimElectronics", "mbsimFlexibleBody",
+              "mbsimHydraulics", "mbsimInterface", "mbsimPowertrain"]
 
 # command line option definition
 argparser = argparse.ArgumentParser(
@@ -50,10 +53,10 @@ argparser = argparse.ArgumentParser(
   However only examples of the type matching --filter are executed.
   If the directory is prefixed with '^' this directory (and subdirectories) is removed from the current list.
   The specified directories are processed from left to right.
-  The type of an example is defined dependent on some key files in the corrosponding example directory.
-  If a file named 'Makefile' exists, than it is treated as a SRC example.
-  If a file named 'MBS.mbsim.flat.xml' exists, then it is treated as a FLATXML example.
-  If a file named 'MBS.mbsim.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
+  The type of an example is defined dependent on some key files in the corrosponding example directory:
+  - If a file named 'Makefile' exists, than it is treated as a SRC example.
+  - If a file named 'MBS.mbsim.flat.xml' exists, then it is treated as a FLATXML example.
+  - If a file named 'MBS.mbsim.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
   If more then one of these files exist the behaviour is undefined.
   The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
   For a FLATXML and XML examples a second file named 'Integrator.mbsimint.xml' must exist.
@@ -73,14 +76,19 @@ mainOpts.add_argument("--action", default="report", type=str,
           'report': run examples and report results (default);
           'copyToReference': copy current results to reference directory;
           'updateReference[=URL|DIR]': update references from URL or DIR, use the build system if not given;
-          'pushReference=DIR': push references to DIR;''')
+          'pushReference=DIR': push references to DIR;
+          'list': list directories to be run;''')
 mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
-mainOpts.add_argument("--filter", default="all",
-  choices=["all",
-           "allxml",
-           "flatxml",
-           "xml",
-           "src"], help="Filter the specified directories")
+mainOpts.add_argument("--filter", default="True", type=str,
+  help='''Filter the specifed directories using the given Python code. A directory is processed if the provided
+          Python code evaluates to True where the following variables are defined:
+          src: is True if the directory is a source code examples;
+          flatxml: is True if the directory is a xml flat examples;
+          ppxml: is True if the directory is a preprocessing xml examples;
+          xml: is True if the directory is a flat or preprocessing xml examples;
+          mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
+                    mbsimXXX='''+str(mbsimModules)+''';
+          Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
 cfgOpts.add_argument("--atol", default=2e-5, type=float,
@@ -140,7 +148,8 @@ def main():
   # check arguments
   if not (args.action=="report" or args.action=="copyToReference" or
           args.action=="updateReference" or args.action.startswith("updateReference=") or
-          args.action.startswith("pushReference=")):
+          args.action.startswith("pushReference=") or
+          args.action=="list"):
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
@@ -187,9 +196,8 @@ def main():
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
-  global ombvSchema, mbsimSchema, intSchema
+  global ombvSchema, mbsimSchema
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
-  intSchema  =pj(schemaDir, "http___mbsim_berlios_de_MBSim", "mbsimintegrator.xsd")
   # create mbsimxml schema
   mbsimSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
   subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimSchema])
@@ -220,6 +228,11 @@ def main():
   # apply (unpack) a reference archive
   if args.action=="updateReference":
     updateReference()
+    return 0
+
+  # list directires to run
+  if args.action=="list":
+    listExamples()
     return 0
 
   # write empty RSS feed
@@ -401,17 +414,38 @@ def addExamplesByFilter(baseDir, directoriesSet):
     addOrDiscard=directoriesSet.discard
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
-  for root, _, _ in os.walk(baseDir):
-    foundXML=os.path.isfile(pj(root, "MBS.mbsim.xml"))
-    foundFLATXML=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
-    foundSRC=os.path.isfile(pj(root, "Makefile"))
-    add=False
-    if args.filter=="xml"     and (foundXML)                            : add=True
-    if args.filter=="flatxml" and (foundFLATXML)                        : add=True
-    if args.filter=="src"     and (foundSRC)                            : add=True
-    if args.filter=="allxml"  and (foundXML or foundFLATXML)            : add=True
-    if args.filter=="all"     and (foundXML or foundFLATXML or foundSRC): add=True
-    if add:
+  for root, dirs, _ in os.walk(baseDir):
+    ppxml=os.path.isfile(pj(root, "MBS.mbsim.xml"))
+    flatxml=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
+    xml=ppxml or flatxml
+    src=os.path.isfile(pj(root, "Makefile"))
+    # skip none examples directires
+    if(not ppxml and not flatxml and not src):
+      continue
+    dirs=[]
+    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src}
+    for m in mbsimModules:
+      d[m]=False
+    # check for MBSim modules in src examples
+    if src:
+      filecont=open(pj(root, "Makefile"), "rb").read().decode('utf-8')
+      for m in mbsimModules:
+        if re.search("\\b"+m+"\\b", filecont): d[m]=True
+    # check for MBSim modules in xml and flatxml examples
+    else:
+      for filedir, _, filenames in os.walk(root):
+        for filename in fnmatch.filter(filenames, "*.xml"):
+          if filename[0:4]==".pp.": continue # skip generated .pp.* files
+          filecont=open(pj(filedir, filename), "rb").read().decode('utf-8')
+          for m in mbsimModules:
+            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): d[m]=True
+    # evaluate filter
+    try:
+      filterResult=eval(args.filter, d)
+    except:
+      print("Unable to evaluate the filter:\n"+args.filter)
+      exit(1)
+    if filterResult:
       addOrDiscard(os.path.normpath(root))
 
 
@@ -494,16 +528,17 @@ def runExample(resultQueue, example):
         resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
 
     # check for deprecated features
-    nrDeprecated=0
-    for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
-      match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
-      if match!=None:
-        nrDeprecated=match.expand("\\1")
-        break
-    if nrDeprecated==0:
-      resultStr+='<td><span style="color:green">none</span></td>'
-    else:
-      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:orange">'+str(nrDeprecated)+' found</span></a></td>'
+    if(not args.disableRun):
+      nrDeprecated=0
+      for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
+        match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
+        if match!=None:
+          nrDeprecated=match.expand("\\1")
+          break
+      if nrDeprecated==0:
+        resultStr+='<td><span style="color:green">none</span></td>'
+      else:
+        resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:orange">'+str(nrDeprecated)+' found</span></a></td>'
 
     # validate XML
     if not args.disableValidate:
@@ -804,20 +839,21 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       # if if curObj[:,column] does not exitst
       if column>=curObjCols:
         printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
-      # compare
-      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
-          delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
-        else:
-          delta=float("inf") # very large => error
+      else:
+        # compare
+        if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+          if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
+            delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
+          else:
+            delta=float("inf") # very large => error
       print('<tr>', file=compareFD)
       print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
       print('<td>'+datasetName+'</td>', file=compareFD)
-      if refLabels[column]==curLabels[column]:
+      if column<curObjCols and refLabels[column]==curLabels[column]:
         print('<td>'+printLabel+'</td>', file=compareFD)
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
-      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+      if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         #check for NaN/Inf # check for NaN and Inf
         #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
         #check for NaN/Inf   print('<td><span style="color:red">cur. contains NaN or +/-Inf</span></td>', file=compareFD)
@@ -995,6 +1031,13 @@ def updateReference():
 
 
 
+def listExamples():
+  print('The following examples will be run:\n')
+  for example in directories:
+    print(example[0])
+
+
+
 def validateXML(example, consoleOutput, htmlOutputFD):
   nrFailed=0
   nrTotal=0
@@ -1002,10 +1045,13 @@ def validateXML(example, consoleOutput, htmlOutputFD):
          ["*.ombv.env.xml",   ombvSchema],
          ["*.mbsim.xml",      mbsimSchema],
          ["*.mbsim.flat.xml", mbsimSchema],
-         ["*.mbsimint.xml",   intSchema]]
+         ["*.mbsimint.xml",   mbsimSchema]]
   for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
+        # skip error file
+        if filename==".err.MBS.mbsim.xml":
+          continue
         outputFN=pj(example[0], filename+".txt")
         outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)
