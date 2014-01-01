@@ -7,6 +7,7 @@ import os
 from os.path import join as pj
 import subprocess
 import re
+import glob
 import sys
 import datetime
 import fileinput
@@ -21,6 +22,7 @@ toolDependencies=dict()
 toolXMLDocCopyDir=dict()
 toolDoxyDocCopyDir=dict()
 docDir=None
+timeID=None
 
 # command line option definition
 argparser = argparse.ArgumentParser(
@@ -60,6 +62,7 @@ outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
 outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
 outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
+outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
 passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
@@ -69,6 +72,61 @@ passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAIN
 
 # parse command line options
 args=argparser.parse_args() # modified by mypostargparse
+
+# rotate
+def rotateOutput():
+  # create output dir
+  if not os.path.isdir(args.reportOutDir): os.makedirs(args.reportOutDir)
+
+  # get result IDs of last runs
+  resultID=[]
+  for curdir in glob.glob(pj(args.reportOutDir, "result_*")):
+    currentID=1
+    # skip all except result_[0-9]+
+    try: currentID=int(curdir[len(pj(args.reportOutDir, "result_")):])
+    except ValueError: continue
+    # skip symbolic links
+    if os.path.islink(curdir):
+      os.remove(curdir)
+      continue
+    # add to resultID
+    resultID.append(currentID);
+  # sort resultID
+  resultID=sorted(resultID)
+
+  # calculate ID for this run
+  if len(resultID)>0:
+    currentID=resultID[-1]+1
+  else:
+    currentID=1
+
+  # only keep args.rotate old results
+  delFirstN=len(resultID)-args.rotate
+  if delFirstN>0:
+    for delID in resultID[0:delFirstN]:
+      shutil.rmtree(pj(args.reportOutDir, "result_%010d"%(delID)))
+    resultID=resultID[delFirstN:]
+
+  # create link for very last result
+  lastLinkID=1
+  if len(resultID)>0:
+    lastLinkID=resultID[0]
+  try: os.remove(pj(args.reportOutDir, "result_%010d"%(lastLinkID-1)))
+  except OSError: pass
+  os.symlink("result_%010d"%(lastLinkID), pj(args.reportOutDir, "result_%010d"%(lastLinkID-1)))
+  # create link for very first result
+  try: os.remove(pj(args.reportOutDir, "result_%010d"%(currentID+1)))
+  except OSError: pass
+  os.symlink("result_%010d"%(currentID), pj(args.reportOutDir, "result_%010d"%(currentID+1)))
+  # create link for current result
+  try: os.remove(pj(args.reportOutDir, "result_current"))
+  except OSError: pass
+  os.symlink("result_%010d"%(currentID), pj(args.reportOutDir, "result_current"))
+
+  # fix reportOutDir, create and clean output dir
+  args.reportOutDir=pj(args.reportOutDir, "result_%010d"%(currentID))
+  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
+  os.makedirs(args.reportOutDir)
 
 # the main routine being called ones
 def main():
@@ -194,6 +252,9 @@ def main():
   else:
     os.environ["PKG_CONFIG_PATH"]=pkgConfigDir
 
+  global timeID
+  timeID=datetime.datetime.now()
+  timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
   # write main doc file
   if args.docOutDir!=None:
     args.docOutDir=os.path.abspath(args.docOutDir)
@@ -209,6 +270,7 @@ def main():
     print('</head>', file=docFD)
     print('<body>', file=docFD)
     print('<h1>MBSim, OpenMBV, ... Documentation</h1>', file=docFD)
+    print('<p>Generated at: %s</p>'%(str(timeID)), file=compareFD)
     print('<h2>XML Documentation</h2>', file=docFD)
     print('<p>', file=docFD)
     print('  <ul>', file=docFD)
@@ -228,13 +290,12 @@ def main():
 
   # start messsage
   print("Started build process.")
-  print("See the log file "+pj(args.reportOutDir, "index.html")+" for detailed results.")
+  print("See the log file "+pj(args.reportOutDir, "result_current", "index.html")+" for detailed results.")
   if args.docOutDir!=None:
     print("See also the generated documentation "+pj(args.docOutDir, "index.html")+".\n")
 
-  # remove report output dir
-  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
-  os.makedirs(args.reportOutDir)
+  # rotate (modifies args.reportOutDir)
+  rotateOutput()
 
   # svn update all tools
   buildTools=set()
@@ -270,7 +331,7 @@ def main():
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
   print('<head>', file=mainFD)
   print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
-  print('  <link rel="alternate" type="application/rss+xml" title="MBSim, OpenMBV, ... Build Results" href="result.rss.xml"/>', file=mainFD)
+  print('  <link rel="alternate" type="application/rss+xml" title="MBSim, OpenMBV, ... Build Results" href="../result.rss.xml"/>', file=mainFD)
   print('  <style type="text/css">', file=mainFD)
   print('    table.sortable th {', file=mainFD)
   print('      cursor: move;', file=mainFD)
@@ -290,9 +351,13 @@ def main():
   print('<b>Called command:</b> <tt>', file=mainFD)
   for argv in sys.argv: print(argv+' ', file=mainFD)
   print('</tt><br/>', file=mainFD)
-  print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="result.rss.xml">here</a><br/>', file=mainFD)
-  print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
+  print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a><br/>', file=mainFD)
+  print('   <b>Time ID:</b> '+str(timeID)+'<br/>', file=mainFD)
   print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
+  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
+  print('   <b>Navigate:</b> <a href="../result_%010d/index.html">previous result</a>,'%(currentID-1), file=mainFD)
+  print('                    <a href="../result_%010d/index.html">next result</a>,'%(currentID+1), file=mainFD)
+  print('                    <a href="../result_current/index.html">current result</a><br/>', file=mainFD)
   print('</p>', file=mainFD)
 
   print('<p>Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.</p>', file=mainFD)
@@ -337,7 +402,9 @@ def main():
   mainFD.close()
   # replace <span id="STILLRUNNINGORABORTED"...</span> in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
-    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(datetime.datetime.now()), line)
+    endTime=datetime.datetime.now()
+    endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
+    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line)
 
   # write RSS feed
@@ -625,12 +692,15 @@ def runexamples(mainFD):
     return 0
 
   # runexamples.py command
+  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   command=["./runexamples.py", "-j", str(args.j)]
   if args.url!=None:
-    command.extend(["--url", args.url+"/runexamples_report"])
+    command.extend(["--url", args.url+"/result_%010d/runexamples_report"%(currentID)])
   if args.buildType!="":
     command.extend(["--buildType", args.buildType])
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
+  command.extend(["--currentID", str(currentID)])
+  command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
   command.extend(args.passToRunexamples)
 
   print("")
@@ -640,7 +710,7 @@ def runexamples(mainFD):
   ret=subprocess.call(command, stderr=subprocess.STDOUT)
 
   if ret==0:
-    print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "index.html"))+
+    print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '"><span style="color:green">all examples passed</span></a></td>', file=mainFD)
   else:
     print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "index.html"))+
@@ -654,33 +724,34 @@ def runexamples(mainFD):
 
 def writeRSSFeed(nrFailed):
   rssFN="result.rss.xml"
-  rssFD=open(pj(args.reportOutDir, rssFN), "w")
+  rssFD=open(pj(args.reportOutDir, os.pardir, rssFN), "w")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>%sMBSim, OpenMBV, ... Build Results</title>
-    <link>%s/index.html</link>
+    <link>%s/result_current/index.html</link>
     <description>%sResult RSS feed of the last build of MBSim and Co.</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url), file=rssFD)
+    <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
   if nrFailed>0:
+    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
     print('''\
     <item>
       <title>%sBuild failed</title>
-      <link>%s/index.html</link>
-      <guid isPermaLink="false">%s/rss_id_%s</guid>
+      <link>%s/result_%010d/index.html</link>
+      <guid isPermaLink="false">%s/result_%010d/rss_id_%s</guid>
       <pubDate>%s</pubDate>
-    </item>'''%(args.buildType, args.url,
-           args.url,
-           datetime.datetime.utcnow().strftime("%s"),
+    </item>'''%(args.buildType,
+           args.url, currentID,
+           args.url, currentID, datetime.datetime.utcnow().strftime("%s"),
            datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
   print('''\
     <item>
       <title>%sDummy feed item. Just ignore it.</title>
-      <link>%s/index.html</link>
-      <guid isPermaLink="false">%s/rss_id_1359206848</guid>
+      <link>%s/result_current/index.html</link>
+      <guid isPermaLink="false">%s/result_current/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
     </item>
   </channel>

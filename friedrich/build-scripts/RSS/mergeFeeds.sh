@@ -3,13 +3,13 @@
 # Build feeds
 /home/user/Tools/rsstool-1.0.1rc2-src/src/rsstool --rss -o=/media/mbsim-env/mergedFeeds/build.rss.xml \
 http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/result.rss.xml \
-http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/runexamples_report/result.rss.xml \
+http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimLinux/report/result.rss.xml \
-http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimLinux/report/runexamples_report/result.rss.xml \
+http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimLinux/report/result_current/runexamples_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimLinux/report_distribute/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimWindows/report/result.rss.xml \
-http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimWindows/report/runexamples_report/result.rss.xml \
+http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimWindows/report/result_current/runexamples_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimWindows/report_distribute/result.rss.xml
 
 # google code feeds
