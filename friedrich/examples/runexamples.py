@@ -33,6 +33,7 @@ canCompare=True # True if numpy and h5py are found
 xmllint=None
 ombvSchema =None
 mbsimSchema=None
+timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
@@ -108,12 +109,15 @@ outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
 outOpts.add_argument("--url", type=str,
   help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
-debugOpts=argparser.add_argument_group('Debugging Options')
+debugOpts=argparser.add_argument_group('Debugging and other Options')
 debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--debugValidateHTMLOutput", action="store_true",
   help="validate all generated html output files at the end")
+debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
+debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 
 # parse command line options
 args = argparser.parse_args()
@@ -142,6 +146,64 @@ def subprocessCall(args, f, env=os.environ):
     if line==b'': break
     print(line.decode("utf-8"), end="", file=f)
   return proc.wait()
+
+# rotate
+def rotateOutput():
+  # create output dir
+  if not os.path.isdir(args.reportOutDir): os.makedirs(args.reportOutDir)
+
+  if args.currentID==0:
+    # get result IDs of last runs
+    resultID=[]
+    for curdir in glob.glob(pj(args.reportOutDir, "result_*")):
+      currentID=1
+      # skip all except result_[0-9]+
+      try: currentID=int(curdir[len(pj(args.reportOutDir, "result_")):])
+      except ValueError: continue
+      # skip symbolic links
+      if os.path.islink(curdir):
+        os.remove(curdir)
+        continue
+      # add to resultID
+      resultID.append(currentID);
+    # sort resultID
+    resultID=sorted(resultID)
+
+    # calculate ID for this run
+    if len(resultID)>0:
+      currentID=resultID[-1]+1
+    else:
+      currentID=1
+
+    # only keep args.rotate old results
+    delFirstN=len(resultID)-args.rotate
+    if delFirstN>0:
+      for delID in resultID[0:delFirstN]:
+        shutil.rmtree(pj(args.reportOutDir, "result_%010d"%(delID)))
+      resultID=resultID[delFirstN:]
+
+    # create link for very last result
+    lastLinkID=1
+    if len(resultID)>0:
+      lastLinkID=resultID[0]
+    try: os.remove(pj(args.reportOutDir, "result_%010d"%(lastLinkID-1)))
+    except OSError: pass
+    os.symlink("result_%010d"%(lastLinkID), pj(args.reportOutDir, "result_%010d"%(lastLinkID-1)))
+    # create link for very first result
+    try: os.remove(pj(args.reportOutDir, "result_%010d"%(currentID+1)))
+    except OSError: pass
+    os.symlink("result_%010d"%(currentID), pj(args.reportOutDir, "result_%010d"%(currentID+1)))
+  else:
+    currentID=args.currentID
+  # create link for current result
+  try: os.remove(pj(args.reportOutDir, "result_current"))
+  except OSError: pass
+  os.symlink("result_%010d"%(currentID), pj(args.reportOutDir, "result_current"))
+
+  # fix reportOutDir, create and clean output dir
+  args.reportOutDir=pj(args.reportOutDir, "result_%010d"%(currentID))
+  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
+  os.makedirs(args.reportOutDir)
 
 # the main routine being called ones
 def main():
@@ -172,8 +234,8 @@ def main():
   else:
     args.prefixSimulation=[]
 
-  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
-  os.makedirs(args.reportOutDir)
+  # rotate (modifies args.reportOutDir)
+  rotateOutput()
   os.makedirs(pj(args.reportOutDir, "tmp"))
 
   # check if the numpy and h5py modules exists. If not disable compare
@@ -244,7 +306,7 @@ def main():
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
   print('<head>', file=mainFD)
   print('  <title>MBSim runexamples Results</title>', file=mainFD)
-  print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="result.rss.xml"/>', file=mainFD)
+  print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>', file=mainFD)
   print('  <style type="text/css">', file=mainFD)
   print('    table.sortable th {', file=mainFD)
   print('      cursor: move;', file=mainFD)
@@ -264,9 +326,26 @@ def main():
   print('<b>Called command:</b> <tt>', file=mainFD)
   for argv in sys.argv: print(argv+' ', file=mainFD)
   print('</tt><br/>', file=mainFD)
-  print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="result.rss.xml">here</a><br/>', file=mainFD)
-  print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
+  print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a><br/>', file=mainFD)
+  global timeID
+  timeID=datetime.datetime.now()
+  timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
+  if args.timeID!="":
+    timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%S")
+  print('   <b>Time ID:</b> '+str(timeID)+'<br/>', file=mainFD)
   print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
+  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
+  navA=""
+  navB=""
+  if args.currentID!=0:
+    navA="/../.."
+    navB="/runexamples_report/result_current"
+  print('   <b>Navigate:</b> <a href="..%s/result_%010d%s/index.html">previous result</a>,'%(navA, currentID-1, navB), file=mainFD)
+  print('                    <a href="..%s/result_%010d%s/index.html">next result</a>,'%(navA, currentID+1, navB), file=mainFD)
+  print('                    <a href="..%s/result_current%s/index.html">current result</a>'%(navA, navB), file=mainFD)
+  if args.currentID!=0:
+    print(',                 <a href="../../index.html">parent</a>', file=mainFD)
+  print('                    <br/>', file=mainFD)
   print('</p>', file=mainFD)
   print('<p>A example name in gray color is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
@@ -286,7 +365,7 @@ def main():
 
   # run examples in parallel
   print("Started running examples. Each example will print a message if finished.")
-  print("See the log file "+pj(args.reportOutDir, "index.html")+" for detailed results.\n")
+  print("See the log file "+pj(os.path.dirname(args.reportOutDir), "result_current", "index.html")+" for detailed results.\n")
 
   if not args.debugDisableMultiprocessing:
     # init mulitprocessing handling and run in parallel
@@ -335,7 +414,9 @@ def main():
   mainFD.close()
   # replace <span id="STILLRUNNINGORABORTED"...</span> in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
-    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(datetime.datetime.now()), line)
+    endTime=datetime.datetime.now()
+    endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
+    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line)
 
   # write RSS feed
@@ -566,6 +647,22 @@ def runExample(resultQueue, example):
       print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
       print('<p>', file=htmlOutputFD)
       print('<b>Example:</b> '+example[0]+'<br/>', file=htmlOutputFD)
+      print('<b>Time ID:</b> '+str(timeID)+'<br/>', file=htmlOutputFD)
+      currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
+      parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+1))))
+      navA=""
+      navB=""
+      if args.currentID!=0:
+        navA="/../.."
+        navB="/runexamples_report/result_current"
+      print('<b>Navigate:</b> <a href="%s/..%s/result_%010d%s/%s">previous result</a>,'%
+        (parDirs, navA, currentID-1, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
+      print('                 <a href="%s/..%s/result_%010d%s/%s">next result</a>,'%
+        (parDirs, navA, currentID+1, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
+      print('                 <a href="%s/..%s/result_current%s/%s">current result</a>,'%
+        (parDirs, navA, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
+      print('                 <a href="%s%s%s/index.html">parent</a><br/>'%
+        (parDirs, navA, navB), file=htmlOutputFD)
       print('</p>', file=htmlOutputFD)
       print('<table border="1" class="sortable">', file=htmlOutputFD)
       print('<tr><th>XML File</th><th>Result</th></tr>', file=htmlOutputFD)
@@ -669,7 +766,7 @@ def executeFlatXMLExample(executeFD):
 
 
 
-def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, dataArrayRef, dataArrayCur):
+def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, label, dataArrayRef, dataArrayCur):
   import numpy
 
   diffDir=os.path.dirname(diffHTMLFileName)
@@ -689,7 +786,23 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print('<b>Example:</b> '+example+'<br/>', file=diffHTMLPlotFD)
   print('<b>File:</b> '+filename+'<br/>', file=diffHTMLPlotFD)
   print('<b>Dataset:</b> '+datasetName+'<br/>', file=diffHTMLPlotFD)
-  print('<b>Label:</b> '+label.decode("utf-8")+'<br/>', file=diffHTMLPlotFD)
+  print('<b>Label:</b> '+label.decode("utf-8")+' (column %d)<br/>'%(column), file=diffHTMLPlotFD)
+  print('<b>Time ID:</b> '+str(timeID)+'<br/>', file=diffHTMLPlotFD)
+  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
+  parDirs="/".join(list(map(lambda x: "..", range(0, pj(example, filename, datasetName, str(column)).count(os.sep)+1))))
+  navA=""
+  navB=""
+  if args.currentID!=0:
+    navA="/../.."
+    navB="/runexamples_report/result_current"
+  print('<b>Navigate:</b> <a href="%s/..%s/result_%010d%s/%s">previous result</a>,'%
+    (parDirs, navA, currentID-1, fmfmb, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+  print('                 <a href="%s/..%s/result_%010d%s/%s">next result</a>,'%
+    (parDirs, navA, currentID+1, fmfmb, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+  print('                 <a href="%s/..%s/result_current%s/%s">current result</a>,'%
+    (parDirs, navA, fmfmb, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+  print('                 <a href="%s/%s%s%s/compare.html">parent</a><br/>'%
+    (parDirs, myurllib.pathname2url(example), navA, fmfmb), file=diffHTMLPlotFD)
   print('</p>', file=diffHTMLPlotFD)
   print('<p>A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" height="300%" width="100%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
@@ -869,7 +982,7 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
           dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
           createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
-                         refLabels[column], dataArrayRef, dataArrayCur)
+                         column, refLabels[column], dataArrayRef, dataArrayCur)
         # everything OK
         else:
           print('<td><span style="color:green">passed</span></td>', file=compareFD)
@@ -920,6 +1033,22 @@ def compareExample(example, compareFN):
   print('<h1>Compare Results</h1>', file=compareFD)
   print('<p>', file=compareFD)
   print('<b>Example:</b> '+example+'<br/>', file=compareFD)
+  print('<b>Time ID:</b> '+str(timeID)+'<br/>', file=compareFD)
+  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
+  parDirs="/".join(list(map(lambda x: "..", range(0, example.count(os.sep)+1))))
+  navA=""
+  navB=""
+  if args.currentID!=0:
+    navA="/../.."
+    navB="/runexamples_report/result_current"
+  print('<b>Navigate:</b> <a href="%s/..%s/result_%010d%s/%s">previous result</a>,'%
+    (parDirs, navA, currentID-1, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
+  print('                 <a href="%s/..%s/result_%010d%s/%s">next result</a>,'%
+    (parDirs, navA, currentID+1, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
+  print('                 <a href="%s/..%s/result_current%s/%s">current result</a>,'%
+    (parDirs, navA, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
+  print('                 <a href="%s%s%s/index.html">parent</a><br/>'%
+    (parDirs, navA, navB), file=compareFD)
   print('</p>', file=compareFD)
   print('<table border="1" class="sortable">', file=compareFD)
   print('<tr><th>H5 File</th><th>Dataset</th><th>Label</th><th>Result</th></tr>', file=compareFD)
@@ -1075,34 +1204,34 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 def writeRSSFeed(nrFailed, nrTotal):
   rssFN="result.rss.xml"
-  rssFD=open(pj(args.reportOutDir, rssFN), "w")
+  rssFD=open(pj(args.reportOutDir, os.pardir, rssFN), "w")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>%sMBSim runexample.py Result</title>
-    <link>%s/index.html</link>
+    <link>%s/result_current/index.html</link>
     <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url), file=rssFD)
+    <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
   if nrFailed>0:
+    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])#mfmf
     print('''\
     <item>
       <title>%s%d of %d examples failed</title>
-      <link>%s/index.html</link>
-      <guid isPermaLink="false">%s/rss_id_%s</guid>
+      <link>%s/result_%010d/index.html</link>
+      <guid isPermaLink="false">%s/result_%010d/rss_id_%s</guid>
       <pubDate>%s</pubDate>
     </item>'''%(args.buildType, nrFailed, nrTotal,
-           args.url,
-           args.url,
-           datetime.datetime.utcnow().strftime("%s"),
+           args.url, currentID,
+           args.url, currentID, datetime.datetime.utcnow().strftime("%s"),
            datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
   print('''\
     <item>
       <title>%sDummy feed item. Just ignore it.</title>
-      <link>%s/index.html</link>
-      <guid isPermaLink="false">%s/rss_id_1359206848</guid>
+      <link>%s/result_current/index.html</link>
+      <guid isPermaLink="false">%s/result_current/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
     </item>
   </channel>
