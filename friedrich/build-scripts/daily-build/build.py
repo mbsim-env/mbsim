@@ -270,7 +270,7 @@ def main():
     print('</head>', file=docFD)
     print('<body>', file=docFD)
     print('<h1>MBSim, OpenMBV, ... Documentation</h1>', file=docFD)
-    print('<p>Generated at: %s</p>'%(str(timeID)), file=compareFD)
+    print('<p>Generated at: %s</p>'%(str(timeID)), file=docFD)
     print('<h2>XML Documentation</h2>', file=docFD)
     print('<p>', file=docFD)
     print('  <ul>', file=docFD)
@@ -713,7 +713,7 @@ def runexamples(mainFD):
     print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '"><span style="color:green">all examples passed</span></a></td>', file=mainFD)
   else:
-    print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "index.html"))+
+    print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '"><span style="color:red">examples failed</span></a></td>', file=mainFD)
 
   mainFD.flush()
