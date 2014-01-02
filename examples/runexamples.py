@@ -796,13 +796,13 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
     navA="/../.."
     navB="/runexamples_report/result_current"
   print('<b>Navigate:</b> <a href="%s/..%s/result_%010d%s/%s">previous result</a>,'%
-    (parDirs, navA, currentID-1, fmfmb, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, currentID-1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
   print('                 <a href="%s/..%s/result_%010d%s/%s">next result</a>,'%
-    (parDirs, navA, currentID+1, fmfmb, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, currentID+1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
   print('                 <a href="%s/..%s/result_current%s/%s">current result</a>,'%
-    (parDirs, navA, fmfmb, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
   print('                 <a href="%s/%s%s%s/compare.html">parent</a><br/>'%
-    (parDirs, myurllib.pathname2url(example), navA, fmfmb), file=diffHTMLPlotFD)
+    (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</p>', file=diffHTMLPlotFD)
   print('<p>A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" height="300%" width="100%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
@@ -1216,7 +1216,7 @@ def writeRSSFeed(nrFailed, nrTotal):
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
   if nrFailed>0:
-    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])#mfmf
+    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
     print('''\
     <item>
       <title>%s%d of %d examples failed</title>
