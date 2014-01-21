@@ -429,11 +429,6 @@ namespace MBSim {
         link[i]->closePlot();
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->closePlot();
-
-      if (getPlotFeature(separateFilePerGroup) == enabled)
-        delete (H5::FileSerie*) plotGroup;
-      else
-        delete (H5::Group*) plotGroup;
     }
   }
 

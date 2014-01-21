@@ -13,5 +13,5 @@ libfunction_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENM
 functioninclude_HEADERS = basic_functions.h \
 			  tabular_functions.h \
 			  symbolic_functions.h \
-			  kinematic_functions.h
+			  kinematic_functions.h \
 			  kinetic_functions.h
