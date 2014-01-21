@@ -59,8 +59,6 @@ namespace MBSim {
 
   void Element::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(plotVectorSerie) delete plotVectorSerie;
-      delete plotGroup;
     }
   }
 

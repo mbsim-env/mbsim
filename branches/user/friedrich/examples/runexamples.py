@@ -141,10 +141,16 @@ class MultiFile(object):
 # subprocess call with MultiFile output
 def subprocessCall(args, f, env=os.environ):
   proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
+  lineNP=b'' # not already processed bytes (required since we read 100 bytes which may break a unicode multi byte character)
   while True:
-    line=proc.stdout.read(100)
+    line=lineNP+proc.stdout.read(100)
+    lineNP=b''
     if line==b'': break
-    print(line.decode("utf-8"), end="", file=f)
+    try:
+      print(line.decode("utf-8"), end="", file=f)
+    except UnicodeDecodeError as ex: # catch broken multibyte unicode characters and append it to next line
+      print(line[0:ex.start].decode("utf-8"), end="", file=f) # print up to first broken character
+      lineNP=ex.object[ex.start:] # add broken characters to next line
   return proc.wait()
 
 # rotate
