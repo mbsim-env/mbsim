@@ -18,93 +18,149 @@
  *          rzander@users.berlios.de
  */
 
-#ifndef _BODY_FLEXIBLE_1S_21_ANCF_H_
-#define _BODY_FLEXIBLE_1S_21_ANCF_H_
+#ifndef _FLEXIBLE_BODY_1S_21_ANCF_H_
+#define _FLEXIBLE_BODY_1S_21_ANCF_H_
 
-#include "body_flexible.h"
+#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 
-namespace MBSim {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#endif
 
-  class FiniteElement1s21ANCF;
-  class Contour1sFlexible;
+
+namespace MBSimFlexibleBody {
 
   /**
    * \brief Absolute Nodal Coordinate Formulation for flexible planar beams
    * \author Roland Zander
    */
-  class BodyFlexible1s21ANCF : public BodyFlexible1s {
+  class FlexibleBody1s21ANCF : public FlexibleBodyContinuum<double> {
 
-    protected:
-      FiniteElement1s21ANCF *balken;
+    public:
+      /*!
+       * \brief constructor:
+       * \param name of body
+       * \param bool to specify open (cantilever) or closed (ring) structure
+       */
+      FlexibleBody1s21ANCF(const std::string &name, bool openStructure);
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~FlexibleBody1s21ANCF() {}
+
+      /* INHERITED INTERFACE OF FLEXIBLE BODY */
+      virtual void BuildElements();
+      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+      /****************************************/
+
+      /* INHERITED INTERFACE OF OBJECT */
+      virtual void init(MBSim::InitStage stage);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt=1);
+      virtual std::string getType() const { return "FlexibleBody1s21ANCF"; }
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      /**
+       * \brief sets size of positions and velocities
+       */
+      void setNumberElements(int n);
+      void setLength(double L_) { L = L_; }
+      void setEModul(double E_) { E = E_; }
+      void setCrossSectionalArea(double A_) { A = A_; }
+      void setMomentInertia(double I_) { I = I_; }
+      void setDensity(double rho_) { rho = rho_; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+#endif
+      /***************************************************/
+
+      /**
+       * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vec computeState(double x);
+
+      /**
+       * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring
+       * \param angle of slope in case of cantilever
+       */
+      void initRelaxed(double alpha);
+
+    private:
       static const int NodeDOFs;
       static const int ElementalDOFs;
 
-      int Elements;
-      double L, E, A, I, rho;
-      bool openStructure;
-      bool implicit;
-
-      Vec qElement,uElement;
-      int CurrentElement;
-      SqrMat Dhq, Dhqp;
-
-      // KOS-Definition und Lage des ersten Knoten im Weltsystem
-      Vec WrON00,WrON0;
-
-      void   BuildElement(const int&);
-      double BuildElement(const double&);
-
-      void updateStateDependentVariables(double t);
-      void updatePorts(double t);
-
-      void updateh(double t);
-      void init(InitStage stage);
-      void initM();
-      bool initialized;
-      double alphaRelax0, alphaRelax;
-
-      double sTangent;
-      Vec Wt, Wn, WrOC, WvC, Womega;
-
-      /** right and left side contour of body: defined using binormal of contour */
-      Contour1sFlexible *contourR, *contourL;
-
-    public:
-      BodyFlexible1s21ANCF(const string &name, bool openStructure); 
-
-      void setNumberElements(int n); 
-      void setLength(double L_)             {L = L_;}
-      void setEModul(double E_)             {E = E_;}
-      void setCrossSectionalArea(double A_) {A = A_;}
-      void setMomentInertia(double I_)      {I = I_;}
-      void setDensity(double rho_)          {rho = rho_;}
-      /*     void setCurleRadius(double r)         {rc = r;if(initialized) balken->setCurleRadius(rc);} */
-      /*     void setMaterialDamping(double d)     {dm = d;if(initialized) balken->setMaterialDamping(dm);} */
-      /*     void setLehrDamping(double d)         {dl = d;if(initialized) balken->setLehrDamping(dl);} */
-
-      using BodyFlexible1s::addPort;
-      /*! add Port at
-       * \param node
+      /**
+       * \brief detect current finite element
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
        */
-      void addPort(const string &name, const int &node);
+      void BuildElement (const double& sGlobal, double& sLocal, int& currentElement); //geändert !!!!  Element entspricht currentElement in rcm ?!
 
-      Mat computeJacobianMatrix(const ContourPointData &data);
+      /**
+       * \brief number of finite elements used for discretisation
+       */
+      int Elements;
 
-      Mat computeWt  (const ContourPointData &S_);
-      Vec computeWn  (const ContourPointData &S_);
-      Vec computeWrOC(const ContourPointData &S_);
-      Vec computeWvC (const ContourPointData &S_);
-      Vec computeWomega(const ContourPointData &S_);
+      /**
+       * \brief length of beam
+       */
+      double L;
 
-      bool hasConstMass() const {return true;}
+      /**
+       * \brief length of one finite element
+       */
+      double l0;
 
-      void setJT(const Mat &JT_) {assert(JT_.cols()==2); JT = JT_;};
-      void setJR(const Mat &JR_) {assert(JR_.cols()==1); JR = JR_;};
+      /**
+       * \brief modulus of linear elasticity
+       */
+      double E;
 
-      void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
-      void initRelaxed(double alpha);
+      /**
+       * \brief cross-section area
+       */
+      double A;
+
+      /**
+       * \brief moment of inertia of cross-section
+       */
+      double I;
+
+      /**
+       * \brief material density
+       */
+      double rho;
+
+      fmatvec::VecInt plotElements;
+
+      /**
+       * \brief flag for open (cantilever beam) or closed (rings) structures
+       */
+      bool openStructure;
+
+      /**
+       * \brief flag for testing if beam is initialised
+       */
+      bool initialized;
+
+      /**
+       * \brief contour of body
+       */
+      Contour1sFlexible *contour1sFlexible;
+
   };
 
 }
+#endif /* _FLEXIBLE_BODY_1S_21_ANCF_H_ */
 
-#endif

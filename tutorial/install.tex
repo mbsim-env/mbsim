@@ -199,6 +199,11 @@ and the procedures \textsc{automake, configure} for dynamic compilation with the
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
+Sometimes trouble with linking \emph{swig} occurs; in this case just set
+\begin{verbatim}
+--with-swigpath
+\end{verbatim}
+to some value such that \emph{swig} is not found on your system.
 \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. 
 
 \subsubsection{\MBSim}
