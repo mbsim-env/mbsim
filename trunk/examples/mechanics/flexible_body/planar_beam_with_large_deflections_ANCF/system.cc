@@ -23,10 +23,12 @@ using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
-  Vec grav(3); //"[0.0;-9.81;0.0]");
+  // gravity
+  Vec grav(3);
   grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
+  // data beam
   double l0 = 1.5; // length 
   double b0 = 0.1; // width
   double E = 500.e7; // E-Modul
@@ -35,20 +37,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double rho = 9.2e2; // density  
   int elements = 4; // number of finite elements
   
+  // data point mass
   double mass = 2.; // mass of ball
   double r = 1.e-2; // radius of ball
   
+  // beam with some angle around z-axis and shift
   FlexibleBody1s21ANCF *rod = new FlexibleBody1s21ANCF("Rod", true);
   rod->setLength(l0);
   rod->setEModul(E);
   rod->setCrossSectionalArea(A);
   rod->setMomentInertia(I1);
   rod->setDensity(rho);
-  Vec VecMove(3,INIT,0.); //movingvector
-  VecMove(0) = 0.3*l0;
-  double alpha = 0; //
-  double beta = 0.; // Angle of rotation y
-  double gamma = 0.4; // Angle of rotation z
+  Vec VecMove(3,INIT,0.);
+  //VecMove(0) = 0.3*l0;
+  double alpha = 0.; //
+  double beta = M_PI/4.; // angle of rotation y
+  double gamma = 0.; // angle of rotation z
   SqrMat K=Cardan2AIK(alpha,beta,gamma);
   
   this->addFrame("R",VecMove,K,this->getFrame("I"));
@@ -62,7 +66,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
   rod->setq0(q0);
   this->addObject(rod);
-
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
@@ -94,9 +97,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   top->setNormalDistance(0.5*b0);
   rod->addContour(top);
   
+  // point mass with point contour at a specific surface point
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
-  WrOS0B(0) = 0.8*l0; WrOS0B(1) = b0*0.5+0.05;
+  WrOS0B(0) = 0.8*l0; WrOS0B(1) = b0*0.5+0.35;
   this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("R"));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
@@ -106,12 +110,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 2./5.*mass*r*r;
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
-  Mat JacTrans(3,1,INIT,0.); JacTrans(1,0) = 1.;
+  Mat JacTrans(3,2,INIT,0.); JacTrans(0,0) = 1.; JacTrans(1,1) = 1.;
   ball->setTranslation(new LinearTranslation(JacTrans));
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
-  ball->setInitialGeneralizedVelocity(-0.0);
+  ball->setInitialGeneralizedVelocity(Vec(2,INIT,0.));
   this->addObject(ball);
   
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -121,6 +125,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
+  // elastic impact
   Contact *contact = new Contact("Contact");
   contact->setContactForceLaw(new UnilateralConstraint);
   contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
@@ -128,12 +133,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->enableOpenMBVContactPoints();
   this->addLink(contact);
   
+  // 
   ContourPointData cpdata;
   cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
   cpdata.getContourParameterType() = CONTINUUM;
   rod->addFrame("RJ",cpdata);
   Joint *joint = new Joint("Clamping");
-  joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
+  joint->connect(this->getFrame("R"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
   joint->setImpactForceLaw(new BilateralImpact);
