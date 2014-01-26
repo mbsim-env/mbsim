@@ -207,13 +207,15 @@ def main():
         pj('mbsim', 'modules', 'mbsimFlexibleBody'),
         pj('mbsim', 'modules', 'mbsimPowertrain'),
         pj('mbsim', 'modules', 'mbsimElectronics'),
-        pj('mbsim', 'modules', 'mbsimControl')
+        pj('mbsim', 'modules', 'mbsimControl'),
+        pj('mbsim', 'modules', 'mbsimInterface')
       ])]
   }
   toolXMLDocCopyDir={
     pj("mbsim", "kernel"):                       set(["http___mbsim_berlios_de_MBSim", "http___mbsim_berlios_de_MBSimIntegrator"]),
     pj("mbsim", "modules", "mbsimFlexibleBody"): set(["http___mbsim_berlios_de_MBSimFlexibleBody"]),
     pj("mbsim", "modules", "mbsimControl"):      set(["http___mbsim_berlios_de_MBSimControl"]),
+    pj("mbsim", "modules", "mbsimInterface"):    set(["http___mbsim_berlios_de_MBSimInterface"]),
     pj("mbsim", "modules", "mbsimHydraulics"):   set(["http___mbsim_berlios_de_MBSimHydraulics"]),
     pj("mbsim", "mbsimxml"):                     set(["http___mbsim_berlios_de_MBSimXML"]),
     pj("openmbv", "mbxmlutils"):                 set(["http___openmbv_berlios_de_MBXMLUtils_physicalvariable"]),
@@ -226,6 +228,7 @@ def main():
     pj("mbsim", "kernel"):                       set(["mbsim"]),
     pj("mbsim", "modules", "mbsimFlexibleBody"): set(["mbsimflexiblebody"]),
     pj("mbsim", "modules", "mbsimControl"):      set(["mbsimcontrol"]),
+    pj("mbsim", "modules", "mbsimInterface"):    set(["mbsiminterface"]),
     pj("mbsim", "modules", "mbsimElectronics"):  set(["mbsimelectronics"]),
     pj("mbsim", "modules", "mbsimHydraulics"):   set(["mbsimhydraulics"]),
     pj("mbsim", "modules", "mbsimPowertrain"):   set(["mbsimpowertrain"])
