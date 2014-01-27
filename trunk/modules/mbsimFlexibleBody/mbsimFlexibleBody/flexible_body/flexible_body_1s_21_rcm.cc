@@ -266,7 +266,7 @@ namespace MBSimFlexibleBody {
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
-          data.push_back(0.); // local twist
+          data.push_back(acos(R->getOrientation()(2,2))+X(3)); // local twist
         }
         ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
       }
