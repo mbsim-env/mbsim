@@ -43,6 +43,57 @@
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
     schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/xml.xsd"/>
 
+  <xs:group name="OpenMBVArrowParameters">
+    <xs:sequence>
+      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="diameter" type="pv:lengthScalar" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+          tbd.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="headDiameter" type="pv:lengthScalar" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+          tbd.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="headLength" type="pv:lengthScalar" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+          tbd.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="&quot;line&quot;"/>
+            <xs:enumeration value="&quot;fromHead&quot;"/>
+            <xs:enumeration value="&quot;toHead&quot;"/>
+            <xs:enumeration value="&quot;bothHeads&quot;"/>
+            <xs:enumeration value="&quot;fromDoubleHead&quot;"/>
+            <xs:enumeration value="&quot;toDoubleHead&quot;"/>
+            <xs:enumeration value="&quot;bothDoubleHeads&quot;"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="referencePoint" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="&quot;toPoint&quot;"/>
+            <xs:enumeration value="&quot;fromPoint&quot;"/>
+            <xs:enumeration value="&quot;midPoint&quot;"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
   <xs:simpleType name="PlotFeatureType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
@@ -4231,103 +4282,30 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:sequence>
-            <xs:choice>
-              <xs:element name="enableOpenMBVPosition" minOccurs="0">  
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="diameter" type="pv:lengthScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                    <xs:element name="headDiameter" type="pv:lengthScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                    <xs:element name="headLength" type="pv:lengthScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                    <xs:element name="staticColor" type="pv:nounitScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType> 
-              </xs:element>
-              <xs:element name="openMBVPositionArrow" minOccurs="0">  
-                 <xs:annotation>
-                   <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                   tbd
-                   </xs:documentation>
-                 </xs:annotation>
-                 <xs:complexType>
-                   <xs:sequence>
-                     <xs:element ref="ombv:Arrow"/>
-                   </xs:sequence>
-                 </xs:complexType>
-              </xs:element>
-            </xs:choice>
-          </xs:sequence>
-          <xs:element name="openMBVVelocityArrow" minOccurs="0">  
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-               tbd
-               </xs:documentation>
-             </xs:annotation>
-             <xs:complexType>
-               <xs:sequence>
-                 <xs:element ref="ombv:Arrow"/>
-               </xs:sequence>
-             </xs:complexType>
+          <xs:element name="enableOpenMBVPosition" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVAngularVelocityArrow" minOccurs="0">  
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-               tbd
-               </xs:documentation>
-             </xs:annotation>
-             <xs:complexType>
-               <xs:sequence>
-                 <xs:element ref="ombv:Arrow"/>
-               </xs:sequence>
-             </xs:complexType>
+          <xs:element name="enableOpenMBVVelocity" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVAccelerationArrow" minOccurs="0">  
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-               tbd
-               </xs:documentation>
-             </xs:annotation>
-             <xs:complexType>
-               <xs:sequence>
-                 <xs:element ref="ombv:Arrow"/>
-               </xs:sequence>
-             </xs:complexType>
+          <xs:element name="enableOpenMBVAngularVelocity" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVAngularAccelerationArrow" minOccurs="0">  
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-               tbd
-               </xs:documentation>
-             </xs:annotation>
-             <xs:complexType>
-               <xs:sequence>
-                 <xs:element ref="ombv:Arrow"/>
-               </xs:sequence>
-             </xs:complexType>
+          <xs:element name="enableOpenMBVAcceleration" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVAngularAcceleration" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>

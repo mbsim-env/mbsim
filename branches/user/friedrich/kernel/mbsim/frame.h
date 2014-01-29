@@ -23,6 +23,7 @@
 #include "mbsim/element.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/openmbv_utils.h"
 namespace OpenMBV {
   class Frame;
   class Arrow;
@@ -85,8 +86,8 @@ namespace MBSim {
       virtual const fmatvec::Vec3& getAngularAcceleration() const { return WpsiP; }
       virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual void enableOpenMBV(double size=1, double offset=1);
-      void setOpenMBVFrame(OpenMBV::Frame* frame) { openMBVFrame = frame; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1))) { enableOpenMBV_(size,offset); }
+//      void setOpenMBVFrame(OpenMBV::Frame* frame) { openMBVFrame = frame; }
       OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame; }
 #endif
       /***************************************************/
@@ -162,6 +163,7 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Frame* openMBVFrame;
+      virtual void enableOpenMBV_(double size, double offset);
 #endif
   };
 
