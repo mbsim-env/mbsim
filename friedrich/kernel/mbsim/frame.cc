@@ -143,7 +143,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void Frame::enableOpenMBV(double size, double offset) {
+  void Frame::enableOpenMBV_(double size, double offset) {
     if(size>=0) {
       openMBVFrame=new OpenMBV::Frame;
       openMBVFrame->setSize(size);
@@ -161,8 +161,12 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     TiXmlElement *ee;
     if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
-      enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
-          getDouble(ee->FirstChildElement(MBSIMNS"offset")));
+      double size=1, offset=1;
+      TiXmlElement *eee = ee->FirstChildElement(MBSIMNS"size");
+      if(eee) size = getDouble(eee);
+      eee = ee->FirstChildElement(MBSIMNS"offset");
+      if(eee) offset = getDouble(eee);
+      enableOpenMBV_(size,offset);
 
       // pass a OPENMBV_ID processing instruction to the OpenMBV Frame object
       for(TiXmlNode *child=ee->FirstChild(); child; child=child->NextSibling()) {
@@ -171,11 +175,6 @@ namespace MBSim {
         if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
           openMBVFrame->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
       }
-    }
-    if((ee=element->FirstChildElement(MBSIMNS"openMBVFrame"))) {
-      OpenMBV::Frame *f=new OpenMBV::Frame;
-      setOpenMBVFrame(f);
-      f->initializeUsingXML(ee->FirstChildElement());
     }
 #endif
   }
