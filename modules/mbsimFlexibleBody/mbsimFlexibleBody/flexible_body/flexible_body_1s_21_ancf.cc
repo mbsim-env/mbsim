@@ -26,6 +26,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
@@ -230,10 +231,13 @@ namespace MBSimFlexibleBody {
         plotColumns.push_back("dx2 ("+numtostr(plotElements(i))+")"); // 6
         plotColumns.push_back("dy2 ("+numtostr(plotElements(i))+")"); // 7
       }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+#endif
       FlexibleBodyContinuum<double>::init(stage);
     }
     else
-      FlexibleBodyContinuum<double>::init(stage); //
+      FlexibleBodyContinuum<double>::init(stage);
   }
 
   void FlexibleBody1s21ANCF::plot(double t, double dt) {
@@ -251,7 +255,7 @@ namespace MBSimFlexibleBody {
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
-          data.push_back(acos(R->getOrientation()(2,2))+X(3)); // local twist
+          data.push_back(0.); // local twist
         }
         ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
       }
