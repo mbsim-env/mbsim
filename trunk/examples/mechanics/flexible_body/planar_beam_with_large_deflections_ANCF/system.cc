@@ -55,7 +55,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double gamma = 0.; // angle of rotation z
   SqrMat K=Cardan2AIK(alpha,beta,gamma);
   
-  this->addFrame("R",VecMove,K,this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("R",VecMove,K,this->getFrame("I")));
   this->getFrame("R")->enableOpenMBV();
   rod->setFrameOfReference(this->getFrame("R"));
   rod->setNumberElements(elements);
@@ -101,7 +101,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
   WrOS0B(0) = 0.8*l0; WrOS0B(1) = b0*0.5+0.35;
-  this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("R"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("R")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);

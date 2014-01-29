@@ -24,6 +24,7 @@
 #include "mbsimFlexibleBody/defines.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/environment.h"
+#include "mbsim/utils/rotarymatrices.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/objectfactory.h>
@@ -171,6 +172,12 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s23BTA*>(discretization[i])->setTorsionalDamping(dTorsional);
       }
     }
+    else if(stage==MBSim::plot) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+#endif
+      FlexibleBodyContinuum<double>::init(stage);
+    }
     else
       FlexibleBodyContinuum<double>::init(stage);    
   }
@@ -192,7 +199,7 @@ namespace MBSimFlexibleBody {
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
-          data.push_back(acos(R->getOrientation()(2,2))+X(3)); // local twist
+          data.push_back(X(3)); // local twist
         }
         ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
       }
