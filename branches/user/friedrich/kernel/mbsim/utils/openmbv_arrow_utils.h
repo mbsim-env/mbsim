@@ -18,8 +18,8 @@
  *          rzander@users.berlios.de
  */
 
-#ifndef _PARAMETER_H_
-#define _PARAMETER_H_
+#ifndef _OPENMBV_ARROW_UTILS_H_
+#define _OPENMBV_ARROW_UTILS_H_
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <boost/parameter/name.hpp>
@@ -31,18 +31,14 @@
 
 namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  BOOST_PARAMETER_NAME(size)
-  BOOST_PARAMETER_NAME(offset)
   BOOST_PARAMETER_NAME(scaleLength)
+  BOOST_PARAMETER_NAME(scaleSize)
   BOOST_PARAMETER_NAME(type)
   BOOST_PARAMETER_NAME(referencePoint)
-  BOOST_PARAMETER_NAME(diameter)
-  BOOST_PARAMETER_NAME(headDiameter)
-  BOOST_PARAMETER_NAME(headLength)
   BOOST_PARAMETER_NAME(diffuseColor)
   BOOST_PARAMETER_NAME(transparency)
-  void enableOpenMBVArrow(OpenMBV::Arrow* &arrow, const fmatvec::Vec3& dC, double tp, double d, double hD, double hL, OpenMBV::Arrow::Type &t, OpenMBV::Arrow::ReferencePoint &rP, double sL);
-  void readOpenMBVArrow(MBXMLUtils::TiXmlElement* e, fmatvec::Vec3& dC, double &tp, double &d, double &hD, double &hL, OpenMBV::Arrow::Type &t, OpenMBV::Arrow::ReferencePoint &rP, double &sL);
+  //void enableOpenMBVArrow(OpenMBV::Arrow* &arrow, const fmatvec::Vec3& dC, double tp, double d, double hD, double hL, const OpenMBV::Arrow::Type &t, const OpenMBV::Arrow::ReferencePoint &rP, double sL);
+  OpenMBV::Arrow* enableOpenMBVArrow(const fmatvec::Vec3 &dC_, double tp_, const OpenMBV::Arrow::Type &t_, const OpenMBV::Arrow::ReferencePoint &rP_, double sL_, double sS_, MBXMLUtils::TiXmlElement* e=0);
 #endif
 }
 
