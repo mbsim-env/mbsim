@@ -43,44 +43,29 @@
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
     schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/xml.xsd"/>
 
+  <xs:group name="OpenMBVFrameParameters">
+    <xs:sequence>
+      <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Länge der Achsen des KOS.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="offset" type="pv:nounitScalar" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
   <xs:group name="OpenMBVArrowParameters">
     <xs:sequence>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
-      <xs:element name="diameter" type="pv:lengthScalar" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-          tbd.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="headDiameter" type="pv:lengthScalar" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-          tbd.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="headLength" type="pv:lengthScalar" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-          tbd.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="type" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="&quot;line&quot;"/>
-            <xs:enumeration value="&quot;fromHead&quot;"/>
-            <xs:enumeration value="&quot;toHead&quot;"/>
-            <xs:enumeration value="&quot;bothHeads&quot;"/>
-            <xs:enumeration value="&quot;fromDoubleHead&quot;"/>
-            <xs:enumeration value="&quot;toDoubleHead&quot;"/>
-            <xs:enumeration value="&quot;bothDoubleHeads&quot;"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
       <xs:element name="referencePoint" minOccurs="0">
         <xs:simpleType>
           <xs:restriction base="xs:token">
@@ -91,6 +76,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -539,22 +525,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Achsen des KOS in OpenMBV.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="offset" type="pv:nounitScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
+              <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -1098,22 +1069,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Achsen des KOS in OpenMBV.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="offset" type="pv:nounitScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
+              <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="openMBVWeightArrow" minOccurs="0">
@@ -2201,35 +2157,8 @@
           <xs:choice>
             <xs:element name="enableOpenMBV" minOccurs="0">  
               <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="size" type="pv:lengthScalar">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        Länge der Achsen des KOS.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>
-                  <xs:element name="offset" type="pv:nounitScalar">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>
-                </xs:sequence>
+                <xs:group ref="OpenMBVFrameParameters"/>
               </xs:complexType> 
-            </xs:element>
-            <xs:element name="openMBVFrame" minOccurs="0">  
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                tbd
-                </xs:documentation>
-              </xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:Frame"/>
-                </xs:sequence>
-              </xs:complexType>
             </xs:element>
           </xs:choice>
         </xs:sequence> 

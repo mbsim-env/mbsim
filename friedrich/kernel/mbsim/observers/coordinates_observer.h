@@ -22,7 +22,8 @@
 #include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
+#include <mbsim/utils/openmbv_arrow_utils.h>
+#include <mbsim/utils/openmbv_frame_utils.h>
 namespace OpenMBV {
   class Frame;
 }
@@ -49,15 +50,10 @@ namespace MBSim {
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVPositionArrow(OpenMBV::Arrow *arrow) { openMBVPosition = arrow; }
-      void setOpenMBVVelocityArrow(OpenMBV::Arrow *arrow) { openMBVVelocity = arrow; }
-      void setOpenMBVAccelerationArrow(OpenMBV::Arrow *arrow) { openMBVAcceleration = arrow; }
-
-      virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVFrame(double size=1, double offset=1);
-
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(scaleLength,(double),1)(scaleSize,(double),1))) { openMBVPosition=enableOpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize); }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVVelocity, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(scaleLength,(double),1)(scaleSize,(double),1))) { openMBVVelocity=enableOpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize); }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAcceleration, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(scaleLength,(double),1)(scaleSize,(double),1))) { openMBVAcceleration=enableOpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize); }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVFrame, tag, (optional (size,(double),1)(offset,(double),1))) { openMBVFrame=MBSim::enableOpenMBVFrame(size,offset); }
 #endif
 
     private:

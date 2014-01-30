@@ -72,6 +72,9 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="Punkt">
+          <enableOpenMBV>
+            <size>0.3</size>
+          </enableOpenMBV>
           <relativePosition>[0;0.2;0]</relativePosition>
           <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </FixedRelativeFrame>
@@ -89,6 +92,7 @@
           <ombv:innerTopRadius>0</ombv:innerTopRadius>
         </ombv:Frustum>
       </openMBVRigidBody>
+      <enableOpenMBVFrameC/>
     </RigidBody>
   </objects>
   <links>
@@ -132,7 +136,8 @@
         <diffuseColor>[0.6;0.3;0.6]</diffuseColor>
       </enableOpenMBVPosition>
       <enableOpenMBVVelocity>
-        <headLength>0.9</headLength>
+        <scaleLength>0.1</scaleLength>
+        <scaleSize>0.1</scaleSize>
       </enableOpenMBVVelocity>
       <enableOpenMBVAngularVelocity>
         <scaleLength>0.1</scaleLength>

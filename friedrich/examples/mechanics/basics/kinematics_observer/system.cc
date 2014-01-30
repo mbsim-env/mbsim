@@ -132,8 +132,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setInitialRotation(1.5708,0,0);
   box2->setOpenMBVRigidBody(cylinder);
 
+  box2->getFrame("Punkt")->enableOpenMBV(_size=0.3);
+
   obs->enableOpenMBVPosition(_diffuseColor="[0.6;0.3;0.6]");
-  obs->enableOpenMBVVelocity(_headLength=0.9);
+  obs->enableOpenMBVVelocity(_scaleSize=0.1,_scaleLength=0.1);
   obs->enableOpenMBVAngularVelocity(_scaleLength=0.1);
 #endif
 }
