@@ -148,13 +148,22 @@ namespace MBSim {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"frame");
     if(e) saved_frame=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
-    if(e) openMBVPosition=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::fromPoint,1,1,e);
+    if(e) {
+        OpenMBVArrow ombv;
+        openMBVPosition=ombv.createOpenMBV(); 
+    }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
-    if(e) openMBVVelocity=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::fromPoint,1,1,e);
+    if(e) {
+        OpenMBVArrow ombv;
+        openMBVVelocity=ombv.createOpenMBV(); 
+    }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
-    if(e) openMBVAcceleration=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::fromPoint,1,1,e);
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrame");
-    if(e) openMBVFrame=MBSim::enableOpenMBVFrame(1,1,e);
+    if(e) {
+        OpenMBVArrow ombv;
+        openMBVAcceleration=ombv.createOpenMBV(); 
+    }
+    //e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrame");
+    //if(e) openMBVFrame=MBSim::enableOpenMBVFrame(1,1,e);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CartesianCoordinatesObserver, MBSIMNS"CartesianCoordinatesObserver")

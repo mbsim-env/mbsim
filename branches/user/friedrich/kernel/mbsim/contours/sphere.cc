@@ -33,15 +33,22 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Sphere, MBSIMNS"Sphere")
 
+  void Sphere::init(InitStage stage) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures();
+
+      if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void Sphere::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Sphere;
-      ((OpenMBV::Sphere*)openMBVRigidBody)->setRadius(r);
-    }
-    else openMBVRigidBody=0;
-  }
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          if(openMBVRigidBody) ((OpenMBV::Sphere*)openMBVRigidBody)->setRadius(r);
+        }
 #endif
+        RigidContour::init(stage);
+      }
+    }
+    else
+      RigidContour::init(stage);
+  }
 
   void Sphere::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
@@ -50,14 +57,10 @@ namespace MBSim {
     setRadius(getDouble(e));
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV") {
-      enableOpenMBV();
-      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
-        TiXmlUnknown *unknown=child->ToUnknown();
-        const size_t length=strlen("?OPENMBV_ID ");
-        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
-          openMBVRigidBody->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
-      }
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    if(e) {
+      OpenMBVSphere ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e); 
     }
 #endif
   }

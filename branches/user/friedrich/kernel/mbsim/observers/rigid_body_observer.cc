@@ -59,17 +59,6 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void RigidBodyObserver::enableOpenMBVAxisOfRotation(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVAxisOfRotation=new OpenMBV::Arrow;
-    openMBVAxisOfRotation->setScaleLength(scale);
-    openMBVAxisOfRotation->setReferencePoint(refPoint);
-    openMBVAxisOfRotation->setType(OpenMBV::Arrow::toDoubleHead);
-    openMBVAxisOfRotation->setDiameter(diameter);
-    openMBVAxisOfRotation->setHeadDiameter(headDiameter);
-    openMBVAxisOfRotation->setHeadLength(headLength);
-    openMBVAxisOfRotation->setStaticColor(color);
-  }
-
   void RigidBodyObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Vec3 r = body->getFrame("C")->getPosition();
