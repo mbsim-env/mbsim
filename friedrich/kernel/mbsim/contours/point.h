@@ -22,6 +22,10 @@
 
 #include "mbsim/contour.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
 namespace MBSim {
 
   /**
@@ -44,6 +48,16 @@ namespace MBSim {
       /* INHERITED INTERFACE OF CONTOUR */
       fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /**********************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(size,(double),0.001))) { 
+        OpenMBVSphere ombv(size,diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
+      }
+#endif
+      
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
   };
 
   inline fmatvec::Vec2 Point::computeLagrangeParameter(const fmatvec::Vec3 & WrPoint) {

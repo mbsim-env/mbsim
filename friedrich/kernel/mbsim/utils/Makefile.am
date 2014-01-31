@@ -9,8 +9,7 @@ libutils_la_SOURCES = colors.cc\
                       utils.cc\
                       stopwatch.cc\
                       ansatz_functions.cc\
-                      openmbv_arrow_utils.cc\
-                      openmbv_frame_utils.cc
+                      openmbv_utils.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
 
@@ -28,8 +27,8 @@ utilsinclude_HEADERS = colors.h\
                        stopwatch.h\
                        ansatz_functions.h\
                        contour_functions.h\
-		       openmbv_arrow_utils.h\
-		       openmbv_frame_utils.h
+		       boost_parameters.h\
+		       openmbv_utils.h
 
 if COND_CASADI
   MAYBE_CPPCASADITOXML = cppCasADiToXML

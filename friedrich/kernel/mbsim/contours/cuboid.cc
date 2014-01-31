@@ -300,8 +300,13 @@ namespace MBSim {
       addContour(edge);
 
     }
-    else if (stage == MBSim::plot)
+    else if (stage == MBSim::plot) {
       RigidContour::init(stage);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(openMBVRigidBody)
+        ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(lx,ly,lz);
+#endif
+    }
     else
       CompoundContour::init(stage);
   }
@@ -309,15 +314,5 @@ namespace MBSim {
   void Cuboid::plot(double t, double dt) {
     RigidContour::plot(t,dt);
   }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Cuboid::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Cuboid;
-      ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(lx,ly,lz);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
 
 }

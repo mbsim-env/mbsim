@@ -103,58 +103,6 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void RigidBodyGroupObserver::enableOpenMBVWeight(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVWeight=new OpenMBV::Arrow;
-    openMBVWeight->setScaleLength(scale);
-    openMBVWeight->setReferencePoint(refPoint);
-    openMBVWeight->setDiameter(diameter);
-    openMBVWeight->setHeadDiameter(headDiameter);
-    openMBVWeight->setHeadLength(headLength);
-    openMBVWeight->setStaticColor(color);
-  }
-
-  void RigidBodyGroupObserver::enableOpenMBVMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVMomentum=new OpenMBV::Arrow;
-    openMBVMomentum->setScaleLength(scale);
-    openMBVMomentum->setReferencePoint(refPoint);
-    openMBVMomentum->setDiameter(diameter);
-    openMBVMomentum->setHeadDiameter(headDiameter);
-    openMBVMomentum->setHeadLength(headLength);
-    openMBVMomentum->setStaticColor(color);
-  }
-
-  void RigidBodyGroupObserver::enableOpenMBVAngularMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVAngularMomentum=new OpenMBV::Arrow;
-    openMBVAngularMomentum->setScaleLength(scale);
-    openMBVAngularMomentum->setReferencePoint(refPoint);
-    openMBVAngularMomentum->setType(OpenMBV::Arrow::toDoubleHead);
-    openMBVAngularMomentum->setDiameter(diameter);
-    openMBVAngularMomentum->setHeadDiameter(headDiameter);
-    openMBVAngularMomentum->setHeadLength(headLength);
-    openMBVAngularMomentum->setStaticColor(color);
-  }
-
-  void RigidBodyGroupObserver::enableOpenMBVDerivativeOfMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVDerivativeOfMomentum=new OpenMBV::Arrow;
-    openMBVDerivativeOfMomentum->setScaleLength(scale);
-    openMBVDerivativeOfMomentum->setReferencePoint(refPoint);
-    openMBVDerivativeOfMomentum->setDiameter(diameter);
-    openMBVDerivativeOfMomentum->setHeadDiameter(headDiameter);
-    openMBVDerivativeOfMomentum->setHeadLength(headLength);
-    openMBVDerivativeOfMomentum->setStaticColor(color);
-  }
-
-  void RigidBodyGroupObserver::enableOpenMBVDerivativeOfAngularMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVDerivativeOfAngularMomentum=new OpenMBV::Arrow;
-    openMBVDerivativeOfAngularMomentum->setScaleLength(scale);
-    openMBVDerivativeOfAngularMomentum->setReferencePoint(refPoint);
-    openMBVDerivativeOfAngularMomentum->setType(OpenMBV::Arrow::toDoubleHead);
-    openMBVDerivativeOfAngularMomentum->setDiameter(diameter);
-    openMBVDerivativeOfAngularMomentum->setHeadDiameter(headDiameter);
-    openMBVDerivativeOfAngularMomentum->setHeadLength(headLength);
-    openMBVDerivativeOfAngularMomentum->setStaticColor(color);
-  }
-
   void RigidBodyGroupObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       double m = 0;

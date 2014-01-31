@@ -21,10 +21,6 @@
 #include "mbsim/contours/line_segment.h"
 #include "mbsim/utils/utils.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/grid.h>
-#endif
-
 using namespace std;
 using namespace MBXMLUtils;
 
@@ -41,17 +37,32 @@ namespace MBSim {
   LineSegment::LineSegment(const std::string& name, Frame *R) : RigidContour(name,R), length(1), thickness(0.01) {
   }
 
+  void LineSegment::init(InitStage stage) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures();
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          if(openMBVRigidBody) ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(0,length,0);
+        }
+#endif
+        RigidContour::init(stage);
+      }
+    }
+    else
+      RigidContour::init(stage);
+  }
+
   void LineSegment::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"length");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"length");
     setLength(getDouble(e));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
     if(e) {
-      double s=getDouble(e->FirstChildElement(MBSIMNS"size"));
-      int n=getInt(e->FirstChildElement(MBSIMNS"number"));
-      enableOpenMBV(true, s, n);
+      OpenMBVLine ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e); 
     }
 #endif
   }
@@ -59,29 +70,8 @@ namespace MBSim {
   TiXmlElement* LineSegment::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Contour::writeXMLFile(parent);
     addElementText(ele0,MBSIMNS"length",length);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"enableOpenMBV");
-      addElementText(ele1,MBSIMNS"size",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXSize());
-      addElementText(ele1,MBSIMNS"number",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXNumber());
-      ele0->LinkEndChild(ele1);
-    }
-#endif
     return ele0;
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void LineSegment::enableOpenMBV(bool enable, double size, int number) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Grid;
-      ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(size);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(0.01);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setXNumber(number);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setYNumber(1);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setInitialRotation(0.,M_PI/2.,0.);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
 }
 

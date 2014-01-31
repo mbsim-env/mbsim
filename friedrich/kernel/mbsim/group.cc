@@ -192,7 +192,10 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
-    if(e) I->setOpenMBVFrame(enableOpenMBVFrame(1,1,e));
+    if(e) {
+      OpenMBVFrame ombv;
+      I->setOpenMBVFrame(ombv.createOpenMBV());
+    }
 #endif
   }
 

@@ -147,7 +147,10 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     TiXmlElement *ee=element->FirstChildElement(MBSIMNS"enableOpenMBV");
-    if(ee) openMBVFrame = enableOpenMBVFrame(1,1,ee);
+    if(ee) {
+      OpenMBVFrame ombv;
+      openMBVFrame=ombv.createOpenMBV(); 
+    }
 #endif
   }
 

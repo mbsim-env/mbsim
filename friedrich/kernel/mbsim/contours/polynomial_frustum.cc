@@ -94,27 +94,21 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void PolynomialFrustum::enableOpenMBV(bool enable, int polynomialPoints_, int circularPoints_) {
-    if (enable) {
-      openMBVRigidBody = new OpenMBV::IvBody;
+  void PolynomialFrustum::enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints_, int circularPoints_) {
+    openMBVRigidBody = new OpenMBV::IvBody;
+    openMBVRigidBody->setDiffuseColor(dc(0),dc(1),dc(2));
+    openMBVRigidBody->setTransparency(tp);
 
-      if (circularPoints_ <= 0)
-        circularPoints = 25;
-      else
-        circularPoints = circularPoints_;
+    if (circularPoints_ <= 0)
+      circularPoints = 25;
+    else
+      circularPoints = circularPoints_;
 
-      if (polynomialPoints_ <= 0)
-        polynomialPoints = 4 * parameters.size();
-      else
-        polynomialPoints = polynomialPoints_;
+    if (polynomialPoints_ <= 0)
+      polynomialPoints = 4 * parameters.size();
+    else
+      polynomialPoints = polynomialPoints_;
 
-    }
-    else {
-      //TODO: destructor of OpenMBV::RigidBody is private (not public...)
-      //      if(openMBVRigidBody)
-      //        delete openMBVRigidBody;
-      openMBVRigidBody = 0;
-    }
   }
 
   void PolynomialFrustum::setColor(const RGBColor & color_) {

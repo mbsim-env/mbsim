@@ -1,18 +1,20 @@
 SUBDIRS = .
 
 noinst_LTLIBRARIES = libcontour.la
-libcontour_la_SOURCES = face.cc\
-			circle.cc\
+libcontour_la_SOURCES = circle.cc\
 			rectangle.cc\
 			compound_contour.cc\
 			contour1s_analytical.cc\
 			contour_interpolation.cc\
 			contour_quad.cc\
 			cuboid.cc\
+			edge.cc\
 			frustum.cc\
 			frustum2d.cc\
+			line.cc\
 			plane.cc\
 			planewithfrustum.cc\
+			point.cc\
 			polynomial_frustum.cc\
 			room.cc\
 			sphere.cc\
@@ -22,8 +24,7 @@ libcontour_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMB
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 contourincludedir = $(includedir)/mbsim/contours
-contourinclude_HEADERS = face.h\
-			 circle.h\
+contourinclude_HEADERS = circle.h\
 			 rectangle.h\
 			 circle_hollow.h\
 			 circle_solid.h\

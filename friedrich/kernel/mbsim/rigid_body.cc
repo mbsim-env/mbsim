@@ -770,7 +770,8 @@ namespace MBSim {
     if(e) {
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
-      C->setOpenMBVFrame(enableOpenMBVFrame(1,1,e));
+      OpenMBVFrame ombv;
+      C->setOpenMBVFrame(ombv.createOpenMBV());
     }
 
     e=element->FirstChildElement(MBSIMNS"openMBVWeightArrow");
