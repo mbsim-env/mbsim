@@ -50,7 +50,7 @@ namespace MBSim {
   SingleContact::SingleContact(const string &name) :
       LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVContactGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
+          , openMBVContactGrp(0), openMBVContactFrame(2), contactArrow(NULL), frictionArrow(NULL)
 #endif
           , saved_ref1(""), saved_ref2("") {
   }
@@ -525,19 +525,15 @@ namespace MBSim {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || contactArrow || frictionArrow)) {
+        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
           openMBVContactGrp = new OpenMBV::Group();
           openMBVContactGrp->setName(name + "_ContactGroup");
           openMBVContactGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
 
-          if (openMBVContactFrameSize > epsroot()) {
+          if (openMBVContactFrame[0]) {
             for (unsigned int i = 0; i < 2; i++) { // frames
-              openMBVContactFrame.push_back(new OpenMBV::Frame);
-              openMBVContactFrame[i]->setOffset(1.);
-              openMBVContactFrame[i]->setSize(openMBVContactFrameSize);
               openMBVContactFrame[i]->setName(string("ContactPoint_") + (i == 0 ? "A" : "B"));
-              openMBVContactFrame[i]->setEnable(openMBVContactFrameEnabled);
               openMBVContactGrp->addObject(openMBVContactFrame[i]);
             }
           }
@@ -636,9 +632,9 @@ namespace MBSim {
   void SingleContact::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || contactArrow || frictionArrow)) {
+      if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
         // frames
-        if (openMBVContactFrameSize > epsroot()) {
+        if (openMBVContactFrame[0]) {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
             data.push_back(t);

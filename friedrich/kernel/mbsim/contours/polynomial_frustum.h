@@ -82,7 +82,7 @@ namespace MBSim {
        * \param polynomialPoints how fine should the grid be in polynomial direction
        * \param circulaPoints    how fine should the grid be in circular direction
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(polynomialPoints,(int),0)(circularPoints,(int),25))) { enableOpenMBV_(diffuseColor,transparency,polynomialPoints,circularPoints); }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (polynomialPoints,(int),0)(circularPoints,(int),25)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { enableOpenMBV_(diffuseColor,transparency,polynomialPoints,circularPoints); }
 
       /*!
        * \brief set color of body
