@@ -150,20 +150,23 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVPosition=ombv.createOpenMBV(); 
+        openMBVPosition=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVVelocity=ombv.createOpenMBV(); 
+        openMBVVelocity=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVAcceleration=ombv.createOpenMBV(); 
+        openMBVAcceleration=ombv.createOpenMBV(e); 
     }
-    //e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrame");
-    //if(e) openMBVFrame=MBSim::enableOpenMBVFrame(1,1,e);
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrame");
+    if(e) {
+        OpenMBVFrame ombv;
+        openMBVFrame=ombv.createOpenMBV(e); 
+    }
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CartesianCoordinatesObserver, MBSIMNS"CartesianCoordinatesObserver")

@@ -50,7 +50,7 @@ namespace MBSim {
       /**********************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(size,(double),0.001))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),0.001)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVSphere ombv(size,diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }

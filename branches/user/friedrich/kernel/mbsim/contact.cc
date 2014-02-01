@@ -53,7 +53,7 @@ namespace MBSim {
   Contact::Contact(const string &name) :
       LinkMechanics(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(false), contactArrow(NULL), frictionArrow(NULL)
+          , openMBVGrp(0), openMBVFrame(0), contactArrow(NULL), frictionArrow(NULL)
 #endif
           , saved_ref(0) {
   }
@@ -397,7 +397,7 @@ namespace MBSim {
           //Set OpenMBV-Properties to single contacts
           for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-              jter->enableOpenMBVContactPoints(openMBVContactFrameSize, openMBVContactFrameEnabled);
+              jter->setOpenMBVContactPoints(openMBVFrame);
               jter->setOpenMBVNormalForceArrow(contactArrow);
               jter->setOpenMBVTangentialForceArrow(frictionArrow);
             }
@@ -834,8 +834,10 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
-      enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
+    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")) {
+      OpenMBVFrame ombv;
+      openMBVFrame=ombv.createOpenMBV(e); 
+    }
 
     e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
     if (e) {
@@ -882,8 +884,8 @@ namespace MBSim {
     //}
     ele0->LinkEndChild(ele1);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVContactFrameEnabled==true)
-      addElementText(ele0,MBSIMNS"enableOpenMBVContactPoints",openMBVContactFrameSize);
+//    if(openMBVContactFrameSize>0)
+//      addElementText(ele0,MBSIMNS"enableOpenMBVContactPoints",openMBVContactFrameSize);
     if(contactArrow) {
       ele1 = new TiXmlElement( MBSIMNS"openMBVNormalForceArrow" );
       contactArrow->writeXMLFile(ele1);

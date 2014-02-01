@@ -21,14 +21,11 @@
 #define _SINGLE_CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
-
 #include <map>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class Frame;
-  class Arrow;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -129,7 +126,15 @@ namespace MBSim {
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      void enableOpenMBVContactPoints(double size=1.,bool enable=true) { openMBVContactFrameSize=size; openMBVContactFrameEnabled=enable; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVFrame ombv(size,offset,diffuseColor,transparency);
+        openMBVContactFrame[0]=ombv.createOpenMBV(); 
+        openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
+      }
+      void setOpenMBVContactPoints(OpenMBV::Frame *frame) { 
+        openMBVContactFrame[0]=frame;
+        openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
+      }
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
@@ -312,16 +317,6 @@ namespace MBSim {
        * \brief container of tangential forces to draw
        */
       OpenMBV::Arrow * openMBVFrictionArrow;
-
-      /**
-       * \brief size of ContactFrames to draw
-       */
-      double openMBVContactFrameSize;
-
-      /**
-       * \brief enable flag of ContactFrames to draw
-       */
-      bool openMBVContactFrameEnabled;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw

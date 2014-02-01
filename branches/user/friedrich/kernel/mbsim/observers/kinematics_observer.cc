@@ -177,27 +177,27 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVPosition=ombv.createOpenMBV(); 
+        openMBVPosition=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVVelocity=ombv.createOpenMBV(); 
+        openMBVVelocity=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularVelocity");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVAngularVelocity=ombv.createOpenMBV(); 
+        openMBVAngularVelocity=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVAcceleration=ombv.createOpenMBV(); 
+        openMBVAcceleration=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularAcceleration");
     if(e) {
         OpenMBVArrow ombv;
-        openMBVAngularAcceleration=ombv.createOpenMBV(); 
+        openMBVAngularAcceleration=ombv.createOpenMBV(e); 
     }
   }
 
