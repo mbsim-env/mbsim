@@ -27,7 +27,7 @@ class Element;
 
 //class FunctionPropertyFactory : public PropertyFactory {
 //  public:
-//    FunctionPropertyFactory(const std::string &omit_, int n_, const std::string &xmlName_="", int mode_=1) : omit(omit_), n(n_), xmlName(xmlName_), mode(mode_) { }
+//    FunctionPropertyFactory(const std::string &omit_, int n_, const std::FQN &xmlName_="", int mode_=1) : omit(omit_), n(n_), xmlName(xmlName_), mode(mode_) { }
 //    Property* createProperty(int i=0);
 //  protected:
 //    std::string omit, xmlName;
@@ -36,7 +36,7 @@ class Element;
 //
 //class TranslationPropertyFactory : public PropertyFactory {
 //  public:
-//    TranslationPropertyFactory(const std::string &omit_, int n_, const std::string &xmlName_="", int mode_=1) : omit(omit_), n(n_), xmlName(xmlName_), mode(mode_) { }
+//    TranslationPropertyFactory(const std::string &omit_, int n_, const std::FQN &xmlName_="", int mode_=1) : omit(omit_), n(n_), xmlName(xmlName_), mode(mode_) { }
 //    Property* createProperty(int i=0);
 //  protected:
 //    std::string omit, xmlName;
@@ -45,7 +45,7 @@ class Element;
 //
 //class RotationPropertyFactory : public PropertyFactory {
 //  public:
-//    RotationPropertyFactory(const std::string &omit_, int n_, const std::string &xmlName_="", int mode_=1) : omit(omit_), n(n_), xmlName(xmlName_), mode(mode_) { }
+//    RotationPropertyFactory(const std::string &omit_, int n_, const std::FQN &xmlName_="", int mode_=1) : omit(omit_), n(n_), xmlName(xmlName_), mode(mode_) { }
 //    Property* createProperty(int i=0);
 //  protected:
 //    std::string omit, xmlName;
@@ -56,66 +56,66 @@ class FunctionPropertyFactory2 : public PropertyFactory {
   public:
     FunctionPropertyFactory2() : name(FunctionPropertyFactory2::getNames()) { }
     Property* createProperty(int i=0);
-    static std::vector<std::string> getNames();
-    std::string getName(int i=0) const { return name[i]; }
+    static std::vector<MBXMLUtils::FQN> getNames();
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class TranslationPropertyFactory2 : public PropertyFactory {
   public:
     TranslationPropertyFactory2() : name(TranslationPropertyFactory2::getNames()) { }
     Property* createProperty(int i=0);
-    static std::vector<std::string> getNames();
-    std::string getName(int i=0) const { return name[i]; }
+    static std::vector<MBXMLUtils::FQN> getNames();
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class TranslationPropertyFactory3 : public PropertyFactory {
   public:
     TranslationPropertyFactory3() : name(TranslationPropertyFactory3::getNames()) { }
     Property* createProperty(int i=0);
-    static std::vector<std::string> getNames();
-    std::string getName(int i=0) const { return name[i]; }
+    static std::vector<MBXMLUtils::FQN> getNames();
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class RotationPropertyFactory2 : public PropertyFactory {
   public:
     RotationPropertyFactory2() : name(RotationPropertyFactory2::getNames()) { }
     Property* createProperty(int i=0);
-    static std::vector<std::string> getNames();
-    std::string getName(int i=0) const { return name[i]; }
+    static std::vector<MBXMLUtils::FQN> getNames();
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class RotationPropertyFactory3 : public PropertyFactory {
   public:
     RotationPropertyFactory3() : name(RotationPropertyFactory3::getNames()) { }
     Property* createProperty(int i=0);
-    static std::vector<std::string> getNames();
-    std::string getName(int i=0) const { return name[i]; }
+    static std::vector<MBXMLUtils::FQN> getNames();
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class SymbolicFunctionPropertyFactory2 : public PropertyFactory {
   public:
     SymbolicFunctionPropertyFactory2(const std::string &ext_, const std::vector<std::string> &var_) : name(SymbolicFunctionPropertyFactory2::getNames()), ext(ext_), var(var_) { }
     Property* createProperty(int i=0);
-    static std::vector<std::string> getNames();
-    std::string getName(int i=0) const { return name[i]; }
+    static std::vector<MBXMLUtils::FQN> getNames();
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
     std::string ext;
     std::vector<std::string> var;
 };
@@ -124,50 +124,50 @@ class TranslationPropertyFactory4 : public PropertyFactory {
   public:
     TranslationPropertyFactory4();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class RotationPropertyFactory4 : public PropertyFactory {
   public:
     RotationPropertyFactory4();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class TabularFunctionPropertyFactory : public PropertyFactory {
   public:
     TabularFunctionPropertyFactory();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class ConstraintPropertyFactory : public PropertyFactory {
   public:
     ConstraintPropertyFactory();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 class ConnectFramesPropertyFactory : public PropertyFactory {
   public:
     ConnectFramesPropertyFactory(Element *element);
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
     Element *element;
 };
 
@@ -175,10 +175,10 @@ class SpringDamperPropertyFactory: public PropertyFactory {
   public:
     SpringDamperPropertyFactory();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 #endif

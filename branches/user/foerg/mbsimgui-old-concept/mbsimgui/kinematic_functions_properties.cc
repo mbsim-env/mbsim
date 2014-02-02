@@ -26,20 +26,21 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIMNS"axisOfTranslation"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfTranslation"));
   a.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* TranslationAlongFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* TranslationAlongFixedAxisProperty::initializeUsingXML(DOMElement *element) {
   a.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* TranslationAlongFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+DOMElement* TranslationAlongFixedAxisProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
   a.writeXMLFile(ele0);
   return ele0;
 } 
@@ -54,11 +55,11 @@ void TranslationAlongFixedAxisProperty::toWidget(QWidget *widget) {
 
 LinearTranslationProperty::LinearTranslationProperty(int m, int n) : b(0,false) {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"translationVectors"));
+  input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIM%"translationVectors"));
   A.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"offset"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIM%"offset"));
   b.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -68,14 +69,14 @@ int LinearTranslationProperty::getArg1Size() const {
   return A.size()?A[0].size():0;
 }
 
-TiXmlElement* LinearTranslationProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* LinearTranslationProperty::initializeUsingXML(DOMElement *element) {
   A.initializeUsingXML(element);
   b.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* LinearTranslationProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+DOMElement* LinearTranslationProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
   A.writeXMLFile(ele0);
   b.writeXMLFile(ele0);
   return ele0;
@@ -93,17 +94,17 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIMNS"axisOfRotation"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfRotation"));
   a.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* RotationAboutFixedAxisProperty::initializeUsingXML(DOMElement *element) {
   a.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* RotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+DOMElement* RotationAboutFixedAxisProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
   a.writeXMLFile(ele0);
   return ele0;
 } 

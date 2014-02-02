@@ -19,14 +19,14 @@
 
 #include <config.h>
 #include "function_property.h"
-#include <mbxmlutilstinyxml/tinyxml.h>
-#include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
-TiXmlElement* FunctionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-  parent->LinkEndChild(ele0);
+DOMElement* FunctionProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }

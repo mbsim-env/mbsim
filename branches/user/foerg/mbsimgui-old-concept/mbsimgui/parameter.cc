@@ -21,9 +21,12 @@
 #include "parameter.h"
 #include "basic_properties.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 Parameter::Parameter(const string &name_) {
   name.setProperty(new TextProperty(name_,""));
@@ -31,13 +34,14 @@ Parameter::Parameter(const string &name_) {
 
   //return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
 
-void Parameter::initializeUsingXML(TiXmlElement *element) {
+void Parameter::initializeUsingXML(DOMElement *element) {
 }
 
-TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(PARAMNS+getType());
-  ele0->SetAttribute("name", getName());
-  parent->LinkEndChild(ele0);
+DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(PARAM%getType());
+  E(ele0)->setAttribute("name", getName());
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
@@ -47,15 +51,15 @@ StringParameter::StringParameter(const string &name) : Parameter(name) {
   setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
 }
 
-void StringParameter::initializeUsingXML(TiXmlElement *element) {
+void StringParameter::initializeUsingXML(DOMElement *element) {
   Parameter::initializeUsingXML(element);
   TextProperty *val = static_cast<TextProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getText());
 }
 
-TiXmlElement* StringParameter::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+DOMElement* StringParameter::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Parameter::writeXMLFile(parent);
   TextProperty *val = static_cast<TextProperty*>(value.getProperty());
   val->writeXMLFile(ele0);
   return ele0;
@@ -69,15 +73,15 @@ ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
   setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
-void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
+void ScalarParameter::initializeUsingXML(DOMElement *element) {
   Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getValue());
 }
 
-TiXmlElement* ScalarParameter::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+DOMElement* ScalarParameter::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Parameter::writeXMLFile(parent);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->writeXMLFile(ele0);
   return ele0;
@@ -91,15 +95,15 @@ VectorParameter::VectorParameter(const string &name) : Parameter(name) {
   setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
-void VectorParameter::initializeUsingXML(TiXmlElement *element) {
+void VectorParameter::initializeUsingXML(DOMElement *element) {
   Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getValue());
 }
 
-TiXmlElement* VectorParameter::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+DOMElement* VectorParameter::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Parameter::writeXMLFile(parent);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->writeXMLFile(ele0);
   return ele0;
@@ -113,15 +117,15 @@ MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
   setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
-void MatrixParameter::initializeUsingXML(TiXmlElement *element) {
+void MatrixParameter::initializeUsingXML(DOMElement *element) {
   Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getValue());
 }
 
-TiXmlElement* MatrixParameter::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+DOMElement* MatrixParameter::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Parameter::writeXMLFile(parent);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->writeXMLFile(ele0);
   return ele0;
@@ -140,34 +144,27 @@ void ParameterList::addParameterList(const ParameterList &list) {
 
 bool ParameterList::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    TiXml_setLineNrFromProcessingInstruction(e);
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    TiXmlElement *E=e->FirstChildElement();
-    vector<QString> refFrame;
-    while(E) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-      parameter->initializeUsingXML(E);
-      addParameter(parameter->getName(),parameter->getValue(),parameter->getType());
-      delete parameter;
-      E=E->NextSiblingElement();
-    }
-    return true;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  DOMElement *E=e->getFirstElementChild();
+  vector<QString> refFrame;
+  while(E) {
+    Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
+    parameter->initializeUsingXML(E);
+    addParameter(parameter->getName(),parameter->getValue(),parameter->getType());
+    delete parameter;
+    E=E->getNextElementSibling();
   }
-  return false;
+  return true;
 }
 
-TiXmlElement* ParameterList::writeXMLFile(TiXmlNode *parent) const {
+DOMElement* ParameterList::writeXMLFile(DOMNode *parent) const {
+  DOMDocument *doc=parent->getOwnerDocument();
   for(int i=0; i<getSize(); i++) {
-    TiXmlElement *p=new TiXmlElement(PARAMNS+type[i]);
-    parent->LinkEndChild(p);
-    p->SetAttribute("name", name[i]);
-    TiXmlText *t=new TiXmlText(value[i]);
-    p->LinkEndChild(t);
+    DOMElement *p=D(doc)->createElement(PARAM%type[i]);
+    parent->insertBefore(p, NULL);
+    E(p)->setAttribute("name", name[i]);
+    DOMText *t=doc->createTextNode(X()%value[i]);
+    p->insertBefore(t, NULL);
   }
 }

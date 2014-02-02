@@ -34,14 +34,17 @@
 #include "element_view.h"
 #include "parameter_view.h"
 #include "integrator_view.h"
-#include <mbxmlutilstinyxml/getinstallpath.h>
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
 #include <mbxmlutils/octeval.h>
+#include <mbxmlutilshelper/getinstallpath.h>
+#include <mbxmlutilshelper/dom.h>
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 bool absolutePath = false;
 QDir mbsDir;
@@ -71,6 +74,7 @@ bool removeDir(const QString &dirName) {
   return result;
 }
 
+shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(false);
 MBXMLUtils::OctEval *MainWindow::octEval=NULL;
 MBXMLUtils::NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
@@ -106,7 +110,7 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
   GUIMenu->addSeparator();
 
-  action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/exit.svg"), "E&xit", this, SLOT(close()));
+  action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"exit.svg").string())), "E&xit", this, SLOT(close()));
   action->setShortcuts(QKeySequence::Quit);
   action->setStatusTip(tr("Exit the application"));
 
@@ -202,16 +206,16 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   menuBar()->addMenu(helpMenu);
 
   QToolBar *toolBar = addToolBar("Tasks");
-  actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/simulate.svg"),"Simulate");
+  actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"simulate.svg").string())),"Simulate");
   //actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
   toolBar->addAction(actionSimulate);
-  actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/openmbv.svg"),"OpenMBV");
+  actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
   actionOpenMBV->setDisabled(true);
   connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
   toolBar->addAction(actionOpenMBV);
-  actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/h5plotserie.svg"),"H5plotserie");
+  actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
   actionH5plotserie->setDisabled(true);
   connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
   toolBar->addAction(actionH5plotserie);
@@ -390,11 +394,11 @@ void MainWindow::initInlineOpenMBV() {
 //  mkdtemp(temp);
 //  uniqueTempDir = temp;
 
-  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml"),uniqueTempDir+"/out1.ombv.xml");
-  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5"),uniqueTempDir+"/out1.ombv.h5");
+  QFile::copy(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"empty.ombv.xml").string()),uniqueTempDir+"/out1.ombv.xml");
+  QFile::copy(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"empty.ombv.h5").string()),uniqueTempDir+"/out1.ombv.h5");
   std::list<string> arg;
   arg.push_back("--wst");
-  arg.push_back(MBXMLUtils::getInstallPath()+"/share/mbsimgui/inlineopenmbv.ombv.wst");
+  arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
   arg.push_back("--autoreload");
   arg.push_back((uniqueTempDir+"/out1.ombv.xml").toStdString());
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
@@ -522,62 +526,57 @@ void MainWindow::loadProject(const QString &file) {
     fileProject->setText(file);
     mPath.clear();
     MBSimObjectFactory::initialize();
-    TiXmlDocument doc;
-    if(doc.LoadFile(file.toStdString())) {
-      TiXml_PostLoadFile(&doc);
-      TiXmlElement *e=doc.FirstChildElement();
-      map<string,string> dummy;
-      TiXmlElement *ele0 = doc.FirstChildElement();
-      incorporateNamespace(ele0, dummy);
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
+    DOMElement *e=doc->getDocumentElement();
+    DOMElement *ele0=doc->getDocumentElement();
 
-      TiXmlElement *ele1 = ele0->FirstChildElement(MBSIMNS"dynamicSystemSolver");
-      TiXmlElement *ele2 = ele1->FirstChildElement();
-      Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele2,0));
-      solver->initializeUsingXML(ele2);
-      solver->initialize();
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      if(model->rowCount(index))
-        delete model->getItem(index)->getItemData();
-      model->removeRow(index.row(), index.parent());
-      model->createGroupItem(solver);
+    DOMElement *ele1 = E(ele0)->getFirstElementChildNamed(MBSIM%"dynamicSystemSolver");
+    DOMElement *ele2 = ele1->getFirstElementChild();
+    Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele2,0));
+    solver->initializeUsingXML(ele2);
+    solver->initialize();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = model->index(0,0);
+    if(model->rowCount(index))
+      delete model->getItem(index)->getItemData();
+    model->removeRow(index.row(), index.parent());
+    model->createGroupItem(solver);
 
-      ele1 = ele0->FirstChildElement(MBSIMNS"parameters");
-      ele2 = ele1->FirstChildElement();
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      index = pmodel->index(0,0);
-      for(int i=0; i<pmodel->rowCount(QModelIndex()); i++)
-        delete pmodel->getItem(index.sibling(i,0))->getItemData();
-      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-      TiXmlElement *E=ele2->FirstChildElement();
-      vector<QString> refFrame;
-      while(E) {
-        Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-        parameter->initializeUsingXML(E);
-        pmodel->createParameterItem(parameter);
-        E=E->NextSiblingElement();
-      }
-      updateOctaveParameters();
+    ele1 = E(ele0)->getFirstElementChildNamed(MBSIM%"parameters");
+    ele2 = ele1->getFirstElementChild();
+    ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+    index = pmodel->index(0,0);
+    for(int i=0; i<pmodel->rowCount(QModelIndex()); i++)
+      delete pmodel->getItem(index.sibling(i,0))->getItemData();
+    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+    DOMElement *ELE=ele2->getFirstElementChild();
+    vector<QString> refFrame;
+    while(ELE) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(ELE);
+      parameter->initializeUsingXML(ELE);
+      pmodel->createParameterItem(parameter);
+      ELE=ELE->getNextElementSibling();
+    }
+    updateOctaveParameters();
 
-      ele1 = ele0->FirstChildElement(MBSIMNS"integrator");
-      ele2 = ele1->FirstChildElement();
-      Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
-      integrator->initializeUsingXML(ele2);
-      integratorView->setIntegrator(integrator);
+    ele1 = E(ele0)->getFirstElementChildNamed(MBSIM%"integrator");
+    ele2 = ele1->getFirstElementChild();
+    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
+    integrator->initializeUsingXML(ele2);
+    integratorView->setIntegrator(integrator);
 
-      ele1 = ele0->FirstChildElement(MBSIMNS"mPaths");
-      ele2=ele1->FirstChildElement();
-      while(ele2) {
-        mPath << ele2->Attribute("href");
-        ele2=ele2->NextSiblingElement();
-      }
+    ele1 = E(ele0)->getFirstElementChildNamed(MBSIM%"mPaths");
+    ele2=ele1->getFirstElementChild();
+    while(ele2) {
+      mPath << E(ele2)->getAttribute("href").c_str();
+      ele2=ele2->getNextElementSibling();
+    }
 
-      actionSaveProject->setDisabled(false);
+    actionSaveProject->setDisabled(false);
 
 #ifdef INLINE_OPENMBV
-      mbsimxml(1);
+    mbsimxml(1);
 #endif
-    }
   }
 }
 
@@ -600,48 +599,43 @@ void MainWindow::saveProjectAs() {
 }
 
 void MainWindow::saveProject() {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS"MBSimProject");
-  doc.LinkEndChild(ele0);
-  ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSim");
-  ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
+  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%"MBSimProject");
+  doc->insertBefore(ele0, NULL);
 
-  //TiXmlElement *ele1 = ele0;
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dynamicSystemSolver" );
-  //TiXmlElement *ele2 = new TiXmlElement( PVNS"embed" );
-  TiXmlElement *ele2 = ele1;
+  //DOMElement *ele1 = ele0;
+  DOMElement *ele1=D(doc)->createElement(MBSIM%"dynamicSystemSolver");
+  //DOMElement *ele2 = D(doc)->createElement( PV%"embed" );
+  DOMElement *ele2 = ele1;
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
   Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
   solver->writeXMLFile(ele2);
   //ele1->LinkEndChild(ele2);
-  ele0->LinkEndChild(ele1);
-  ele1 = new TiXmlElement( MBSIMNS"parameters" );
-  //ele2 = new TiXmlElement( PVNS"embed" );
+  ele0->insertBefore(ele1, NULL);
+  ele1 = D(doc)->createElement(MBSIM%"parameters");
+  //ele2 = D(doc)->createElement( PV%"embed" );
   ele2 = ele1;
-  TiXmlElement *ele3=writeParameterList();
-  ele2->LinkEndChild(ele3);
+  DOMElement *ele3=writeParameterList(doc);
+  ele2->insertBefore(ele3, NULL);
   //ele1->LinkEndChild(ele2);
-  ele0->LinkEndChild(ele1);
-  ele1 = new TiXmlElement( MBSIMNS"integrator" );
-  //ele2 = new TiXmlElement( PVNS"embed" );
+  ele0->insertBefore(ele1, NULL);
+  ele1 = D(doc)->createElement(MBSIM%"integrator");
+  //ele2 = D(doc)->createElement( PV%"embed" );
   ele2 = ele1;
   integratorView->getIntegrator()->writeXMLFile(ele2);
   //ele1->LinkEndChild(ele2);
-  ele0->LinkEndChild(ele1);
-  ele1 = new TiXmlElement( MBSIMNS"mPaths" );
+  ele0->insertBefore(ele1, NULL);
+  ele1 = D(doc)->createElement(MBSIM%"mPaths");
   for(int i=0; i<mPath.size(); i++) {
-    ele2 = new TiXmlElement( MBSIMNS"mPath" );
-    ele2->SetAttribute("href",mPath.at(i).toStdString());
-    ele1->LinkEndChild(ele2);
+    ele2 = D(doc)->createElement(MBSIM%"mPath");
+    E(ele2)->setAttribute("href", mPath.at(i).toStdString());
+    ele1->insertBefore(ele2, NULL);
   }
-  ele0->LinkEndChild(ele1);
-  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
+  ele0->insertBefore(ele1, NULL);
   QString file = fileProject->text();
   string name = (file.right(14)==".mbsimproj.xml"?file:file+".mbsimproj.xml").toStdString();
-  doc.SaveFile((name.length()>14 && name.substr(name.length()-14,14)==".mbsimproj.xml")?name:name+".mbsimproj.xml");
+  DOMParser::serialize(doc.get(), (name.length()>14 && name.substr(name.length()-14,14)==".mbsimproj.xml")?name:name+".mbsimproj.xml");
   actionSaveProject->setDisabled(false);
 }
 
@@ -891,24 +885,18 @@ void MainWindow::loadParameterList(const QString &file) {
   if(file!="") {
     setCurrentParameterFile(file);
     MBSimObjectFactory::initialize();
-    TiXmlDocument doc;
-    if(doc.LoadFile(file.toAscii().data())) {
-      TiXml_PostLoadFile(&doc);
-      TiXmlElement *e=doc.FirstChildElement();
-      TiXml_setLineNrFromProcessingInstruction(e);
-      map<string,string> dummy;
-      incorporateNamespace(doc.FirstChildElement(), dummy);
-      TiXmlElement *E=e->FirstChildElement();
-      vector<QString> refFrame;
-      while(E) {
-        Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-        parameter->initializeUsingXML(E);
-        model->createParameterItem(parameter);
-        E=E->NextSiblingElement();
-      }
-      updateOctaveParameters();
-      actionSaveParameterList->setDisabled(false);
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toAscii().data());
+    DOMElement *e=doc->getDocumentElement();
+    DOMElement *ELE=e->getFirstElementChild();
+    vector<QString> refFrame;
+    while(ELE) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(ELE);
+      parameter->initializeUsingXML(ELE);
+      model->createParameterItem(parameter);
+      ELE=ELE->getNextElementSibling();
     }
+    updateOctaveParameters();
+    actionSaveParameterList->setDisabled(false);
   }
 
 #ifdef INLINE_OPENMBV
@@ -936,9 +924,9 @@ void MainWindow::saveParameterListAs() {
 }
 
 // write model paramters to XML structure
-// The resource owner of the returned TiXmlElement is the caller!
-TiXmlElement* MainWindow::writeParameterList() {
-  TiXmlElement *ele0=new TiXmlElement(PARAMNS+string("parameter"));
+// The resource owner of the returned DOMElement is the caller!
+DOMElement* MainWindow::writeParameterList(shared_ptr<DOMDocument> &doc) {
+  DOMElement *ele0=D(doc)->createElement(PARAM%string("parameter"));
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
   for(int i=0; i<model->rowCount(QModelIndex()); i++)
@@ -948,22 +936,20 @@ TiXmlElement* MainWindow::writeParameterList() {
 
 // write model parameters to file (using writeParameterList)
 void MainWindow::saveParameterList(const QString &fileName) {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  TiXmlElement *ele0=NULL;
-  ele0=writeParameterList();
-  doc.LinkEndChild(ele0);
-  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
+  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+  DOMElement *ele0=NULL;
+  ele0=writeParameterList(doc);
+  doc->insertBefore(ele0, NULL);
   QString file = fileParameter->text();
-  doc.SaveFile(fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
+  DOMParser::serialize(doc.get(), fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
 }
 
 // update model parameters including additional paramters from paramList
 void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
   // write model paramters to XML structure
-  TiXmlElement *ele0=NULL;
-  ele0=writeParameterList();
+  DOMElement *ele0=NULL;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+  ele0=writeParameterList(doc);
 
   paramList.writeXMLFile(ele0);
 
@@ -974,15 +960,12 @@ void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
     octEvalParamLevel=new NewParamLevel(*octEval);
     // add parameter
     octEval->addParamSet(ele0);
-    delete ele0;
   }
   catch(string e) {
     cout << "An exception occurred in updateOctaveParameters: " << e << endl;
-    delete ele0;
   }
   catch(...) {
     cout << "An unknown exception occurred in updateOctaveParameters." << endl;
-    delete ele0;
   }
 }
 
@@ -1076,7 +1059,7 @@ void MainWindow::mbsimxml(int task) {
   arg.append(mbsFile);
   arg.append(intFile);
   mbsim->getProcess()->setWorkingDirectory(uniqueTempDir);
-  mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg);
+  mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
   absolutePath = false;
 }
 
@@ -1097,7 +1080,7 @@ void MainWindow::openmbv() {
     QStringList arg;
     arg.append("--autoreload");
     arg.append(name);
-    QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/openmbv").c_str(), arg);
+    QProcess::startDetached((MBXMLUtils::getInstallPath()/"bin"/"openmbv").string().c_str(), arg);
   }
 }
 
@@ -1106,7 +1089,7 @@ void MainWindow::h5plotserie() {
   if(QFile::exists(name)) {
     QStringList arg;
     arg.append(name);
-    QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/h5plotserie").c_str(), arg);
+    QProcess::startDetached((MBXMLUtils::getInstallPath()/"bin"/"h5plotserie").string().c_str(), arg);
   }
 }
 

@@ -38,8 +38,8 @@ class LinearTransferSystem : public SignalProcessingSystem {
   public:
     LinearTransferSystem(const std::string &str, Element *parent);
     std::string getType() const { return "LinearTransferSystem"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
   protected:
     ExtProperty choice;
@@ -59,10 +59,10 @@ class LinearTransferSystemPropertyFactory: public PropertyFactory {
   public:
     LinearTransferSystemPropertyFactory();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
   protected:
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
 };
 
 #endif

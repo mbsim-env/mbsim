@@ -25,13 +25,14 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false), u0(0,false), R(0,false) {
-  q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedPosition",vector<string>(3,"")),"",4));
+  q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGeneralizedPosition",vector<string>(3,"")),"",4));
 
-  u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMNS"initialGeneralizedVelocity",vector<string>(3,"")),"",4));
+  u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGeneralizedVelocity",vector<string>(3,"")),"",4));
 
-  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
 }
 
 Body::Body(const Body &b) : Object(b), R(b.R) {
@@ -120,15 +121,15 @@ Contour* Body::getContour(const string &name) {
   return NULL;
 }
 
-void Body::initializeUsingXML(TiXmlElement *element) {
+void Body::initializeUsingXML(DOMElement *element) {
   Object::initializeUsingXML(element);
   q0.initializeUsingXML(element);
   u0.initializeUsingXML(element);
   R.initializeUsingXML(element);
 }
 
-TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Object::writeXMLFile(parent);
+DOMElement* Body::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Object::writeXMLFile(parent);
   q0.writeXMLFile(ele0);
   u0.writeXMLFile(ele0);
   R.writeXMLFile(ele0);

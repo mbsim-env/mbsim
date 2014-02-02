@@ -29,8 +29,8 @@ class Contact : public Link {
     Contact(const std::string &str, Element *parent);
     ~Contact();
     std::string getType() const { return "Contact"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
   protected:

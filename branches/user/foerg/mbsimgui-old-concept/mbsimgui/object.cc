@@ -20,37 +20,34 @@
 #include <config.h>
 #include "object.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 Object::Object(const string &str, Element *parent) : Element(str,parent) {
 
 }
 
 Object* Object::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Object *object=ObjectFactory::getInstance()->createObject(e,parent);
-    if(object) {
-      object->initializeUsingXML(e);
-      object->initialize();
-    }
-    return object;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Object *object=ObjectFactory::getInstance()->createObject(e, parent);
+  if(object) {
+    object->initializeUsingXML(e);
+    object->initialize();
   }
-  return 0;
+  return object;
 }
 
-void Object::initializeUsingXML(TiXmlElement *element) {
+void Object::initializeUsingXML(DOMElement *element) {
   Element::initializeUsingXML(element);
 }
 
-TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {    
-  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+DOMElement* Object::writeXMLFile(DOMNode *parent) {    
+  DOMElement *ele0 = Element::writeXMLFile(parent);
   return ele0;
 }
 
