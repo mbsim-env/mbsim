@@ -22,10 +22,6 @@
 #include "mbsim/objectfactory.h"
 #include <fmatvec/function.h>
 #include <mbsim/dynamic_system_solver.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objectfactory.h"
-#include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -170,17 +166,20 @@ namespace MBSim {
       saved_ref2=e->Attribute("ref2");
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"openMBVForceArrow");
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, false);
+      which[1]=true;
+      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
-    e = element->FirstChildElement(MBSIMNS"openMBVMomentArrow");
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVMomentArrow calls the copy constructor on arrow
-      setOpenMBVMomentArrow(arrow);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, false);
+      which[1]=true;
+      LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }

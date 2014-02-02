@@ -39,5 +39,10 @@
   BOOST_PARAMETER_NAME(zLength)
   BOOST_PARAMETER_NAME(polynomialPoints)
   BOOST_PARAMETER_NAME(circularPoints)
+  BOOST_PARAMETER_NAME(numberOfCoils)
+  BOOST_PARAMETER_NAME(nominalLength)
+  BOOST_PARAMETER_NAME(springRadius)
+  BOOST_PARAMETER_NAME(scaleFactor)
+  BOOST_PARAMETER_NAME(crossSectionRadius)
 #endif
 

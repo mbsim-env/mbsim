@@ -154,18 +154,16 @@ namespace MBSim {
     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVGearForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVGearForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      FArrow=ombv.createOpenMBV(e);
     }
 
-    e=element->FirstChildElement(MBSIMNS"openMBVGearMomentArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVGearMomentArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      MArrow=ombv.createOpenMBV(e);
     }
 #endif
   }
@@ -177,9 +175,9 @@ namespace MBSim {
     for(unsigned int i=0; i<bi.size(); i++)
       gear->addTransmission(new Transmission(bi[i],ratio[i]));
     if(FArrow)
-      gear->setOpenMBVForceArrow(FArrow);
+      gear->setOpenMBVForce(FArrow);
     if(MArrow)
-      gear->setOpenMBVMomentArrow(MArrow);
+      gear->setOpenMBVMoment(MArrow);
   }
 
   KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
@@ -213,18 +211,16 @@ namespace MBSim {
     saved_DependentBody=e->Attribute("ref");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVConstraintForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVConstraintForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      FArrow=ombv.createOpenMBV(e);
     }
 
-    e=element->FirstChildElement(MBSIMNS"openMBVConstraintMomentArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVConstraintMomentArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      MArrow=ombv.createOpenMBV(e);
     }
 #endif
   }
@@ -262,9 +258,9 @@ namespace MBSim {
     ke->setDependentBody(bd);
     ke->setExcitationFunction(f);
     if(FArrow)
-      ke->setOpenMBVForceArrow(FArrow);
+      ke->setOpenMBVForce(FArrow);
     if(MArrow)
-      ke->setOpenMBVMomentArrow(MArrow);
+      ke->setOpenMBVMoment(MArrow);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocityConstraint, MBSIMNS"GeneralizedVelocityConstraint")
@@ -325,9 +321,9 @@ namespace MBSim {
     ke->setDependentBody(bd);
     ke->setExcitationFunction(f);
     if(FArrow)
-      ke->setOpenMBVForceArrow(FArrow);
+      ke->setOpenMBVForce(FArrow);
     if(MArrow)
-      ke->setOpenMBVMomentArrow(MArrow);
+      ke->setOpenMBVMoment(MArrow);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedAccelerationConstraint, MBSIMNS"GeneralizedAccelerationConstraint")
@@ -385,9 +381,9 @@ namespace MBSim {
     ke->setDependentBody(bd);
     ke->setExcitationFunction(f);
     if(FArrow)
-      ke->setOpenMBVForceArrow(FArrow);
+      ke->setOpenMBVForce(FArrow);
     if(MArrow)
-      ke->setOpenMBVMomentArrow(MArrow);
+      ke->setOpenMBVMoment(MArrow);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIMNS"JointConstraint")
@@ -591,9 +587,9 @@ namespace MBSim {
       joint->setMomentDirection(momentDir);
     joint->connect(frame1,frame2);
     if(FArrow)
-      joint->setOpenMBVForceArrow(FArrow);
+      joint->setOpenMBVForce(FArrow);
     if(MArrow)
-      joint->setOpenMBVMomentArrow(MArrow);
+      joint->setOpenMBVMoment(MArrow);
   }
 
   void JointConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -628,18 +624,16 @@ namespace MBSim {
     saved_ref2=e->Attribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVJointForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVJointForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      FArrow=ombv.createOpenMBV(e);
     }
 
-    e=element->FirstChildElement(MBSIMNS"openMBVJointMomentArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVJointMomentArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      MArrow=ombv.createOpenMBV(e);
     }
 #endif
   }

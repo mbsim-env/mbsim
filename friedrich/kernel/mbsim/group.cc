@@ -194,7 +194,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
     if(e) {
       OpenMBVFrame ombv;
-      I->setOpenMBVFrame(ombv.createOpenMBV());
+      I->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 #endif
   }

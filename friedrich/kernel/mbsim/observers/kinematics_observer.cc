@@ -186,7 +186,7 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularVelocity");
     if(e) {
-        OpenMBVArrow ombv;
+        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
         openMBVAngularVelocity=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
@@ -196,7 +196,7 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularAcceleration");
     if(e) {
-        OpenMBVArrow ombv;
+        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
         openMBVAngularAcceleration=ombv.createOpenMBV(e); 
     }
   }

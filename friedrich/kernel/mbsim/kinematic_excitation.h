@@ -24,6 +24,11 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+#endif
+
 namespace MBSim {
 
   class KinematicExcitation : public LinkMechanics {
@@ -54,10 +59,18 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV(); 
+      }
+      void setOpenMBVForce(OpenMBV::Arrow *arrow) { FArrow=arrow; }
 
       /** \brief Visualize a moment arrow */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV(); 
+      }
+      void setOpenMBVMoment(OpenMBV::Arrow *arrow) { MArrow=arrow; }
 #endif
 
     protected:

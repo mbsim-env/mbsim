@@ -141,15 +141,14 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
     if(e) {
-      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
-      coilSpring->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVCoilSpring(coilSpring);
+      OpenMBVCoilSpring ombv;
+      coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, true);
+      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }
@@ -278,15 +277,14 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
     if(e) {
-      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
-      coilSpring->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVCoilSpring(coilSpring);
+      OpenMBVCoilSpring ombv;
+      coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, true);
+      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }
@@ -420,21 +418,20 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
     if(e) {
-      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e->FirstChildElement());
-      coilSpring->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVCoilSpring(coilSpring);
+      OpenMBVCoilSpring ombv;
+      coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, true);
+      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVMomentArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVMomentArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, true);
+      LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }
