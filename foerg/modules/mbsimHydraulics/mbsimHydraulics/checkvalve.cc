@@ -34,6 +34,7 @@
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/utils/boost_parameters.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
@@ -163,11 +164,7 @@ namespace MBSimHydraulics {
 
         addLink(new colorLink("BallColorLink", ballVisu, line));
 
-        OpenMBV::CoilSpring* springVisu=new OpenMBV::CoilSpring();
-        springVisu->setSpringRadius(rBall/2.);
-        springVisu->setCrossSectionRadius(.05*hMax);
-        springVisu->setNumberOfCoils(5);
-        spring->setOpenMBVCoilSpring(springVisu);
+        spring->enableOpenMBVCoilSpring(_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
       }
       if (openMBVArrows) {
         ((CircleSolid*)ball->getContour("ContourBall"))->enableOpenMBV(true);
