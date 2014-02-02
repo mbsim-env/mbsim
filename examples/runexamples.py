@@ -1242,7 +1242,7 @@ def writeRSSFeed(nrFailed, nrTotal):
 
 
 def validateHTMLOutput():
-  schema=pj(pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"]), "http___openmbv_berlios_de_MBXMLUtils", "xhtml1-transitional.xsd")
+  schema=pj(pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"]), "http___www_w3_org", "xhtml1-transitional.xsd")
   for root, _, filenames in os.walk(args.reportOutDir):
     for filename in filenames:
       if os.path.splitext(filename)[1]==".html":
