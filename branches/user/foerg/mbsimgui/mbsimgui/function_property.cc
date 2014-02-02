@@ -20,15 +20,15 @@
 #include <config.h>
 #include "function_property.h"
 #include "kinematic_functions_properties.h"
-#include <mbxmlutilstinyxml/tinyxml.h>
-#include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
-TiXmlElement* FunctionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-  parent->LinkEndChild(ele0);
+DOMElement* FunctionProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
@@ -48,15 +48,16 @@ TiXmlElement* FunctionProperty::writeXMLFile(TiXmlNode *parent) {
 //  }
 //}
 //
-//TiXmlElement* FunctionChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-////  ele1 = element->FirstChildElement( MBSIMNS"mass" );
+//DOMElement* FunctionChoiceProperty::initializeUsingXML(DOMElement *element) {
+////  ele1 = E(element)->getFirstElementChildNamed( MBSIM%"mass" );
 //  property->initializeUsingXML(element);
 //}
 //
-//TiXmlElement* FunctionChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-////  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"mass" );
+//DOMElement* FunctionChoiceProperty::writeXMLFile(DOMNode *parent) {
+////  DOMDocument *doc=parent->getOwnerDocument();
+////  DOMElement *ele1 = D(doc)->createElement( MBSIM%"mass" );
 //  property->writeXMLFile(parent);
-////  parent->LinkEndChild(ele1);
+////  parent->insertBefore(ele1, NULL);
 //}
 
 

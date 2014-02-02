@@ -25,6 +25,7 @@
 #include <vector>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 //Property* FunctionPropertyFactory::createProperty(int i) {
 //  return 0;
@@ -63,19 +64,19 @@ Property* FunctionPropertyFactory2::createProperty(int i) {
     return new TabularFunctionProperty;
 }
 
-vector<string> FunctionPropertyFactory2::getNames() {
-  vector<std::string> name;
-  name.push_back(MBSIMNS"ConstantFunction");
-  name.push_back(MBSIMNS"LinearFunction");
-  name.push_back(MBSIMNS"QuadraticFunction");
-  name.push_back(MBSIMNS"PolynomFunction");
-  name.push_back(MBSIMNS"SinusoidalFunction");
-  name.push_back(MBSIMNS"ScaledFunction");
-  name.push_back(MBSIMNS"SummationFunction");
-  name.push_back(MBSIMNS"VectorValuedFunction");
-  name.push_back(MBSIMNS"PiecewiseDefinedFunction");
-  name.push_back(MBSIMNS"SymbolicFunction");
-  name.push_back(MBSIMNS"TabularFunction");
+vector<FQN> FunctionPropertyFactory2::getNames() {
+  vector<FQN> name;
+  name.push_back(MBSIM%"ConstantFunction");
+  name.push_back(MBSIM%"LinearFunction");
+  name.push_back(MBSIM%"QuadraticFunction");
+  name.push_back(MBSIM%"PolynomFunction");
+  name.push_back(MBSIM%"SinusoidalFunction");
+  name.push_back(MBSIM%"ScaledFunction");
+  name.push_back(MBSIM%"SummationFunction");
+  name.push_back(MBSIM%"VectorValuedFunction");
+  name.push_back(MBSIM%"PiecewiseDefinedFunction");
+  name.push_back(MBSIM%"SymbolicFunction");
+  name.push_back(MBSIM%"TabularFunction");
   return name;
 }
 
@@ -104,19 +105,19 @@ Property* TranslationPropertyFactory2::createProperty(int i) {
 //    return new NestedFunctionProperty(new TranslationPropertyFactory2, new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")));
 }
 
-vector<string> TranslationPropertyFactory2::getNames() {
-  vector<std::string> name;
-  name.push_back(MBSIMNS"TranslationAlongXAxis");
-  name.push_back(MBSIMNS"TranslationAlongYAxis");
-  name.push_back(MBSIMNS"TranslationAlongZAxis");
-  name.push_back(MBSIMNS"TranslationAlongAxesXY");
-  name.push_back(MBSIMNS"TranslationAlongAxesYZ");
-  name.push_back(MBSIMNS"TranslationAlongAxesXZ");
-  name.push_back(MBSIMNS"TranslationAlongAxesXYZ");
-  name.push_back(MBSIMNS"TranslationAlongFixedAxis");
-  name.push_back(MBSIMNS"LinearTranslation");
-  name.push_back(MBSIMNS"SymbolicFunction");
-  name.push_back(MBSIMNS"NestedFunction");
+vector<FQN> TranslationPropertyFactory2::getNames() {
+  vector<FQN> name;
+  name.push_back(MBSIM%"TranslationAlongXAxis");
+  name.push_back(MBSIM%"TranslationAlongYAxis");
+  name.push_back(MBSIM%"TranslationAlongZAxis");
+  name.push_back(MBSIM%"TranslationAlongAxesXY");
+  name.push_back(MBSIM%"TranslationAlongAxesYZ");
+  name.push_back(MBSIM%"TranslationAlongAxesXZ");
+  name.push_back(MBSIM%"TranslationAlongAxesXYZ");
+  name.push_back(MBSIM%"TranslationAlongFixedAxis");
+  name.push_back(MBSIM%"LinearTranslation");
+  name.push_back(MBSIM%"SymbolicFunction");
+  name.push_back(MBSIM%"NestedFunction");
   return name;
 }
 
@@ -137,15 +138,15 @@ Property* TranslationPropertyFactory3::createProperty(int i) {
     return new PiecewiseDefinedFunctionProperty;
 }
 
-vector<string> TranslationPropertyFactory3::getNames() {
-  vector<std::string> name;
-  name.push_back(MBSIMNS"VectorValuedFunction");
-  name.push_back(MBSIMNS"NestedFunction");
-  name.push_back(MBSIMNS"SymbolicFunction");
-  name.push_back(MBSIMNS"TabularFunction");
-  name.push_back(MBSIMNS"ScaledFunction");
-  name.push_back(MBSIMNS"SummationFunction");
-  name.push_back(MBSIMNS"PiecewiseDefinedFunction");
+vector<FQN> TranslationPropertyFactory3::getNames() {
+  vector<FQN> name;
+  name.push_back(MBSIM%"VectorValuedFunction");
+  name.push_back(MBSIM%"NestedFunction");
+  name.push_back(MBSIM%"SymbolicFunction");
+  name.push_back(MBSIM%"TabularFunction");
+  name.push_back(MBSIM%"ScaledFunction");
+  name.push_back(MBSIM%"SummationFunction");
+  name.push_back(MBSIM%"PiecewiseDefinedFunction");
   return name;
 }
 
@@ -173,18 +174,18 @@ Property* RotationPropertyFactory2::createProperty(int i) {
     return new SymbolicFunctionProperty("MV",vector<string>(1,"q"),1);
 }
 
-vector<string> RotationPropertyFactory2::getNames() {
-  vector<string> name;
-  name.push_back(MBSIMNS"RotationAboutXAxis");
-  name.push_back(MBSIMNS"RotationAboutYAxis");
-  name.push_back(MBSIMNS"RotationAboutZAxis");
-  name.push_back(MBSIMNS"RotationAboutAxesXY");
-  name.push_back(MBSIMNS"RotationAboutAxesYZ");
-  name.push_back(MBSIMNS"RotationAboutAxesXZ");
-  name.push_back(MBSIMNS"RotationAboutAxesXYZ");
-  name.push_back(MBSIMNS"RotationAboutFixedAxis");
-  name.push_back(MBSIMNS"NestedFunction");
-  name.push_back(MBSIMNS"SymbolicFunction");
+vector<FQN> RotationPropertyFactory2::getNames() {
+  vector<FQN> name;
+  name.push_back(MBSIM%"RotationAboutXAxis");
+  name.push_back(MBSIM%"RotationAboutYAxis");
+  name.push_back(MBSIM%"RotationAboutZAxis");
+  name.push_back(MBSIM%"RotationAboutAxesXY");
+  name.push_back(MBSIM%"RotationAboutAxesYZ");
+  name.push_back(MBSIM%"RotationAboutAxesXZ");
+  name.push_back(MBSIM%"RotationAboutAxesXYZ");
+  name.push_back(MBSIM%"RotationAboutFixedAxis");
+  name.push_back(MBSIM%"NestedFunction");
+  name.push_back(MBSIM%"SymbolicFunction");
   return name;
 }
 
@@ -195,10 +196,10 @@ Property* RotationPropertyFactory3::createProperty(int i) {
     return new SymbolicFunctionProperty("MS",vector<string>(1,"t"),1);
 }
 
-vector<string> RotationPropertyFactory3::getNames() {
-  vector<std::string> name;
-  name.push_back(MBSIMNS"NestedFunction");
-  name.push_back(MBSIMNS"SymbolicFunction");
+vector<FQN> RotationPropertyFactory3::getNames() {
+  vector<FQN> name;
+  name.push_back(MBSIM%"NestedFunction");
+  name.push_back(MBSIM%"SymbolicFunction");
   return name;
 }
 
@@ -206,46 +207,46 @@ Property* SymbolicFunctionPropertyFactory2::createProperty(int i) {
   return new SymbolicFunctionProperty(ext,var,1);
 }
 
-vector<string> SymbolicFunctionPropertyFactory2::getNames() {
-  vector<std::string> name;
-  name.push_back(MBSIMNS"SymbolicFunction");
+vector<FQN> SymbolicFunctionPropertyFactory2::getNames() {
+  vector<FQN> name;
+  name.push_back(MBSIM%"SymbolicFunction");
   return name;
 }
 
 TranslationPropertyFactory4::TranslationPropertyFactory4() {
-  name.push_back(MBSIMNS"stateDependentTranslation");
-  name.push_back(MBSIMNS"timeDependentTranslation");
-  name.push_back(MBSIMNS"generalTranslation");
+  name.push_back(MBSIM%"stateDependentTranslation");
+  name.push_back(MBSIM%"timeDependentTranslation");
+  name.push_back(MBSIM%"generalTranslation");
 }
 
 Property* TranslationPropertyFactory4::createProperty(int i) {
   if(i==0)
-    return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory2,MBSIMNS"stateDependentTranslation"));
+    return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory2,MBSIM%"stateDependentTranslation"));
   if(i==1)
-    return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory3,MBSIMNS"timeDependentTranslation"));
+    return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory3,MBSIM%"timeDependentTranslation"));
   if(i==2) {
     vector<string> var;
     var.push_back("q");
     var.push_back("t");
-    return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVS",var),MBSIMNS"generalTranslation"));
+    return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVS",var),MBSIM%"generalTranslation"));
   }
 }
 
 RotationPropertyFactory4::RotationPropertyFactory4() {
-  name.push_back(MBSIMNS"stateDependentRotation");
-  name.push_back(MBSIMNS"timeDependentRotation");
+  name.push_back(MBSIM%"stateDependentRotation");
+  name.push_back(MBSIM%"timeDependentRotation");
 }
 
 Property* RotationPropertyFactory4::createProperty(int i) {
   if(i==0)
-    return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2,MBSIMNS"stateDependentRotation"));
+    return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2,MBSIM%"stateDependentRotation"));
   if(i==1)
-    return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3,MBSIMNS"timeDependentRotation"));
+    return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3,MBSIM%"timeDependentRotation"));
 }
 
 TabularFunctionPropertyFactory::TabularFunctionPropertyFactory() {
-  name.push_back(MBSIMNS"x");
-  name.push_back(MBSIMNS"xy");
+  name.push_back(MBSIM%"x");
+  name.push_back(MBSIM%"xy");
 }
 
 Property* TabularFunctionPropertyFactory::createProperty(int i) {
@@ -254,36 +255,36 @@ Property* TabularFunctionPropertyFactory::createProperty(int i) {
     vector<Property*> choiceProperty;
 
 //    vector<PhysicalVariableProperty> input;
-//    input.push_back(PhysicalVariableProperty(new VecFromFileProperty,"",MBSIMNS"x"));
+//    input.push_back(PhysicalVariableProperty(new VecFromFileProperty,"",MBSIM%"x"));
 //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
    propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3),"",4)));
 
    propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,1,"1","0")),"",4)));
 //    input.clear();
-//    input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"y"));
+//    input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIM%"y"));
 //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     return propertyContainer;
   }
   if(i==1) {
     //vector<PhysicalVariableProperty> input;
-    //input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
+    //input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIM%"xy"));
     //return new ExtProperty(new ExtPhysicalVarProperty(input));
     return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0")),"",4));
   }
 }
 
 ConstraintPropertyFactory::ConstraintPropertyFactory() {
-  name.push_back(MBSIMNS"timeDependentConstraintFunction");
-  name.push_back(MBSIMNS"stateDependentConstraintFunction");
+  name.push_back(MBSIM%"timeDependentConstraintFunction");
+  name.push_back(MBSIM%"stateDependentConstraintFunction");
 }
 
 Property* ConstraintPropertyFactory::createProperty(int i) {
   if(i==0)
-    return new ExtProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMNS"timeDependentConstraintFunction"));
+    return new ExtProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"timeDependentConstraintFunction"));
   if(i==1)
-    return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")),MBSIMNS"stateDependentConstraintFunction"));
+    return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")),MBSIM%"stateDependentConstraintFunction"));
 }
 
 ConnectFramesPropertyFactory::ConnectFramesPropertyFactory(Element *element_) : name(2), element(element_) {
@@ -294,8 +295,8 @@ Property* ConnectFramesPropertyFactory::createProperty(int i) {
 }
 
 SpringDamperPropertyFactory::SpringDamperPropertyFactory() {
-  name.push_back(MBSIMNS"LinearSpringDamperForce");
-  name.push_back(MBSIMNS"SymbolicFunction");
+  name.push_back(MBSIM%"LinearSpringDamperForce");
+  name.push_back(MBSIM%"SymbolicFunction");
 }
 
 Property* SpringDamperPropertyFactory::createProperty(int i) {

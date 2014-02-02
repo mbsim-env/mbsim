@@ -33,8 +33,8 @@ class GeneralizedCoordinateSensor : public Sensor {
   public:
     GeneralizedCoordinateSensor(const std::string &str, Element *parent);
     virtual std::string getType() const { return "GeneralizedCoordinateSensor"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
   protected:
     ExtProperty object, index;
@@ -60,8 +60,8 @@ class AbsoluteCoordinateSensor : public Sensor {
   public:
     AbsoluteCoordinateSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
   protected:
     ExtProperty frame, direction;
@@ -86,8 +86,8 @@ class FunctionSensor : public Sensor {
   public:
     FunctionSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "FunctionSensor"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
   protected:
     ExtProperty function;
@@ -99,8 +99,8 @@ class SignalProcessingSystemSensor : public Sensor {
     SignalProcessingSystemSensor(const std::string &str, Element *parent); 
     void initialize();
     virtual std::string getType() const { return "SignalProcessingSystemSensor"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemSensorPropertyDialog(this);}
   protected:
     ExtProperty spsRef;

@@ -31,10 +31,10 @@ class Frame : public Element {
     ~Frame();
     virtual Element* clone() const {return new Frame(*this);}
     static Frame* readXMLFile(const std::string &filename, Element *parent);    
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile2(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual void initializeUsingXML2(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
     bool openMBVFrame() const {return property[0]->isDisabled()==false;}
     void setOpenMBVFrame(bool flag) {property[0]->setDisabled(flag==false);}
     virtual Element * getByPathSearch(std::string path);
@@ -50,8 +50,8 @@ class FixedRelativeFrame : public Frame {
     ~FixedRelativeFrame();
     virtual Element* clone() const {return new FixedRelativeFrame(*this);}
     std::string getType() const { return "FixedRelativeFrame"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initialize();
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
 };

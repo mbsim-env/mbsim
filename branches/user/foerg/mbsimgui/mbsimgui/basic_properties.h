@@ -34,9 +34,9 @@ class Link;
 class RigidBody;
 class Signal;
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class LocalFrameOfReferenceProperty : public Property {
@@ -46,8 +46,8 @@ class LocalFrameOfReferenceProperty : public Property {
   public:
     LocalFrameOfReferenceProperty(const std::string &name="", const std::string &frame_="", Element* element_=0);
     virtual Property* clone() const {return new LocalFrameOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     void setFrame(const std::string &str);
@@ -63,8 +63,8 @@ class ParentFrameOfReferenceProperty : public Property {
   public:
     ParentFrameOfReferenceProperty(const std::string &name="", const std::string &frame_="", Element* element_=0);
     virtual Property* clone() const {return new ParentFrameOfReferenceProperty(*this);}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -81,8 +81,8 @@ class FrameOfReferenceProperty : public Property {
   public:
     FrameOfReferenceProperty(const std::string &name="", const std::string &frame="", Element* element=0); 
     virtual Property* clone() const {return new FrameOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -97,12 +97,12 @@ class ContourOfReferenceProperty : public Property {
     std::string contour;
     Contour *contourPtr;
     Element* element;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const std::string &xmlName_=""); 
+    ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const MBXMLUtils::FQN &xmlName_=""); 
     virtual Property* clone() const {return new ContourOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -115,12 +115,12 @@ class RigidBodyOfReferenceProperty : public Property {
     std::string body;
     RigidBody *bodyPtr;
     Element* element;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const std::string &xmlName_="");
+    RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_="");
     virtual Property* clone() const {return new RigidBodyOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -134,12 +134,12 @@ class ObjectOfReferenceProperty : public Property {
     std::string object;
     Object *objectPtr;
     Element* element;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    ObjectOfReferenceProperty(const std::string &object_="", Element *element_=0, const std::string &xmlName_=""); 
+    ObjectOfReferenceProperty(const std::string &object_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_=""); 
     virtual Property* clone() const {return new ObjectOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -152,12 +152,12 @@ class LinkOfReferenceProperty : public Property {
     std::string link;
     Link *linkPtr;
     Element* element;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    LinkOfReferenceProperty(const std::string &link_="", Element *element_=0, const std::string &xmlName_=""); 
+    LinkOfReferenceProperty(const std::string &link_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_=""); 
     virtual Property* clone() const {return new LinkOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -170,12 +170,12 @@ class SignalOfReferenceProperty : public Property {
     std::string signal;
     Signal *signalPtr;
     Element* element;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    SignalOfReferenceProperty(const std::string &signal_="", Element *element_=0, const std::string &xmlName_=""); 
+    SignalOfReferenceProperty(const std::string &signal_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_=""); 
     virtual Property* clone() const {return new SignalOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
@@ -186,10 +186,10 @@ class SignalOfReferenceProperty : public Property {
 class FileProperty : public Property {
 
   public:
-    FileProperty(const std::string &xmlName_) : xmlName(xmlName_) {}
+    FileProperty(const MBXMLUtils::FQN &xmlName_) : xmlName(xmlName_) {}
     virtual Property* clone() const {return new FileProperty(*this);}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     const std::string& getFile() const {return file;}
@@ -197,16 +197,16 @@ class FileProperty : public Property {
 
   protected:
     std::string file;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
 };
 
 class IntegerProperty : public Property {
 
   public:
-    IntegerProperty(const std::string &name="", int value_=0, const std::string &xmlName_="") : Property(name,toStr(value_)), value(value_), xmlName(xmlName_) {}
+    IntegerProperty(const std::string &name="", int value_=0, const MBXMLUtils::FQN &xmlName_="") : Property(name,toStr(value_)), value(value_), xmlName(xmlName_) {}
     virtual Property* clone() const {return new IntegerProperty(*this);}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     int getInt() const {return value;}
@@ -217,16 +217,16 @@ class IntegerProperty : public Property {
 
   protected:
     int value;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
 };
 
 class TextProperty : public Property {
 
   public:
-    TextProperty(const std::string &name="", const std::string &text="", const std::string &xmlName_="", bool quote_=false) : Property(name,text), xmlName(xmlName_), quote(quote_) {}
+    TextProperty(const std::string &name="", const std::string &text="", const MBXMLUtils::FQN &xmlName_="", bool quote_=false) : Property(name,text), xmlName(xmlName_), quote(quote_) {}
     virtual Property* clone() const {return new TextProperty(*this);}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     //const std::string& getText() const {return text;}
@@ -236,58 +236,58 @@ class TextProperty : public Property {
     Widget* createWidget() { return new TextWidget("Text"); }
 
   protected:
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
     bool quote;
 };
 
 class ConnectFramesProperty : public Property {
 
   public:
-    ConnectFramesProperty(int n, Element* element, const std::string &xmlName_=MBSIMNS"connect");
+    ConnectFramesProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
     virtual Property* clone() const {return new ConnectFramesProperty(*this);}
 
     void initialize();
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
     std::vector<FrameOfReferenceProperty> frame;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
 };
 
 class ConnectContoursProperty : public Property {
 
   public:
-    ConnectContoursProperty(int n, Element* element, const std::string &xmlName_=MBSIMNS"connect");
+    ConnectContoursProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
     virtual Property* clone() const {return new ConnectContoursProperty(*this);}
 
     void initialize();
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
     std::vector<ContourOfReferenceProperty> contour;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
 };
 
 class SolverChoiceProperty : public Property {
 
   public:
-    SolverChoiceProperty(const std::string &xmlName_) : choice("FixedPointSingle"), xmlName(xmlName_) {}
+    SolverChoiceProperty(const MBXMLUtils::FQN &xmlName_) : choice("FixedPointSingle"), xmlName(xmlName_) {}
     virtual Property* clone() const {return new SolverChoiceProperty(*this);}
 
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
     std::string choice;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
 };
 
 class SolverTolerancesProperty : public Property {
@@ -296,8 +296,8 @@ class SolverTolerancesProperty : public Property {
     SolverTolerancesProperty();
     virtual Property* clone() const {return new SolverTolerancesProperty(*this);}
 
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -311,8 +311,8 @@ class SolverParametersProperty : public Property {
     SolverParametersProperty();
     virtual Property* clone() const {return new SolverParametersProperty(*this);}
 
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -325,8 +325,8 @@ class EmbedProperty : public Property {
   public:
     EmbedProperty(Element *element);
     virtual Property* clone() const {return new EmbedProperty(*this);}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     bool hasFile() const {return false;}//(href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFile()!="");}
@@ -346,8 +346,8 @@ class SignalReferenceProperty : public Property {
     SignalReferenceProperty(Element* element);
     virtual Property* clone() const {return new SignalReferenceProperty(*this);}
     void initialize() {refSignal.initialize();}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -358,12 +358,12 @@ class SignalReferenceProperty : public Property {
 class ColorProperty : public Property {
   protected:
     ExtProperty color;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    ColorProperty(const std::string &xmlName=""); 
+    ColorProperty(const MBXMLUtils::FQN &xmlName=""); 
     virtual Property* clone() const {return new ColorProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };

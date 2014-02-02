@@ -28,17 +28,17 @@
 #include "basic_widgets.h"
 #include "property_property_dialog.h"
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class OctaveExpressionProperty : public PhysicalProperty {
   public:
     OctaveExpressionProperty(const std::string &name="", const std::string &scalar="1", const Units &unit=NoUnitUnits()) : PhysicalProperty(name,scalar,unit) {}
     virtual Property* clone() const {return new OctaveExpressionProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     Widget* createWidget() { return new OctaveExpressionWidget(this); }
 };
 
@@ -50,8 +50,8 @@ class ScalarProperty : public PhysicalProperty {
     virtual Property* clone() const {return new ScalarProperty(*this);}
 //    const std::string& getScalar() const {return scalar;}
 //    void setScalar(const std::string &x) {scalar = x; setValue(scalar);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     //PropertyPropertyDialog* createPropertyDialog() { return new PropertyPropertyDialog(this,new ScalarWidget); }
     //PropertyPropertyDialog* createUnitDialog() { return new PropertyPropertyDialog(this,new UnitWidget(angleUnits(),1)); }
     Widget* createWidget() { return new ScalarWidget(this); }
@@ -70,8 +70,8 @@ class VecProperty : public PhysicalProperty {
     void setVec(const std::vector<std::string> &x) {value = x; setValue(toStr(value));}
     int size(int i=0) const {return value.size();}
     void setSize(int i=0, int size=0) { if(value.size()!=size) setVec(::getVec<std::string>(size,"0")); }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     Widget* createWidget() { return new VecWidget(this); }
@@ -90,8 +90,8 @@ class MatProperty : public PhysicalProperty {
     void setMat(const std::vector<std::vector<std::string> > &A) {value = A; setValue(toStr(value));}
 //    std::string getValue() const {return toStr(getMat());}
 //    void setValue(const std::string &str) {setMat(strToMat(str));}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     int rows() const {return value.size();}
     int cols() const {return value[0].size();}
     int size(int i=0) { return (i==0)?rows():cols(); }
@@ -126,8 +126,8 @@ class CardanProperty : public PhysicalProperty {
     const std::vector<std::string>& getAngles() const {return angles;}
     void setAngles(const std::vector<std::string> &x) {angles = x; setValue(toStr(angles));}
     int size() const {return angles.size();}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     Widget* createWidget() { return new CardanWidget(this); }
@@ -136,9 +136,9 @@ class CardanProperty : public PhysicalProperty {
 class PhysicalVariableProperty : public Property {
   protected:
     PhysicalProperty* value;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
   public:
-    PhysicalVariableProperty(PhysicalProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : Property("",""), value(value_), xmlName(xmlName_) {}
+    PhysicalVariableProperty(PhysicalProperty *value_=0, const std::string &unit_="", const MBXMLUtils::FQN &xmlName_="") : Property("",""), value(value_), xmlName(xmlName_) {}
     PhysicalVariableProperty(const PhysicalVariableProperty &p) : value(static_cast<PhysicalProperty*>(p.value->clone())), xmlName(p.xmlName) {}
     ~PhysicalVariableProperty() {delete value;}
     PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<PhysicalProperty*>(p.value->clone()); xmlName=p.xmlName;}
@@ -148,10 +148,10 @@ class PhysicalVariableProperty : public Property {
 //    std::string getUnit() const {return unit;}
 //    void setUnit(const std::string &unit_) {unit = unit_;}
     virtual PhysicalProperty* getProperty() {return value;}
-    const std::string& getXmlName() const {return xmlName;}
+    const MBXMLUtils::FQN& getXmlName() const {return xmlName;}
     void setXmlName(const std::string &name) {xmlName = name;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };
@@ -163,8 +163,8 @@ class PhysicalVariableProperty : public Property {
 //    virtual Property* clone() const {return new VecFromFileProperty(*this);}
 //    std::string getValue() const;
 //    void setValue(const std::string &str) {}
-//    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+//    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //    void fromWidget(QWidget *widget);
 //    void toWidget(QWidget *widget);
 //
@@ -179,8 +179,8 @@ class FromFileProperty : public PhysicalProperty {
     virtual Property* clone() const {return new FromFileProperty(*this);}
 //    std::string getValue() const; 
 //    void setValue(const std::string &str) {}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -192,7 +192,7 @@ class ScalarPropertyFactory: public PropertyFactory {
   public:
     ScalarPropertyFactory(const std::string &value, const Units &unit=NoUnitUnits());
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
     WidgetFactory* createWidgetFactory() { return new ScalarWidgetFactory(QString::fromStdString(value),unit); }
   protected:
@@ -206,7 +206,7 @@ class VecPropertyFactory: public PropertyFactory {
     VecPropertyFactory(int m, const Units &unit=NoUnitUnits());
     VecPropertyFactory(const std::vector<std::string> &x, const Units &unit=NoUnitUnits());
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
     WidgetFactory* createWidgetFactory() { return new VecWidgetFactory(x.size(),unit); }
   protected:
@@ -219,7 +219,7 @@ class RotMatPropertyFactory: public PropertyFactory {
   public:
     RotMatPropertyFactory();
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
     WidgetFactory* createWidgetFactory() { return new RotMatWidgetFactory; }
   protected:
@@ -231,7 +231,7 @@ class MatPropertyFactory: public PropertyFactory {
     MatPropertyFactory(const Units &unit=NoUnitUnits());
     MatPropertyFactory(const std::vector<std::vector<std::string> > &A, const Units &unit=NoUnitUnits());
     Property* createProperty(int i=0);
-    std::string getName(int i=0) const { return name[i]; }
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
     int getSize() const { return name.size(); }
     WidgetFactory* createWidgetFactory() { return new MatWidgetFactory(fromStdMat(A),unit); }
   protected:
@@ -252,7 +252,7 @@ class VariableProperty : public PhysicalProperty {
   protected:
     std::vector<PhysicalProperty*> property;
     int index;
-    std::vector<std::string> name;
+    std::vector<MBXMLUtils::FQN> name;
   public:
     VariableProperty(const std::string &name, std::vector<PhysicalProperty*> property_=std::vector<PhysicalProperty*>(0), int index_=0) : PhysicalProperty(name), property(property_), index(index_) { }
     const std::string& getValue() const {return property[index]->getValue();}
@@ -260,13 +260,13 @@ class VariableProperty : public PhysicalProperty {
     const std::string& getEvaluation() const {return property[index]->getEvaluation();}
     const Units& getUnits() const { return property[index]->getUnits(); }
     virtual Property* clone() const {return new VariableProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     Widget* createWidget() { return property[index]->createWidget(); }
     QMenu* createContextMenu() {return new VariableChoiceContextMenu(this);}
     int getIndex() const { return index; }
     void setIndex(int index_) { index = index_; }
-    const std::string& getName(int i) const { return name[i]; }
+    const MBXMLUtils::FQN& getName(int i) const { return name[i]; }
     int getNumberOfInputs() const { return name.size(); }
     int size(int i=0) { return property[index]->size(i); }
     void setSize(int i=0, int size=0) { property[index]->setSize(i,size); }

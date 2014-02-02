@@ -23,9 +23,12 @@
 #include "basic_properties.h"
 #include "ombv_properties.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 Contour::Contour(const string &str, Element *parent) : Element(str,parent), refFrame(0,false) {
   refFrame.setProperty(new ParentFrameOfReferenceProperty("",getParent()->getFrame(0)->getXMLPath(this,true),this));
@@ -44,29 +47,23 @@ void Contour::setSavedFrameOfReference(const string &str) {
 }
 
 Contour* Contour::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Contour *contour=ObjectFactory::getInstance()->createContour(e,parent);
-    if(contour) {
-      contour->initializeUsingXML(e);
-      contour->initialize();
-    }
-    return contour;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Contour *contour=ObjectFactory::getInstance()->createContour(e, parent);
+  if(contour) {
+    contour->initializeUsingXML(e);
+    contour->initialize();
   }
-  return 0;
+  return contour;
 }
 
-void Contour::initializeUsingXML(TiXmlElement *element) {
+void Contour::initializeUsingXML(DOMElement *element) {
   Element::initializeUsingXML(element);
   refFrame.initializeUsingXML(element);
 }
 
-TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+DOMElement* Contour::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Element::writeXMLFile(parent);
   refFrame.writeXMLFile(ele0);
   return ele0;
 }
@@ -96,19 +93,19 @@ Line::~Line() {
 
 Plane::Plane(const string &str, Element *parent) : Contour(str,parent) {
 
-  visu.setProperty(new OMBVPlaneProperty(MBSIMNS"enableOpenMBV",getID()));
+  visu.setProperty(new OMBVPlaneProperty(MBSIM%"enableOpenMBV",getID()));
 }
 
 Plane::~Plane() {
 }
 
-void Plane::initializeUsingXML(TiXmlElement *element) {
+void Plane::initializeUsingXML(DOMElement *element) {
   Contour::initializeUsingXML(element);
   visu.initializeUsingXML(element);
 }
 
-TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e = Contour::writeXMLFile(parent);
+DOMElement* Plane::writeXMLFile(DOMNode *parent) {
+  DOMElement *e = Contour::writeXMLFile(parent);
   visu.writeXMLFile(e);
   return e;
 }
@@ -116,24 +113,24 @@ TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
 Sphere::Sphere(const string &str, Element *parent) : Contour(str,parent) {
  
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
-  visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV",getID()));
+  visu.setProperty(new OMBVEmptyProperty(MBSIM%"enableOpenMBV",getID()));
 
 }
 
 Sphere::~Sphere() {
 }
 
-void Sphere::initializeUsingXML(TiXmlElement *element) {
+void Sphere::initializeUsingXML(DOMElement *element) {
   Contour::initializeUsingXML(element);
   radius.initializeUsingXML(element);
   visu.initializeUsingXML(element);
 }
 
-TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e = Contour::writeXMLFile(parent);
+DOMElement* Sphere::writeXMLFile(DOMNode *parent) {
+  DOMElement *e = Contour::writeXMLFile(parent);
   radius.writeXMLFile(e);
   visu.writeXMLFile(e);
   return e;
@@ -142,24 +139,24 @@ TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
 CircleSolid::CircleSolid(const string &str, Element *parent) : Contour(str,parent) {
  
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
-  visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV",getID()));
+  visu.setProperty(new OMBVEmptyProperty(MBSIM%"enableOpenMBV",getID()));
 
 }
 
 CircleSolid::~CircleSolid() {
 }
 
-void CircleSolid::initializeUsingXML(TiXmlElement *element) {
+void CircleSolid::initializeUsingXML(DOMElement *element) {
   Contour::initializeUsingXML(element);
   radius.initializeUsingXML(element);
   visu.initializeUsingXML(element);
 }
 
-TiXmlElement* CircleSolid::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e = Contour::writeXMLFile(parent);
+DOMElement* CircleSolid::writeXMLFile(DOMNode *parent) {
+  DOMElement *e = Contour::writeXMLFile(parent);
   radius.writeXMLFile(e);
   visu.writeXMLFile(e);
   return e;

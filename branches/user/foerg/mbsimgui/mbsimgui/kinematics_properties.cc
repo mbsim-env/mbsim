@@ -25,6 +25,7 @@
   
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 Translation::Translation(const std::string &name) : Property(name) { 
   FunctionFactory1 *factory = new FunctionFactory1;
@@ -33,19 +34,19 @@ Translation::Translation(const std::string &name) : Property(name) {
   addProperty(function);
 }
 
-TiXmlElement* Translation::initializeUsingXML(TiXmlElement *parent) {
+DOMElement* Translation::initializeUsingXML(DOMElement *parent) {
   FunctionFactory *factory;
   if(name=="stateDependentTranslation")
     factory = new FunctionFactory1;
   else
     factory = new FunctionFactory2;
-  FunctionProperty *function = factory->createFunction(parent->FirstChildElement());
+  FunctionProperty *function = factory->createFunction(parent->getFirstElementChild());
   delete factory;
   setProperty(function);
-  return property[0]->initializeUsingXML(parent->FirstChildElement());
+  return property[0]->initializeUsingXML(parent->getFirstElementChild());
 }
 
-TiXmlElement* Translation::writeXMLFile(TiXmlNode *parent) {
+DOMElement* Translation::writeXMLFile(DOMNode *parent) {
   return property[0]->writeXMLFile(parent);
 }
 

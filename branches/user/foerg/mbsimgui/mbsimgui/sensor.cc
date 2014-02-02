@@ -29,6 +29,7 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
 }
@@ -37,9 +38,9 @@ Sensor::~Sensor() {
 }
 
 GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROLNS"object"));
+  object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROL%"object"));
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROLNS"index"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROL%"index"));
   index.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -48,23 +49,23 @@ void GeneralizedCoordinateSensor::initialize() {
   object.initialize();
 }
 
-void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
+void GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
   Sensor::initializeUsingXML(element);
   object.initializeUsingXML(element);
   index.initializeUsingXML(element);
 }
 
-TiXmlElement* GeneralizedCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
+DOMElement* GeneralizedCoordinateSensor::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Sensor::writeXMLFile(parent);
   object.writeXMLFile(ele0);
   index.writeXMLFile(ele0);
   return ele0;
 }
 
 AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  frame.setProperty(new FrameOfReferenceProperty("","",this));//,MBSIMCONTROLNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("","",this));//,MBSIMCONTROL%"frame"));
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"direction"));
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"direction"));
   direction.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -73,14 +74,14 @@ void AbsoluteCoordinateSensor::initialize() {
   frame.initialize();
 }
 
-void AbsoluteCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
+void AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
   Sensor::initializeUsingXML(element);
   frame.initializeUsingXML(element);
   direction.initializeUsingXML(element);
 }
 
-TiXmlElement* AbsoluteCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
+DOMElement* AbsoluteCoordinateSensor::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Sensor::writeXMLFile(parent);
   frame.writeXMLFile(ele0);
   direction.writeXMLFile(ele0);
   return ele0;
@@ -97,22 +98,22 @@ FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str,
 //  vector<string> var;
 //  var.push_back("t");
 //  property.push_back(new SymbolicFunctionProperty("VS",var));
-  function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMCONTROLNS"function"));
+  function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMCONTROL%"function"));
 }
 
-void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
+void FunctionSensor::initializeUsingXML(DOMElement *element) {
   Sensor::initializeUsingXML(element);
   function.initializeUsingXML(element);
 }
 
-TiXmlElement* FunctionSensor::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
+DOMElement* FunctionSensor::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Sensor::writeXMLFile(parent);
   function.writeXMLFile(ele0);
   return ele0;
 }
 
 SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROLNS"signalProcessingSystem"));
+  spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROL%"signalProcessingSystem"));
 }
 
 void SignalProcessingSystemSensor::initialize() {
@@ -120,13 +121,13 @@ void SignalProcessingSystemSensor::initialize() {
   spsRef.initialize();
 }
 
-void SignalProcessingSystemSensor::initializeUsingXML(TiXmlElement *element) {
+void SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
   Sensor::initializeUsingXML(element);
   spsRef.initializeUsingXML(element);
 }
 
-TiXmlElement* SignalProcessingSystemSensor::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
+DOMElement* SignalProcessingSystemSensor::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Sensor::writeXMLFile(parent);
   spsRef.writeXMLFile(ele0);
   return ele0;
 }

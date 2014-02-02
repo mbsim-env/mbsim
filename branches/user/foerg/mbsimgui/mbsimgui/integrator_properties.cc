@@ -22,11 +22,12 @@
 #include "integrator_widgets.h"
 
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 RKSuiteTypeProperty::RKSuiteTypeProperty() : index(0) {
-  method.push_back(MBSIMINTNS"method23");
-  method.push_back(MBSIMINTNS"method45");
-  method.push_back(MBSIMINTNS"method67");
+  method.push_back(MBSIMINT%"method23");
+  method.push_back(MBSIMINT%"method45");
+  method.push_back(MBSIMINT%"method67");
 }
 
 void RKSuiteTypeProperty::fromWidget(QWidget *widget) {
@@ -37,10 +38,11 @@ void RKSuiteTypeProperty::toWidget(QWidget *widget) {
   static_cast<RKSuiteTypeWidget*>(widget)->comboBox->setCurrentIndex(index);
 }
 
-TiXmlElement* RKSuiteTypeProperty::initializeUsingXML(TiXmlElement *element) {}
+DOMElement* RKSuiteTypeProperty::initializeUsingXML(DOMElement *element) {}
 
-TiXmlElement* RKSuiteTypeProperty::writeXMLFile(TiXmlNode *element) {
-  TiXmlElement *ele = new TiXmlElement(method[index]);
-  element->LinkEndChild(ele);
+DOMElement* RKSuiteTypeProperty::writeXMLFile(DOMNode *element) {
+  DOMDocument *doc=element->getOwnerDocument();
+  DOMElement *ele = D(doc)->createElement(method[index]);
+  element->insertBefore(ele, NULL);
   return 0;
 }

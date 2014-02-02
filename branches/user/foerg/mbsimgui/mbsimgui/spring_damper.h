@@ -29,8 +29,8 @@ class SpringDamper : public Link {
     SpringDamper(const std::string &str, Element *element);
     ~SpringDamper();
     std::string getType() const { return "SpringDamper"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   protected:
@@ -43,8 +43,8 @@ class DirectionalSpringDamper : public Link {
     DirectionalSpringDamper(const std::string &str, Element *element);
     ~DirectionalSpringDamper();
     std::string getType() const { return "DirectionalSpringDamper"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
   protected:
@@ -57,8 +57,8 @@ class GeneralizedSpringDamper : public Link {
     GeneralizedSpringDamper(const std::string &str, Element *element);
     ~GeneralizedSpringDamper();
     std::string getType() const { return "GeneralizedSpringDamper"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
   protected:

@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 Widget::Widget(const Units &units, int defaultUnit) : unit(0) {
   QHBoxLayout *mainlayout = new QHBoxLayout;

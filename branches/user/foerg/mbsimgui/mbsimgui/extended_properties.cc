@@ -25,17 +25,16 @@
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include <QStackedWidget>
-#include <mbxmlutilstinyxml/tinyxml.h>
-#include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 ExtPhysicalVarProperty::ExtPhysicalVarProperty(const std::vector<PhysicalVariableProperty> &inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
   inputProperty.push_back(PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0].getUnit(), inputProperty[0].getXmlName()));
 }
 
-TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* ExtPhysicalVarProperty::initializeUsingXML(DOMElement *element) {
   for(int i=0; i< inputProperty.size(); i++) {
     if(inputProperty[i].initializeUsingXML(element)) { 
       currentInput = i;
@@ -45,7 +44,7 @@ TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) 
   return 0;
 }
 
-TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
+DOMElement* ExtPhysicalVarProperty::writeXMLFile(DOMNode *parent) {
   inputProperty[currentInput].writeXMLFile(parent);
   return 0;
 }
@@ -60,13 +59,13 @@ void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   inputProperty[currentInput].toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
 }
 
-ChoiceProperty2::ChoiceProperty2(const string &name, PropertyFactory *factory_, const std::string &xmlName_, int mode_, const std::string &xmlBase_) : Property(name), factory(factory_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_), property(factory->createProperty()) {
+ChoiceProperty2::ChoiceProperty2(const string &name, PropertyFactory *factory_, const FQN &xmlName_, int mode_, const NamespaceURI &nsuri_) : Property(name), factory(factory_), index(0), mode(mode_), xmlName(xmlName_), nsuri(nsuri_), property(factory->createProperty()) {
 }
 
-ChoiceProperty2::ChoiceProperty2(PropertyFactory *factory_, const std::string &xmlName_, int mode_, const std::string &xmlBase_) : factory(factory_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_), property(factory->createProperty()) {
+ChoiceProperty2::ChoiceProperty2(PropertyFactory *factory_, const FQN &xmlName_, int mode_, const NamespaceURI &nsuri_) : factory(factory_), index(0), mode(mode_), xmlName(xmlName_), nsuri(nsuri_), property(factory->createProperty()) {
 }
 
-ChoiceProperty2::ChoiceProperty2(const ChoiceProperty2 &p) : index(p.index), mode(p.mode), xmlName(p.xmlName), xmlBase(p.xmlBase) {
+ChoiceProperty2::ChoiceProperty2(const ChoiceProperty2 &p) : index(p.index), mode(p.mode), xmlName(p.xmlName), nsuri(p.nsuri) {
 //  for(unsigned int i=0; i<p.property.size(); i++)
 //    property.push_back(p.property[i]->clone());
 }
@@ -83,7 +82,7 @@ ChoiceProperty2& ChoiceProperty2::operator=(const ChoiceProperty2 &p) {
 //  index=p.index; 
 //  mode=p.mode; 
 //  xmlName=p.xmlName; 
-//  xmlBase=p.xmlBase;
+//  nsuri=p.nsuri;
 //  for(unsigned int i=0; i<p.property.size(); i++)
 //    property.push_back(p.property[i]->clone());
 }
@@ -92,15 +91,15 @@ void ChoiceProperty2::initialize() {
   property->initialize();
 }
 
-TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
+DOMElement* ChoiceProperty2::initializeUsingXML(DOMElement *element) {
   if(element) {
     if(mode<=1) {
-      TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
+      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
       if(e) {
-        TiXmlElement* ee=(mode==0)?e->FirstChildElement():e;
+        DOMElement* ee=(mode==0)?e->getFirstElementChild():e;
         if(ee) {
           for(int i=0; i<factory->getSize(); i++) {
-            if(ee->ValueStr() == factory->getName(i)) {
+            if(E(ee)->getTagName() == factory->getName(i)) {
               index = i;
               property = factory->createProperty(i);
               return property->initializeUsingXML(ee);
@@ -111,12 +110,12 @@ TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
       return 0;
     }
     else if (mode<=3) {
-      TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
+      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
       if(e) {
-        TiXmlElement* ee=(mode==2)?e->FirstChildElement():e;
+        DOMElement* ee=(mode==2)?e->getFirstElementChild():e;
         if(ee) {
           for(int i=0; i<factory->getSize(); i++) {
-            TiXmlElement *eee=ee->FirstChildElement(factory->getName(i));
+            DOMElement *eee=E(ee)->getFirstElementChildNamed(factory->getName(i));
             if(eee) {
               index = i;
               property = factory->createProperty(i);
@@ -128,9 +127,9 @@ TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
       return 0;
     }
     else {
-      TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
+      DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
       if(e) {
-        TiXmlElement* ee=e;
+        DOMElement* ee=e;
         if(ee) {
           for(int i=0; i<factory->getSize(); i++) {
             index = i;
@@ -145,11 +144,12 @@ TiXmlElement* ChoiceProperty2::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* ChoiceProperty2::writeXMLFile(TiXmlNode *parent) {
-  TiXmlNode *ele0;
-  if(xmlName!="") {
-    ele0 = new TiXmlElement(xmlName);
-    parent->LinkEndChild(ele0);
+DOMElement* ChoiceProperty2::writeXMLFile(DOMNode *parent) {
+  DOMNode *ele0;
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    ele0 = D(doc)->createElement(xmlName);
+    parent->insertBefore(ele0, NULL);
   }
   else
     ele0 = parent;
@@ -186,11 +186,11 @@ void ChoiceProperty2::setIndex(int i) {
   }
 }
 
-TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* ExtProperty::initializeUsingXML(DOMElement *element) {
   active = false;
   if(element)
-  if(xmlName!="") {
-    TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(xmlName!=FQN()) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
     if(e)
       active = property->initializeUsingXML(e);
     if(alwaysWriteXMLName) 
@@ -201,18 +201,19 @@ TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
   return active?element:0;
 }
 
-TiXmlElement* ExtProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
+DOMElement* ExtProperty::writeXMLFile(DOMNode *parent) {
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
     if(alwaysWriteXMLName) {
-      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      DOMElement *ele0 = D(doc)->createElement(xmlName);
       if(active) property->writeXMLFile(ele0);
-      parent->LinkEndChild(ele0);
+      parent->insertBefore(ele0, NULL);
       return ele0;
     }
     else if(active) {
-      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      DOMElement *ele0 = D(doc)->createElement(xmlName);
       property->writeXMLFile(ele0);
-      parent->LinkEndChild(ele0);
+      parent->insertBefore(ele0, NULL);
       return ele0;
     }
   }
@@ -259,11 +260,11 @@ void ContainerProperty::initialize() {
     property[i]->initialize();
 }
 
-TiXmlElement* ContainerProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* ContainerProperty::initializeUsingXML(DOMElement *element) {
   bool flag = false;
   if(mode==0) {
-  if(xmlName!="") {
-    TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(xmlName!=FQN()) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
       for(unsigned int i=0; i<property.size(); i++)
         if(property[i]->initializeUsingXML(e))
@@ -279,8 +280,8 @@ TiXmlElement* ContainerProperty::initializeUsingXML(TiXmlElement *element) {
   }
   }
   else {
-  if(xmlName!="") {
-    TiXmlElement *e=element;
+  if(xmlName!=FQN()) {
+    DOMElement *e=element;
     if(e) {
       for(unsigned int i=0; i<property.size(); i++) {
         if(property[i]->initializeUsingXML(e))
@@ -298,12 +299,13 @@ TiXmlElement* ContainerProperty::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* ContainerProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+DOMElement* ContainerProperty::writeXMLFile(DOMNode *parent) {
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(xmlName);
     for(unsigned int i=0; i<property.size(); i++)
       property[i]->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+    parent->insertBefore(ele0, NULL);
   }
   else
     for(unsigned int i=0; i<property.size(); i++)
@@ -321,46 +323,47 @@ void ContainerProperty::toWidget(QWidget *widget) {
     property[i]->toWidget(static_cast<ContainerWidget*>(widget)->widget[i]);
 }
 
-ListProperty::ListProperty(PropertyFactory *factory_, const string &xmlName_, int m, int mode_) : factory(factory_), xmlName(xmlName_), mode(mode_) {
+ListProperty::ListProperty(PropertyFactory *factory_, const FQN &xmlName_, int m, int mode_) : factory(factory_), xmlName(xmlName_), mode(mode_) {
   for(int i=0; i<m; i++)
     property.push_back(factory->createProperty());
 }
 
-TiXmlElement* ListProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* ListProperty::initializeUsingXML(DOMElement *element) {
   
   property.clear();
-  if(xmlName=="") {
-    TiXmlElement *e=(mode==0)?element->FirstChildElement():element;
+  if(xmlName==FQN()) {
+    DOMElement *e=(mode==0)?element->getFirstElementChild():element;
     while(e) {
       property.push_back(factory->createProperty());
       property[property.size()-1]->initializeUsingXML(e);
 
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
   }
   else {
-    TiXmlElement *e=element->FirstChildElement(xmlName);
-    while(e and e->ValueStr()==xmlName) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    while(e and E(e)->getTagName()==xmlName) {
       property.push_back(factory->createProperty());
       property[property.size()-1]->initializeUsingXML(e);
 
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
   }
 
   return element;
 }
 
-TiXmlElement* ListProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName=="") {
+DOMElement* ListProperty::writeXMLFile(DOMNode *parent) {
+  if(xmlName==FQN()) {
     for(unsigned int i=0; i<property.size(); i++)
       property[i]->writeXMLFile(parent);
   }
   else {
+    DOMDocument *doc=parent->getOwnerDocument();
     for(unsigned int i=0; i<property.size(); i++) {
-      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      DOMElement *ele0 = D(doc)->createElement(xmlName);
       property[i]->writeXMLFile(ele0);
-      parent->LinkEndChild(ele0);
+      parent->insertBefore(ele0, NULL);
     }
   }
   return 0;

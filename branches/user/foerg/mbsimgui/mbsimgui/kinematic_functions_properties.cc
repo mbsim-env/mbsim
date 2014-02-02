@@ -26,6 +26,7 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty(const string &name) : FunctionProperty(name) {
   vector<string> x = getVec<string>(3,"0");
@@ -33,17 +34,18 @@ TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty(const strin
   property.push_back(new Vec_Property("axisOfTranslation",x));
 }
 
-TiXmlElement* TranslationAlongFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"axisOfTranslation" );
+DOMElement* TranslationAlongFixedAxisProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *ele1 = E(element)->getFirstElementChildNamed( MBSIM%"axisOfTranslation" );
   property[0]->initializeUsingXML(ele1);
   return element;
 }
 
-TiXmlElement* TranslationAlongFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"axisOfTranslation" );
+DOMElement* TranslationAlongFixedAxisProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement *ele1 = D(doc)->createElement( MBSIM%"axisOfTranslation" );
   property[0]->writeXMLFile(ele1);
-  ele0->LinkEndChild(ele1);
+  ele0->insertBefore(ele1, NULL);
   return ele0;
 } 
 
@@ -64,17 +66,18 @@ int LinearTranslationProperty::getArgSize(int i) const {
   return static_cast<VarMat_Property*>(property[0])->size(1);
 }
 
-TiXmlElement* LinearTranslationProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* LinearTranslationProperty::initializeUsingXML(DOMElement *element) {
 }
 
-TiXmlElement* LinearTranslationProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"translationVectors" );
+DOMElement* LinearTranslationProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement *ele1 = D(doc)->createElement( MBSIM%"translationVectors" );
   property[0]->writeXMLFile(ele1);
-  ele0->LinkEndChild(ele1);
-  ele1 = new TiXmlElement( MBSIMNS"offset" );
+  ele0->insertBefore(ele1, NULL);
+  ele1 = D(doc)->createElement( MBSIM%"offset" );
   property[1]->writeXMLFile(ele1);
-  ele0->LinkEndChild(ele1);
+  ele0->insertBefore(ele1, NULL);
   return ele0;
 } 
 
@@ -86,17 +89,17 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIMNS"axisOfRotation"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfRotation"));
   a.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* RotationAboutFixedAxisProperty::initializeUsingXML(DOMElement *element) {
   a.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* RotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+DOMElement* RotationAboutFixedAxisProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
   a.writeXMLFile(ele0);
   return ele0;
 } 

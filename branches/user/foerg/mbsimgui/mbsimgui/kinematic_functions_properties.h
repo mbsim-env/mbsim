@@ -85,8 +85,8 @@ class TranslationAlongFixedAxisProperty : public FunctionProperty {
     virtual Property* clone() const {return new TranslationAlongFixedAxisProperty(*this);}
     int getArgSize(int i=0) const {return 1;}
     inline std::string getType() const { return "TranslationAlongFixedAxis"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };
@@ -97,8 +97,8 @@ class LinearTranslationProperty : public FunctionProperty {
     virtual Property* clone() const {return new LinearTranslationProperty(*this);}
     int getArgSize(int i=0) const;
     inline std::string getType() const { return "LinearTranslation"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };
@@ -165,8 +165,8 @@ class RotationAboutFixedAxisProperty : public FunctionProperty {
     virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
     int getArgSize(int i=0) const {return 1;}
     inline std::string getType() const { return "RotationAboutFixedAxis"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:

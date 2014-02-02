@@ -30,9 +30,9 @@ class PropertyWidget;
 class PropertyDialog;
 class ExtWidget;
 class TextWidget;
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class Parameter : public TreeItemData {
@@ -44,8 +44,8 @@ class Parameter : public TreeItemData {
     const std::string& getUnit() const {return unit;}
     const std::string& getEvaluation() const {return evaluation;}
     void setValue(const std::string &value) {valuestr = value;}
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getValue();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setValue(str);}
@@ -63,8 +63,8 @@ class StringParameter : public Parameter {
   public:
     StringParameter(const std::string &name);
     virtual ~StringParameter() {}
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "stringParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new StringParameterPropertyDialog(this);}
 };
@@ -74,8 +74,8 @@ class ScalarParameter : public Parameter {
   public:
     ScalarParameter(const std::string &name);
     virtual ~ScalarParameter() {}
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "scalarParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
 };
@@ -85,8 +85,8 @@ class VectorParameter : public Parameter {
   public:
     VectorParameter(const std::string &name);
     virtual ~VectorParameter() {}
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "vectorParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
 };
@@ -96,8 +96,8 @@ class MatrixParameter : public Parameter {
   public:
     MatrixParameter(const std::string &name);
     virtual ~MatrixParameter() {}
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "matrixParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
 };
@@ -105,7 +105,7 @@ class MatrixParameter : public Parameter {
 class ParameterList {
   public:
     bool readXMLFile(const std::string &filename);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) const;
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) const;
     int getSize() const {return name.size();}
     void addParameter(const std::string &name, const std::string &value, const std::string &type);
     void addParameterList(const ParameterList &list); 
