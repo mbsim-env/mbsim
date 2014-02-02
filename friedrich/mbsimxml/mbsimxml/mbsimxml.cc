@@ -8,8 +8,8 @@
 #include "env.h"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <mbxmlutilstinyxml/getinstallpath.h>
-#include <mbxmlutilstinyxml/last_write_time.h>
+#include <mbxmlutilshelper/getinstallpath.h>
+#include <mbxmlutilshelper/last_write_time.h>
 #include <mbsim/element.h>
 #include <mbsim/integrators/integrator.h>
 #include <stdio.h>
@@ -76,12 +76,12 @@ void createOrTouch(const string &filename) {
   ofstream f(filename.c_str()); // Note: ofstream use precise file timestamp
 }
 
-void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const string &MBXMLUTILSSCHEMA) {
+void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
   // read plugins
   string ns, loc;
-  for(bfs::directory_iterator it=bfs::directory_iterator(MBXMLUtils::getInstallPath()+"/share/mbsimxml/plugins"); it!=bfs::directory_iterator(); it++) {
+  for(bfs::directory_iterator it=bfs::directory_iterator(MBXMLUtils::getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
     bfs::ifstream plugin(*it);
     // read up to the first empty line
     for(getline(plugin, ns); !ns.empty(); getline(plugin, ns)) {
@@ -100,13 +100,13 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const string &MBXMLUT
   file<<"  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"<<endl;
   file<<endl;
   file<<"  <xs:import namespace=\""<<MBSIMNS_<<"\""<<endl;
-  file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/http___mbsim_berlios_de_MBSim/mbsim.xsd\"/>"<<endl;
+  file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/http___mbsim_berlios_de_MBSim/mbsim.xsd\"/>"<<endl;
   file<<"  <xs:import namespace=\""<<MBSIMINTNS_<<"\""<<endl;
-  file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\"/>"<<endl;
+  file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\"/>"<<endl;
   file<<endl;
   for(vector<pair<string, string> >::iterator it=schema.begin(); it!=schema.end(); it++) {
     file<<"  <xs:import namespace=\""<<it->first<<"\""<<endl;
-    file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA<<"/"<<it->second<<"\"/>"<<endl;
+    file<<"             schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/"<<it->second<<"\"/>"<<endl;
   }
   file<<"</xs:schema>"<<endl;
 }
@@ -166,19 +166,19 @@ int main(int argc, char *argv[]) {
 #endif
   
     // check for environment variables (none default installation)
-    string MBXMLUTILSBIN;
-    string MBXMLUTILSSCHEMA;
-    string MBSIMXMLBIN;
+    bfs::path MBXMLUTILSBIN;
+    bfs::path MBXMLUTILSSCHEMA;
+    bfs::path MBSIMXMLBIN;
     char *env;
     MBXMLUTILSBIN=MBXMLUTILSBIN_DEFAULT; // default: from build configuration
-    if(!bfs::exists((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str())) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()+"/bin"; // use rel path if build configuration dose not work
-    if(!bfs::exists((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str())) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()+"/bin"; // use rel path if build configuration dose not work
+    if(!bfs::exists(MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT))) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()/"bin"; // use rel path if build configuration dose not work
+    if(!bfs::exists(MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT))) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()/"bin"; // use rel path if build configuration dose not work
     if((env=getenv("MBXMLUTILSBINDIR"))) MBXMLUTILSBIN=env; // overwrite with envvar if exist
     MBXMLUTILSSCHEMA=MBXMLUTILSSCHEMA_DEFAULT; // default: from build configuration
-    if(!bfs::exists((MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsim.xsd").c_str())) MBXMLUTILSSCHEMA=MBXMLUtils::getInstallPath()+"/share/mbxmlutils/schema"; // use rel path if build configuration dose not work
+    if(!bfs::exists(MBXMLUTILSSCHEMA/"http___mbsim_berlios_de_MBSim"/"mbsim.xsd")) MBXMLUTILSSCHEMA=MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"schema"; // use rel path if build configuration dose not work
     if((env=getenv("MBXMLUTILSSCHEMADIR"))) MBXMLUTILSSCHEMA=env; // overwrite with envvar if exist
     MBSIMXMLBIN=MBSIMXMLBIN_DEFAULT; // default: from build configuration
-    if(!bfs::exists((MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT).c_str())) MBSIMXMLBIN=MBXMLUtils::getInstallPath()+"/bin"; // use rel path if build configuration dose not work
+    if(!bfs::exists(MBSIMXMLBIN/(string("mbsimflatxml")+EXEEXT))) MBSIMXMLBIN=MBXMLUtils::getInstallPath()/"bin"; // use rel path if build configuration dose not work
     if((env=getenv("MBSIMXMLBINDIR"))) MBSIMXMLBIN=env; // overwrite with envvar if exist
   
     // parse parameters
@@ -282,7 +282,7 @@ int main(int argc, char *argv[]) {
       // mbsimflatxml checks explicity for a correct root element of both files, so validating both
       // with mbsimxml.xsd is no problem.
       vector<string> command;
-      command.push_back(MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT);
+      command.push_back((MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT)).string());
       command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
       command.insert(command.end(), MPATH.begin(), MPATH.end());
       command.push_back(PARAM);
@@ -295,7 +295,7 @@ int main(int argc, char *argv[]) {
   
       if(!ONLYPP && ret==0) {
         vector<string> command;
-        command.push_back(MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT);
+        command.push_back((MBSIMXMLBIN/(string("mbsimflatxml")+EXEEXT)).string());
         if(NOINT!="") command.push_back(NOINT);
         if(ONLY1OUT!="") command.push_back(ONLY1OUT);
         command.push_back(PPMBSIM);
