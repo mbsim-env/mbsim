@@ -4,7 +4,7 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-INCLUDES = -DTIXML_USE_STL $(QT_CFLAGS) $(OPENMBV_CFLAGS)
+INCLUDES = $(QT_CFLAGS) $(OPENMBV_CFLAGS)
 
 LDADD = $(QT_LIBS) $(OPENMBV_LIBS) 
 
@@ -67,6 +67,7 @@ mbsimgui_SOURCES = element.cc \
 		   integrator_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
+		   property.cc \
 		   mainwindow.cc \
 		   main.cc
 		   

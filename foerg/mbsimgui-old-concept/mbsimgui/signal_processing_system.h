@@ -27,9 +27,9 @@ class SignalProcessingSystem : public Link {
   public:
     SignalProcessingSystem(const std::string &str, Element *parent);
     std::string getType() const { return "SignalProcessingSystem"; }
-    virtual std::string getNameSpace() const { return MBSIMCONTROLNS; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemPropertyDialog(this);}
   protected:

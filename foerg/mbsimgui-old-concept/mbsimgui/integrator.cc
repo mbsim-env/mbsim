@@ -29,23 +29,25 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 extern MainWindow *mw;
 
 TolerancePropertyFactory::TolerancePropertyFactory(const string &type_) : type(type_) {
-  name.push_back(MBSIMINTNS+type+"ToleranceScalar");
-  name.push_back(MBSIMINTNS+type+"Tolerance");
+  name.push_back(MBSIMINT%(type+"ToleranceScalar"));
+  name.push_back(MBSIMINT%(type+"Tolerance"));
 }
 
 Property* TolerancePropertyFactory::createProperty(int i) {
   if(i==0) {
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS+type+"ToleranceScalar"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINT%(type+"ToleranceScalar")));
     return new ExtPhysicalVarProperty(input);
   }
   if(i==1) {
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS+type+"Tolerance"));
+    input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINT%(type+"Tolerance")));
     return new ExtPhysicalVarProperty(input);
   }
 }
@@ -53,36 +55,36 @@ Property* TolerancePropertyFactory::createProperty(int i) {
 Integrator::Integrator() : initialState(0,false) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"startTime"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"startTime"));
   startTime.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"s",MBSIMINTNS"endTime"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"s",MBSIMINT%"endTime"));
   endTime.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-2"),"s",MBSIMINTNS"plotStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-2"),"s",MBSIMINT%"plotStepSize"));
   plotStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0), "", MBSIMINTNS"initialState"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(0), "", MBSIMINT%"initialState"));
   initialState.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 Integrator::~Integrator() {
 }
 
-void Integrator::initializeUsingXML(TiXmlElement *element) {
+void Integrator::initializeUsingXML(DOMElement *element) {
   startTime.initializeUsingXML(element);
   endTime.initializeUsingXML(element);
   plotStepSize.initializeUsingXML(element);
   initialState.initializeUsingXML(element);
 }
 
-TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType());
-  parent->LinkEndChild(ele0);
-  ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSimIntegrator");
+DOMElement* Integrator::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIMINT%getType());
+  parent->insertBefore(ele0, NULL);
 
   startTime.writeXMLFile(ele0);
   endTime.writeXMLFile(ele0);
@@ -94,28 +96,18 @@ TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
 
 Integrator* Integrator::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    TiXml_setLineNrFromProcessingInstruction(e);
-    map<string,string> dummy;
-    incorporateNamespace(e, dummy);
-    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
-    if(integrator)
-      integrator->initializeUsingXML(doc.FirstChildElement());
-    return integrator;
-  }
-  return 0;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
+  if(integrator)
+    integrator->initializeUsingXML(e);
+  return integrator;
 }
 
 void Integrator::writeXMLFile(const string &name) {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  writeXMLFile(&doc);
-  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
-  doc.SaveFile(name.substr(name.length()-13,13)==".mbsimint.xml"?name:name+".mbsimint.xml");
+  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+  writeXMLFile(doc.get());
+  DOMParser::serialize(doc.get(), name.substr(name.length()-13,13)==".mbsimint.xml"?name:name+".mbsimint.xml");
 }
 
 DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
@@ -124,19 +116,19 @@ DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
   relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3)); 
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void DOPRI5Integrator::initializeUsingXML(TiXmlElement *element) {
+void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   absTol.initializeUsingXML(element);
   relTol.initializeUsingXML(element);
@@ -145,8 +137,8 @@ void DOPRI5Integrator::initializeUsingXML(TiXmlElement *element) {
   maxSteps.initializeUsingXML(element);
 }
 
-TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* DOPRI5Integrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   absTol.writeXMLFile(ele0);
   relTol.writeXMLFile(ele0);
   initialStepSize.writeXMLFile(ele0);
@@ -161,19 +153,19 @@ RADAU5Integrator::RADAU5Integrator() {
   relTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("relative"),"",3)); 
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void RADAU5Integrator::initializeUsingXML(TiXmlElement *element) {
+void RADAU5Integrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   absTol.initializeUsingXML(element);
   relTol.initializeUsingXML(element);
@@ -182,8 +174,8 @@ void RADAU5Integrator::initializeUsingXML(TiXmlElement *element) {
   maxSteps.initializeUsingXML(element);
 }
 
-TiXmlElement* RADAU5Integrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* RADAU5Integrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   absTol.writeXMLFile(ele0);
   relTol.writeXMLFile(ele0);
   initialStepSize.writeXMLFile(ele0);
@@ -196,31 +188,31 @@ LSODEIntegrator::LSODEIntegrator() : stiff(0,false) {
   absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINT%"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"minimalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"minimalStepSize"));
   minimalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"numberOfMaximalSteps"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"numberOfMaximalSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"stiffModus"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"stiffModus"));
   stiff.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void LSODEIntegrator::initializeUsingXML(TiXmlElement *element) {
+void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   absTol.initializeUsingXML(element);
   relTol.initializeUsingXML(element);
@@ -231,8 +223,8 @@ void LSODEIntegrator::initializeUsingXML(TiXmlElement *element) {
   stiff.initializeUsingXML(element);
 }
 
-TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* LSODEIntegrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   absTol.writeXMLFile(ele0);
   relTol.writeXMLFile(ele0);
   initialStepSize.writeXMLFile(ele0);
@@ -247,27 +239,27 @@ LSODARIntegrator::LSODARIntegrator() {
   absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINT%"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"minimalStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"minimalStepSize"));
   minimalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"plotOnRoot"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"plotOnRoot"));
   plotOnRoot.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
+void LSODARIntegrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   absTol.initializeUsingXML(element);
   relTol.initializeUsingXML(element);
@@ -277,8 +269,8 @@ void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
   plotOnRoot.initializeUsingXML(element);
 }
 
-TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* LSODARIntegrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   absTol.writeXMLFile(ele0);
   relTol.writeXMLFile(ele0);
   initialStepSize.writeXMLFile(ele0);
@@ -291,34 +283,34 @@ TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
 TimeSteppingIntegrator::TimeSteppingIntegrator() {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINT%"stepSize"));
   stepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+void TimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   stepSize.initializeUsingXML(element);
 }
 
-TiXmlElement* TimeSteppingIntegrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* TimeSteppingIntegrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   stepSize.writeXMLFile(ele0);
   return ele0;
 }
 
 EulerExplicitIntegrator::EulerExplicitIntegrator() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINT%"stepSize"));
   stepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void EulerExplicitIntegrator::initializeUsingXML(TiXmlElement *element) {
+void EulerExplicitIntegrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   stepSize.initializeUsingXML(element);
 }
 
-TiXmlElement* EulerExplicitIntegrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* EulerExplicitIntegrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   stepSize.writeXMLFile(ele0);
   return ele0;
 }
@@ -328,19 +320,19 @@ RKSuiteIntegrator::RKSuiteIntegrator() : initialStepSize(0,false) {
   type.setProperty(new RKSuiteTypeProperty);
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINT%"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"thresholdScalar"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINT%"thresholdScalar"));
   threshold.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-void RKSuiteIntegrator::initializeUsingXML(TiXmlElement *element) {
+void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
   Integrator::initializeUsingXML(element);
   type.initializeUsingXML(element);
   relTol.initializeUsingXML(element);
@@ -348,8 +340,8 @@ void RKSuiteIntegrator::initializeUsingXML(TiXmlElement *element) {
   initialStepSize.initializeUsingXML(element);
 }
 
-TiXmlElement* RKSuiteIntegrator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+DOMElement* RKSuiteIntegrator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Integrator::writeXMLFile(parent);
   type.writeXMLFile(ele0);
   relTol.writeXMLFile(ele0);
   threshold.writeXMLFile(ele0);

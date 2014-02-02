@@ -32,18 +32,19 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
   Frame *C = new Frame("C",this);
   addFrame(C);
 
-  K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForKinematics"));
+  K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForKinematics"));
 
-  mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMNS"mass",vector<string>(2,"kg")),"",4));
+  mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"mass",vector<string>(2,"kg")),"",4));
 
-  inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIMNS"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
+  inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIM%"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
 
-  frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForInertiaTensor"));
+  frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForInertiaTensor"));
 
   vector<Property*> property;
 
@@ -52,22 +53,22 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4,"",3)); 
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"translationDependentRotation"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"translationDependentRotation"));
   translationDependentRotation.setProperty(new ExtPhysicalVarProperty(input)); 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"coordinateTransformationForRotation"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"coordinateTransformationForRotation"));
   coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
   weightArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  weightArrow.setXMLName(MBSIMNS"openMBVWeightArrow",false);
+  weightArrow.setXMLName(MBSIM%"openMBVWeightArrow",false);
 
   jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  jointForceArrow.setXMLName(MBSIMNS"openMBVJointForceArrow",false);
+  jointForceArrow.setXMLName(MBSIM%"openMBVJointForceArrow",false);
 
   jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
+  jointMomentArrow.setXMLName(MBSIM%"openMBVJointMomentArrow",false);
 
 }
 
@@ -100,22 +101,22 @@ void RigidBody::initialize() {
     contour[i]->initialize();
 }
 
-void RigidBody::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
+void RigidBody::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
   Body::initializeUsingXML(element);
 
   // frames
-  e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
+  e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
   Frame *f;
   while(e) {
-    if(e->ValueStr()==PVNS"embed") {
-      TiXmlElement *ee = 0;
-      if(e->Attribute("href"))
-        f=Frame::readXMLFile(e->Attribute("href"),this);
+    if(E(e)->getTagName()==PV%"embed") {
+      DOMElement *ee = 0;
+      if(E(e)->hasAttribute("href"))
+        f=Frame::readXMLFile(E(e)->getAttribute("href"),this);
       else {
-        ee = e->FirstChildElement();
-        if(ee->ValueStr() == PVNS"localParameter")
-          ee = ee->NextSiblingElement();
+        ee = e->getFirstElementChild();
+        if(E(ee)->getTagName() == PV%"localParameter")
+          ee = ee->getNextElementSibling();
         f=ObjectFactory::getInstance()->createFrame(ee,this);
       }
       if(f) {
@@ -130,21 +131,21 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
       addFrame(f);
       f->initializeUsingXML(e);
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
   }
 
   // contours
-  e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+  e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
   Contour *c;
   while(e) {
-    if(e->ValueStr()==PVNS"embed") {
-      TiXmlElement *ee = 0;
-      if(e->Attribute("href"))
-        c=Contour::readXMLFile(e->Attribute("href"),this);
+    if(E(e)->getTagName()==PV%"embed") {
+      DOMElement *ee = 0;
+      if(E(e)->hasAttribute("href"))
+        c=Contour::readXMLFile(E(e)->getAttribute("href"),this);
       else {
-        ee = e->FirstChildElement();
-        if(ee->ValueStr() == PVNS"localParameter")
-          ee = ee->NextSiblingElement();
+        ee = e->getFirstElementChild();
+        if(E(ee)->getTagName() == PV%"localParameter")
+          ee = ee->getNextElementSibling();
         c=ObjectFactory::getInstance()->createContour(ee,this);
       }
       if(c) {
@@ -161,7 +162,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
         c->initializeUsingXML(e);
       }
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
   }
 
   K.initializeUsingXML(element);
@@ -177,7 +178,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   ombvEditor.initializeUsingXML(element);
 
-  e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+  e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
   if(e)
     getFrame(0)->initializeUsingXML2(e);
   else
@@ -191,10 +192,10 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   Body::initializeUsingXML(element);
 }
 
-TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
+DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
 
-  TiXmlElement *ele0 = Body::writeXMLFile(parent);
-  TiXmlElement *ele1;
+  DOMElement *ele0 = Body::writeXMLFile(parent);
+  DOMElement *ele1;
 
   K.writeXMLFile(ele0);
 
@@ -207,29 +208,30 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   translationDependentRotation.writeXMLFile(ele0);
   coordinateTransformationForRotation.writeXMLFile(ele0);
 
-  ele1 = new TiXmlElement( MBSIMNS"frames" );
+  DOMDocument *doc=parent->getOwnerDocument();
+  ele1 = D(doc)->createElement( MBSIM%"frames" );
   for(int i=1; i<frame.size(); i++)
     if(frame[i]->isEmbedded())
       frame[i]->writeXMLFileEmbed(ele1);
     else
       frame[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+  ele0->insertBefore( ele1, NULL );
 
-  ele1 = new TiXmlElement( MBSIMNS"contours" );
+  ele1 = D(doc)->createElement( MBSIM%"contours" );
   for(int i=0; i<contour.size(); i++)
     if(contour[i]->isEmbedded())
       contour[i]->writeXMLFileEmbed(ele1);
     else
       contour[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+  ele0->insertBefore( ele1, NULL );
 
   ombvEditor.writeXMLFile(ele0);
 
   Frame *C = getFrame(0);
   if(C->openMBVFrame()) {
-    ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
+    ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
     C->writeXMLFile2(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
 
   weightArrow.writeXMLFile(ele0);

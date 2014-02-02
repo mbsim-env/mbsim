@@ -24,6 +24,7 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent, Qt::WindowFlags f) : SignalProcessingSystemPropertyDialog(lts,parent,f) {
 
@@ -46,13 +47,13 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
   choice.setProperty(new ChoiceProperty2(new LinearTransferSystemPropertyFactory,"",3));
 }
 
-void LinearTransferSystem::initializeUsingXML(TiXmlElement *element) {
+void LinearTransferSystem::initializeUsingXML(DOMElement *element) {
   SignalProcessingSystem::initializeUsingXML(element);
   choice.initializeUsingXML(element);
 }
 
-TiXmlElement* LinearTransferSystem::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = SignalProcessingSystem::writeXMLFile(parent);
+DOMElement* LinearTransferSystem::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = SignalProcessingSystem::writeXMLFile(parent);
   choice.writeXMLFile(ele0);
   return ele0;
 }
@@ -128,69 +129,69 @@ QWidget* LinearTransferSystemWidgetFactory::createWidget(int i) {
 }
 
 LinearTransferSystemPropertyFactory::LinearTransferSystemPropertyFactory() {
-  name.push_back(MBSIMCONTROLNS"pidType");
-  name.push_back(MBSIMCONTROLNS"abcdType");
-  name.push_back(MBSIMCONTROLNS"integratorType");
-  name.push_back(MBSIMCONTROLNS"pt1Type");
+  name.push_back(MBSIMCONTROL%"pidType");
+  name.push_back(MBSIMCONTROL%"abcdType");
+  name.push_back(MBSIMCONTROL%"integratorType");
+  name.push_back(MBSIMCONTROL%"pt1Type");
 }
 
 Property* LinearTransferSystemPropertyFactory::createProperty(int i) {
   if(i==0) {
-    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROLNS"pidType",0);
+    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"pidType",0);
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"P"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"I"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"I"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     return propertyContainer;
   }
   if(i==1) {
-    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROLNS"abcdType",0);
+    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"abcdType",0);
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"A"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"A"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"B"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"B"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"C"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"C"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     return propertyContainer;
   }
   if(i==2) {
-    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROLNS"integratorType",0);
+    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"integratorType",0);
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"gain"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"gain"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     return propertyContainer;
   }
   if(i==3) {
-    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROLNS"pt1Type",0);
+    ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROL%"pt1Type",0);
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"P"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"-",MBSIMCONTROLNS"T"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"-",MBSIMCONTROL%"T"));
     propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     return propertyContainer;

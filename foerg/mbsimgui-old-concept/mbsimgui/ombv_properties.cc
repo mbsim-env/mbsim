@@ -24,18 +24,20 @@
 #include "ombv_widgets.h"
 #include "rigidbody.h"
 #include "frame.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 OMBVBodyPropertyFactory::OMBVBodyPropertyFactory(const string &ID_) : ID(ID_), count(0) {
-  name.push_back(OPENMBVNS"Cube");
-  name.push_back(OPENMBVNS"Cuboid");
-  name.push_back(OPENMBVNS"Frustum");
-  name.push_back(OPENMBVNS"Sphere");
-  name.push_back(OPENMBVNS"IvBody");
-  name.push_back(OPENMBVNS"CompoundRigidBody");
-  name.push_back(OPENMBVNS"InvisibleBody");
+  name.push_back(OPENMBV%"Cube");
+  name.push_back(OPENMBV%"Cuboid");
+  name.push_back(OPENMBV%"Frustum");
+  name.push_back(OPENMBV%"Sphere");
+  name.push_back(OPENMBV%"IvBody");
+  name.push_back(OPENMBV%"CompoundRigidBody");
+  name.push_back(OPENMBV%"InvisibleBody");
 }
 
 Property* OMBVBodyPropertyFactory::createProperty(int i) {
@@ -55,27 +57,27 @@ Property* OMBVBodyPropertyFactory::createProperty(int i) {
     return new InvisibleBodyProperty("Body"+toStr(count++),ID);
 }
 
-void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
+void OMBVObjectProperty::writeXMLFileID(DOMNode *parent) {
   if(!ID.empty()) {
-    TiXmlUnknown *id=new TiXmlUnknown;
-    id->SetValue("?OPENMBV_ID "+ID+"?");
-    parent->LinkEndChild(id);
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%ID);
+    parent->insertBefore(id, parent->getFirstChild());
   }
 }
 
-OMBVFrameProperty::OMBVFrameProperty(const string &name, const string &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), xmlName(xmlName_) {
+OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"size"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"size"));
   size.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIMNS"offset"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"offset"));
   offset.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* OMBVFrameProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+DOMElement* OMBVFrameProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
     size.initializeUsingXML(e);
     offset.initializeUsingXML(e);
@@ -83,11 +85,12 @@ TiXmlElement* OMBVFrameProperty::initializeUsingXML(TiXmlElement *element) {
   return e;
 }
 
-TiXmlElement* OMBVFrameProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *e=new TiXmlElement(xmlName);
+DOMElement* OMBVFrameProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  if(xmlName!=FQN()) {
+    DOMElement *e=D(doc)->createElement(xmlName);
     writeXMLFileID(e);
-    parent->LinkEndChild(e);
+    parent->insertBefore(e, NULL);
     size.writeXMLFile(e);
     offset.writeXMLFile(e);
     return e;
@@ -113,22 +116,22 @@ void OMBVFrameProperty::toWidget(QWidget *widget) {
 OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), diffuseColor(0,false), transparency(0,false), readXMLType(readXMLType_) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "-", OPENMBVNS"minimalColorValue"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "-", OPENMBV%"minimalColorValue"));
   minimalColorValue.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"maximalColorValue"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"maximalColorValue"));
   maximalColorValue.setProperty(new ExtPhysicalVarProperty(input));
 
-  diffuseColor.setProperty(new ColorProperty(OPENMBVNS"diffuseColor"));
+  diffuseColor.setProperty(new ColorProperty(OPENMBV%"diffuseColor"));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", OPENMBVNS"transparency"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", OPENMBV%"transparency"));
   transparency.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=readXMLType?element->FirstChildElement(OPENMBVNS+getType()):element;
+DOMElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=readXMLType?E(element)->getFirstElementChildNamed(OPENMBV%getType()):element;
   if(e) {
     minimalColorValue.initializeUsingXML(e);
     maximalColorValue.initializeUsingXML(e);
@@ -138,10 +141,11 @@ TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement 
   return e;
 }
 
-TiXmlElement* OMBVDynamicColoredObjectProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
-  parent->LinkEndChild(e);
-  e->SetAttribute("name", name);
+DOMElement* OMBVDynamicColoredObjectProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *e=D(doc)->createElement(OPENMBV%getType());
+  parent->insertBefore(e, NULL);
+  E(e)->setAttribute("name", name);
   writeXMLFileID(e);
   minimalColorValue.writeXMLFile(e);
   maximalColorValue.writeXMLFile(e);
@@ -168,30 +172,30 @@ OMBVArrowProperty::OMBVArrowProperty(const string &name, const std::string &ID, 
   readXMLType = true;
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBVNS"diameter"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBV%"diameter"));
   diameter.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBVNS"headDiameter"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBV%"headDiameter"));
   headDiameter.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBVNS"headLength"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBV%"headLength"));
   headLength.setProperty(new ExtPhysicalVarProperty(input));
 
-  type.setProperty(new TextProperty("toHead", OPENMBVNS"type", true));
+  type.setProperty(new TextProperty("toHead", OPENMBV%"type", true));
 
-  referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", OPENMBVNS"referencePoint", true));
+  referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", OPENMBV%"referencePoint", true));
   if(fromPoint)
     referencePoint.setActive(true);
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"scaleLength"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleLength"));
   scaleLength.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* OMBVArrowProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
+DOMElement* OMBVArrowProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
   if(e) {
     diameter.initializeUsingXML(e);
     headDiameter.initializeUsingXML(e);
@@ -203,8 +207,8 @@ TiXmlElement* OMBVArrowProperty::initializeUsingXML(TiXmlElement *element) {
   return e;
 }
 
-TiXmlElement* OMBVArrowProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
+DOMElement* OMBVArrowProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
   diameter.writeXMLFile(e);
   headDiameter.writeXMLFile(e);
   headLength.writeXMLFile(e);
@@ -236,31 +240,31 @@ void OMBVArrowProperty::toWidget(QWidget *widget) {
 
 OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const std::string &ID) : OMBVObjectProperty(name,ID), crossSectionRadius(0,false), nominalLength(0,false) {
 
-  type.setProperty(new TextProperty("tube", OPENMBVNS"type", true));
+  type.setProperty(new TextProperty("tube", OPENMBV%"type", true));
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "-", OPENMBVNS"numberOfCoils"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "-", OPENMBV%"numberOfCoils"));
   numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBVNS"springRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBV%"springRadius"));
   springRadius.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", OPENMBVNS"crossSectionRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", OPENMBV%"crossSectionRadius"));
   crossSectionRadius.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", OPENMBVNS"nominalLength"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", OPENMBV%"nominalLength"));
   nominalLength.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"scaleFactor"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleFactor"));
   scaleFactor.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* OMBVCoilSpringProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType());
+DOMElement* OMBVCoilSpringProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=E(element)->getFirstElementChildNamed(OPENMBV%getType());
   if(e) {
     type.initializeUsingXML(e);
     numberOfCoils.initializeUsingXML(e);
@@ -272,10 +276,11 @@ TiXmlElement* OMBVCoilSpringProperty::initializeUsingXML(TiXmlElement *element) 
   return e;
 }
 
-TiXmlElement* OMBVCoilSpringProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
-  parent->LinkEndChild(e);
-  e->SetAttribute("name", "dummy");
+DOMElement* OMBVCoilSpringProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *e=D(doc)->createElement(OPENMBV%getType());
+  parent->insertBefore(e, NULL);
+  E(e)->setAttribute("name", "dummy");
   writeXMLFileID(e);
   type.writeXMLFile(e);
   numberOfCoils.writeXMLFile(e);
@@ -309,20 +314,20 @@ OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : 
   transparency.setActive(true);
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBVNS"initialTranslation"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBV%"initialTranslation"));
   trans.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(3), "rad", OPENMBVNS"initialRotation"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(3), "rad", OPENMBV%"initialRotation"));
   rot.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"scaleFactor"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleFactor"));
   scale.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* OMBVBodyProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
+DOMElement* OMBVBodyProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
   if(e) {
     trans.initializeUsingXML(e);
     rot.initializeUsingXML(e);
@@ -331,8 +336,8 @@ TiXmlElement* OMBVBodyProperty::initializeUsingXML(TiXmlElement *element) {
   return e;
 }
 
-TiXmlElement* OMBVBodyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
+DOMElement* OMBVBodyProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
   trans.writeXMLFile(e);
   rot.writeXMLFile(e);
   scale.writeXMLFile(e);
@@ -356,18 +361,18 @@ void OMBVBodyProperty::toWidget(QWidget *widget) {
 CubeProperty::CubeProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"length"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"length"));
   length.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* CubeProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* CubeProperty::initializeUsingXML(DOMElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
   length.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* CubeProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
+DOMElement* CubeProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
   length.writeXMLFile(e);
   return e;
 }
@@ -385,18 +390,18 @@ void CubeProperty::toWidget(QWidget *widget) {
 CuboidProperty::CuboidProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "m", OPENMBVNS"length"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "m", OPENMBV%"length"));
   length.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* CuboidProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* CuboidProperty::initializeUsingXML(DOMElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
   length.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* CuboidProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
+DOMElement* CuboidProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
   length.writeXMLFile(e);
   return e;
 }
@@ -414,18 +419,18 @@ void CuboidProperty::toWidget(QWidget *widget) {
 SphereProperty::SphereProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"radius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* SphereProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* SphereProperty::initializeUsingXML(DOMElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
   radius.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* SphereProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
+DOMElement* SphereProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
   radius.writeXMLFile(e);
   return e;
 }
@@ -443,29 +448,29 @@ void SphereProperty::toWidget(QWidget *widget) {
 FrustumProperty::FrustumProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"topRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"topRadius"));
   top.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"baseRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"baseRadius"));
   base.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBVNS"height"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"height"));
   height.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "m", OPENMBVNS"innerTopRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "m", OPENMBV%"innerTopRadius"));
   innerTop.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "m", OPENMBVNS"innerBaseRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "m", OPENMBV%"innerBaseRadius"));
   innerBase.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* FrustumProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* FrustumProperty::initializeUsingXML(DOMElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
-  TiXmlElement *e;
+  DOMElement *e;
   base.initializeUsingXML(element);
   top.initializeUsingXML(element);
   height.initializeUsingXML(element);
@@ -474,8 +479,8 @@ TiXmlElement* FrustumProperty::initializeUsingXML(TiXmlElement *element) {
   return element;
 }
 
-TiXmlElement* FrustumProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
+DOMElement* FrustumProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
   base.writeXMLFile(e);
   top.writeXMLFile(e);
   height.writeXMLFile(e);
@@ -504,18 +509,18 @@ void FrustumProperty::toWidget(QWidget *widget) {
 
 IvBodyProperty::IvBodyProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
 
-  ivFileName.setProperty(new FileProperty(OPENMBVNS"ivFileName"));
+  ivFileName.setProperty(new FileProperty(OPENMBV%"ivFileName"));
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "rad", OPENMBVNS"creaseEdges"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "rad", OPENMBV%"creaseEdges"));
   creaseEdges.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", OPENMBVNS"boundaryEdges"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", OPENMBV%"boundaryEdges"));
   boundaryEdges.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* IvBodyProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* IvBodyProperty::initializeUsingXML(DOMElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
   ivFileName.initializeUsingXML(element);
   creaseEdges.initializeUsingXML(element);
@@ -523,8 +528,8 @@ TiXmlElement* IvBodyProperty::initializeUsingXML(TiXmlElement *element) {
   return element;
 }
 
-TiXmlElement* IvBodyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
+DOMElement* IvBodyProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
   ivFileName.writeXMLFile(e);
   creaseEdges.writeXMLFile(e);
   boundaryEdges.writeXMLFile(e);
@@ -547,19 +552,19 @@ void IvBodyProperty::toWidget(QWidget *widget) {
 
 CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
   bodies.setProperty(new ListProperty(new ChoicePropertyFactory(new OMBVBodyPropertyFactory(ID),"",1),"",0,1));
-  //bodies.setXMLName(MBSIMNS"bodies");
+  //bodies.setXMLName(MBSIM%"bodies");
 }
 
-TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* CompoundRigidBodyProperty::initializeUsingXML(DOMElement *element) {
   OMBVBodyProperty::initializeUsingXML(element);
-  TiXmlElement *e=element->FirstChildElement(OPENMBVNS"scaleFactor");
-  TiXmlElement *ee = e->NextSiblingElement();
+  DOMElement *e=E(element)->getFirstElementChildNamed(OPENMBV%"scaleFactor");
+  DOMElement *ee = e->getNextElementSibling();
   bodies.initializeUsingXML(ee);
   return element;
 }
 
-TiXmlElement* CompoundRigidBodyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = OMBVBodyProperty::writeXMLFile(parent);
+DOMElement* CompoundRigidBodyProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = OMBVBodyProperty::writeXMLFile(parent);
   bodies.writeXMLFile(ele0);
   return ele0;
 }
@@ -573,17 +578,17 @@ void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
 }
 
 OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv(0,true), ref(0,false) {
-  ombv.setProperty(new ChoiceProperty2(new OMBVBodyPropertyFactory(body->getID()),MBSIMNS"openMBVRigidBody"));
-  ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,MBSIMNS"openMBVFrameOfReference")); 
+  ombv.setProperty(new ChoiceProperty2(new OMBVBodyPropertyFactory(body->getID()),MBSIM%"openMBVRigidBody"));
+  ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,MBSIM%"openMBVFrameOfReference")); 
 }
 
-TiXmlElement* OMBVBodySelectionProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* OMBVBodySelectionProperty::initializeUsingXML(DOMElement *element) {
   ombv.initializeUsingXML(element);
   ref.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* OMBVBodySelectionProperty::writeXMLFile(TiXmlNode *parent) {
+DOMElement* OMBVBodySelectionProperty::writeXMLFile(DOMNode *parent) {
   ombv.writeXMLFile(parent);
   ref.writeXMLFile(parent);
   return 0;
@@ -599,30 +604,31 @@ void OMBVBodySelectionProperty::toWidget(QWidget *widget) {
   ombv.toWidget(static_cast<OMBVBodySelectionWidget*>(widget)->ombv);
 }
 
-TiXmlElement* OMBVEmptyProperty::initializeUsingXML(TiXmlElement *parent) {
-  return parent->FirstChildElement(xmlName);
+DOMElement* OMBVEmptyProperty::initializeUsingXML(DOMElement *parent) {
+  return E(parent)->getFirstElementChildNamed(xmlName);
 }
 
-TiXmlElement* OMBVEmptyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
+DOMElement* OMBVEmptyProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele = D(doc)->createElement(xmlName);
   writeXMLFileID(ele);
-  parent->LinkEndChild(ele);
+  parent->insertBefore(ele, NULL);
   return 0;
 }
 
-OMBVPlaneProperty::OMBVPlaneProperty(const string &xmlName_, const std::string &ID) : OMBVObjectProperty("Plane",ID), xmlName(xmlName_) {
+OMBVPlaneProperty::OMBVPlaneProperty(const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty("Plane",ID), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"size"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"size"));
   size.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("10"), "", MBSIMNS"numberOfLines"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("10"), "", MBSIM%"numberOfLines"));
   numberOfLines.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* OMBVPlaneProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
+DOMElement* OMBVPlaneProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
     size.initializeUsingXML(e);
     numberOfLines.initializeUsingXML(e);
@@ -630,10 +636,11 @@ TiXmlElement* OMBVPlaneProperty::initializeUsingXML(TiXmlElement *element) {
   return e;
 }
 
-TiXmlElement* OMBVPlaneProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(xmlName);
+DOMElement* OMBVPlaneProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *e=D(doc)->createElement(xmlName);
   writeXMLFileID(e);
-  parent->LinkEndChild(e);
+  parent->insertBefore(e, NULL);
   size.writeXMLFile(e);
   numberOfLines.writeXMLFile(e);
   return e;

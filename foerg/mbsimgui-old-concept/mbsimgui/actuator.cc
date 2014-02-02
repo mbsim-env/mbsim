@@ -24,28 +24,29 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forceDir(0,false), momentDir(0,false), frameOfReference(0,false), actuatorForceArrow(0,false), actuatorMomentArrow(0,false) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"forceDirection"));
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"forceDirection"));
   forceDir.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROLNS"momentDirection"));
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"momentDirection"));
   momentDir.setProperty(new ExtPhysicalVarProperty(input));
 
-  frameOfReference.setProperty(new IntegerProperty(1,MBSIMCONTROLNS"referenceFrame")); 
+  frameOfReference.setProperty(new IntegerProperty(1,MBSIMCONTROL%"referenceFrame")); 
 
-  inputSignal.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
+  inputSignal.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
   
-  connections.setProperty(new ConnectFramesProperty(2,this,MBSIMCONTROLNS"connect"));
+  connections.setProperty(new ConnectFramesProperty(2,this,MBSIMCONTROL%"connect"));
 
   actuatorForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  actuatorForceArrow.setXMLName(MBSIMCONTROLNS"openMBVActuatorForceArrow",false);
+  actuatorForceArrow.setXMLName(MBSIMCONTROL%"openMBVActuatorForceArrow",false);
 
   actuatorMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  actuatorMomentArrow.setXMLName(MBSIMCONTROLNS"openMBVActuatorMomentArrow",false);
+  actuatorMomentArrow.setXMLName(MBSIMCONTROL%"openMBVActuatorMomentArrow",false);
 }
 
 
@@ -58,7 +59,7 @@ void Actuator::initialize() {
   connections.initialize();
 }
 
-void Actuator::initializeUsingXML(TiXmlElement *element) {
+void Actuator::initializeUsingXML(DOMElement *element) {
   Link::initializeUsingXML(element);
   forceDir.initializeUsingXML(element);
   momentDir.initializeUsingXML(element);
@@ -69,8 +70,8 @@ void Actuator::initializeUsingXML(TiXmlElement *element) {
   actuatorMomentArrow.initializeUsingXML(element);
 }
 
-TiXmlElement* Actuator::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Link::writeXMLFile(parent);
+DOMElement* Actuator::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Link::writeXMLFile(parent);
   forceDir.writeXMLFile(ele0);
   momentDir.writeXMLFile(ele0);
   frameOfReference.writeXMLFile(ele0);

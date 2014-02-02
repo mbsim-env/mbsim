@@ -24,6 +24,7 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 #include <cmath>
+#include <boost/shared_ptr.hpp>
 #include "frame.h"
 #include "contour.h"
 #include "solver.h"
@@ -37,6 +38,8 @@ extern bool absolutePath;
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 int Element::IDcounter=0;
 
@@ -51,40 +54,38 @@ string Element::getPath() {
 }
 
 void Element::writeXMLFile(const string &name) {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  writeXMLFile(&doc);
-  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
+  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+  writeXMLFile(doc.get());
   QFileInfo info(QString::fromStdString(name));
   QDir dir;
   if(!dir.exists(info.absolutePath()))
     dir.mkpath(info.absolutePath());
-  doc.SaveFile((name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
 }
 
-void Element::initializeUsingXML(TiXmlElement *element) {
+void Element::initializeUsingXML(DOMElement *element) {
 //  for(unsigned int i=0; i<plotFeature.size(); i++)
 //    plotFeature[i]->initializeUsingXML(element);
 }
 
-TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(getNameSpace()+getType());
+DOMElement* Element::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType());
   //name->writeXMLFile(ele0);
-  ele0->SetAttribute("name", getName());
+  E(ele0)->setAttribute("name", getName());
 //  for(unsigned int i=0; i<plotFeature.size(); i++)
 //    plotFeature[i]->writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
-void Element::initializeUsingXMLEmbed(TiXmlElement *element) {
+void Element::initializeUsingXMLEmbed(DOMElement *element) {
   embed.initializeUsingXML(element);
   embed.setActive(true);
 }
 
-TiXmlElement* Element::writeXMLFileEmbed(TiXmlNode *parent) {
-  TiXmlElement *ele = embed.writeXMLFile(parent);
+DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
+  DOMElement *ele = embed.writeXMLFile(parent);
   if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
     writeXMLFile(ele);
   else 
