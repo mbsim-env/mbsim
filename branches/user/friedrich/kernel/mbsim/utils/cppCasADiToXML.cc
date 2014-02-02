@@ -43,7 +43,7 @@ int main() {
   
   TiXmlDocument xmlFile;
   xmlFile.LinkEndChild(new TiXmlDeclaration("1.0","UTF-8",""));
-  xmlFile.LinkEndChild(convertCasADiToXML(f));
+  xmlFile.LinkEndChild(convertCasADiToXMLT(f));
   cout<<"XML representation"<<endl<<endl;
   map<string, string> nsprefix;
   nsprefix[MBXMLUTILSCASADINS_]="";

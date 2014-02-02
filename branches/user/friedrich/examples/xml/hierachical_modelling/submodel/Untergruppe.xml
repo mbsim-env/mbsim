@@ -43,14 +43,14 @@
         </LinearTranslation>
       </stateDependentTranslation>
       <frames>
-          <FixedRelativeFrame name="P1">
-            <enableOpenMBV>
-              <size>h1</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-            <relativePosition>[0;-h1/2;0]</relativePosition>
-            <relativeOrientation>rotateAboutX(0)</relativeOrientation>
-          </FixedRelativeFrame>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size>h1</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0;-h1/2;0]</relativePosition>
+          <relativeOrientation>rotateAboutX(0)</relativeOrientation>
+        </FixedRelativeFrame>
         <pv:embed>
           <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
         </pv:embed>
