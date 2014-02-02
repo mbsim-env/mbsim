@@ -59,13 +59,14 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
     </xs:sequence>
   </xs:group>
 
   <xs:group name="OpenMBVArrowParameters">
     <xs:sequence>
-      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
-      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+      <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="referencePoint" minOccurs="0">
         <xs:simpleType>
           <xs:restriction base="xs:token">
@@ -75,8 +76,28 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="OpenMBVCoilSpringParameters">
+    <xs:sequence>
+      <xs:element name="numberOfCoils" type="pv:nounitScalar" minOccurs="0"/>
+      <xs:element name="springRadius" type="pv:lengthScalar" minOccurs="0"/>
+      <xs:element name="crossSectionRadius" type="pv:lengthScalar" minOccurs="0"/>
+      <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
+      <xs:element name="type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="&quot;tube&quot;"/>
+            <xs:enumeration value="&quot;scaledTube&quot;"/>
+            <xs:enumeration value="&quot;polyline&quot;"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+      <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
     </xs:sequence>
   </xs:group>
 
@@ -1072,35 +1093,29 @@
               <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVWeightArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVWeight" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird die Gewichtskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVJointForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVJointForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVJointMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVJointMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1140,25 +1155,21 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVConstraintForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird die Zwangskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVConstraintMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird das Zwangsmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1360,25 +1371,21 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openMBVGearForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVGearMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1482,25 +1489,21 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVJointForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVJointMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1597,25 +1600,21 @@
               <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -1659,25 +1658,21 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVCoilSpring" minOccurs="0">
+          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:CoilSpring"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVCoilSpringParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -1729,25 +1724,21 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVCoilSpring" minOccurs="0">
+          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:CoilSpring"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVCoilSpringParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV (Kraft/Momenten)-Pfeile in OpenMBV visualisiert.
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -1781,35 +1772,29 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVCoilSpring" minOccurs="0">
+          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:CoilSpring"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVCoilSpringParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Kraft-Pfeile in OpenMBV visualisiert.
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -1921,25 +1906,21 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2012,32 +1993,31 @@
               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
+          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
                 Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
                 Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
             </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2113,32 +2093,31 @@
                <xs:attribute name="name" type="pv:stringPartialOctEval" use="optional"/>
              </xs:complexType>
           </xs:element>
-          <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
+          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
                 Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
                 Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
             </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVTangentialForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2154,13 +2133,11 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="enableOpenMBV" minOccurs="0">  
-              <xs:complexType>
-                <xs:group ref="OpenMBVFrameParameters"/>
-              </xs:complexType> 
-            </xs:element>
-          </xs:choice>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
        <xs:attribute ref="xml:base"/>
       </xs:extension>
@@ -2250,16 +2227,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircleHollow" substitutionGroup="RigidContour" type="CircleHollowType">
+  <xs:element name="Circle" substitutionGroup="RigidContour" type="CircleType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Ebene Kontur eines CircleHollow (= Hohlzylinders = Kreiskontur mit Kontakt innen).<br/>
+        Ebene Kontur eines Circle.<br/>
         Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
-        <object class="figure" standby="4cm" data="contour_circlehollow" title="Orientierung einer CicleHollow-Kontur"></object>
+        <object class="figure" standby="4cm" data="contour_circlehollow" title="Orientierung einer Cicle-Kontur"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="CircleHollowType">
+  <xs:complexType name="CircleType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
@@ -2276,13 +2253,34 @@
                 Aktiviert die Visualisierung der Kontur.
               </xs:documentation>
             </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircleSolid" substitutionGroup="RigidContour" type="CircleSolidType">
+  <xs:element name="CircleHollow" substitutionGroup="Circle" type="CircleHollowType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Ebene Kontur eines CircleHollow (= Hohlzylinders = Kreiskontur mit Kontakt innen).<br/>
+        Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
+        <object class="figure" standby="4cm" data="contour_circlehollow" title="Orientierung einer CicleHollow-Kontur"></object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CircleHollowType">
+    <xs:complexContent>
+      <xs:extension base="CircleType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="CircleSolid" substitutionGroup="Circle" type="CircleSolidType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Ebene Kontur eines CircleSolid (= (Voll)zylinders = Kreiskontur mit Kontakt aussen).<br/>
@@ -2293,24 +2291,7 @@
   </xs:element>
   <xs:complexType name="CircleSolidType">
     <xs:complexContent>
-      <xs:extension base="RigidContourType">
-        <xs:sequence>
-          <xs:element name="radius" type="pv:lengthScalar">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Aussenradius des Vollzylinders.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="enableOpenMBV" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Aktiviert die Visualisierung der Kontur.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
+      <xs:extension base="CircleType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -2370,6 +2351,12 @@
                 Aktiviert die Visualisierung der Kontur.
               </xs:documentation>
             </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -2387,8 +2374,25 @@
   </xs:element>
   <xs:complexType name="LineType">
     <xs:complexContent>
-      <xs:extension base="RigidContourType"/>
-    </xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="length" type="pv:lengthScalar" minOccurs="0"/>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+   </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="LineSegment" substitutionGroup="RigidContour" type="LineSegmentType">
@@ -2408,10 +2412,8 @@
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
-                </xs:element>
-                <xs:element name="number" type="pv:integerFullOctEval">
-                </xs:element>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2441,20 +2443,9 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Größe der Ebene um den Referenzframe.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="numberOfLines" type="pv:integerFullOctEval">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Anzahl der Gitterlinien.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
+                <xs:element name="length" type="pv:lengthVector" minOccurs="0"/>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2555,6 +2546,12 @@
                 Aktiviert die Visualisierung der Kontur.
               </xs:documentation>
             </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -2659,6 +2656,12 @@
                 Aktiviert die Visualisierung der Kontur.
               </xs:documentation>
             </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -4080,79 +4083,25 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:sequence>
-            <xs:choice>
-              <xs:element name="enableOpenMBVPosition" minOccurs="0">  
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="diameter" type="pv:lengthScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                    <xs:element name="headDiameter" type="pv:lengthScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                    <xs:element name="headLength" type="pv:lengthScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                    <xs:element name="staticColor" type="pv:nounitScalar">
-                      <xs:annotation>
-                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                        tbd.
-                        </xs:documentation>
-                      </xs:annotation>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType> 
-              </xs:element>
-              <xs:element name="openMBVPositionArrow" minOccurs="0">  
-                 <xs:annotation>
-                   <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                   tbd
-                   </xs:documentation>
-                 </xs:annotation>
-                 <xs:complexType>
-                   <xs:sequence>
-                     <xs:element ref="ombv:Arrow"/>
-                   </xs:sequence>
-                 </xs:complexType>
-              </xs:element>
-            </xs:choice>
-          </xs:sequence>
-          <xs:element name="openMBVVelocityArrow" minOccurs="0">  
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-               tbd
-               </xs:documentation>
-             </xs:annotation>
-             <xs:complexType>
-               <xs:sequence>
-                 <xs:element ref="ombv:Arrow"/>
-               </xs:sequence>
-             </xs:complexType>
+          <xs:element name="enableOpenMBVPosition" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVAccelerationArrow" minOccurs="0">  
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-               tbd
-               </xs:documentation>
-             </xs:annotation>
-             <xs:complexType>
-               <xs:sequence>
-                 <xs:element ref="ombv:Arrow"/>
-               </xs:sequence>
-             </xs:complexType>
+          <xs:element name="enableOpenMBVVelocity" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVAcceleration" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVFrame" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>

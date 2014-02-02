@@ -62,8 +62,8 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         openMBVAcceleration=ombv.createOpenMBV(); 
       }
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVFrame, tag, (optional (size,(double),1)(offset,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVFrame ombv(size,offset,diffuseColor,transparency);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVFrame, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) { 
+        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         openMBVFrame=ombv.createOpenMBV(); 
       }
 #endif

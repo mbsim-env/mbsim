@@ -56,7 +56,13 @@ namespace MBSim {
     if(ee) sL = Element::getDouble(ee);
     ee = e->FirstChildElement(MBSIMNS"scaleSize");
     if(ee) sS = Element::getDouble(ee);
-  }
+    if(ee) {
+      string rP=string(ee->GetText()).substr(1,string(ee->GetText()).length()-2);
+      if(rP=="toPoint")   refPoint=OpenMBV::Arrow::toPoint;
+      if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
+      if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
+    }
+ }
 
   OpenMBV::Arrow* OpenMBVArrow::createOpenMBV(TiXmlElement *e) {
     OpenMBV::Arrow* object = new OpenMBV::Arrow;
@@ -231,6 +237,44 @@ namespace MBSim {
   void OpenMBVExtrusion::initializeObject(OpenMBV::Extrusion* object) {
     OpenMBVObject::initializeObject(object);
     object->setHeight(h);
+  }
+
+  void OpenMBVCoilSpring::initializeUsingXML(TiXmlElement *e) {
+    OpenMBVObject::initializeUsingXML(e);
+    TiXmlElement *ee = e->FirstChildElement(MBSIMNS"numberOfCoils");
+    if(ee) r = Element::getInt(ee);
+    ee = e->FirstChildElement(MBSIMNS"springRadius");
+    if(ee) r = Element::getDouble(ee);
+    ee = e->FirstChildElement(MBSIMNS"crossSectionRadius");
+    if(ee) r = Element::getDouble(ee);
+    ee = e->FirstChildElement(MBSIMNS"nominalLength");
+    if(ee) r = Element::getDouble(ee);
+    ee = e->FirstChildElement(MBSIMNS"scaleFactor");
+    if(ee) r = Element::getDouble(ee);
+    ee = e->FirstChildElement(MBSIMNS"type");
+    if(ee) r = Element::getDouble(ee);
+    if(ee) {
+      string typeStr=string(ee->GetText()).substr(1,string(ee->GetText()).length()-2);
+      if(typeStr=="tube") type=OpenMBV::CoilSpring::tube;
+      if(typeStr=="scaledTube") type=OpenMBV::CoilSpring::scaledTube;
+      if(typeStr=="polyline") type=OpenMBV::CoilSpring::polyline;
+    }
+  }
+
+  OpenMBV::CoilSpring* OpenMBVCoilSpring::createOpenMBV(TiXmlElement *e) {
+    OpenMBV::CoilSpring* object = new OpenMBV::CoilSpring;
+    if(e) initializeUsingXML(e);
+    initializeObject(object);
+    return object;
+  }
+
+  void OpenMBVCoilSpring::initializeObject(OpenMBV::CoilSpring* object) {
+    OpenMBVObject::initializeObject(object);
+    object->setSpringRadius(r);
+    object->setCrossSectionRadius(cr);
+    object->setScaleFactor(sf);
+    object->setNumberOfCoils(n);
+    object->setNominalLength(l);
   }
 
 }

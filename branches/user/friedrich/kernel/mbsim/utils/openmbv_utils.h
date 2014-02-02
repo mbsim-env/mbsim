@@ -29,6 +29,7 @@
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/extrusion.h>
+#include <openmbvcppinterface/coilspring.h>
 
 namespace MBSim {
   class OpenMBVObject {
@@ -133,6 +134,17 @@ namespace MBSim {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void initializeObject(OpenMBV::Extrusion* object);
       OpenMBV::Extrusion* createOpenMBV(MBXMLUtils::TiXmlElement* e=0);
+  };
+
+  class OpenMBVCoilSpring : public OpenMBVObject {
+    protected:
+      double r, cr, sf, n, l;
+      OpenMBV::CoilSpring::Type type;
+    public:
+      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) { }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeObject(OpenMBV::CoilSpring* object);
+      OpenMBV::CoilSpring* createOpenMBV(MBXMLUtils::TiXmlElement* e=0);
   };
 }
 

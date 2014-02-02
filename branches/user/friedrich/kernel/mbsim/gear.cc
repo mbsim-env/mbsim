@@ -22,9 +22,6 @@
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constraint.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;

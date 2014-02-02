@@ -31,9 +31,6 @@
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/frame.h>
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
 #endif
@@ -397,9 +394,10 @@ namespace MBSim {
           //Set OpenMBV-Properties to single contacts
           for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-              jter->setOpenMBVContactPoints(openMBVFrame);
-              jter->setOpenMBVNormalForceArrow(contactArrow);
-              jter->setOpenMBVTangentialForceArrow(frictionArrow);
+              if(openMBVFrame)
+                jter->setOpenMBVContactPoints(openMBVFrame);
+              jter->setOpenMBVNormalForce(contactArrow);
+              jter->setOpenMBVTangentialForce(frictionArrow);
             }
           }
 #endif
@@ -839,18 +837,16 @@ namespace MBSim {
       openMBVFrame=ombv.createOpenMBV(e); 
     }
 
-    e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVNormalForce");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVNormalForceArrow(arrow);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      contactArrow=ombv.createOpenMBV(e); 
     }
 
-    e = element->FirstChildElement(MBSIMNS"openMBVTangentialForceArrow");
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVTangentialForce");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVTangentialForceArrow(arrow);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      frictionArrow=ombv.createOpenMBV(e); 
     }
 #endif
   }

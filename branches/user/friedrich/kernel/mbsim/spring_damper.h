@@ -24,9 +24,8 @@
 #include "fmatvec/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class CoilSpring;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -74,12 +73,16 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
-      void setOpenMBVCoilSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(scaleFactor,(double),1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,scaleFactor,numberOfCoils,nominalLength,type,diffuseColor,transparency);
+        coilspringOpenMBV=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize a force arrow acting on each of both connected frames */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:
@@ -133,13 +136,16 @@ namespace MBSim {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
-      void setOpenMBVCoilSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
+        coilspringOpenMBV=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize a force arrow acting on each of both connected frames */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:
@@ -192,19 +198,23 @@ namespace MBSim {
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualise the RelativeRotationalSpringDamper using a OpenMBV::CoilSpring */
-      void setOpenMBVCoilSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(scaleFactor,(double),1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,scaleFactor,numberOfCoils,nominalLength,type,diffuseColor,transparency);
+        coilspringOpenMBV=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize a force arrow acting on each of both connected frames */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 
       /** \brief Visualize a torque arrow acting on each of both connected frames */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:

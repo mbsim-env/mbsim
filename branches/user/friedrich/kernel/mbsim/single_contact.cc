@@ -30,8 +30,6 @@
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/frame.h>
-#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
@@ -1417,23 +1415,22 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Contact points
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
-      enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
-
-    //Normal force
-    e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVNormalForceArrow(arrow);
+    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")) {
+      OpenMBVFrame ombv;
+      openMBVContactFrame[0]=ombv.createOpenMBV(e); 
+      openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
     }
 
-    //Friction force
-    e = element->FirstChildElement(MBSIMNS"openMBVTangentialForceArrow");
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVNormalForce");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVTangentialForceArrow(arrow);
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      contactArrow=ombv.createOpenMBV(e); 
+    }
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVTangentialForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      frictionArrow=ombv.createOpenMBV(e); 
     }
 #endif
   }

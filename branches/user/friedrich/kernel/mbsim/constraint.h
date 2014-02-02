@@ -23,9 +23,8 @@
 #include "utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class Arrow;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -74,11 +73,17 @@ namespace MBSim {
       virtual std::string getType() const { return "GearConstraint"; }
     
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize the constraint force */
-      void setOpenMBVGearForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      /** \brief Visualize a force arrow acting on frame2 */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
-      /** \brief Visualize the constraint moment */
-      void setOpenMBVGearMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
 #endif
 
     private:
@@ -108,11 +113,17 @@ namespace MBSim {
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize the constraint force */
-      void setOpenMBVConstraintForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      /** \brief Visualize a force arrow acting on frame2 */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
-      /** \brief Visualize the constraint moment */
-      void setOpenMBVConstraintMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
 #endif
 
     protected:
@@ -258,15 +269,19 @@ namespace MBSim {
 
       virtual std::string getType() const { return "JointConstraint"; }
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
-      void setOpenMBVJointForceArrow(OpenMBV::Arrow *arrow) {
-        FArrow = arrow;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
       }
 
-      /** \brief Visualize a moment arrow acting on frame2 */
-      void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) {
-        MArrow = arrow;
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
       }
+#endif
 
     private:
       class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {

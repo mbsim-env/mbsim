@@ -24,10 +24,8 @@
 #include "utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class RigidBody;
-  class Arrow;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -223,13 +221,22 @@ namespace MBSim {
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
       /** \brief Visualize the weight */
-      void setOpenMBVWeightArrow(OpenMBV::Arrow *arrow) { FWeight = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize the joint force */
-      void setOpenMBVJointForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize the joint moment */
-      void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
 #endif
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);

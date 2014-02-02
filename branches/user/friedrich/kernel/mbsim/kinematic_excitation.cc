@@ -21,10 +21,6 @@
 #include "mbsim/kinematic_excitation.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objectfactory.h"
-#include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
