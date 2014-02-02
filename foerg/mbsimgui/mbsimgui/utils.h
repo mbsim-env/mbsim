@@ -25,8 +25,10 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include <mbxmlutilstinyxml/tinyxml.h>
-#include <mbxmlutilstinyxml/tinynamespace.h>
+#include <sstream>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMElement.hpp>
+#include <mbxmlutilshelper/dom.h>
 
 class QTreeWidgetItem;
 
@@ -294,20 +296,22 @@ inline std::vector<std::vector<QString> > fromStdMat(const std::vector<std::vect
 }
 
 template <class T>
-void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, T value) {
+void addElementText(xercesc::DOMElement *parent, std::string name, T value) {
   std::ostringstream oss;
   oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
-  parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(new MBXMLUtils::TiXmlText(oss.str()));
+  xercesc::DOMDocument *doc=parent->getOwnerDocument();
+  parent->insertBefore(MBXMLUtils::D(doc)->createElement(name), NULL)->insertBefore(MBXMLUtils::D(doc)->createElement(oss.str()), NULL);
 }
 
 template <class T>
-void addElementAttributeAndText(MBXMLUtils::TiXmlElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
+void addElementAttributeAndText(xercesc::DOMElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
   std::ostringstream oss;
   oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
-  MBXMLUtils::TiXmlElement* ele = new MBXMLUtils::TiXmlElement(name);
-  ele->SetAttribute(attribute,attributeName);
-  ele->LinkEndChild(new MBXMLUtils::TiXmlText(oss.str()));
-  parent->LinkEndChild(ele);
+  xercesc::DOMDocument *doc=parent->getOwnerDocument();
+  xercesc::DOMElement* ele = MBXMLUtils::D(doc)->createElement(name);
+  MBXMLUtils::E(ele)->setAttribute(attribute, attributeName);
+  ele->insertBefore(doc->createTextNode(MBXMLUtils::X()%oss.str()), NULL);
+  parent->insertBefore(ele, NULL);
 }
 
 std::vector<std::vector<double> > Cardan2AIK(const std::vector<std::vector<double> > &x);

@@ -29,8 +29,8 @@ class Joint : public Link {
     Joint(const std::string &str, Element *parent);
     ~Joint();
     std::string getType() const { return "Joint"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
   protected:

@@ -54,7 +54,7 @@ ChoiceProperty2ContextMenu::ChoiceProperty2ContextMenu(Property *property, QWidg
   addSeparator();
   PropertyFactory *factory = static_cast<ChoiceProperty2*>(property)->getPropertyFactory();
   for(int i=0; i<factory->getSize(); i++) {
-    QAction *action=new QAction(QString::fromStdString(factory->getName(i)), this);
+    QAction *action=new QAction(QString::fromStdString("{"+factory->getName(i).first+"}"+factory->getName(i).second), this);
     connect(action,SIGNAL(triggered()),this,SLOT(selectProperty()));
     addAction(action);
   }

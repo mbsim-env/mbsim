@@ -25,17 +25,24 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+
+NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
+NamespaceURI PARAM("http://openmbv.berlios.de/MBXMLUtils/parameter");
+NamespaceURI OPENMBV("http://openmbv.berlios.de/OpenMBV");
+NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
+NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
 
 Property::Property(const std::string &name_, const std::string &value_, const Units &units_) : name(name_), value(value_), units(units_), disabl(false), disabled(false), parent(0) { 
   slot = boost::bind(&Property::update,this); 
 }
 
-TiXmlElement* Property::initializeUsingXML(TiXmlElement *element) {
+DOMElement* Property::initializeUsingXML(DOMElement *element) {
   for(int i=0; i<property.size(); i++)
     property[i]->initializeUsingXML(element);
 }
 
-TiXmlElement* Property::writeXMLFile(TiXmlNode *element) {
+DOMElement* Property::writeXMLFile(DOMNode *element) {
   for(int i=0; i<property.size(); i++)
     property[i]->writeXMLFile(element);
 }
@@ -74,14 +81,14 @@ void PhysicalProperty::setValue(const string &data) {
     signal();
 }
 
-TiXmlElement* PhysicalProperty::initializeUsingXML(TiXmlElement *element) {
-  if(element->Attribute("unit"))
-    setCurrentUnit(units.find(element->Attribute("unit")));
+DOMElement* PhysicalProperty::initializeUsingXML(DOMElement *element) {
+  if(E(element)->hasAttribute("unit"))
+    setCurrentUnit(units.find(E(element)->getAttribute("unit")));
 }
 
-TiXmlElement* PhysicalProperty::writeXMLFile(TiXmlNode *parent) {
+DOMElement* PhysicalProperty::writeXMLFile(DOMNode *parent) {
   if(units.getNumberOfUnits()) {
-    TiXmlElement *ele = (TiXmlElement*)parent;
-    ele->SetAttribute("unit", getUnit());
+    DOMElement *ele = (DOMElement*)parent;
+    E(ele)->setAttribute("unit", getUnit());
   }
 }

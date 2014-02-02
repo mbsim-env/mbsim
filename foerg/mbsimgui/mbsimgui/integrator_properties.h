@@ -28,11 +28,11 @@ class RKSuiteTypeProperty : public Property {
     RKSuiteTypeProperty();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
   protected:
     int index;
-    std::vector<std::string> method;
+    std::vector<MBXMLUtils::FQN> method;
 };
 
 #endif

@@ -957,7 +957,7 @@ VariableChoiceContextMenu::VariableChoiceContextMenu(VariableProperty *property,
 //  name.push_back("plain");
   QActionGroup *actionGroup = new QActionGroup(this);
   for(int i=0; i<property->getNumberOfInputs(); i++) {
-    QAction *action=new QAction(QString::fromStdString(property->getName(i)), this);
+    QAction *action=new QAction(QString::fromStdString("{"+property->getName(i).first+"}"+property->getName(i).second), this);
     action->setCheckable(true);
     actionGroup->addAction(action);
     addAction(action);

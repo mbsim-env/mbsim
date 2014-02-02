@@ -25,7 +25,6 @@
 #include <QTabWidget>
 #include <QProcess>
 #include <QTimer>
-#include <mbxmlutilstinyxml/tinyxml.h>
 #include <casadi/symbolic/sx/sx.hpp>
 #include <mbxmlutils/octeval.h>
 #include <boost/function.hpp>
@@ -94,6 +93,7 @@ class MainWindow : public QMainWindow {
   public:
     MainWindow(QStringList &arg);
     ~MainWindow();
+    static boost::shared_ptr<MBXMLUtils::DOMParser> parser;
     static MBXMLUtils::OctEval *octEval;
     static MBXMLUtils::NewParamLevel *octEvalParamLevel;
     void mbsimxml(int task);
@@ -177,7 +177,9 @@ class MainWindow : public QMainWindow {
     void openRecentIntegratorFile();
   protected:
     void closeEvent ( QCloseEvent * event );
-    MBXMLUtils::TiXmlElement* writeParameterList();
+
+    // write parameter list to XML. The returned DOMNodes are owned by doc.
+    xercesc::DOMElement* writeParameterList(boost::shared_ptr<xercesc::DOMDocument> &doc);
 };
 
 class Process : public QTabWidget {

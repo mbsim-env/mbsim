@@ -24,30 +24,31 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 Joint::Joint(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-  refFrameID.setProperty(new IntegerProperty("",0,MBSIMNS"frameOfReferenceID"));
+  refFrameID.setProperty(new IntegerProperty("",0,MBSIM%"frameOfReferenceID"));
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"forceDirection"));
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
   forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  forceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"forceLaw"));
+  forceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"forceLaw"));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"momentDirection"));
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
   momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"momentLaw"));
+  momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"momentLaw"));
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
   forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIMNS"openMBVForceArrow",false);
+  forceArrow.setXMLName(MBSIM%"openMBVForceArrow",false);
 
   momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  momentArrow.setXMLName(MBSIMNS"openMBVMomentArrow",false);
+  momentArrow.setXMLName(MBSIM%"openMBVMomentArrow",false);
 }
 
 Joint::~Joint() {
@@ -58,7 +59,7 @@ void Joint::initialize() {
   connections.initialize();
 }
 
-void Joint::initializeUsingXML(TiXmlElement *element) {
+void Joint::initializeUsingXML(DOMElement *element) {
   Link::initializeUsingXML(element);
   refFrameID.initializeUsingXML(element);
   forceDirection.initializeUsingXML(element);
@@ -70,8 +71,8 @@ void Joint::initializeUsingXML(TiXmlElement *element) {
   momentArrow.initializeUsingXML(element);
 }
 
-TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Link::writeXMLFile(parent);
+DOMElement* Joint::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Link::writeXMLFile(parent);
   refFrameID.writeXMLFile(ele0);
   forceDirection.writeXMLFile(ele0);
   forceLaw.writeXMLFile(ele0);

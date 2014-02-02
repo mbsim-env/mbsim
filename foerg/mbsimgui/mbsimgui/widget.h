@@ -23,9 +23,9 @@
 #include <QWidget>
 #include "units.h"
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class Property;

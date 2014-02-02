@@ -22,6 +22,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <xercesc/util/XercesDefs.hpp>
 
 class Element;
 class Frame;
@@ -37,8 +38,8 @@ class OMBVBodyProperty;
 class FunctionProperty;
 class PhysicalProperty;
 
-namespace MBXMLUtils {
-  class TiXmlElement;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
 }
 
 class ObjectFactoryBase {
@@ -50,15 +51,15 @@ class ObjectFactoryBase {
     typedef std::pair<double, P_NSPRE> P_PRINSPRE;
   public:
     typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
-    virtual Frame* createFrame(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element) { return NULL; }
-    virtual Parameter* createParameter(MBXMLUtils::TiXmlElement *element) { return NULL; }
-    virtual Environment *getEnvironment(MBXMLUtils::TiXmlElement *element) { return NULL; }
+    virtual Frame* createFrame(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Contour* createContour(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Group* createGroup(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Integrator* createIntegrator(xercesc::DOMElement *element) { return NULL; }
+    virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
+    virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
     virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
       static MM_PRINSPRE ret;
       return ret;
@@ -77,15 +78,15 @@ class ObjectFactory : public ObjectFactoryBase {
     void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
     void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
-    Frame* createFrame(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
-    Parameter* createParameter(MBXMLUtils::TiXmlElement *element);
-    Environment *getEnvironment(MBXMLUtils::TiXmlElement *element);
+    Frame* createFrame(xercesc::DOMElement *element, Element *parent);
+    Contour* createContour(xercesc::DOMElement *element, Element *parent);
+    Group* createGroup(xercesc::DOMElement *element, Element *parent);
+    Object* createObject(xercesc::DOMElement *element, Element *parent);
+    Link* createLink(xercesc::DOMElement *element, Element *parent);
+    Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+    Integrator* createIntegrator(xercesc::DOMElement *element);
+    Parameter* createParameter(xercesc::DOMElement *element);
+    Environment *getEnvironment(xercesc::DOMElement *element);
     M_NSPRE getNamespacePrefixMapping();
 };
 
@@ -98,15 +99,15 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     // objects from MBSimObjectFactory
     static void initialize();
   protected:
-    Frame* createFrame(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
-    Parameter* createParameter(MBXMLUtils::TiXmlElement *element);
-    Environment* getEnvironment(MBXMLUtils::TiXmlElement *element);
+    Frame* createFrame(xercesc::DOMElement *element, Element *parent);
+    Contour* createContour(xercesc::DOMElement *element, Element *parent);
+    Group* createGroup(xercesc::DOMElement *element, Element *parent);
+    Object* createObject(xercesc::DOMElement *element, Element *parent);
+    Link* createLink(xercesc::DOMElement *element, Element *parent);
+    Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+    Integrator* createIntegrator(xercesc::DOMElement *element);
+    Parameter* createParameter(xercesc::DOMElement *element);
+    Environment* getEnvironment(xercesc::DOMElement *element);
 };
 
 class OMBVBodyFactory {
@@ -116,7 +117,7 @@ class OMBVBodyFactory {
     OMBVBodyFactory();
     OMBVBodyProperty* createBody(int i, const std::string &ID); 
     OMBVBodyProperty* createBody(const std::string &name, const std::string &ID); 
-    OMBVBodyProperty* createBody(MBXMLUtils::TiXmlElement *element, const std::string &ID); 
+    OMBVBodyProperty* createBody(xercesc::DOMElement *element, const std::string &ID); 
     const std::string& getName(int i) const { return names[i]; }
     int size() const { return names.size(); }
 };
@@ -127,7 +128,7 @@ class FunctionFactory {
   public:
     virtual FunctionProperty* createFunction(int i) = 0; 
     FunctionProperty* createFunction(const std::string &name); 
-    FunctionProperty* createFunction(MBXMLUtils::TiXmlElement *element); 
+    FunctionProperty* createFunction(xercesc::DOMElement *element); 
     const std::string& getName(int i) const { return names[i]; }
     int size() const { return names.size(); }
 };
@@ -158,7 +159,7 @@ class VariableFactory {
     VariableFactory();
     PhysicalProperty* createVariable(int i); 
     PhysicalProperty* createVariable(const std::string &name); 
-    PhysicalProperty* createVariable(MBXMLUtils::TiXmlElement *element); 
+    PhysicalProperty* createVariable(xercesc::DOMElement *element); 
     const std::string& getName(int i) const { return names[i]; }
     int size() const { return names.size(); }
 };

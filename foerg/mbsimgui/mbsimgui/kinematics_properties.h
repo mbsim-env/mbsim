@@ -30,8 +30,8 @@ class Translation : public Property {
   public:
     Translation(const std::string &name="");
     virtual Property* clone() const {return new Translation(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     QMenu* createContextMenu() {return new TranslationChoiceContextMenu(this);}
     int getqSize() const;
     int getuSize() const;

@@ -38,9 +38,9 @@ class Link;
 class Observer;
 class TextWidget;
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class Element : public TreeItemData {
@@ -59,10 +59,10 @@ class Element : public TreeItemData {
     virtual Element* clone() const {return 0;}
     virtual std::string getPath();
     std::string getXMLPath(Element *ref=0, bool rel=false);
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    virtual void initializeUsingXMLEmbed(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFileEmbed(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize() {}
@@ -73,7 +73,7 @@ class Element : public TreeItemData {
     const std::string& getEvaluation() const {return evaluation;}
     void setName(const std::string &str) { }
     void setValue(const std::string &str) {name = str;}
-    virtual std::string getNameSpace() const { return MBSIMNS; }
+    virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
     template<class T> T* getByPath(std::string path);

@@ -28,8 +28,8 @@ class FunctionProperty : public Property {
     FunctionProperty(const std::string &name="") : Property(name) {}
     virtual int getArgSize(int i=0) const {return 0;}
     virtual std::string getType() const { return "Function"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) { return element; }
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
     void fromWidget(QWidget *widget) { }
     void toWidget(QWidget *widget) { }
  //   QMenu* createContextMenu() { return new FunctionChoiceContextMenu(this); }

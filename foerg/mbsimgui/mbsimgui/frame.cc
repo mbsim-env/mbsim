@@ -18,12 +18,16 @@
    */
 
 #include <config.h>
+#include <boost/shared_ptr.hpp>
 #include "frame.h"
 #include "ombv_properties.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 #define ieO 0
 #define irP 1
@@ -41,8 +45,8 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
  // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
  // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
-//  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV",getID()));
-  //property.push_back(new OMBVFrameProperty("enable OpenMBV",grey?"":MBSIMNS"enableOpenMBV",getID()));
+//  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
+  //property.push_back(new OMBVFrameProperty("enable OpenMBV",grey?"":MBSIM%"enableOpenMBV",getID()));
   property.push_back(new OMBVFrameProperty("enableOpenMBV",grey?"":"",getID()));
   property[ieO]->setDisabling(true);
   property[ieO]->setDisabled(false);
@@ -52,44 +56,39 @@ Frame::~Frame() {
 }
 
 Frame* Frame::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Frame *frame=ObjectFactory::getInstance()->createFrame(e,parent);
-    if(frame) {
-      frame->initializeUsingXML(e);
-      frame->initialize();
-    }
-    return frame;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
+  if(frame) {
+    frame->initializeUsingXML(e);
+    frame->initialize();
   }
-  return 0;
+  return frame;
 }
 
-void Frame::initializeUsingXML(TiXmlElement *element) {
+void Frame::initializeUsingXML(DOMElement *element) {
   Element::initializeUsingXML(element);
-  TiXmlElement *e = element->FirstChildElement( MBSIMNS"enableOpenMBV" );
+  DOMElement *e = E(element)->getFirstElementChildNamed( MBSIM%"enableOpenMBV" );
   if(e)
     property[ieO]->initializeUsingXML(e);
 }
 
-TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+DOMElement* Frame::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Element::writeXMLFile(parent);
   if(not(property[ieO]->isDisabled())) {
-    TiXmlElement *ele1=new TiXmlElement(MBSIMNS"enableOpenMBV");
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele1=D(doc)->createElement(MBSIM%"enableOpenMBV");
     property[ieO]->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
   return ele0;
 }
 
-void Frame::initializeUsingXML2(TiXmlElement *element) {
+void Frame::initializeUsingXML2(DOMElement *element) {
   property[ieO]->initializeUsingXML(element);
 }
 
-TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
+DOMElement* Frame::writeXMLFile2(DOMNode *parent) {
   property[ieO]->writeXMLFile(parent);
   return 0;
 }
@@ -122,7 +121,7 @@ FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Fra
   property[irO]->setDisabling(true);
   property[irO]->setDisabled(true);
 
-  //refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  //refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   property.push_back(new ParentFrameOfReferenceProperty("frameOfReference",getParent()->getFrame(0)->getXMLPath(this,true),this));
   property[ifo]->setDisabling(true);
   property[ifo]->setDisabled(true);
@@ -136,42 +135,43 @@ void FixedRelativeFrame::initialize() {
   property[ifo]->initialize();
 }
 
-void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
+void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
   Frame::initializeUsingXML(element);
-  TiXmlElement *ele1 = element->FirstChildElement( MBSIMNS"frameOfReference" );
+  DOMElement *ele1 = E(element)->getFirstElementChildNamed( MBSIM%"frameOfReference" );
   if(ele1) {
     property[ifo]->initializeUsingXML(ele1);
     property[ifo]->setDisabled(false);
   }
-  ele1 = element->FirstChildElement( MBSIMNS"relativePosition" );
+  ele1 = E(element)->getFirstElementChildNamed( MBSIM%"relativePosition" );
   if(ele1) {
     property[irP]->initializeUsingXML(ele1);
     property[irP]->setDisabled(false);
   }
-  ele1 = element->FirstChildElement( MBSIMNS"relativeOrientation" );
+  ele1 = E(element)->getFirstElementChildNamed( MBSIM%"relativeOrientation" );
   if(ele1) {
     property[irO]->initializeUsingXML(ele1);
     property[irO]->setDisabled(false);
   }
 }
 
-TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
+DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
 
-  TiXmlElement *ele0 = Frame::writeXMLFile(parent);
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0 = Frame::writeXMLFile(parent);
   if(not(property[ifo]->isDisabled())) {
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frameOfReference" );
     property[ifo]->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
   if(not(property[irP]->isDisabled())) {
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"relativePosition" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"relativePosition" );
     property[irP]->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
   if(not(property[irO]->isDisabled())) {
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"relativeOrientation" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"relativeOrientation" );
     property[irO]->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
   return ele0;
 }

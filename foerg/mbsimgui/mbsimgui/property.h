@@ -27,23 +27,18 @@
 #include "units.h"
 #include "property_context_menu.h"
 #include <boost/function.hpp>
+#include <xercesc/util/XercesDefs.hpp>
+#include <mbxmlutilshelper/dom.h>
 
-#define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
-#define MBSIMNS "{"MBSIMNS_"}"
-#define PARAMNS_ "http://openmbv.berlios.de/MBXMLUtils/parameter"
-#define PARAMNS "{"PARAMNS_"}"
-#define PVNS_ "http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-#define PVNS "{"PVNS_"}"
-#define OPENMBVNS_ "http://openmbv.berlios.de/OpenMBV"
-#define OPENMBVNS "{"OPENMBVNS_"}"
-#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
-#define MBSIMINTNS "{"MBSIMINTNS_"}"
-#define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
-#define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
+extern MBXMLUtils::NamespaceURI MBSIM;
+extern MBXMLUtils::NamespaceURI PARAM;
+extern MBXMLUtils::NamespaceURI OPENMBV;
+extern MBXMLUtils::NamespaceURI MBSIMINT;
+extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
 
-namespace MBXMLUtils {
-  class TiXmlNode;
-  class TiXmlElement;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMNode;
+  class DOMElement;
 }
 
 class QWidget;
@@ -54,8 +49,8 @@ class PropertyPropertyDialog;
 
 class PropertyInterface {
   public:
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) = 0;
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) = 0;
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) = 0;
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) = 0;
     virtual void fromWidget(QWidget *widget) {}
     virtual void toWidget(QWidget *widget) {}
     virtual void initialize() {}
@@ -68,8 +63,8 @@ class Property : public TreeItemData, public PropertyInterface {
     Property(const std::string &name_="", const std::string &value_="", const Units &units_=Units());
     virtual ~Property() {}
     virtual Property* clone() const {return 0;}
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     const std::string& getName() const { return name; }
     const std::string& getValue() const { return value; }
     const std::string& getUnit() const { return unit; }
@@ -120,8 +115,8 @@ class PhysicalProperty : public Property {
     void setUnits(const Units &units_) { units = units_; currentUnit=units.getDefaultUnit(); }
     void setCurrentUnit(int i) { currentUnit = i; setUnit(units.getUnit(currentUnit)); } 
     int getCurrentUnit() const { return currentUnit; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual int size(int i=0) { return 1; }
     virtual void setSize(int i=0, int size=0) { }
   protected:
@@ -131,7 +126,7 @@ class PhysicalProperty : public Property {
 class PropertyFactory {
   public:
     virtual Property* createProperty(int i=0) = 0;
-    virtual std::string getName(int i=0) const { return ""; }
+    virtual MBXMLUtils::FQN getName(int i=0) const { return ""; }
     virtual int getSize() const { return 0; }
     virtual WidgetFactory* createWidgetFactory() { return 0; }
 };
