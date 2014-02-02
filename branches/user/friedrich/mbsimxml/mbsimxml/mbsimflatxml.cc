@@ -3,8 +3,8 @@
 #include <iostream>
 #include "mbxmlutilstinyxml/tinyxml.h"
 #include "mbxmlutilstinyxml/tinynamespace.h"
-#include <mbxmlutilstinyxml/getinstallpath.h>
-#include <mbxmlutilstinyxml/last_write_time.h>
+#include <mbxmlutilshelper/getinstallpath.h>
+#include <mbxmlutilshelper/last_write_time.h>
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"

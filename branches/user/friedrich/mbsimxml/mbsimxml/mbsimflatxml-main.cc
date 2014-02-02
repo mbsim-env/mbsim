@@ -4,7 +4,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <boost/filesystem.hpp>
-#include <mbxmlutilstinyxml/last_write_time.h>
+#include <mbxmlutilshelper/last_write_time.h>
 
 using namespace std;
 using namespace MBSim;
