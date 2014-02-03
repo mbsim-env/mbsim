@@ -1,7 +1,7 @@
 #include <config.h>
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/utils/kinematic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -115,7 +115,7 @@ namespace MBSimPowertrain {
     cylinder->setBaseRadius(data.radiusInputShaft);
     cylinder->setTopRadius(data.radiusInputShaft);
     cylinder->setHeight(data.lengthInputShaft);
-    cylinder->setStaticColor(0.3);
+    cylinder->setDiffuseColor(0.3,1,1);
     welle1->setOpenMBVRigidBody(cylinder);
     cylinder -> setInitialTranslation(0,0,data.lengthInputShaft/2);
     cylinder -> setInitialRotation(0,0,0);
@@ -124,7 +124,7 @@ namespace MBSimPowertrain {
     cylinder->setBaseRadius(data.radiusIntermediateShaft);
     cylinder->setTopRadius(data.radiusIntermediateShaft);
     cylinder->setHeight(data.lengthIntermediateShaft);
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(0.5,1,1);
     welle2->setOpenMBVRigidBody(cylinder);
     cylinder -> setInitialTranslation(0,0,data.lengthIntermediateShaft/2);
     cylinder -> setInitialRotation(0,0,0);
@@ -133,7 +133,7 @@ namespace MBSimPowertrain {
     cylinder->setBaseRadius(data.radiusOutputShaft);
     cylinder->setTopRadius(data.radiusOutputShaft);
     cylinder->setHeight(data.lengthOutputShaft);
-    cylinder->setStaticColor(0.7);
+    cylinder->setDiffuseColor(0.7,1,1);
     welle3->setOpenMBVRigidBody(cylinder);
     cylinder -> setInitialTranslation(0,0,data.lengthOutputShaft/2);
     cylinder -> setInitialRotation(0,0,0);

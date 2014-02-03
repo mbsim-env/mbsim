@@ -5,7 +5,7 @@
 #include "mbsim/gear.h"
 #include "mbsim/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/utils/kinematic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -200,7 +200,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rS/2);
     cylinder->setBaseRadius(rS/2);
     cylinder->setHeight(lS*5);
-    cylinder->setStaticColor(0.1);
+    cylinder->setDiffuseColor(0.1,1,1);
     cylinder->setInitialTranslation(0,0,0);
     cylinder->setName("frustum1");
     sunOMBV->addRigidBody(cylinder);
@@ -208,7 +208,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rS);
     cylinder->setBaseRadius(rS);
     cylinder->setHeight(lS);
-    cylinder->setStaticColor(0.1);
+    cylinder->setDiffuseColor(0.1,1,1);
     cylinder->setInitialTranslation(0,0,0);
     cylinder->setName("frustum2");
     sunOMBV->addRigidBody(cylinder);
@@ -220,7 +220,7 @@ namespace MBSimPowertrain {
     //  cylinder->setTopRadius(rS);
     //  cylinder->setBaseRadius(rS);
     //  cylinder->setHeight(lS);
-    //  cylinder->setStaticColor(0.1);
+    //  cylinder->setDiffuseColor(0.1,1,1);
     //  sun->setOpenMBVRigidBody(cylinder);
     //  cylinder->setInitialTranslation(0,0,lS/2);
 
@@ -228,7 +228,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rH);
     cylinder->setBaseRadius(rH);
     cylinder->setHeight(lH);
-    cylinder->setStaticColor(0.3);
+    cylinder->setDiffuseColor(0.3,1,1);
     annulus->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,lH/2);
 
@@ -236,7 +236,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rT1);
     cylinder->setBaseRadius(rT1);
     cylinder->setHeight(lT);
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(0.5,1,1);
     carrier->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,lT/2);
 
@@ -246,7 +246,7 @@ namespace MBSimPowertrain {
       cylinder->setTopRadius(rP);
       cylinder->setBaseRadius(rP);
       cylinder->setHeight(lP);
-      cylinder->setStaticColor(0.8);
+      cylinder->setDiffuseColor(0.8,1,1);
       planet[i]->setOpenMBVRigidBody(cylinder);
       cylinder->setInitialTranslation(0,0,lP/2);
     }
