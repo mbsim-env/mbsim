@@ -3,7 +3,8 @@
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 using namespace std;
 using namespace fmatvec;
