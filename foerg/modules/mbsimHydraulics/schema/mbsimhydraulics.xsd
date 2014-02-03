@@ -1580,21 +1580,21 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
+                <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Größe des Druckknotens
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="minimalPressure" type="pv:pressureScalar">
+                <xs:element name="minimalPressure" type="pv:pressureScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       minimaler Druckwert für die Farbgebung des Knotens (entspricht blau)
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="maximalPressure" type="pv:pressureScalar">
+                <xs:element name="maximalPressure" type="pv:pressureScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       maximaler Druckwert für die Farbgebung des Knotens (entspricht rot)
@@ -1876,7 +1876,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:nounitScalar">
+                <xs:element name="size" type="pv:nounitScalar" minOccurs="0">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>

@@ -261,9 +261,9 @@ namespace MBSimHydraulics {
       setMaximalContactImpactLaw(gilM);
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    enableOpenMBVBodies(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVBodies"));
-    enableOpenMBVFrames(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVFrames"));
-    enableOpenMBVArrows(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows"));
+    if(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVBodies")) enableOpenMBVBodies();
+    if(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVFrames")) enableOpenMBVFrames();
+    if(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows")) enableOpenMBVArrows();
 #endif
   }
 }
