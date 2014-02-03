@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
   end=clock();
   cout << "Integration Time TimeStepping: " << double(end - start)/CLOCKS_PER_SEC << " s." << endl;
 
-  sys->closePlot();
+//  sys->closePlot();
   delete sys;
 
   return 0;

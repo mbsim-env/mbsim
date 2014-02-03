@@ -9,7 +9,9 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-#include "mbsim/rotational_spring_damper.h"
+#include "mbsim/spring_damper.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #include <iostream>
 
@@ -196,10 +198,10 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   schnabel->setFrameOfReference(specht->getFrame("Schabel"));
   specht->addContour(schnabel);
 
-  RelativeRotationalSpringDamper *feder = new RelativeRotationalSpringDamper("Drehfeder");
+  GeneralizedSpringDamper *feder = new GeneralizedSpringDamper("Drehfeder");
   feder->setRigidBody(specht);
   double cDF = 0.5;
-  feder->setMomentFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
+  feder->setGeneralizedForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
   addLink(feder);
 
   Contact *contact = new Contact("SchnabelKontakt");

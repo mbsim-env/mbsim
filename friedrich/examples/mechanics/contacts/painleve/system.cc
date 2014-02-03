@@ -5,6 +5,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"

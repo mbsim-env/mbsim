@@ -3,10 +3,11 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/utils/rotarymatrices.h"
-
 #include "tools/rigid_contour_functions1s.h"
 
 using namespace std;

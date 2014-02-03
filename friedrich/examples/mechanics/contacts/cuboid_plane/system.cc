@@ -1,5 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
@@ -29,11 +30,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  wall->enableOpenMBV(true, 10, 5);
+  wall->enableOpenMBV(1, 0.5);
 #endif
   addFrame(new FixedRelativeFrame("WandUnten",Vec(3),AWK));
   wall->setFrameOfReference(getFrame("WandUnten"));
   addContour(wall);
+
+  addContour(new Plane("WandTest"));
 
   RigidBody* body = new RigidBody("Wuerfel");
   addObject(body);

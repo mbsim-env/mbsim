@@ -6,11 +6,10 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 #include <mbsim/utils/colors.h>
-
 #include <fmatvec/fmatvec.h>
-
 #include <mbsim/frame.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -117,6 +116,7 @@ System::System(const string &projectName) :
     rectangleBody->setInertiaTensor(SymMat3(EYE));
 
     rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
     rectangleBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
     rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));

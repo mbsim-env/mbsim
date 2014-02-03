@@ -13,8 +13,9 @@
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-#include "mbsim/utils/symbolic_function.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 using namespace std;
 using namespace MBSim;

@@ -8,6 +8,7 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contact_kinematics/circle_frustum.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
