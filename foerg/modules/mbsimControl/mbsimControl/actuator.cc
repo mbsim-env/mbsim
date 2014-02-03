@@ -22,10 +22,6 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
 #include "mbsimControl/defines.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objectfactory.h"
-#include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -131,18 +127,20 @@ namespace MBSimControl {
     saved_ref2=e->Attribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMCONTROLNS"openMBVActuatorForceArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVActuatorForceArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, false);
+      which[1]=true;
+      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 
-    e=element->FirstChildElement(MBSIMCONTROLNS"openMBVActuatorMomentArrow");
-    if(e) {
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement());
-      setOpenMBVActuatorMomentArrow(arrow);
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, false);
+      which[1]=true;
+      LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }
