@@ -54,12 +54,6 @@ namespace MBSimHydraulics {
 #endif
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void HNodeMec::enableOpenMBVArrows(double size) {
-    openMBVArrowSize=(size>.0)?size:.0;
-  }
-#endif
-
   unsigned int HNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
     connectedTransFrameStruct transFrame;
     transFrame.frame = f;

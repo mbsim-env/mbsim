@@ -61,9 +61,9 @@ namespace MBSimHydraulics {
       void setMaximalContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
       void setMaximalContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBVFrames(bool openMBVFrames_=true) {openMBVFrames=openMBVFrames_; }
-      void enableOpenMBVArrows(bool openMBVArrows_=true) {openMBVArrows=openMBVArrows_; }
-      void enableOpenMBVBodies(bool openMBVBodies_=true) {openMBVBodies=openMBVBodies_; }
+      void enableOpenMBVFrames() {openMBVFrames=true; }
+      void enableOpenMBVArrows() {openMBVArrows=true; }
+      void enableOpenMBVBodies() {openMBVBodies=true; }
 #endif
 
       ClosableRigidLine * getLine() {return line; }

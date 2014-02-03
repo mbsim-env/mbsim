@@ -23,12 +23,6 @@
 #include "hnode.h"
 #include <fmatvec/function.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class Arrow;
-}
-#endif
-
 namespace MBSim {
   class Frame;
   class GeneralizedForceLaw;
@@ -63,7 +57,9 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "HNodeMec"; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBVArrows(double size=1.);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVArrows, tag, (optional (size,(double),1))) { 
+        openMBVArrowSize=(size>.0)?size:.0;
+      }
 #endif
 
       void setInitialVolume(double V0_) {V0=V0_; }

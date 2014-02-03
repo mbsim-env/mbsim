@@ -44,22 +44,18 @@ namespace MBSimHydraulics {
 
   HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0)
 # ifdef HAVE_OPENMBVCPPINTERFACE
-                                     , openMBVGrp(NULL), openMBVSphere(NULL), WrON(3)
+                                     , openMBVGrp(NULL), openMBVSphere(NULL), WrON()
 #endif
                                      {
                                      }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void HNode::enableOpenMBV(double size, double pMin, double pMax, Vec WrON_) {
-    if(size>=0) {
-      openMBVSphere=new OpenMBV::Sphere;
-      openMBVSphere->setRadius(size);
-      openMBVSphere->setMinimalColorValue(pMin);
-      openMBVSphere->setMaximalColorValue(pMax);
-      WrON=WrON_;
-    }
-    else 
-      openMBVSphere=0;
+  void HNode::enableOpenMBV(double size, double pMin, double pMax, const Vec3 &WrON_) {
+    openMBVSphere=new OpenMBV::Sphere;
+    openMBVSphere->setRadius(size);
+    openMBVSphere->setMinimalColorValue(pMin);
+    openMBVSphere->setMaximalColorValue(pMax);
+    WrON=WrON_;
   }
 #endif
 
@@ -81,17 +77,17 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVSphere");
     if (e) {
       TiXmlElement * ee;
+      double size=1, pMin=0e5, pMax=10e5;
+      Vec3 localWrON;
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"size");
-      double size=Element::getDouble(ee);
+      if(ee) size=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressure");
-      double pMin=Element::getDouble(ee);
+      if(ee) pMin=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"maximalPressure");
-      double pMax=Element::getDouble(ee);
+      if(ee) pMax=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"position");
-      Vec localWrON(3, INIT, 0);
-      if (ee)
-        localWrON=Element::getVec(ee, 3);
-      enableOpenMBV(size, pMin, pMax, localWrON);
+      if (ee) localWrON=Element::getVec(ee, 3);
+      enableOpenMBVSphere(size, pMin, pMax, localWrON);
     }
 #endif
   }
