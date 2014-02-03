@@ -6,6 +6,7 @@
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
@@ -72,12 +73,8 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   cr->setTangentialImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
   cr->connect(pl,ball->getContour("Sphere"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
-  aC_N->setEnable(false);
-  cr->setOpenMBVNormalForceArrow(aC_N);
-  OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-  cr->setOpenMBVTangentialForceArrow(aC_T);
-  aC_T->setEnable(false);
+  cr->enableOpenMBVNormalForce();
+  cr->enableOpenMBVTangentialForce();
 #endif
   this->addLink(cr);
 }

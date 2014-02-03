@@ -2,6 +2,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #endif
@@ -49,7 +50,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(lStab);
-  cylinder->setStaticColor(0.5);
+  cylinder->setDiffuseColor(180./360.,1,1);
   stab1->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);
@@ -75,7 +76,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(lStab);
-  cylinder->setStaticColor(0.1);
+  cylinder->setDiffuseColor(90./360.,1,1);
   stab2->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);

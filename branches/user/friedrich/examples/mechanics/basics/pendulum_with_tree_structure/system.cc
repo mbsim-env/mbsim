@@ -2,7 +2,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"

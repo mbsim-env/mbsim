@@ -7,6 +7,9 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/kinetic_excitation.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -119,7 +122,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   KineticExcitation *a = new KineticExcitation("Anregung");
   addLink(a);
   a->setForceDirection(Vec("[0;1;0]"));
-  a->setForceFunction(new ConstantFunction<VecV>("[-10]"));
+  a->setForceFunction(new ConstantFunction<VecV>(-10));
   a->connect(k3->getFrame("fTop"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -131,7 +134,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k1Visu->setHeight(hDisk);
   k1Visu->setInitialRotation(M_PI/2., 0, 0);
   k1Visu->setInitialTranslation(0, -hDisk/2., 0);
-  k1Visu->setStaticColor(0.4);
+  k1Visu->setDiffuseColor(120./360.,1,1);
   k1->setOpenMBVRigidBody(k1Visu);
 
   OpenMBV::Frustum *k2Visu = new OpenMBV::Frustum();
@@ -142,7 +145,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k2Visu->setHeight(hDisk);
   k2Visu->setInitialRotation(M_PI/2., 0, 0);
   k2Visu->setInitialTranslation(0, -hDisk/2., 0);
-  k2Visu->setStaticColor(0.4);
+  k2Visu->setDiffuseColor(120./360.,1,1);
   k2->setOpenMBVRigidBody(k2Visu);
 
   OpenMBV::Frustum *k3Visu = new OpenMBV::Frustum();
@@ -153,26 +156,14 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k3Visu->setHeight(hDisk);
   k3Visu->setInitialRotation(M_PI/2., 0, 0);
   k3Visu->setInitialTranslation(0, -hDisk/2., 0);
-  k3Visu->setStaticColor(0.4);
+  k3Visu->setDiffuseColor(120./360.,1,1);
   k3->setOpenMBVRigidBody(k3Visu);
 
-  OpenMBV::CoilSpring *sp01Visu = new OpenMBV::CoilSpring();
-  sp01Visu->setSpringRadius(.75*.5*dDisk);
-  sp01Visu->setCrossSectionRadius(.1*.25*dDisk);
-  sp01Visu->setNumberOfCoils(5);
-  sp01->setOpenMBVCoilSpring(sp01Visu);
+  sp01->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring *sp12Visu = new OpenMBV::CoilSpring();
-  sp12Visu->setSpringRadius(.75*.5*dDisk);
-  sp12Visu->setCrossSectionRadius(.1*.25*dDisk);
-  sp12Visu->setNumberOfCoils(5);
-  sp12->setOpenMBVCoilSpring(sp12Visu);
+  sp12->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring *sp23Visu = new OpenMBV::CoilSpring();
-  sp23Visu->setSpringRadius(.75*.5*dDisk);
-  sp23Visu->setCrossSectionRadius(.1*.25*dDisk);
-  sp23Visu->setNumberOfCoils(5);
-  sp23->setOpenMBVCoilSpring(sp23Visu);
+  sp23->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 #endif
 
   if(type==1) 

@@ -3,6 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "test_group.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
