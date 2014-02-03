@@ -66,7 +66,6 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         openMBVAngularAcceleration=ombv.createOpenMBV(); 
       }
-
 #endif
   };
 
