@@ -25,6 +25,8 @@
 #include <boost/parameter/keyword.hpp>
 #include <boost/parameter/preprocessor.hpp>
 
+namespace MBSim {
+
   BOOST_PARAMETER_NAME(scaleLength)
   BOOST_PARAMETER_NAME(scaleSize)
   BOOST_PARAMETER_NAME(type)
@@ -44,5 +46,8 @@
   BOOST_PARAMETER_NAME(springRadius)
   BOOST_PARAMETER_NAME(scaleFactor)
   BOOST_PARAMETER_NAME(crossSectionRadius)
+
+}
+
 #endif
 

@@ -242,17 +242,16 @@ namespace MBSim {
   void OpenMBVCoilSpring::initializeUsingXML(TiXmlElement *e) {
     OpenMBVObject::initializeUsingXML(e);
     TiXmlElement *ee = e->FirstChildElement(MBSIMNS"numberOfCoils");
-    if(ee) r = Element::getInt(ee);
+    if(ee) n = Element::getInt(ee);
     ee = e->FirstChildElement(MBSIMNS"springRadius");
     if(ee) r = Element::getDouble(ee);
     ee = e->FirstChildElement(MBSIMNS"crossSectionRadius");
-    if(ee) r = Element::getDouble(ee);
+    if(ee) cr = Element::getDouble(ee);
     ee = e->FirstChildElement(MBSIMNS"nominalLength");
-    if(ee) r = Element::getDouble(ee);
+    if(ee) l = Element::getDouble(ee);
     ee = e->FirstChildElement(MBSIMNS"scaleFactor");
-    if(ee) r = Element::getDouble(ee);
+    if(ee) sf = Element::getDouble(ee);
     ee = e->FirstChildElement(MBSIMNS"type");
-    if(ee) r = Element::getDouble(ee);
     if(ee) {
       string typeStr=string(ee->GetText()).substr(1,string(ee->GetText()).length()-2);
       if(typeStr=="tube") type=OpenMBV::CoilSpring::tube;

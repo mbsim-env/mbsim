@@ -24,9 +24,6 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
-namespace OpenMBV {
-  class Frame;
-}
 #endif
 
 namespace MBSim {

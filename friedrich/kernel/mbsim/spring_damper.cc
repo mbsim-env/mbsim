@@ -139,7 +139,7 @@ namespace MBSim {
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
@@ -275,7 +275,7 @@ namespace MBSim {
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
@@ -416,7 +416,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"rigidBody");
     saved_body=e->Attribute("ref");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVCoilSpring");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
