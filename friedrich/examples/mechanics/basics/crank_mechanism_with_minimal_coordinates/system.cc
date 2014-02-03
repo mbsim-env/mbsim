@@ -5,6 +5,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/kinetic_excitation.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
@@ -120,15 +121,15 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   dummy->setBaseRadius(r);
   dummy->setTopRadius(r);
   dummy->setHeight(0.02);
-  dummy->setStaticColor(0.1);
+  dummy->setDiffuseColor(90./360.,1,1);
   body1->setOpenMBVRigidBody(dummy);
   OpenMBV::Cuboid* dummy1 = new OpenMBV::Cuboid;
   dummy1->setLength(b,0.02,0.02);
-  dummy1->setStaticColor(0.5);
+  dummy1->setDiffuseColor(180./360.,1,1);
   body2->setOpenMBVRigidBody(dummy1);
   OpenMBV::Cuboid* dummy2 = new OpenMBV::Cuboid;
   dummy2->setLength(c,c/2,0.02);
-  dummy2->setStaticColor(0.8);
+  dummy2->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy2);
 #endif
 

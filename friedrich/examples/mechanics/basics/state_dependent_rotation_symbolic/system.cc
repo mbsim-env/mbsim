@@ -2,7 +2,9 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/symbolic_function.h"
+#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/observers/frame_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -65,28 +67,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->getFrame("C")->setPlotFeature(globalVelocity,enabled);
   body->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
 
-  body->setOpenMBVWeightArrow(new OpenMBV::Arrow);
-  body->setOpenMBVJointForceArrow(new OpenMBV::Arrow);
-  body->setOpenMBVJointMomentArrow(new OpenMBV::Arrow);
+  body->enableOpenMBVWeight();
+  body->enableOpenMBVJointForce();
+  body->enableOpenMBVJointMoment();
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
-  OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setStaticColor(0.5);
-  o->setOpenMBVVelocityArrow(arrow);
+ // OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
+ // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+ // arrow->setStaticColor(0.5);
+  o->enableOpenMBVVelocity();
 
-  arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setType(OpenMBV::Arrow::toDoubleHead);
-  arrow->setStaticColor(0.4);
-  o->setOpenMBVAngularVelocityArrow(arrow);
+//  arrow = new OpenMBV::Arrow;
+//  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+//  arrow->setType(OpenMBV::Arrow::toDoubleHead);
+//  arrow->setStaticColor(0.4);
+  o->enableOpenMBVAngularVelocity();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
   OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
   cuboid->setLength(l,h,d);
-  cuboid->setStaticColor(0.0);
+  cuboid->setDiffuseColor(160./360.,1,1);
   body->setOpenMBVRigidBody(cuboid);
 
   getFrame("I")->enableOpenMBV();

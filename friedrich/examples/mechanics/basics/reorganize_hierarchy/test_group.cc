@@ -1,5 +1,6 @@
 #include "test_group.h"
 #include "mbsim/frame.h"
+#include "mbsim/functions/kinematic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
 #endif

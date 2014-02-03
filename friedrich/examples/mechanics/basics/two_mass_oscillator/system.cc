@@ -3,6 +3,8 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
@@ -98,26 +100,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // ----------------------- Visualisierung in OpenMBV --------------------  
   OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(h1);
-  cuboid->setStaticColor(0.5);
+  cuboid->setDiffuseColor(240./360.,1,1);
   box1->setOpenMBVRigidBody(cuboid);
 
   cuboid=new OpenMBV::Cube;
   cuboid->setLength(h2);
-  cuboid->setStaticColor(0.8);
+  cuboid->setDiffuseColor(120./360.,1,1);
   box2->setOpenMBVRigidBody(cuboid);
 
-  OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
-  openMBVspring1->setSpringRadius(0.1);
-  openMBVspring1->setCrossSectionRadius(0.01);
-  openMBVspring1->setNumberOfCoils(5);
-  openMBVspring1->setStaticColor(0.);
-  spring1->setOpenMBVCoilSpring(openMBVspring1);
+  spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
-  openMBVspring2->setSpringRadius(0.1);
-  openMBVspring2->setCrossSectionRadius(0.01);
-  openMBVspring2->setNumberOfCoils(5);
-  spring2->setOpenMBVCoilSpring(openMBVspring2);
+  spring2->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 #endif
 
 }

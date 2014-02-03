@@ -6,6 +6,7 @@
 #include "mbsim/contours/line.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
@@ -231,17 +232,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
   openMBVCrank->setLength(length_crank,width_crank,thickness_crank);
-  openMBVCrank->setStaticColor(0.5);
+  openMBVCrank->setDiffuseColor(180./360.,1,1);
   crank->setOpenMBVRigidBody(openMBVCrank);
 
   OpenMBV::Cuboid *openMBVRod = new OpenMBV::Cuboid();
   openMBVRod->setLength(length_rod,width_rod,thickness_rod);
-  openMBVRod->setStaticColor(0.5);
+  openMBVRod->setDiffuseColor(180./360.,1,1);
   rod->setOpenMBVRigidBody(openMBVRod);
 
   OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
   openMBVPiston->setLength(length_piston,width_piston,thickness_piston);
-  openMBVPiston->setStaticColor(0.8);
+  openMBVPiston->setDiffuseColor(240./360.,1,1);
   piston->setOpenMBVRigidBody(openMBVPiston);
 #endif
 
