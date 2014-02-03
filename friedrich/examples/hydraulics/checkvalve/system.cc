@@ -9,7 +9,10 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/basic_functions.h"
 #include "mbsimControl/object_sensors.h"
 
 #include "mbsim/utils/rotarymatrices.h"

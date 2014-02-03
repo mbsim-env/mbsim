@@ -8,6 +8,9 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
@@ -134,11 +137,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("R"), 
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("L"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
-      spVisu->setSpringRadius(.75*.5*dA);
-      spVisu->setCrossSectionRadius(.1*.25*dA);
-      spVisu->setNumberOfCoils(5);
-      sp->setOpenMBVCoilSpring(spVisu);
+      sp->enableOpenMBVCoilSpring(_springRadius=.75*.5*dA,_crossSectionRadius=.1*.25*dA,_numberOfCoils=5);
 #endif
     }
   }

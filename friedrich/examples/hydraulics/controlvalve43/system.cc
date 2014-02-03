@@ -3,7 +3,9 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/controlvalve43.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/basic_functions.h"
 #include "mbsimControl/function_sensor.h"
 
 using namespace std;

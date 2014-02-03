@@ -6,11 +6,13 @@
 #include "mbsimHydraulics/pressure_loss.h"
 
 #include "mbsim/rigid_body.h"
-//#include "mbsim/tree.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "fmatvec/function.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
@@ -180,11 +182,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
-      spVisu->setSpringRadius(.75*.1*h);
-      spVisu->setCrossSectionRadius(.1*.25*h);
-      spVisu->setNumberOfCoils(5);
-      sp->setOpenMBVCoilSpring(spVisu);
+      sp->enableOpenMBVCoilSpring(_springRadius=.75*.1*h,_crossSectionRadius=.1*.25*h,_numberOfCoils=5);
 #endif
     }
   }
@@ -195,11 +193,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
       dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
       dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
-  spVisu->setSpringRadius(.75*.1*h);
-  spVisu->setCrossSectionRadius(.1*.25*h);
-  spVisu->setNumberOfCoils(5);
-  sp->setOpenMBVCoilSpring(spVisu);
+  sp->enableOpenMBVCoilSpring(_springRadius=.75*.1*h,_crossSectionRadius=.1*.25*h,_numberOfCoils=5);
 #endif
 
   RigidLine * l04 = new RigidLine("l04");
@@ -227,7 +221,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  n1->enableOpenMBV(.005);
+  n1->enableOpenMBVSphere(.005);
 #endif
   n1->setInitialVolume(V0);
   n1->setpFunction(new ConstantFunction<double>(pRB));
@@ -243,7 +237,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(n2);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n2->enableOpenMBVArrows(.01);
-  n2->enableOpenMBV(.005);
+  n2->enableOpenMBVSphere(.005);
 #endif
   n2->setInitialVolume(V0);
   n2->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
@@ -255,7 +249,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(n3);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n3->enableOpenMBVArrows(.01);
-  n3->enableOpenMBV(.005);
+  n3->enableOpenMBVSphere(.005);
 #endif
   n3->setInitialVolume(V0);
   n3->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C"));
@@ -266,7 +260,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n4->setInitialVolume(V0);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n4->enableOpenMBVArrows(.01);
-  n4->enableOpenMBV(.005);
+  n4->enableOpenMBVSphere(.005);
 #endif
   n4->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
   n4->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
