@@ -10,6 +10,9 @@
 #include "mbsim/kinetic_excitation.h"
 #include "fmatvec/function.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/linear_transfer_system.h"
@@ -185,7 +188,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Anregung
   KineticExcitation *MomentAnCrank = new KineticExcitation("MomentAnCrank");
   MomentAnCrank->setMomentDirection("[0;0;1]");
-  MomentAnCrank->setMomentFunction(new ConstantFunction<VecV>("[109]"));
+  MomentAnCrank->setMomentFunction(new ConstantFunction<VecV>(109));
   MomentAnCrank->connect(Crank->getFrameForKinematics());
 
   addLink(MomentAnCrank);
@@ -356,7 +359,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Sollsignal
   FunctionSensor *VelSoll = new FunctionSensor("VelSoll");
   addLink(VelSoll);
-  VelSoll->setFunction(new ConstantFunction<VecV>("10"));
+  VelSoll->setFunction(new ConstantFunction<VecV>(10));
 
   // Signal-Addition
   SignalAddition *Regelfehler = new SignalAddition("Regelfehler");
@@ -401,12 +404,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   OpenMBV::Cuboid *openMBVCrank=new OpenMBV::Cuboid();
   openMBVCrank->setLength(Laenge_Crank,Breite_Crank-0.03,Dicke_Crank-0.05);
   openMBVCrank->setInitialTranslation(0, 0, 0.05);
-  openMBVCrank->setStaticColor(0.5);
+  openMBVCrank->setDiffuseColor(0.5,1,1);
   Crank->setOpenMBVRigidBody(openMBVCrank);
 
   OpenMBV::Cuboid *openMBVRod=new OpenMBV::Cuboid();
   openMBVRod->setLength(Laenge_Rod,Breite_Rod-0.04,Dicke_Rod-0.05);
-  openMBVRod->setStaticColor(0.5);
+  openMBVRod->setDiffuseColor(0.5,1,1);
   Rod->setOpenMBVRigidBody(openMBVRod);
 
   OpenMBV::Frustum *openMBVCylinder=new OpenMBV::Frustum();
@@ -414,7 +417,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVCylinder->setTopRadius(0.045);
   openMBVCylinder->setHeight(0.054);
   openMBVCylinder->setInitialTranslation(0, 0, 0.077);
-  openMBVCylinder->setStaticColor(0.5);
+  openMBVCylinder->setDiffuseColor(0.5,1,1);
   Lager->setOpenMBVRigidBody(openMBVCylinder);
 
   OpenMBV::Frustum *openMBVCylinder2=new OpenMBV::Frustum();
@@ -422,23 +425,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVCylinder2->setTopRadius(0.045);
   openMBVCylinder2->setHeight(0.105);
   openMBVCylinder2->setInitialTranslation(0, 0, 0.076);
-  openMBVCylinder2->setStaticColor(0.45);
+  openMBVCylinder2->setDiffuseColor(0.45,1,1);
   Gelenk->setOpenMBVRigidBody(openMBVCylinder2);
 
   OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
   openMBVPiston->setLength(Laenge_Piston,Laenge_Piston,Laenge_Piston);
-  openMBVPiston->setStaticColor(0.8);
+  openMBVPiston->setDiffuseColor(0.8,1,1);
   Piston->setOpenMBVRigidBody(openMBVPiston);
 
   OpenMBV::Cuboid *openMBVBlock=new OpenMBV::Cuboid();
   openMBVBlock->setLength(Laenge_Block,Breite_Block,Dicke_Block);
   Block->setOpenMBVRigidBody(openMBVBlock);
 
-  OpenMBV::CoilSpring *openMBVspring1=new OpenMBV::CoilSpring;
-  openMBVspring1->setSpringRadius(0.1);
-  openMBVspring1->setCrossSectionRadius(0.01);
-  openMBVspring1->setNumberOfCoils(5);
-  spring1->setOpenMBVCoilSpring(openMBVspring1);
+  spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 #endif
 
 }

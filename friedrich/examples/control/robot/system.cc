@@ -9,7 +9,8 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
 #include "tools/file_to_fmatvecstring.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
