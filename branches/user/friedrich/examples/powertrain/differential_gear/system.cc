@@ -5,6 +5,8 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
 #include "mbsimPowertrain/differential_gear.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
@@ -66,26 +68,26 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV>(VecV(1,INIT,1.1/100.)));
+  ke->setMomentFunction(new ConstantFunction<VecV>(1.1/100.));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("LeftOutputShaft"))->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV>(VecV(1,INIT,0.99/100.)));
+  ke->setMomentFunction(new ConstantFunction<VecV>(0.99/100.));
 
   ke = new KineticExcitation("MAbR");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("RightOutputShaft"))->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV>(VecV(1,INIT,1/100.)));
+  ke->setMomentFunction(new ConstantFunction<VecV>(1/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;
   cylinder->setTopRadius(R1);
   cylinder->setBaseRadius(R1);
   cylinder->setHeight(l);
-  cylinder->setStaticColor(0.1);
+  cylinder->setDiffuseColor(0.1,1,1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 #endif
