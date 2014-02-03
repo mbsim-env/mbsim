@@ -21,6 +21,8 @@
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
+#include <mbsim/functions/kinetic_functions.h>
+#include "mbsim/functions/kinematic_functions.h"
 
 using namespace std;
 using namespace MBSim;
@@ -64,13 +66,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   FixedRelativeFrame* ReferenceFrame = new FixedRelativeFrame(getName()+"RefFrame");
   ReferenceFrame->setRelativePosition(ReferenceFrameShift);
   this->addFrame(ReferenceFrame);
-
-  /*Print arrows for contacts*/
-  OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
-  normalArrow->setScaleLength(0.00001);
-  OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
-  frArrow->setScaleLength(0.001);
-
 
   /*Parameters for the balls*/
   double space = 0.03;  //defines the space between two balls
@@ -203,8 +198,8 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
   //fancy stuff
   contact->enableOpenMBVContactPoints(1.,false);
-  contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVTangentialForceArrow(frArrow);
+  contact->enableOpenMBVNormalForce(_scaleLength=0.00001);
+  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
 
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {

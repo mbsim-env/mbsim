@@ -8,6 +8,8 @@
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #include "openmbvcppinterface/ivbody.h"
 #include "openmbvcppinterface/cube.h"

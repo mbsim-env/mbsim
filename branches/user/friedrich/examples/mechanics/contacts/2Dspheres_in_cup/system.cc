@@ -6,6 +6,8 @@
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>

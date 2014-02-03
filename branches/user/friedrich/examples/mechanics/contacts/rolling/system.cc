@@ -9,6 +9,8 @@
 #include "mbsim/contact.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -310,11 +312,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body4->setOpenMBVRigidBody(cuboid);
   body4->getFrame("C")->enableOpenMBV(d);
 
-  OpenMBV::CoilSpring* openMBVspring=new OpenMBV::CoilSpring;
-  openMBVspring->setSpringRadius(d/5.);
-  openMBVspring->setCrossSectionRadius(d/50.);
-  openMBVspring->setNumberOfCoils(5);
-  spring->setOpenMBVCoilSpring(openMBVspring);
+  spring->enableOpenMBVCoilSpring(_springRadius=d/5.,_crossSectionRadius=d/50.,_numberOfCoils=5);
 
   #endif
 }

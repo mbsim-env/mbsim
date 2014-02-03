@@ -6,11 +6,9 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-
+#include "mbsim/functions/kinematic_functions.h"
 #include <mbsim/utils/colors.h>
-
 #include <fmatvec/fmatvec.h>
-
 #include <mbsim/frame.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -101,9 +99,8 @@ System::System(const string &projectName) :
     contact->setPlotFeature(openMBV, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     contact->enableOpenMBVContactPoints();
-    OpenMBV::Arrow* arrow = new OpenMBV::Arrow();
-    contact->setOpenMBVNormalForceArrow(arrow);
-    contact->setOpenMBVTangentialForceArrow(arrow);
+    contact->enableOpenMBVNormalForce();
+    contact->enableOpenMBVTangentialForce();
 #endif
 
     //Set contact law

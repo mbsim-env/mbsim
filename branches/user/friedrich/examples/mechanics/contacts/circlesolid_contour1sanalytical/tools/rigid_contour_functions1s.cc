@@ -21,7 +21,8 @@
 
 
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "rigid_contour_functions1s.h"
 

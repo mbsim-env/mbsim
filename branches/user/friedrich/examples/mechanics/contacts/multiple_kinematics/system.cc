@@ -8,6 +8,8 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contact_kinematics/circle_frustum.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -78,17 +80,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   Contact *contact = new Contact("Contact");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  /*Print arrows for contacts*/
-  OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
-  normalArrow->setScaleLength(0.001);
-  OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
-  frArrow->setScaleLength(0.001);
-  frArrow->setStaticColor(0.75);
-
   //fancy stuff
   contact->enableOpenMBVContactPoints(0.01);
-  contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVTangentialForceArrow(frArrow);
+  contact->enableOpenMBVNormalForce(_scaleLength=0.001);
+  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
 #endif
 
   double stiffness = 1e5;

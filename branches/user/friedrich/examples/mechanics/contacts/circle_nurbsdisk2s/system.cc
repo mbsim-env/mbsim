@@ -10,6 +10,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -164,12 +165,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // bearing
   Joint *joint = new Joint("Clamping");
   joint->setForceDirection(Mat("[0;0;1]"));
-  //joint->setMomentDirection(Mat("[0;0;1]")); // TODO
   joint->connect(nurbsdisk->getFrame("COG"),this->getFrame("I"));
   joint->setForceLaw(new BilateralConstraint());
-  //joint->setMomentLaw(new BilateralConstraint()); // TODO
-  joint->setImpactForceLaw(new BilateralImpact());
-  //joint->setImpactMomentLaw(new BilateralImpact()); // TODO
   this->addLink(joint);
 
   /* contact */

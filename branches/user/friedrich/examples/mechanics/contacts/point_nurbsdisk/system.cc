@@ -8,6 +8,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
@@ -63,7 +64,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->setForceDirection(Mat("[0;0;1]"));
   joint->connect(disk->getFrame("COG"),this->getFrame("I"));
   joint->setForceLaw(new BilateralConstraint());
-  joint->setImpactForceLaw(new BilateralImpact());
   this->addLink(joint);
 
   /* ball */ 

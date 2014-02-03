@@ -1,5 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
@@ -21,12 +22,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   roomBody->setInertiaTensor(SymMat3(EYE));
   roomBody->setFrameOfReference(getFrameI());
   Room* room = new Room("Raum");
-  room->setLength(.3); //X
-  room->setDepth(.2); //Y
-  room->setHeight(0.1); //Z
+  room->setXLength(.3); //X
+  room->setYLength(.2); //Y
+  room->setZLength(0.1); //Z
   room->setFrameOfReference(I);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  room->enableOpenMBV(true, 2);
+  room->enableOpenMBV(_transparency=0.5);
 #endif
   roomBody->addContour(room);
 
