@@ -396,8 +396,10 @@ namespace MBSim {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
               if(openMBVFrame)
                 jter->setOpenMBVContactPoints(new OpenMBV::Frame(*openMBVFrame));
-              jter->setOpenMBVNormalForce(new OpenMBV::Arrow(*contactArrow));
-              jter->setOpenMBVTangentialForce(new OpenMBV::Arrow(*frictionArrow));
+              if(contactArrow)
+                jter->setOpenMBVNormalForce(new OpenMBV::Arrow(*contactArrow));
+              if(frictionArrow)
+                jter->setOpenMBVTangentialForce(new OpenMBV::Arrow(*frictionArrow));
             }
           }
 #endif
