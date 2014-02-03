@@ -1,7 +1,7 @@
 #include <config.h>
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/utils/kinematic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/constraint.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -172,7 +172,7 @@ namespace MBSimPowertrain {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cube *cube=new OpenMBV::Cube;
     cube->setLength(0.01);
-    cube->setStaticColor(0.1);
+    cube->setDiffuseColor(0.1,1,1);
     housing->setOpenMBVRigidBody(cube);
 
     OpenMBV::Frustum *cylinder;
@@ -181,7 +181,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(data.radiusInputShaft);
     cylinder->setBaseRadius(data.radiusInputShaft);
     cylinder->setHeight(data.lengthInputShaft);
-    cylinder->setStaticColor(0.2);
+    cylinder->setDiffuseColor(0.2,1,1);
     shaft2->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthInputShaft/2);
 
@@ -189,7 +189,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(data.radiusPlanet);
     cylinder->setBaseRadius(data.radiusPlanet);
     cylinder->setHeight(data.lengthPlanet);
-    cylinder->setStaticColor(0.88);
+    cylinder->setDiffuseColor(0.88,1,1);
     planet->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthPlanet/2);
 
@@ -197,7 +197,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(data.radiusLeftOutputShaft);
     cylinder->setBaseRadius(data.radiusLeftOutputShaft);
     cylinder->setHeight(data.lengthLeftOutputShaft);
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(0.5,1,1);
     shaft4->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthLeftOutputShaft/2);
 
@@ -205,7 +205,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(data.radiusRightOutputShaft);
     cylinder->setBaseRadius(data.radiusRightOutputShaft);
     cylinder->setHeight(data.lengthRightOutputShaft);
-    cylinder->setStaticColor(0.7);
+    cylinder->setDiffuseColor(0.7,1,1);
     shaft5->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthRightOutputShaft/2);
 #endif
