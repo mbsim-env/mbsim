@@ -2,7 +2,6 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsimControl/actuator.h"
-#include "mbsim/utils/function_library.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/plane.h"
@@ -15,6 +14,8 @@
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsimPowertrain/cardan_shaft.h"
 #include "mbsim/kinetic_excitation.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
 #include "openmbvcppinterface/frustum.h"
@@ -497,7 +498,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   vl->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -506,7 +507,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   vr->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -515,7 +516,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   hl->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -524,7 +525,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   hr->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -533,7 +534,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setTopRadius(r1);
   cylinder->setBaseRadius(r1);
   cylinder->setHeight(l);
-  cylinder->setStaticColor(0.1);
+  cylinder->setDiffuseColor(0.1,1,1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 #endif
