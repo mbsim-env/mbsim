@@ -23,6 +23,11 @@
 #include "mbsim/link_mechanics.h"
 #include "mbsim/frame.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+#endif
+
 namespace MBSimControl {
   
   class Signal;
@@ -77,18 +82,20 @@ namespace MBSimControl {
       void connect(MBSim::Frame *frame1, MBSim::Frame *frame2);
       
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize a force arrow acting on the frame */
-      void setOpenMBVActuatorForceArrow(OpenMBV::Arrow *arrow) {
+      /** \brief Visualize a force arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        MBSim::OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 
-      /** \brief Visualize a moment arrow acting on the frame */
-      void setOpenMBVActuatorMomentArrow(OpenMBV::Arrow *arrow) {
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        MBSim::OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
 #endif
 

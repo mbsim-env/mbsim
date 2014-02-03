@@ -1303,25 +1303,21 @@
               <xs:attribute name="ref2" type="mbsim:FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openMBVActuatorForceArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn angegeben, wird die Zwangskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
-          <xs:element name="openMBVActuatorMomentArrow" minOccurs="0">
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn angegeben, wird das Zwangsmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="ombv:Arrow"/>
-              </xs:sequence>
-            </xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence>
       </xs:extension>
