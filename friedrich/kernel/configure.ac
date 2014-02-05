@@ -90,6 +90,12 @@ AC_TYPE_SIZE_T
 dnl Check for optional boost type_trains and static_assert
 AC_CHECK_HEADERS([boost/type_traits.hpp])
 
+dnl Include boost system lib
+AC_ARG_WITH([boost-system-lib],
+  [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
+  [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
+AC_SUBST([BOOST_SYSTEM_LIB])
+
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
 AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([
