@@ -172,7 +172,6 @@ int main(int argc, char *argv[]) {
     char *env;
     MBXMLUTILSBIN=MBXMLUTILSBIN_DEFAULT; // default: from build configuration
     if(!bfs::exists(MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT))) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()/"bin"; // use rel path if build configuration dose not work
-    if(!bfs::exists(MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT))) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()/"bin"; // use rel path if build configuration dose not work
     if((env=getenv("MBXMLUTILSBINDIR"))) MBXMLUTILSBIN=env; // overwrite with envvar if exist
     MBXMLUTILSSCHEMA=MBXMLUTILSSCHEMA_DEFAULT; // default: from build configuration
     if(!bfs::exists(MBXMLUTILSSCHEMA/"http___mbsim_berlios_de_MBSim"/"mbsim.xsd")) MBXMLUTILSSCHEMA=MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"schema"; // use rel path if build configuration dose not work
