@@ -7,6 +7,8 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/circle.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"

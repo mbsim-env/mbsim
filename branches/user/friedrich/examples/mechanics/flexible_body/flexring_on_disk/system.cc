@@ -9,6 +9,7 @@
 #include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -167,19 +168,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
     //contact->setPlotFeature(linkLagrangeParameters, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
-    //aC_N->setEnable(false);
-    //aC_N->setArrowHead (float diameter, float length);
-    aC_N->setArrowHead(1, 3);
-    aC_N->setDiameter (0.5);
-    aC_N->setScaleLength(0.01);
-    OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-    //aC_T->setEnable(false);
-    aC_T->setArrowHead(1, 3);
-    aC_T->setDiameter (0.5);
-    aC_T->setScaleLength(0.01);
-    contact->setOpenMBVNormalForceArrow(aC_N);
-    contact->setOpenMBVTangentialForceArrow(aC_T);
+    contact->enableOpenMBVNormalForce(_scaleLength=0.01);
+    contact->enableOpenMBVTangentialForce(_scaleLength=0.01);
     contact->enableOpenMBVContactPoints(0.02,true);
 #endif
     this->addLink(contact);

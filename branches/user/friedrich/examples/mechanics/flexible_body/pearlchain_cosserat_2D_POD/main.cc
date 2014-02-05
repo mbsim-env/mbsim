@@ -39,7 +39,6 @@ int main (int argc, char* argv[]) {
     timer.restart();
     integrator->integrate(*sys);
     double calctime = timer.elapsed();
-    sys->closePlot();
 
     sys->writez("z0.h5");
 
@@ -67,7 +66,6 @@ int main (int argc, char* argv[]) {
     timer.restart();
     integrator->integrate(*sys);
     double calctime = timer.elapsed();
-    sys->closePlot();
 
     cout << "Finished reduced Simulation after calculation time [s] : " << calctime << endl;
   }
