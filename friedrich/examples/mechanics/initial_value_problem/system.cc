@@ -6,8 +6,8 @@
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/utils/rotarymatrices.h"
-
 #include "tools/rigid_contour_functions1s.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #include "mbsim/contact_kinematics/circlesolid_contour1s.h"
 #include "mbsim/utils/nonlinear_algebra.h"

@@ -23,7 +23,6 @@ int main (int argc, char* argv[]) {
   timer.restart();
   integrator.integrate(*sys);
   double calctime = timer.elapsed();
-  sys->closePlot();
 
   cout << "finished after calculation time [s] : " << calctime << endl;
 

@@ -7,6 +7,8 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -104,20 +106,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
-  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
-  //a_n->setHeadDiameter(tP*0.05);
-  //a_n->setHeadLength(tP*0.07);
-  //a_n->setDiameter(tP*0.02);
-  //a_n->setScaleLength(tP*0.1);
-  //a_n->setEnable(false);
-  contact->setOpenMBVNormalForceArrow(a_n);
-  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
-  //a_t->setHeadDiameter(tP*0.05);
-  //a_t->setHeadLength(tP*0.07);
-  //a_t->setDiameter(tP*0.02);
-  //a_t->setScaleLength(tP*0.1);
-  //a_t->setEnable(false);
-  contact->setOpenMBVTangentialForceArrow(a_t);
+  contact->enableOpenMBVNormalForce();
+  contact->enableOpenMBVTangentialForce();
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);

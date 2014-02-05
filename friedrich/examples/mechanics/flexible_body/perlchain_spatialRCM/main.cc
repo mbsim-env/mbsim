@@ -26,8 +26,6 @@ int main(int argc, char* argv[]) {
 
   cout << "CPU-Time = " << Timer.stop() << endl;
 
-  sys->closePlot();
-
   cout << "finished"<<endl;
 
   delete sys;
