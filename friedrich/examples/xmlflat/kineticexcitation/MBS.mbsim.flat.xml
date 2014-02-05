@@ -73,24 +73,12 @@
         </ConstantFunction>
       </momentFunction>
       <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
-      <openMBVForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.05</ombv:diameter>
-          <ombv:headDiameter>0.1</ombv:headDiameter>
-          <ombv:headLength>0.2</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.05</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVForceArrow>
-      <openMBVMomentArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.05</ombv:diameter>
-          <ombv:headDiameter>0.1</ombv:headDiameter>
-          <ombv:headLength>0.2</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.05</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVMomentArrow>
+      <enableOpenMBVForce>
+        <scaleLength>0.05</scaleLength>
+      </enableOpenMBVForce>
+      <enableOpenMBVMoment>
+        <scaleLength>0.05</scaleLength>
+      </enableOpenMBVMoment>
     </KineticExcitation>
   </links>
   <environments>
