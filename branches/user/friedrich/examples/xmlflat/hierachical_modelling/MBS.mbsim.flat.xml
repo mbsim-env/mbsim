@@ -96,14 +96,11 @@
                 </LinearSpringDamperForce>
               </forceFunction>
               <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
-              <openMBVCoilSpring>
-                <ombv:CoilSpring name="dummy">
-                  <ombv:numberOfCoils>5</ombv:numberOfCoils>
-                  <ombv:springRadius>0.1</ombv:springRadius>
-                  <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-                  <ombv:scaleFactor>1</ombv:scaleFactor>
-                </ombv:CoilSpring>
-              </openMBVCoilSpring>
+              <enableOpenMBVCoilSpring>
+                <numberOfCoils>5</numberOfCoils>
+                <springRadius>0.1</springRadius>
+                <crossSectionRadius>0.01</crossSectionRadius>
+              </enableOpenMBVCoilSpring>
             </SpringDamper>
             <SpringDamper name="Feder2">
               <forceFunction>
@@ -114,14 +111,11 @@
                 </LinearSpringDamperForce>
               </forceFunction>
               <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
-              <openMBVCoilSpring>
-                <ombv:CoilSpring name="dummy">
-                  <ombv:numberOfCoils>5</ombv:numberOfCoils>
-                  <ombv:springRadius>0.1</ombv:springRadius>
-                  <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-                  <ombv:scaleFactor>1</ombv:scaleFactor>
-                </ombv:CoilSpring>
-              </openMBVCoilSpring>
+              <enableOpenMBVCoilSpring>
+                <numberOfCoils>5</numberOfCoils>
+                <springRadius>0.1</springRadius>
+                <crossSectionRadius>0.01</crossSectionRadius>
+              </enableOpenMBVCoilSpring>
             </SpringDamper>
           </links>
         </Group>
@@ -253,14 +247,11 @@
                 </LinearSpringDamperForce>
               </forceFunction>
               <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
-              <openMBVCoilSpring>
-                <ombv:CoilSpring name="dummy">
-                  <ombv:numberOfCoils>5</ombv:numberOfCoils>
-                  <ombv:springRadius>0.1</ombv:springRadius>
-                  <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-                  <ombv:scaleFactor>1</ombv:scaleFactor>
-                </ombv:CoilSpring>
-              </openMBVCoilSpring>
+              <enableOpenMBVCoilSpring>
+                <numberOfCoils>5</numberOfCoils>
+                <springRadius>0.1</springRadius>
+                <crossSectionRadius>0.01</crossSectionRadius>
+              </enableOpenMBVCoilSpring>
             </SpringDamper>
             <SpringDamper name="Feder2">
               <forceFunction>
@@ -271,14 +262,11 @@
                 </LinearSpringDamperForce>
               </forceFunction>
               <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
-              <openMBVCoilSpring>
-                <ombv:CoilSpring name="dummy">
-                  <ombv:numberOfCoils>5</ombv:numberOfCoils>
-                  <ombv:springRadius>0.1</ombv:springRadius>
-                  <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-                  <ombv:scaleFactor>1</ombv:scaleFactor>
-                </ombv:CoilSpring>
-              </openMBVCoilSpring>
+              <enableOpenMBVCoilSpring>
+                <numberOfCoils>5</numberOfCoils>
+                <springRadius>0.1</springRadius>
+                <crossSectionRadius>0.01</crossSectionRadius>
+              </enableOpenMBVCoilSpring>
             </SpringDamper>
           </links>
         </Group>

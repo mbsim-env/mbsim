@@ -45,7 +45,9 @@
         <Sphere name="Sphere1">
           <frameOfReference ref="../Frame[S1]"/>
           <radius>1.5e-2</radius>
-          <enableOpenMBV/>
+          <enableOpenMBV>
+            <transparency>0</transparency>
+          </enableOpenMBV>
         </Sphere>
         <Sphere name="Sphere2">
           <frameOfReference ref="../Frame[S2]"/>
@@ -80,25 +82,15 @@
         </SpatialCoulombImpact>
       </tangentialImpactLaw>
       <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
-      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
-      <openMBVNormalForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.001</ombv:diameter>
-          <ombv:headDiameter>0.002</ombv:headDiameter>
-          <ombv:headLength>0.004</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.4</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVNormalForceArrow>
-      <openMBVTangentialForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.001</ombv:diameter>
-          <ombv:headDiameter>0.002</ombv:headDiameter>
-          <ombv:headLength>0.004</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.4</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVTangentialForceArrow>
+      <enableOpenMBVContactPoints>
+        <size>0.0025</size>
+      </enableOpenMBVContactPoints>
+      <enableOpenMBVNormalForce>
+        <scaleLength>0.4</scaleLength>
+      </enableOpenMBVNormalForce>
+      <enableOpenMBVTangentialForce>
+        <scaleLength>0.4</scaleLength>
+      </enableOpenMBVTangentialForce>
     </Contact>
     <Contact name="Contact2">
       <normalForceLaw>
@@ -120,25 +112,15 @@
         </SpatialCoulombImpact>
       </tangentialImpactLaw>
       <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
-      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
-      <openMBVNormalForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.001</ombv:diameter>
-          <ombv:headDiameter>0.002</ombv:headDiameter>
-          <ombv:headLength>0.004</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.4</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVNormalForceArrow>
-      <openMBVTangentialForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.001</ombv:diameter>
-          <ombv:headDiameter>0.002</ombv:headDiameter>
-          <ombv:headLength>0.004</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.4</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVTangentialForceArrow>
+      <enableOpenMBVContactPoints>
+        <size>0.0025</size>
+      </enableOpenMBVContactPoints>
+      <enableOpenMBVNormalForce>
+        <scaleLength>0.4</scaleLength>
+      </enableOpenMBVNormalForce>
+      <enableOpenMBVTangentialForce>
+        <scaleLength>0.4</scaleLength>
+      </enableOpenMBVTangentialForce>
     </Contact>
   </links>
   <environments>

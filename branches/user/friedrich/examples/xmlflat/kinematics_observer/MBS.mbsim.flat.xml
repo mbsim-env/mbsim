@@ -102,15 +102,9 @@
         <BilateralConstraint/>
       </forceLaw>
       <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[PunktO]"/>
-      <openMBVForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.01</ombv:diameter>
-          <ombv:headDiameter>0.02</ombv:headDiameter>
-          <ombv:headLength>0.04</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.02</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVForceArrow>
+      <enableOpenMBVForce>
+        <scaleLength>0.02</scaleLength>
+      </enableOpenMBVForce>
     </Joint>
     <Joint name="Gelenk2">
       <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
@@ -118,15 +112,9 @@
         <BilateralConstraint/>
       </forceLaw>
       <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
-      <openMBVForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.01</ombv:diameter>
-          <ombv:headDiameter>0.02</ombv:headDiameter>
-          <ombv:headLength>0.04</ombv:headLength>
-          <ombv:type>"toHead"</ombv:type>
-          <ombv:scaleLength>0.02</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVForceArrow>
+      <enableOpenMBVForce>
+        <scaleLength>0.02</scaleLength>
+      </enableOpenMBVForce>
     </Joint>
   </links>
   <observers>
