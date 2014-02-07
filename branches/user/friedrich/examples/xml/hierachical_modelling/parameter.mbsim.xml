@@ -1,7 +1,7 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <vectorParameter name="rHG">[0;2]</vectorParameter>
   <vectorParameter name="alphaHG">
-    <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <xmlVector>
       <ele>0</ele>
       <ele>pi/4</ele>
     </xmlVector>
@@ -18,7 +18,7 @@
   <scalarParameter name="l01">0.5</scalarParameter>
   <scalarParameter name="l02">l01</scalarParameter>
   <matrixParameter name="identHalf">
-    <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <xmlMatrix>
       <row><ele>0.5</ele><ele>0</ele><ele>0</ele></row>
       <row><ele>0</ele><ele>a=1;ret=a/2</ele><ele>0</ele></row>
       <row><ele>0</ele><ele>0</ele><ele>m2/4</ele></row>

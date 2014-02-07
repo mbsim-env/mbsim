@@ -7,7 +7,7 @@
   <groups>
     <embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" href="./CrankMechanism.xml" count="1" counterName="n">
       <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="fSize">.01</scalarParameter>
           <scalarParameter name="carrier_Mass">8.5</scalarParameter>
           <scalarParameter name="carrier_Inertia">5e-4</scalarParameter>
