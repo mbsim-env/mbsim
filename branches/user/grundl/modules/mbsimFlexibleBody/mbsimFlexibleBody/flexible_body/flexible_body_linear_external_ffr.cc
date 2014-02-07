@@ -37,7 +37,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
   
   FlexibleBodyLinearExternalFFR::FlexibleBodyLinearExternalFFR(const string &name, const bool &DEBUG_) :
-      FlexibleBodyContinuum<Vec>(name), numOfElements(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta(INIT, 0.0), I_ThetaF(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_) {
+      FlexibleBodyContinuum<Vec>(name), numOfElements(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_) {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++)
         S_kl_bar[i][j] = SqrMat();
@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
 //        visNodelist.push_back(227 + i);  // add frames to nodes ( N228 ~ N236) in abaqus.
 //      }
       for (int i = 0; i < numOfElements; i++) {
-        visNodelist.push_back(i);  // add frames to nodes ( N228 ~ N236) in abaqus.
+        visNodelist.push_back(i);  // add frames to all nodes
       }
 
       for (size_t index = 0; index < visNodelist.size(); index++) {
@@ -121,7 +121,7 @@ namespace MBSimFlexibleBody {
     if (millimeterUnits)
       power = 1000;
 
-    ifstream mijInfile((inFilePath + "mij.dat").c_str());
+    ifstream mijInfile((inFilePath + "/mij.dat").c_str());
     if (!mijInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "mij.dat" << endl;
       throw 1;
@@ -130,7 +130,7 @@ namespace MBSimFlexibleBody {
       mij.push_back(a * power);
     
     // read u0
-    ifstream u0Infile((inFilePath + "u0.dat").c_str());
+    ifstream u0Infile((inFilePath + "/u0.dat").c_str());
     if (!u0Infile.is_open()) {
       cout << "Can not open file " << inFilePath << "u0.dat" << endl;
       throw 1;
@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
     numOfElements = u0.size();
     
     // get the number of mode shapes(nf) used to describe the deformation
-    ifstream phiInfile((inFilePath + "modeShapeMatrix.dat").c_str());
+    ifstream phiInfile((inFilePath + "/modeShapeMatrix.dat").c_str());
     if (!phiInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
       throw 1;
@@ -165,7 +165,7 @@ namespace MBSimFlexibleBody {
     
     // read mode shape matrix
     phi.resize(3 * numOfElements, nf, INIT, 0.0);
-    phiInfile.open((inFilePath + "modeShapeMatrix.dat").c_str());
+    phiInfile.open((inFilePath + "/modeShapeMatrix.dat").c_str());
     if (!phiInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
       throw 1;
@@ -175,12 +175,12 @@ namespace MBSimFlexibleBody {
       istringstream sin(s);  // TODO: use sin.clear() to avoid creating sin every time
       int i = 0;
       for (double temp; sin >> temp; i++)
-        phi(row, i) = temp / power;
+        phi(row, i) = temp;
     }
 
     // read stiffness matrix
     SymMat KFull(3 * numOfElements, INIT, 0.0);
-    ifstream KInfile((inFilePath + "stiffnessMatrix.dat").c_str());
+    ifstream KInfile((inFilePath + "/stiffnessMatrix.dat").c_str());
     if (!KInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "stiffnessMatrix.dat" << endl;
       throw 1;
@@ -202,19 +202,24 @@ namespace MBSimFlexibleBody {
       for (int j = i; j < 6 + nf; j++)
         K(i, j) = Kff(i - 6, j - 6);
 
+    fistIterFlag = true;
+
     if (DEBUG) {
 
       cout.precision(6);
       cout << "numOfElements = " << numOfElements << endl;
       cout << "nf = " << nf << endl;
       
-//      cout << "phi" << phi << endl;
+      cout << "phi" << phi << endl;
+//      phi >> "phi.out";
+
+//      cout << "KFull" << KFull << endl;
       cout << "Kff" << Kff << endl;
       cout << "K" << K << endl;
 
-      cout << "mij 0" << mij[0] << endl;
-      cout << "mij 1" << mij[1] << endl;
-      cout << "mij 2" << mij[2] << endl;
+      cout << "mij 0: " << mij[0] << endl;
+      cout << "mij 1: " << mij[1] << endl;
+      cout << "mij 2: " << mij[2] << endl;
       cout << "mij last one" << mij[numOfElements - 1] << endl;
 
       cout << "u0[0] = " << u0.at(0) << endl;
@@ -260,13 +265,13 @@ namespace MBSimFlexibleBody {
       for (int j = i; j < nf + 6; j++)
         M[k](i, j) = M_FF(i - 6, j - 6);
     
-    if (DEBUG) {
+    if (DEBUG && fistIterFlag) {
       cout << "M init " << M[k] << endl;
     }
   }
   
   void FlexibleBodyLinearExternalFFR::updateM(double t, int k) {
-    // update M_ThetaR, M_ThetaTheta, M_FR, M_FTheta;  M_RR and M_FF is constant
+    // update M_RTheta, M_ThetaTheta, M_RF, M_ThetaF;  M_RR and M_FF is constant
     
     const fmatvec::Vec& qf = q(6, 5 + nf);
     
@@ -283,27 +288,27 @@ namespace MBSimFlexibleBody {
     double u31 = I_kl(2, 0) + (I_kl_bar[2][0] + I_kl_bar[0][2]) * qf + qf.T() * S_kl_bar[2][0] * qf;
     double u32 = I_kl(2, 1) + (I_kl_bar[2][1] + I_kl_bar[1][2]) * qf + qf.T() * S_kl_bar[2][1] * qf;
     
-    I_ThetaTheta(0, 0) = u22 + u33;
-    I_ThetaTheta(0, 1) = -u21;
-    I_ThetaTheta(0, 2) = -u31;
-    I_ThetaTheta(1, 1) = u11 + u33;
-    I_ThetaTheta(1, 2) = -u32;
-    I_ThetaTheta(2, 2) = u11 + u22;
+    I_ThetaTheta_bar(0, 0) = u22 + u33;
+    I_ThetaTheta_bar(0, 1) = -u21;
+    I_ThetaTheta_bar(0, 2) = -u31;
+    I_ThetaTheta_bar(1, 1) = u11 + u33;
+    I_ThetaTheta_bar(1, 2) = -u32;
+    I_ThetaTheta_bar(2, 2) = u11 + u22;
     
-    fmatvec::SymMat3 M_ThetaTheta(G_bar.T() * I_ThetaTheta * G_bar);
+    fmatvec::SymMat3 M_ThetaTheta(G_bar.T() * I_ThetaTheta_bar * G_bar);
     
     // M_RF: 3*nf
     fmatvec::Mat M_RF = Mat(3, nf, INIT, 0.);
     M_RF = A * S_bar;
     
     // M_ThetaF: 3*nf
-    I_ThetaF.resize(3, nf, INIT, 0.);
+    I_ThetaF_bar.resize(3, nf, INIT, 0.);
     
-    I_ThetaF(Index(0, 0), Index(0, nf - 1)) = qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]);
-    I_ThetaF(Index(1, 1), Index(0, nf - 1)) = qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]);
-    I_ThetaF(Index(2, 2), Index(0, nf - 1)) = qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]);
+    I_ThetaF_bar(Index(0, 0), Index(0, nf - 1)) = qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]);
+    I_ThetaF_bar(Index(1, 1), Index(0, nf - 1)) = qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]);
+    I_ThetaF_bar(Index(2, 2), Index(0, nf - 1)) = qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]);
     
-    fmatvec::Mat M_ThetaF(G_bar.T() * I_ThetaF);
+    fmatvec::Mat M_ThetaF(G_bar.T() * I_ThetaF_bar);
     
     // update M by the submatrix M_RTheta, M_ThetaTheta, M_RF, M_ThetaF
     M[k](Index(0, 2), Index(3, 5)) = M_RTheta;
@@ -318,48 +323,78 @@ namespace MBSimFlexibleBody {
     
     if (DEBUG) {
 
-      cout << "qf " << qf << endl;
+      cout << "q " << q << endl;
+      cout << "u " << u << endl;
       cout << "I_kl(1,1) " << I_kl(0, 0) << endl;
       cout << "I_kl_bar(1,1) " << I_kl_bar[0][0] << endl;
       cout << "S_kl_bar(1,1) " << S_kl_bar[0][0] << endl;
       cout << "M_RTheta " << M_RTheta << endl;
-      cout << "I_ThetaTheta " << I_ThetaTheta << endl;
+      cout << "I_ThetaTheta_bar " << I_ThetaTheta_bar << endl;
       cout << "M_ThetaTheta " << M_ThetaTheta << endl;
       cout << "M_RF " << M_RF << endl;
+      cout << "I_ThetaF_bar " << I_ThetaF_bar << endl;
       cout << "M_ThetaF " << M_ThetaF << endl;
 
+      cout << "S1" << S_kl_bar[1][2] - S_kl_bar[2][1] << endl;
+      cout << "S2" << S_kl_bar[2][0] - S_kl_bar[0][2] << endl;
+      cout << "S3" << S_kl_bar[0][1] - S_kl_bar[1][0] << endl;
+      cout << "I1 " << I_kl_bar[1][2] - I_kl_bar[2][1] << endl;
+      cout << "I2 " << I_kl_bar[2][0] - I_kl_bar[0][2] << endl;
+      cout << "I3 " << I_kl_bar[0][1] - I_kl_bar[1][0] << endl;
+      cout << "qf " << qf << endl;
     }
 
   }
   
   void FlexibleBodyLinearExternalFFR::initQv() {
     // initQv has to be called after initM
-    Qv.resize(nf + 6, INIT, 0.0);
+    Qv.resize(nf + 6, NONINIT);
     updateQv();
-    
-    if (DEBUG) {
-      cout << "Qv init" << Qv << endl;
-    }
   }
   
   void FlexibleBodyLinearExternalFFR::updateQv() {
     
-    // TODO: updateQv has to be called after updateM in each iteration
     fmatvec::Vec3 uTheta = u(3, 5);
     fmatvec::Vec uf = u(6, 5 + nf);
     fmatvec::Vec qf = q(6, 5 + nf);
     fmatvec::SqrMat omega_bar_skew(tilde(G_bar * uTheta));
     
+    Qv.init(0.); // Qv has to be init every time step as for calculating Qv(6, nf + 5), the operator "+=" is used.
+
     Qv(0, 2) = (-A) * (omega_bar_skew * omega_bar_skew * (I_1 + S_bar * qf) + 2. * omega_bar_skew * S_bar * uf);
-    Qv(3, 5) = -2. * G_bar_Dot.T() * I_ThetaTheta * (G_bar * uTheta) - 2. * G_bar_Dot.T() * I_ThetaF * uf - G_bar.T() * I_ThetaTheta * (G_bar * uTheta);
+    Qv(3, 5) = -2. * G_bar_Dot.T() * I_ThetaTheta_bar * (G_bar * uTheta) - 2. * G_bar_Dot.T() * I_ThetaF_bar * uf - G_bar.T() * I_ThetaTheta_bar * (G_bar * uTheta);
     for (int j = 0; j < numOfElements; j++) {
-      Qv(6, nf + 5) += -static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * (static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape() * qf) + 2. * omega_bar_skew * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape() * uf));
+      FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j]);
+      Qv(6, nf + 5) += - node->getMij() * (node->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (node->getU0() + node->getModeShape() * qf) + 2. * omega_bar_skew * node->getModeShape() * uf));
     }
 
+    if (DEBUG) {
+      cout << "Qv" << Qv << endl;
+      cout << "A" << A << endl;
+      cout << "uThe" << uTheta << endl;
+      cout << "qf" << qf << endl;
+      cout << "uf" << uf << endl;
+      cout << "omtild" << omega_bar_skew << endl;
+      cout << "G_bar" << G_bar << endl;
+    }
   }
   
   void FlexibleBodyLinearExternalFFR::updateh(double t, int k) {
+    updateQv();
     h[k] = Qv - K * q;
+
+    if(DEBUG){
+      ofstream f;
+      f.open("Variables.txt", fstream::in | fstream::out | fstream::trunc);
+      f << "t" << t << endl;
+      f << "q" << q << endl;
+      f << "K" << K << endl;
+      f << "Qv" << Qv << endl;
+      f << "h[" << k << "]" << h[k] << endl;
+      f << "M[" << k << "]" << M[k] << endl;
+      f.close();
+    }
+
   }
 
   void FlexibleBodyLinearExternalFFR::computeShapeIntegrals() {
@@ -411,7 +446,7 @@ namespace MBSimFlexibleBody {
       }
     }
     
-    if (DEBUG) {
+    if (DEBUG && fistIterFlag) {
       cout << "I_1" << I_1 << endl << endl;
       cout << "I_kl" << I_kl << endl << endl;
       cout << "S_bar" << S_bar << endl << endl;
@@ -443,6 +478,8 @@ namespace MBSimFlexibleBody {
     double cosbeta = cos(q(4));
     double singamma = sin(q(5));
     double cosgamma = cos(q(5));
+    double betadot = u(4);
+    double gammadot = u(5);
     
     A(0, 0) = cosbeta * cosgamma;
     A(0, 1) = -cosbeta * singamma;
@@ -470,20 +507,22 @@ namespace MBSimFlexibleBody {
     
     // update G_bar_Dot
     //TODO:: check whether the formula for G_bar_Dot is correct?
-    G_bar_Dot(0, 0) = -sinbeta * cosgamma - cosbeta * singamma;
-    G_bar_Dot(0, 1) = cosgamma;
+    G_bar_Dot(0, 0) = -sinbeta * cosgamma * betadot - cosbeta * singamma * gammadot;
+    G_bar_Dot(0, 1) = cosgamma * gammadot;
     
-    G_bar_Dot(1, 0) = sinbeta * singamma - cosbeta * cosgamma;
-    G_bar_Dot(1, 1) = -singamma;
+    G_bar_Dot(1, 0) = sinbeta * singamma * betadot - cosbeta * cosgamma * gammadot;
+    G_bar_Dot(1, 1) = -singamma * gammadot;
     
-    G_bar_Dot(2, 0) = cosbeta;
+    G_bar_Dot(2, 0) = cosbeta * betadot;
     
     if (DEBUG) {
+
       cout << "cosbeta" << cosbeta << endl << endl;
       cout << "cosgamma" << cosgamma << endl << endl;
       cout << "A" << A << endl << endl;
       cout << "G_bar" << G_bar << endl << endl;
       cout << "G_bar_Dot" << G_bar_Dot << endl << endl;
+
     }
 
   }
@@ -507,7 +546,7 @@ namespace MBSimFlexibleBody {
 
         Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape() * q(6, 5 + nf);
 
-        cp.getFrameOfReference().setLocalPosition(u_bar);  // don't need to transform to the systerm coordinates,  TODO: need to be done in neutral contour when calcualting the position
+        cp.getFrameOfReference().setLocalPosition(u_bar);  // don't need to transform to the systerm coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix
       }
 
       // TODO: interpolate the position of lumped node to get a smooth surface, and then get A from that curve.
@@ -566,7 +605,7 @@ namespace MBSimFlexibleBody {
     else if (cp.getContourParameterType() == FIXEDRELATIVEFRAME) { // origin of Floating frame
       FixedRelativeFrame * frf = static_cast<FixedRelativeFrame*>(frame);
       if (ff == position || ff == position_cosy || ff == all) {
-        cp.getFrameOfReference().setPosition(R->getPosition() +  R->getOrientation() * (q(0,2) +  A * frf->getRelativePosition())); // frf->getRelativePosition() is expressed in FFR frame, and FFR position is expressed in the inertial frame.
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * (q(0, 2) + A * frf->getRelativePosition())); // frf->getRelativePosition() is expressed in FFR frame, and FFR position is expressed in the inertial frame.
       }
 
       SqrMat3 wA(R->getOrientation() * A * frf->getRelativeOrientation());
@@ -666,6 +705,8 @@ namespace MBSimFlexibleBody {
     updateAGbarGbardot();
 
     FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
+
+    fistIterFlag = false;
   }
 
   const Vec3 FlexibleBodyLinearExternalFFR::getModeShapeVector(int node, int column) const {

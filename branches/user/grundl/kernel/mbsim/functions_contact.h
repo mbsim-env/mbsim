@@ -697,7 +697,7 @@ namespace MBSim {
       /**
        * \brief search all possible contact point along the V direction
        */
-      std::vector<double> searchVdirection();
+      std::vector<double> searchVdirection(double u);
 
     private:
       /**

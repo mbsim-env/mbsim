@@ -11,13 +11,14 @@ int main (int argc, char* argv[]) {
 
   System *sys = new System("MBS", argv[1]);
 
+
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
 //  RADAU5Integrator integrator;
   integrator.setEndTime(1.0);
-  integrator.setStepSize(1e-3);
+  integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-2);
 
   integrator.integrate(*sys);

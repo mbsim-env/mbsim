@@ -181,7 +181,7 @@ namespace MBSim {
         double fb = (*func)(temp)(0);
         if (fa * fb < 0) {
           startingValue(0) = nodesU(i);  // get the starting value for the U direction
-          std::vector<double> startingValueV = searchVdirection();
+          std::vector<double> startingValueV = searchVdirection(nodesU(i));
           for (size_t j = 0; j < startingValueV.size(); j++) {
             startingValue(1) = startingValueV.at(j);
             alphaC.at(nRoots) = rf.solve(startingValue);
@@ -194,7 +194,7 @@ namespace MBSim {
         }
         else if (fabs(fa) < epsroot()) {
           startingValue(0) = nodesU(i);  // get the starting value for the U direction
-          std::vector<double> startingValueV = searchVdirection();
+          std::vector<double> startingValueV = searchVdirection(nodesU(i));
           for (size_t j = 0; j < startingValueV.size(); j++) {
             startingValue(1) = startingValueV.at(j);
             alphaC.at(nRoots) = rf.solve(startingValue);
@@ -206,7 +206,7 @@ namespace MBSim {
         }
         else if (fabs(fb) < epsroot()) {
           startingValue(0) = nodesU(i + 1);  // get the starting value for the U direction
-          std::vector<double> startingValueV = searchVdirection();
+          std::vector<double> startingValueV = searchVdirection(nodesU(i+1));
           for (size_t j = 0; j < startingValueV.size(); j++) {
             startingValue(1) = startingValueV.at(j);
             alphaC.at(nRoots) = rf.solve(startingValue);
@@ -238,10 +238,11 @@ namespace MBSim {
     }
   }
 
-  std::vector<double> Contact2sSearch::searchVdirection() {
+  std::vector<double> Contact2sSearch::searchVdirection(double u) {
     std::vector<double> startingValueV;
     for (int i = 0; i < nodesV.size() - 1; i++) {
       Vec temp(2, INIT, 0.);
+      temp(0) = u;
       temp(1) = nodesV(i);
       double fa = (*func)(temp)(1);
       temp(1) = nodesV(i + 1);

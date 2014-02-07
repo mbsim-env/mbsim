@@ -16,12 +16,13 @@ int main (int argc, char* argv[]) {
 
   StopWatch Timer;
   int iintegrator = 0;
-  double tEnd = 3;
-  double dtPlot = 1e-2;
+  double tEnd = 0.3;
+  double dtPlot = 1e-5;
+  double dt = 1e-5;
 
   if (iintegrator==0) {
     TimeSteppingIntegrator in;
-    in.setStepSize(1e-2);
+    in.setStepSize(dt);
     in.setStartTime(0);
     in.setEndTime(tEnd);
     in.setPlotStepSize(dtPlot);
@@ -31,7 +32,7 @@ int main (int argc, char* argv[]) {
   }
   else if (iintegrator==1) {
     ThetaTimeSteppingIntegrator in;
-    in.setStepSize(1e-2);
+    in.setStepSize(dt);
     in.setTheta(.5);
     in.setStartTime(0);
     in.setEndTime(tEnd);

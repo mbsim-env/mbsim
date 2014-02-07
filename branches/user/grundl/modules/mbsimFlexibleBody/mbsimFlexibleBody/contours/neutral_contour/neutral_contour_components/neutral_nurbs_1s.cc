@@ -35,19 +35,19 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    cout << "Neutral nurbs ?? 1s curve: " << endl;
-    stringstream x;
-    x << "xpl = [";
-    stringstream y;
-    y << "ypl = [";
-    for (int i = 0; i < 100; i++) {
-      double u = (uMax-uMin)/100 * i;
-      x << curve.pointAt(u)(0) << ", ";
-      y << curve.pointAt(u)(1) << ", ";
-    }
-    x << "];" << endl;
-    y << "];" << endl;
-    cout << x.str() << y.str();
+//    cout << "Neutral nurbs ?? 1s curve: " << endl;
+//    stringstream x;
+//    x << "xpl = [";
+//    stringstream y;
+//    y << "ypl = [";
+//    for (int i = 0; i < 100; i++) {
+//      double u = (uMax-uMin)/100 * i;
+//      x << curve.pointAt(u)(0) << ", ";
+//      y << curve.pointAt(u)(1) << ", ";
+//    }
+//    x << "];" << endl;
+//    y << "];" << endl;
+//    cout << x.str() << y.str();
   }
 
 }

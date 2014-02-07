@@ -32,7 +32,6 @@
 
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_linear_external_lumped_node.h"
-//#include "/home/zwang/MBSim/mbsim/unitTest/flexibleBodyLinearExternalFFRUnitTest/flexible_body_linear_external_ffr_unittest.cc"
 
 //namespace unitTest{
 //  class linearExternalFFRTest;
@@ -229,12 +228,12 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief inertia tensor
        */
-      fmatvec::SymMat3 I_ThetaTheta;
+      fmatvec::SymMat3 I_ThetaTheta_bar;
 
       /*!
        * \brief I_ThetaF 3*nf
        */
-      fmatvec::Mat I_ThetaF;
+      fmatvec::Mat I_ThetaF_bar;
       /**
        * \brief stiffness matrix
        */
@@ -294,6 +293,11 @@ namespace MBSimFlexibleBody {
        * \brief debug flag
        */
       bool DEBUG;
+
+      /**
+       * \brief first iteration flag
+       */
+      bool fistIterFlag;
   };
   
   inline void FlexibleBodyLinearExternalFFR::BuildElements() {
