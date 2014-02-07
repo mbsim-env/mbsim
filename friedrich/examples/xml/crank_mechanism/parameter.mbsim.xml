@@ -1,4 +1,4 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <scalarParameter name="fSize">.01</scalarParameter>
 
   <scalarParameter name="g">-9.81</scalarParameter>

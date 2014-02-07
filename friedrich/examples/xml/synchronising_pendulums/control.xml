@@ -10,7 +10,7 @@
   <objects>
     <embed count="1" counterName="n" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="timeMove">1.</scalarParameter>
           <matrixParameter name="xValue">
             <![CDATA[

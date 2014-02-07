@@ -6,14 +6,14 @@
   <groups>
     <embed href="M.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="c">2/3</scalarParameter>
         </parameter>
       </localParameter>
     </embed>
     <embed href="B.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="c">7/8</scalarParameter>
           <scalarParameter name="hx">x*(1-c)</scalarParameter>
           <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
@@ -23,7 +23,7 @@
     </embed>
     <embed href="S.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="c">7/8</scalarParameter>
           <scalarParameter name="hx">x*(1-c)</scalarParameter>
           <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
@@ -33,14 +33,14 @@
     </embed>
     <embed href="i.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="y">y/sqrt(2)</scalarParameter>
         </parameter>
       </localParameter>
     </embed>
     <embed href="_m.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
           <scalarParameter name="c">7/8</scalarParameter>
           <scalarParameter name="hx">x*(1-c)</scalarParameter>
           <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
