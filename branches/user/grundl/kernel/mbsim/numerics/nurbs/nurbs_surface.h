@@ -15,16 +15,15 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-
 //  enum Direction { u_direction=1, v_direction=2, both_direction=3} ;
 //
 //  template <class T, int N> class NurbsSurfaceArray ;
 //
 //  template <class T, int N> void gordonSurface(NurbsCurveArray<T,N>& , NurbsCurveArray<T,N>& , const Matrix< Point_nD<T,N> >& , NurbsSurface<T,N>& );
-  int surfMeshParams(const GeneralMatrix<fmatvec::Vec3 >& Q, Vec& uk, Vec& vl);
+  int surfMeshParams(const GeneralMatrix<fmatvec::Vec3>& Q, Vec& uk, Vec& vl);
 //  template <class T, int N> int surfMeshParamsH(const Matrix< HPoint_nD<T,N> >& , Vector<T>& , Vector<T>& );
 //  template <class T, int N> int surfMeshParamsClosedU(const Matrix< Point_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
-  int surfMeshParamsClosedU(const GeneralMatrix< fmatvec::Vec3 >& Q, Vec& uk, Vec& vl, int degU);
+  int surfMeshParamsClosedU(const GeneralMatrix<fmatvec::Vec3>& Q, Vec& uk, Vec& vl, int degU);
 //  template <class T, int N> int surfMeshParamsClosedUH(const Matrix< HPoint_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
 //
 //  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& );
@@ -32,70 +31,85 @@ namespace MBSim {
 //  template <class T, int N> void globalSurfApprox(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& , double=0);
 //  template <class T, int N> void wrapPointMatrix(const Matrix< Point_nD<T,N> >& Q, int , int, Matrix< Point_nD<T,N> >& Qw);
 
+  /*!
+   \class NurbsSurface nurbsS.h
+   \brief A class to represent a NURBS surface
 
-
-/*!
-  \class NurbsSurface nurbsS.h
-  \brief A class to represent a NURBS surface
-
-  The NURBS surface is composed of points in homogenous space. It can have 
-  any degree in both the \a u and the \a v direction.
-*/
+   The NURBS surface is composed of points in homogenous space. It can have
+   any degree in both the \a u and the \a v direction.
+   */
 //template <class T, int N>
-class NurbsSurface {
-public:
-  NurbsSurface() ;
-  NurbsSurface(const NurbsSurface& nS) ;
+  class NurbsSurface {
+    public:
+      NurbsSurface();
+      NurbsSurface(const NurbsSurface& nS);
 //  NurbsSurface(int DegU, int DegV, const Vector<T>& Uk, const Vector<T>& Vk, const Matrix< HPoint_nD<T,N> >& Cp) ;
 //  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W) ;
-  virtual ~NurbsSurface() //!< Empty desctructor
-    {;}
-  
-public:  
-  // Reference to internal data
-  const Vec& knotU() const //!< A reference to the U knot vector
-    { return U ; }
-  const Vec& knotV() const //!< A reference to the V knot vector
-    { return V ; }
-  double knotU(int i) const //!< Returns the i-th knot from U
-    { return U(i) ; }
-  double knotV(int i) const //!< Returns the i-th knot from V
-    { return V(i) ; }
-  const GeneralMatrix<Vec4>& ctrlPnts() const //!< A reference to the control points
-    { return P; }
-  const  fmatvec::Vec4 ctrlPnts(int i, int j) const //!< A reference to the control point at (i,j)
-    { return P(i,j); }
-  int degreeU() const //!< A reference to the degree in U of the surface
-    { return degU ; }
-  int degreeV() const //!< A reference to the degree in V of the surface
-    { return degV ; }
-  
-  // Basic operators
-  virtual NurbsSurface& operator=(const NurbsSurface&) ;
-  void resize(int Pu, int Pv, int DegU, int DegV) ;
+      virtual ~NurbsSurface() //!< Empty desctructor
+      {
+        ;
+      }
+
+    public:
+      // Reference to internal data
+      const Vec& knotU() const //!< A reference to the U knot vector
+      {
+        return U;
+      }
+      const Vec& knotV() const //!< A reference to the V knot vector
+      {
+        return V;
+      }
+      double knotU(int i) const //!< Returns the i-th knot from U
+      {
+        return U(i);
+      }
+      double knotV(int i) const //!< Returns the i-th knot from V
+      {
+        return V(i);
+      }
+      const GeneralMatrix<Vec4>& ctrlPnts() const //!< A reference to the control points
+      {
+        return P;
+      }
+      const fmatvec::Vec4 ctrlPnts(int i, int j) const //!< A reference to the control point at (i,j)
+      {
+        return P(i, j);
+      }
+      int degreeU() const //!< A reference to the degree in U of the surface
+      {
+        return degU;
+      }
+      int degreeV() const //!< A reference to the degree in V of the surface
+      {
+        return degV;
+      }
+
+      // Basic operators
+      virtual NurbsSurface& operator=(const NurbsSurface&);
+      void resize(int Pu, int Pv, int DegU, int DegV);
 //  virtual void resizeKeep(int Pu, int Pv, int DegU, int DegV) ;
 //  int ok();
-  
-  // Basis functions
-  fmatvec::HPoint<3> operator()(double u, double v) const ;
-  fmatvec::Point<3> pointAt(double u, double v) const;  //!< Projects the point in the normal space
+
+      // Basis functions
+      fmatvec::HPoint<3> operator()(double u, double v) const;
+      fmatvec::Point<3> pointAt(double u, double v) const;  //!< Projects the point in the normal space
 //  void basisFuns(T u, T v, int spanU, int spanV, Vector<T>& Nu, Vector<T>& Nv) const ;
 //  void basisFunsU(T u, int span, Vector<T>& M) const ;
 //  void basisFunsV(T u, int span, Vector<T>& M) const ;
 //  void dersBasisFuns(T u, T v, int dU, int dV,int uspan, int vspan,Matrix<T> & Niku, Matrix<T>& Njkv ) const ;
 
-  // Derivative functions
-  void deriveAt(double u, double v, int d, GeneralMatrix< Vec3 > &skl) const;
-  void deriveAtH(double u, double v, int d, GeneralMatrix<Vec4> &skl) const;
-  Vec3 normal(double u, double v) const ;
+      // Derivative functions
+      void deriveAt(double u, double v, int d, GeneralMatrix<Vec3> &skl) const;
+      void deriveAtH(double u, double v, int d, GeneralMatrix<Vec4> &skl) const;
+      Vec3 normal(double u, double v) const;
 
-  
-  // Surface fitting functions
+      // Surface fitting functions
 
-  void globalInterp(const GeneralMatrix<fmatvec::Vec3 >& Q, int DegU, int DegV);
-  void globalInterp(const GeneralMatrix<fmatvec::Vec3 >& Q, const Vec& uk, const Vec& vk, int DegU, int DegV);
-  void globalInterpClosedU(const GeneralMatrix< fmatvec::Vec3 >& Q, int DegU, int DegV);
-  void globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3 >& Q, const Vec& uk, const Vec& vk, int DegU, int DegV);
+      void globalInterp(const GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
+      void globalInterp(const GeneralMatrix<fmatvec::Vec3>& Q, const Vec& uk, const Vec& vk, int DegU, int DegV);
+      void globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3>& Q, int DegU, int DegV);
+      void globalInterpClosedU(const GeneralMatrix<fmatvec::Vec3>& Q, const Vec& uk, const Vec& vk, int DegU, int DegV);
 //  void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
 //  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
@@ -215,30 +229,28 @@ public:
 //
 //  NurbsSurface<T,N>& transpose(void) ;
 
+    protected:
+      fmatvec::Vec U; //!< the U knot vector
+      fmatvec::Vec V; //!< the V knot vector
+      GeneralMatrix<fmatvec::Vec4> P; //!< The matrix of control points
+      int degU; //!< the degree of the surface in U
+      int degV; //!< the degree of the surface in V
 
-protected:
-  fmatvec::Vec U ; //!< the U knot vector
-  fmatvec::Vec V ; //!< the V knot vector
-  GeneralMatrix< fmatvec::Vec4  > P ; //!< The matrix of control points
-  int degU ; //!< the degree of the surface in U
-  int degV ; //!< the degree of the surface in V
+      //changed
+      Mat InverseU; //!< The matrix for the computation of the control points in U-direction
+      Mat InverseV; //!< The matrix for the computation of the control points in V-direction
 
-  //changed
-  Mat InverseU; //!< The matrix for the computation of the control points in U-direction
-  Mat InverseV; //!< The matrix for the computation of the control points in V-direction
-  
-  // Knot functions
-  void findSpan(double u, double v, int spanU, int spanV) const ;
-  int findSpanU(double u) const ;
-  int findSpanV(double v) const ;
-  
-  int findMultU(int r) const ;
-  int findMultV(int r) const ;
+      // Knot functions
+      void findSpan(double u, double v, int spanU, int spanV) const;
+      int findSpanU(double u) const;
+      int findSpanV(double v) const;
 
-};
+      int findMultU(int r) const;
+      int findMultV(int r) const;
+
+  };
 
 } // end namespace
-
 
 ///*!
 // */
@@ -292,6 +304,5 @@ protected:
 //#ifdef INCLUDE_TEMPLATE_SOURCE
 //#include "nurbsS.cpp"
 //#endif
-
 
 #endif 

@@ -23,6 +23,8 @@
 
 #define MBSIMFLEXNS "{http://mbsim.berlios.de/MBSimFlexibleBody}"
 
+#include <mbsimFlexibleBody/node_frame.h>
+
 #include "mbsim/body.h"
 #include "mbsim/frame.h"
 
@@ -123,6 +125,13 @@ namespace MBSimFlexibleBody {
        */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::FrameFeature ff, MBSim::Frame *frame=0) = 0;
 
+      /*!
+       * \brief cartesian kinematic on a node
+       */
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+    	  throw MBSim::MBSimError("Not implemented"); //TODO: make that interface prettier
+      }
+
       /**
        * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
        * \param data contour parameter
@@ -159,10 +168,9 @@ namespace MBSimFlexibleBody {
       void addFrame(const std::string &name, const int &id);
 
       /**
-       * \param frame
-       * \param node of frame
+       * \param node frame
        */
-      void addFrame(MBSim::Frame *frame, const  int &id);
+      void addFrame(NodeFrame *frame);
 
       void addContour(MBSim::Contour *contour);
 
@@ -209,6 +217,21 @@ namespace MBSimFlexibleBody {
        * \brief vector of contour parameters each describing a frame
        */
       std::vector<MBSim::ContourPointData> S_Frame;
+
+      /*!
+       * \brief list of all contour frames
+       * \todo: actually continous frames should be added to a contour and not to the body?!
+       */
+
+      /*!
+       * \brief list of all fixed relative frames
+       */
+      std::vector<MBSim::FixedRelativeFrame*> fixedRelativeFrames;
+
+      /*!
+       * \brief list of all  Node-Frames
+       */
+      std::vector<NodeFrame*> nodeFrames;
   };
 
   /**
@@ -265,6 +288,7 @@ namespace MBSimFlexibleBody {
          * \brief offset of the ROTNODE from the TRANSNODE
          */
         AT nodeOffset;
+
     };
 }
 

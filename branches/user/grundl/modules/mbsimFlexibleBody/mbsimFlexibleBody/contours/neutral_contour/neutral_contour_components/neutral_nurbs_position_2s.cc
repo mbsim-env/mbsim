@@ -27,7 +27,6 @@ namespace MBSimFlexibleBody {
 
   // TODO: this Normal and secondTangent is only work for the neutral surface on the xy plane. Need to adapt to different situations.
   void NeutralNurbsPosition2s::updatePositionNormal(ContourPointData &cp){
-//    Vec3 b("[0; 0; -1]"); // binormal point to negative z direction
     Vec3 Tmpv = surface.normal(cp.getLagrangeParameterPosition()(0), cp.getLagrangeParameterPosition()(1));  // TODO: check whether this normal point outwards of the material. In the nurbs_disk_2s, the normal is been reversed manually.
     Tmpv = Tmpv / nrm2(Tmpv);  // normalize the normal vector
     cp.getFrameOfReference().getOrientation().set(0, Tmpv);

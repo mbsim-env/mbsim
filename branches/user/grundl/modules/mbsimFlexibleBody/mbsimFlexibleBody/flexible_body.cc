@@ -84,9 +84,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::updateStateDependentVariables(double t) {
     BuildElements();
-    for (unsigned int i = 0; i < frame.size(); i++) { // frames
+    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
       updateKinematicsForFrame(S_Frame[i], all, frame[i]);
     }
+
+    for (size_t i  = 0; i < nodeFrames.size(); i++)
+      updateKinematicsAtNode(nodeFrames[i], MBSim::all);
 
     for (size_t i = 0; i < contour.size(); i++) {
       contour[i]->updateStateDependentVariables(t);
@@ -94,7 +97,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateJacobians(double t, int k) {
-    for (unsigned int i = 0; i < frame.size(); i++) { // frames
+    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
       updateJacobiansForFrame(S_Frame[i], frame[i]);
     }
     // TODO contour non native?  DONE!
@@ -113,7 +116,7 @@ namespace MBSimFlexibleBody {
     if (stage == unknownStage) {
       Body::init(stage);
       T = SqrMat(qSize, fmatvec::EYE);
-      for (unsigned int i = 0; i < frame.size(); i++) { // frames
+      for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
         S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(uSize[0]);
         S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(uSize[0]);
       }
@@ -163,13 +166,13 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addFrame(const std::string &name, const int &id) {
-    ContourPointData cp(id);
-    addFrame(name, cp);
+    NodeFrame * frame = new NodeFrame(name, id);
+    addFrame(frame);
   }
 
-  void FlexibleBody::addFrame(Frame *frame, const int &id) {
-    ContourPointData cp(id);
-    addFrame(frame, cp);
+  void FlexibleBody::addFrame(NodeFrame *frame) {
+    nodeFrames.push_back(frame);
+    Body::addFrame(frame);
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
@@ -183,7 +186,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::initializeUsingXML(TiXmlElement *element) {
     Body::initializeUsingXML(element);
-    
+
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMFLEXNS"massProportionalDamping");
     setMassProportionalDamping(getDouble(e));

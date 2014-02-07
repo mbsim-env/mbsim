@@ -37,7 +37,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
   
   FlexibleBodyLinearExternalFFR::FlexibleBodyLinearExternalFFR(const string &name, const bool &DEBUG_) :
-      FlexibleBodyContinuum<Vec>(name), numOfElements(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_) {
+      FlexibleBodyContinuum<Vec>(name), nNodes(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_) {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++)
         S_kl_bar[i][j] = SqrMat();
@@ -52,25 +52,7 @@ namespace MBSimFlexibleBody {
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage) {
-    if (stage == preInit) {
-      // be careful the node index in abaqus starts from 1, but here starts 0. For example, if we want to add a frame to node 20 in abaqus, we should refer to node number 19 here.
-      // TODO:  when wrinting a individual function for add nodes, we need do the transformation for user.
-      vector<int> visNodelist;
-//      for (int i = 0; i < 9; i++) {
-//        visNodelist.push_back(227 + i);  // add frames to nodes ( N228 ~ N236) in abaqus.
-//      }
-      for (int i = 0; i < numOfElements; i++) {
-        visNodelist.push_back(i);  // add frames to all nodes
-      }
-
-      for (size_t index = 0; index < visNodelist.size(); index++) {
-        int nodeNumber = visNodelist[index];
-        Frame * refFrame = new Frame("RefFrame" + numtostr(nodeNumber));
-        addFrame(refFrame, nodeNumber);
-        refFrame->enableOpenMBV(1e-3); //TODO: set this value
-      }
-    }
-    else if (stage == resize) {
+    if (stage == resize) {
       // setNumberof qSize uSize[2]
       uSize[0] = qSize;
       uSize[1] = qSize; // TODO
@@ -82,12 +64,12 @@ namespace MBSimFlexibleBody {
       // read the input data file: mode shape vector, u0, mij, K.
 //      readFEMData();  // move to public function, has to be executed before the init().
       
-      assert(numOfElements > 1);
+      assert(nNodes > 1);
       // at least two azimuthal elements
 
       // create Elements and store them into discretization vector
       // the node index in abaqus strats from 1, but here starts from 0.
-      for (int j = 0; j < numOfElements; j++) {
+      for (int j = 0; j < nNodes; j++) {
         discretization.push_back(new FiniteElementLinearExternalLumpedNode(mij[j], u0[j], phi(Index(3 * j, 3 * j + 2), Index(0, nf - 1))));
       }
 
@@ -146,7 +128,7 @@ namespace MBSimFlexibleBody {
     }
     
     // get the number of lumped nodes(nj) = number of numOfElements in the model
-    numOfElements = u0.size();
+    nNodes = u0.size();
     
     // get the number of mode shapes(nf) used to describe the deformation
     ifstream phiInfile((inFilePath + "/modeShapeMatrix.dat").c_str());
@@ -164,7 +146,7 @@ namespace MBSimFlexibleBody {
     phiInfile.close();
     
     // read mode shape matrix
-    phi.resize(3 * numOfElements, nf, INIT, 0.0);
+    phi.resize(3 * nNodes, nf, INIT, 0.0);
     phiInfile.open((inFilePath + "/modeShapeMatrix.dat").c_str());
     if (!phiInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
@@ -179,7 +161,7 @@ namespace MBSimFlexibleBody {
     }
 
     // read stiffness matrix
-    SymMat KFull(3 * numOfElements, INIT, 0.0);
+    SymMat KFull(3 * nNodes, INIT, 0.0);
     ifstream KInfile((inFilePath + "/stiffnessMatrix.dat").c_str());
     if (!KInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "stiffnessMatrix.dat" << endl;
@@ -207,7 +189,7 @@ namespace MBSimFlexibleBody {
     if (DEBUG) {
 
       cout.precision(6);
-      cout << "numOfElements = " << numOfElements << endl;
+      cout << "numOfElements = " << nNodes << endl;
       cout << "nf = " << nf << endl;
       
       cout << "phi" << phi << endl;
@@ -220,32 +202,49 @@ namespace MBSimFlexibleBody {
       cout << "mij 0: " << mij[0] << endl;
       cout << "mij 1: " << mij[1] << endl;
       cout << "mij 2: " << mij[2] << endl;
-      cout << "mij last one" << mij[numOfElements - 1] << endl;
+      cout << "mij last one" << mij[nNodes - 1] << endl;
 
       cout << "u0[0] = " << u0.at(0) << endl;
       cout << "u0[1] = " << u0.at(1) << endl;
       cout << "u0[2] = " << u0.at(2) << endl;
-      cout << "u0[" << numOfElements - 3 << "] = " << u0.at(numOfElements - 3) << endl;
-      cout << "u0[" << numOfElements - 2 << "] = " << u0.at(numOfElements - 2) << endl;
-      cout << "u0[" << numOfElements - 1 << "] = " << u0.back() << endl;
+      cout << "u0[" << nNodes - 3 << "] = " << u0.at(nNodes - 3) << endl;
+      cout << "u0[" << nNodes - 2 << "] = " << u0.at(nNodes - 2) << endl;
+      cout << "u0[" << nNodes - 1 << "] = " << u0.back() << endl;
       cout << "u0.at(1)(2)" << u0.at(1)(2) << endl;
 
       cout << "phi node0,1 = " << phi(Index(0, 0), Index(0, nf - 1)) << endl;
       cout << "phi node0,2 = " << phi(Index(1, 1), Index(0, nf - 1)) << endl;
       cout << "phi node0,3 = " << phi(Index(2, 2), Index(0, nf - 1)) << endl;
-      cout << "phi node" << numOfElements << ",1 = " << phi(Index(3 * numOfElements - 3, 3 * numOfElements - 3), Index(0, nf - 1)) << endl;
-      cout << "phi node" << numOfElements << ",2 = " << phi(Index(3 * numOfElements - 2, 3 * numOfElements - 2), Index(0, nf - 1)) << endl;
-      cout << "phi node" << numOfElements << ",3 = " << phi(Index(3 * numOfElements - 1, 3 * numOfElements - 1), Index(0, nf - 1)) << endl;
+      cout << "phi node" << nNodes << ",1 = " << phi(Index(3 * nNodes - 3, 3 * nNodes - 3), Index(0, nf - 1)) << endl;
+      cout << "phi node" << nNodes << ",2 = " << phi(Index(3 * nNodes - 2, 3 * nNodes - 2), Index(0, nf - 1)) << endl;
+      cout << "phi node" << nNodes << ",3 = " << phi(Index(3 * nNodes - 1, 3 * nNodes - 1), Index(0, nf - 1)) << endl;
     }
 
   }
   
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void FlexibleBodyLinearExternalFFR::enableFramePlot(double size, std::vector<int> numbers) {
+    if (numbers.size() == 0) { //take all nodes
+      for (int i = 0; i < nNodes; i++) {
+        numbers.push_back(i);
+      }
+    }
+
+    for (size_t i = 0; i < numbers.size(); i++) {
+      int nodeNumber = i;
+      NodeFrame * refFrame = new NodeFrame("RefFrame" + numtostr(nodeNumber), nodeNumber);
+      addFrame(refFrame);
+      refFrame->enableOpenMBV(size);
+    }
+  }
+#endif
+
   void FlexibleBodyLinearExternalFFR::initM(int k) {
     // allocate memeory for M and Qv
     M[k].resize(6 + nf, INIT, 0.0);
     
     double M_RR = 0;  // constant during the simulation; for each DOF M_RR is same.  !!!!Every vaule has to be initialized before using it.
-    for (int j = 0; j < numOfElements; j++) {
+    for (int j = 0; j < nNodes; j++) {
       M_RR += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij();
     }
 
@@ -363,9 +362,9 @@ namespace MBSimFlexibleBody {
 
     Qv(0, 2) = (-A) * (omega_bar_skew * omega_bar_skew * (I_1 + S_bar * qf) + 2. * omega_bar_skew * S_bar * uf);
     Qv(3, 5) = -2. * G_bar_Dot.T() * I_ThetaTheta_bar * (G_bar * uTheta) - 2. * G_bar_Dot.T() * I_ThetaF_bar * uf - G_bar.T() * I_ThetaTheta_bar * (G_bar * uTheta);
-    for (int j = 0; j < numOfElements; j++) {
+    for (int j = 0; j < nNodes; j++) {
       FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j]);
-      Qv(6, nf + 5) += - node->getMij() * (node->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (node->getU0() + node->getModeShape() * qf) + 2. * omega_bar_skew * node->getModeShape() * uf));
+      Qv(6, nf + 5) += -node->getMij() * (node->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (node->getU0() + node->getModeShape() * qf) + 2. * omega_bar_skew * node->getModeShape() * uf));
     }
 
     if (DEBUG) {
@@ -383,7 +382,7 @@ namespace MBSimFlexibleBody {
     updateQv();
     h[k] = Qv - K * q;
 
-    if(DEBUG){
+    if (DEBUG) {
       ofstream f;
       f.open("Variables.txt", fstream::in | fstream::out | fstream::trunc);
       f << "t" << t << endl;
@@ -405,7 +404,7 @@ namespace MBSimFlexibleBody {
 //      }
 //    }
     //I_1  3*1,
-    for (int j = 0; j < numOfElements; j++) {
+    for (int j = 0; j < nNodes; j++) {
       I_1 += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getU0();
     }
     
@@ -413,7 +412,7 @@ namespace MBSimFlexibleBody {
     // as I_kl is symmetric, the second loop starts at l=k.
     for (int k = 0; k < 3; k++) {
       for (int l = k; l < 3; l++) {
-        for (int j = 0; j < numOfElements; j++) {
+        for (int j = 0; j < nNodes; j++) {
           I_kl(k, l) += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getU0()(k) * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getU0()(l);
         }
       }
@@ -421,7 +420,7 @@ namespace MBSimFlexibleBody {
 
     // S_bar:  3*nf
     S_bar = Mat(3, nf, INIT, 0.);
-    for (int j = 0; j < numOfElements; j++) {
+    for (int j = 0; j < nNodes; j++) {
       S_bar += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape();
     }
     
@@ -429,7 +428,7 @@ namespace MBSimFlexibleBody {
     for (int k = 0; k < 3; k++) {
       for (int l = 0; l < 3; l++) {
         S_kl_bar[k][l].resize(nf, INIT, 0.0);
-        for (int j = 0; j < numOfElements; j++) {
+        for (int j = 0; j < nNodes; j++) {
           S_kl_bar[k][l] += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * trans(static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape().row(k)) * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape().row(l);
         }
       }
@@ -440,7 +439,7 @@ namespace MBSimFlexibleBody {
     for (int k = 0; k < 3; k++) {
       for (int l = 0; l < 3; l++) {
         I_kl_bar[k][l].resize(nf, INIT, 0.0);
-        for (int j = 0; j < numOfElements; j++) {
+        for (int j = 0; j < nNodes; j++) {
           I_kl_bar[k][l] += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getU0()(k) * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape().row(l); // getModeShape() return matrix
         }
       }
@@ -464,7 +463,7 @@ namespace MBSimFlexibleBody {
 //  void FlexibleBodyLinearExternalFFR::BuildElements() {
 //    // set mode shape vectors (3*nf) to each node.
 //    for(int j=0;j<Elements;j++) {
-//       // TODO: nodes which are in the boundary are missing in the output file of ABAQUS
+//       // TODO: nNodes which are in the boundary are missing in the output file of ABAQUS
 //       static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->setModeShape(phi( Index(3*j,3*j+2), Index(0,nf-1) ));
 //    }
 //  }
@@ -639,6 +638,59 @@ namespace MBSimFlexibleBody {
     }
   }
 
+  void FlexibleBodyLinearExternalFFR::updateKinematicsAtNode(NodeFrame * frame, FrameFeature ff) {
+
+    size_t nodeNumber = frame->getNodeNumber();
+
+    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeNumber]);
+
+    if (ff == position || ff == position_cosy || ff == all) {
+
+      Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
+//        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
+//        u_bar += q(0, 2); // r_p = R + A*U_bar: add the translational displacement of FFR (based on the reference frame R) to the local position vector expressed in Reference Frame R
+
+      frame->setPosition(R->getPosition() + R->getOrientation() * (q(0, 2) + A * u_bar)); // transformation from Reference Frame R into world frame
+      // TODO:  why in cosserat is there not  plus R->getPosition() ?
+    }
+
+    if (ff == localPosition || ff == all) {
+
+      Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
+
+      frame->setLocalPosition(u_bar);  // don't need to transform to the systerm coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix
+    }
+
+    // TODO: interpolate the position of lumped node to get a smooth surface, and then get A from that curve.
+    SqrMat3 wA(R->getOrientation() * A);
+    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      frame->getOrientation().set(0, wA.col(0));
+    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      frame->getOrientation().set(1, wA.col(1));
+    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      frame->getOrientation().set(2, wA.col(2));
+
+    if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      Vec3 A_S_qfDot = A * node->getModeShape() * u(6, 5 + nf);
+
+      Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
+
+      Vec3 u_ref_1 = -A * tilde(u_bar) * G_bar * u(3, 5);
+
+      frame->setVelocity(R->getOrientation() * (u(0, 2) + u_ref_1 + A_S_qfDot));  // Schabana 5.15
+    }
+
+    if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+      // In reality, each point on the flexible body should has a different angular rotation velocity omega as the effect of deformation. But as we assume the deformation is small and thus linearizable, in calculating
+      // deformation u_f, we neglect the effect of the change of orientation, simply set the deformation to be equal a weighted summation of different modes vectors.
+      // For kinematics, it means that we assume that every point in the flexible body have the same angular velocity omega of the FFR, neglecting the effect of deformation on angular velocity.
+
+      Vec omega_ref = A * G_bar * u(3, 5);
+
+      frame->setAngularVelocity(R->getOrientation() * omega_ref);
+    }
+  }
+
   void FlexibleBodyLinearExternalFFR::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
     if (cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
@@ -713,9 +765,5 @@ namespace MBSimFlexibleBody {
     return static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape().col(column);
   }
 
-  void FlexibleBodyLinearExternalFFR::addFrame(FixedRelativeFrame * frame) {
-    ContourPointData cp(0, FIXEDRELATIVEFRAME);
-    addFrame(frame, cp);
-  }
 }
 

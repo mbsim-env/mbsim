@@ -15,9 +15,12 @@ PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
   MBSIMXML_MINGW=""
+  EXTRA_LIBS=""
 else
   MBSIMXML_MINGW="-fPIC"
+  EXTRA_LIBS="-ldl"
 fi
+AC_SUBST([EXTRA_LIBS])
 AC_SUBST([MBSIMFLATXML_CFLAGS])
 
 dnl boost
