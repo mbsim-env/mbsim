@@ -31,34 +31,18 @@ namespace MBSimFlexibleBody {
     return pow(base,exponent);
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  const double FiniteElement1s21ANCF::NumPrec    = 1.e-12;
-  const double FiniteElement1s21ANCF::epsRel     = 1.e-4;
-  const int    FiniteElement1s21ANCF::Iterations = 32;
-
-  const int    FiniteElement1s21ANCF::NodeDOFs      = 4;
-  const int    FiniteElement1s21ANCF::ElementalDOFs = 2*NodeDOFs;
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //-------------------------------------------------------------------------
-
-  FiniteElement1s21ANCF::FiniteElement1s21ANCF() {
-  }
+  FiniteElement1s21ANCF::FiniteElement1s21ANCF() {}
 
   FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, Vec sg)
     :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.0), depsilon(0.0), g(sg),
-    M(ElementalDOFs), h(ElementalDOFs), implicit(false), Dhq(ElementalDOFs), Dhqp(ElementalDOFs),
-    Damp(ElementalDOFs,fmatvec::INIT,0.0)
+    M(8,INIT,0.), h(8,INIT,0.), Damp(8,INIT,0.0), Dhq(8,INIT,0.), Dhqp(8,INIT,0.)
   {
     l0h2 = l0*l0;
-
   }
 
   FiniteElement1s21ANCF::~FiniteElement1s21ANCF() {
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
   /*void FiniteElement1s21ANCF::setCurleRadius(double R)
     {
     if (R == 0.0) {cout << "CurleRadius muss ungleich 0 sein!\n"; throw(1);}
@@ -82,8 +66,7 @@ namespace MBSimFlexibleBody {
 
   }*/
 
-  void FiniteElement1s21ANCF::berechneM() {
-    //MassenMatrix
+  void FiniteElement1s21ANCF::computeM(const Vec& qElement) {
     M(0,0) = (13*Arho*l0)/35.;
     M(0,1) = 0;
     M(0,2) = (11*Arho*Power(l0,2))/210.;
@@ -150,23 +133,19 @@ namespace MBSimFlexibleBody {
     M(7,7) = (Arho*Power(l0,3))/105.;
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
-  void FiniteElement1s21ANCF::berechneh(Vec qElement, Vec qpElement)
-  {
+  void FiniteElement1s21ANCF::computeh(const Vec& qElement, const Vec& qpElement) {
     //---  Koordinaten, Geschwindigkeiten
-    double & x1 = qElement(0);    double & y1 = qElement(1);
-    double &dx1 = qElement(2);    double &dy1 = qElement(3);
-    double & x2 = qElement(4);    double & y2 = qElement(5);
-    double &dx2 = qElement(6);    double &dy2 = qElement(7);
+    const double & x1 = qElement(0);    const double & y1 = qElement(1);
+    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
+    const double & x2 = qElement(4);    const double & y2 = qElement(5);
+    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
 
-    // Gravitation !!!!TODO -> Vorzeichen in Mathematica-Routine aendern!!!!!!!!!1
+    //---  Gravitation
     static double gx = g(0);
     static double gy = g(1);
 
     double lh1     =      (Power(x1 - x2,2) + Power(y1 - y2,2))  ;
     double sqrtlh1 = sqrt(lh1);
-    //  double lh2     = Power(Power(x1 - x2,2) + Power(y1 - y2,2),2);
     double lh2     = lh1*lh1;
 
     //h-Vektor
@@ -183,14 +162,13 @@ namespace MBSimFlexibleBody {
     // //    hdLokal.init(0.0); beim Initialisieren
     //     hdLokal(3) = - depsilon * epsp; // eps
 
-
-    //     // für die Impliziten Integratoren
+    //     // Impliziten Integratoren
     //     if(implicit)
     //     {
-    // 	static Mat Dhz(2*ElementalDOFs,ElementalDOFs,fmatvec::INIT,0.0);
+    // 	static Mat Dhz(2*8,8,fmatvec::INIT,0.0);
     // 	Dhz   = hFullJacobi(qElement,qpElement,qLokal,qpLokal,Jeg,Jegp,MLokal,hZwischen);
-    // 	Dhq   = static_cast<SqrMat>(Dhz(0,0, ElementalDOFs-1,ElementalDOFs-1));
-    // 	Dhqp  = static_cast<SqrMat>(Dhz(ElementalDOFs,0,2*ElementalDOFs-1,ElementalDOFs-1));
+    // 	Dhq   = static_cast<SqrMat>(Dhz(0,0, 8-1,8-1));
+    // 	Dhqp  = static_cast<SqrMat>(Dhz(8,0,2*8-1,8-1));
     // 	Dhqp += trans(Jeg)*Damp*Jeg;
     //     }
 
@@ -200,17 +178,13 @@ namespace MBSimFlexibleBody {
 
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // Balkenort ermitteln aus globalen Lagen 
-  Vec FiniteElement1s21ANCF::LocateBalken(Vec& qElement, double& s)
-  {
+  Vec FiniteElement1s21ANCF::LocateBalken(Vec& qElement, double& s) {
     Mat S = JGeneralized(qElement,s).T();
     return S*qElement;
   }
 
-  Vec FiniteElement1s21ANCF::StateBalken(Vec& qElement, Vec& qpElement, double& s)
-  {
+  Vec FiniteElement1s21ANCF::StateBalken(Vec& qElement, Vec& qpElement, double& s) {
     Mat S = JGeneralized(qElement,s).T();
     Vec X(6);
     X(Index(0,2)) = S* qElement;
@@ -219,36 +193,34 @@ namespace MBSimFlexibleBody {
     return X;
   }
 
-  Vec FiniteElement1s21ANCF::Tangente(Vec& qElement, double& s) {
+  //  Vec FiniteElement1s21ANCF::Tangente(Vec& qElement, double& s) {
+  //    double xi = s/l0;
+  //
+  //    double & x1 = qElement(0);    double & y1 = qElement(1);
+  //    double &dx1 = qElement(2);    double &dy1 = qElement(3);
+  //    double & x2 = qElement(4);    double & y2 = qElement(5);
+  //    double &dx2 = qElement(6);    double &dy2 = qElement(7);
+  //
+  //    Vec t(2);
+  //    //Tangente                                                                                  // wird gemeinsam unten normiert...
+  //    t(0) = (dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)));///(Power(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + Power(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
+  //    t(1) = (dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)));///(Power(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + Power(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
+  //
+  //    t /= nrm2(t);
+  //
+  //    return t;
+  //  }
+
+  Mat FiniteElement1s21ANCF::JGeneralized(const Vec& qElement, const double& s) {
+    Mat J(8,3,INIT,0.0);
     double xi = s/l0;
 
-    double & x1 = qElement(0);    double & y1 = qElement(1);
-    double &dx1 = qElement(2);    double &dy1 = qElement(3);
-    double & x2 = qElement(4);    double & y2 = qElement(5);
-    double &dx2 = qElement(6);    double &dy2 = qElement(7);
+    const double & x1 = qElement(0);    const double & y1 = qElement(1);
+    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
+    const double & x2 = qElement(4);    const double & y2 = qElement(5);
+    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
 
-    Vec t(2);
-    //Tangente                                                                                  // wird gemeinsam unten normiert...
-    t(0) = (dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)));///(Power(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + Power(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
-    t(1) = (dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)));///(Power(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + Power(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
-
-    t /= nrm2(t);
-
-    return t;
-  }
-
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  // Balkenzustand ermitteln aus globalen Lagen, Geschwindigkeit
-  Mat FiniteElement1s21ANCF::JGeneralized(Vec& qElement, const double& s) {
-    Mat J(ElementalDOFs,3,INIT,0.0);
-    double xi = s/l0;
-
-    double & x1 = qElement(0);    double & y1 = qElement(1);
-    double &dx1 = qElement(2);    double &dy1 = qElement(3);
-    double & x2 = qElement(4);    double & y2 = qElement(5);
-    double &dx2 = qElement(6);    double &dy2 = qElement(7);
-
-    //Jocobimatrix
+    //Jacobimatrix
     J(0,0) = 1 - 3*Power(xi,2) + 2*Power(xi,3);
     J(0,1) = 0;
     J(0,2) = (6*(-1 + xi)*xi*(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2))))/(Power(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + Power(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
@@ -276,63 +248,5 @@ namespace MBSimFlexibleBody {
 
     return J;
   }
-
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-
-  // // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
-  // Vec FiniteElement1s21ANCF::ElementData(Vec qElement, Vec qpElement)
-  // {
-  //     // Rückgabedaten
-  //     static Vec Data(8,fmatvec::INIT,0.0);
-  //     // 0:  eps
-  //     // 1:  epsp
-  //     // 2:  xS
-  //     // 3:  yS
-  //     // 4:  xSp
-  //     // 5:  ySp
-  //     // 6:  delta_phi      = bL  + bR
-  //     // 7:  delta_phip     = bLp + bRp
-
-  //     static Vec qLokal(8,fmatvec::INIT,0.0), qpLokal(8,fmatvec::INIT,0.0);
-  //     static SqrMat Jeg(8,fmatvec::INIT,0.0), Jegp(8,fmatvec::INIT,0.0);
-
-  // //--- lokale  Koordinaten, Geschwingigkeiten
-  //     static double &xS     = qLokal(0);      static double &yS     = qLokal(1);
-  // //    static double &phiS   = qLokal(2);  unused
-  //     static double &eps   = qLokal(3);
-  //     static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-  //     static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
-  // //
-  //     static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
-  // //    static double &phiSp  = qpLokal(2); unused
-  //     static double &epsp  = qpLokal(3);
-  //     static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
-  //     static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
-
-
-  // //lokale Koordinate-----------------------------------------------------------
-  //     BuildqLokal(qElement,qLokal);
-
-  // //JacobiMatrizen--------------------------------------------------------------
-  //     BuildJacobi(qElement,qpElement,Jeg,Jegp);
-
-  //     qpLokal << Jeg * qpElement;
-  // //     Data(0) = (32*(17*Power(aL,2) - 2*aL0*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL0*bL - 3*aR*bL - 3*aL0*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL0*bR + 3*Power(bR,2))*(1 + eps))*l0h2)/(420.*l0h2);
-  // //     Data(1) = (64*(17*aL0*aLp - aLp*aR - aL0*aRp + 17*aR*aRp)*(1 + eps) + 32*(17*Power(aL,2) - 2*aL0*aR + 17*Power(aR,2))*epsp - 12*((8*aLp*bL - 3*aRp*bL + 8*aL0*bLp - 3*aR*bLp - 3*aLp*bR + 8*aRp*bR - 3*aL0*bRp + 8*aR*bRp)*(1 + eps) + (8*aL0*bL - 3*aR*bL - 3*aL0*bR + 8*aR*bR)*epsp)*l0 + 3*(6*(3*bL0*bLp - bLp*bR - bL0*bRp + 3*bR*bRp)*(1 + eps) + (140 + 9*Power(bL,2) - 6*bL0*bR + 9*Power(bR,2))*epsp)*l0h2)/ (420.*l0h2);
-  //     Data(2) = xS;
-  //     Data(3) = yS;
-  //     Data(4) = xSp;
-  //     Data(5) = ySp;
-  //     Data(6) = bL  + bR;
-  //     Data(7) = bLp + bRp;
-
-  //     return Data;
-  // }
-
-
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
-  
 }
 

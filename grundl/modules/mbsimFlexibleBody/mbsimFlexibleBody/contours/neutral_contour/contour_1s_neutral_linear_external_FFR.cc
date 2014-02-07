@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(numOfTransNodes, NONINIT);
     for (int k = 0; k < qSize - 6; k++) {
       for (int i = 0; i < numOfTransNodes; i++) {
-        Nodelist.set(i, trans((static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getModeShapeVector(transNodes.at(i) - 1, k))); // transNodes.at(i) - 1, because the index of nodes starts from 0 in abaqus and from 1 in Mbsim::FFR
+        Nodelist.set(i, trans((static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getModeShapeVector(transNodes.at(i), k)));
       }
       if (openStructure) {
         curveModeShape.at(k).globalInterp(Nodelist,uMin, uMax, degU, false); // calculate once, as the mode shape is constant.
@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
 
       for (int i = 0; i < numOfTransNodes; i++)
-        transContourPoints.push_back(ContourPointData(transNodes.at(i) - 1)); // transNodes.at(i) - 1, because the index of nodes starts from 0 in abaqus and from 1 in Mbsim::FFR
+        transContourPoints.push_back(ContourPointData(transNodes.at(i)));
 
       NP = createNeutralPosition();
       NLP = createNeutralLocalPosition();

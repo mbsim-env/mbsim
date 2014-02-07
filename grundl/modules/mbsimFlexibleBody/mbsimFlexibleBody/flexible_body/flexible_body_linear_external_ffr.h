@@ -33,6 +33,8 @@
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_linear_external_lumped_node.h"
 
+#include <mbsimFlexibleBody/node_frame.h>
+
 //namespace unitTest{
 //  class linearExternalFFRTest;
 //}
@@ -78,8 +80,9 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0);
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
-      virtual void updateh(double t, int k=0);
+      virtual void updateh(double t, int k = 0);
       virtual void updateStateDependentVariables(double t);
       /***************************************************/
 
@@ -94,7 +97,6 @@ namespace MBSimFlexibleBody {
         return "FlexibleBodyLinearExternalFFR";
       }
       /***************************************************/
-
 
       /* GETTER AND SETTER */
       int getNumberModes() const {
@@ -115,25 +117,16 @@ namespace MBSimFlexibleBody {
 
       const fmatvec::Vec3 getModeShapeVector(int node, int column) const;
 
-//      void setLength(double L_) { L = L_; }
-//      double getLength(){return L;}
-//      void setEModul(double E_) { E = E_; }
-//      void setCrossSectionalArea(double CSA_) { CSA = CSA_; }
-//      void setMomentInertia(double I_) { I = I_; }
-//      void setDensity(double rho_) { rho = rho_; }
-      /***************************************************/
-
-      void addFrame(MBSim::FixedRelativeFrame * frame);
-
       /*!
        * \brief  read u0, mij, mode shape matrix and stiffness matrix form the input file
        */
       void readFEMData(std::string inFilePath, const bool millimeterUnits);
 
-//      friend class unitTest::linearExternalFFRTest;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableFramePlot(double size = 1e-3, std::vector<int> numbers = std::vector<int>(0));
+#endif
 
-
-//    protected: // TODO :: change back to protected after finish the unitTest
+    protected:
       /*!
        * \brief  initialize the mass matrix
        */
@@ -159,41 +152,10 @@ namespace MBSimFlexibleBody {
        */
       void updateAGbarGbardot();
 
-
       /**
        * \brief total number of nodes
        */
-      int numOfElements;
-
-//      /**
-//      * \brief length of beam
-//      */
-//      double L;
-//
-//      /**
-//      * \brief length of one finite element
-//      */
-//      double l0;
-//
-//      /**
-//      * \brief modulus of linear elasticity
-//      */
-//      double E;
-//
-//      /**
-//      * \brief cross-section area
-//      */
-//      double CSA;
-//
-//      /**
-//      * \brief moment of inertia of cross-section
-//      */
-//      double I;
-//
-//      /**
-//      * \brief material density
-//      */
-//      double rho;
+      int nNodes;
 
       /*!
        * \brief Floating Frame of Reference
@@ -316,9 +278,15 @@ namespace MBSimFlexibleBody {
     throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
   }
   
-  inline int FlexibleBodyLinearExternalFFR::getNumberElements() const { return numOfElements; }
-  inline double FlexibleBodyLinearExternalFFR::getLength() const {throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");}
-  inline bool FlexibleBodyLinearExternalFFR::isOpenStructure() const { return openStructure; }
+  inline int FlexibleBodyLinearExternalFFR::getNumberElements() const {
+    return nNodes;
+  }
+  inline double FlexibleBodyLinearExternalFFR::getLength() const {
+    throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
+  }
+  inline bool FlexibleBodyLinearExternalFFR::isOpenStructure() const {
+    return openStructure;
+  }
 
 }
 

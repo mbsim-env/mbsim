@@ -65,8 +65,6 @@ namespace MBSimFlexibleBody {
 
     cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fiber, only in the x direction.
 
-    double ts = cpData[icontour].getLagrangeParameterPosition()(0);
-
     cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
 
     if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd()) g(0) = 1.;

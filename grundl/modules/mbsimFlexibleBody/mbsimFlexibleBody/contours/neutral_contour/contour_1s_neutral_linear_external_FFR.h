@@ -29,8 +29,14 @@ namespace MBSimFlexibleBody {
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual void updateStateDependentVariables(double t);
-      protected:
-      std::vector<int> transNodes;  // TODO: can this be type of reference, No! as a contour, it should contains the nodes.
+    protected:
+
+      /*!
+       * \brief list of nodes to be interpolated
+       *
+       * REMARK: MBSim starts indexing with 0. If external programs (e.g. abaqus) start indexing with 1 the user has to substract one for each node-index
+       */
+      std::vector<int> transNodes;
       double nodeOffset;
       std::vector<ContourPointData> transContourPoints;
       int numOfTransNodes;

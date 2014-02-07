@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mbsimFmi
+Description: mbsimFmi is an add-on implementing the standard Functional Mock-up Interface
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimFmi
+Cflags: -I${includedir}
+
+

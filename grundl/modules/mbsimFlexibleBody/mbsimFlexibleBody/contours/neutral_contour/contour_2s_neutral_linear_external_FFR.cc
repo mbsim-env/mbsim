@@ -13,9 +13,13 @@
 using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
+
+  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_) :
+      Contour2sNeutralFactory(name_), transNodes(), nodeOffset(0.), degU(3), degV(3), openStructure(false), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
+  }
   
-  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, Mat transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_):
-      Contour2sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), numOfTransNodesU(transNodes_.rows()), numOfTransNodesV(transNodes_.cols()), degU(degU_), degV(degV_), openStructure(openStructure_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
+  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, Mat transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
+      Contour2sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), degV(degV_), openStructure(openStructure_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
 
     parent_->addContour(this);
   }
@@ -30,35 +34,23 @@ namespace MBSimFlexibleBody {
     NV = NULL;
   }
 
-  NeutralNurbsVelocity2s* Contour2sNeutralLinearExternalFFR::createNeutralVelocity() {
-    return new NeutralNurbsVelocity2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
-  }
-
-  NeutralNurbsPosition2s* Contour2sNeutralLinearExternalFFR::createNeutralPosition() {
-    return new NeutralNurbsPosition2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
-  }
-
-  NeutralNurbsLocalPosition2s* Contour2sNeutralLinearExternalFFR::createNeutralLocalPosition() {
-    return new NeutralNurbsLocalPosition2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
-  }
-
   void Contour2sNeutralLinearExternalFFR::createNeutralModeShape() {
     for (int k = 0; k < qSize - 6; k++) {
       surfaceModeShape.push_back(NurbsSurface());
     }
 
-    GeneralMatrix<Vec3> Nodelist(numOfTransNodesU, numOfTransNodesV);
-    for (int k = 0; k < qSize - 6; k++) {
-      for (int i = 0; i < numOfTransNodesU; i++) {
-        for (int j = 0; j < numOfTransNodesV; j++) {
-          Nodelist(i, j) = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getModeShapeVector(transNodes(i, j) - 1, k); // transNodes.at(i,j) - 1, because the index of nodes starts from 0 in abaqus and from 1 in Mbsim::FFR
+    GeneralMatrix<Vec3> Nodelist(getNumberOfTransNodesU(), getNumberOfTransNodesV());
+    for (int modeNumber = 0; modeNumber < qSize - 6; modeNumber++) {
+      for (int i = 0; i < getNumberOfTransNodesU(); i++) {
+        for (int j = 0; j < getNumberOfTransNodesV(); j++) {
+          Nodelist(i, j) = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getModeShapeVector(transNodes(i, j), modeNumber);
         }
       }
       if (openStructure) {
-        surfaceModeShape.at(k).globalInterp(Nodelist, uk, vl, degU, degV); // calculate once, as the mode shape is constant.
+        surfaceModeShape.at(modeNumber).globalInterp(Nodelist, uk, vl, degU, degV); // calculate once, as the mode shape is constant.
       }
       else {
-        surfaceModeShape.at(k).globalInterpClosedU(Nodelist, uk, vl, degU, degV); // calculate once, as the mode shape is constant.
+        surfaceModeShape.at(modeNumber).globalInterpClosedU(Nodelist, uk, vl, degU, degV); // calculate once, as the mode shape is constant.
       }
     }
   }
@@ -67,20 +59,20 @@ namespace MBSimFlexibleBody {
 
     if (stage == resize) {
       // construct contourPoint for translation nodes
-      nodes.reserve(numOfTransNodesU);  // TODO: which type is suitable for nodes in the contour2sSearch
-      transContourPoints.resize(numOfTransNodesU, numOfTransNodesV);
+      nodes.reserve(getNumberOfTransNodesU());  // TODO: which type is suitable for nodes in the contour2sSearch
+      transContourPoints.resize(getNumberOfTransNodesU(), getNumberOfTransNodesV());
     }
     else if (stage == worldFrameContourLocation) {
-        R->getOrientation() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
-        R->getPosition() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getPosition();
+      R->getOrientation() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
+      R->getPosition() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getPosition();
     }
     else if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
 
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
 
-      for (int i = 0; i < numOfTransNodesU; i++)
-        for (int j = 0; j < numOfTransNodesV; j++)
-        transContourPoints(i, j) = ContourPointData(transNodes(i, j) - 1, NODE); // transNodes.at(i, j) - 1, because the index of nodes starts from 0 in abaqus and from 1 in Mbsim::FFR
+      for (int i = 0; i < getNumberOfTransNodesU(); i++)
+        for (int j = 0; j < getNumberOfTransNodesV(); j++)
+          transContourPoints(i, j) = ContourPointData(transNodes(i, j), NODE);
 
       NP = createNeutralPosition();
       NLP = createNeutralLocalPosition();
@@ -125,7 +117,7 @@ namespace MBSimFlexibleBody {
     if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
       NP->updatePositionSecondTangent(cp);
 
-    if (ff == angle){ // only for openmbvBody visualization
+    if (ff == angle) { // only for openmbvBody visualization
       SqrMat3 ALocal(INIT, 0);
       NP->updatePositionNormal(cp);
       NP->updatePositionFirstTangent(cp);
@@ -155,7 +147,7 @@ namespace MBSimFlexibleBody {
     double positionV = cp.getLagrangeParameterPosition()(0);
     for (int k = 0; k < qSize - 6; k++) {
       Vec3 temp = surfaceModeShape.at(k).pointAt(positionU, positionV);
-      modeShapeMatrix.set(k,temp);
+      modeShapeMatrix.set(k, temp);
     }
 
     Jacobian_trans.set(Index(0, 2), Index(6, qSize - 1), A * modeShapeMatrix);
@@ -212,5 +204,55 @@ namespace MBSimFlexibleBody {
 //    cout << "localPositionCurve" << TestPosition << endl << endl;
 //    cout << "velocityCurve" << TestVelocity << endl << endl;
 
+  }
+
+  int Contour2sNeutralLinearExternalFFR::getNumberOfTransNodesU() {
+    return transNodes.rows(); //TODO: shouldn't it be the other way round?
+  }
+
+  int Contour2sNeutralLinearExternalFFR::getNumberOfTransNodesV() {
+    return transNodes.cols(); //TODO: shouldn't it be the other way round?
+  }
+
+  void Contour2sNeutralLinearExternalFFR::setTransNodes(const Mat & transNodes_) {
+    transNodes.resize() = transNodes_;
+  }
+
+  void Contour2sNeutralLinearExternalFFR::setdegU(int deg) {
+    degU = deg;
+  }
+
+  void Contour2sNeutralLinearExternalFFR::setdegV(int deg) {
+    degV = deg;
+  }
+
+  Mat Contour2sNeutralLinearExternalFFR::readNodes(string file) {
+    ifstream contourfile((file).c_str());
+    if (!contourfile.is_open()) {
+      throw MBSimError("Can not open file " + file);
+    }
+    string s;
+    getline(contourfile, s);
+
+    Mat transNodes(s.c_str());
+
+    for(int i = 0; i < transNodes.rows(); i++)
+      for(int j = 0; j < transNodes.cols(); j++)
+        transNodes(i,j) -= 1;
+
+
+    return transNodes;
+  }
+
+  NeutralNurbsVelocity2s* Contour2sNeutralLinearExternalFFR::createNeutralVelocity() {
+    return new NeutralNurbsVelocity2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
+  }
+
+  NeutralNurbsPosition2s* Contour2sNeutralLinearExternalFFR::createNeutralPosition() {
+    return new NeutralNurbsPosition2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
+  }
+
+  NeutralNurbsLocalPosition2s* Contour2sNeutralLinearExternalFFR::createNeutralLocalPosition() {
+    return new NeutralNurbsLocalPosition2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
   }
 } /* namespace MBSimFlexibleBody */
