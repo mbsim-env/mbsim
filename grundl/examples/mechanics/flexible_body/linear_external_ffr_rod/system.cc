@@ -54,7 +54,7 @@ System::System(const string &projectName, const std::string & inputFilesPath) :
 //  q0(4) = M_PI / 3;
 //  q0(5) = M_PI / 3;
 
-//   q0(6) = 0.2;  // active the first eigenmode
+   q0(6) = 0.002;  // active the first eigenmode
 //  q0(7) = 0.15;
 //  q0(8) = 0.11;
 //  q0(9) = 0.09;
@@ -89,104 +89,104 @@ System::System(const string &projectName, const std::string & inputFilesPath) :
 
   this->addObject(rod);
 
-  // add neutral contour to the rod
-  int numOfTransNodesU = 24;
-  int numOfTransNodesV = 5;
-  Vec startingIndex1("[625; 473; 321; 169; 17]");
-  Vec startingIndex2("[637; 485; 333; 181; 29]");
-  Vec startingIndex3("[636; 484; 332; 180; 28]");
-  Mat transNodes(numOfTransNodesU, numOfTransNodesV, NONINIT);
-  for (int j = 0; j < numOfTransNodesV; j++)
-    for (int i = 0; i < 11; i++)
-        transNodes(i, j) = startingIndex1(j) + i;
-
-  for (int j = 0; j < numOfTransNodesV; j++)
-    for (int i = 0; i < 12; i++)
-      transNodes(11 + i, j) = startingIndex2(j) + i;
-
-  for (int j = 0; j < numOfTransNodesV; j++)
-    transNodes(23, j) = startingIndex3(j);
-
-  cout << transNodes << endl << endl;
-
-  int degU = 3;
-  int degV = 3;
-  bool openStructure = false;
-  double nodeOffset = 0.;
-
-  Contour2sNeutralLinearExternalFFR* ncc = new Contour2sNeutralLinearExternalFFR("neutralFibre", rod, transNodes, nodeOffset, degU, degV, openStructure);
-  ncc->setFrameOfReference(rod->getFrameOfReference());
-  ncc->setAlphaStart(Vec(2, INIT, 0));
-  ncc->setAlphaEnd(Vec(2, INIT, 1));
+//  // add neutral contour to the rod
+//  int numOfTransNodesU = 24;
+//  int numOfTransNodesV = 5;
+//  Vec startingIndex1("[625; 473; 321; 169; 17]");
+//  Vec startingIndex2("[637; 485; 333; 181; 29]");
+//  Vec startingIndex3("[636; 484; 332; 180; 28]");
+//  Mat transNodes(numOfTransNodesU, numOfTransNodesV, NONINIT);
+//  for (int j = 0; j < numOfTransNodesV; j++)
+//    for (int i = 0; i < 11; i++)
+//        transNodes(i, j) = startingIndex1(j) + i;
+//
+//  for (int j = 0; j < numOfTransNodesV; j++)
+//    for (int i = 0; i < 12; i++)
+//      transNodes(11 + i, j) = startingIndex2(j) + i;
+//
+//  for (int j = 0; j < numOfTransNodesV; j++)
+//    transNodes(23, j) = startingIndex3(j);
+//
+//  cout << transNodes << endl << endl;
+//
+//  int degU = 3;
+//  int degV = 3;
+//  bool openStructure = false;
+//  double nodeOffset = 0.;
+//
+//  Contour2sNeutralLinearExternalFFR* ncc = new Contour2sNeutralLinearExternalFFR("neutralFibre", rod, transNodes, nodeOffset, degU, degV, openStructure);
+//  ncc->setFrameOfReference(rod->getFrameOfReference());
+//  ncc->setAlphaStart(Vec(2, INIT, 0));
+//  ncc->setAlphaEnd(Vec(2, INIT, 1));
 
 
 // Beginning Contact ---------------------------------------------------
 // for exciting the beam : ball mass 500; position(90, 200, 10), velocity(-100)
 
-  double mass = 500.; // mass of ball
-  double r = 1; // radius of ball
-
-  RigidBody *ball = new RigidBody("Ball");
-  Vec WrOS0B(3, INIT, 0.);
-  WrOS0B(0) = 11.;
-  WrOS0B(1) = -5;
-  WrOS0B(2) = 0;
-  this->addFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I"));
-  ball->setFrameOfReference(this->getFrame("B"));
-  ball->setFrameForKinematics(ball->getFrame("C"));
-  ball->setMass(mass);
-  SymMat Theta(3);
-  Theta(0, 0) = 2. / 5. * mass * r * r;
-  Theta(1, 1) = 2. / 5. * mass * r * r;
-  Theta(2, 2) = 2. / 5. * mass * r * r;
-  ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearTranslation(Mat(3, 3, EYE)));
-
-  Vec3 u0Ball;
-  u0Ball(1) = -50;
-  ball->setInitialGeneralizedVelocity(u0Ball);
-
-  MBSim::Point *point = new MBSim::Point("Point");
-  Vec BR(3, INIT, 0.);
-  BR(1) = -r;
-  ball->addContour(point, BR, SqrMat(3, EYE), ball->getFrame("C"));
-  this->addObject(ball);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
-  sphere->setRadius(r);
-  sphere->setStaticColor(0.5);
-  ball->setOpenMBVRigidBody(sphere);
-#endif
-
-  Contact *contact = new Contact("Contact");
-  if (0) {
-  contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7,0.)));
-  }
-  else {
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-  }
-  /********************* changed heare ********************/
-//contact->connect(ball->getContour("Point"),rod->getContour("Top"));
-  contact->connect(ball->getContour("Point"), ncc);
-  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
-//a_n->setHeadDiameter(tP*0.05);
-//a_n->setHeadLength(tP*0.07);
-//a_n->setDiameter(tP*0.02);
-//a_n->setScaleLength(tP*0.1);
-//a_n->setEnable(false);
-  contact->setOpenMBVNormalForceArrow(a_n);
-  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
-//a_t->setHeadDiameter(tP*0.05);
-//a_t->setHeadLength(tP*0.07);
-//a_t->setDiameter(tP*0.02);
-//a_t->setScaleLength(tP*0.1);
-//a_t->setEnable(false);
-  contact->setOpenMBVFrictionArrow(a_t);
-  contact->enableOpenMBVContactPoints();
-
-  this->addLink(contact);
+//  double mass = 500.; // mass of ball
+//  double r = 1; // radius of ball
+//
+//  RigidBody *ball = new RigidBody("Ball");
+//  Vec WrOS0B(3, INIT, 0.);
+//  WrOS0B(0) = 11.;
+//  WrOS0B(1) = -5;
+//  WrOS0B(2) = 0;
+//  this->addFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I"));
+//  ball->setFrameOfReference(this->getFrame("B"));
+//  ball->setFrameForKinematics(ball->getFrame("C"));
+//  ball->setMass(mass);
+//  SymMat Theta(3);
+//  Theta(0, 0) = 2. / 5. * mass * r * r;
+//  Theta(1, 1) = 2. / 5. * mass * r * r;
+//  Theta(2, 2) = 2. / 5. * mass * r * r;
+//  ball->setInertiaTensor(Theta);
+//  ball->setTranslation(new LinearTranslation(Mat(3, 3, EYE)));
+//
+//  Vec3 u0Ball;
+//  u0Ball(1) = -50;
+//  ball->setInitialGeneralizedVelocity(u0Ball);
+//
+//  MBSim::Point *point = new MBSim::Point("Point");
+//  Vec BR(3, INIT, 0.);
+//  BR(1) = -r;
+//  ball->addContour(point, BR, SqrMat(3, EYE), ball->getFrame("C"));
+//  this->addObject(ball);
+//
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//  OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
+//  sphere->setRadius(r);
+//  sphere->setStaticColor(0.5);
+//  ball->setOpenMBVRigidBody(sphere);
+//#endif
+//
+//  Contact *contact = new Contact("Contact");
+//  if (0) {
+//  contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7,0.)));
+//  }
+//  else {
+//    contact->setContactForceLaw(new UnilateralConstraint);
+//    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
+//  }
+//  /********************* changed heare ********************/
+////contact->connect(ball->getContour("Point"),rod->getContour("Top"));
+//  contact->connect(ball->getContour("Point"), ncc);
+//  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
+////a_n->setHeadDiameter(tP*0.05);
+////a_n->setHeadLength(tP*0.07);
+////a_n->setDiameter(tP*0.02);
+////a_n->setScaleLength(tP*0.1);
+////a_n->setEnable(false);
+//  contact->setOpenMBVNormalForceArrow(a_n);
+//  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
+////a_t->setHeadDiameter(tP*0.05);
+////a_t->setHeadLength(tP*0.07);
+////a_t->setDiameter(tP*0.02);
+////a_t->setScaleLength(tP*0.1);
+////a_t->setEnable(false);
+//  contact->setOpenMBVFrictionArrow(a_t);
+//  contact->enableOpenMBVContactPoints();
+//
+//  this->addLink(contact);
 
 // End Contact ---------------------------------------------------
 

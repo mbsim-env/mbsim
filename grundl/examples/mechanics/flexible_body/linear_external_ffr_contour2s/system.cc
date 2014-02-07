@@ -47,7 +47,7 @@ System::System(const string &projectName, const std::string & inputFilesPath) :
   // set a initial angle for the body reference
   Vec q0 = Vec(nf + 6, INIT, 0.0);
   Vec u0Beam = Vec(nf + 6, INIT, 0.0);
-  q0(0) = 0.2;
+//  q0(0) = 0.2;
 //  q0(1) = 0.3;
 //  q0(2) = 0.4;
 //  q0(3) = M_PI / 6;
