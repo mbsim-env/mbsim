@@ -62,7 +62,7 @@ namespace MBSim {
       if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
       if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
     }
- }
+  }
 
   OpenMBV::Arrow* OpenMBVArrow::createOpenMBV(TiXmlElement *e) {
     OpenMBV::Arrow* object = new OpenMBV::Arrow;
