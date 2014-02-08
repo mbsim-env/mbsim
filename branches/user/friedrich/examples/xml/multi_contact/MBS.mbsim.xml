@@ -9,8 +9,7 @@
   <contours>
     <Plane name="Ground">
       <enableOpenMBV>
-        <size>1</size>   
-        <numberOfLines>2</numberOfLines>      
+        <length>1,1</length>   
       </enableOpenMBV>
     </Plane>
   </contours>
@@ -84,18 +83,12 @@
      </normalForceLaw>
      <connect ref1="../Contour[Ground]" ref2="../Object[Ball1]/Contour[Sphere]" name="Contact_Uno"/>
      <connect ref1="../Contour[Ground]" ref2="../Object[Ball2]/Contour[Sphere]" name="Contact_Due"/>
-     <enableOpenMBVContactPoints>0.1</enableOpenMBVContactPoints>
-     <openMBVNormalForceArrow>
-        <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <minimalColorValue>0</minimalColorValue> <!-- optional -->
-          <maximalColorValue>100</maximalColorValue> <!-- optional -->
-          <diameter>0.1</diameter>
-          <headDiameter>2*0.1</headDiameter>
-          <headLength>2*0.1</headLength>
-          <type>"toHead"</type>
-          <scaleLength>.01</scaleLength>
-        </Arrow>   
-     </openMBVNormalForceArrow>
+     <enableOpenMBVContactPoints>
+       <size>0.1</size>
+     </enableOpenMBVContactPoints>
+     <enableOpenMBVNormalForce>
+        <scaleLength>.01</scaleLength>
+     </enableOpenMBVNormalForce>
    </Contact>   
   </links>
   

@@ -131,9 +131,9 @@
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
       <enableOpenMBVCoilSpring>
-        <numberOfCoils>5</numberOfCoils>
-        <springRadius>0.1</springRadius>
-        <crossSectionRadius>0.01</crossSectionRadius>
+          <numberOfCoils>5</numberOfCoils>
+          <springRadius>0.1</springRadius>
+          <crossSectionRadius>0.01</crossSectionRadius>
       </enableOpenMBVCoilSpring>
     </SpringDamper>
   </links>

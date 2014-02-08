@@ -13,7 +13,7 @@
   <contours/>
   <groups/>
   <objects>
-    <xi:include href="test.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <pv:Embed href="test.xml"/>
     <pv:Embed href="{filenameWithoutExt}.xml" count="N-1+1" counterName="{myCounterName}_pendel"/>
   </objects>
   <links>

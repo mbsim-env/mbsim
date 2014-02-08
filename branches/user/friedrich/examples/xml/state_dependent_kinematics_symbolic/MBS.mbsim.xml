@@ -81,53 +81,24 @@
                 <size unit="m">1</size>
                 <offset unit="-">1</offset>
             </enableOpenMBVFrameC>
-            <openMBVWeightArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 4?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVWeightArrow>
-            <openMBVJointForceArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 4?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVJointForceArrow>
-            <openMBVJointMomentArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 4?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVJointMomentArrow>
+            <enableOpenMBVWeight>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVWeight>
+           <enableOpenMBVJointForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointForce>
+           <enableOpenMBVJointMoment>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointMoment>
         </RigidBody>
     </objects>
     <links />
     <observers>
         <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
             <frame ref="../Object[RigidBody1]/Frame[C]" />
-            <openMBVVelocityArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 6?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:referencePoint>&quot;fromPoint&quot;</ns_1:referencePoint>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVVelocityArrow>
+            <enableOpenMBVVelocity>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVVelocity>
         </AbsoluteKinematicsObserver>
     </observers>
     <enableOpenMBVFrameI>

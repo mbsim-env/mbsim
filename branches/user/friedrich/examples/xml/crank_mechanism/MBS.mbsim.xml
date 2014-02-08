@@ -212,29 +212,15 @@
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
       <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
-      <enableOpenMBVContactPoints>fSize/4.</enableOpenMBVContactPoints> <!-- optional -->
-      <openMBVNormalForceArrow> <!-- optional -->
-        <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <minimalColorValue>0</minimalColorValue> <!-- optional -->
-          <maximalColorValue>100</maximalColorValue> <!-- optional -->
-          <diameter>arrowDiameter</diameter>
-          <headDiameter>2*arrowDiameter</headDiameter>
-          <headLength>2*arrowDiameter</headLength>
-          <type>"toHead"</type>
+      <enableOpenMBVContactPoints>
+        <size>fSize/4.</size>
+      </enableOpenMBVContactPoints> <!-- optional -->
+      <enableOpenMBVNormalForce> <!-- optional -->
         <scaleLength>.01</scaleLength>
-        </Arrow>
-      </openMBVNormalForceArrow>
-      <openMBVTangentialForceArrow> <!-- optional -->
-        <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <minimalColorValue>-10</minimalColorValue> <!-- optional -->
-          <maximalColorValue>10</maximalColorValue> <!-- optional -->
-          <diameter>arrowDiameter</diameter>
-          <headDiameter>2*arrowDiameter</headDiameter>
-          <headLength>2*arrowDiameter</headLength>
-          <type>"toHead"</type>
+      </enableOpenMBVNormalForce>
+      <enableOpenMBVTangentialForce> <!-- optional -->
         <scaleLength>.1</scaleLength>
-        </Arrow>
-      </openMBVTangentialForceArrow>
+      </enableOpenMBVTangentialForce>
     </Contact>
   </links>
   <environments>
