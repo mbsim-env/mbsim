@@ -13,10 +13,7 @@
   <frames/>
   <contours/>
   <groups>
-    <pv:embed href="submodel/Untergruppe.xml">
-      <!-- set local parameter for Untergruppe.xml; existing ones will be overwritten -->
-      <pv:localParameter href="submodel/Untergruppe.param.xml"/>
-    </pv:embed>
+    <pv:Embed href="submodel/Untergruppe.xml" parameterHref="submodel/Untergruppe.param.xml"/>
   </groups>
   <objects>
     <RigidBody name="Box1">

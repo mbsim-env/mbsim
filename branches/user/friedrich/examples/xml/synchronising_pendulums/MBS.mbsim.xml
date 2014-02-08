@@ -1,6 +1,6 @@
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim">
   <frames>
-    <embed count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Embed count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <FixedRelativeFrame name="I{i}" xmlns="http://mbsim.berlios.de/MBSim">
         <!--
         -<enableOpenMBV>
@@ -17,14 +17,14 @@
         </relativePosition>
         <relativeOrientation>eye(3)</relativeOrientation>
       </FixedRelativeFrame>
-    </embed>
+    </Embed>
   </frames>
   <contours>
   </contours>
   <groups>
-    <embed href="swing.xml" count="1" counterName="X" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
-    <embed href="metronome.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
-    <embed href="control.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+    <Embed href="swing.xml" count="1" counterName="X" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+    <Embed href="metronome.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+    <Embed href="control.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
   </groups>
   <objects>
   </objects>

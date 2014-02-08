@@ -1,5 +1,5 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <scalarParameter name="freq1">pi</scalarParameter>
   <scalarParameter name="freq2">pi/3</scalarParameter>
   <scalarParameter name="v0y">1</scalarParameter>
-</parameter>
+</Parameter>

@@ -509,7 +509,7 @@
       </momentLaw>
       <connect ref1="../../Object[Carrier]/Frame[FS]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
-    <embed count="8" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Embed count="8" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <Joint name="Joint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
         <momentDirection>[0; 0; 1]</momentDirection>
         <momentLaw>
@@ -524,7 +524,7 @@
         </momentLaw>
         <connect ref1="../Object[S{nr}]/Frame[F2]" ref2="../Object[S{nr+1}]/Frame[F1]"/>
       </Joint>
-    </embed>
+    </Embed>
   </links>
 </Group>
 

@@ -419,7 +419,7 @@
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
                   <xs:element ref="FixedRelativeFrame"/>
-                  <xs:element ref="pv:embed"/>
+                  <xs:element ref="pv:Embed"/>
                 </xs:choice>
               </xs:sequence>
             </xs:complexType>
@@ -434,7 +434,7 @@
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
                   <xs:element ref="Contour"/>
-                  <xs:element ref="pv:embed"/>
+                  <xs:element ref="pv:Embed"/>
                 </xs:choice>
               </xs:sequence>
             </xs:complexType>
@@ -454,7 +454,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element ref="pv:embed">
+                <xs:element ref="pv:Embed">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Definition in externer Datei.
@@ -479,7 +479,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element ref="pv:embed">
+                <xs:element ref="pv:Embed">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Definition in externer Datei.
@@ -504,7 +504,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element ref="pv:embed">
+                <xs:element ref="pv:Embed">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Definition in externer Datei.
@@ -529,7 +529,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element ref="pv:embed">
+                <xs:element ref="pv:Embed">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Definition in externer Datei.
@@ -1035,7 +1035,7 @@
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
                   <xs:element ref="FixedRelativeFrame"/>
-                  <xs:element ref="pv:embed"/>
+                  <xs:element ref="pv:Embed"/>
                 </xs:choice>
               </xs:sequence>
             </xs:complexType>
@@ -1052,7 +1052,7 @@
               <xs:sequence>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="Contour"/>
-                <xs:element ref="pv:embed"/>
+                <xs:element ref="pv:Embed"/>
               </xs:choice>
               </xs:sequence>
             </xs:complexType>
