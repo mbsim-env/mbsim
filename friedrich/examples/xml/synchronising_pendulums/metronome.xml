@@ -188,15 +188,9 @@
         </TabularFunction>
       </forceFunction>
       <connect ref="../Object[Sphere]/Frame[C]"/>
-      <openMBVForceArrow>
-        <Arrow name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <diameter>pendulumD*2</diameter>
-          <headDiameter>pendulumD*4</headDiameter>
-          <headLength>pendulumD*8</headLength>
-          <type>"toHead"</type>
-          <scaleLength>1.</scaleLength>
-        </Arrow>
-      </openMBVForceArrow>
+      <enableOpenMBVForce>
+        <scaleLength>1.</scaleLength>
+      </enableOpenMBVForce>
     </KineticExcitation>
 
     <GeneralizedPositionSensor name="AngularSensor" xmlns="http://mbsim.berlios.de/MBSimControl">
