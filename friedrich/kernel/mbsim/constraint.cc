@@ -286,7 +286,7 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityConstraint::updateJacobians(double t, int jj) {
-    Mat3xV J = f->parDer1(x,t);
+    MatV J = f->parDer1(x,t);
     if(J.cols())
       bd->getjRel() = J*xd + f->parDer2(x,t);
     else

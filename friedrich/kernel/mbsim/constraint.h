@@ -20,7 +20,7 @@
 #define _CONSTRAINT_H
 
 #include "object.h"
-#include "utils/utils.h"
+#include "functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"

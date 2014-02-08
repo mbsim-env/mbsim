@@ -14,4 +14,5 @@ functioninclude_HEADERS = basic_functions.h \
 			  tabular_functions.h \
 			  symbolic_functions.h \
 			  kinematic_functions.h \
-			  kinetic_functions.h
+			  kinetic_functions.h \
+			  auxiliary_functions.h
