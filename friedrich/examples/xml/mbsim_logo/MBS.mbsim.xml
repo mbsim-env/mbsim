@@ -4,50 +4,40 @@
   <contours>
   </contours>
   <groups>
-    <embed href="M.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="c">2/3</scalarParameter>
-        </parameter>
-      </localParameter>
-    </embed>
-    <embed href="B.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="c">7/8</scalarParameter>
-          <scalarParameter name="hx">x*(1-c)</scalarParameter>
-          <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
-          <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
-        </parameter>
-      </localParameter>
-    </embed>
-    <embed href="S.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="c">7/8</scalarParameter>
-          <scalarParameter name="hx">x*(1-c)</scalarParameter>
-          <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
-          <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
-        </parameter>
-      </localParameter>
-    </embed>
-    <embed href="i.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="y">y/sqrt(2)</scalarParameter>
-        </parameter>
-      </localParameter>
-    </embed>
-    <embed href="_m.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter>
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="c">7/8</scalarParameter>
-          <scalarParameter name="hx">x*(1-c)</scalarParameter>
-          <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
-          <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
-        </parameter>
-      </localParameter>
-    </embed>
+    <Embed href="M.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="c">2/3</scalarParameter>
+      </Parameter>
+    </Embed>
+    <Embed href="B.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="c">7/8</scalarParameter>
+        <scalarParameter name="hx">x*(1-c)</scalarParameter>
+        <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
+        <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
+      </Parameter>
+    </Embed>
+    <Embed href="S.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="c">7/8</scalarParameter>
+        <scalarParameter name="hx">x*(1-c)</scalarParameter>
+        <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
+        <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
+      </Parameter>
+    </Embed>
+    <Embed href="i.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="y">y/sqrt(2)</scalarParameter>
+      </Parameter>
+    </Embed>
+    <Embed href="_m.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="c">7/8</scalarParameter>
+        <scalarParameter name="hx">x*(1-c)</scalarParameter>
+        <scalarParameter name="hy">y*(1-c/2)/4</scalarParameter>
+        <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
+      </Parameter>
+    </Embed>
   </groups>
   <objects>
     <RigidBody name="Carrier" xmlns="http://mbsim.berlios.de/MBSim">
@@ -142,7 +132,7 @@
       </momentLaw>
       <connect ref1="../Frame[I]" ref2="../Object[Carrier]/Frame[C]"/>
     </Joint>
-    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <Contact name="ContactBS{nr}" xmlns="http://mbsim.berlios.de/MBSim">
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -157,8 +147,8 @@
         <connect ref1="../Group[B]/Object[S10]/Contour[CSide]" ref2="../Group[S]/Object[S7]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
-    </embed>
-    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    </Embed>
+    <Embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <Contact name="ContactMB{nr}" xmlns="http://mbsim.berlios.de/MBSim">
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -173,7 +163,7 @@
         <connect ref1="../Group[B]/Object[S1]/Contour[CSide]" ref2="../Group[M]/Object[S4]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>frameSize</enableOpenMBVContactPoints> 
       </Contact>
-    </embed>
+    </Embed>
       <Contact name="ContactSi" xmlns="http://mbsim.berlios.de/MBSim">
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">

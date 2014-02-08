@@ -1,4 +1,4 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <vectorParameter name="rHG">[0;2]</vectorParameter>
   <vectorParameter name="alphaHG">
     <xmlVector>
@@ -27,4 +27,4 @@
   <stringParameter name="grav">'gravity.txt'</stringParameter>
   <stringParameter name="plotSubType">'Derivative'</stringParameter>
   <stringParameter name="plotSubTypeEnabled">true</stringParameter>
-</parameter>
+</Parameter>

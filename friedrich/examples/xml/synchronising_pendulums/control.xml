@@ -8,29 +8,27 @@
   <groups>
   </groups>
   <objects>
-    <embed count="1" counterName="n" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="timeMove">1.</scalarParameter>
-          <matrixParameter name="xValue">
-            <![CDATA[
-            tBound=200;
-            tStartVal=linspace(tStart(i), tStart(i)+timeMove, 200);
-            tEndVal=linspace(tEnd(i), tEnd(i)+timeMove, 200);
-            tSection1=linspace(-tBound, tStartVal(1)-diff(tStartVal(1:2)), 200);
-            tSection2=linspace(tStartVal(length(tStartVal))+diff(tStartVal(1:2)), tEndVal(1)-diff(tEndVal(1:2)), 200);
-            tSection3=linspace(tEndVal(length(tEndVal))+diff(tEndVal(1:2)), tBound, 200);
-            timeValue=[tSection1 tStartVal tSection2 tEndVal tSection3];
+    <Embed count="1" counterName="n" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="timeMove">1.</scalarParameter>
+        <matrixParameter name="xValue">
+          <![CDATA[
+          tBound=200;
+          tStartVal=linspace(tStart(i), tStart(i)+timeMove, 200);
+          tEndVal=linspace(tEnd(i), tEnd(i)+timeMove, 200);
+          tSection1=linspace(-tBound, tStartVal(1)-diff(tStartVal(1:2)), 200);
+          tSection2=linspace(tStartVal(length(tStartVal))+diff(tStartVal(1:2)), tEndVal(1)-diff(tEndVal(1:2)), 200);
+          tSection3=linspace(tEndVal(length(tEndVal))+diff(tEndVal(1:2)), tBound, 200);
+          timeValue=[tSection1 tStartVal tSection2 tEndVal tSection3];
 
-            tVal=[-tBound tStart(i) tStart(i)+timeMove tEnd(i) tEnd(i)+timeMove tBound];
-            xVal=[0 0 -.05 -.05 0 0];
-            xValue=interp1(tVal, xVal, timeValue, 'pchip');
-            xValue=interp1(tVal, xVal, timeValue);
-            ret=[timeValue' xValue' 0*xValue' 0*xValue'];
-            ]]>
-          </matrixParameter>
-        </parameter>
-      </localParameter>
+          tVal=[-tBound tStart(i) tStart(i)+timeMove tEnd(i) tEnd(i)+timeMove tBound];
+          xVal=[0 0 -.05 -.05 0 0];
+          xValue=interp1(tVal, xVal, timeValue, 'pchip');
+          xValue=interp1(tVal, xVal, timeValue);
+          ret=[timeValue' xValue' 0*xValue' 0*xValue'];
+          ]]>
+        </matrixParameter>
+      </Parameter>
       <RigidBody name="Body" xmlns="http://mbsim.berlios.de/MBSim">
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
@@ -63,7 +61,7 @@
            -</enableOpenMBVFrameC>
            -->
       </RigidBody>
-    </embed>
+    </Embed>
   </objects>
   <links>
     <Contact name="contactMetronome" xmlns="http://mbsim.berlios.de/MBSim">

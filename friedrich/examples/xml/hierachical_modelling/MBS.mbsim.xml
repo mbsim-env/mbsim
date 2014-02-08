@@ -6,7 +6,7 @@
   <frames/>
   <contours/>
   <groups>
-    <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
+    <pv:Embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
   </groups>
   <objects/>
   <links/>

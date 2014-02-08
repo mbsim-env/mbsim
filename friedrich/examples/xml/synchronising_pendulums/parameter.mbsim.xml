@@ -1,4 +1,4 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <scalarParameter name="fSize">.01</scalarParameter>
 
   <!-- Geometry-Data of Swing -->
@@ -137,4 +137,4 @@
     ]]>
   </scalarParameter>
 
-</parameter>
+</Parameter>

@@ -51,9 +51,9 @@
           <relativePosition>[0;-h1/2;0]</relativePosition>
           <relativeOrientation>rotateAboutX(0)</relativeOrientation>
         </FixedRelativeFrame>
-        <pv:embed>
+        <pv:Embed>
           <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
-        </pv:embed>
+        </pv:Embed>
       </frames>
       <contours/>
       <openMBVRigidBody>
@@ -117,15 +117,9 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
-      <openMBVForceArrow>
-        <ombv:Arrow name="dummy">
-          <ombv:diameter>0.03*numHG</ombv:diameter>
-          <ombv:headDiameter>0.03*2*numHG</ombv:headDiameter>
-          <ombv:headLength>0.03*4*numHG</ombv:headLength>
-          <ombv:type>"bothDoubleHeads"</ombv:type>
-          <ombv:scaleLength>0.005</ombv:scaleLength>
-        </ombv:Arrow>
-      </openMBVForceArrow>
+      <enableOpenMBVForce>
+        <scaleLength>0.005</scaleLength>
+      </enableOpenMBVForce>
     </SpringDamper>
     <SpringDamper name="Feder2">
       <forceFunction>
@@ -136,14 +130,11 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
-      <openMBVCoilSpring>
-        <ombv:CoilSpring name="dummy">
-          <ombv:numberOfCoils>5</ombv:numberOfCoils>
-          <ombv:springRadius>0.1</ombv:springRadius>
-          <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-        </ombv:CoilSpring>
-      </openMBVCoilSpring>
+      <enableOpenMBVCoilSpring>
+        <numberOfCoils>5</numberOfCoils>
+        <springRadius>0.1</springRadius>
+        <crossSectionRadius>0.01</crossSectionRadius>
+      </enableOpenMBVCoilSpring>
     </SpringDamper>
   </links>
 </Group>

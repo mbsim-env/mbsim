@@ -22,10 +22,10 @@
   <contours>
   </contours>
   <groups>
-    <pv:embed href="rocker.xml" count="1" counterName="numHG"/>
-    <pv:embed href="hydraulic_actor.xml" count="1" counterName="numHG"/>
-    <pv:embed href="hydraulic_system.xml" count="1" counterName="numHG"/>
-    <pv:embed href="control.xml" count="1" counterName="numHG"/>
+    <pv:Embed href="rocker.xml" count="1" counterName="numHG"/>
+    <pv:Embed href="hydraulic_actor.xml" count="1" counterName="numHG"/>
+    <pv:Embed href="hydraulic_system.xml" count="1" counterName="numHG"/>
+    <pv:Embed href="control.xml" count="1" counterName="numHG"/>
   </groups>
   <objects>
   </objects>

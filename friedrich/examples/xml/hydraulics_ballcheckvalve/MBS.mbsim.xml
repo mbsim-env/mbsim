@@ -9,7 +9,7 @@
   </frames>
   <contours/>
   <groups>
-    <pv:embed href="BallCheckvalveSystem.xml" count="1" counterName="xxx"/>
+    <pv:Embed href="BallCheckvalveSystem.xml" count="1" counterName="xxx"/>
   </groups>
   <objects>
     <RigidBody name="Anregung">

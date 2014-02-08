@@ -58,7 +58,7 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <RigidBody name="S{nr+1}" xmlns="http://mbsim.berlios.de/MBSim">
         <initialGeneralizedPosition>-pi/2+atan(hy/hx)</initialGeneralizedPosition>
         <frameOfReference ref="../Object[S{[6;9](nr)}]/Frame[F2]"/>
@@ -111,8 +111,8 @@
           <offset>1.</offset>
         </enableOpenMBVFrameC>
       </RigidBody>
-    </embed>
-    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    </Embed>
+    <Embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <RigidBody name="S{[4,7](nr)}" xmlns="http://mbsim.berlios.de/MBSim">
         <initialGeneralizedPosition>[-pi/2+atan(hy/hx), 2*atan(hy/hx)](nr)</initialGeneralizedPosition>
         <frameOfReference ref="../Object[S{[1,6](nr)}]/Frame[F2]"/>
@@ -165,8 +165,8 @@
           <offset>1.</offset>
         </enableOpenMBVFrameC>
       </RigidBody>
-    </embed>
-    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    </Embed>
+    <Embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <RigidBody name="S{[5;8](nr)}" xmlns="http://mbsim.berlios.de/MBSim">
         <initialGeneralizedPosition>[-atan(hy/hx),-atan(hy/hx)](nr)</initialGeneralizedPosition>
         <frameOfReference ref="../Object[S{[4;7](nr)}]/Frame[F2]"/>
@@ -219,8 +219,8 @@
           <offset>1.</offset>
         </enableOpenMBVFrameC>
       </RigidBody>
-    </embed>
-    <embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    </Embed>
+    <Embed count="2" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <RigidBody name="S{[6,9](nr)}" xmlns="http://mbsim.berlios.de/MBSim">
         <initialGeneralizedPosition>[-atan(hy/hx), -atan(hy/hx)](nr)</initialGeneralizedPosition>
         <frameOfReference ref="../Object[S{[5,8](nr)}]/Frame[F2]"/>
@@ -273,7 +273,7 @@
           <offset>1.</offset>
         </enableOpenMBVFrameC>
       </RigidBody>
-    </embed>
+    </Embed>
   </objects>
   <links>
     <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
@@ -290,7 +290,7 @@
       </momentLaw>
       <connect ref1="../../Object[Carrier]/Frame[Fm]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
-    <embed count="8" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Embed count="8" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <Joint name="Joint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
         <momentDirection>[0; 0; 1]</momentDirection>
         <momentLaw>
@@ -305,7 +305,7 @@
         </momentLaw>
         <connect ref1="../Object[S{[1,4,5,6,6,7,8,9](nr)}]/Frame[F{[2,2,2,2,2,2,2,2](nr)}]" ref2="../Object[S{[4,5,6,2,7,8,9,3](nr)}]/Frame[F{[1,1,1,2,1,1,1,2](nr)}]"/>
       </Joint>
-    </embed>
+    </Embed>
   </links>
 </Group>
 

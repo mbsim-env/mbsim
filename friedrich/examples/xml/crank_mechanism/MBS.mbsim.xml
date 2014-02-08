@@ -11,14 +11,12 @@
   </frames>
   <contours/>
   <groups>
-    <embed href="controller.xml" count="1" counterName="X" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-          <scalarParameter name="controllerKP">20.</scalarParameter>
-          <scalarParameter name="controllerKI">100.</scalarParameter>
-        </parameter>
-      </localParameter>
-    </embed>
+    <Embed href="controller.xml" count="1" counterName="X" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="controllerKP">20.</scalarParameter>
+        <scalarParameter name="controllerKI">100.</scalarParameter>
+      </Parameter>
+    </Embed>
   </groups>
   <objects>
     <RigidBody name="Crank" xmlns="http://mbsim.berlios.de/MBSim">
