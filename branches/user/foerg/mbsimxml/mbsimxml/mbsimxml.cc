@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
       ONLYGENERATESCHEMA=*++i;
   
     // help
-    if(arg.size()<2 ||
+    if(arg.size()<1 ||
        std::find(arg.begin(), arg.end(), "-h")!=arg.end() ||
        std::find(arg.begin(), arg.end(), "--help")!=arg.end() ||
        std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
@@ -256,23 +256,11 @@ int main(int argc, char *argv[]) {
       AUTORELOAD.push_back(DEPMBSIM);
     }
   
-    string PARAMINT="none";
-    if((i=std::find(arg.begin(), arg.end(), "--intparam"))!=arg.end()) {
-      i2=i; i2++;
-      PARAMINT=*i2;
-      arg.erase(i); arg.erase(i2);
-    }
-  
-    string MBSIMINT=*arg.begin();
-    arg.erase(arg.begin());
-    string PPMBSIMINT=".pp."+basename(MBSIMINT);
-  
     // execute
     int ret; // comamnd return value
     bool runAgain=true; // always run the first time
     while(runAgain) {
       unlink(PPMBSIM.c_str());
-      unlink(PPMBSIMINT.c_str());
       unlink(ERRFILE.c_str());
   
       // run preprocessor
@@ -287,9 +275,6 @@ int main(int argc, char *argv[]) {
       command.push_back(PARAM);
       command.push_back(MBSIM);
       command.push_back(mbsimxml_xsd.generic_string());
-      command.push_back(PARAMINT);
-      command.push_back(MBSIMINT);
-      command.push_back(mbsimxml_xsd.generic_string());
       ret=runProgram(command);
   
       if(!ONLYPP && ret==0) {
@@ -298,7 +283,6 @@ int main(int argc, char *argv[]) {
         if(NOINT!="") command.push_back(NOINT);
         if(ONLY1OUT!="") command.push_back(ONLY1OUT);
         command.push_back(PPMBSIM);
-        command.push_back(PPMBSIMINT);
         ret=runProgram(command);
       }
   
@@ -324,7 +308,7 @@ int main(int argc, char *argv[]) {
           Sleep(AUTORELOADTIME);
 #endif
           for(size_t i=0; i<depfiles.size(); i++) {
-            if(newer(depfiles[i], PPMBSIM) || newer(depfiles[i], PPMBSIMINT) || newer(depfiles[i], ERRFILE)) {
+            if(newer(depfiles[i], PPMBSIM) || newer(depfiles[i], ERRFILE)) {
               runAgain=true;
               break;
             }

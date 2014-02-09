@@ -135,7 +135,7 @@ int MBSimXML::initProject(int argc, char *argv[], DynamicSystemSolver*& dss, Int
 
 
   // help
-  if(argc<3 || argc>4) {
+  if(argc<2 || argc>4) {
     cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
     cout<<"                    <mbsimfile> <mbsimintegratorfile>"<<endl;
     cout<<"   or: mbsimflatxml --printNamespacePrefixMapping"<<endl;
