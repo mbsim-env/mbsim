@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSim" xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <!--<pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml" count="1" counterName="MBS"/>-->
+  <pv:Embed parameterHref="parameter.mbsim.xml" count="1" counterName="MBS">
+<DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim" xmlns:ombv="http://openmbv.berlios.de/OpenMBV" xmlns:ctl="http://mbsim.berlios.de/MBSimControl" xmlns:flex="http://mbsim.berlios.de/MBSimFlexibleBody" xmlns:hyd="http://mbsim.berlios.de/MBSimHydraulics" xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator" xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" xmlns:ns_1="http://openmbv.berlios.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <frames />
+    <contours />
+    <groups />
+    <objects>
+        <RigidBody name="RigidBody1">
+            <mass unit="kg">1</mass>
+            <inertiaTensor unit="kg*m^2">
+                <pv:xmlMatrix>
+                    <pv:row>
+                        <pv:ele>0.01</pv:ele>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>0</pv:ele>
+                    </pv:row>
+                    <pv:row>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>0.01</pv:ele>
+                        <pv:ele>0</pv:ele>
+                    </pv:row>
+                    <pv:row>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>1/12*m*l^2</pv:ele>
+                    </pv:row>
+                </pv:xmlMatrix>
+            </inertiaTensor>
+            <stateDependentTranslation>
+              <SymbolicFunction arg1="s" arg1Dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
+            </stateDependentTranslation>
+            <stateDependentRotation>
+              <NestedFunction>
+                <outerFunction>
+                  <RotationAboutFixedAxis>
+                    <axisOfRotation unit="-">
+                      <pv:xmlVector>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>1</pv:ele>
+                      </pv:xmlVector>
+                    </axisOfRotation>
+                  </RotationAboutFixedAxis>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction arg1="s" arg1Dim="1">pi/2+s/R</SymbolicFunction>
+                </innerFunction>
+              </NestedFunction>
+            </stateDependentRotation>
+            <translationDependentRotation>true</translationDependentRotation>
+            <frames />
+            <contours />
+            <openMBVRigidBody>
+                <ns_1:Cuboid name="NOTSET">
+                    <?OPENMBV_ID 4?>
+                    <ns_1:initialTranslation unit="m">
+                        <pv:xmlVector>
+                            <pv:ele>0</pv:ele>
+                            <pv:ele>0</pv:ele>
+                            <pv:ele>0</pv:ele>
+                        </pv:xmlVector>
+                    </ns_1:initialTranslation>
+                    <ns_1:initialRotation unit="rad">
+                        <pv:xmlVector>
+                            <pv:ele>0</pv:ele>
+                            <pv:ele>0</pv:ele>
+                            <pv:ele>0</pv:ele>
+                        </pv:xmlVector>
+                    </ns_1:initialRotation>
+                    <ns_1:scaleFactor unit="-">1</ns_1:scaleFactor>
+                    <ns_1:length unit="m">
+                        <pv:xmlVector>
+                            <pv:ele>l</pv:ele>
+                            <pv:ele>h</pv:ele>
+                            <pv:ele>d</pv:ele>
+                        </pv:xmlVector>
+                    </ns_1:length>
+                </ns_1:Cuboid>
+            </openMBVRigidBody>
+            <enableOpenMBVFrameC>
+                <?OPENMBV_ID 5?>
+                <size unit="m">1</size>
+                <offset unit="-">1</offset>
+            </enableOpenMBVFrameC>
+            <enableOpenMBVWeight>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVWeight>
+           <enableOpenMBVJointForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointForce>
+           <enableOpenMBVJointMoment>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointMoment>
+        </RigidBody>
+    </objects>
+    <links />
+    <observers>
+        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
+            <frame ref="../Object[RigidBody1]/Frame[C]" />
+            <enableOpenMBVVelocity>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVVelocity>
+        </AbsoluteKinematicsObserver>
+    </observers>
+    <enableOpenMBVFrameI>
+        <?OPENMBV_ID 3?>
+        <size unit="m">1</size>
+        <offset unit="-">1</offset>
+    </enableOpenMBVFrameI>
+    <environments>
+        <MBSimEnvironment>
+            <accelerationOfGravity unit="m/s^2">
+                <pv:xmlVector>
+                    <pv:ele>0</pv:ele>
+                    <pv:ele>-9.81</pv:ele>
+                    <pv:ele>0</pv:ele>
+                </pv:xmlVector>
+            </accelerationOfGravity>
+        </MBSimEnvironment>
+    </environments>
+    <inverseKinetics>1</inverseKinetics>
+</DynamicSystemSolver>
+</pv:Embed>
+  <DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+    <startTime>0</startTime>
+    <endTime>4</endTime>
+    <plotStepSize>1e-3</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar>1e-6</relativeToleranceScalar>
+    <initialStepSize>0</initialStepSize>
+    <maximalStepSize>1e-1</maximalStepSize>
+  </DOPRI5Integrator>
+</MBSimProject>
