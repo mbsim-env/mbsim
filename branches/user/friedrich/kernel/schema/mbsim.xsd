@@ -4,6 +4,7 @@
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSim"
   xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -32,6 +33,9 @@
       </ol>
     </xs:documentation>
   </xs:annotation>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSimIntegrator"
+    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd"/>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
@@ -238,6 +242,51 @@
     <xs:restriction base="pv:stringPartialOctEval"/>
   </xs:simpleType>
 
+  <xs:element name="MBSimProject" type="MBSimProjectType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Klasse für MBSim-Projekte
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MBSimProjectType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element ref="DynamicSystemSolver">
+          <xs:annotation>
+            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Modell.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="pv:Embed">
+          <xs:annotation>
+            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definition in externer Datei.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:choice>
+        <xs:element ref="mbsimint:Integrator">
+          <xs:annotation>
+            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Integrator.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="pv:Embed">
+          <xs:annotation>
+            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definition in externer Datei.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="name" type="pv:stringPartialOctEval" use="required"/>
+    <xs:attribute ref="xml:base"/>
+  </xs:complexType>
 
 
   <xs:element name="Element" abstract="true" type="ElementType">
