@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSim">
-  <DynamicSystemSolver name="DSS" xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML">
+  <DynamicSystemSolver name="DSS" xmlns="http://mbsim.berlios.de/MBSim" xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
     <frames>
       <FixedRelativeFrame name="W">
         <enableOpenMBV>
