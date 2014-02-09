@@ -65,8 +65,6 @@ argparser = argparse.ArgumentParser(
   for 'MBS.mbsim.xml' using the --mbsimparam option of mbsimxml.
   If for an XML example an additional file named 'parameter.mbsimint.xml' exists it is used by as parameter file
   for 'Integrator.mbsimint.xml' using the --mbsimintparam option of mbsimxml.
-  If for an XML example an additional directory named 'mfiles' exists it is used as additional octave m-file path
-  using the --mpath option of mbsimxml.
   '''
 )
 
@@ -742,14 +740,12 @@ def executeXMLExample(executeFD):
   if os.path.isfile("parameter.mbsim.xml"): parMBSimOption=["--mbsimparam", "parameter.mbsim.xml"]
   parIntOption=[]
   if os.path.isfile("parameter.mbsimint.xml"): parIntOption=["--mbsimparam", "parameter.mbsimint.xml"]
-  mpathOption=[]
-  if os.path.isdir("mfiles"): mpathOption=["--mpath", "mfiles"]
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+["MBS.mbsim.xml", "Integrator.mbsimint.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+["MBS.mbsim.xml", "Integrator.mbsimint.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+
                     ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
