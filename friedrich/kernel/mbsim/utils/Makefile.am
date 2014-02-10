@@ -24,6 +24,7 @@ utilsinclude_HEADERS = colors.h\
                        contact_utils.h\
                        rotarymatrices.h\
                        utils.h\
+                       ptr.h\
                        stopwatch.h\
                        ansatz_functions.h\
                        contour_functions.h\
