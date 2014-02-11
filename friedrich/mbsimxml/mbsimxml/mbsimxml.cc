@@ -129,9 +129,7 @@ int main(int argc, char *argv[]) {
        std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
           <<"                 --autoreload|--onlyGenerateSchema <file>]"<<endl
-          <<"                [--mpath <dir> [--mpath <dir>]]"<<endl
-          <<"                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"<<endl
-          <<"                [--intparam <integratorparameterfile>] <integratorfile>"<<endl
+          <<"                <mbsimprjfile>"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
           <<"This is free software; see the source for copying conditions. There is NO"<<endl
@@ -147,11 +145,7 @@ int main(int argc, char *argv[]) {
           <<"                     a input file is newer than the output file"<<endl
           <<"--onlyGenerateSchema Generate .mbsimxml.xsd (including imports of all modules)"<<endl
           <<"                     and exit"<<endl
-          <<"--mpath              Add <dir> to the octave search path for m-files"<<endl
-          <<"--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"<<endl
-          <<"<mbsimfile>          Use <mbsimfile> as mbsim xml file"<<endl
-          <<"--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"<<endl
-          <<"<integratorfile>     Use <integratorfile> as mbsim integrator xml file"<<endl;
+          <<"<mbsimprjfile>       Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
     }
   
@@ -177,18 +171,6 @@ int main(int argc, char *argv[]) {
     generateMBSimXMLSchema(mbsimxml_xsd, MBXMLUTILSSCHEMA);
     if(!ONLYGENERATESCHEMA.empty())
       return 0;
-  
-    // mpath
-    vector<string> MPATH;
-    do {
-      if((i=std::find(arg.begin(), arg.end(), "--mpath"))!=arg.end()) {
-        i2=i; i2++;
-        MPATH.push_back(*i);
-        MPATH.push_back(*i2);
-        arg.erase(i); arg.erase(i2);
-      }
-    }
-    while(i!=arg.end());
   
     bool ONLYPP=false;
     if((i=std::find(arg.begin(), arg.end(), "--onlypreprocess"))!=arg.end()) {
@@ -223,58 +205,31 @@ int main(int argc, char *argv[]) {
         AUTORELOADTIME=250;
     }
   
-    string PARAM="none";
-    if((i=std::find(arg.begin(), arg.end(), "--mbsimparam"))!=arg.end()) {
-      i2=i; i2++;
-      PARAM=*i2;
-      arg.erase(i); arg.erase(i2);
-    }
-  
-    string MBSIM=*arg.begin();
+    string MBSIMPRJ=*arg.begin();
     arg.erase(arg.begin());
-    string PPMBSIM=".pp."+basename(MBSIM);
-    string DEPMBSIM=".dep."+basename(MBSIM);
-    string ERRFILE=".err."+basename(MBSIM);
+    string PPMBSIMPRJ=".pp."+basename(MBSIMPRJ);
+    string DEPMBSIMPRJ=".dep."+basename(MBSIMPRJ);
+    string ERRFILE=".err."+basename(MBSIMPRJ);
   
     vector<string> AUTORELOAD;
     if(AUTORELOADTIME>0) { // AUTORELOAD is now set (see above)
       AUTORELOAD.push_back("--dependencies");
-      AUTORELOAD.push_back(DEPMBSIM);
+      AUTORELOAD.push_back(DEPMBSIMPRJ);
     }
-  
-    string PARAMINT="none";
-    if((i=std::find(arg.begin(), arg.end(), "--intparam"))!=arg.end()) {
-      i2=i; i2++;
-      PARAMINT=*i2;
-      arg.erase(i); arg.erase(i2);
-    }
-  
-    string MBSIMINT=*arg.begin();
-    arg.erase(arg.begin());
-    string PPMBSIMINT=".pp."+basename(MBSIMINT);
   
     // execute
     int ret; // comamnd return value
     bool runAgain=true; // always run the first time
     while(runAgain) {
-      unlink(PPMBSIM.c_str());
-      unlink(PPMBSIMINT.c_str());
+      unlink(PPMBSIMPRJ.c_str());
       unlink(ERRFILE.c_str());
   
       // run preprocessor
-      // NOTE: we validate both, the model and integrator file, with mbsimxml.xsd to enable
-      // integrators as mbsim modules.
-      // mbsimflatxml checks explicity for a correct root element of both files, so validating both
-      // with mbsimxml.xsd is no problem.
+      // validate the project file with mbsimxml.xsd
       vector<string> command;
       command.push_back((MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT)).string());
       command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
-      command.insert(command.end(), MPATH.begin(), MPATH.end());
-      command.push_back(PARAM);
-      command.push_back(MBSIM);
-      command.push_back(mbsimxml_xsd.generic_string());
-      command.push_back(PARAMINT);
-      command.push_back(MBSIMINT);
+      command.push_back(MBSIMPRJ);
       command.push_back(mbsimxml_xsd.generic_string());
       ret=runProgram(command);
   
@@ -283,8 +238,7 @@ int main(int argc, char *argv[]) {
         command.push_back((MBXMLUTILSBIN/(string("mbsimflatxml")+EXEEXT)).string());
         if(NOINT!="") command.push_back(NOINT);
         if(ONLY1OUT!="") command.push_back(ONLY1OUT);
-        command.push_back(PPMBSIM);
-        command.push_back(PPMBSIMINT);
+        command.push_back(PPMBSIMPRJ);
         ret=runProgram(command);
       }
   
@@ -294,7 +248,7 @@ int main(int argc, char *argv[]) {
       if(AUTORELOADTIME>0) {
         // get dependent files
         vector<string> depfiles;
-        ifstream deps(DEPMBSIM.c_str());
+        ifstream deps(DEPMBSIMPRJ.c_str());
         while(true) {
           string depfile;
           getline(deps, depfile);
@@ -310,7 +264,7 @@ int main(int argc, char *argv[]) {
           Sleep(AUTORELOADTIME);
 #endif
           for(size_t i=0; i<depfiles.size(); i++) {
-            if(newer(depfiles[i], PPMBSIM) || newer(depfiles[i], PPMBSIMINT) || newer(depfiles[i], ERRFILE)) {
+            if(newer(depfiles[i], PPMBSIMPRJ) || newer(depfiles[i], ERRFILE)) {
               runAgain=true;
               break;
             }
