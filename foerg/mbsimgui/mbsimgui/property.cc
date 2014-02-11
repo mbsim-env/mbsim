@@ -28,7 +28,7 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
-NamespaceURI PARAM("http://openmbv.berlios.de/MBXMLUtils/parameter");
+NamespaceURI PARAM("http://openmbv.berlios.de/MBXMLUtils/physicalvariable");
 NamespaceURI OPENMBV("http://openmbv.berlios.de/OpenMBV");
 NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
 NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
