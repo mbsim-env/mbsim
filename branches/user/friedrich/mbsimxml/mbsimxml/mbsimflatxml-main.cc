@@ -22,11 +22,9 @@ int main(int argc, char *argv[]) {
     if(argc>=2 && strcmp(argv[1],"--stopafterfirststep")==0)
       stopAfterFirstStep=true;
   
-    if(MBSimXML::preInitDynamicSystemSolver(argc, argv, dss)!=0) return 0; 
+    if(MBSimXML::preInit(argc, argv, dss, integrator)!=0) return 0; 
     MBSimXML::initDynamicSystemSolver(argc, argv, dss);
   
-    MBSimXML::initIntegrator(argc, argv, integrator);
-
     if(doNotIntegrate==false) {
       if(stopAfterFirstStep)
         MBSimXML::plotInitialState(integrator, dss);
