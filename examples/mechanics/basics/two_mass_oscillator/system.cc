@@ -15,11 +15,6 @@ using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
-  // Define gravitational environment
-  Vec g(3);
-  g(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
-
   /* Parameters of body 1 */
   //mass
   double m1 = 5;
