@@ -990,7 +990,7 @@ void MainWindow::saveParameterListAs() {
 // write model paramters to XML structure
 // The resource owner of the returned DOMElement is the caller!
 DOMElement* MainWindow::writeParameterList(shared_ptr<DOMDocument> &doc) {
-  DOMElement *ele0=D(doc)->createElement(PARAM%string("parameter"));
+  DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
   for(int i=0; i<model->rowCount(QModelIndex()); i++)
