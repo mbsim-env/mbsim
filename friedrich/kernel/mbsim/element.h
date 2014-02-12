@@ -91,9 +91,9 @@ namespace MBSim {
     resolveXMLPath, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
     preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
     resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
-    plot, /*!< Build/initialize the plot structure */
     relativeFrameContourLocation, /*!< Set the relative position and orientation of all Frame's/Contour's in all Group's/RigidBody's */
     worldFrameContourLocation, /*!< Set the world position and orientation of all Frame's/Contour's in all Group's */
+    plot, /*!< Build/initialize the plot structure */
     reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structur) */
     unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
     calculateLocalInitialValues, /*!< calculation of non-linear initial values in complex internal models */
