@@ -118,10 +118,9 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void GearConstraint::addTransmission(Transmission *transmission) {
-    bi.push_back(transmission->body); 
-    ratio.push_back(transmission->ratio);
-    delete transmission;
+  void GearConstraint::addTransmission(const Transmission &transmission) {
+    bi.push_back(transmission.body); 
+    ratio.push_back(transmission.ratio);
   }
 
   void GearConstraint::updateStateDependentVariables(double t){
@@ -173,7 +172,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setDependentBody(bd);
     for(unsigned int i=0; i<bi.size(); i++)
-      gear->addTransmission(new Transmission(bi[i],ratio[i]));
+      gear->addTransmission(Transmission(bi[i],ratio[i]));
     if(FArrow)
       gear->setOpenMBVForce(FArrow);
     if(MArrow)

@@ -135,15 +135,15 @@ namespace MBSimPowertrain {
     if(model==1) {
       GearConstraint* constraint = new GearConstraint("C1",carrier);
       addObject(constraint);
-      constraint->addTransmission(new Transmission(sun,0.5*rS/rT2));
-      constraint->addTransmission(new Transmission(annulus,0.5*rH/rT2));
+      constraint->addTransmission(Transmission(sun,0.5*rS/rT2));
+      constraint->addTransmission(Transmission(annulus,0.5*rH/rT2));
     } else if(model==0) {
       Gear *gear;
       gear = new Gear("Gear1");
       addLink(gear);
       gear->setDependentBody(carrier);
-      gear->addTransmission(new Transmission(sun,0.5*rS/rT2));
-      gear->addTransmission(new Transmission(annulus,0.5*rH/rT2));
+      gear->addTransmission(Transmission(sun,0.5*rS/rT2));
+      gear->addTransmission(Transmission(annulus,0.5*rH/rT2));
       //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
      // gear->setDependentBody(sun);
@@ -162,15 +162,15 @@ namespace MBSimPowertrain {
       if(model==1) {
         GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str(),planet[i]);
         addObject(constraint);
-        constraint->addTransmission(new Transmission(sun,-0.5*(rS/rP+rS/rT2)));
-        constraint->addTransmission(new Transmission(annulus,0.5*(rH/rP-rH/rT2)));
+        constraint->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
+        constraint->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
       } else if (model==0) {
         Gear *gear;
         gear = new Gear(string("Gear_")+shaftName.str());
         addLink(gear);
         gear->setDependentBody(planet[i]);
-        gear->addTransmission(new Transmission(sun,-0.5*(rS/rP+rS/rT2)));
-        gear->addTransmission(new Transmission(annulus,0.5*(rH/rP-rH/rT2)));
+        gear->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
+        gear->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
         //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
         //gear->setDependentBody(annulus);

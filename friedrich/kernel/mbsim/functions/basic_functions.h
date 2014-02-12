@@ -326,11 +326,13 @@ namespace MBSim {
       public:
        NestedFunction(fmatvec::Function<Ret(Argo)> *fo_=0, fmatvec::Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
         ~NestedFunction() { delete fo; delete fi; }
-       typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
+        typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
         typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
+        void setOuterFunction(fmatvec::Function<Ret(Argo)> *fo_) { fo = fo_; }
+        void setInnerFunction(fmatvec::Function<Argo(Argi)> *fi_) { fi = fi_; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
           fo=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
@@ -346,7 +348,6 @@ namespace MBSim {
   template <typename Ret>
   struct LimitedFunction {
     LimitedFunction(fmatvec::Function<Ret(double)> *function_, double limit_) : function(function_), limit(limit_) { }
-    ~LimitedFunction() { delete function; }
     fmatvec::Function<Ret(double)> *function;
     double limit;
   };
@@ -355,9 +356,13 @@ namespace MBSim {
     class PiecewiseDefinedFunction : public fmatvec::Function<Ret(double)> {
       public:
         PiecewiseDefinedFunction() : contDiff(0) { }
+        ~PiecewiseDefinedFunction() { 
+          for(unsigned int i=0; i<function.size(); i++)
+            delete function[i];
+        }
         void addLimitedFunction(const LimitedFunction<Ret> &limitedFunction) { 
           function.push_back(limitedFunction.function); 
-          function.push_back(limitedFunction.limit); 
+          a.push_back(limitedFunction.limit); 
           init();
         }
         void setContinouslyDifferentiable(double contDiff_) { contDiff = contDiff_; }
