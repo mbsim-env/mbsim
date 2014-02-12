@@ -204,6 +204,7 @@ namespace MBSim {
     public:
       PositiveFunction(fmatvec::Function<Ret(double)> *f_=0) : f(f_) { }
       ~PositiveFunction() { delete f; }
+      void setFunction(fmatvec::Function<Ret(double)> *f_) { f = f_; }
       Ret operator()(const double &x) {
         Ret y=(*f)(x);
         for (int i=0; i<y.size(); i++)
