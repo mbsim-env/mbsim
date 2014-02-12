@@ -84,9 +84,15 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::updateStateDependentVariables(double t) {
     BuildElements();
+
+    // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
+    //        The idea is to use a contour frame that has all necessary position information
     for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
       updateKinematicsForFrame(S_Frame[i], all, frame[i]);
     }
+
+    for (size_t i  = 0; i < fixedRelativeFrames.size(); i++)
+      fixedRelativeFrames[i]->updateStateDependentVariables();
 
     for (size_t i  = 0; i < nodeFrames.size(); i++)
       updateKinematicsAtNode(nodeFrames[i], MBSim::all);
@@ -172,6 +178,11 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::addFrame(NodeFrame *frame) {
     nodeFrames.push_back(frame);
+    Body::addFrame(frame);
+  }
+
+  void FlexibleBody::addFrame(MBSim::FixedRelativeFrame *frame) {
+    fixedRelativeFrames.push_back(frame);
     Body::addFrame(frame);
   }
 

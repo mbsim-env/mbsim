@@ -21,6 +21,7 @@
 #define _CONTOUR2SFLEXIBLE_H_
 
 //#include "mbsim/contours/contour_2s.h"
+#include "mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_factory.h"
 
 namespace MBSim {
   class ContactKinematics;
@@ -46,13 +47,18 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) { neutral->updateKinematicsForFrame(cp,ff); }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) { neutral->updateJacobiansForFrame(cp); }
       /***************************************************/
 
       MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());
       }
+
+      void setNeutral(Contour2sNeutralFactory* neutral_) {neutral = neutral_;}
+
+    protected:
+      Contour2sNeutralFactory* neutral;
 
   };
 

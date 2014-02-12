@@ -27,7 +27,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief constructor with all necessary data given
        */
-      Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, Mat transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_);
+      Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_);
 
       /*!
        * \brief destructor
@@ -44,17 +44,47 @@ namespace MBSimFlexibleBody {
       /* GETTER / SETTER*/
       int getNumberOfTransNodesU();
       int getNumberOfTransNodesV();
-      void setTransNodes(const fmatvec::Mat & transNodes);
-      void setdegU(int deg);
-      void setdegV(int deg);
+
+      /*!
+       * \brief function to set the indices of the nodes for the interpolation
+       * The function expects index for the first node the index 1 for the second node the index 2 etc. --> Thus index 0 is not possible here.
+       *
+       */
+      void setTransNodes(const fmatvec::MatVVI & transNodes);
 
       /*!
        * \brief read data from a file that consists of sorted lists for nodes that should be interpolated
        *        Every line in the has to be a row of nodes in U-direction (the first direction of the interpolation)
 
-       * \return A Matrix that consists of the list of node-numbers
+       * The node numbering starts with 1.
        */
-      static fmatvec::Mat readNodes(std::string file);
+      void readTransNodes(std::string file);
+
+      /*!
+       * \brief returns the nodes for interpolation
+       */
+      fmatvec::MatVVI getTransNodes();
+
+
+      /*!
+       * \brief set interpolation degree in U-direction
+       */
+      void setdegU(int deg);
+
+      /*!
+       * \brief set interpolation degree in V-direction
+       */
+      void setdegV(int deg);
+
+      /*!
+       * \brief set open or closed structure
+       */
+      void setOpenStructure(bool openstructure);
+
+      /*!
+       * \brief get open or closed structure
+       */
+      bool getOpenStructure();
 
     protected:
       virtual NeutralNurbsVelocity2s* createNeutralVelocity();
@@ -66,9 +96,9 @@ namespace MBSimFlexibleBody {
        * \brief Matrix of all node numbers that are interpolated
        *
        * Each row contains a list of node-numbers in u-direction of the contour (first direction)
-       * REMARK: MBSim starts indexing with 0. If external programs (e.g. abaqus) start indexing with 1 the user has to substract one for each node-index
+       * REMARK: MBSim starts indexing with 0. Therefore in the set-nodes routine one index is substracted
        */
-      Mat transNodes;
+      fmatvec::MatVVI transNodes;
 
       /*!
        * \brief offset between translation and rotational nodes
@@ -78,7 +108,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief Matrix for the contour-point datas for the single nodes
        */
-      fmatvec::GeneralMatrix<ContourPointData> transContourPoints;
+//      fmatvec::GeneralMatrix<ContourPointData> transContourPoints;
       Vec uk;
       Vec vl;
       int degU;

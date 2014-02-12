@@ -172,6 +172,11 @@ namespace MBSimFlexibleBody {
        */
       void addFrame(NodeFrame *frame);
 
+      /**
+       * \param fixed relative frame that should be added
+       */
+      void addFrame(MBSim::FixedRelativeFrame *frame);
+
       void addContour(MBSim::Contour *contour);
 
       /**

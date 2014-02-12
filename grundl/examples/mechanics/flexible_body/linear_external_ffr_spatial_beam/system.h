@@ -8,7 +8,7 @@
 
 class System : public MBSim::DynamicSystemSolver {
   public:
-    System(const std::string &projectName, const std::string & inputFilesPath);
+    System(const std::string &projectName);
 
   private:
     MBSimFlexibleBody::FlexibleBodyLinearExternalFFR *test;

@@ -81,9 +81,11 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0);
       virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
+      virtual void updateJacobiansAtNode(NodeFrame * frame);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void updateh(double t, int k = 0);
       virtual void updateStateDependentVariables(double t);
+      virtual void updateJacobians(double t, int k);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -151,6 +153,11 @@ namespace MBSimFlexibleBody {
        * \brief  update A, G_bar, and G_bar_Dot
        */
       void updateAGbarGbardot();
+
+      /*!
+       * \brief update FFR Frame
+       */
+      void updateFFRFrame();
 
       /**
        * \brief total number of nodes
