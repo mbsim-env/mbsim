@@ -18,7 +18,7 @@ namespace MBSimFlexibleBody {
       Contour2sNeutralFactory(name_), transNodes(), nodeOffset(0.), degU(3), degV(3), openStructure(false), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
   }
   
-  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, Mat transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
+  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
       Contour2sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), degV(degV_), openStructure(openStructure_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
 
     parent_->addContour(this);
@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
     if (stage == resize) {
       // construct contourPoint for translation nodes
       nodes.reserve(getNumberOfTransNodesU());  // TODO: which type is suitable for nodes in the contour2sSearch
-      transContourPoints.resize(getNumberOfTransNodesU(), getNumberOfTransNodesV());
+//      transContourPoints.resize(getNumberOfTransNodesU(), getNumberOfTransNodesV());
     }
     else if (stage == worldFrameContourLocation) {
       R->getOrientation() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
@@ -70,9 +70,9 @@ namespace MBSimFlexibleBody {
 
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
 
-      for (int i = 0; i < getNumberOfTransNodesU(); i++)
-        for (int j = 0; j < getNumberOfTransNodesV(); j++)
-          transContourPoints(i, j) = ContourPointData(transNodes(i, j), NODE);
+//      for (int i = 0; i < getNumberOfTransNodesU(); i++)
+//        for (int j = 0; j < getNumberOfTransNodesV(); j++)
+//          transContourPoints(i, j) = ContourPointData(transNodes(i, j), NODE);
 
       NP = createNeutralPosition();
       NLP = createNeutralLocalPosition();
@@ -105,10 +105,8 @@ namespace MBSimFlexibleBody {
     if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
       NV->update(cp);
 
-    ContourPointData FFR(0, FFRORIGIN);
     if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
-      static_cast<FlexibleBodyLinearExternalFFR*>(parent)->updateKinematicsForFrame(FFR, angularVelocity);
-      cp.getFrameOfReference().setAngularVelocity(FFR.getFrameOfReference().getAngularVelocity());
+      cp.getFrameOfReference().setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
     }
     if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
       NP->updatePositionNormal(cp);
@@ -214,8 +212,13 @@ namespace MBSimFlexibleBody {
     return transNodes.cols(); //TODO: shouldn't it be the other way round?
   }
 
-  void Contour2sNeutralLinearExternalFFR::setTransNodes(const Mat & transNodes_) {
+  void Contour2sNeutralLinearExternalFFR::setTransNodes(const MatVVI & transNodes_) {
     transNodes.resize() = transNodes_;
+  }
+
+
+  MatVVI Contour2sNeutralLinearExternalFFR::getTransNodes() {
+    return transNodes;
   }
 
   void Contour2sNeutralLinearExternalFFR::setdegU(int deg) {
@@ -226,7 +229,15 @@ namespace MBSimFlexibleBody {
     degV = deg;
   }
 
-  Mat Contour2sNeutralLinearExternalFFR::readNodes(string file) {
+  void Contour2sNeutralLinearExternalFFR::setOpenStructure(bool openstructure_) {
+    openStructure = openstructure_;
+  }
+
+  bool Contour2sNeutralLinearExternalFFR::getOpenStructure() {
+    return openStructure;
+  }
+
+  void Contour2sNeutralLinearExternalFFR::readTransNodes(string file) {
     ifstream contourfile((file).c_str());
     if (!contourfile.is_open()) {
       throw MBSimError("Can not open file " + file);
@@ -234,25 +245,18 @@ namespace MBSimFlexibleBody {
     string s;
     getline(contourfile, s);
 
-    Mat transNodes(s.c_str());
-
-    for(int i = 0; i < transNodes.rows(); i++)
-      for(int j = 0; j < transNodes.cols(); j++)
-        transNodes(i,j) -= 1;
-
-
-    return transNodes;
+    setTransNodes(MatVVI(s.c_str()));
   }
 
   NeutralNurbsVelocity2s* Contour2sNeutralLinearExternalFFR::createNeutralVelocity() {
-    return new NeutralNurbsVelocity2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
+    return new NeutralNurbsVelocity2s(parent, transNodes, nodeOffset, degU, degV, openStructure);
   }
 
   NeutralNurbsPosition2s* Contour2sNeutralLinearExternalFFR::createNeutralPosition() {
-    return new NeutralNurbsPosition2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
+    return new NeutralNurbsPosition2s(parent, transNodes, nodeOffset, degU, degV, openStructure);
   }
 
   NeutralNurbsLocalPosition2s* Contour2sNeutralLinearExternalFFR::createNeutralLocalPosition() {
-    return new NeutralNurbsLocalPosition2s(parent, transContourPoints, nodeOffset, degU, degV, openStructure);
+    return new NeutralNurbsLocalPosition2s(parent, transNodes, nodeOffset, degU, degV, openStructure);
   }
 } /* namespace MBSimFlexibleBody */

@@ -536,7 +536,8 @@ namespace MBSim {
               openMBVContactFrame.push_back(new OpenMBV::Frame);
               openMBVContactFrame[i]->setOffset(1.);
               openMBVContactFrame[i]->setSize(openMBVContactFrameSize);
-              openMBVContactFrame[i]->setName(string("ContactPoint_") + (i == 0 ? "A" : "B"));
+              string name = string((i == 0 ? "A" : "B")) + string("_") + string(contour[i]->getShortName());
+              openMBVContactFrame[i]->setName(name);
               openMBVContactFrame[i]->setEnable(openMBVContactFrameEnabled);
               openMBVContactGrp->addObject(openMBVContactFrame[i]);
             }

@@ -10,14 +10,12 @@
 
 namespace MBSimFlexibleBody {
 
-  NeutralNurbsLocalPosition2s::NeutralNurbsLocalPosition2s(Element* parent_, fmatvec::GeneralMatrix<ContourPointData>& ContourPoints_, double nodeOffset_, int degU_, int degV_, bool openStructure_):
-    NeutralNurbs2s(parent_, ContourPoints_, nodeOffset_, degU_, degV_, openStructure_){
-    // TODO Auto-generated constructor stub
+  NeutralNurbsLocalPosition2s::NeutralNurbsLocalPosition2s(Element* parent_, const MatVVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_):
+    NeutralNurbs2s(parent_, nodes, nodeOffset_, degU_, degV_, openStructure_){
     
   }
   
   NeutralNurbsLocalPosition2s::~NeutralNurbsLocalPosition2s() {
-    // TODO Auto-generated destructor stub
   }
 
   void NeutralNurbsLocalPosition2s::update(ContourPointData &cp){
@@ -26,10 +24,12 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsLocalPosition2s::buildNodelist(){
+    NodeFrame frame;
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsForFrame(contourPoints(i, j), localPosition);
-        Nodelist(i,j) = contourPoints(i, j).getFrameOfReference().getLocalPosition();
+        frame.setNodeNumber(nodes(i, j));
+        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, localPosition);
+        Nodelist(i,j) = frame.getLocalPosition();
 //        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
 //        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
       }

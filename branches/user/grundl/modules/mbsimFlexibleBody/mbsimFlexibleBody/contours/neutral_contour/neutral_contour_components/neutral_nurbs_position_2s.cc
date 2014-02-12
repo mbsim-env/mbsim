@@ -10,8 +10,8 @@
 
 namespace MBSimFlexibleBody {
 
-  NeutralNurbsPosition2s::NeutralNurbsPosition2s(Element* parent_, fmatvec::GeneralMatrix<ContourPointData>& ContourPoints_, double nodeOffset_, int degU_, int degV_, bool openStructure_):
-    NeutralNurbs2s(parent_, ContourPoints_, nodeOffset_, degU_, degV_, openStructure_){
+  NeutralNurbsPosition2s::NeutralNurbsPosition2s(Element* parent_, const MatVVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_):
+    NeutralNurbs2s(parent_, nodes, nodeOffset_, degU_, degV_, openStructure_){
     // TODO Auto-generated constructor stub
     
   }
@@ -81,10 +81,12 @@ namespace MBSimFlexibleBody {
 
 
   void NeutralNurbsPosition2s::buildNodelist(){
+    NodeFrame frame;
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsForFrame(contourPoints(i, j), position);
-        Nodelist(i,j) = contourPoints(i, j).getFrameOfReference().getPosition();
+        frame.setNodeNumber(nodes(i,j));
+        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, position);
+        Nodelist(i,j) = frame.getPosition();
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
       }

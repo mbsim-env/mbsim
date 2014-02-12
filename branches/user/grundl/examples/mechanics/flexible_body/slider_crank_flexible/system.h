@@ -6,12 +6,10 @@
 #include "mbsim/rigid_body.h"
 #include <string>
 
-class System : public MBSim::DynamicSystemSolver {
+class FlexibleSliderCrankSystem : public MBSim::DynamicSystemSolver {
   public:
-    System(const std::string &projectName, const std::string & inputFilesPath);
+    FlexibleSliderCrankSystem(const std::string &projectName);
 
-  private:
-    MBSimFlexibleBody::FlexibleBodyLinearExternalFFR *test;
 };
 
 #endif /* _SYSTEM_H */

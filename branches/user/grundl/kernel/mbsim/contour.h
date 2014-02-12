@@ -282,6 +282,10 @@ namespace MBSim {
       OpenMBV::RigidBody * getOpenMBVRigidBody() {
         return openMBVRigidBody;
       }
+
+       void setOpenMBVRigidBody(OpenMBV::RigidBody * ombvBody) {
+        openMBVRigidBody = ombvBody;
+      }
 #endif
 
     protected:
