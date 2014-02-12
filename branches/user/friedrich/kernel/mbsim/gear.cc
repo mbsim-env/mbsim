@@ -48,10 +48,9 @@ namespace MBSim {
     gdSize = 1;
   }
 
-  void Gear::addTransmission(Transmission *transmission) { 
-    body.push_back(transmission->body); 
-    ratio.push_back(transmission->ratio); 
-    delete transmission;
+  void Gear::addTransmission(const Transmission &transmission) { 
+    body.push_back(transmission.body); 
+    ratio.push_back(transmission.ratio); 
   }
 
   void Gear::updateW(double t, int j) {

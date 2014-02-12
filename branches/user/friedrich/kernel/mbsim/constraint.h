@@ -58,7 +58,7 @@ namespace MBSim {
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name="");
 
-      void addTransmission(Transmission *transmission);
+      void addTransmission(const Transmission &transmission);
 
       void init(InitStage stage);
 
