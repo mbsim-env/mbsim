@@ -6,7 +6,7 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 
-  System *sys = new System("MBS");
+  SlidingMass *sys = new SlidingMass("MBS");
 
   sys->setImpactSolver(RootFinding);
   sys->setStopIfNoConvergence(true,true);
@@ -14,9 +14,9 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(1.5);
+  integrator.setEndTime(5e-1);
   integrator.setStepSize(1e-5);
-  integrator.setPlotStepSize(1e-4);
+  integrator.setPlotStepSize(1e-3);
   integrator.integrate(*sys);
 
   sys->closePlot();
