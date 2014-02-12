@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
       ONLYGENERATESCHEMA=*++i;
   
     // help
-    if(arg.size()<2 ||
+    if(arg.size()<1 ||
        std::find(arg.begin(), arg.end(), "-h")!=arg.end() ||
        std::find(arg.begin(), arg.end(), "--help")!=arg.end() ||
        std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
@@ -229,6 +229,7 @@ int main(int argc, char *argv[]) {
       vector<string> command;
       command.push_back((MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT)).string());
       command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
+      command.push_back("none");
       command.push_back(MBSIMPRJ);
       command.push_back(mbsimxml_xsd.generic_string());
       ret=runProgram(command);
