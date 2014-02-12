@@ -18,7 +18,7 @@ namespace MBSimFlexibleBody {
       Contour2sNeutralFactory(name_), transNodes(), nodeOffset(0.), degU(3), degV(3), openStructure(false), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
   }
   
-  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
+  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
       Contour2sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), degV(degV_), openStructure(openStructure_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
 
     parent_->addContour(this);
@@ -212,12 +212,12 @@ namespace MBSimFlexibleBody {
     return transNodes.cols(); //TODO: shouldn't it be the other way round?
   }
 
-  void Contour2sNeutralLinearExternalFFR::setTransNodes(const MatVVI & transNodes_) {
+  void Contour2sNeutralLinearExternalFFR::setTransNodes(const MatVI & transNodes_) {
     transNodes.resize() = transNodes_;
   }
 
 
-  MatVVI Contour2sNeutralLinearExternalFFR::getTransNodes() {
+  MatVI Contour2sNeutralLinearExternalFFR::getTransNodes() {
     return transNodes;
   }
 
@@ -245,7 +245,7 @@ namespace MBSimFlexibleBody {
     string s;
     getline(contourfile, s);
 
-    setTransNodes(MatVVI(s.c_str()));
+    setTransNodes(MatVI(s.c_str()));
   }
 
   NeutralNurbsVelocity2s* Contour2sNeutralLinearExternalFFR::createNeutralVelocity() {

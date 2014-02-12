@@ -10,7 +10,7 @@
 
 namespace MBSimFlexibleBody {
 
-  NeutralNurbsPosition2s::NeutralNurbsPosition2s(Element* parent_, const MatVVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_):
+  NeutralNurbsPosition2s::NeutralNurbsPosition2s(Element* parent_, const MatVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_):
     NeutralNurbs2s(parent_, nodes, nodeOffset_, degU_, degV_, openStructure_){
     // TODO Auto-generated constructor stub
     

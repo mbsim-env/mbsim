@@ -27,7 +27,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief constructor with all necessary data given
        */
-      Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_);
+      Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_);
 
       /*!
        * \brief destructor
@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
        * The function expects index for the first node the index 1 for the second node the index 2 etc. --> Thus index 0 is not possible here.
        *
        */
-      void setTransNodes(const fmatvec::MatVVI & transNodes);
+      void setTransNodes(const fmatvec::MatVI & transNodes);
 
       /*!
        * \brief read data from a file that consists of sorted lists for nodes that should be interpolated
@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief returns the nodes for interpolation
        */
-      fmatvec::MatVVI getTransNodes();
+      fmatvec::MatVI getTransNodes();
 
 
       /*!
@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
        * Each row contains a list of node-numbers in u-direction of the contour (first direction)
        * REMARK: MBSim starts indexing with 0. Therefore in the set-nodes routine one index is substracted
        */
-      fmatvec::MatVVI transNodes;
+      fmatvec::MatVI transNodes;
 
       /*!
        * \brief offset between translation and rotational nodes

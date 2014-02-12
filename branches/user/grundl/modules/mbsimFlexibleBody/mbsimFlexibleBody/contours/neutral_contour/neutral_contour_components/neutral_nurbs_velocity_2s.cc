@@ -10,7 +10,7 @@
 
 namespace MBSimFlexibleBody {
 
-  NeutralNurbsVelocity2s::NeutralNurbsVelocity2s(Element* parent_, const MatVVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
+  NeutralNurbsVelocity2s::NeutralNurbsVelocity2s(Element* parent_, const MatVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
       NeutralNurbs2s(parent_, nodes, nodeOffset_, degU_, degV_, openStructure_) {
     
   }
