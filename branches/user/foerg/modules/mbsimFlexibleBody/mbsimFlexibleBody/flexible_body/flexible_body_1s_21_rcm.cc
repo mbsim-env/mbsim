@@ -26,6 +26,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
@@ -246,6 +247,9 @@ namespace MBSimFlexibleBody {
         plotColumns.push_back("Dal ("+numtostr(plotElements(i))+")"); // 6
         plotColumns.push_back("Dalp("+numtostr(plotElements(i))+")"); // 7
       }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+#endif
       FlexibleBodyContinuum<double>::init(stage);
     }
     else
