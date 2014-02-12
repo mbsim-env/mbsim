@@ -149,7 +149,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
 
   if (0) {
     // Enable plotting of the nodes on the rod that are in contact
-    MatVVI transNodes(ncc->getTransNodes());
+    MatVI transNodes(ncc->getTransNodes());
     for (int i = 0; i < transNodes.rows(); i++)
       for (int j = 0; j < transNodes.cols(); j++) {
         int nodeNumber = transNodes(i, j);
