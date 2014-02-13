@@ -12,58 +12,51 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>carrier_Mass</mass>
       <inertiaTensor>carrier_Inertia*eye(3)</inertiaTensor>
-      <translation>
+      <stateDependentTranslation>
         <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
-      </translation>
-      <rotation/>
+      </stateDependentTranslation>
       <frames>
-        <frame>
-          <Frame name="fI">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fMotor">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[fI]"/>
-          <position>[1/sqrt(2) -1/sqrt(2) 0; 1/sqrt(2) 1/sqrt(2) 0; 0 0 1]*[crank_TransmissionRadius+motor_TransmissionRadius 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fPiston">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[fI]"/>
-          <position>[sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length piston_Eccentricity 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fI">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fMotor">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[fI]"/>
+          <relativePosition>[1/sqrt(2) -1/sqrt(2) 0; 1/sqrt(2) 1/sqrt(2) 0; 0 0 1]*[crank_TransmissionRadius+motor_TransmissionRadius 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fPiston">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[fI]"/>
+          <relativePosition>[sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length piston_Eccentricity 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>0</staticColor>
+          <diffuseColor>[0.6666;0.3333;0]</diffuseColor>
           <initialTranslation>[(sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length+crank_Radius)/2-crank_Radius; (crank_Radius+max([crank_Radius, piston_Eccentricity])+cylinder_Radius)/2-crank_Radius; -2*2*cylinder_Radius/3]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
           <length>[sqrt((crank_Radius+rocker_Length)^2-piston_Eccentricity^2)+piston_Length+crank_Radius crank_Radius+max([crank_Radius, piston_Eccentricity])+cylinder_Radius cylinder_Radius/3]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[fI]"/>
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[fI]"/>
       <enableOpenMBVFrameC>
         <size>fSize</size>
         <offset>1.</offset>
@@ -75,17 +68,16 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>motor_Mass</mass>
       <inertiaTensor>motor_Inertia*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames/>
       <contours/>
       <openMBVRigidBody>
         <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.8</staticColor>
+          <diffuseColor>[0.6666;0.3333;0]</diffuseColor>
           <initialTranslation>[0; 0; -cylinder_Radius/3/2]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -95,8 +87,8 @@
           <innerBaseRadius>0</innerBaseRadius>
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[C]"/>
       <enableOpenMBVFrameC>
         <size>fSize</size>
         <offset>1.</offset>
@@ -107,29 +99,26 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>crank_Mass</mass>
       <inertiaTensor>crank_Inertia*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fRocker">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[crank_Radius 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fRocker">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[crank_Radius 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <CompoundRigidBody xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.2</staticColor>
+          <diffuseColor>[0.6666;0.3333;0]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -150,8 +139,8 @@
             <length>[crank_Radius cylinder_Radius/3 cylinder_Radius/3]'</length>
           </Cuboid>
         </CompoundRigidBody>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[C]"/>
       <enableOpenMBVFrameC>
         <size>fSize</size>
         <offset>1.</offset>
@@ -159,58 +148,54 @@
     </RigidBody>
     <GearConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
       <dependentRigidBody ref="../Object[Crank]"/>
-      <independentRigidBodies>
-        <independentRigidBody ref="../Object[Motor]">
-          <transmissionRatio>-motor_TransmissionRadius/crank_TransmissionRadius</transmissionRatio>
-        </independentRigidBody>
-      </independentRigidBodies>
+      <transmissions>
+        <Transmission>
+          <rigidBody ref="../Object[Motor]"/>
+          <ratio>-motor_TransmissionRadius/crank_TransmissionRadius</ratio>
+        </Transmission>
+      </transmissions>
     </GearConstraint>
     <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="Rocker">
       <frameOfReference ref="../Object[Crank]/Frame[fRocker]"/>
       <frameForKinematics ref="Frame[fCrank]"/>
       <mass>rocker_Mass</mass>
       <inertiaTensor>rocker_Inertia*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fCrank">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-rocker_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fPiston">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[rocker_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fCrank">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-rocker_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fPiston">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[rocker_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.6</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
           <length>[rocker_Length cylinder_Radius/3 cylinder_Radius/3]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[C]"/>
       <enableOpenMBVFrameC>
         <size>fSize</size>
         <offset>1.</offset>
@@ -221,40 +206,35 @@
       <frameForKinematics ref="Frame[fCylinder]"/>
       <mass>piston_Mass</mass>
       <inertiaTensor>piston_Inertia*eye(3)</inertiaTensor>
-      <translation>
+      <stateDependentTranslation>
         <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
           <translationVectors>[1 0 0]'</translationVectors>
         </LinearTranslation>
-      </translation>
-      <rotation/>
+      </stateDependentTranslation>
       <frames>
-        <frame>
-          <Frame name="fRocker">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-piston_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fCylinder">
-            <enableOpenMBV>
-              <size>fSize</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[piston_Length/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fRocker">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-piston_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fCylinder">
+          <enableOpenMBV>
+            <size>fSize</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[piston_Length/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
-          <staticColor>.4</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -264,8 +244,8 @@
           <innerBaseRadius>0</innerBaseRadius>
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
-        <frameOfReference ref="Frame[fRocker]"/>
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[fRocker]"/>
       <enableOpenMBVFrameC>
         <size>fSize</size>
         <offset>1.</offset>
@@ -285,74 +265,54 @@
   </objects>
   <links>
     <KineticExcitation xmlns="http://mbsim.berlios.de/MBSim" name="MotorTorque">
-      <moment>
-        <directionVectors>[0 0 1]'</directionVectors>
-        <function>
-          <TabularFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
-            <x>[0 1  2  100]'</x>
-            <y>[0 .2 .1 .1]'</y>
-          </TabularFunction1_VS>
-        </function>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
-          <staticColor>1</staticColor>
-          <diameter>cylinder_Radius/3</diameter>
-          <headDiameter>cylinder_Radius/3*2</headDiameter>
-          <headLength>cylinder_Radius/3*2</headLength>
-          <type>"toHead"</type>
-          <scaleLength>.1</scaleLength>
-        </Arrow>
-      </moment>
+      <momentDirection>[0 0 1]'</momentDirection>
+      <momentFunction>
+        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+          <x>[0 1  2  100]'</x>
+          <y>[0 .2 .1 .1]'</y>
+        </TabularFunction>
+      </momentFunction>
       <connect ref="../Object[Motor]/Frame[C]"/>
+      <enableOpenMBVMoment>
+          <scaleLength>.1</scaleLength>
+          <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBVMoment>
     </KineticExcitation>
     <Joint xmlns="http://mbsim.berlios.de/MBSim" name="Friction_Crank_Rocker">
-      <moment>
-        <direction>[0 0 1]'</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>0</stiffnessCoefficient>
-                <dampingCoefficient>.1</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw/>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
-          <staticColor>1</staticColor>
-          <diameter>cylinder_Radius/3</diameter>
-          <headDiameter>cylinder_Radius/3*2</headDiameter>
-          <headLength>cylinder_Radius/3*2</headLength>
-          <type>"toHead"</type>
-          <scaleLength>.1</scaleLength>
-        </Arrow>
-      </moment>
+      <momentDirection>[0 0 1]'</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>0</stiffnessCoefficient>
+              <dampingCoefficient>.1</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
       <connect ref1="../Object[Crank]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fCrank]"/>
+      <enableOpenMBVMoment>
+        <scaleLength>.1</scaleLength>
+        <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBVMoment>
     </Joint>
     <Joint xmlns="http://mbsim.berlios.de/MBSim" name="Friction_Rocker_Piston">
-      <moment>
-        <direction>[0 0 1]'</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>0</stiffnessCoefficient>
-                <dampingCoefficient>.1</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw/>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
-          <staticColor>1</staticColor>
-          <diameter>cylinder_Radius/3</diameter>
-          <headDiameter>cylinder_Radius/3*2</headDiameter>
-          <headLength>cylinder_Radius/3*2</headLength>
-          <type>"toHead"</type>
-          <scaleLength>.1</scaleLength>
-        </Arrow>
-      </moment>
+      <momentDirection>[0 0 1]'</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>0</stiffnessCoefficient>
+              <dampingCoefficient>.1</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
       <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
+      <enableOpenMBVMoment>
+        <scaleLength>.1</scaleLength>
+        <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBVMoment>
     </Joint>
   </links>
 </Group>

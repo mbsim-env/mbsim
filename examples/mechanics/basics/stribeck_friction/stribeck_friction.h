@@ -1,9 +1,9 @@
 #ifndef _STRIBECK_FRICTION_H
 #define _STRIBECK_FRICTION_H
 
-#include "mbsim/utils/function.h"
+#include "fmatvec/function.h"
 
-class Friction : public MBSim::Function1<double,double> {
+class Friction : public fmatvec::Function<double(double)> {
   public:
     /*! 
      * \brief constructor
@@ -17,7 +17,7 @@ class Friction : public MBSim::Function1<double,double> {
     virtual ~Friction() {}
 
     /* INHERITED INTERFACE OF FUNCTION1 */
-    virtual double operator()(const double& gT, const void*);
+    virtual double operator()(const double& gT);
     /***************************************************/
 
   protected:
@@ -27,7 +27,7 @@ class Friction : public MBSim::Function1<double,double> {
     double mu0, mu1, mu2, k;
 };
 
-inline double Friction::operator()(const double& gT, const void*) { return mu0+mu1/(1.+mu2*pow(gT,k)); }
+inline double Friction::operator()(const double& gT) { return mu0+mu1/(1.+mu2*pow(gT,k)); }
 
 #endif /* _STRIBECK_FRICTION_H */
 

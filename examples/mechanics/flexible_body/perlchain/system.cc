@@ -6,6 +6,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -80,8 +81,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls.push_back(ball);
     balls[i]->setFrameOfReference(this->getFrame("I"));
     balls[i]->setFrameForKinematics(balls[i]->getFrame("C"));
-    balls[i]->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
-    balls[i]->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    balls[i]->setTranslation(new TranslationAlongAxesXY<VecV>);
+    balls[i]->setRotation(new RotationAboutZAxis<VecV>);
     balls[i]->setMass(mass);
     SymMat Theta(3,INIT,0.);
     Theta(0,0) = 1./6.*mass*b*b;
@@ -91,17 +92,23 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addObject(balls[i]);
 
     Point *pt = new Point("COG");
-    balls[i]->addContour(pt,Vec(3,INIT,0.),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addContour(pt);
 
     Point *tP = new Point("topPoint");
-    balls[i]->addContour(tP,d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("topPoint",d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+    tP->setFrameOfReference(balls[i]->getFrame("topPoint"));
+    balls[i]->addContour(tP);
 
     Point *bP = new Point("bottomPoint");
-    balls[i]->addContour(bP,d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("bottomPoint",d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+    bP->setFrameOfReference(balls[i]->getFrame("bottomPoint"));
+    balls[i]->addContour(bP);
 
     Plane *plane = new Plane("Plane");
     SqrMat trafoPlane(3,INIT,0.); trafoPlane(0,0) = -1.; trafoPlane(1,1) = 1.; trafoPlane(2,2) = -1.;
-    balls[i]->addContour(plane,-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("Plane",-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C")));
+    plane->setFrameOfReference(balls[i]->getFrame("Plane"));
+    balls[i]->addContour(plane);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cuboid *cube=new OpenMBV::Cuboid;
@@ -140,19 +147,18 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   delete rodInfo;
 
   // inertial ball constraint
-  this->addFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I")));
   Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->connect(this->getFrame("BearingFrame"),balls[0]->getFrame("C"));
   this->addLink(joint);
 
   // constraints balls on flexible band
   for(int i=0;i<nBalls;i++) {
     Contact *contact = new Contact("Band_"+balls[i]->getName());
-    contact->setContactForceLaw(new BilateralConstraint);
-    contact->setContactImpactLaw(new BilateralImpact);
+    contact->setNormalForceLaw(new BilateralConstraint);
+    contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
     contact->enableOpenMBVContactPoints(0.01);
     this->addLink(contact);
@@ -165,10 +171,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     nameb << "ContactBot_" << i;
     Contact *ctrt = new Contact(namet.str());
     Contact *ctrb = new Contact(nameb.str());
-    ctrt->setContactForceLaw(new UnilateralConstraint);
-    ctrt->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-    ctrb->setContactForceLaw(new UnilateralConstraint);
-    ctrb->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+    ctrt->setNormalForceLaw(new UnilateralConstraint);
+    ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    ctrb->setNormalForceLaw(new UnilateralConstraint);
+    ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     if(i==nBalls-1) {
       ctrt->connect(balls[0]->getContour("topPoint"),balls[i]->getContour("Plane"));
       ctrb->connect(balls[0]->getContour("bottomPoint"),balls[i]->getContour("Plane"));

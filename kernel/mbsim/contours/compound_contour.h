@@ -36,7 +36,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      CompoundContour(const std::string &name);
+      CompoundContour(const std::string &name="", Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const {

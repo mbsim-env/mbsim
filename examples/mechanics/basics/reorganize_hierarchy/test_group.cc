@@ -1,4 +1,6 @@
 #include "test_group.h"
+#include "mbsim/frame.h"
+#include "mbsim/functions/kinematic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
 #endif
@@ -26,7 +28,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   for(int i=0; i<3; i++)
     A(i,i) = 1;
 
-  stab1->addFrame("Ref",-KrKS,A);
+  stab1->addFrame(new FixedRelativeFrame("Ref",-KrKS,A));
   stab1->setFrameForKinematics(stab1->getFrame("Ref"));
   stab1->setFrameOfReference(getFrame("I"));
 
@@ -36,7 +38,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
-  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* obj1=new OpenMBV::IvBody;
@@ -50,9 +52,9 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   stab2 = new RigidBody("Stab2");
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
-  stab1->addFrame("P",WrOK-KrKS,A);
+  stab1->addFrame(new FixedRelativeFrame("P",WrOK-KrKS,A));
   KrKS(0) = a2;
-  stab2->addFrame("R",-KrKS,A);
+  stab2->addFrame(new FixedRelativeFrame("R",-KrKS,A));
   addObject(stab2);
   stab2->setqSize(1);
   stab2->setuSize(1);
@@ -61,7 +63,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE

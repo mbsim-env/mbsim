@@ -1,5 +1,6 @@
 #include "pendulum.h"
 #include "mbsim/frame.h"
+#include "mbsim/functions/kinematic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
 #endif
@@ -24,7 +25,7 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   KrKS(0) = a1;
   SqrMat A(3,EYE);
 
-  stab1->addFrame(new FixedRelativeFrame("R", -KrKS, A));
+  stab1->addFrame(new FixedRelativeFrame("R",-KrKS,A));
   stab1->setFrameForKinematics(stab1->getFrame("R"));
   stab1->setFrameOfReference(getFrame("I"));
 
@@ -34,7 +35,7 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
-  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* obj1=new OpenMBV::IvBody;
@@ -48,9 +49,9 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab2 = new RigidBody("Stab2");
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
-  stab1->addFrame(new FixedRelativeFrame("P", WrOK-KrKS, A));
+  stab1->addFrame(new FixedRelativeFrame("P",WrOK-KrKS,A));
   KrKS(0) = a2;
-  stab2->addFrame(new FixedRelativeFrame("R", -KrKS, A));
+  stab2->addFrame(new FixedRelativeFrame("R",-KrKS,A));
   addObject(stab2);
   stab2->setqSize(1);
   stab2->setuSize(1);
@@ -59,7 +60,7 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE

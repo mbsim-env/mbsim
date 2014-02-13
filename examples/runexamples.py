@@ -57,17 +57,10 @@ argparser = argparse.ArgumentParser(
   The specified directories are processed from left to right.
   The type of an example is defined dependent on some key files in the corrosponding example directory:
   - If a file named 'Makefile' exists, than it is treated as a SRC example.
-  - If a file named 'MBS.mbsim.flat.xml' exists, then it is treated as a FLATXML example.
-  - If a file named 'MBS.mbsim.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
+  - If a file named 'MBS.mbsimprj.flat.xml' exists, then it is treated as a FLATXML example.
+  - If a file named 'MBS.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
   If more then one of these files exist the behaviour is undefined.
   The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
-  For a FLATXML and XML examples a second file named 'Integrator.mbsimint.xml' must exist.
-  If for an XML example an additional file named 'parameter.mbsim.xml' exists it is used by as parameter file
-  for 'MBS.mbsim.xml' using the --mbsimparam option of mbsimxml.
-  If for an XML example an additional file named 'parameter.mbsimint.xml' exists it is used by as parameter file
-  for 'Integrator.mbsimint.xml' using the --mbsimintparam option of mbsimxml.
-  If for an XML example an additional directory named 'mfiles' exists it is used as additional octave m-file path
-  using the --mpath option of mbsimxml.
   '''
 )
 
@@ -142,10 +135,16 @@ class MultiFile(object):
 # subprocess call with MultiFile output
 def subprocessCall(args, f, env=os.environ):
   proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
+  lineNP=b'' # not already processed bytes (required since we read 100 bytes which may break a unicode multi byte character)
   while True:
-    line=proc.stdout.read(100)
+    line=lineNP+proc.stdout.read(100)
+    lineNP=b''
     if line==b'': break
-    print(line.decode("utf-8"), end="", file=f)
+    try:
+      print(line.decode("utf-8"), end="", file=f)
+    except UnicodeDecodeError as ex: # catch broken multibyte unicode characters and append it to next line
+      print(line[0:ex.start].decode("utf-8"), end="", file=f) # print up to first broken character
+      lineNP=ex.object[ex.start:] # add broken characters to next line
   return proc.wait()
 
 # rotate
@@ -497,8 +496,8 @@ def addExamplesByFilter(baseDir, directoriesSet):
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
   for root, dirs, _ in os.walk(baseDir):
-    ppxml=os.path.isfile(pj(root, "MBS.mbsim.xml"))
-    flatxml=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
+    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml"))
+    flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
     # skip none examples directires
@@ -549,9 +548,9 @@ def runExample(resultQueue, example):
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
-      elif os.path.isfile("MBS.mbsim.xml"):
+      elif os.path.isfile("MBS.mbsimprj.xml"):
         executeRet, dt=executeXMLExample(executeFD)
-      elif os.path.isfile("MBS.mbsim.flat.xml"):
+      elif os.path.isfile("MBS.mbsimprj.flat.xml"):
         executeRet, dt=executeFlatXMLExample(executeFD)
       else:
         print("Unknown example type in directory "+example[0]+" found.", file=executeFD)
@@ -733,19 +732,13 @@ def executeSrcExample(executeFD):
 
 # execute the soruce code example in the current directory (write everything to fd executeFD)
 def executeXMLExample(executeFD):
-  parMBSimOption=[]
-  if os.path.isfile("parameter.mbsim.xml"): parMBSimOption=["--mbsimparam", "parameter.mbsim.xml"]
-  parIntOption=[]
-  if os.path.isfile("parameter.mbsimint.xml"): parIntOption=["--mbsimparam", "parameter.mbsimint.xml"]
-  mpathOption=[]
-  if os.path.isdir("mfiles"): mpathOption=["--mpath", "mfiles"]
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+["MBS.mbsim.xml", "Integrator.mbsimint.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+["MBS.mbsimprj.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
-                    ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], executeFD)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+                    ["MBS.mbsimprj.xml"], executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -755,11 +748,11 @@ def executeXMLExample(executeFD):
 # execute the soruce code example in the current directory (write everything to fd executeFD)
 def executeFlatXMLExample(executeFD):
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsimprj.flat.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
                     executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1180,7 +1173,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
         # skip error file
-        if filename==".err.MBS.mbsim.xml":
+        if filename==".err.MBS.mbsimprj.xml":
           continue
         outputFN=pj(example[0], filename+".txt")
         outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)

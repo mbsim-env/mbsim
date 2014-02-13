@@ -6,6 +6,7 @@
 #include "mbsim/contours/line.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
@@ -48,11 +49,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(piston);
 
   // generalised coordinates
-  crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  rod->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  rod->setTranslation(new LinearTranslation(Mat("[1,0;0,1;0,0]")));
-  piston->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  piston->setTranslation(new LinearTranslation(Mat("[1,0;0,1;0,0]")));
+  crank->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  rod->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  rod->setTranslation(new LinearTranslation<VecV>(Mat("[1,0;0,1;0,0]")));
+  piston->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  piston->setTranslation(new LinearTranslation<VecV>(Mat("[1,0;0,1;0,0]")));
 
   // inertial properties
   double mass_crank = 0.038; // m1
@@ -87,7 +88,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   
   Vec crank_KrCP(3,INIT,0.);
   crank_KrCP(0) = -0.5*length_crank;
-  crank->addFrame("P",crank_KrCP,SqrMat(3,EYE));
+  crank->addFrame(new FixedRelativeFrame("P",crank_KrCP,SqrMat(3,EYE)));
   crank->setFrameForKinematics(crank->getFrame("P"));
   
   rod->setFrameOfReference(getFrame("I"));
@@ -97,13 +98,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(joint_crank_rod);
   Vec crank_KrCS(3,INIT,0.);
   crank_KrCS(0) = 0.5*length_crank;
-  crank->addFrame("S",crank_KrCS,SqrMat(3,EYE));
+  crank->addFrame(new FixedRelativeFrame("S",crank_KrCS,SqrMat(3,EYE)));
   Vec rod_KrCP(3,INIT,0.);
   rod_KrCP(0) = -0.5*length_rod;
-  rod->addFrame("P",rod_KrCP,SqrMat(3,EYE));
+  rod->addFrame(new FixedRelativeFrame("P",rod_KrCP,SqrMat(3,EYE)));
   joint_crank_rod->setForceDirection("[1,0;0,1;0,0]");
   joint_crank_rod->setForceLaw(new BilateralConstraint());
-  joint_crank_rod->setImpactForceLaw(new BilateralImpact());
   joint_crank_rod->connect(crank->getFrame("S"),rod->getFrame("P"));
 
   piston->setFrameOfReference(getFrame("I"));
@@ -113,10 +113,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(joint_rod_piston);
   Vec rod_KrCS(3,INIT,0.);
   rod_KrCS(0) = 0.5*length_rod;
-  rod->addFrame("S",rod_KrCS,SqrMat(3,EYE));
+  rod->addFrame(new FixedRelativeFrame("S",rod_KrCS,SqrMat(3,EYE)));
   joint_rod_piston->setForceDirection("[1,0;0,1;0,0]");
   joint_rod_piston->setForceLaw(new BilateralConstraint());
-  joint_rod_piston->setImpactForceLaw(new BilateralImpact());
   joint_rod_piston->connect(rod->getFrame("S"),piston->getFrame("C"));
 
   // initial conditions
@@ -138,29 +137,37 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec piston_KrCP1(3,INIT,0.);
   piston_KrCP1(0) = -0.5*length_piston;
   piston_KrCP1(1) = 0.5*width_piston;
-  rod->addFrame("P1",piston_KrCP1,SqrMat(3,EYE));
-  piston->addContour(point_piston_1,piston_KrCP1,SqrMat(3,EYE));
+  rod->addFrame(new FixedRelativeFrame("P1",piston_KrCP1,SqrMat(3,EYE)));
+  piston->addFrame(new FixedRelativeFrame("P1",piston_KrCP1,SqrMat(3,EYE)));
+  point_piston_1->setFrameOfReference(piston->getFrame("P1"));
+  piston->addContour(point_piston_1);
 
   Point *point_piston_2 = new Point("Point_Piston_2");
   Vec piston_KrCP2(3,INIT,0.);
   piston_KrCP2(0) = 0.5*length_piston;
   piston_KrCP2(1) = 0.5*width_piston;
-  rod->addFrame("P2",piston_KrCP2,SqrMat(3,EYE));
-  piston->addContour(point_piston_2,piston_KrCP2,SqrMat(3,EYE));
+  rod->addFrame(new FixedRelativeFrame("P2",piston_KrCP2,SqrMat(3,EYE)));
+  piston->addFrame(new FixedRelativeFrame("P2",piston_KrCP2,SqrMat(3,EYE)));
+  point_piston_2->setFrameOfReference(piston->getFrame("P2"));
+  piston->addContour(point_piston_2);
 
   Point *point_piston_3 = new Point("Point_Piston_3");
   Vec piston_KrCP3(3,INIT,0.);
   piston_KrCP3(0) = -0.5*length_piston;
   piston_KrCP3(1) = -0.5*width_piston;
-  rod->addFrame("P3",piston_KrCP3,SqrMat(3,EYE));
-  piston->addContour(point_piston_3,piston_KrCP3,SqrMat(3,EYE));
+  rod->addFrame(new FixedRelativeFrame("P3",piston_KrCP3,SqrMat(3,EYE)));
+  piston->addFrame(new FixedRelativeFrame("P3",piston_KrCP3,SqrMat(3,EYE)));
+  point_piston_3->setFrameOfReference(piston->getFrame("P3"));
+  piston->addContour(point_piston_3);
 
   Point *point_piston_4 = new Point("Point_Piston_4");
   Vec piston_KrCP4(3,INIT,0.);
   piston_KrCP4(0) = 0.5*length_piston;
   piston_KrCP4(1) = -0.5*width_piston;
-  rod->addFrame("P4",piston_KrCP4,SqrMat(3,EYE));
-  piston->addContour(point_piston_4,piston_KrCP4,SqrMat(3,EYE));
+  rod->addFrame(new FixedRelativeFrame("P4",piston_KrCP4,SqrMat(3,EYE)));
+  piston->addFrame(new FixedRelativeFrame("P4",piston_KrCP4,SqrMat(3,EYE)));
+  point_piston_4->setFrameOfReference(piston->getFrame("P4"));
+  piston->addContour(point_piston_4);
 
   // bottom plane
   Line *bottom = new Line("Bottom");
@@ -168,7 +175,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   bottom_IrIB(1) = -clearance-0.5*width_piston;
   SqrMat bottom_A(3,INIT,0.);
   bottom_A(0,1) = -1; bottom_A(1,0) = 1; bottom_A(2,2) = 1;
-  this->addContour(bottom,bottom_IrIB,bottom_A);
+  addFrame(new FixedRelativeFrame("B",bottom_IrIB,bottom_A));
+  bottom->setFrameOfReference(getFrame("B"));
+  this->addContour(bottom);
 
   // top plane
   Line *top = new Line("Top");
@@ -176,43 +185,45 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   top_IrIT(1) = clearance+0.5*width_piston;
   SqrMat top_A(3,INIT,0.);
   top_A(0,1) = 1; top_A(1,0) = -1; top_A(2,2) = 1;
-  this->addContour(top,top_IrIT,top_A);
+  addFrame(new FixedRelativeFrame("T",top_IrIT,top_A));
+  top->setFrameOfReference(getFrame("T"));
+  this->addContour(top);
   //---------------------------------------------------------------------------
 
   // contacts
   Contact *contact_point_piston_1_top = new Contact("Contact_Point_Piston_1_Top");
   contact_point_piston_1_top->connect(point_piston_1,top);
-  contact_point_piston_1_top->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu1
-  contact_point_piston_1_top->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
-  contact_point_piston_1_top->setContactForceLaw(new UnilateralConstraint());
-  contact_point_piston_1_top->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN1
+  contact_point_piston_1_top->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu1
+  contact_point_piston_1_top->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_1_top->setNormalForceLaw(new UnilateralConstraint());
+  contact_point_piston_1_top->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN1
   contact_point_piston_1_top->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_1_top);
 
   Contact *contact_point_piston_2_top = new Contact("Contact_Point_Piston_2_Top");
   contact_point_piston_2_top->connect(point_piston_2,top);
-  contact_point_piston_2_top->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu2
-  contact_point_piston_2_top->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
-  contact_point_piston_2_top->setContactForceLaw(new UnilateralConstraint());
-  contact_point_piston_2_top->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN2
+  contact_point_piston_2_top->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu2
+  contact_point_piston_2_top->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_2_top->setNormalForceLaw(new UnilateralConstraint());
+  contact_point_piston_2_top->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN2
   contact_point_piston_2_top->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_2_top);
 
   Contact *contact_point_piston_3_bottom = new Contact("Contact_Point_Piston_3_Bottom");
   contact_point_piston_3_bottom->connect(point_piston_3,bottom);
-  contact_point_piston_3_bottom->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu3
-  contact_point_piston_3_bottom->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
-  contact_point_piston_3_bottom->setContactForceLaw(new UnilateralConstraint());
-  contact_point_piston_3_bottom->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN3
+  contact_point_piston_3_bottom->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu3
+  contact_point_piston_3_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_3_bottom->setNormalForceLaw(new UnilateralConstraint());
+  contact_point_piston_3_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN3
   contact_point_piston_3_bottom->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_3_bottom);
   
   Contact *contact_point_piston_4_bottom = new Contact("Contact_Point_Piston_4_Bottom");
   contact_point_piston_4_bottom->connect(point_piston_4,bottom);
-  contact_point_piston_4_bottom->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu4
-  contact_point_piston_4_bottom->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
-  contact_point_piston_4_bottom->setContactForceLaw(new UnilateralConstraint());
-  contact_point_piston_4_bottom->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN4
+  contact_point_piston_4_bottom->setTangentialForceLaw(new PlanarCoulombFriction(0.01)); // mu4
+  contact_point_piston_4_bottom->setTangentialImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_4_bottom->setNormalForceLaw(new UnilateralConstraint());
+  contact_point_piston_4_bottom->setNormalImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN4
   contact_point_piston_4_bottom->enableOpenMBVContactPoints();
   this->addLink(contact_point_piston_4_bottom);
   //---------------------------------------------------------------------------
@@ -221,17 +232,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
   openMBVCrank->setLength(length_crank,width_crank,thickness_crank);
-  openMBVCrank->setStaticColor(0.5);
+  openMBVCrank->setDiffuseColor(180./360.,1,1);
   crank->setOpenMBVRigidBody(openMBVCrank);
 
   OpenMBV::Cuboid *openMBVRod = new OpenMBV::Cuboid();
   openMBVRod->setLength(length_rod,width_rod,thickness_rod);
-  openMBVRod->setStaticColor(0.5);
+  openMBVRod->setDiffuseColor(180./360.,1,1);
   rod->setOpenMBVRigidBody(openMBVRod);
 
   OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
   openMBVPiston->setLength(length_piston,width_piston,thickness_piston);
-  openMBVPiston->setStaticColor(0.8);
+  openMBVPiston->setDiffuseColor(240./360.,1,1);
   piston->setOpenMBVRigidBody(openMBVPiston);
 #endif
 

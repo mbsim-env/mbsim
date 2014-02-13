@@ -75,6 +75,7 @@ namespace MBSim {
   }
 
   DynamicSystemSolver::~DynamicSystemSolver() {
+    closePlot();
     H5::FileSerie::deletePIDFiles();
   }
 
@@ -245,7 +246,7 @@ namespace MBSim {
       init(resize);
       for (unsigned int i = 0; i < dynamicsystem.size(); i++)
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
-          dynamic_cast<Graph*>(dynamicsystem[i])->co();
+          static_cast<Graph*>(dynamicsystem[i])->co();
     }
     else if (stage == resize) {
       calcqSize();
@@ -604,7 +605,7 @@ namespace MBSim {
       else if (linAlg == PseudoInverse)
         dx >> slvLS(Jprox, res0);
       else
-        throw 5;
+        throw MBSimError("Internal error");
 
       Vec La_old = la.copy();
       double alpha = 1;
@@ -680,7 +681,7 @@ namespace MBSim {
       else if (linAlg == PseudoInverse)
         dx >> slvLS(Jprox, res0);
       else
-        throw 5;
+        throw MBSimError("Internal error");
 
       Vec La_old = la.copy();
       double alpha = 1.;
@@ -828,11 +829,11 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdx(double t) {
-    throw;
+    throw MBSimError("Internal error");
   }
 
   Vec DynamicSystemSolver::dhdt(double t) {
-    throw;
+    throw MBSimError("Internal error");
   }
 
   void DynamicSystemSolver::updateM(double t, int i) {
@@ -1124,7 +1125,7 @@ namespace MBSim {
       corrID = 2;
     }
     else
-      throw;
+      throw MBSimError("Internal error");
 
     calcgSize(gID);
     calccorrSize(corrID);
@@ -1179,7 +1180,7 @@ namespace MBSim {
       corrID = 4; // IH
     }
     else
-      throw;
+      throw MBSimError("Internal error");
     calccorrSize(corrID); // IH
     if (corrSize) {
       calcgdSize(gdID); // IH
@@ -1425,14 +1426,21 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::initializeUsingXML(TiXmlElement *element) {
+    // If enviornment variable MBSIMREORGANIZEHIERARCHY=false then do NOT reorganize.
+    // In this case it is not possible to simulate a relativ kinematics (tree structures).
+    char *reorg=getenv("MBSIMREORGANIZEHIERARCHY");
+    if(reorg && strcmp(reorg, "false")==0)
+      setReorganizeHierarchy(false);
+    else
+      setReorganizeHierarchy(true);
+
     Group::initializeUsingXML(element);
     TiXmlElement *e;
     // search first Environment element
     e = element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
 
-    Environment *env;
-    while ((env = ObjectFactory<Environment>::create<Environment>(e))) {
-      env->initializeUsingXML(e);
+    while (e) {
+      ObjectFactory<Environment>::createAndInit<Environment>(e);
       e = e->NextSiblingElement();
     }
 
@@ -1565,8 +1573,7 @@ namespace MBSim {
     TiXml_setLineNrFromProcessingInstruction(e);
     map<string, string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
-    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::create<Group>(e));
-    dss->initializeUsingXML(doc.FirstChildElement());
+    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::createAndInit<Group>(e));
     return dss;
   }
 

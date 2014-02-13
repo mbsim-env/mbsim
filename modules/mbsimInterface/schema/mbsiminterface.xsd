@@ -4,7 +4,9 @@
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSimInterface"
   xmlns:integrator="http://mbsim.berlios.de/MBSimIntegrator"
+  xmlns:control="http://mbsim.berlios.de/MBSimControl"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:annotation>
@@ -19,21 +21,28 @@
   <xs:import namespace="http://mbsim.berlios.de/MBSimIntegrator"
     schemaLocation="../http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd"/>
 
+  <xs:import namespace="http://mbsim.berlios.de/MBSimControl"
+    schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
+
+  <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="../http___www_w3_org/xml.xsd"/>
+
   <!-- A reference to a Link somewhere in the hierarchy in absolute path-->
   <xs:simpleType name="AbsoluteSignalReferenceType">
-    <xs:restriction base="pv:partialOctaveString">
+    <xs:restriction base="pv:stringPartialOctEval">
       <!-- pattern value="/(Group\[X\]/)*Link\[X\]" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Signal\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="AbsoluteExternSignalSourceReferenceType">
-    <xs:restriction base="pv:partialOctaveString">
+    <xs:restriction base="pv:stringPartialOctEval">
       <!-- pattern value="/(Group\[X\]/)*Link\[X\]" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*ExternSignalSource\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 

@@ -3,7 +3,13 @@
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <position>[cot(2)/cot(2);0*det([4,5;6,3]);0]</position><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
-  <orientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</orientation>
+  <orientation>
+    <pv:cardan unit="degree">
+      <pv:alpha>0</pv:alpha>
+      <pv:beta>0</pv:beta>
+      <pv:gamma>-alphaUG*180/pi</pv:gamma>
+    </pv:cardan>
+  </orientation>
   <frames/>
   <contours/>
   <groups/>
@@ -29,26 +35,25 @@
         ]]>
       </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
+      <stateDependentTranslation>
         <LinearTranslation>
           <translationVectors>
             [0; myMFunction(1); 0]
           </translationVectors>
         </LinearTranslation>
-      </translation>
-      <rotation/>
+      </stateDependentTranslation>
       <frames>
-          <FixedRelativeFrame name="P1">
-            <enableOpenMBV>
-              <size>h1</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-            <relativePosition>[0;-h1/2;0]</relativePosition>
-            <relativeOrientation>rotateAboutX(0)</relativeOrientation>
-          </FixedRelativeFrame>
-        <pv:embed>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size>h1</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0;-h1/2;0]</relativePosition>
+          <relativeOrientation>rotateAboutX(0)</relativeOrientation>
+        </FixedRelativeFrame>
+        <pv:Embed>
           <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
-        </pv:embed>
+        </pv:Embed>
       </frames>
       <contours/>
       <openMBVRigidBody>
@@ -70,12 +75,9 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>m2</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
-        <LinearTranslation>
-          <translationVectors>[0; 1; 0]</translationVectors>
-        </LinearTranslation>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <TranslationAlongYAxis/>
+      </stateDependentTranslation>
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>
@@ -85,7 +87,7 @@
           <relativePosition>[0;-h2/2;0]</relativePosition>
           <relativeOrientation>
             <pv:cardan>
-              <pv:alpha unit="degree">0</pv:alpha>
+              <pv:alpha>0</pv:alpha>
               <pv:beta>a=9;ret=0</pv:beta>
               <pv:gamma>0</pv:gamma>
             </pv:cardan>
@@ -95,7 +97,7 @@
       <contours/>
       <openMBVRigidBody>
         <IvBody name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>[0.5]</staticColor>
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0;0;0]</initialTranslation>
           <initialRotation>[0;0;0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -115,13 +117,9 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
-      <ombv:Arrow name="dummy">
-        <ombv:diameter>0.03*numHG</ombv:diameter>
-        <ombv:headDiameter>0.03*2*numHG</ombv:headDiameter>
-        <ombv:headLength>0.03*4*numHG</ombv:headLength>
-        <ombv:type>"bothDoubleHeads"</ombv:type>
-        <ombv:scaleLength>0.005</ombv:scaleLength>
-      </ombv:Arrow>
+      <enableOpenMBVForce>
+        <scaleLength>0.005</scaleLength>
+      </enableOpenMBVForce>
     </SpringDamper>
     <SpringDamper name="Feder2">
       <forceFunction>
@@ -132,12 +130,11 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
-      <ombv:CoilSpring name="dummy">
-        <ombv:numberOfCoils>5</ombv:numberOfCoils>
-        <ombv:springRadius>0.1</ombv:springRadius>
-        <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-        <ombv:scaleFactor>1</ombv:scaleFactor>
-      </ombv:CoilSpring>
+      <enableOpenMBVCoilSpring>
+          <numberOfCoils>5</numberOfCoils>
+          <springRadius>0.1</springRadius>
+          <crossSectionRadius>0.01</crossSectionRadius>
+      </enableOpenMBVCoilSpring>
     </SpringDamper>
   </links>
 </Group>

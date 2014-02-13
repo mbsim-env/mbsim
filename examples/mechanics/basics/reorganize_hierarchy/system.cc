@@ -1,7 +1,9 @@
 #include "system.h"
+#include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #include "test_group.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -30,7 +32,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addObject(stab1);
   KrCR(0) = a1;
 
-  stab1->addFrame("R",KrCR,SqrMat(3,EYE));
+  stab1->addFrame(new FixedRelativeFrame("R",KrCR,SqrMat(3,EYE)));
 
   stab1->setFrameOfReference(getFrame("I"));
   stab1->setFrameForKinematics(stab1->getFrame("R"));
@@ -38,7 +40,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
-  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;
@@ -53,15 +55,15 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addObject(stab2);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
-  stab1->addFrame("P",KrRP,SqrMat(3,EYE),stab1->getFrame("R"));
+  stab1->addFrame(new FixedRelativeFrame("P",KrRP,SqrMat(3,EYE),stab1->getFrame("R")));
   KrCR(0) = a2;
-  stab2->addFrame("R",-KrCR,SqrMat(3,EYE));
+  stab2->addFrame(new FixedRelativeFrame("R",-KrCR,SqrMat(3,EYE)));
   stab2->setFrameOfReference(stab1->getFrame("P"));
   stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
@@ -77,15 +79,15 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addObject(stab3);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
-  stab2->addFrame("P",KrRP,SqrMat(3,EYE),stab2->getFrame("R"));
+  stab2->addFrame(new FixedRelativeFrame("P",KrRP,SqrMat(3,EYE),stab2->getFrame("R")));
   KrCR(0) = a2;
-  stab3->addFrame("R",-KrCR,SqrMat(3,EYE));
+  stab3->addFrame(new FixedRelativeFrame("R",-KrCR,SqrMat(3,EYE)));
   stab3->setFrameOfReference(stab2->getFrame("P"));
   stab3->setFrameForKinematics(stab3->getFrame("R"));
   stab3->setMass(mStab);
   Theta(2,2) = JStab;
   stab3->setInertiaTensor(Theta);
-  stab3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab3->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab3->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
@@ -107,7 +109,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab4->setMass(mStab);
   Theta(2,2) = JStab;
   stab4->setInertiaTensor(Theta);
-  stab4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab4->setInitialGeneralizedVelocity(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
@@ -120,7 +122,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   TestGroup *group = new TestGroup("PendelGruppe1"); 
   addGroup(group);
-  stab3->addFrame("P",KrRP,SqrMat(3,EYE),stab3->getFrame("R"));
+  stab3->addFrame(new FixedRelativeFrame("P",KrRP,SqrMat(3,EYE),stab3->getFrame("R")));
   group->getRod1()->setFrameOfReference(stab3->getFrame("P"));
 
   group = new TestGroup("PendelGruppe2"); 

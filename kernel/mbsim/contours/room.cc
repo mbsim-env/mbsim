@@ -108,20 +108,18 @@ namespace MBSim {
       }
     }
     else if (stage == MBSim::plot) {
+      RigidContour::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      for (int i = 0; i < 6; i++) {
-        static_cast<Rectangle*>(element[i])->enableOpenMBV(enable, gridSize);
-      }
+      if(openMBVRigidBody)
+        ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(l,d,h);
 #endif
     }
-    CompoundContour::init(stage);
+    else
+      CompoundContour::init(stage);
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Room::enableOpenMBV(bool enable_, int number) {
-    openMBVRigidBody = new OpenMBV::CompoundRigidBody;
-    this->enable = enable_;
-    this->gridSize = number;
+  void Room::plot(double t, double dt) {
+    RigidContour::plot(t,dt);
   }
-#endif
+
 }

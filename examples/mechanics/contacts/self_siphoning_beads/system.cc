@@ -10,12 +10,12 @@
 #include <mbsim/isotropic_rotational_spring_damper.h>
 #include <mbsim/contact.h>
 #include <mbsim/constitutive_laws.h>
-#include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-#include <mbsim/kinematics.h>
-#include "mbsim/utils/symbolic_function.h"
+#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 using namespace std;
 using namespace MBSim;
@@ -54,21 +54,21 @@ System::System(const string &projectName, int elements) :
     /*Prepare Contact*/
     Contact* ballOben = new Contact("Ball_Boden");
     if (not ODE) {
-      ballOben->setContactForceLaw(new UnilateralConstraint());
-      ballOben->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+      ballOben->setNormalForceLaw(new UnilateralConstraint());
+      ballOben->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
     else {
-      ballOben->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, damping)));
+      ballOben->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, damping)));
     }
     addLink(ballOben);
 
     Contact* ballUnten = new Contact("Ball_Unten");
     if (not ODE) {
-      ballUnten->setContactForceLaw(new UnilateralConstraint());
-      ballUnten->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+      ballUnten->setNormalForceLaw(new UnilateralConstraint());
+      ballUnten->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
     else {
-      ballUnten->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100*damping)));
+      ballUnten->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100*damping)));
     }
     addLink(ballUnten);
 
@@ -83,7 +83,7 @@ System::System(const string &projectName, int elements) :
       balls.push_back(new RigidBody("Ball" + numtostr(ele)));
       balls[ele]->setMass(mass);
       balls[ele]->setInertiaTensor(theta);
-      balls[ele]->setRotation(new RotationAboutAxesYZ());
+      balls[ele]->setRotation(new RotationAboutAxesYZ<VecV>);
       addObject(balls[ele]);
 
       //Add Contour (+ visualisation)
@@ -114,7 +114,7 @@ System::System(const string &projectName, int elements) :
 
     }
 
-    balls[0]->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    balls[0]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     balls[0]->setFrameOfReference(getFrameI());
 
     for (int i = 1; i < elements; i++) {
@@ -153,10 +153,7 @@ void System::addTrajectory(double tEnd) {
   SX t("t");
   vector<SX> fexp(3);
   double v = M_PI / tEnd;
-  double h = 2e-2;
   double x0 = 2e-2;
-  double a = -h / (x0 * x0);
-  double b = -2 * a * x0;
   fexp[0] = x0 * sin(v * t - (M_PI_2)) + x0;
   fexp[1] = radius + x0 * cos(v * t - (M_PI_2));
 //  fexp[1] = radius + (a * v * t * v * t + b * v * t);
@@ -164,19 +161,16 @@ void System::addTrajectory(double tEnd) {
   fexp[2] = 0;
   SXFunction foo(t, fexp);
 
-  SymbolicFunction1<Vec3, double> *f = new SymbolicFunction1<Vec3, double>(foo);
+  SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(foo);
 
-  leader->setTranslation(new TimeDependentTranslation(f));
+  leader->setTranslation(f);
   if (elements) {
     Joint* joint = new Joint("Joint");
     joint->setForceDirection(Mat3x3(EYE));
-    if (not ODE) {
+    if (not ODE)
       joint->setForceLaw(new BilateralConstraint());
-      joint->setImpactForceLaw(new BilateralImpact());
-    }
-    else {
+    else
       joint->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(stiffness, damping)));
-    }
 
     joint->connect(leader->getFrameC(), balls[0]->getFrameC());
 

@@ -23,6 +23,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #endif
@@ -56,17 +57,6 @@ namespace MBSim {
     }
     else
       Observer::init(stage);
-  }
-
-  void RigidBodyObserver::enableOpenMBVAxisOfRotation(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVAxisOfRotation=new OpenMBV::Arrow;
-    openMBVAxisOfRotation->setScaleLength(scale);
-    openMBVAxisOfRotation->setReferencePoint(refPoint);
-    openMBVAxisOfRotation->setType(OpenMBV::Arrow::toDoubleHead);
-    openMBVAxisOfRotation->setDiameter(diameter);
-    openMBVAxisOfRotation->setHeadDiameter(headDiameter);
-    openMBVAxisOfRotation->setHeadLength(headLength);
-    openMBVAxisOfRotation->setStaticColor(color);
   }
 
   void RigidBodyObserver::plot(double t, double dt) {

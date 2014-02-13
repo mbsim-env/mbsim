@@ -1,6 +1,8 @@
 #include "group1.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
 #include <openmbvcppinterface/cuboid.h>
@@ -38,7 +40,7 @@ Group1::Group1(const string &name) : Group(name) {
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity C) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
-  box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box1->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
   box1->setFrameOfReference(getFrame("I"));
   box1->setFrameForKinematics(box1->getFrame("C"));
   box1->setFrameOfReference(getFrame("I"));
@@ -56,7 +58,7 @@ Group1::Group1(const string &name) : Group(name) {
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity C) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
-  box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box2->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
   box2->setFrameOfReference(getFrame("I"));
   box2->setFrameForKinematics(box2->getFrame("C"));
 
@@ -66,12 +68,12 @@ Group1::Group1(const string &name) : Group(name) {
 
   // Federanschlusspunkte P1 und P2 auf Körper 1 definieren
   SrSP(1) = h1/2.;
-  box1->addFrame("P1",-SrSP,ASP); 
-  box1->addFrame("P2",SrSP,ASP);
+  box1->addFrame(new FixedRelativeFrame("P1",-SrSP,ASP));
+  box1->addFrame(new FixedRelativeFrame("P2",SrSP,ASP));
 
   // Federanschlusspunkt P1 auf Körper 2 definieren
   SrSP(1) = h2/2.;
-  box2->addFrame("P1",-SrSP,ASP);
+  box2->addFrame(new FixedRelativeFrame("P1",-SrSP,ASP));
 
   // ----------------------- Definition der 1. Feder --------------------  
   SpringDamper *spring1 = new SpringDamper("Feder1");
@@ -92,26 +94,18 @@ Group1::Group1(const string &name) : Group(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid* body1=new OpenMBV::Cuboid;
   body1->setLength(Vec(3,INIT,1)*h1);
-  body1->setStaticColor(OpenMBV::ScalarParameter("color1",0.5));
+  body1->setDiffuseColor(240./360.,1,1);
   box1->setOpenMBVRigidBody(body1);
   box1->getFrame("P1")->enableOpenMBV(0.5);
 
   OpenMBV::Cuboid* body2=new OpenMBV::Cuboid;
   body2->setLength(Vec(3,INIT,1)*h2);
-  body2->setStaticColor(OpenMBV::ScalarParameter("color2",1));
+  body2->setDiffuseColor(360./360.,1,1);
   box2->setOpenMBVRigidBody(body2);
   box2->getFrame("P1")->enableOpenMBV(0.5);
 
-  OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
-  openMBVspring1->setSpringRadius(0.1);
-  openMBVspring1->setCrossSectionRadius(0.01);
-  openMBVspring1->setNumberOfCoils(5);
-  spring1->setOpenMBVSpring(openMBVspring1);
+  spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
-  openMBVspring2->setSpringRadius(0.1);
-  openMBVspring2->setCrossSectionRadius(0.01);
-  openMBVspring2->setNumberOfCoils(5);
-  spring2->setOpenMBVSpring(openMBVspring2);
+  spring2->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 #endif
 }

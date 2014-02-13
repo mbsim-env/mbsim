@@ -22,6 +22,7 @@
 
 #include<string>
 #include<exception>
+#include "mbxmlutilstinyxml/tinyxml.h"
 
 namespace MBSim {
 
@@ -43,12 +44,21 @@ namespace MBSim {
 
       virtual const char* what() const throw();
 
+    protected:
+      void setMessage(const std::string &msg) { mbsim_error_message = msg; }
+
     private:
       /**
        * \brief error message
        */
       std::string mbsim_error_message;
 
+  };
+
+  class MBSimErrorInXML : public MBSimError {
+    public:
+      MBSimErrorInXML(const std::string &mbsim_error_message_, const MBXMLUtils::TiXmlElement *e_) throw(); 
+      virtual ~MBSimErrorInXML() throw() {}
   };
 }
 

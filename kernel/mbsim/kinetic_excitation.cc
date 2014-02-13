@@ -20,12 +20,8 @@
 #include <config.h>
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
-#include <mbsim/utils/function.h>
+#include <fmatvec/function.h>
 #include <mbsim/dynamic_system_solver.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objectfactory.h"
-#include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -35,14 +31,12 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KineticExcitation, MBSIMNS"KineticExcitation")
 
-  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), F(NULL), M(NULL) {}
+  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {}
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(saved_ref!="")
         connect(getByPath<Frame>(saved_ref));
       else if(saved_ref1!="" && saved_ref2!="")
@@ -56,7 +50,9 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);
-      if(!refFrame) refFrame=frame[1];
+      if(F) assert((*F)(0).size()==forceDir.cols());
+      if(M) assert((*M)(0).size()==momentDir.cols());
+      refFrame=refFrameID?frame[1]:frame[0];
       C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
       C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
       C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
@@ -126,68 +122,42 @@ namespace MBSim {
     }
   }
 
-  void KineticExcitation::setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
-    forceDir << dir;
+  void KineticExcitation::setForceDirection(const Mat3xV &fd) {
 
-    for(int i=0; i<dir.cols(); i++)
-      forceDir.set(i, forceDir.col(i)/nrm2(dir.col(i)));
+    forceDir = fd;
 
-    F=func;
-    assert((*F)(0).size()==forceDir.cols());
+    for(int i=0; i<fd.cols(); i++)
+      forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
   }
 
-  void KineticExcitation::setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
-    momentDir << dir;
+  void KineticExcitation::setMomentDirection(const Mat3xV &md) {
 
-    for(int i=0; i<dir.cols(); i++)
-      momentDir.set(i, momentDir.col(i)/nrm2(dir.col(i)));
+    momentDir = md;
 
+    for(int i=0; i<md.cols(); i++)
+      momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
+  }
+
+  void KineticExcitation::setForceFunction(Function<VecV(double)> *func) {
+    F=func;
+  }
+
+  void KineticExcitation::setMomentFunction(Function<VecV(double)> *func) {
     M=func;
-    assert((*M)(0).size()==momentDir.cols());
   }
 
   void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e)
-      saved_frameOfReference=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"force");
-    if(e) {
-      TiXmlElement *ee=e->FirstChildElement();
-      Mat dir=getMat(ee,3,0);
-      ee=ee->NextSiblingElement();
-      Function1<Vec,double> *func=ObjectFactory<Function>::create<Function1<Vec,double> >(ee->FirstChildElement());
-      func->initializeUsingXML(ee->FirstChildElement());
-      setForce(dir, func);
-      ee=ee->NextSiblingElement();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVForceArrow(arrow);
-        ee=ee->NextSiblingElement();
-      }
-#endif
-    }
-    e=element->FirstChildElement(MBSIMNS"moment");
-    if(e) {
-      TiXmlElement *ee=e->FirstChildElement();
-      Mat dir=getMat(ee,3,0);
-      ee=ee->NextSiblingElement();
-      Function1<Vec,double> *func=ObjectFactory<Function>::create<Function1<Vec,double> >(ee->FirstChildElement());
-      func->initializeUsingXML(ee->FirstChildElement());
-      setMoment(dir, func);
-      ee=ee->NextSiblingElement();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVMomentArrow calls the copy constructor on arrow
-        setOpenMBVMomentArrow(arrow);
-        ee=ee->NextSiblingElement();
-      }
-#endif
-    }
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    if(e) refFrameID=getDouble(e);
+    e=element->FirstChildElement(MBSIMNS"forceDirection");
+    if(e) setForceDirection(getMat(e,3,0));
+    e=element->FirstChildElement(MBSIMNS"forceFunction");
+    if(e) setForceFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement()));
+    e=element->FirstChildElement(MBSIMNS"momentDirection");
+    if(e) setMomentDirection(getMat(e,3,0));
+    e=element->FirstChildElement(MBSIMNS"momentFunction");
+    if(e) setMomentFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement()));
     e=element->FirstChildElement(MBSIMNS"connect");
     if(e->Attribute("ref"))
       saved_ref=e->Attribute("ref");
@@ -195,7 +165,23 @@ namespace MBSim {
       saved_ref1=e->Attribute("ref1");
       saved_ref2=e->Attribute("ref2");
     }
-    e=e->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, false);
+      which[1]=true;
+      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
+    }
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      std::vector<bool> which; which.resize(2, false);
+      which[1]=true;
+      LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
+    }
+#endif
   }
 
   TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
@@ -206,19 +192,15 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
     if(forceDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
-      addElementText(ele1,MBSIMNS"directionVectors",forceDir);
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
-      F->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
+      addElementText(ele0,MBSIMNS"forceDirection",forceDir);
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"forceFunction");
+      F->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     if(momentDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
-      addElementText(ele1,MBSIMNS"directionVectors",momentDir);
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
-      M->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
+      addElementText(ele0,MBSIMNS"momentDirection",momentDir);
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"momentFunction");
+      M->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");

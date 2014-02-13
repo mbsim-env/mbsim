@@ -2,7 +2,6 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsimControl/actuator.h"
-#include "mbsim/utils/function_library.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/plane.h"
@@ -15,6 +14,8 @@
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsimPowertrain/cardan_shaft.h"
 #include "mbsim/kinetic_excitation.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
 #include "openmbvcppinterface/frustum.h"
@@ -36,14 +37,14 @@ double mR = 10;
 double g0 = 9.81;
 double mu = 1.07;
 
-class Fahrwiderstand : public Function1<fmatvec::Vec, double> {
+class Fahrwiderstand : public fmatvec::Function<fmatvec::VecV(double)> {
   private:
     RigidBody *body;
   public:
     Fahrwiderstand(RigidBody *body_) : body(body_) {}
 
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      fmatvec::Vec F(1);
+    fmatvec::VecV operator()(const double& t) {
+      fmatvec::VecV F(1);
       double v = abs(body->getu()(0));
       double vkmh = v*3.6;
       if(vkmh<0.1)
@@ -61,7 +62,7 @@ class Fahrwiderstand : public Function1<fmatvec::Vec, double> {
     };
 };
 
-class Moment : public Function1<fmatvec::Vec, double> {
+class Moment : public fmatvec::Function<fmatvec::VecV(double)> {
     RigidBody *shaft,*fzg;
     double P, M_max, Om_eck, Om_max, t0;
     double i, M_An, M_Ab, Om_Ab, Om_An, v_Fzg;
@@ -75,9 +76,9 @@ class Moment : public Function1<fmatvec::Vec, double> {
       M_max = P/Om_eck;
     }
 
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      fmatvec::Vec M(1);
-      if(tVal<t0)
+    fmatvec::VecV operator()(const double& t) {
+      fmatvec::VecV M(1);
+      if(t<t0)
 	return M;
 
       Om_Ab = abs(shaft->getuRel()(0));
@@ -142,8 +143,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec SrSP(3);
 
-  karosserie->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  karosserie->setRotation(new CardanAngles);
+  karosserie->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  karosserie->setRotation(new RotationAboutAxesXYZ<VecV>);
   karosserie->setFrameOfReference(getFrame("I"));
   karosserie->setFrameForKinematics(karosserie->getFrame("C"));
   karosserie->setPlotFeature(stateDerivative,enabled);
@@ -151,28 +152,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SrSP(0) = d;
   SrSP(1) = -h+r;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("VL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("VL",SrSP,ASP));
   SrSP(2) = b/2-bR/2;
-  karosserie->addFrame("VR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("VR",SrSP,ASP));
 
   SrSP(1) = -h+r+0.3;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("FVL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FVL",SrSP,ASP));
   SrSP(2) = b/2-bR/2;
-  karosserie->addFrame("FVR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FVR",SrSP,ASP));
 
   SrSP(0) = -e;
   SrSP(1) = -h+r;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("HL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("HL",SrSP,ASP));
   SrSP(2) = +b/2-bR/2;
-  karosserie->addFrame("HR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("HR",SrSP,ASP));
 
   SrSP(1) = -h+r+0.3;
   SrSP(2) = -b/2+bR/2;
-  karosserie->addFrame("FHL",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FHL",SrSP,ASP));
   SrSP(2) = +b/2-bR/2;
-  karosserie->addFrame("FHR",SrSP,ASP);
+  karosserie->addFrame(new FixedRelativeFrame("FHR",SrSP,ASP));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   karosserie->getFrame("FHL")->enableOpenMBV(0.3);
 #endif
@@ -183,8 +184,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vl->setMass(mR);
   vl->setInertiaTensor(ThetaR);
 
-  vl->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  vl->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  vl->setRotation(new RotationAboutZAxis<VecV>);
+  vl->setTranslation(new TranslationAlongYAxis<VecV>);
   vl->setFrameOfReference(karosserie->getFrame("VL"));
   vl->setFrameForKinematics(vl->getFrame("C"));
 
@@ -200,8 +201,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vr->setMass(mR);
   vr->setInertiaTensor(ThetaR);
 
-  vr->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  vr->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  vr->setRotation(new RotationAboutZAxis<VecV>);
+  vr->setTranslation(new TranslationAlongYAxis<VecV>);
   vr->setFrameOfReference(karosserie->getFrame("VR"));
   vr->setFrameForKinematics(vr->getFrame("C"));
 
@@ -216,8 +217,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hl->setMass(mR);
   hl->setInertiaTensor(ThetaR);
 
-  hl->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  hl->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  hl->setRotation(new RotationAboutZAxis<VecV>);
+  hl->setTranslation(new TranslationAlongYAxis<VecV>);
   hl->setFrameOfReference(karosserie->getFrame("HL"));
   hl->setFrameForKinematics(hl->getFrame("C"));
 
@@ -232,9 +233,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hr->setMass(mR);
   hr->setInertiaTensor(ThetaR);
 
-  hr->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  hr->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
-
+  hr->setRotation(new RotationAboutZAxis<VecV>);
+  hr->setTranslation(new TranslationAlongYAxis<VecV>);
   hr->setFrameOfReference(karosserie->getFrame("HR"));
   hr->setFrameForKinematics(hr->getFrame("C"));
 
@@ -246,19 +246,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SrSP.init(0);
   CircleSolid *circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  vl->addContour(circle,SrSP,ASP);
+  vl->addContour(circle);
 
   circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  hl->addContour(circle,SrSP,ASP);
+  hl->addContour(circle);
 
   circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  vr->addContour(circle,SrSP,ASP);
+  vr->addContour(circle);
 
   circle = new CircleSolid("Reifen");
   circle->setRadius(r);
-  hr->addContour(circle,SrSP,ASP);
+  hr->addContour(circle);
 
   Plane *plane = new Plane("Ebene");
   double phi = M_PI*0.5; 
@@ -268,56 +268,58 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(1,1) = cos(phi);
   A(1,0) = sin(phi);
   A(2,2) = 1;
-  addContour(plane,SrSP,A);
+  addFrame(new FixedRelativeFrame("Ebene",SrSP,A));
+  plane->setFrameOfReference(getFrame("Ebene"));
+  addContour(plane);
 
   Contact *c = new Contact("KontaktVorneLinks"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),vl->getContour("Reifen"));
   addLink(c);
 
   c = new Contact("KontaktHintenLinks"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),hl->getContour("Reifen"));
   addLink(c);
 
   c = new Contact("KontaktVorneRechts"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),vr->getContour("Reifen"));
   addLink(c);
 
   c = new Contact("KontaktHintenRechts"); 
   if(rigidContacts) {
-    c->setContactForceLaw(new UnilateralConstraint);
-    c->setContactImpactLaw(new UnilateralNewtonImpact);
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    c->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    c->setNormalForceLaw(new UnilateralConstraint);
+    c->setNormalImpactLaw(new UnilateralNewtonImpact);
+    c->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    c->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cc,dc)));
+    c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
   c->connect(getContour("Ebene"),hr->getContour("Reifen"));
   addLink(c);
@@ -343,7 +345,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec rSD(3);
   rSD(0) = -w/2;
   rSD(1) = -h+r;
-  karosserie->addFrame("D",rSD,BasicRotAKIy(0));
+  karosserie->addFrame(new FixedRelativeFrame("D",rSD,BasicRotAKIy(0)));
   static_cast<RigidBody*>(differentialGear->getObject("Housing"))->setFrameOfReference(karosserie->getFrame("D"));
 
   CardanShaft* psR = new CardanShaft("CardanShaftRechts");
@@ -357,14 +359,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   rSD.init(0);
   rSD(2) = -bR/2;
-  hr->addFrame("K",rSD,BasicRotAKIz(M_PI/2));
+  hr->addFrame(new FixedRelativeFrame("K",rSD,BasicRotAKIz(M_PI/2)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   hr->getFrame("K")->enableOpenMBV(0.3);
 #endif
 
   rSD.init(0);
   rSD(2) = bR/2;
-  hl->addFrame("K",rSD,BasicRotAKIy(-M_PI)*BasicRotAKIz(M_PI/2));
+  hl->addFrame(new FixedRelativeFrame("K",rSD,BasicRotAKIy(-M_PI)*BasicRotAKIz(M_PI/2)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   hl->getFrame("K")->enableOpenMBV(0.3);
 #endif
@@ -381,9 +383,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     if(rigidJoints) {
       joint2->setForceLaw(new BilateralConstraint);
-      joint2->setImpactForceLaw(new BilateralImpact);
       joint2->setMomentLaw(new BilateralConstraint);
-      joint2->setImpactMomentLaw(new BilateralImpact);
     } 
     else {
       joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
@@ -398,9 +398,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     if(rigidJoints) {
       joint2->setForceLaw(new BilateralConstraint);
-      joint2->setImpactForceLaw(new BilateralImpact);
       joint2->setMomentLaw(new BilateralConstraint);
-      joint2->setImpactMomentLaw(new BilateralImpact);
     } 
     else {
       joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
@@ -448,7 +446,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   rSD(1) = -h+r;
 
-  karosserie->addFrame("W",rSD,BasicRotAKIy(M_PI/2));
+  karosserie->addFrame(new FixedRelativeFrame("W",rSD,BasicRotAKIy(M_PI/2)));
   shaft1->setFrameOfReference(karosserie->getFrame("W"));
   shaft1->setFrameForKinematics(shaft1->getFrame("C"));
 
@@ -461,17 +459,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   I(1,1) = m*pow(l,2)/12.0;
   I(2,2) = m*pow(l,2)/2.0;
   shaft1->setInertiaTensor(I);
-  shaft1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  shaft1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   rSD.init(0);
   rSD(2) = l/2;
-  shaft1->addFrame("Q",rSD,SqrMat(3,EYE));
+  shaft1->addFrame(new FixedRelativeFrame("Q",rSD,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 #endif
 
   GearConstraint *constraint = new GearConstraint("C0",shaft1);
   addObject(constraint);
-  constraint->addDependency(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1);
+  constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1));
 
   //actuator = new Actuator("Fahrwiderstand");
   //addLink(load);
@@ -500,7 +498,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   vl->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -509,7 +507,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   vr->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -518,7 +516,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   hl->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -527,7 +525,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
-  cylinder->setStaticColor(0.9);
+  cylinder->setDiffuseColor(0.9,1,1);
   hr->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
@@ -536,7 +534,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setTopRadius(r1);
   cylinder->setBaseRadius(r1);
   cylinder->setHeight(l);
-  cylinder->setStaticColor(0.1);
+  cylinder->setDiffuseColor(0.1,1,1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 #endif

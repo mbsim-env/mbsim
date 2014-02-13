@@ -7,6 +7,7 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -82,7 +83,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
   WrOS0B(0) = l0*0.9; WrOS0B(1) = b0*0.5+0.05;
-  this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
@@ -92,10 +93,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
   Mat JacTrans(3,1,INIT,0.); JacTrans(1,0) = 1.;
-  ball->setTranslation(new LinearTranslation(JacTrans));
+  ball->setTranslation(new LinearTranslation<VecV>(JacTrans));
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addContour(point);
   ball->setInitialGeneralizedVelocity(-0.5);
   this->addObject(ball);
 
@@ -107,8 +110,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
   this->addLink(contact);
 
@@ -120,10 +123,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->setMomentDirection("[0; 0; 1]");
   joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
 }
 

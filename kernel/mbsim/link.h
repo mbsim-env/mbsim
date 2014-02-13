@@ -129,11 +129,6 @@ namespace MBSim {
       virtual void updatewbRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to TODO of dynamic system parent
-       */
-      virtual void updatefRef(const fmatvec::Vec &ref) {};
-
-      /**
        * \brief references to contact force parameter of dynamic system parent
        */
       virtual void updatelaRef(const fmatvec::Vec& ref);

@@ -22,6 +22,10 @@
 
 #include "mbsim/contour.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
 namespace MBSim {
 
   /**
@@ -36,15 +40,23 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Edge(const std::string &name) : RigidContour(name), length(1), thickness(0.01) {};
+      Edge(const std::string &name="", Frame *R=0) : RigidContour(name,R), length(1), thickness(0.01) {};
 
       std::string getType() const {return "Edge";}
+      virtual void init(InitStage stage);
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}
       double getLength() const { return length; }
       double getThickness() const {return thickness;}
       /***************************************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVLine ombv(1,diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
+      }
+#endif
 
     private:
       double length, thickness;

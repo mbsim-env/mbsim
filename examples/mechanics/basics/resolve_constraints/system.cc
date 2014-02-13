@@ -1,6 +1,8 @@
 #include "system.h"
+#include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #endif
@@ -30,7 +32,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addObject(stab1);
   KrKS(1) = a1;
 
-  stab1->addFrame("Ref",KrKS,SqrMat(3,EYE));
+  stab1->addFrame(new FixedRelativeFrame("Ref",KrKS,SqrMat(3,EYE)));
 
   stab1->setFrameOfReference(getFrame("I"));
   stab1->setFrameForKinematics(stab1->getFrame("Ref"));
@@ -38,7 +40,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
-  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   Vec q0(1);
   q0(0) = -phi1;
   stab1->setInitialGeneralizedPosition(q0);
@@ -48,7 +50,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(lStab);
-  cylinder->setStaticColor(0.5);
+  cylinder->setDiffuseColor(180./360.,1,1);
   stab1->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);
@@ -57,15 +59,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody* stab2 = new RigidBody("Stab2");
   addObject(stab2);
   KrKS(1) = -b1;
-  stab1->addFrame("P",KrKS,SqrMat(3,EYE));
+  stab1->addFrame(new FixedRelativeFrame("P",KrKS,SqrMat(3,EYE)));
   KrKS(1) = a2;
-  stab2->addFrame("R",KrKS,SqrMat(3,EYE));
+  stab2->addFrame(new FixedRelativeFrame("R",KrKS,SqrMat(3,EYE)));
   stab2->setFrameOfReference(stab1->getFrame("P"));
   stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   q0(0) = -phi2+phi1;
   stab2->setInitialGeneralizedPosition(q0);
 
@@ -74,7 +76,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(lStab);
-  cylinder->setStaticColor(0.1);
+  cylinder->setDiffuseColor(90./360.,1,1);
   stab2->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);

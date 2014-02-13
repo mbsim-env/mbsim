@@ -29,15 +29,34 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Rectangle::Rectangle(const string &name) :
-      Plane(name), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Rectangle::Rectangle(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  }
+
+  Rectangle::Rectangle(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  }
+
+  Rectangle::Rectangle(const string &name, double yL, double zL, double t, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(t), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
   void Rectangle::init(InitStage stage) {
-    if (stage == calculateLocalInitialValues)
+    if (stage == calculateLocalInitialValues) {
       setVertices();
+      Plane::init(stage);
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures();
 
-    Plane::init(stage);
+      if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          if(openMBVRigidBody) ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(0,yLength,zLength);
+        }
+#endif
+        Plane::init(stage);
+      }
+    }
+    else
+      Plane::init(stage);
   }
 
   void Rectangle::setVertices() {
@@ -155,16 +174,5 @@ namespace MBSim {
 
     return false;
   }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Rectangle::enableOpenMBV(bool enable, int number) {
-    Plane::enableOpenMBV(enable, yLength, number);
-    if (enable) {
-      ((OpenMBV::Grid*) openMBVRigidBody)->setXSize(zLength);
-    }
-    else
-      openMBVRigidBody = 0;
-  }
-#endif
 
 }

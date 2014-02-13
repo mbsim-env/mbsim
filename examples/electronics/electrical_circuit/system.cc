@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsimElectronics/simulation_classes.h"
-#include <mbsim/utils/function.h>
 #include "mbsimControl/function_sensor.h"
 
 using namespace std;
@@ -9,10 +8,10 @@ using namespace MBSim;
 using namespace MBSimElectronics;
 //using namespace MBSimControl;
 // Just a test voltage signal
-class Signal : public Function1<fmatvec::Vec,double> {
+class Signal : public Function<fmatvec::VecV(double)> {
   public:
-    fmatvec::Vec operator()(const double &t, const void * =NULL) {
-      fmatvec::Vec U(1);
+    fmatvec::VecV operator()(const double &t) {
+      fmatvec::VecV U(1);
       U(0) = 3;
       return U;
     }

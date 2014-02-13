@@ -24,7 +24,6 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
@@ -137,9 +136,9 @@ namespace MBSimHydraulics {
   void RigidHLine::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       for (unsigned int i=0; i<refDependencyOnInflowString.size(); i++)
-        addInflowDependencyOnInflow(getByPath<RigidHLine>(process_hline_string(refDependencyOnInflowString[i])));
+        addInflowDependencyOnInflow(getByPath<RigidHLine>(refDependencyOnInflowString[i]));
       for (unsigned int i=0; i<refDependencyOnOutflowString.size(); i++)
-        addInflowDependencyOnOutflow(getByPath<RigidHLine>(process_hline_string(refDependencyOnOutflowString[i])));
+        addInflowDependencyOnOutflow(getByPath<RigidHLine>(refDependencyOnOutflowString[i]));
       HLine::init(stage);
     }
     else if (stage==MBSim::preInit) {
@@ -211,9 +210,8 @@ namespace MBSimHydraulics {
   void ConstrainedLine::initializeUsingXML(TiXmlElement * element) {
     HLine::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    Function1<double, double> * qf=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
+    fmatvec::Function<double(double)> * qf=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
     setQFunction(qf);
-    qf->initializeUsingXML(e->FirstChildElement());
   }
 
   void ConstrainedLine::init(MBSim::InitStage stage) {
@@ -243,7 +241,7 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       HLine::init(stage);
       if (QSignalString!="")
-        setQSignal(getByPath<Signal>(process_signal_string(QSignalString)));
+        setQSignal(getByPath<Signal>(QSignalString));
     }
     else if (stage==preInit) {
       Object::init(stage); // no check of connected lines
@@ -281,11 +279,11 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       HLine::init(stage);
       if (inflowSignalString!="")
-        setInflowSignal(getByPath<Signal>(process_signal_string(inflowSignalString)));
+        setInflowSignal(getByPath<Signal>(inflowSignalString));
       if (outflowSignalString!="")
-        setOutflowSignal(getByPath<Signal>(process_signal_string(outflowSignalString)));
+        setOutflowSignal(getByPath<Signal>(outflowSignalString));
       if (openingSignalString!="")
-        setOpeningSignal(getByPath<Signal>(process_signal_string(openingSignalString)));
+        setOpeningSignal(getByPath<Signal>(openingSignalString));
     }
     else if (stage==preInit) {
       Object::init(stage); // no check of connected lines

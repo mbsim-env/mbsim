@@ -24,7 +24,7 @@
 #include <mbsim/utils/contour_functions.h>
 
 namespace MBSim {
-  template<class Row, class Col> class TabularFunction1_VS;
+  template<class Ret> class TabularFunction;
 };
 
 class FuncCrPC : public MBSim::ContourFunction1s {
@@ -47,13 +47,13 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
   private:
     fmatvec::Vec3 Cb;
-    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> pp_y;
-    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> pp_z;
-    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_operator;
-    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_T;
-    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_B;
-    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_N;
-    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_curvature;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_y;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_z;
+    MBSim::TabularFunction<fmatvec::Vec3> * tab_operator;
+    MBSim::TabularFunction<fmatvec::Vec3> * tab_T;
+    MBSim::TabularFunction<fmatvec::Vec3> * tab_B;
+    MBSim::TabularFunction<fmatvec::Vec3> * tab_N;
+    MBSim::TabularFunction<fmatvec::Vec3> * tab_curvature;
 
     fmatvec::Vec3 (FuncCrPC::*operator_)(const double& alpha);
     fmatvec::Vec3 operatorPPolynom(const double& alpha);
@@ -95,7 +95,7 @@ class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
   private:
     const fmatvec::Vec3 Cb;
-    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> * pp_r;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV> * pp_r;
 
     double alphaSave, salphaSave, calphaSave, rSave, drdalphaSave, d2rdalpha2Save;
     

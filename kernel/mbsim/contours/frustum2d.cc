@@ -37,10 +37,11 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(0.,h,0.);
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
           ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
           ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
           ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(0.,h,0.);
         }
   #endif
         RigidContour::init(stage);
@@ -49,16 +50,5 @@ namespace MBSim {
     else
       RigidContour::init(stage);
   }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Frustum2D::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setStaticColor(0.5);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(-M_PI*0.5,0.,0.);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
 
 }

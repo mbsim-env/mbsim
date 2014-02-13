@@ -22,11 +22,11 @@
     schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
 
   <xs:simpleType name="HLineReferenceType">
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*(HLine\[X\]|Object\[X\])" with
+    <xs:restriction base="pv:stringPartialOctEval">
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*(Object\[X\]|Object\[X\])" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*(HLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*(Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -253,7 +253,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PressureLoss" abstract="true" substitutionGroup="mbsim:Function1_SS" type="PressureLossType">
+  <xs:element name="PressureLoss" abstract="true" substitutionGroup="mbsim:Function" type="PressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse zur Berechnung von Druckverlusten
@@ -262,7 +262,7 @@
   </xs:element>
   <xs:complexType name="PressureLossType">
     <xs:complexContent>
-      <xs:extension base="mbsim:Function1_SSType"/>
+      <xs:extension base="mbsim:FunctionType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -313,7 +313,7 @@
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
-          <xs:element name="number" type="xs:nonNegativeInteger">
+          <xs:element name="number" type="pv:integerFullOctEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Anzahl der parallel geschalteten hydraulischen Widerstände.
@@ -508,7 +508,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Angabe der Druckverlustwerte.
@@ -1042,7 +1042,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion der Flussrandbedingung
@@ -1505,7 +1505,7 @@
                   <xs:element name="Polynom"/>
                   <xs:element name="Harmonic"/>
                 </xs:choice>
-                <xs:element name="number" type="xs:nonNegativeInteger"/>
+                <xs:element name="number" type="pv:integerFullOctEval"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1534,7 +1534,7 @@
           <xs:element name="diameter" type="pv:lengthScalar"/>
           <xs:element name="length" type="pv:lengthScalar"/>
           <xs:element name="relativePlotPoints" type="pv:nounitVector" minOccurs="0"/>
-          <xs:element name="numberOfAnsatzFunctions" type="xs:nonNegativeInteger"/>
+          <xs:element name="numberOfAnsatzFunctions" type="pv:integerFullOctEval"/>
           <xs:choice>
             <xs:element name="windowNone"/>
             <xs:element name="windowHann"/>
@@ -1580,21 +1580,21 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
+                <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Größe des Druckknotens
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="minimalPressure" type="pv:pressureScalar">
+                <xs:element name="minimalPressure" type="pv:pressureScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       minimaler Druckwert für die Farbgebung des Knotens (entspricht blau)
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="maximalPressure" type="pv:pressureScalar">
+                <xs:element name="maximalPressure" type="pv:pressureScalar" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       maximaler Druckwert für die Farbgebung des Knotens (entspricht rot)
@@ -1631,7 +1631,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion der Druckrandbedingung
@@ -1876,7 +1876,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:nounitScalar">
+                <xs:element name="size" type="pv:nounitScalar" minOccurs="0">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -1900,7 +1900,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion der Druckrandbedingung
@@ -2045,7 +2045,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2138,7 +2138,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
         Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <a class="link" href="mbsimhydraulics:NodeMec">&lt;NodeMec&gt;</a> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
-        <p>Die hydraulische Leitung des Rückschlagventils ist mit <i>Line</i> benannt und kann durch <i>XXX/Group[name]/HLine[Line]</i> an Knoten angeschlossen werden.</p>
+        <p>Die hydraulische Leitung des Rückschlagventils ist mit <i>Line</i> benannt und kann durch <i>XXX/Group[name]/Object[Line]</i> an Knoten angeschlossen werden.</p>
         <object class="figure" standby="4cm" data="ball_checkvalve" title="Rückschlagventil"></object>
       </xs:documentation>
     </xs:annotation>
@@ -2251,7 +2251,7 @@
                   </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="mbsim:Function2_SSS"/>
+                      <xs:element ref="mbsim:Function"/>
                     </xs:sequence>
                   </xs:complexType> 
                 </xs:element>

@@ -32,7 +32,7 @@ namespace MBSim {
   /*!
    * \brief Function describing the scalar product between normal of frustum point and difference between frustum point and point on line defined by one parameter t
    */
-  class edgePolyFrustum : public Function1<fmatvec::Vec, fmatvec::Vec> {
+  class edgePolyFrustum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /*!
        * \brief constructor
@@ -49,7 +49,7 @@ namespace MBSim {
        */
       void setAdir(const fmatvec::Vec3 & A, const fmatvec::Vec3 & dir);
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x, const void* = NULL);
+      fmatvec::Vec operator()(const fmatvec::Vec &x);
 
     protected:
       /*!
@@ -102,8 +102,8 @@ namespace MBSim {
       }
 
       /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec & x, const void * = NULL);
-      virtual bool isBetter(const fmatvec::Vec & x);
+      virtual int operator ()(const fmatvec::Vec &x);
+      virtual bool isBetter(const fmatvec::Vec &x);
       virtual void clear(){criteriaResults.clear();}
       /*END - INHERITED INTERFACE*/
 

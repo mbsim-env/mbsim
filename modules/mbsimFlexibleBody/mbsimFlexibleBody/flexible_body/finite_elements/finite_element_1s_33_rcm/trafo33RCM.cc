@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
 
   PositionFunction::~PositionFunction() {}
 
-  Vec PositionFunction::operator()(const Vec& pos, const void *) {			
+  Vec PositionFunction::operator()(const Vec& pos) {			
     Vec pS = pos(0,2);
 
     Vec nS = angle->computen(pS);
@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
 
   PositionJacobian::~PositionJacobian() {}
 
-  SqrMat PositionJacobian::operator()(const Vec& pos, const void *) {			
+  SqrMat PositionJacobian::operator()(const Vec& pos) {			
     Vec pS = pos(0,2);
 
     Vec nS = angle->computen(pS);

@@ -12,7 +12,9 @@
 #include "mbsim/environment.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/kinetic_excitation.h"
-#include "mbsim/utils/function.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #include "beltDriveFunctions.h"
 
@@ -29,69 +31,74 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class Moment : public Function1<fmatvec::Vec, double> {
+class Moment : public Function<VecV(double)> {
   double M0;
   double M1;
   double omegaM;
   public:
     Moment(double M0_, double M1_, double omegaM_) : M0(M0_), M1(M1_), omegaM(omegaM_) {}
-    fmatvec::Vec operator()(const double& tVal, const void *) {
-      Vec M(1);
+    VecV operator()(const double& tVal) {
+      VecV M(1);
       M(0) = M0 + M1*sin(tVal*omegaM);
       return M;
     };
 };
 
-class tpSin : public Function1<Vec,double> {
+class tpSin : public Function<Vec(double)> {
    protected:
       Vec    J;
       double a, b, c, d;
    public:
-      tpSin(const Vec &J_, double a_, double b_, double c_, double d_): Function1<Vec,double>(), J(J_), a(a_), b(b_), c(c_), d(d_) {}
-      Vec operator()(const double& t, const void*) {
+      tpSin(const Vec &J_, double a_, double b_, double c_, double d_): J(J_), a(a_), b(b_), c(c_), d(d_) {}
+      Vec operator()(const double& t) {
          double om = a + b*t + c*sin(d*t) ;
          //cout << "  tpSin(t=" << t << ") = " << J*om << endl;
          return J*om;
       }
 };
-class tpCos : public Function1<Vec,double> {
+class tpCos : public Function<Vec(double)> {
    protected:
       Vec    J;
       double a, b, c, d;
    public:
-      tpCos(const Vec &J_, double a_, double b_, double c_, double d_): Function1<Vec,double>(), J(J_), a(a_), b(b_), c(c_), d(d_) {}
-      Vec operator()(const double& t, const void*) {
+      tpCos(const Vec &J_, double a_, double b_, double c_, double d_): J(J_), a(a_), b(b_), c(c_), d(d_) {}
+      Vec operator()(const double& t) {
          double omp = a + b*t + c*cos(d*t) ;
          //cout << "  tpCos(t=" << t << ") = " << J*omp << endl;
          return J*omp;
       }
 };
-class SinusExcitedOnConstVelocity : public MBSim::Function1<double,double> {
+class SinusExcitedOnConstVelocity : public Function<double(double)> {
    protected:
       Vec    JR;
       double omega0, phi0;
       double omegaExcitation, amplitudeExcitation;
-      Function1<fmatvec::Vec,double>* position;
-      Function1<fmatvec::Vec,double>* velocity;
-      Function1<fmatvec::Vec,double>* acceleration;
+      Function<Vec(double)>* position;
+      Function<Vec(double)>* velocity;
+      Function<Vec(double)>* acceleration;
    public:
-      SinusExcitedOnConstVelocity(Vec &JR_, double phi0_, double omega0_, double amplitudeExcitation_, double omegaExcitation_):
-         Function1<double,double>(), JR(JR_), omega0(omega0_), phi0(phi0_), omegaExcitation(omegaExcitation_), amplitudeExcitation(amplitudeExcitation_) {
+      SinusExcitedOnConstVelocity(Vec &JR_, double phi0_, double omega0_, double amplitudeExcitation_, double omegaExcitation_): JR(JR_), omega0(omega0_), phi0(phi0_), omegaExcitation(omegaExcitation_), amplitudeExcitation(amplitudeExcitation_) {
             position     = new tpCos(JR,   phi0, omega0,omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0, omegaExcitation);
             velocity     = new tpSin(JR, omega0,    0.0,omegaExcitation>epsroot()? amplitudeExcitation                :0.0, omegaExcitation);
             acceleration = new tpCos(JR,    0.0,    0.0,omegaExcitation>epsroot()? amplitudeExcitation*omegaExcitation:0.0, omegaExcitation);
          }
 //      Vec operator() (const double &t, const void *) { return (*position)(t);}
-      double operator ()(const double &t, const void *) {
-         return ( phi0 + omega0 * t - ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * (cos(omegaExcitation*t) - 1) );
+      double operator ()(const double &t) {
+         return phi0 + omega0 * t - ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * (cos(omegaExcitation*t) - 1);
+      }
+      double parDer(const double &t) {
+         return omega0 + ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * sin(omegaExcitation*t) * omegaExcitation;
+      }
+      double parDerParDer(const double &t) {
+         return ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * cos(omegaExcitation*t) * omegaExcitation * omegaExcitation;
       }
 
-      const Function1<Vec,double>& getPositionFunction    () const {return *position    ;}
-      const Function1<Vec,double>& getVelocityFunction    () const {return *velocity    ;}
-      const Function1<Vec,double>& getAccelerationFunction() const {return *acceleration;}
-            Function1<Vec,double>& getPositionFunction    ()       {return *position    ;}
-            Function1<Vec,double>& getVelocityFunction    ()       {return *velocity    ;}
-            Function1<Vec,double>& getAccelerationFunction()       {return *acceleration;}
+      const Function<Vec(double)>& getPositionFunction    () const {return *position    ;}
+      const Function<Vec(double)>& getVelocityFunction    () const {return *velocity    ;}
+      const Function<Vec(double)>& getAccelerationFunction() const {return *acceleration;}
+            Function<Vec(double)>& getPositionFunction    ()       {return *position    ;}
+            Function<Vec(double)>& getVelocityFunction    ()       {return *velocity    ;}
+            Function<Vec(double)>& getAccelerationFunction()       {return *acceleration;}
 };
 
 
@@ -147,6 +154,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   const double nodesPerElement = 1.65;
   const double nominalContactRadius = radiiDisks(1);
 
+  bool enableContactPoints = false;
 
 // initial condition for belt
   Mat start(2,nDisks), end(2,nDisks);
@@ -198,6 +206,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   for(int i=0;i<elements;i++) {
      static int part      = 0;
      static int pSpanWrap = 0; // 0: wrap; 1: span
+     cout << pSpanWrap << endl;
      int nPre = (part-1+nDisks)%nDisks;
 /*******     cout << " Element " << i << ":\t part=" << part <<"\t nPre=" << nPre << " pSpanWrap=" << pSpanWrap << endl; *********/
 
@@ -351,7 +360,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     name.clear();
     name << "B" << i;
-    this->addFrame(name.str(),positionDisks.col(i),SqrMat(3,EYE),this->getFrame("I"));
+    this->addFrame(new FixedRelativeFrame(name.str(),positionDisks.col(i),SqrMat(3,EYE),this->getFrame("I")));
     disk->setFrameOfReference(this->getFrame(name.str()));
     disk->setFrameForKinematics(disk->getFrame("C"));
     disk->setMass(massDisks(i));
@@ -370,18 +379,18 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     if(i==0)
     {
       SinusExcitedOnConstVelocity *excitation = new SinusExcitedOnConstVelocity(JR, 0.0        , omega0, 0.0*omega0,3*omega0);
-      disk->setRotation(new TimeDependentRotationAboutFixedAxis(excitation,JR));
+      disk->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>(JR),excitation));
 //      disk->setGuidingVelocityOfRotation             (&(excitation->getVelocityFunction()    ))  ;
 //      disk->setDerivativeOfGuidingVelocityOfRotation (&(excitation->getAccelerationFunction()))  ;
       diskHasRotationalDOFs = false;
     }
     else {
-       disk->setRotation(new RotationAboutFixedAxis(JR));
+       disk->setRotation(new RotationAboutFixedAxis<VecV>(JR));
        diskHasRotationalDOFs = true;
     }
 
     if(i==nDisks-1) {
-       disk->setTranslation(new LinearTranslation(JtransSpring));
+       disk->setTranslation(new LinearTranslation<VecV>(JtransSpring));
        Vec vInit(2,INIT,0.);
        vInit(1) = -v0*sideInOut( i )/radiiDisks(i);
        disk->setInitialGeneralizedVelocity(vInit);
@@ -394,7 +403,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     CircleSolid *cDisk = new CircleSolid("cDisk");
     cDisk->setRadius(radiiDisks(i));
     Vec BR(3,INIT,0.);// BR(1)=-r;
-    disk->addContour(cDisk,BR,SqrMat(3,EYE),disk->getFrame("C"));
+    disk->addFrame(new FixedRelativeFrame("cDisk",BR,SqrMat(3,EYE),disk->getFrame("C")));
+    cDisk->setFrameOfReference(disk->getFrame("cDisk"));
+    disk->addContour(cDisk);
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -414,17 +425,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 // #define rigidContact 1
 // #if rigidContact
     if (true) {
-       contact->setContactForceLaw(new UnilateralConstraint);
-       contact->setContactImpactLaw(new UnilateralNewtonImpact(.0));
+       contact->setNormalForceLaw(new UnilateralConstraint);
+       contact->setNormalImpactLaw(new UnilateralNewtonImpact(.0));
        if(mu>0.0) {
-          contact->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-          contact->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+          contact->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+          contact->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
        }
       cout << "rigid";
     }
     else
     {
-      contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6,1e3)));
+      contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6,1e3)));
       cout << "flexible";
     }
 // #endif
@@ -435,22 +446,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->connect(disk->getContour("cDisk"),band[i]);
 //    contact->setPlotFeature(linkLagrangeParameters, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
-    //aC_N->setEnable(true);
-    //aC_N->setArrowHead (float diameter, float length);
-    aC_N->setArrowHead(1, 3);
-    aC_N->setDiameter (0.5);
-    aC_N->setScaleLength(0.0002);
-    contact->setOpenMBVNormalForceArrow(aC_N);
-    if(mu>0) {
-       OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-       //aC_T->setEnable(true);
-       aC_T->setArrowHead(1, 3);
-       aC_T->setDiameter (0.5);
-       aC_T->setScaleLength(0.0002);
-       contact->setOpenMBVFrictionArrow(aC_T);
-    }
-    contact->enableOpenMBVContactPoints(0.0075,false);
+    contact->enableOpenMBVNormalForce(_scaleLength=0.0002);
+    if(mu>0)
+      contact->enableOpenMBVTangentialForce(_scaleLength=0.0002);
+    if(enableContactPoints)
+      contact->enableOpenMBVContactPoints(0.0075);
 #endif
     this->addLink(contact);
 
@@ -465,14 +465,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         M0 = +10.0; M1 = +5.0; omegaM = fabs(2*omega0); }
       else {
         M0 = -10.0; M1 = -5.0; omegaM = fabs(2*omega0); }
-      ke->setMoment(JR, new Moment(M0,M1,omegaM));
-      OpenMBV::Arrow *loadArrow = new OpenMBV::Arrow;
-      //loadArrow->setEnable(true);
-      //aC_N->setArrowHead (float diameter, float length);
-      loadArrow->setArrowHead(1, 3);
-      loadArrow->setDiameter (0.5);
-      loadArrow->setScaleLength(0.005 * 15./(fabs(M0)+fabs(M1)));
-      ke->setOpenMBVMomentArrow(loadArrow);
+      ke->setMomentDirection(JR);
+      ke->setMomentFunction(new Moment(M0,M1,omegaM));
+      ke->enableOpenMBVMoment(_scaleLength=0.005 * 15./(fabs(M0)+fabs(M1)));
     }
 
     if(i==nDisks-1) {
@@ -482,7 +477,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        const double F0Spring = 2.3215000000E+02;
 
        Vec posSpring = positionDisks.col(nDisks-1) + (l0Spring - F0Spring/cSpring ) * JtransSpring;
-       this->addFrame("BS",posSpring,SqrMat(3,EYE),this->getFrame("I"));
+       this->addFrame(new FixedRelativeFrame("BS",posSpring,SqrMat(3,EYE),this->getFrame("I")));
 
        // ----------------------- Definition der 1. Feder --------------------  
        SpringDamper *spring = new SpringDamper("TensionerSpring");
@@ -490,12 +485,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        spring->setForceFunction(new LinearSpringDamperForce(cSpring,dSpring,l0Spring));
        spring->connect(disk->getFrame("C"),this->getFrame("BS"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-       OpenMBV::CoilSpring* openMBVspring=new OpenMBV::CoilSpring;
-       openMBVspring->setSpringRadius(0.1*radiiDisks(i));
-       openMBVspring->setCrossSectionRadius(0.005*radiiDisks(i));
-       openMBVspring->setNumberOfCoils(nWindings);
-       openMBVspring->setStaticColor(0.);
-       spring->setOpenMBVSpring(openMBVspring);
+       spring->enableOpenMBVCoilSpring(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
 #endif
     }
   }

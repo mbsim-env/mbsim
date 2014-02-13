@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="Hauptgruppe{numHG}" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    xmlns:p="http://openmbv.berlios.de/MBXMLUtils/parameter"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <plotFeatureRecursive feature="+stateDerivative"/>
+  <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}state{plotSubType}"/>
   <plotFeature feature="+separateFilePerGroup"/>
-  <position>[rHG(numHG);0;0]</position>
+  <position unit="mm">
+    <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <ele>rHG(numHG)*1000</ele><ele>0</ele><ele>0</ele>
+    </xmlVector>
+  </position>
   <orientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></orientation>
   <frames/>
   <contours/>
   <groups>
-    <pv:embed href="submodel/Untergruppe.xml">
-      <!-- set local parameter for Untergruppe.xml; existing ones will be overwritten -->
-      <pv:localParameter href="submodel/Untergruppe.param.xml"/>
-    </pv:embed>
+    <pv:Embed href="submodel/Untergruppe.xml" parameterHref="submodel/Untergruppe.param.xml"/>
   </groups>
   <objects>
     <RigidBody name="Box1">
@@ -24,12 +24,9 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>m</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-      <translation>
-        <LinearTranslation>
-          <translationVectors>[0; 1; 0]</translationVectors>
-        </LinearTranslation>
-      </translation>
-      <rotation/>
+      <stateDependentTranslation>
+        <TranslationAlongYAxis/>
+      </stateDependentTranslation>
       <frames/>
       <contours/>
       <openMBVRigidBody>

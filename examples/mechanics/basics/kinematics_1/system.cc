@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
@@ -10,47 +11,29 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyRot : public MBSim::Rotation {
+class MyPos : public Function<Vec3(double)> {
   public:
-    virtual SqrMat3 operator()(const Vec &q, double t) {
-      SqrMat3 A;
-      for(int i=0; i<3; i++)
-        A(i,i) = 1;
-      return A;
-    }; 
-};
-
-class MyPos : public Translation {
-  public:
-    int getqSize() const {return 0;}
-    virtual Vec3 operator()(const Vec &q, const double &t, const void * =NULL) {
-      Vec3 PrPK;
+    int getArgSize() const {return 0;}
+    Vec3 operator()(const double &t) {
+      Vec3 r;
       double om = 1;
-      PrPK(0) = cos(om*t);
-      PrPK(1) = sin(om*t);
-      return PrPK;
+      r(0) = cos(om*t);
+      r(1) = sin(om*t);
+      return r;
     }; 
-};
-
-class jT : public GuidingVelocity {
-  public:
-    Vec3 operator()(const Vec &q, const double& t, const void*) {
-      Vec3 j;
+    Vec3 parDer(const double &t) {
+      Vec3 jh;
       double om = 1;
-      j(0) = -sin(om*t)*om;
-      j(1) =  cos(om*t)*om;
-      return j;
+      jh(0) = -sin(om*t)*om;
+      jh(1) =  cos(om*t)*om;
+      return jh;
     }
-};
-
-class djT : public DerivativeOfGuidingVelocity {
-  public:
-    Vec3 operator()(const Vec &qd, const Vec &q, const double& t, const void*) {
-      Vec3 dj;
+    Vec3 parDerParDer(const double &t) {
+      Vec3 jb;
       double om = 1;
-      dj(0) = -cos(om*t)*om*om;
-      dj(1) =  -sin(om*t)*om*om;
-      return dj;
+      jb(0) = -cos(om*t)*om*om;
+      jb(1) =  -sin(om*t)*om*om;
+      return jb;
     }
 };
 
@@ -77,9 +60,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
+  //body->setTranslation(new TranslationTeqI(new MyPos));
   body->setTranslation(new MyPos);
-  body->setGuidingVelocityOfTranslation(new jT);
-  body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
@@ -94,6 +76,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  body->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
 }
 

@@ -76,17 +76,6 @@ namespace MBSim {
     return p;
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Frustum::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setDiffuseColor(0.5,0,0);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(-M_PI*0.5,0.,0.);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
-
   void Frustum::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
     TiXmlElement* e;
@@ -101,8 +90,11 @@ namespace MBSim {
     else
       outCont=false;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(element->FirstChildElement(MBSIMNS"enableOpenMBV"))
-      enableOpenMBV();
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    if(e) {
+      OpenMBVFrustum ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e); 
+    }
 #endif
   }
 

@@ -144,7 +144,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==MBSim::unknownStage) {
       HLine::init(stage);
-      setInitialGeneralizedVelocity(inv(MatIntWWT)*WInt*Q0); 
+      u0 = inv(MatIntWWT)*WInt*Q0; 
       //      plotParameters();
     }
     else

@@ -24,6 +24,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #include <map>
 
@@ -762,9 +763,8 @@ namespace MBSim {
     GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double, double, double> *f = ObjectFactory<Function>::create<Function2<double,double,double> >(e->FirstChildElement());
+    Function<double(double,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedUnilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
@@ -852,11 +852,9 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMNS"InfluenceFunction");
     while(e) {
       xmlInfo info;
-      info.function = ObjectFactory<Function>::create<InfluenceFunction>(e->FirstChildElement());
+      info.function = ObjectFactory<FunctionBase>::createAndInit<InfluenceFunction>(e->FirstChildElement());
       info.name1 = e->FirstChildElement()->Attribute("contourName1");
       info.name2 = e->FirstChildElement()->Attribute("contourName2");
-
-      info.function->initializeUsingXML(e->FirstChildElement());
 
       referenceXML.push_back(info);
 
@@ -994,9 +992,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double, double, double> *f = ObjectFactory<Function>::create<Function2<double,double,double> >(e->FirstChildElement());
+    Function<double(double,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedBilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
@@ -1013,9 +1010,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec, Vec, double> *f = ObjectFactory<Function>::create<Function2<Vec,Vec,double> >(e->FirstChildElement());
+    Function<Vec(Vec,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<Vec(Vec,double)> >(e->FirstChildElement());
     setFrictionForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, RegularizedSpatialFriction, MBSIMNS"RegularizedSpatialFriction")
@@ -1024,9 +1020,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec, Vec, double> *f = ObjectFactory<Function>::create<Function2<Vec,Vec,double> >(e->FirstChildElement());
+    Function<Vec(Vec,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<Vec(Vec,double)> >(e->FirstChildElement());
     setFrictionForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
   }
 
 }

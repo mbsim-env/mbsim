@@ -21,13 +21,13 @@
 #define  _CHECKVALVE_H_
 
 #include "mbsim/group.h"
-#include "mbsim/utils/function.h"
+#include <fmatvec/function.h>
 
 namespace MBSim {
   class Frame;
   class RigidBody;
   class Contact;
-  class SpringDamper;
+  class DirectionalSpringDamper;
   class GeneralizedImpactLaw;
   class GeneralizedForceLaw;
 }
@@ -54,16 +54,16 @@ namespace MBSimHydraulics {
       void setLineSetValued(bool setValued=true);
       void setBallMass(double mBall_);
       void setBallInitialPosition(double x0Ball_);
-      void setSpringForceFunction(MBSim::Function2<double,double,double> *func);
+      void setSpringForceFunction(fmatvec::Function<double(double,double)> *func);
       void setSeatContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
       void setSeatContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
       void setMaximalOpening(double hMax_) {hMax=hMax_; }
       void setMaximalContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
       void setMaximalContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBVFrames(bool openMBVFrames_=true) {openMBVFrames=openMBVFrames_; }
-      void enableOpenMBVArrows(bool openMBVArrows_=true) {openMBVArrows=openMBVArrows_; }
-      void enableOpenMBVBodies(bool openMBVBodies_=true) {openMBVBodies=openMBVBodies_; }
+      void enableOpenMBVFrames() {openMBVFrames=true; }
+      void enableOpenMBVArrows() {openMBVArrows=true; }
+      void enableOpenMBVBodies() {openMBVBodies=true; }
 #endif
 
       ClosableRigidLine * getLine() {return line; }
@@ -71,7 +71,7 @@ namespace MBSimHydraulics {
       MBSim::RigidBody * getBall() {return ball; }
       MBSim::Contact * getSeatContact() {return seatContact; }
       MBSim::Contact * getMaximalContact() {return maxContact; }
-      MBSim::SpringDamper * getSpring() {return spring; }
+      MBSim::DirectionalSpringDamper * getSpring() {return spring; }
       MBSimControl::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
       
       void init(MBSim::InitStage stage);
@@ -84,7 +84,7 @@ namespace MBSimHydraulics {
       MBSim::RigidBody * ball;
       MBSim::Contact * seatContact;
       MBSim::Contact * maxContact;
-      MBSim::SpringDamper * spring;
+      MBSim::DirectionalSpringDamper * spring;
       MBSimControl::GeneralizedCoordinateSensor * xOpen;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
       double hMax, mBall;

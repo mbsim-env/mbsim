@@ -2,7 +2,9 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/symbolic_function.h"
+#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/observers/frame_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -51,44 +53,42 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SXFunction spos(sq,pos);
   
-  SymbolicFunction1<Vec3,Vec> *position = new SymbolicFunction1<Vec3,Vec>(spos);
-  StateDependentTranslation *trans = new StateDependentTranslation(1,position);
-  body->setTranslation(trans);
+  body->setTranslation(new SymbolicFunction<Vec3(VecV)>(spos));
 
   vector<SX> al(1);
   al[0] = M_PI/2+sq[0]/R;
 
   SXFunction sangle(sq,al);
-  SymbolicFunction1<double,Vec> *angle = new SymbolicFunction1<double,Vec>(sangle);
-  StateDependentRotationAboutFixedAxis *rot = new StateDependentRotationAboutFixedAxis(1,angle,"[0;0;1]");
-  body->setRotation(rot);
+  SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(sangle);
+  body->setRotation(new NestedFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
+  body->setTranslationDependentRotation(true);
   
   body->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body->getFrame("C")->setPlotFeature(globalVelocity,enabled);
   body->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
 
-  body->setOpenMBVWeightArrow(new OpenMBV::Arrow);
-  body->setOpenMBVJointForceArrow(new OpenMBV::Arrow);
-  body->setOpenMBVJointMomentArrow(new OpenMBV::Arrow);
+  body->enableOpenMBVWeight();
+  body->enableOpenMBVJointForce();
+  body->enableOpenMBVJointMoment();
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
-  OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setStaticColor(0.5);
-  o->setOpenMBVVelocityArrow(arrow);
+ // OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
+ // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+ // arrow->setStaticColor(0.5);
+  o->enableOpenMBVVelocity();
 
-  arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setType(OpenMBV::Arrow::toDoubleHead);
-  arrow->setStaticColor(0.4);
-  o->setOpenMBVAngularVelocityArrow(arrow);
+//  arrow = new OpenMBV::Arrow;
+//  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+//  arrow->setType(OpenMBV::Arrow::toDoubleHead);
+//  arrow->setStaticColor(0.4);
+  o->enableOpenMBVAngularVelocity();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
   OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
   cuboid->setLength(l,h,d);
-  cuboid->setStaticColor(0.0);
+  cuboid->setDiffuseColor(160./360.,1,1);
   body->setOpenMBVRigidBody(cuboid);
 
   getFrame("I")->enableOpenMBV();

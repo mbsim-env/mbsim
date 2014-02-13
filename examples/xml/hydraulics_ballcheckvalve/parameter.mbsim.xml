@@ -1,4 +1,4 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <scalarParameter name="pistonMass">7.5e-3</scalarParameter>
   <scalarParameter name="hpcInitialHeight">33e-8/(pi*pistonRadius**2)</scalarParameter>
   <scalarParameter name="pistonRadius">4.2945e-3</scalarParameter>
@@ -21,4 +21,4 @@
 
   <scalarParameter name="A">5e-5</scalarParameter>
   <scalarParameter name="f">100</scalarParameter>
-</parameter>
+</Parameter>

@@ -9,7 +9,8 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
 #include "tools/file_to_fmatvecstring.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -56,10 +57,10 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec KrKS(3);
   KrKS(1) = hB/2;
-  basis->setRotation(new RotationAboutFixedAxis(Vec("[0;1;0]")));
+  basis->setRotation(new RotationAboutYAxis<VecV>);
   Vec KrSP(3);
   KrSP(1) = hB/2;
-  basis->addFrame("R",-KrKS,A);
+  basis->addFrame(new FixedRelativeFrame("R",-KrKS,A));
   basis->setFrameOfReference(getFrame("I"));
   basis->setFrameForKinematics(basis->getFrame("R"));
 
@@ -67,10 +68,10 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(arm);
   Vec PrPK0(3);
   PrPK0(1) = hB;
-  basis->addFrame("P",PrPK0,A,basis->getFrame("R"));
+  basis->addFrame(new FixedRelativeFrame("P",PrPK0,A,basis->getFrame("R")));
   KrKS.init(0);
   KrKS(1) = lA/2;
-  arm->addFrame("R",-KrKS,A);
+  arm->addFrame(new FixedRelativeFrame("R",-KrKS,A));
   arm->setFrameOfReference(basis->getFrame("P"));
   arm->setFrameForKinematics(arm->getFrame("R"));
 
@@ -79,7 +80,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 1./2.*mA*rA*rA;
   Theta(2,2) = mA*rA*rA;
   arm->setInertiaTensor(Theta);
-  arm->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  arm->setRotation(new RotationAboutZAxis<VecV>);
   KrSP(1) = -lA/2;
   KrSP(1) = lA/2;
 
@@ -90,9 +91,9 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 1./2.*mS*rS*rS;
   Theta(2,2) = mS*rS*rS;
   PrPK0(1) = lA;
-  arm->addFrame("Q",PrPK0,SqrMat(3,EYE),arm->getFrame("R"));
+  arm->addFrame(new FixedRelativeFrame("Q",PrPK0,SqrMat(3,EYE),arm->getFrame("R")));
   spitze->setInertiaTensor(Theta);
-  spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  spitze->setTranslation(new TranslationAlongYAxis<VecV>);
   spitze->setFrameOfReference(arm->getFrame("Q"));
   spitze->setFrameForKinematics(spitze->getFrame("C"));
 
@@ -108,7 +109,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basePosition->setIndex(0);
 
   Mat bPT(FileTofmatvecString("./Soll_Basis.tab").c_str());
-  TabularFunction1_VS<Ref,Ref> * basePositionSollFunction = new TabularFunction1_VS<Ref,Ref>(bPT.col(0), bPT.col(1));
+  TabularFunction<VecV> * basePositionSollFunction = new TabularFunction<VecV>(bPT.col(0), bPT.col(1));
   FunctionSensor * basePositionSoll = new FunctionSensor("BasePositionSoll");
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
@@ -149,7 +150,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   armPosition->setIndex(0);
 
   Mat aPT(FileTofmatvecString("./Soll_Arm.tab").c_str());
-  TabularFunction1_VS<Ref,Ref> * armPositionSollFunction = new TabularFunction1_VS<Ref,Ref>(aPT.col(0), aPT.col(1));
+  TabularFunction<VecV> * armPositionSollFunction = new TabularFunction<VecV>(aPT.col(0), aPT.col(1));
   FunctionSensor * armPositionSoll = new FunctionSensor("ArmPositionSoll");
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
@@ -190,7 +191,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitzePosition->setIndex(0);
 
   Mat sPT(FileTofmatvecString("./Soll_Spitze.tab").c_str());
-  TabularFunction1_VS<Ref,Ref> * spitzePositionSollFunction = new TabularFunction1_VS<Ref,Ref>(sPT.col(0), sPT.col(1));
+  TabularFunction<VecV> * spitzePositionSollFunction = new TabularFunction<VecV>(sPT.col(0), sPT.col(1));
   FunctionSensor * spitzePositionSoll = new FunctionSensor("SpitzePositionSoll");
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);

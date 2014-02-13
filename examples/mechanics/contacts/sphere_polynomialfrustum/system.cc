@@ -6,11 +6,9 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-
+#include "mbsim/functions/kinematic_functions.h"
 #include <mbsim/utils/colors.h>
-
 #include <fmatvec/fmatvec.h>
-
 #include <mbsim/frame.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -36,7 +34,7 @@ System::System(const string &projectName) :
   //BODY
   RigidBody* polyfrustum = new RigidBody("PolynomialFrustum");
 
-  polyfrustum->setRotation(new RotationAboutXAxis); //change from ZAxis, rotation,1 degree of freedom
+  polyfrustum->setRotation(new RotationAboutXAxis<VecV>); //change from ZAxis, rotation,1 degree of freedom
   polyfrustum->setMass(1);
   polyfrustum->setInertiaTensor(SymMat3(EYE));
   FixedRelativeFrame* rotPoly = new FixedRelativeFrame("RotPoly", Vec3(), BasicRotAKIz(M_PI_2));
@@ -76,8 +74,8 @@ System::System(const string &projectName) :
     sphereBody->setFrameOfReference(this->getFrameI());
     sphereBody->setInertiaTensor(SymMat3(EYE));
 
-    sphereBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
-    sphereBody->setRotation(new CardanAngles);
+    sphereBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    sphereBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
     Vec q0(6, INIT, 0);
     q0(1) = 0.5;
@@ -101,16 +99,15 @@ System::System(const string &projectName) :
     contact->setPlotFeature(openMBV, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     contact->enableOpenMBVContactPoints();
-    OpenMBV::Arrow* arrow = new OpenMBV::Arrow();
-    contact->setOpenMBVNormalForceArrow(arrow);
-    contact->setOpenMBVFrictionArrow(arrow);
+    contact->enableOpenMBVNormalForce();
+    contact->enableOpenMBVTangentialForce();
 #endif
 
     //Set contact law
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    contact->setNormalForceLaw(new UnilateralConstraint);
+    contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(0.5));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }

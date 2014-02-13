@@ -20,12 +20,11 @@
 #define _CONSTRAINT_H
 
 #include "object.h"
-#include "utils/function.h"
+#include "functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class Arrow;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -47,13 +46,19 @@ namespace MBSim {
 #endif
   };
 
+  struct Transmission {
+    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
+    RigidBody *body;
+    double ratio;
+  };
+
   class GearConstraint : public Constraint {
 
     public:
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name="");
 
-      void addDependency(RigidBody* body_, double ratio);
+      void addTransmission(const Transmission &transmission);
 
       void init(InitStage stage);
 
@@ -68,21 +73,26 @@ namespace MBSim {
       virtual std::string getType() const { return "GearConstraint"; }
     
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize the constraint force */
-      void setOpenMBVGearForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      /** \brief Visualize a force arrow acting on frame2 */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
-      /** \brief Visualize the constraint moment */
-      void setOpenMBVGearMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
 #endif
 
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
       std::vector<double> ratio;
-      
+
       std::string saved_DependentBody;
-      std::vector<std::string> saved_DependencyBodies;
-      std::vector<double> saved_ratio;
+      std::vector<std::string> saved_IndependentBody;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *FArrow, *MArrow;
@@ -103,11 +113,17 @@ namespace MBSim {
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize the constraint force */
-      void setOpenMBVConstraintForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      /** \brief Visualize a force arrow acting on frame2 */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
-      /** \brief Visualize the constraint moment */
-      void setOpenMBVConstraintMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
 #endif
 
     protected:
@@ -120,60 +136,103 @@ namespace MBSim {
 #endif
   };
 
-  class TimeDependentKinematicConstraint : public KinematicConstraint {
+  class GeneralizedPositionConstraint : public KinematicConstraint {
 
     public:
-      TimeDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL), fd(NULL), fdd(NULL) {}
-      TimeDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL), fd(NULL), fdd(NULL) {}
+      GeneralizedPositionConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL) {}
+      GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
 
       void init(InitStage stage);
 
-      void calcqSize();
-
-      void setGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
-      void setFirstDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
-      void setSecondDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
 
       void setUpInverseKinetics();
 
-      void updateqd(double t);
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
-      virtual std::string getType() const { return "TimeDependentKinematicConstraint"; }
+      virtual std::string getType() const { return "GeneralizedPositionConstraint"; }
 
     private:
-      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
+      fmatvec::Function<fmatvec::VecV(double)> *f;
   };
 
-  class StateDependentKinematicConstraint : public KinematicConstraint {
+  class GeneralizedVelocityConstraint : public KinematicConstraint {
 
     public:
-      StateDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL), fd(NULL) {}
-      StateDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL), fd(NULL) {}
+      GeneralizedVelocityConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL) {}
+      GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
 
       void init(InitStage stage);
 
-      void calcqSize();
+      void calcxSize();
 
-      void setGeneralizedVelocityFunction(Function1<fmatvec::VecV,fmatvec::Vec>* f_) { f = f_;}
-      void setFirstDerivativeOfGeneralizedVelocityFunction(Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec>* fd_) { fd = fd_;}
+      // NOTE: we can not use a overloaded setConstraintFunction here due to restrictions in XML but define them for convinience in c++
+      void setGeneralConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
+        f = f_;
+      }
+      void setTimeDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) {
+        setGeneralConstraintFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setStateDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) {
+        setGeneralConstraintFunction(new StateDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { setGeneralConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { setTimeDependentConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { setStateDependentConstraintFunction(f_); }
 
       virtual void setUpInverseKinetics();
 
-      void updateqd(double t);
+      void updatexd(double t);
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
-      virtual std::string getType() const { return "StateDependetKinematicConstraint"; }
+      virtual std::string getType() const { return "GeneralizedVelocityConstraint"; }
 
     private:
-      Function1<fmatvec::VecV,fmatvec::Vec> *f; 
-      Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec> *fd; 
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f; 
+  };
+
+  class GeneralizedAccelerationConstraint : public KinematicConstraint {
+
+    public:
+      GeneralizedAccelerationConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
+      GeneralizedAccelerationConstraint(const std::string &name="") : KinematicConstraint(name) {}
+
+      void init(InitStage stage);
+
+      void calcxSize();
+
+      // NOTE: we can not use a overloaded setConstraintFunction here due to restrictions in XML but define them for convinience in c++
+      void setGeneralConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
+        f = f_;
+      }
+      void setTimeDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) {
+        setGeneralConstraintFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setStateDependentConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) {
+        setGeneralConstraintFunction( new StateDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { setGeneralConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { setTimeDependentConstraintFunction(f_); }
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { setStateDependentConstraintFunction(f_); }
+
+      virtual void setUpInverseKinetics();
+
+      void updatexd(double t);
+      void updateStateDependentVariables(double t);
+      void updateJacobians(double t, int j=0);
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+
+      virtual std::string getType() const { return "GeneralizedAccelerationConstraint"; }
+
+    private:
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f; 
   };
 
   /** 
@@ -194,9 +253,13 @@ namespace MBSim {
       void setIndependentBody(RigidBody* bi);
 
       virtual void setUpInverseKinetics();
-      void setForceDirection(const fmatvec::Mat3xV& d_) {dT = d_;}
-      void setMomentDirection(const fmatvec::Mat3xV& d_) {dR = d_;}
-      void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
+      void setForceDirection(const fmatvec::Mat3xV& d_);
+      void setMomentDirection(const fmatvec::Mat3xV& d_);
+
+      /** \brief The frame of reference ID for the force/moment direction vectors.
+       * If ID=0 (default) the first frame, if ID=1 the second frame is used.
+       */
+      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
@@ -206,18 +269,22 @@ namespace MBSim {
 
       virtual std::string getType() const { return "JointConstraint"; }
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
-      void setOpenMBVJointForceArrow(OpenMBV::Arrow *arrow) {
-        FArrow = arrow;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
       }
 
-      /** \brief Visualize a moment arrow acting on frame2 */
-      void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) {
-        MArrow = arrow;
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
       }
+#endif
 
     private:
-      class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
+      class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
         private:
           std::vector<RigidBody*> body1, body2;
           fmatvec::Mat3xV dT, dR;
@@ -226,7 +293,7 @@ namespace MBSim {
           std::vector<Frame*> i1,i2;
         public:
           Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &dT_, const fmatvec::Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<Frame*> i1_, std::vector<Frame*> i2_);
-          fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
+          fmatvec::Vec operator()(const fmatvec::Vec &x);
       };
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
@@ -236,8 +303,13 @@ namespace MBSim {
 
       Frame *frame1,*frame2;
 
-      fmatvec::Mat3xV dT;
-      fmatvec::Mat3xV dR;
+      /**
+       * \brief frame of reference the force is defined in
+       */
+      Frame *refFrame;
+      int refFrameID;
+
+      fmatvec::Mat3xV dT, dR, forceDir, momentDir;
 
       std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
       int nq, nu, nh;
