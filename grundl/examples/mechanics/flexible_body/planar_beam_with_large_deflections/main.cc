@@ -4,12 +4,15 @@
 using namespace MBSim;
 using namespace std;
 
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 
+  StopWatch sw;
+
+  sw.start();
   SlidingMass *sys = new SlidingMass("MBS");
 
   sys->setImpactSolver(RootFinding);
-  sys->setStopIfNoConvergence(true,true);
+  sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
@@ -21,7 +24,7 @@ int main (int argc, char* argv[]) {
 
   sys->closePlot();
 
-  cout << "finished"<<endl;
+  cout << "finished in " << sw.stop() << endl;
 
   delete sys;
 
