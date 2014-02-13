@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mbsimHydraulics
+Description: mbsimHydraulics is an add-on for hydraulic systems to the mbsim-kernel.
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimHydraulics
+Cflags: -I${includedir}
+
+
