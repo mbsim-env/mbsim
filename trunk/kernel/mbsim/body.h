@@ -62,6 +62,11 @@ namespace MBSim {
        */
       virtual ~Body();
 
+      void setInitialGeneralizedPosition(const fmatvec::Vec &q0_) { q0 = q0_; }
+      void setInitialGeneralizedVelocity(const fmatvec::Vec &u0_) { u0 = u0_; }
+      void setInitialGeneralizedPosition(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
+      void setInitialGeneralizedVelocity(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
+
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       void sethSize(int hSize_, int i=0);
       void sethInd(int hInd_, int i=0); 

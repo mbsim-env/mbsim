@@ -38,11 +38,11 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleHollow, MBSIMNS"CircleHollow")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleSolid, MBSIMNS"CircleSolid")
 
-  Circle::Circle(const string& name) : RigidContour(name),r(0.),curvature(0),outCont(false) {}
+  Circle::Circle(const string& name, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(false) {}
  
-  Circle::Circle(const string& name, bool outCont_) : RigidContour(name),r(0.),curvature(0),outCont(outCont_) {}
+  Circle::Circle(const string& name, bool outCont_, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(outCont_) {}
 
-  Circle::Circle(const string& name, double r_, bool outCont_) : RigidContour(name),r(r_),curvature(outCont_ ? 1./r_ : -1./r_),outCont(outCont_) {}
+  Circle::Circle(const string& name, double r_, bool outCont_, Frame *R) : RigidContour(name,R),r(r_),curvature(outCont_ ? 1./r_ : -1./r_),outCont(outCont_) {}
 
   Circle::~Circle() {}
 
@@ -68,6 +68,7 @@ namespace MBSim {
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
           ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
         }
 #endif
         RigidContour::init(stage);
@@ -77,16 +78,6 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Circle::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
-
   void Circle::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
     TiXmlElement* e;
@@ -94,14 +85,10 @@ namespace MBSim {
     setRadius(getDouble(e));
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV") {
-      enableOpenMBV();
-      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
-        TiXmlUnknown *unknown=child->ToUnknown();
-        const size_t length=strlen("?OPENMBV_ID ");
-        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
-          openMBVRigidBody->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
-      }
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    if(e) {
+      OpenMBVCircle ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e); 
     }
 #endif
   }

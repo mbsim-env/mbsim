@@ -5,6 +5,8 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 //#include "openmbvcppinterface/ivbody.h"
@@ -40,8 +42,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+  body->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
   // Initial translation and rotation
   Vec q0(3);
@@ -53,18 +55,24 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Line *line = new Line("Line");
   Vec KrSC(3);
   KrSC(0) = 0.5*h;
-  body->addContour(line,KrSC,SqrMat(3,EYE));
+  body->addFrame(new FixedRelativeFrame("P",KrSC,SqrMat(3,EYE)));
+  line->setFrameOfReference(body->getFrame("P"));
+  body->addContour(line);
 
   // Obstacles
   Vec delta1(3); 
   delta1(0) = -deltax/2.;
   Point* point1 = new Point("Point1");
-  addContour(point1,delta1,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("P1",delta1,SqrMat(3,EYE)));
+  point1->setFrameOfReference(getFrame("P1"));
+  addContour(point1);
 
   Vec delta2(3);
   delta2(0) = deltax/2.;
   Point* point2 = new Point("Point2");
-  addContour(point2,delta2,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("P2",delta2,SqrMat(3,EYE)));
+  point2->setFrameOfReference(getFrame("P2"));
+  addContour(point2);
 
   Contact *cr1S = new Contact("Contact1"); 
   cr1S->connect(point1,body->getContour("Line"));
@@ -75,20 +83,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cr2S);
 
   if(rigidContacts) {
-    cr1S->setContactForceLaw(new UnilateralConstraint);
-    cr1S->setContactImpactLaw(new UnilateralNewtonImpact);
-    cr1S->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    cr1S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
-    cr2S->setContactForceLaw(new UnilateralConstraint);
-    cr2S->setContactImpactLaw(new UnilateralNewtonImpact);
-    cr2S->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    cr2S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    cr1S->setNormalForceLaw(new UnilateralConstraint);
+    cr1S->setNormalImpactLaw(new UnilateralNewtonImpact);
+    cr1S->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    cr1S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+    cr2S->setNormalForceLaw(new UnilateralConstraint);
+    cr2S->setNormalImpactLaw(new UnilateralNewtonImpact);
+    cr2S->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    cr2S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   }
   else {
-    cr1S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    cr1S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
-    cr2S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    cr2S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    cr1S->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    cr1S->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    cr2S->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    cr2S->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

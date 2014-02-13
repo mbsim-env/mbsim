@@ -3,7 +3,8 @@
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/utils/function.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 using namespace std;
 using namespace MBSim;
@@ -33,7 +34,7 @@ System::System(const string &name, bool setvalued) : Group(name) {
   l23->setDirection("[0;0;0]");
 
   ConstrainedNode * n1 = new ConstrainedNode("n1");
-  n1->setpFunction(new ConstantFunction1<double, double>(5e5));
+  n1->setpFunction(new ConstantFunction<double>(5e5));
   addLink(n1);
   n1->addOutFlow(l12);
 

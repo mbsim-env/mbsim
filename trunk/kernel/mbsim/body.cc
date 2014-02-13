@@ -105,7 +105,7 @@ namespace MBSim {
     if(stage==preInit) {
       Object::init(stage);
       if(!R)
-        R = dynamic_cast<DynamicSystem*>(parent)->getFrameI();
+        R = static_cast<DynamicSystem*>(parent)->getFrameI();
       Body* obj = dynamic_cast<Body*>(R->getParent());
       if(obj)
         dependency.push_back(obj);
@@ -201,14 +201,21 @@ namespace MBSim {
   }
 
   void Body::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
     Object::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+    if (e)
+      setInitialGeneralizedPosition(getVec(e));
+    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
+    if (e)
+      setInitialGeneralizedVelocity(getVec(e));
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
     if(e) saved_frameOfReference=e->Attribute("ref");
   }
 
   TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Object::writeXMLFile(parent);
+    if(q0.size()) addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
+    if(u0.size()) addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
     // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
     ele1->SetAttribute("ref", R->getXMLPath(this,true)); // relative path

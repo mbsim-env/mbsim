@@ -5,6 +5,8 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
 #include "mbsimPowertrain/differential_gear.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
@@ -15,17 +17,6 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimPowertrain;
-
-class Moment : public Function1<fmatvec::Vec, double> {
-  double M0;
-  public:
-    Moment(double M0_) : M0(M0_) {}
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      Vec M(1);
-      M(0) = M0;
-      return M;
-    };
-};
 
 Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
   double R1 = 0.02;
@@ -40,7 +31,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   Vec r(3);
   r(0) = l/2;
-  addFrame("Q",r,BasicRotAKIy(M_PI/2));
+  addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(M_PI/2)));
 
   RigidBody* shaft1 = new RigidBody("Shaft1");
   addObject(shaft1);
@@ -53,10 +44,10 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft1->setMass(m1);
   Theta(2,2) = J;
   shaft1->setInertiaTensor(Theta);
-  shaft1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  shaft1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   r.init(0);
   r(2) = l/2;
-  shaft1->addFrame("Q",r,SqrMat(3,EYE));
+  shaft1->addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
   shaft1->getFrame("C")->enableOpenMBV(0.3);
@@ -70,30 +61,33 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   GearConstraint *constraint = new GearConstraint("C1",shaft1);
   addObject(constraint);
-  constraint->addDependency(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1);
+  constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1));
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(1.1/100.));
+  ke->setMomentDirection("[0;0;1]");
+  ke->setMomentFunction(new ConstantFunction<VecV>(1.1/100.));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("LeftOutputShaft"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(0.99/100.));
+  ke->setMomentDirection("[0;0;1]");
+  ke->setMomentFunction(new ConstantFunction<VecV>(0.99/100.));
 
   ke = new KineticExcitation("MAbR");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("RightOutputShaft"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(1/100.));
+  ke->setMomentDirection("[0;0;1]");
+  ke->setMomentFunction(new ConstantFunction<VecV>(1/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;
   cylinder->setTopRadius(R1);
   cylinder->setBaseRadius(R1);
   cylinder->setHeight(l);
-  cylinder->setStaticColor(0.1);
+  cylinder->setDiffuseColor(0.1,1,1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 #endif

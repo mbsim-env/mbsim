@@ -2,11 +2,14 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/utils/function.h"
+#include "fmatvec/function.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/kinetic_excitation.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -35,36 +38,36 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   cout << "mDisk = " << mDisk << endl;
 
   // single bodies and frames for connection
-  addFrame("fK1", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  addFrame("fK2", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  addFrame("fK3", 3.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("fK1", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  addFrame(new FixedRelativeFrame("fK2", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  addFrame(new FixedRelativeFrame("fK3", 3.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k1 = new RigidBody("K1");
   k1->setFrameForKinematics(k1->getFrame("C"));
   k1->setMass(3.*mDisk);
   k1->setInertiaTensor(0.001*SymMat(3,EYE));
-  k1->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  k1->addFrame("fK2", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k1->addFrame("fK3", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k1->addFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k1->addFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
+  k1->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  k1->addFrame(new FixedRelativeFrame("fK2", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k1->addFrame(new FixedRelativeFrame("fK3", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k1->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k1->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k2 = new RigidBody("K2");
   k2->setFrameForKinematics(k2->getFrame("C"));
   k2->setMass(5.*mDisk);
   k2->setInertiaTensor(0.001*SymMat(3,EYE));
-  k2->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  k2->addFrame("fK3", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k2->addFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k2->addFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
+  k2->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  k2->addFrame(new FixedRelativeFrame("fK3", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k2->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k2->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k3 = new RigidBody("K3");
   k3->setFrameForKinematics(k3->getFrame("C"));
   k3->setMass(7.*mDisk);
   k3->setInertiaTensor(0.001*SymMat(3,EYE));
-  k3->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  k3->addFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k3->addFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
+  k3->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  k3->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k3->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   // parametrisation of relative kinematics
   if(type==1) { // K2 child of K1, K3 child of K2
@@ -113,14 +116,13 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   j23 = new Joint("xxxJ23");
   j23->setForceDirection(Mat("[0;1;0]"));
   j23->setForceLaw(new BilateralConstraint());
-  j23->setImpactForceLaw(new BilateralImpact());
   j23->connect(k2->getFrame("fTop"), k3->getFrame("fBottom"));
   addLink(j23);
 
   KineticExcitation *a = new KineticExcitation("Anregung");
   addLink(a);
-  a->setFrameOfReference(k3->getFrame("fTop"));
-  a->setForce(Vec("[0;1;0]"), new ConstantFunction1<Vec, double>(Vec("[-10]")));
+  a->setForceDirection(Vec("[0;1;0]"));
+  a->setForceFunction(new ConstantFunction<VecV>(-10));
   a->connect(k3->getFrame("fTop"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -132,7 +134,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k1Visu->setHeight(hDisk);
   k1Visu->setInitialRotation(M_PI/2., 0, 0);
   k1Visu->setInitialTranslation(0, -hDisk/2., 0);
-  k1Visu->setStaticColor(0.4);
+  k1Visu->setDiffuseColor(120./360.,1,1);
   k1->setOpenMBVRigidBody(k1Visu);
 
   OpenMBV::Frustum *k2Visu = new OpenMBV::Frustum();
@@ -143,7 +145,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k2Visu->setHeight(hDisk);
   k2Visu->setInitialRotation(M_PI/2., 0, 0);
   k2Visu->setInitialTranslation(0, -hDisk/2., 0);
-  k2Visu->setStaticColor(0.4);
+  k2Visu->setDiffuseColor(120./360.,1,1);
   k2->setOpenMBVRigidBody(k2Visu);
 
   OpenMBV::Frustum *k3Visu = new OpenMBV::Frustum();
@@ -154,26 +156,14 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k3Visu->setHeight(hDisk);
   k3Visu->setInitialRotation(M_PI/2., 0, 0);
   k3Visu->setInitialTranslation(0, -hDisk/2., 0);
-  k3Visu->setStaticColor(0.4);
+  k3Visu->setDiffuseColor(120./360.,1,1);
   k3->setOpenMBVRigidBody(k3Visu);
 
-  OpenMBV::CoilSpring *sp01Visu = new OpenMBV::CoilSpring();
-  sp01Visu->setSpringRadius(.75*.5*dDisk);
-  sp01Visu->setCrossSectionRadius(.1*.25*dDisk);
-  sp01Visu->setNumberOfCoils(5);
-  sp01->setOpenMBVSpring(sp01Visu);
+  sp01->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring *sp12Visu = new OpenMBV::CoilSpring();
-  sp12Visu->setSpringRadius(.75*.5*dDisk);
-  sp12Visu->setCrossSectionRadius(.1*.25*dDisk);
-  sp12Visu->setNumberOfCoils(5);
-  sp12->setOpenMBVSpring(sp12Visu);
+  sp12->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring *sp23Visu = new OpenMBV::CoilSpring();
-  sp23Visu->setSpringRadius(.75*.5*dDisk);
-  sp23Visu->setCrossSectionRadius(.1*.25*dDisk);
-  sp23Visu->setNumberOfCoils(5);
-  sp23->setOpenMBVSpring(sp23Visu);
+  sp23->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 #endif
 
   if(type==1) 

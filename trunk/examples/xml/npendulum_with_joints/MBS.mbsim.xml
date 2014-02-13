@@ -5,32 +5,26 @@
   <position>[0;0;0]</position><!-- dummy -->
   <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <frames>
-    <frame>
-      <Frame name="Os"/>
-      <position>[0;0;0.04]</position>
-      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-    </frame>
+    <FixedRelativeFrame name="Os">
+      <relativePosition>[0;0;0.04]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups/>
   <objects>
-    <xi:include href="test.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-    <pv:embed href="Stab_n.xml" count="N" counterName="n"/>
+    <pv:Embed href="test.xml"/>
+    <pv:Embed href="{filenameWithoutExt}.xml" count="N-1+1" counterName="{myCounterName}_pendel"/>
   </objects>
   <links>
     <Joint name="Gelenk1">
-      <force>
-        <direction>[1,0 ; 0,1 ; 0,0]</direction>
-        <generalizedForceLaw>
-          <BilateralConstraint/>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-          <BilateralImpact/>
-        </generalizedImpactLaw>
-      </force>
+      <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
+      <forceLaw>
+        <BilateralConstraint/>
+      </forceLaw>
       <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[O]"/>
     </Joint>
-    <pv:embed href="Joint_n.xml" count="N" counterName="n"/>
+    <pv:Embed href="Joint_n.xml" count="N" counterName="n"/>
   </links>
   <environments>
     <MBSimEnvironment>

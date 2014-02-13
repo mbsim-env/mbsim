@@ -30,7 +30,7 @@ AC_ARG_WITH([boost-system-lib],
   [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
 AC_SUBST([BOOST_SYSTEM_LIB])
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl mbxmlutils)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl mbxmlutilstinyxml)
 
 dnl process _SI_interfaceMessages_SI_
 AS_IF([test "1==1"], [

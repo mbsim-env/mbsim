@@ -70,8 +70,7 @@ namespace MBSim {
     TiXml_setLineNrFromProcessingInstruction(e);
     map<string,string> dummy;
     incorporateNamespace(e, dummy);
-    Integrator *integrator=ObjectFactory<Integrator>::create<Integrator>(e);
-    integrator->initializeUsingXML(doc.FirstChildElement());
+    Integrator *integrator=ObjectFactory<Integrator>::createAndInit<Integrator>(e);
     return integrator;
   }
 

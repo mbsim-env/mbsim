@@ -54,7 +54,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Contour(const std::string &name);
+      Contour(const std::string &name, Frame *R=0);
 
       /**
        * \brief destructor
@@ -252,7 +252,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      RigidContour(const std::string &name) : Contour(name)
+      RigidContour(const std::string &name, Frame *R=0) : Contour(name,R)
 # ifdef HAVE_OPENMBVCPPINTERFACE
                                               , openMBVRigidBody(0)
 # endif

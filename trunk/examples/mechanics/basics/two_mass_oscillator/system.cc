@@ -3,6 +3,8 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
@@ -62,7 +64,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   //  - enable the body movement:
   //    the body can move translational along the second direction in the reference frame, i.e. y-direction of the "I"-frame of the system
-  box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box1->setTranslation(new TranslationAlongYAxis<VecV>);
   //    REMARK: As no setRotation()-Routine is given the body can not rotate! (for rigid bodies the DoF have to be "unlocked")
 
   // ----- Define attachment points for the springs using additional frames on the body
@@ -100,7 +102,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box2->setMass(m2);
   box2->setInertiaTensor(Theta2);
   box2->setFrameOfReference(getFrameI());
-  box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box2->setTranslation(new TranslationAlongYAxis<VecV>);
   Vec3 KrBLowerB2;
   KrBLowerB2(1) = - h2/2.;
   FixedRelativeFrame * frameLowerB2 = new FixedRelativeFrame("LowerFrame");
@@ -159,17 +161,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setTransparency(0.7);
   box2->setOpenMBVRigidBody(cuboid);
 
-  OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
-  openMBVspring1->setSpringRadius(0.1);
-  openMBVspring1->setCrossSectionRadius(0.01);
-  openMBVspring1->setNumberOfCoils(5);
-  spring1->setOpenMBVSpring(openMBVspring1);
+  spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
-  OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
-  openMBVspring2->setSpringRadius(0.1);
-  openMBVspring2->setCrossSectionRadius(0.01);
-  openMBVspring2->setNumberOfCoils(5);
-  spring2->setOpenMBVSpring(openMBVspring2);
+  spring2->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 #endif
 
 }

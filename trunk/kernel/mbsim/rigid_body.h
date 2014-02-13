@@ -21,15 +21,11 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/body.h"
-#include "fmatvec/fmatvec.h"
-#include "mbsim/kinematics.h"
-#include "mbsim/utils/function.h"
+#include "functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class RigidBody;
-  class Arrow;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -72,7 +68,9 @@ namespace MBSim {
         constraint = constraint_;
       }
 
-      virtual void updateT(double t) { if(fT) TRel = (*fT)(qRel,t); }
+      virtual void updatedq(double t, double dt);
+      virtual void updateqd(double t); 
+      virtual void updateT(double t);
       virtual void updateh(double t, int j=0);
       virtual void updateh0Fromh1(double t);
       virtual void updateW0FromW1(double t);
@@ -98,7 +96,6 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
       virtual void updateuRef(const fmatvec::Vec& ref);
-      virtual void updateTRef(const fmatvec::Mat &ref);
       virtual void init(InitStage stage);
       virtual void initz();
       virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
@@ -132,57 +129,77 @@ namespace MBSim {
       virtual void updateJacobiansForRemainingFramesAndContours1(double t);
 
       /* GETTER / SETTER */
+
+      // NOTE: we can not use a overloaded setTranslation here due to restrictions in XML but define them for convinience in c++
       /*!
-       * \brief set Kinematic for translational motion
+       * \brief set Kinematic for genral translational motion
        * \param fPrPK translational kinematic description
        */
-      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
+      void setGeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) {
+        fPrPK = fPrPK_;
+      }
       /*!
-       * \brief set Kinematic for rotational motion
+       * \brief set Kinematic for only time dependent translational motion
+       * \param fPrPK translational kinematic description
+       */
+      void setTimeDependentTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fPrPK_) {
+        setGeneralTranslation(new TimeDependentFunction<fmatvec::Vec3>(fPrPK_));
+      }
+      /*!
+       * \brief set Kinematic for only state dependent translational motion
+       * \param fPrPK translational kinematic description
+       */
+      void setStateDependentTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fPrPK_) {
+        setGeneralTranslation(new StateDependentFunction<fmatvec::Vec3>(fPrPK_));
+      }
+      void setTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) { setGeneralTranslation(fPrPK_); }
+      void setTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fPrPK_) { setTimeDependentTranslation(fPrPK_); }
+      void setTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fPrPK_) { setStateDependentTranslation(fPrPK_); }
+
+      // NOTE: we can not use a overloaded setRotation here due to restrictions in XML but define them for convinience in c++
+      /*!
+       * \brief set Kinematic for general rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
+      void setGeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { fAPK = fAPK_; }
+      /*!
+       * \brief set Kinematic for only time dependent rotational motion
+       * \param fAPK rotational kinematic description
+       */
+      void setTimeDependentRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_) { setGeneralRotation(new TimeDependentFunction<fmatvec::RotMat3>(fAPK_)); }
+      /*!
+       * \brief set Kinematic for only state dependent rotational motion
+       * \param fAPK rotational kinematic description
+       */
+      void setStateDependentRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setGeneralRotation(new StateDependentFunction<fmatvec::RotMat3>(fAPK_)); }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { setGeneralRotation(fAPK_); }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_) { setTimeDependentRotation(fAPK_); }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setStateDependentRotation(fAPK_); }
+
+      void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
+      void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
+
       /*!
        * \brief get Kinematic for translational motion
        * \return translational kinematic description
        */
-      Translation* getTranslation()            { return fPrPK;   }
+      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)>* getTranslation() { return fPrPK; }
       /*!
        * \brief get Kinematic for rotational motion
        * \return rotational kinematic description
        */
-      Rotation*    getRotation()               { return fAPK;    }
-      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
-      void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
-
-      /** \brief Sets the time dependent function for the guiding velocity of translation */
-      void setGuidingVelocityOfTranslation(GuidingVelocity* fPjT_) { fPjT = fPjT_;}
-
-      /** \brief Sets the time dependent function for the guiding velocity of rotation */
-      void setGuidingVelocityOfRotation(GuidingVelocity* fPjR_) { fPjR = fPjR_;}
-
-      /** \brief Sets the time dependent function for the derivative of the guilding velocity of translation */
-      void setDerivativeOfGuidingVelocityOfTranslation(DerivativeOfGuidingVelocity* fPdjT_) { fPdjT = fPdjT_;}
-
-      /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
-      void setDerivativeOfGuidingVelocityOfRotation(DerivativeOfGuidingVelocity* fPdjR_) { fPdjR = fPdjR_;}
+      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
 
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
       FixedRelativeFrame* getFrameForKinematics() { return K; };
       FixedRelativeFrame* getFrameC() { return C; };
-      void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
 
       /**
        * \param RThetaR  inertia tensor
        * \param frame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, Frame *frame=0) {
-        SThetaS = RThetaR;
-        frameForInertiaTensor = frame;
-      }
+      void setInertiaTensor(const fmatvec::SymMat3& RThetaR) { SThetaS = RThetaR; }
 
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
@@ -191,50 +208,12 @@ namespace MBSim {
 
       using Body::addContour;
 
-//      /**
-//       * \param frame        specific Frame to add
-//       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
-//       * \param ARF          constant relative rotation from specific Frame to reference Frame
-//       * \param refFrameName reference Frame name
-//       */
-//      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName); 
-
-      /**
-       * \param frame        specific Frame to add
-       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
-       * \param ARF          constant relative rotation from specific Frame to reference Frame
-       * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
-       */
-      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
-
-      /**
-       * \param str          name of Frame to add
-       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
-       * \param ARF          constant relative rotation from specific Frame to reference Frame
-       * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
-       */
-      void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
-
-//      /**
-//       * \param contour      specific contour to add
-//       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
-//       * \param ARC          constant relative rotation from specific contour to reference Frame
-//       * \param refFrameName reference Frame name
-//       */
-//      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
-
-      /**
-       * \param contour      specific contour to add
-       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
-       * \param ARC          constant relative rotation from specific contour to reference Frame
-       * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame=0);
-
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
        */
       void setFrameForKinematics(Frame *frame);
+
+      void setFrameForInertiaTensor(Frame *frame);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
@@ -242,13 +221,22 @@ namespace MBSim {
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
       /** \brief Visualize the weight */
-      void setOpenMBVWeightArrow(OpenMBV::Arrow *arrow) { FWeight = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FWeight=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize the joint force */
-      void setOpenMBVJointForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
 
       /** \brief Visualize the joint moment */
-      void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
 #endif
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -295,17 +283,14 @@ namespace MBSim {
       /**
        * \brief boolean to use body fixed Frame for rotation
        */
-      bool cb;
+      bool coordinateTransformation;
 
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Mat3xV PJT[2], PJR[2], PdJT, PdJR;
+      fmatvec::Mat3xV PJT[2], PJR[2];
 
-      /**
-       * guiding velocities of translation, rotation and their derivatives in parent system
-       */
-      fmatvec::Vec3 PjT, PjR, PdjT, PdjR;
+      fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
@@ -322,60 +307,17 @@ namespace MBSim {
        */
       fmatvec::Vec3 WvPKrel, WomPK;
 
-      /**
-       * \brief JACOBIAN for linear transformation between differentiated positions and velocities
-       */
-      TMatrix *fT;
+      fmatvec::Function<fmatvec::MatV(fmatvec::VecV)> *fTR;
 
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
-      Translation *fPrPK;
+      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK;
 
       /**
        * \brief rotation from kinematic Frame to parent Frame
        */
-      Rotation *fAPK;
-
-      /**
-       * \brief JACOBIAN of translation in parent system
-       */
-      Jacobian *fPJT;
-
-      /**
-       * \brief JACOBIAN of rotation in parent system
-       */
-      Jacobian *fPJR;
-
-      /**
-       * \brief differentiated JACOBIAN of translation in parent system
-       */
-      DerivativeOfJacobian *fPdJT;
-
-      /**
-       * \brief differentiated JACOBIAN of rotation in parent system
-       */
-      DerivativeOfJacobian *fPdJR;
-
-      /**
-       * \brief guiding velocity of translation in parent system
-       */
-      GuidingVelocity *fPjT;
-
-      /**
-       * \brief guiding velocity of rotation in parent system
-       */
-      GuidingVelocity *fPjR;
-
-      /**
-       * \brief differentiated guiding veclocity of translation in parent system
-       */
-      DerivativeOfGuidingVelocity *fPdjT;
-
-      /**
-       * \brief differentiated guiding veclocity of rotation in parent system
-       */
-      DerivativeOfGuidingVelocity *fPdjR;
+      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK;
 
       /**
        * \brief function pointer to update mass matrix
@@ -418,10 +360,8 @@ namespace MBSim {
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
 
-      fmatvec::Mat3xV WJTrel,WJRrel;
-      fmatvec::Vec3 WjTrel,WjRrel;
-
-      fmatvec::Mat TRel;
+      fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
+      fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
 
       Constraint *constraint;
 
@@ -433,6 +373,10 @@ namespace MBSim {
       std::vector<CompoundContour*> RBC;
 
       Frame *frameForInertiaTensor;
+
+      fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
+
+      bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -8,6 +8,8 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
@@ -94,18 +96,18 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     WrOS0B(0) = (rI+rO)*0.25*cos(k*2.*M_PI/nB);
     WrOS0B(1) = (rI+rO)*0.35*sin(k*2.*M_PI/nB);
     WrOS0B(2) = b(1)*0.5 + r + 1e-2*(1.+cos(k*2.*M_PI/nB));
-    this->addFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+    this->addFrame(new FixedRelativeFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
 
     balls[k]->setFrameOfReference(this->getFrame(frame.str()));
     balls[k]->setFrameForKinematics(balls[k]->getFrame("C"));
     balls[k]->setMass(mass);
     balls[k]->setInertiaTensor(Theta);
-    balls[k]->setTranslation(new LinearTranslation(SqrMat(3,EYE))); // only translational dof because of point masses
+    balls[k]->setTranslation(new TranslationAlongAxesXYZ<VecV>); // only translational dof because of point masses
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     sphere.push_back(new OpenMBV::Sphere);
     sphere[k]->setRadius(r);
-    sphere[k]->setStaticColor((double)k/(double)nB);
+    sphere[k]->setDiffuseColor((double)k/(double)nB,(double)k/(double)nB,(double)k/(double)nB);
     balls[k]->setOpenMBVRigidBody(sphere[k]);
 #endif
   }
@@ -117,15 +119,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     points.push_back(new Point(pointname.str()));
 
     Vec BR(3,INIT,0.); BR(2)=-r;
-    balls[k]->addContour(points[k],BR,SqrMat(3,EYE),balls[k]->getFrame("C"));
+    balls[k]->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),balls[k]->getFrame("C")));
+    points[k]->setFrameOfReference(balls[k]->getFrame("Point"));
+    balls[k]->addContour(points[k]);
 
     stringstream contactname; // fricional contact
     contactname << "Contact_" << k;
     contact.push_back(new Contact(contactname.str()));
-    contact[k]->setContactForceLaw(new UnilateralConstraint);
-    contact[k]->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-    contact[k]->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
-    contact[k]->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
+    contact[k]->setNormalForceLaw(new UnilateralConstraint);
+    contact[k]->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
+    contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
     this->addLink(contact[k]);
   }

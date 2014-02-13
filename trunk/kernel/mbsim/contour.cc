@@ -42,11 +42,8 @@ using namespace std;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Line, MBSIMNS"Line")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Point, MBSIMNS"Point")
-
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), R(0) {
+  Contour::Contour(const string &name, Frame *R_) : Element(name), R(R_) {
     // no canonic output...
     hSize[0] = 0;
     hSize[1] = 0;
@@ -134,7 +131,7 @@ namespace MBSim {
     else if (path.substr(0, 3)=="../") // relative path
       return parent->getByPathSearch(path.substr(3));
     else { // local path
-      throw;
+      throw MBSimError("Internal error: local path");
     }
   }
 

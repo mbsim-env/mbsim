@@ -25,7 +25,6 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/eps.h"
 #include <fstream>
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
@@ -39,7 +38,7 @@ namespace MBSimHydraulics {
 
   class ControlvalveAreaSignal : public Signal {
     public:
-      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, Function1<double, double> * relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
+      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, Function<double(double)> * relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
       }
       Vec getSignal() {
         double x=factor*position->getSignal()(0)+offset;
@@ -51,7 +50,7 @@ namespace MBSimHydraulics {
     private:
       double factor, offset;
       Signal * position;
-      Function1<double, double> * relAlphaPA;
+      Function<double(double)> * relAlphaPA;
       Vec signal;
   };
 
@@ -137,15 +136,15 @@ namespace MBSimHydraulics {
   void Controlvalve43::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (positionString!="")
-        setRelativePositionSignal(getByPath<Signal>(process_signal_string(positionString)));
+        setRelativePositionSignal(getByPath<Signal>(positionString));
       if (nPInflowString!="")
-        setPInflow(getByPath<HLine>(process_hline_string(nPInflowString)));
+        setPInflow(getByPath<HLine>(nPInflowString));
       if (nAOutflowString!="")
-        setAOutflow(getByPath<HLine>(process_hline_string(nAOutflowString)));
+        setAOutflow(getByPath<HLine>(nAOutflowString));
       if (nBOutflowString!="")
-        setBOutflow(getByPath<HLine>(process_hline_string(nBOutflowString)));
+        setBOutflow(getByPath<HLine>(nBOutflowString));
       if (nTOutflowString!="")
-        setTOutflow(getByPath<HLine>(process_hline_string(nTOutflowString)));
+        setTOutflow(getByPath<HLine>(nTOutflowString));
 
       checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAlphaPA", 1., 0., position, relAlphaPA);
       addLink(checkSizeSignalPA);
@@ -211,8 +210,7 @@ namespace MBSimHydraulics {
       aT=getDouble(e);
     setAlpha(a, aT);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAlphaPA");
-    Function1<double, double> * relAlphaPA_=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
-    relAlphaPA_->initializeUsingXML(e->FirstChildElement());
+    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->FirstChildElement()); 
     setPARelativeAlphaFunction(relAlphaPA_);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeAlpha");
     setMinimalRelativeAlpha(getDouble(e));

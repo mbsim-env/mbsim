@@ -84,63 +84,6 @@ namespace MBSim {
       cp.getFrameOfReference().getJacobianOfRotation(j).resize(R->getJacobianOfRotation(j).cols());
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Contour1sAnalytical::enableOpenMBV(bool enable) {
-    if (enable) {
-      double rMax=0;
-      for (double a=as; a<=ae; a+=1e-3*(ae-as)) {
-        const double r=nrm2((*funcCrPC)(a));
-        if (r>rMax)
-          rMax=r;
-      }
-      vector<double> alpha;
-      alpha.push_back(as);
-      while(alpha.back()<ae) {
-        class PointDistance : public Function1<double, double> {
-          public:
-            PointDistance(Vec3 p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
-            double operator()(const double &alpha, const void * = NULL) {
-              return nrm2((*f)(alpha)-p1)-d;
-            }
-          private:
-            Vec3 p1;
-            ContourFunction1s * f;
-            double d;
-        };
-        PointDistance g((*funcCrPC)(alpha.back()), funcCrPC, .1*rMax);
-        RegulaFalsi solver(&g);
-        solver.setTolerance(epsroot());
-        double aeTmp;
-        if (alpha.back()<as+.25*(ae-as))
-          aeTmp=as+.25*(ae-as);
-        else if (alpha.back()<as+.5*(ae-as))
-          aeTmp=as+.5*(ae-as);
-        else if (alpha.back()<as+.75*(ae-as))
-          aeTmp=as+.75*(ae-as);
-        else
-          aeTmp=ae;
-        alpha.push_back(solver.solve(alpha.back(), aeTmp));
-      }
-      if (alpha.back()>ae)
-        alpha.back()=ae;
-      else
-        alpha.push_back(ae);
-
-      vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
-      for (unsigned int i=0; i<alpha.size(); i++) {
-        const Vec3 CrPC=(*funcCrPC)(alpha[i]);
-        vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
-      }
-      openMBVRigidBody=new OpenMBV::Extrusion;
-      ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(0);
-      ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
-      ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
-    }
-    else
-      openMBVRigidBody=NULL;
-  }
-#endif
-
   void Contour1sAnalytical::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -149,6 +92,53 @@ namespace MBSim {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           openMBVRigidBody->setName(name);
+          double rMax=0;
+          for (double a=as; a<=ae; a+=1e-3*(ae-as)) {
+            const double r=nrm2((*funcCrPC)(a));
+            if (r>rMax)
+              rMax=r;
+          }
+          vector<double> alpha;
+          alpha.push_back(as);
+          while(alpha.back()<ae) {
+            class PointDistance : public Function<double(double)> {
+              public:
+                PointDistance(Vec3 p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
+                double operator()(const double &alpha) {
+                  return nrm2((*f)(alpha)-p1)-d;
+                }
+              private:
+                Vec3 p1;
+                ContourFunction1s * f;
+                double d;
+            };
+            PointDistance g((*funcCrPC)(alpha.back()), funcCrPC, .1*rMax);
+            RegulaFalsi solver(&g);
+            solver.setTolerance(epsroot());
+            double aeTmp;
+            if (alpha.back()<as+.25*(ae-as))
+              aeTmp=as+.25*(ae-as);
+            else if (alpha.back()<as+.5*(ae-as))
+              aeTmp=as+.5*(ae-as);
+            else if (alpha.back()<as+.75*(ae-as))
+              aeTmp=as+.75*(ae-as);
+            else
+              aeTmp=ae;
+            alpha.push_back(solver.solve(alpha.back(), aeTmp));
+          }
+          if (alpha.back()>ae)
+            alpha.back()=ae;
+          else
+            alpha.push_back(ae);
+
+          vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
+          for (unsigned int i=0; i<alpha.size(); i++) {
+            const Vec3 CrPC=(*funcCrPC)(alpha[i]);
+            vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
+          }
+          ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(0);
+          ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
+          ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
   #endif
@@ -212,12 +202,13 @@ namespace MBSim {
     diameter=atof(e->GetText());
     //Contour1sAnalytical
     e=element->FirstChildElement(MBSIMNS"contourFunction");
-    funcCrPC=ObjectFactory<ContourFunction1s>::create<ContourFunction1s>(e->FirstChildElement());
-    funcCrPC->initializeUsingXML(e->FirstChildElement());
+    funcCrPC=ObjectFactory<ContourFunction1s>::createAndInit<ContourFunction1s>(e->FirstChildElement());
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
-    if (e)
-      enableOpenMBV(true);
+    if(e) {
+      OpenMBVExtrusion ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e); 
+    }
 #endif
   }
 
@@ -230,10 +221,6 @@ namespace MBSim {
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"contourFunction");
     funcCrPC->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody)
-      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
-#endif
     return ele0;
   }
 

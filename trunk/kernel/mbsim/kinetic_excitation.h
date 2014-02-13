@@ -22,10 +22,14 @@
 
 #include <mbsim/link_mechanics.h>
 #include <mbsim/frame.h>
+#include <fmatvec/function.h>
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+#endif
 
 namespace MBSim {
-
-  template <class Ret, class Arg> class Function1;
 
   /**
    * \brief kinetic excitations given by time dependent functions
@@ -67,19 +71,29 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
 
+      /**
+       * \param local force direction represented in first frame
+       */
+      void setForceDirection(const fmatvec::Mat3xV& fd);
+
+      /**
+       * \param local moment direction represented in first frame
+       */
+      void setMomentDirection(const fmatvec::Mat3xV& md);
+
       /** \brief Set the force excitation.
        * forceDir*func(t) is the applied force vector in space.
        * This force vector is given in the frame set by setFrameOfReference.
        */
-      void setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func);
+      void setForceFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
 
       /** \brief see setForce */
-      void setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func);
+      void setMomentFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
 
-      /** \brief The frame of reference for the force/moment direction vectors.
-       * If not given, the frame the excitation is connected to is used.
+      /** \brief The frame of reference ID for the force/moment direction vectors.
+       * If ID=0 the first frame, if ID=1 (default) the second frame is used.
        */
-      void setFrameOfReference(Frame *ref_) { refFrame=ref_; }
+      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
       using LinkMechanics::connect;
 
@@ -90,18 +104,20 @@ namespace MBSim {
       void connect(MBSim::Frame *frame1, MBSim::Frame *frame2);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize a force arrow acting on the frame */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+      /** \brief Visualize a force arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 
-      /** \brief Visualize a moment arrow acting on the frame */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
 #endif
 
@@ -115,6 +131,7 @@ namespace MBSim {
        * \brief frame of reference the force is defined in
        */
       Frame *refFrame;
+      int refFrameID;
 
       /**
        * \brief directions of force and moment in frame of reference
@@ -124,7 +141,7 @@ namespace MBSim {
       /**
        * \brief portions of the force / moment in the specific directions
        */
-      Function1<fmatvec::Vec,double> *F, *M;
+      fmatvec::Function<fmatvec::VecV(double)> *F, *M;
 
       /**
        * \brief own frame located in second partner with same orientation as first partner 
@@ -132,7 +149,7 @@ namespace MBSim {
       Frame C;
 
     private:
-      std::string saved_frameOfReference, saved_ref, saved_ref1, saved_ref2;
+      std::string saved_ref, saved_ref1, saved_ref2;
   };
 
 }

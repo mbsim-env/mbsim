@@ -1,4 +1,4 @@
-SUBDIRS =  numerics utils integrators contact_kinematics contours observers .
+SUBDIRS =  numerics utils integrators contact_kinematics contours functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
@@ -19,9 +19,7 @@ isotropic_rotational_spring_damper.cc\
 joint.cc\
 gear.cc\
 gearing.cc\
-kinematics.cc\
 spring_damper.cc\
-rotational_spring_damper.cc\
 extern_generalized_io.cc\
 link.cc\
 link_mechanics.cc\
@@ -41,8 +39,10 @@ libmbsim_la_LIBADD += utils/libutils.la
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
 libmbsim_la_LIBADD += contours/libcontour.la 
 libmbsim_la_LIBADD += numerics/libnumerics.la 
+libmbsim_la_LIBADD += functions/libfunction.la 
 libmbsim_la_LIBADD += observers/libobserver.la 
 libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libmbsim_la_LIBADD += -l@BOOST_SYSTEM_LIB@
 
 libmbsim_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
@@ -66,9 +66,7 @@ joint.h\
 gear.h\
 gearing.h\
 isotropic_rotational_spring_damper.h\
-kinematics.h\
 spring_damper.h\
-rotational_spring_damper.h\
 extern_generalized_io.h\
 link.h\
 link_mechanics.h\

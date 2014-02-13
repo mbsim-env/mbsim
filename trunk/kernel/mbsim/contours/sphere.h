@@ -23,6 +23,10 @@
 #include "fmatvec/fmatvec.h"
 #include "mbsim/contour.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
 namespace MBSim {
 
   /**
@@ -37,17 +41,18 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Sphere(const std::string &name="") : RigidContour(name), r(0.) {}
+      Sphere(const std::string &name="", Frame *R=0) : RigidContour(name,R), r(0.) {}
 
       /**
        * \brief constructor
        * \param name of sphere
        * \param radius of sphere
        */
-      Sphere(const std::string &name, double r_) : RigidContour(name), r(r_) {}
+      Sphere(const std::string &name, double r_, Frame *R=0) : RigidContour(name,R), r(r_) {}
       
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Sphere"; }
+      virtual void init(InitStage stage);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -56,7 +61,10 @@ namespace MBSim {
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVSphere ombv(1,diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
+      }
 #endif
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);

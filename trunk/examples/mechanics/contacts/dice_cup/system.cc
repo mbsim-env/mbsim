@@ -5,6 +5,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
@@ -25,7 +26,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   WrOK0_dice(0) = -0.005;
   WrOK0_dice(1) = 0.05;
   WrOK0_dice(2) = -0.01;
-  this->addFrame("D",WrOK0_dice,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("D",WrOK0_dice,SqrMat(3,EYE),this->getFrame("I")));
 
   RigidBody* dice = new RigidBody("Dice");
   dice->setFrameOfReference(this->getFrame("D"));
@@ -38,8 +39,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1)=1./12.*mass*(length*length+length*length);
   Theta(2,2)=1./12.*mass*(length*length+length*length);
   dice->setInertiaTensor(Theta);
-  dice->setRotation(new CardanAngles()); 
-  dice->setTranslation(new LinearTranslation("[1,0,0;0,1,0;0,0,1]"));	
+  dice->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  dice->setRotation(new RotationAboutAxesXYZ<VecV>);
 
   this->addObject(dice);
 
@@ -56,50 +57,52 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       p(0) = -length/2.;
       p(1) = -length/2.;
       p(2) = -length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else if(i==1) {
       p(0) = -length/2.;
       p(1) = -length/2.;
       p(2) = length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else if(i==2) {
       p(0) = -length/2.;
       p(1) = length/2.;
       p(2) = -length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else if(i==3) {
       p(0) = -length/2.;
       p(1) = length/2.;
       p(2) = length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else if(i==4) {
       p(0) = length/2.;
       p(1) = -length/2.;
       p(2) = -length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else if(i==5) {
       p(0) = length/2.;
       p(1) = -length/2.;
       p(2) = length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else if(i==6) {
       p(0) = length/2.;
       p(1) = length/2.;
       p(2) = -length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
     else {
       p(0) = length/2.;
       p(1) = length/2.;
       p(2) = length/2.;
-      dice->addContour(contour[i],p,SqrMat(3,EYE));
+      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
     }
+    contour[i]->setFrameOfReference(dice->getFrame(nameContour.str()));
+    dice->addContour(contour[i]);
   }
 
   // Dice-Visualisation
@@ -116,7 +119,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double phi_frustum = 0.; // rotation around inertial x-axis
   AWKO_frustum(1,1) = cos(phi_frustum); AWKO_frustum(1,2) = -sin(phi_frustum);
   AWKO_frustum(2,1) = sin(phi_frustum); AWKO_frustum(2,2) = cos(phi_frustum); AWKO_frustum(0,0) = 1.;
-  this->addFrame("F",Vec(3,INIT,0.),AWKO_frustum,this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("F",Vec(3,INIT,0.),AWKO_frustum,this->getFrame("I")));
   RigidBody* frustumRef = new RigidBody("frustumRef");
   frustumRef->setFrameOfReference(this->getFrame("F"));
   frustumRef->setFrameForKinematics(frustumRef->getFrame("C"));
@@ -132,7 +135,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   radii(0) = 0.005; radii(1) = 0.05;
   frustum->setRadii(radii);
   frustum->setOutCont(false);
-  frustumRef->addContour(frustum,Vec("[0;0;0]"),SqrMat(3,EYE));
+  frustumRef->addContour(frustum);
 
   // Frustum-Visualisation
   int k=0; // numbering vertices
@@ -210,7 +213,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
   frustumMBV->setIvFileName("frustum.iv");
-  frustumMBV->setStaticColor(1.);
+  frustumMBV->setDiffuseColor(0.6666,1,1);
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   frustumRef->setOpenMBVRigidBody(frustumMBV); 
@@ -226,8 +229,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     stringstream nameContour;
     nameContour <<"point_"<< i+1;
     contact.push_back(new Contact(nameContact.str()));
-    contact[i]->setContactForceLaw(new UnilateralConstraint());
-    contact[i]->setContactImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
+    contact[i]->setNormalForceLaw(new UnilateralConstraint());
+    contact[i]->setNormalImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     contact[i]->enableOpenMBVContactPoints(.05);
 #endif

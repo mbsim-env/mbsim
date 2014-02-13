@@ -21,9 +21,11 @@
 #define  _HNODE_H_
 
 #include "mbsim/link.h"
-#include "mbsim/utils/function.h"
+#include <fmatvec/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/boost_parameters.h>
+#include <mbsim/utils/openmbv_utils.h>
 namespace OpenMBV {
   class Group;
   class Sphere;
@@ -40,6 +42,11 @@ namespace MBSimControl {
 }
 
 namespace MBSimHydraulics {
+
+  BOOST_PARAMETER_NAME(size)
+  BOOST_PARAMETER_NAME(minimalPressure)
+  BOOST_PARAMETER_NAME(maximalPressure)
+  BOOST_PARAMETER_NAME(position)
 
   class HLine;
   class HydFluid;
@@ -59,7 +66,10 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "HNode"; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual void enableOpenMBV(double size=1, double pMin=0e5, double pMax=10e5, fmatvec::Vec WrON=fmatvec::Vec(3));
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVSphere, tag, (optional (size,(double),1)(minimalPressure,(double),0e5)(maximalPressure,(double),10e5)(position,(const fmatvec::Vec3&),fmatvec::Vec3()))) { 
+        enableOpenMBV(size,minimalPressure,maximalPressure,position);
+      }
+      virtual void enableOpenMBV(double size, double pMin, double pMax, const fmatvec::Vec3 &WrON);
 #endif
 
       void addInFlow(HLine * in);
@@ -100,7 +110,7 @@ namespace MBSimHydraulics {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group * openMBVGrp;
       OpenMBV::Sphere * openMBVSphere;
-      fmatvec::Vec WrON;
+      fmatvec::Vec3 WrON;
 #endif
   };
 
@@ -111,7 +121,7 @@ namespace MBSimHydraulics {
       ConstrainedNode(const std::string &name="") : HNode(name), pFun(NULL) {}
       virtual std::string getType() const { return "ConstrainedNode"; }
 
-      void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
+      void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
@@ -119,7 +129,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      MBSim::Function1<double,double> * pFun;
+      fmatvec::Function<double(double)> * pFun;
   };
 
 

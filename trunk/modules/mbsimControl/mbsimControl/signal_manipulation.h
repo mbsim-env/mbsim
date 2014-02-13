@@ -21,11 +21,7 @@
 #define _SIGNAL_MANIPULATION_H_
 
 #include "mbsimControl/signal_.h"
-
-namespace MBSim {
-  template <class Ret, class Arg> class Function1;
-  template <class Ret, class Arg1, class Arg2> class Function2;
-}
+#include <fmatvec/function.h>
 
 namespace MBSimControl {
 
@@ -252,12 +248,12 @@ namespace MBSimControl {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal *signal_) {s=signal_; }
-      void setFunction(MBSim::Function1<fmatvec::Vec,fmatvec::Vec> *f_) {f=f_; };
+      void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *f_) {f=f_; };
       fmatvec::Vec getSignal();
     private:
       Signal *s;
       std::string signalString;
-      MBSim::Function1<fmatvec::Vec,fmatvec::Vec> *f;
+      fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *f;
   };
 
   /*!
@@ -271,12 +267,12 @@ namespace MBSimControl {
       void init(MBSim::InitStage stage);
       void setSignal1(Signal *signal_) {s1=signal_; }
       void setSignal2(Signal *signal_) {s2=signal_; }
-      void setFunction(MBSim::Function2<fmatvec::Vec,fmatvec::Vec,fmatvec::Vec> *f_) {f=f_; };
+      void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,fmatvec::Vec)> *f_) {f=f_; };
       fmatvec::Vec getSignal();
     private:
       Signal *s1, *s2;
       std::string signal1String, signal2String;
-      MBSim::Function2<fmatvec::Vec,fmatvec::Vec,fmatvec::Vec> *f;
+      fmatvec::Function<fmatvec::Vec(fmatvec::Vec,fmatvec::Vec)> *f;
   };
 
 }

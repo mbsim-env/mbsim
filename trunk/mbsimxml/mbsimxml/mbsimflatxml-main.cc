@@ -4,7 +4,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <boost/filesystem.hpp>
-#include <mbxmlutilstinyxml/last_write_time.h>
+#include <mbxmlutilshelper/last_write_time.h>
 
 using namespace std;
 using namespace MBSim;
@@ -22,11 +22,9 @@ int main(int argc, char *argv[]) {
     if(argc>=2 && strcmp(argv[1],"--stopafterfirststep")==0)
       stopAfterFirstStep=true;
   
-    if(MBSimXML::preInitDynamicSystemSolver(argc, argv, dss)!=0) return 0; 
+    if(MBSimXML::preInit(argc, argv, dss, integrator)!=0) return 0; 
     MBSimXML::initDynamicSystemSolver(argc, argv, dss);
   
-    MBSimXML::initIntegrator(argc, argv, integrator);
-
     if(doNotIntegrate==false) {
       if(stopAfterFirstStep)
         MBSimXML::plotInitialState(integrator, dss);
@@ -46,7 +44,7 @@ int main(int argc, char *argv[]) {
     MBSimXML::postMain(argc, argv, integrator, dss);
   }
   catch(const MBSimError &e) {
-    cerr<<"MBSimError: "<<e.what()<<endl;
+    cerr<<e.what()<<endl;
     return 1;
   }
   catch(const H5::Exception &e) {

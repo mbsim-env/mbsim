@@ -2,7 +2,9 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/symbolic_function.h"
+#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/observers/frame_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -48,14 +50,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   fexp[2] = 0; 
   SXFunction foo(t,fexp);
 
-  SymbolicFunction1<Vec3,double> *f = new SymbolicFunction1<Vec3,double>(foo);
-  body1->setTranslation(new TimeDependentTranslation(f));
+  body1->setTranslation(new SymbolicFunction<Vec3(double)>(foo));
 
   SX fexp2 = 5*sin(freq2*t);
   SXFunction foo2(t,fexp2);
 
-  SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
-  body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
+  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
+  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2));
+  body1->setTranslationDependentRotation(true);
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
@@ -64,22 +66,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body1->getFrame("C"));
-  OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setStaticColor(0.5);
-  o->setOpenMBVVelocityArrow(arrow);
+  //arrow->setStaticColor(0.5);
+  o->enableOpenMBVVelocity();
 
-  arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setType(OpenMBV::Arrow::toDoubleHead);
-  arrow->setStaticColor(0.4);
-  o->setOpenMBVAngularVelocityArrow(arrow);
+  //arrow->setStaticColor(0.4);
+  o->enableOpenMBVAngularVelocity();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
   OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(h1);
-  cuboid->setStaticColor(0.0);
+  cuboid->setDiffuseColor(240./360.,1,1);
   body1->setOpenMBVRigidBody(cuboid);
 
 #endif
@@ -90,6 +87,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setFrameForKinematics(body2->getFrame("C"));
   body2->setMass(1);
   body2->setInertiaTensor(SymMat3(EYE));
-  body2->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  body2->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
 
 }

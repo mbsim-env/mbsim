@@ -37,37 +37,13 @@ namespace MBSim {
     return (R->getOrientation().T() *(WrPoint - R->getPosition()) )(Range<Fixed<1>,Fixed<2> >());
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Plane::enableOpenMBV(bool enable, double size, int number) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Grid;
-      ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(size);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(size);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setXNumber(number);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setYNumber(number);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setInitialRotation(0.,M_PI/2.,0.);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
-
-  void Plane::initializeUsingXML(TiXmlElement *element) {
+ void Plane::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    TiXmlElement * e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
-    if (e) {
-      TiXmlElement* ee;
-      ee=e->FirstChildElement(MBSIMNS"size");
-      double size=getDouble(ee);
-      ee=e->FirstChildElement(MBSIMNS"numberOfLines");
-      int n=getInt(ee);
-      enableOpenMBV(true, size, n);
-      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
-        TiXmlUnknown *unknown=child->ToUnknown();
-        const size_t length=strlen("?OPENMBV_ID ");
-        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
-          openMBVRigidBody->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
-      }
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    if(e) {
+      OpenMBVPlane ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e); 
     }
 #endif
   }

@@ -2,7 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/symbolic_function.h"
+#include "mbsim/functions/symbolic_functions.h"
 #include "mbsim/observers/frame_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -57,9 +57,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SXFunction spos(input1,pos);
   
-  SymbolicFunction2<Vec3,Vec,double> *position = new SymbolicFunction2<Vec3,Vec,double>(spos);
-  GeneralTranslation *trans = new GeneralTranslation(2,position);
-  body1->setTranslation(trans);
+  SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(spos);
+  body1->setTranslation(position);
   
   body1->setInitialGeneralizedVelocity("[0;1]");
 
@@ -70,16 +69,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body1->getFrame("C"));
-  OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
-  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-  arrow->setStaticColor(0.5);
-  o->setOpenMBVVelocityArrow(arrow);
+  o->enableOpenMBVVelocity();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
   OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(h1);
-  cuboid->setStaticColor(0.0);
+  cuboid->setDiffuseColor(240./360.,1,1);
   body1->setOpenMBVRigidBody(cuboid);
 
   getFrame("I")->enableOpenMBV();

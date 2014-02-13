@@ -7,6 +7,8 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -59,7 +61,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
-  cuboid->setStaticColor(0.6); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setDiffuseColor(0.6666,0.3333,0.6666); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0*0.5,b0*0.5,1);
@@ -78,7 +80,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
   WrOS0B(0) = l0*0.75; WrOS0B(1) = b0*0.5+r; WrOS0B(2) = b0*0.3;
-  this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
@@ -87,37 +89,25 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 2./5.*mass*r*r;
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
-  Point *point = new Point("Point");
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  ball->addContour(new Point("Point",ball->getFrame("Point")));
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
   sphere->setRadius(r);
-  sphere->setStaticColor(0.5);
+  sphere->setDiffuseColor(0.6666,1,0.6666); // color in (minimalColorValue, maximalColorValue)
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
-  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
-  //a_n->setHeadDiameter(tP*0.05);
-  //a_n->setHeadLength(tP*0.07);
-  //a_n->setDiameter(tP*0.02);
-  //a_n->setScaleLength(tP*0.1);
-  //a_n->setEnable(false);
-  contact->setOpenMBVNormalForceArrow(a_n);
-  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
-  //a_t->setHeadDiameter(tP*0.05);
-  //a_t->setHeadLength(tP*0.07);
-  //a_t->setDiameter(tP*0.02);
-  //a_t->setScaleLength(tP*0.1);
-  //a_t->setEnable(false);
-  contact->setOpenMBVFrictionArrow(a_t);
+  contact->enableOpenMBVNormalForce();
+  contact->enableOpenMBVTangentialForce();
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);
@@ -130,10 +120,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat(3,3,EYE));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->setMomentDirection(Mat(3,3,EYE));
   joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
 }
 

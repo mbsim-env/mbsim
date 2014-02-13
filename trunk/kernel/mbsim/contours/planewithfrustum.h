@@ -42,10 +42,10 @@ namespace MBSim {
        * \param height of frustum (positive in "free" space, negative in "solid" space)
        * \param radius of the (small) rouding 
        */
-      PlaneWithFrustum(const std::string &name="") : RigidContour(name), rFrustumOnPlane(0), rFrustumOnTop(0), hFrustum(0), rho(0) {
+      PlaneWithFrustum(const std::string &name="", Frame *R=0) : RigidContour(name,R), rFrustumOnPlane(0), rFrustumOnTop(0), hFrustum(0), rho(0) {
       }
       
-      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_, double rho_) : RigidContour(name), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_), rho(rho_) {
+      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_, double rho_, Frame *R=0) : RigidContour(name,R), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_), rho(rho_) {
         checkInput();
       }
 
@@ -61,7 +61,7 @@ namespace MBSim {
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true);
+      void enableOpenMBV();
 #endif
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);

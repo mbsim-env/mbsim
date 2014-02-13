@@ -102,27 +102,6 @@ namespace MBSim {
     h[0] = hEnd;
   }
 
-  void Object::updatedq(double t, double dt) {
-    qd = T * u * dt;
-  }
-
-  void Object::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]);
-  }
-
-  void Object::updateud(double t, int i) {
-    ud[i] = slvLLFac(LLM[i], h[i] + r[i]);
-  }
-
-  void Object::updateqd(double t) {
-    qd = T * u;
-  }
-
-  void Object::updatezd(double t) {
-    updateqd(t);
-    updateud(t);
-  }
-
   void Object::sethSize(int hSize_, int j) {
     hSize[j] = hSize_;
   }
@@ -205,6 +184,14 @@ namespace MBSim {
     udall[i] >> udParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
+  void Object::updatexRef(const Vec &xParent) {
+    x >> xParent(xInd,xInd+xSize-1);
+  } 
+
+  void Object::updatexdRef(const Vec &xdParent) {
+    xd >> xdParent(xInd,xInd+xSize-1);
+  } 
+
   void Object::updatehRef(const Vec& hParent, int i) {
     h[i] >> hParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
@@ -286,6 +273,7 @@ namespace MBSim {
   void Object::initz() {
     q = (q0.size() == 0) ? Vec(qSize, INIT, 0) : q0;
     u = (u0.size() == 0) ? Vec(uSize[0], INIT, 0) : u0;
+    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
   void Object::writez(const H5::Group & group) {
@@ -308,32 +296,16 @@ namespace MBSim {
     u0.resize() = uWrite.read();
   }
 
-  void Object::facLLM(int i) {
-    LLM[i] = facLL(M[i]);
-  }
-
   void Object::sethInd(int hInd_, int j) {
     hInd[j] = hInd_;
   }
 
   void Object::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
     Element::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
-    if (e)
-      setInitialGeneralizedPosition(getVec(e));
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
-    if (e)
-      setInitialGeneralizedVelocity(getVec(e));
   }
 
   TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Element::writeXMLFile(parent);
-    if(q0.size())
-    addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
-    if(u0.size())
-    addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
-    return ele0;
+    return Element::writeXMLFile(parent);
   }
 
   Element * Object::getByPathSearch(string path) {

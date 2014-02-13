@@ -1,5 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/constitutive_laws.h"
@@ -23,7 +25,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  Plane *plane = new Plane("Plane");
   double phi = M_PI/2;
   SqrMat AWK(3);
   AWK(0,0) = cos(phi);
@@ -31,7 +32,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
-  addContour(plane,Vec(3),AWK);
+  addFrame(new FixedRelativeFrame("Plane",Vec(3),AWK));
+  addContour(new Plane("Plane",getFrame("Plane")));
 
   RigidBody* body = new RigidBody("Body");
   addObject(body);
@@ -40,8 +42,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   Mat J("[1,0,0;0,1,0;0,0,1]");
-  body->setTranslation(new LinearTranslation(J));
-  body->setRotation(new CardanAngles);
+  body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  body->setRotation(new RotationAboutAxesXYZ<VecV>);
   double m = 6e-3;
   double r1 = 1.5e-2;
   double r2 = 0.5e-2;
@@ -67,7 +69,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sphere->enableOpenMBV();
 #endif
-  body->addContour(sphere,rSM,SqrMat(3,EYE));
+  body->addFrame(new FixedRelativeFrame("Sphere1",rSM,SqrMat(3,EYE)));
+  sphere->setFrameOfReference(body->getFrame("Sphere1"));
+  body->addContour(sphere);
   sphere = new Sphere("Sphere2");
   sphere->setRadius(r2);
   rSM(1) = a2;
@@ -75,7 +79,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sphere->enableOpenMBV();
   body->getFrame("C")->enableOpenMBV(2*1.2*r1,0);
 #endif
-  body->addContour(sphere,rSM,SqrMat(3,EYE));
+  body->addFrame(new FixedRelativeFrame("Sphere2",rSM,SqrMat(3,EYE)));
+  sphere->setFrameOfReference(body->getFrame("Sphere2"));
+  body->addContour(sphere);
 
   double mu = 0.2;
 
@@ -88,20 +94,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cnf2);
 
   if(rigidContact) {
-    cnf1->setContactForceLaw(new UnilateralConstraint);
-    cnf1->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf1->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf1->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
-    cnf2->setContactForceLaw(new UnilateralConstraint);
-    cnf2->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf2->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf2->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf1->setNormalForceLaw(new UnilateralConstraint);
+    cnf1->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf1->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf1->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+    cnf2->setNormalForceLaw(new UnilateralConstraint);
+    cnf2->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf2->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf2->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    cnf1->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
-    cnf1->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
-    cnf2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
-    cnf2->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
+    cnf1->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
+    cnf1->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
+    cnf2->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
+    cnf2->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -3,6 +3,8 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -41,10 +43,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   E << DiagMat(3,INIT,1);
   Vec KrSP(3);
   KrSP(1) = a1;
-  box1->addFrame("PunktO",KrSP,E);
+  box1->addFrame(new FixedRelativeFrame("PunktO",KrSP,E));
 
-  box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  box1->setTranslation(new TranslationAlongAxesXY<VecV>);
+  box1->setRotation(new RotationAboutZAxis<VecV>);
 
   box1->setFrameOfReference(getFrame("I"));
   box1->setFrameForKinematics(box1->getFrame("C"));
@@ -54,7 +56,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box1->setInitialGeneralizedPosition(q0);
 
   KrSP(1) = -b1;
-  box1->addFrame("PunktU",KrSP,E);
+  box1->addFrame(new FixedRelativeFrame("PunktU",KrSP,E));
 
   RigidBody *box2 = new RigidBody("Stab2");
   addObject(box2);
@@ -63,9 +65,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box2->setInertiaTensor(Theta);
 
   KrSP(1) = a2;
-  box2->addFrame("Punkt",KrSP,E);
-  box2->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  box2->addFrame(new FixedRelativeFrame("Punkt",KrSP,E));
+  box2->setTranslation(new TranslationAlongAxesXY<VecV>);
+  box2->setRotation(new RotationAboutZAxis<VecV>);
 
   SqrMat A1(3);
   A1(0,0) = cos(phi1);
@@ -85,7 +87,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(2) = -phi2;
   box2->setInitialGeneralizedPosition(q0);
 
-  addFrame("Os","[0;0;0.04]",E);
+  addFrame(new FixedRelativeFrame("Os","[0;0;0.04]",E));
   box2->setFrameOfReference(getFrame("Os"));
   box2->setFrameForKinematics(box2->getFrame("C"));
 
@@ -101,9 +103,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   if(rigidJoints) {
     joint1->setForceLaw(new BilateralConstraint);
-    joint1->setImpactForceLaw(new BilateralImpact);
     joint2->setForceLaw(new BilateralConstraint);
-    joint2->setImpactForceLaw(new BilateralImpact);
   } 
   else {
     joint1->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));

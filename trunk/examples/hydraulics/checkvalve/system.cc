@@ -9,7 +9,10 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/basic_functions.h"
 #include "mbsimControl/object_sensors.h"
 
 #include "mbsim/utils/rotarymatrices.h"
@@ -26,16 +29,16 @@ using namespace MBSimHydraulics;
 
 System::System(const string &name, bool bilateral, bool unilateral) : Group(name) {
 
-  addFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(1)*BasicRotAIKz(-1.));
+  addFrame(new FixedRelativeFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(1)*BasicRotAIKz(-1.)));
 
   RigidBody * b = new RigidBody("Body");
   addObject(b);
   b->setMass(1);
   b->setInertiaTensor(SymMat(3, EYE));
   b->setFrameOfReference(getFrame("ref"));
-  b->addFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(-2.)*BasicRotAIKz(-1.));
+  b->addFrame(new FixedRelativeFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(-2.)*BasicRotAIKz(-1.)));
   b->setFrameForKinematics(b->getFrame("C"));
-  b->setTranslation(new LinearTranslation("[1; 0; 0]"));
+  b->setTranslation(new TranslationAlongXAxis<VecV>);
   b->setInitialGeneralizedVelocity(.1);
 
   Checkvalve * lCV = new Checkvalve("lCV");
@@ -70,13 +73,13 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
     lCV->setMaximalContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(c, d)));
 
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n1");
-  n1->setpFunction(new Function1_SS_from_VS(new TabularFunction1_VS<Ref,Ref>(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
+  n1->setpFunction(new TabularFunction<double>(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]"));
   addLink(n1);
   n1->addOutFlow(lCV->getLine());
 
   ConstrainedNodeMec * n2 = new ConstrainedNodeMec("n2");
   addLink(n2);
-  n2->setpFunction(new ConstantFunction1<double,double>(3e5));
+  n2->setpFunction(new ConstantFunction<double>(3e5));
   n2->addInFlow(lCV->getLine());
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

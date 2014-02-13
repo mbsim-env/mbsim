@@ -25,10 +25,6 @@
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include <mbsim/utils/utils.h>
 #include <mbsim/rigid_body.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objectfactory.h"
-#include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -38,7 +34,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Joint, MBSIMNS"Joint")
 
-  Joint::Joint(const string &name) : LinkMechanics(name), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
+  Joint::Joint(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
   }
 
   Joint::~Joint() {
@@ -54,7 +50,7 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t, int j) {
-    Mat3xV WJT = frame[0]->getOrientation()*JT;
+    Mat3xV WJT = refFrame->getOrientation()*JT;
     VecV sdT = WJT.T()*(WvP0P1);
 
     wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
@@ -87,11 +83,11 @@ namespace MBSim {
   }
 
   void Joint::updateg(double t) {
-    Wf = frame[0]->getOrientation()*forceDir;
-    Wm = frame[0]->getOrientation()*momentDir;
+    Wf = refFrame->getOrientation()*forceDir;
+    Wm = refFrame->getOrientation()*momentDir;
 
     WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
-    C.setOrientation(frame[0]->getOrientation());
+    C.setOrientation(refFrame->getOrientation());
     C.setPosition(frame[0]->getPosition() + WrP0P1);
 
     g(IT) = Wf.T()*WrP0P1;
@@ -149,6 +145,11 @@ namespace MBSim {
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);
 
+      if(ffl)
+        fifl = new BilateralImpact;
+      if(fml)
+        fiml = new BilateralImpact;
+
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
       if(forceDir.cols()) 
@@ -174,12 +175,11 @@ namespace MBSim {
         JT.set(0, computeTangential(forceDir.col(0)));
         JT.set(1, crossProduct(forceDir.col(0),JT.col(0)));
       }
+      refFrame=refFrameID?frame[1]:frame[0];
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#endif
         if(getPlotFeature(generalizedLinkForce)==enabled) {
           for(int j=0; j<la.size(); ++j)
             plotColumns.push_back("la("+numtostr(j)+")");
@@ -564,87 +564,49 @@ namespace MBSim {
   }
 
   void Joint::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e, *ee;
     LinkMechanics::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"force");
-    if(e) {
-      ee=e->FirstChildElement(MBSIMNS"direction");
-      setForceDirection(getMat3xV(ee,0));
-      ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
-      setForceLaw(gfl);
-      gfl->initializeUsingXML(ee->FirstChildElement());
-      ee=ee->NextSiblingElement();
-      GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
-      if(gifl) {
-        setImpactForceLaw(gifl);
-        gifl->initializeUsingXML(ee->FirstChildElement());
-      }
-      ee=ee->NextSiblingElement();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVForceArrow(arrow);
-        ee=ee->NextSiblingElement();
-      }
-#endif
-    }
-    e=element->FirstChildElement(MBSIMNS"moment");
-    if(e) {
-      ee=e->FirstChildElement(MBSIMNS"direction");
-      setMomentDirection(getMat3xV(ee,0));
-      ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
-      setMomentLaw(gfl);
-      gfl->initializeUsingXML(ee->FirstChildElement());
-      ee=ee->NextSiblingElement();
-      GeneralizedImpactLaw *gifl=ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
-      if(gifl) {
-        setImpactMomentLaw(gifl);
-        gifl->initializeUsingXML(ee->FirstChildElement());
-      }
-      ee=ee->NextSiblingElement();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(ee);
-      if(arrow) {
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVMomentArrow(arrow);
-        ee=ee->NextSiblingElement();
-      }
-#endif
-    }
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    if(e) refFrameID=getDouble(e);
+    e=element->FirstChildElement(MBSIMNS"forceDirection");
+    if(e) setForceDirection(getMat(e,3,0));
+    e=element->FirstChildElement(MBSIMNS"forceLaw");
+    if(e) setForceLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));
+    e=element->FirstChildElement(MBSIMNS"momentDirection");
+    if(e) setMomentDirection(getMat(e,3,0));
+    e=element->FirstChildElement(MBSIMNS"momentLaw");
+    if(e) setMomentLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      setOpenMBVForce(ombv.createOpenMBV(e));
+    }
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      setOpenMBVMoment(ombv.createOpenMBV(e));
+    }
+#endif
   }
 
   TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
     if(forceDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
-      addElementText(ele1,MBSIMNS"direction",forceDir);
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
+      addElementText(ele0,MBSIMNS"forceDirection",forceDir);
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"forceLaw");
       if(ffl)
-        ffl->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
-      ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
-      if(fifl)
-        fifl->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
+        ffl->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     if(momentDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
-      addElementText(ele1,MBSIMNS"direction",momentDir);
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
+      addElementText(ele0,MBSIMNS"momentDirection",momentDir);
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"momentLaw");
       if(fml)
-        fml->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
-      ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
-      if(fiml)
-        fiml->writeXMLFile(ele2);
-      ele1->LinkEndChild(ele2);
+        fml->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");

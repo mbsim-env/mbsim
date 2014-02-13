@@ -18,11 +18,11 @@
 #include <mbsim/contours/circle_solid.h>
 #include <mbsim/contact.h>
 #include <mbsim/constitutive_laws.h>
-#include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-#include <mbsim/kinematics.h>
+#include <mbsim/functions/kinetic_functions.h>
+#include "mbsim/functions/kinematic_functions.h"
 
 using namespace std;
 using namespace MBSim;
@@ -40,7 +40,7 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     virtual ~CountourCouplingCantileverBeam() {
     }
 
-    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2, const void * = NULL) {
+    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2) {
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)
@@ -66,14 +66,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   FixedRelativeFrame* ReferenceFrame = new FixedRelativeFrame(getName()+"RefFrame");
   ReferenceFrame->setRelativePosition(ReferenceFrameShift);
   this->addFrame(ReferenceFrame);
-
-  /*Print arrows for contacts*/
-  OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
-  normalArrow->setScaleLength(0.00001);
-  OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
-  frArrow->setScaleLength(0.001);
-  frArrow->setStaticColor(0.75);
-
 
   /*Parameters for the balls*/
   double space = 0.03;  //defines the space between two balls
@@ -110,7 +102,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   Vec planeTrans(3, INIT, 0.);
   planeTrans(1) = height/2;
 
-  Beam->addContour(BeamContour, planeTrans, BasicRotAIKz(planeRot));
+  Beam->addFrame(new FixedRelativeFrame("Line", planeTrans, BasicRotAIKz(planeRot)));
+  BeamContour->setFrameOfReference(Beam->getFrame("Line"));
+  Beam->addContour(BeamContour);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *openMBVBeam=new OpenMBV::Cuboid();
@@ -148,7 +142,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     balls[ballIter]->setFrameOfReference(R);
     balls[ballIter]->setMass(1.);
     balls[ballIter]->setInertiaTensor(SymMat(3,EYE));
-    balls[ballIter]->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
+    balls[ballIter]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     balls[ballIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0]"));
 
     this->addObject(balls[ballIter]);
@@ -161,7 +155,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     Vec pointTrans = Vec(3, INIT, 0.);
     pointTrans(1) = - radius;
 
-    balls[ballIter]->addContour(ballsContours[ballIter], pointTrans, CircContourRot);
+    balls[ballIter]->addFrame(new FixedRelativeFrame(ballname.str(), pointTrans, CircContourRot));
+    ballsContours[ballIter]->setFrameOfReference(balls[ballIter]->getFrame(ballname.str()));
+    balls[ballIter]->addContour(ballsContours[ballIter]);
 
     /*Visualization of the balls*/
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -171,15 +167,15 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     switch (contactType) {
       case 0:
         openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(0));
-        openMBVSphere->setStaticColor(0.4);
+        openMBVSphere->setDiffuseColor(0.3333,1,0.6666);
         break;
       case 1:
         openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(1));
-        openMBVSphere->setStaticColor(0.6);
+        openMBVSphere->setDiffuseColor(0,1,0.6666);
         break;
       case 2:
         openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(1));
-        openMBVSphere->setStaticColor(0.8);
+        openMBVSphere->setDiffuseColor(0.6666,1,1);
         break;
     }
     balls[ballIter]->setOpenMBVRigidBody(openMBVSphere);
@@ -202,8 +198,8 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
   //fancy stuff
   contact->enableOpenMBVContactPoints(1.,false);
-  contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVFrictionArrow(frArrow);
+  contact->enableOpenMBVNormalForce(_scaleLength=0.00001);
+  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
 
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
@@ -219,7 +215,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     case 0: //Maxwell Contact
     {
       MaxwellUnilateralConstraint* mcl = new MaxwellUnilateralConstraint();
-      contact->setContactForceLaw(mcl);
+      contact->setNormalForceLaw(mcl);
       //Debug features
       mcl->setDebuglevel(0);
 
@@ -227,9 +223,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
       mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
       //Force Law (friction)
-//      contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-      contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-      contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
 
     }
     break;
@@ -237,21 +233,21 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     case 1: //regularized contact
     {
         double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
-        contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
+        contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
 
         //Force Law (friction)
-        contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+        contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
     }
     break;
 
     case 2:
     {
-        contact->setContactForceLaw(new UnilateralConstraint);
-        contact->setContactImpactLaw(new UnilateralNewtonImpact(1.));
+        contact->setNormalForceLaw(new UnilateralConstraint);
+        contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.));
 
         //Force Law (friction)
-        contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-        contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+        contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+        contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     }
     break;
     default:

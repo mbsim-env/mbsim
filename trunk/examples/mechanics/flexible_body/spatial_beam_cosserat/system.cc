@@ -8,6 +8,7 @@
 #include "mbsim/constitutive_laws.h"
 // End Contact
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -101,7 +102,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
   WrOS0B(0) = 2.*r; WrOS0B(1) = R+6.*r;
-  this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
@@ -110,7 +111,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 2./5.*mass*r*r;
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
 
   Vec3 u0;
   u0(1) = -10;
@@ -118,7 +119,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   MBSim::Point *point = new MBSim::Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addContour(point);
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -129,23 +132,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
-  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
-  //a_n->setHeadDiameter(tP*0.05);
-  //a_n->setHeadLength(tP*0.07);
-  //a_n->setDiameter(tP*0.02);
-  //a_n->setScaleLength(tP*0.1);
-  //a_n->setEnable(false);
-  contact->setOpenMBVNormalForceArrow(a_n);
-  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
-  //a_t->setHeadDiameter(tP*0.05);
-  //a_t->setHeadLength(tP*0.07);
-  //a_t->setDiameter(tP*0.02);
-  //a_t->setScaleLength(tP*0.1);
-  //a_t->setEnable(false);
-  contact->setOpenMBVFrictionArrow(a_t);
+  contact->enableOpenMBVNormalForce();
+  contact->enableOpenMBVTangentialForce();
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);

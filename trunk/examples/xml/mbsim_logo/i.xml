@@ -12,48 +12,39 @@
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(y)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2, 0; 0, 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2]</inertiaTensor>
-      <translation>
-      </translation>
-      <rotation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="F1">
-            <enableOpenMBV> 
-              <size>frameSize</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/> 
-          <position>[-y/2; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="F2">
-            <enableOpenMBV> 
-              <size>frameSize</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/> 
-          <position>[y/2; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="F1">
+          <enableOpenMBV> 
+            <size>frameSize</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/> 
+          <relativePosition>[-y/2; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="F2">
+          <enableOpenMBV> 
+            <size>frameSize</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/> 
+          <relativePosition>[y/2; 0; 0]</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour xmlns="http://mbsim.berlios.de/MBSim">
-          <Line name="CTop"/>
-          <frameOfReference ref="Frame[F2]"/> 
-          <position>[0;0;0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Line name="CTop" xmlns="http://mbsim.berlios.de/MBSim">
+          <frameOfReference ref="../Frame[F2]"/> 
+        </Line>
       </contours>
       <openMBVRigidBody> 
         <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -63,8 +54,8 @@
           <innerBaseRadius>0</innerBaseRadius>
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
-        <frameOfReference ref="Frame[F1]"/> 
       </openMBVRigidBody>
+      <openMBVFrameOfReference ref="Frame[F1]"/> 
       <enableOpenMBVFrameC> 
         <size>frameSize</size>
         <offset>1.</offset>
@@ -76,34 +67,27 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>4/3*pi*(2*r)^3*rho</mass>
       <inertiaTensor>2/5*4/3*pi*(2*r)^3*rho*eye(3)</inertiaTensor>
-      <translation>
+      <stateDependentTranslation>
         <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
           <translationVectors>[1; 0; 0]</translationVectors>
         </LinearTranslation>
-      </translation>
-      <rotation>
-      </rotation>
+      </stateDependentTranslation>
       <frames>
       </frames>
       <contours>
-        <contour xmlns="http://mbsim.berlios.de/MBSim">
-          <CircleSolid name="CCircle" xmlns="http://mbsim.berlios.de/MBSim">
-            <radius>2*r</radius>
-          </CircleSolid>
-          <frameOfReference ref="Frame[C]"/> 
-          <position>[0;0;0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <CircleSolid name="CCircle" xmlns="http://mbsim.berlios.de/MBSim">
+          <frameOfReference ref="../Frame[C]"/> 
+          <radius>2*r</radius>
+        </CircleSolid>
       </contours>
       <openMBVRigidBody> 
         <Sphere name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>1</staticColor>
+          <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
           <radius>2*r</radius>
         </Sphere>
-        <frameOfReference ref="Frame[C]"/> 
       </openMBVRigidBody>
       <enableOpenMBVFrameC> 
         <size>frameSize</size>
@@ -113,25 +97,21 @@
   </objects>
   <links>
     <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
-      <moment> 
-        <direction>[0; 0; 1]</direction>
-        <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-                <stiffnessCoefficient>jc</stiffnessCoefficient>
-                <dampingCoefficient>jd</dampingCoefficient>
-              </LinearRegularizedBilateralConstraint>
-            </forceFunction>
-          </RegularizedBilateralConstraint>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-        </generalizedImpactLaw>
-      </moment>
+      <momentDirection>[0; 0; 1]</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <stiffnessCoefficient>jc</stiffnessCoefficient>
+              <dampingCoefficient>jd</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
       <connect ref1="../../Object[Carrier]/Frame[Fi]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
     <Contact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
-      <contactForceLaw>
+      <normalForceLaw>
         <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
           <forceFunction>
             <LinearRegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
@@ -140,13 +120,7 @@
             </LinearRegularizedUnilateralConstraint>
           </forceFunction>
         </RegularizedUnilateralConstraint>
-      </contactForceLaw>
-      <contactImpactLaw>
-      </contactImpactLaw>
-      <frictionForceLaw>
-      </frictionForceLaw>
-      <frictionImpactLaw>
-      </frictionImpactLaw>
+      </normalForceLaw>
       <connect ref1="../Object[S1]/Contour[CTop]" ref2="../Object[S2]/Contour[CCircle]"/>
     </Contact>
   </links>

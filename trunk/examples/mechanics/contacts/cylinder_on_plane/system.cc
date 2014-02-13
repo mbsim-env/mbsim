@@ -6,6 +6,8 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -39,8 +41,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body->setRotation(new RotationAboutZAxis<VecV>);
 
   // Fixed cylinder as obstacle 
   RigidBody* body2 = new RigidBody("ObstacleCylinder");
@@ -60,8 +62,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setFrameForKinematics(body3->getFrame("C"));
   body3->setMass(m);
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body3->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body3->setRotation(new RotationAboutZAxis<VecV>);
 
 
 
@@ -79,28 +81,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Contour of InnerCylinder
   CircleSolid *circlecontour=new CircleSolid("Circle",d);
-  body->addContour(circlecontour,Vec(3),SqrMat(3,EYE));
+  body->addContour(circlecontour);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour->enableOpenMBV();
 #endif
 
   // Contour of ObstacleCylinder
   CircleSolid *circlecontour2=new CircleSolid("Circle2",d);
-  body2->addContour(circlecontour2,Vec(3),SqrMat(3,EYE));
+  body2->addContour(circlecontour2);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour2->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (outward)
   CircleHollow *circlecontour3=new CircleHollow("Circle3",2.5*d);
-  body3->addContour(circlecontour3,Vec(3),SqrMat(3,EYE));
+  body3->addContour(circlecontour3);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour3->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (inward)
   CircleSolid *circlecontour4=new CircleSolid("Circle4",3*d);
-  body3->addContour(circlecontour4,Vec(3),SqrMat(3,EYE));
+  body3->addContour(circlecontour4);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour4->enableOpenMBV();
 #endif
@@ -114,7 +116,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(1,1) = cos(phi);
   A(1,0) = sin(phi);
   A(2,2) = 1;
-  addContour(new Line("Line"),Vec(3),A);
+  addFrame(new FixedRelativeFrame("Line",Vec(3),A));
+  addContour(new Line("Line",getFrame("Line")));
 
 
   // Contact between CylinderHollow and ObstacleCylinder
@@ -122,14 +125,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc2->connect(body3->getContour("Circle4"), body2->getContour("Circle2"));
   addLink(rc2);
   if(rigidContact) {
-    rc2->setContactForceLaw(new UnilateralConstraint);
-    rc2->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc2->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc2->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc2->setNormalForceLaw(new UnilateralConstraint);
+    rc2->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc2->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc2->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc2->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc2->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between InnerCylinder and CylinderHollow
@@ -137,14 +140,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc3->connect(body->getContour("Circle"), body3->getContour("Circle3"));
   addLink(rc3);
   if(rigidContact) {
-    rc3->setContactForceLaw(new UnilateralConstraint);
-    rc3->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc3->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc3->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc3->setNormalForceLaw(new UnilateralConstraint);
+    rc3->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc3->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc3->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc3->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc3->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between HollowCylinder and plane
@@ -152,14 +155,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc4->connect(getContour("Line"),body3->getContour("Circle4"));
   addLink(rc4);
   if(rigidContact) {
-    rc4->setContactForceLaw(new UnilateralConstraint);
-    rc4->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc4->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc4->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc4->setNormalForceLaw(new UnilateralConstraint);
+    rc4->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc4->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc4->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc4->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc4->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc4->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc4->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 

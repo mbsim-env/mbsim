@@ -22,7 +22,6 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 
 using namespace std;
@@ -48,7 +47,7 @@ namespace MBSimHydraulics {
   void FlowSensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (lineString!="")
-        setHLine(getByPath<HLine>(process_hline_string(lineString)));
+        setHLine(getByPath<HLine>(lineString));
       Sensor::init(stage);
     }
     else

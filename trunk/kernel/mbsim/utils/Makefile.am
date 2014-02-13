@@ -7,11 +7,9 @@ libutils_la_SOURCES = colors.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
-                      function.cc\
-                      symbolic_function.cc\
-                      function_library.cc\
                       stopwatch.cc\
-                      ansatz_functions.cc
+                      ansatz_functions.cc\
+                      openmbv_utils.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
 
@@ -22,16 +20,16 @@ utilsinclude_HEADERS = colors.h\
                        eps.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
-                       function.h\
-                       symbolic_function.h\
-                       function_library.h\
                        ppolynom.h\
                        contact_utils.h\
                        rotarymatrices.h\
                        utils.h\
+                       ptr.h\
                        stopwatch.h\
                        ansatz_functions.h\
-                       contour_functions.h
+                       contour_functions.h\
+		       boost_parameters.h\
+		       openmbv_utils.h
 
 if COND_CASADI
   MAYBE_CPPCASADITOXML = cppCasADiToXML

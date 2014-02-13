@@ -21,16 +21,12 @@
 #define _CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
-
 #include <mbsim/single_contact.h>
-
 #include <map>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class Frame;
-  class Arrow;
-}
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
@@ -154,9 +150,9 @@ namespace MBSim {
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      void enableOpenMBVContactPoints(double size = 1., bool enable = true) {
-        openMBVContactFrameSize = size;
-        openMBVContactFrameEnabled = enable;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) { 
+        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
+        openMBVFrame=ombv.createOpenMBV(); 
       }
 
       /** 
@@ -164,8 +160,9 @@ namespace MBSim {
        * This vector is the force which is applied on the second contour.
        * The reactio (not drawn) is applied on the first contour.
        */
-      void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) {
-        contactArrow = arrow;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        contactArrow=ombv.createOpenMBV(); 
       }
 
       /** 
@@ -175,8 +172,9 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setOpenMBVFrictionArrow(OpenMBV::Arrow *arrow) {
-        frictionArrow = arrow;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        frictionArrow=ombv.createOpenMBV(); 
       }
 #endif
 
@@ -189,19 +187,19 @@ namespace MBSim {
       virtual void setLinkStatusInd(int LinkStatusInd_);
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
 
-      void setContactForceLaw(GeneralizedForceLaw *fcl_) {
+      void setNormalForceLaw(GeneralizedForceLaw *fcl_) {
         fcl = fcl_;
       }
-      GeneralizedForceLaw * getContactForceLaw() const {
+      GeneralizedForceLaw * getNormalForceLaw() const {
         return fcl;
       }
-      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) {
+      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_) {
         fnil = fnil_;
       }
-      void setFrictionForceLaw(FrictionForceLaw *fdf_) {
+      void setTangentialForceLaw(FrictionForceLaw *fdf_) {
         fdf = fdf_;
       }
-      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) {
+      void setTangentialImpactLaw(FrictionImpactLaw *ftil_) {
         ftil = ftil_;
       }
       void setContactKinematics(ContactKinematics* ck, size_t index = 0) {
@@ -297,14 +295,9 @@ namespace MBSim {
       OpenMBV::Group * openMBVGrp;
 
       /**
-       * \brief size of ContactFrames to draw
+       * \brief Frame of ContactFrames to draw
        */
-      double openMBVContactFrameSize;
-
-      /**
-       * \brief enable flag of ContactFrames to draw
-       */
-      bool openMBVContactFrameEnabled;
+      OpenMBV::Frame * openMBVFrame;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw

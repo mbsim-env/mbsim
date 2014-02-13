@@ -20,16 +20,14 @@
 #ifndef POLYNOMIAL_FRUSTUM_H_
 #define POLYNOMIAL_FRUSTUM_H_
 #include <iostream>
-
 #include <mbsim/contour.h>
-
 #include <mbsim/contours/rectangle.h>
-
 #include <mbsim/utils/colors.h>
-
 #include <fmatvec/fmatvec.h>
-
-#include <mbsim/utils/function.h>
+#include <fmatvec/function.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/boost_parameters.h>
+#endif
 
 namespace MBSim {
 
@@ -84,7 +82,7 @@ namespace MBSim {
        * \param polynomialPoints how fine should the grid be in polynomial direction
        * \param circulaPoints    how fine should the grid be in circular direction
        */
-      void enableOpenMBV(bool enable = true, int polynomialPoints = 0, int circularPoints = 25);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (polynomialPoints,(int),0)(circularPoints,(int),25)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { enableOpenMBV_(diffuseColor,transparency,polynomialPoints,circularPoints); }
 
       /*!
        * \brief set color of body
@@ -225,6 +223,7 @@ namespace MBSim {
        */
       void createInventorFile();
 
+      void enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints, int circularPoints);
 #endif
   };
 
@@ -233,13 +232,13 @@ namespace MBSim {
    * \para para: coefficient vector of the left side
    */
 
-  class ContactPolyfun : public MBSim::Function1<double, double> {
+  class ContactPolyfun : public fmatvec::Function<double(double)> {
     public:
       ContactPolyfun(const double & rhs, const PolynomialFrustum * frustum);
       virtual ~ContactPolyfun() {
       }
 
-      virtual double operator()(const double & x, const void * = NULL);
+      virtual double operator()(const double &x);
       void initializeUsingXML() {
       }
 

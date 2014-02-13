@@ -246,7 +246,7 @@ namespace MBSimFlexibleBody {
       FlexibleBodyContinuum<double>::init(stage);
       l0 = L / Elements;
     }
-    else if (stage == unknownStage) {
+    else if(stage == unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
 
       initialised = true;

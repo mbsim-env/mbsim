@@ -2,6 +2,8 @@
 #include "mbsim/environment.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
 
@@ -14,17 +16,6 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
-
-class Moment : public Function1<fmatvec::Vec, double> {
-  double M0;
-  public:
-    Moment(double M0_) : M0(M0_) {}
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      Vec M(1);
-      M(0) = M0;
-      return M;
-    };
-};
 
 Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   double r1 = 0.02;
@@ -53,7 +44,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setMass(m1);
   Theta(2,2) = J;
   shaft1->setInertiaTensor(Theta);
-  shaft1->setRotation(new RotationAboutZAxis);
+  shaft1->setRotation(new RotationAboutZAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("C")->enableOpenMBV(0.2);
 #endif
@@ -62,7 +53,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec r(3);
   r(1) = R1+R2a;
   r(2) = l;
-  addFrame("Q",r,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
 
   RigidBody* shaft2 = new RigidBody("Shaft2");
   addObject(shaft2);
@@ -71,14 +62,14 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft2->setMass(m1);
   Theta(2,2) = J;
   shaft2->setInertiaTensor(Theta);
-  shaft2->setRotation(new RotationAboutZAxis);
+  shaft2->setRotation(new RotationAboutZAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft2->getFrame("C")->enableOpenMBV(0.2);
 #endif
 
   r(1) = R1+R2a-R2b-R3;
   r(2) = 2*l;
-  addFrame("P",r,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("P",r,SqrMat(3,EYE)));
   RigidBody* shaft3 = new RigidBody("Shaft3");
   addObject(shaft3);
   shaft3->setFrameOfReference(getFrame("P"));
@@ -86,29 +77,31 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft3->setMass(m1);
   Theta(2,2) = J;
   shaft3->setInertiaTensor(Theta);
-  shaft3->setRotation(new RotationAboutZAxis);
+  shaft3->setRotation(new RotationAboutZAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft3->getFrame("C")->enableOpenMBV(0.2);
 #endif
 
   GearConstraint *constraint = new GearConstraint("C1",shaft2);
   addObject(constraint);
-  constraint->addDependency(shaft1,-R1/R2a);
+  constraint->addTransmission(Transmission(shaft1,-R1/R2a));
 
   constraint = new GearConstraint("C2",shaft3);
   addObject(constraint);
-  constraint->addDependency(shaft2,-R2b/R3);
+  constraint->addTransmission(Transmission(shaft2,-R2b/R3));
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(1.1/100.));
+  ke->setMomentDirection("[0;0;1]");
+  ke->setMomentFunction(new ConstantFunction<VecV>(1.1/100.));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(shaft3->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(-4.0/100.));
+  ke->setMomentDirection("[0;0;1]");
+  ke->setMomentFunction(new ConstantFunction<VecV>(-4.0/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *c1=new OpenMBV::Frustum;
@@ -128,7 +121,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   OpenMBV::CompoundRigidBody *c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);
   c->addRigidBody(c2);
-  c->setStaticColor(0.1);
+  c->setDiffuseColor(0.3333,1,0.3333);
   shaft1->setOpenMBVRigidBody(c);
 
   c1=new OpenMBV::Frustum;
@@ -156,7 +149,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c->addRigidBody(c1);
   c->addRigidBody(c2);
   c->addRigidBody(c3);
-  c->setStaticColor(0.3);
+  c->setDiffuseColor(0.6666,1,0.6666);
   shaft2->setOpenMBVRigidBody(c);
 
   c1=new OpenMBV::Frustum;
@@ -171,12 +164,13 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c2->setBaseRadius(R3);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,-l/2+l/20);
+  c2->setDiffuseColor(0.1111,1,1);
   c2->setName("frustum2");
 
   c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);
   c->addRigidBody(c2);
-  c->setStaticColor(0.5);
+  c->setDiffuseColor(0.1111,1,1);
   shaft3->setOpenMBVRigidBody(c);
 #endif
 }

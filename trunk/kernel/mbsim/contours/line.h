@@ -22,6 +22,10 @@
 
 #include "mbsim/contour.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
 namespace MBSim {
 
   class ContourPointData;
@@ -37,7 +41,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of line
        */
-      Line(const std::string& name="") : RigidContour(name) {}
+      Line(const std::string& name="", Frame *R=0) : RigidContour(name,R) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Line"; }
@@ -46,6 +50,16 @@ namespace MBSim {
       /* INHERITED INTERFACE OF CONTOUR */
       virtual double computeCurvature(ContourPointData &cp) { return 0; } 
       /***************************************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (length,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {       
+        OpenMBVLine ombv(length,diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
+      }
+#endif
+      
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
   };      
 }
 

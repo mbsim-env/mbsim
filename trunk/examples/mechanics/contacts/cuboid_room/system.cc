@@ -1,5 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
@@ -21,12 +22,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   roomBody->setInertiaTensor(SymMat3(EYE));
   roomBody->setFrameOfReference(getFrameI());
   Room* room = new Room("Raum");
-  room->setLength(.3); //X
-  room->setDepth(.2); //Y
-  room->setHeight(0.1); //Z
+  room->setXLength(.3); //X
+  room->setYLength(.2); //Y
+  room->setZLength(0.1); //Z
   room->setFrameOfReference(I);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  room->enableOpenMBV(true, 2);
+  room->enableOpenMBV(_transparency=0.5);
 #endif
   roomBody->addContour(room);
 
@@ -38,8 +39,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   Mat J("[1,0,0;0,1,0;0,0,1]");
-  body->setTranslation(new LinearTranslation(J));
-  body->setRotation(new CardanAngles);
+  body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  body->setRotation(new RotationAboutAxesXYZ<VecV>);
   double m = 0.1;
   double l,b,h;
   l = 0.01;
@@ -75,13 +76,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->addContour(cuboid);
 
   Contact *cnf = new Contact("Kontakt_Wuerfel");
-  cnf->setContactForceLaw(new UnilateralConstraint);
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(1));
-//  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.3));
-//  cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.3));
+  cnf->setNormalForceLaw(new UnilateralConstraint);
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(1));
+//  cnf->setTangentialForceLaw(new SpatialCoulombFriction(0.3));
+//  cnf->setTangentialImpactLaw(new SpatialCoulombImpact(0.3));
   //cnf->setPlotFeature(linkKinematics,disabled);
-  //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
-  //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  //cnf->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
+  //cnf->setTangentialForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
   cnf->connect(roomBody->getContour("Raum"), body->getContour("Wuerfel"));
   addLink(cnf);
 

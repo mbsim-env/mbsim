@@ -10,50 +10,26 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyPos : public Translation {
+class MyPos : public Function<Vec3(VecV)> {
   public:
-    int getqSize() const {return 1;} 
-    Vec3 operator()(const Vec &q, const double &t, const void * =NULL) {
-      Vec3 PrPK;
-      PrPK(0) = cos(q(0));
-      PrPK(1) = sin(q(0));
-      return PrPK;
+    int getArgSize() const {return 1;}
+    Vec3 operator()(const VecV &q) {
+      Vec3 r;
+      r(0) = cos(q(0));
+      r(1) = sin(q(0));
+      return r;
     }; 
-};
-
-class JacobianT : public Jacobian {
-  public:
-    int getuSize() const {return 1;} 
-    Mat3xV operator()(const Vec& q, const double &t, const void * =NULL) {
+    Mat3xV parDer(const VecV &q) {
       Mat3xV J(1);
       J(0,0) = -sin(q(0));
       J(1,0) =  cos(q(0));
       return J;
     }
-};
-class JacobianR : public Jacobian {
-  public:
-    Mat3xV operator()(const Vec& q, double t) {
-      Mat3xV J(1);
-      return J;
-    }
-};
-
-class MyDerT : public DerivativeOfJacobian {
-  public:
-    Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-      Mat3xV J(1);
-      J(0,0) = -cos(q(0))*qd(0);
-      J(1,0) = -sin(q(0))*qd(0);
-      return J;
-    }
-};
-
-class MyDerR : public DerivativeOfJacobian {
-  public:
-    Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-      Mat3xV J(1);
-      return J;
+    Mat3xV parDerDirDer(const VecV &qd, const VecV &q) {
+      Mat3xV Jd(1);
+      Jd(0,0) = -cos(q(0))*qd(0)*qd(0);
+      Jd(1,0) = -sin(q(0))*qd(0)*qd(0);
+      return Jd;
     }
 };
 
@@ -79,9 +55,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
+  //body->setTranslation(new TranslationTeqI(new MyPos));
   body->setTranslation(new MyPos);
-  body->setJacobianOfTranslation(new JacobianT);
-  body->setDerivativeOfJacobianOfTranslation(new MyDerT);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
