@@ -1,0 +1,2 @@
+set size ratio -1
+plot "track.dat" u 1:2 w lp
