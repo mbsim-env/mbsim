@@ -2,7 +2,7 @@ lib_LTLIBRARIES = libmbsimflatxml.la
 libmbsimflatxml_la_SOURCES = mbsimflatxml.cc
 libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS)
 libmbsimflatxml_la_LDFLAGS = 
-libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
+libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
 mbsimxmlincludedir = $(includedir)/mbsimxml
 mbsimxmlinclude_HEADERS = mbsimflatxml.h
 
