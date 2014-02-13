@@ -1,0 +1,24 @@
+<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+  <scalarParameter name="pistonMass">7.5e-3</scalarParameter>
+  <scalarParameter name="hpcInitialHeight">33e-8/(pi*pistonRadius**2)</scalarParameter>
+  <scalarParameter name="pistonRadius">4.2945e-3</scalarParameter>
+  <scalarParameter name="pistonSpringStiffness">4.8e3</scalarParameter>
+  <scalarParameter name="pistonSpringDamping">1.0</scalarParameter>
+  <scalarParameter name="pistonSpringF0">-12</scalarParameter>
+  <scalarParameter name="pistonContourRadius">4.22127e-3</scalarParameter>
+  <scalarParameter name="cvRadius">0.9625e-3</scalarParameter>
+  <scalarParameter name="cvAlpha">1.</scalarParameter>
+  <scalarParameter name="cvBallMass">1.1e-4</scalarParameter>
+  <scalarParameter name="cvBallRadius">1.5e-3</scalarParameter>
+  <scalarParameter name="cvSpringStiffness">25</scalarParameter>
+  <scalarParameter name="cvSpringDamping">2.5e-2</scalarParameter>
+  <scalarParameter name="cvSpringF0">-3.75e-2</scalarParameter>
+  <scalarParameter name="cvMaximalOpening">.8e-3</scalarParameter>
+  <scalarParameter name="hpcV0">33e-8</scalarParameter>
+  <scalarParameter name="pistonHeight">1e-2</scalarParameter>
+  <scalarParameter name="gapLength">5.5e-3</scalarParameter>
+  <scalarParameter name="gapDiameter">20e-6</scalarParameter>
+
+  <scalarParameter name="A">5e-5</scalarParameter>
+  <scalarParameter name="f">100</scalarParameter>
+</parameter>
