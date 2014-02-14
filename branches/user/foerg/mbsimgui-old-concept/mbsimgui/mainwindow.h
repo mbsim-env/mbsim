@@ -67,7 +67,8 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
-    QString uniqueTempDir, absoluteMBSFilePath;
+    boost::filesystem::path uniqueTempDir;
+    QString absoluteMBSFilePath;
     QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
     std::string currentID;
     QStringList mPath;
@@ -92,7 +93,7 @@ class MainWindow : public QMainWindow {
     static MBXMLUtils::OctEval *octEval;
     static MBXMLUtils::NewParamLevel *octEvalParamLevel;
     void mbsimxml(int task);
-    const QString& getUniqueTempDir() const {return uniqueTempDir;}
+    const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
     void addFrame(Frame *frame);
     void addContour(Contour *contour);
     void addGroup(Group *group);
@@ -102,20 +103,20 @@ class MainWindow : public QMainWindow {
     void highlightObject(const std::string &ID);
     const std::string& getHighlightedObject() const {return currentID;}
     void loadProject(const QString &file);
-    void loadMBS(const QString &file);
-    void loadIntegrator(const QString &file);
-    void loadParameterList(const QString &file);
+//    void loadMBS(const QString &file);
+//    void loadIntegrator(const QString &file);
+//    void loadParameterList(const QString &file);
   public slots:
     void elementListClicked();
     void parameterListClicked();
     void newProject(bool ask=true);
     void loadProject();
     void saveProjectAs();
-    void saveProject();
+    void saveProject(const QString &filename="");
     void newMBS(bool ask=true);
-    void loadMBS();
-    void saveMBSAs();
-    void saveMBS();
+//    void loadMBS();
+//    void saveMBSAs();
+//    void saveMBS();
     void selectIntegrator();
     void selectDOPRI5Integrator();
     void selectRADAU5Integrator();
@@ -124,13 +125,13 @@ class MainWindow : public QMainWindow {
     void selectTimeSteppingIntegrator();
     void selectEulerExplicitIntegrator();
     void selectRKSuiteIntegrator();
-    void loadIntegrator();
-    void saveIntegratorAs();
-    void saveIntegrator();
+//    void loadIntegrator();
+//    void saveIntegratorAs();
+//    void saveIntegrator();
     void newParameterList(bool ask=true);
-    void loadParameterList();
-    void saveParameterListAs();
-    void saveParameterList(const QString &filename="");
+//    void loadParameterList();
+//    void saveParameterListAs();
+//    void saveParameterList(const QString &filename="");
     void saveDataAs();
     void saveMBSimH5DataAs();
     void saveMBSimH5Data(const QString &file);
@@ -160,9 +161,6 @@ class MainWindow : public QMainWindow {
     void timeout();
     void timeout2();
     void openRecentProjectFile();
-    void openRecentMBSFile();
-    void openRecentParameterFile();
-    void openRecentIntegratorFile();
   protected:
     void closeEvent ( QCloseEvent * event );
 
