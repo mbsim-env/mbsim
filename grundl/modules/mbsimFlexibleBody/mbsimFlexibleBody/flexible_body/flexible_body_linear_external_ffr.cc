@@ -52,6 +52,28 @@ namespace MBSimFlexibleBody {
       // setNumberof qSize uSize[2]
       uSize[0] = qSize;
       uSize[1] = qSize; // TODO
+
+      // only the modes can be used that are available
+      if(nf > phiFull.cols()) {
+        nf = phiFull.cols();
+        cout << "WARNING: only able to use nf=" << nf << " modes" << endl;
+      }
+
+      phi.resize(3 * nNodes, nf, NONINIT);
+      for(int col =0; col < nf; col++) {
+        phi.col(col) = phiFull.col(col);
+      }
+
+      K.resize(6 + nf, INIT, 0);
+
+      SymMat Kff(phi.T() * KFull * phi);
+
+      for (int i = 6; i < 6 + nf; i++)
+        for (int j = i; j < 6 + nf; j++)
+          K(i, j) = Kff(i - 6, j - 6);
+
+      fistIterFlag = true;
+
     }
     else if (stage == MBSim::plot) {
       updatePlotFeatures();
@@ -66,7 +88,7 @@ namespace MBSimFlexibleBody {
       // create Elements and store them into discretization vector
       // the node index in abaqus strats from 1, but here starts from 0.
       for (int j = 0; j < nNodes; j++) {
-        discretization.push_back(new FiniteElementLinearExternalLumpedNode(mij[j], u0[j], phi(Index(3 * j, 3 * j + 2), Index(0, nf - 1))));
+        discretization.push_back(new FiniteElementLinearExternalLumpedNode(mij(j), u0[j], phi(Index(3 * j, 3 * j + 2), Index(0, nf - 1))));
       }
 
       // compute the inertia shape integrals
@@ -94,21 +116,17 @@ namespace MBSimFlexibleBody {
     uSize[j] = 6 + nf;
   }
 
-  void FlexibleBodyLinearExternalFFR::readFEMData(string inFilePath, const bool millimeterUnits) {
-    // read mij
+  void FlexibleBodyLinearExternalFFR::readFEMData(string inFilePath, const bool millimeterUnits, bool output) {
+
+    cout << "Reading FEM-Data" << endl;
+
+    // if SI-milimeter units instead of SI units are used the can be converted to SI-meter (SI-standard) units
+    // please refer to the Abaqus-manual for more information
     double power = 1;
     if (millimeterUnits)
       power = 1000;
 
-    ifstream mijInfile((inFilePath + "/mij.dat").c_str());
-    if (!mijInfile.is_open()) {
-      cout << "Can not open file " << inFilePath << "mij.dat" << endl;
-      throw 1;
-    }
-    for (double a; mijInfile >> a;)
-      mij.push_back(a * power);
-    
-    // read u0
+    /* read u0 */
     ifstream u0Infile((inFilePath + "/u0.dat").c_str());
     if (!u0Infile.is_open()) {
       cout << "Can not open file " << inFilePath << "u0.dat" << endl;
@@ -123,9 +141,33 @@ namespace MBSimFlexibleBody {
       }
       u0.push_back(u0Line / power);
     }
-    
+
     // get the number of lumped nodes(nj) = number of numOfElements in the model
     nNodes = u0.size();
+    cout << "The number of nodes is " << nNodes << endl;
+
+    if (output) {
+      cout << "... with the following initial positions" << endl;
+      for (int i = 0; i < nNodes; i++) {
+        cout << i << ". " << u0[i] << endl;
+      }
+    }
+
+    mij.resize(nNodes + 1, NONINIT);
+
+    /* read mij */
+    ifstream mijInfile((inFilePath + "/mij.dat").c_str());
+    if (!mijInfile.is_open()) {
+      cout << "Can not open file " << inFilePath << "mij.dat" << endl;
+      throw 1;
+    }
+    int i = 0;
+    for (double a; mijInfile >> a; i++)
+      mij(i) = a * power;
+    
+    if (output) {
+      cout << "The lumped masses are: " << mij << endl;
+    }
     
     // get the number of mode shapes(nf) used to describe the deformation
     ifstream phiInfile((inFilePath + "/modeShapeMatrix.dat").c_str());
@@ -139,11 +181,11 @@ namespace MBSimFlexibleBody {
     istringstream sin1(s1);
     for (double temp; sin1 >> temp;)
       phiLine.push_back(temp);
-    nf = phiLine.size();
+    int nfFull = phiLine.size();
     phiInfile.close();
     
     // read mode shape matrix
-    phi.resize(3 * nNodes, nf, INIT, 0.0);
+    phiFull.resize(3 * nNodes, nfFull, INIT, 0.0);
     phiInfile.open((inFilePath + "/modeShapeMatrix.dat").c_str());
     if (!phiInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
@@ -154,11 +196,11 @@ namespace MBSimFlexibleBody {
       istringstream sin(s);  // TODO: use sin.clear() to avoid creating sin every time
       int i = 0;
       for (double temp; sin >> temp; i++)
-        phi(row, i) = temp;
+        phiFull(row, i) = temp;
     }
 
     // read stiffness matrix
-    SymMat KFull(3 * nNodes, INIT, 0.0);
+    KFull.resize(3 * nNodes, INIT, 0.0);
     ifstream KInfile((inFilePath + "/stiffnessMatrix.dat").c_str());
     if (!KInfile.is_open()) {
       cout << "Can not open file " << inFilePath << "stiffnessMatrix.dat" << endl;
@@ -173,33 +215,22 @@ namespace MBSimFlexibleBody {
       KFull(3 * KLine[0] + KLine[1] - 4, 3 * KLine[2] + KLine[3] - 4) = KLine[4] * power;
     }
     
-    K.resize(6 + nf, INIT, 0);
-
-    SymMat Kff(phi.T() * KFull * phi);
-
-    for (int i = 6; i < 6 + nf; i++)
-      for (int j = i; j < 6 + nf; j++)
-        K(i, j) = Kff(i - 6, j - 6);
-
-    fistIterFlag = true;
-
     if (DEBUG) {
 
       cout.precision(6);
       cout << "numOfElements = " << nNodes << endl;
-      cout << "nf = " << nf << endl;
+      cout << "nf = " << nfFull << endl;
       
       cout << "phi" << phi << endl;
 //      phi >> "phi.out";
 
 //      cout << "KFull" << KFull << endl;
-      cout << "Kff" << Kff << endl;
-      cout << "K" << K << endl;
+      cout << "K" << KFull << endl;
 
-      cout << "mij 0: " << mij[0] << endl;
-      cout << "mij 1: " << mij[1] << endl;
-      cout << "mij 2: " << mij[2] << endl;
-      cout << "mij last one" << mij[nNodes - 1] << endl;
+      cout << "mij 0: " << mij(0) << endl;
+      cout << "mij 1: " << mij(1) << endl;
+      cout << "mij 2: " << mij(2) << endl;
+      cout << "mij last one" << mij(nNodes - 1) << endl;
 
       cout << "u0[0] = " << u0.at(0) << endl;
       cout << "u0[1] = " << u0.at(1) << endl;
@@ -209,26 +240,27 @@ namespace MBSimFlexibleBody {
       cout << "u0[" << nNodes - 1 << "] = " << u0.back() << endl;
       cout << "u0.at(1)(2)" << u0.at(1)(2) << endl;
 
-      cout << "phi node0,1 = " << phi(Index(0, 0), Index(0, nf - 1)) << endl;
-      cout << "phi node0,2 = " << phi(Index(1, 1), Index(0, nf - 1)) << endl;
-      cout << "phi node0,3 = " << phi(Index(2, 2), Index(0, nf - 1)) << endl;
-      cout << "phi node" << nNodes << ",1 = " << phi(Index(3 * nNodes - 3, 3 * nNodes - 3), Index(0, nf - 1)) << endl;
-      cout << "phi node" << nNodes << ",2 = " << phi(Index(3 * nNodes - 2, 3 * nNodes - 2), Index(0, nf - 1)) << endl;
-      cout << "phi node" << nNodes << ",3 = " << phi(Index(3 * nNodes - 1, 3 * nNodes - 1), Index(0, nf - 1)) << endl;
+      cout << "phi node0,1 = " << phiFull(Index(0, 0), Index(0, nfFull - 1)) << endl;
+      cout << "phi node0,2 = " << phiFull(Index(1, 1), Index(0, nfFull - 1)) << endl;
+      cout << "phi node0,3 = " << phiFull(Index(2, 2), Index(0, nfFull - 1)) << endl;
+      cout << "phi node" << nNodes << ",1 = " << phiFull(Index(3 * nNodes - 3, 3 * nNodes - 3), Index(0, nfFull - 1)) << endl;
+      cout << "phi node" << nNodes << ",2 = " << phiFull(Index(3 * nNodes - 2, 3 * nNodes - 2), Index(0, nfFull - 1)) << endl;
+      cout << "phi node" << nNodes << ",3 = " << phiFull(Index(3 * nNodes - 1, 3 * nNodes - 1), Index(0, nfFull - 1)) << endl;
     }
 
   }
   
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void FlexibleBodyLinearExternalFFR::enableFramePlot(double size, std::vector<int> numbers) {
+  void FlexibleBodyLinearExternalFFR::enableFramePlot(double size, VecInt numbers) {
     if (numbers.size() == 0) { //take all nodes
+      numbers.resize(nNodes, NONINIT);
       for (int i = 1; i <= nNodes; i++) {
-        numbers.push_back(i);
+        numbers(i - 1) = i;
       }
     }
 
-    for (size_t i = 0; i < numbers.size(); i++) {
-      int nodeNumber = numbers[i];
+    for (int i = 0; i < numbers.size(); i++) {
+      int nodeNumber = numbers(i);
       NodeFrame * refFrame = new NodeFrame("RefFrame" + numtostr(nodeNumber), nodeNumber);
       addFrame(refFrame);
       refFrame->enableOpenMBV(size);

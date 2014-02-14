@@ -101,6 +101,10 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER AND SETTER */
+      void setNumberOfModes(int nf_) {
+        nf = nf_;
+      }
+
       int getNumberModes() const {
         return nf;
       }
@@ -122,10 +126,10 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief  read u0, mij, mode shape matrix and stiffness matrix form the input file
        */
-      void readFEMData(std::string inFilePath, const bool millimeterUnits);
+      void readFEMData(std::string inFilePath, const bool millimeterUnits, bool output = false);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableFramePlot(double size = 1e-3, std::vector<int> numbers = std::vector<int>(0));
+      void enableFramePlot(double size = 1e-3, fmatvec::VecInt numbers = fmatvec::VecInt(0));
 #endif
 
     protected:
@@ -203,10 +207,16 @@ namespace MBSimFlexibleBody {
        * \brief I_ThetaF 3*nf
        */
       fmatvec::Mat I_ThetaF_bar;
+
       /**
        * \brief stiffness matrix
        */
       fmatvec::SymMat K;
+
+      /**
+       * \brief full stiffness matrix
+       */
+      fmatvec::SymMat KFull;
 
       /**
        * \brief transformation matrix of the time derivates of the angles into tho angular velocity in reference coordinates
@@ -236,10 +246,15 @@ namespace MBSimFlexibleBody {
       /**
        * \brief lumped mass for each node
        */
-      std::vector<double> mij;
+      fmatvec::Vec mij;
 
       /**
-       * \brief lumped mass for each node
+       * \brief matrix of all modes
+       */
+      fmatvec::Mat phiFull;
+
+      /**
+       * \brief matrix of modes used
        */
       fmatvec::Mat phi;
 

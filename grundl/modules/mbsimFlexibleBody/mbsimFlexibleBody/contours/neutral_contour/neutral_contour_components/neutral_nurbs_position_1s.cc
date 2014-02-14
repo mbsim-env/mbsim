@@ -11,8 +11,8 @@
 namespace MBSimFlexibleBody {
 //  class FlexibleBodyContinuum<double>;
 
-  NeutralNurbsPosition1s::NeutralNurbsPosition1s(Element* parent_, std::vector<ContourPointData>& ContourPoints_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
-    NeutralNurbs1s(parent_, ContourPoints_, nodeOffset_, uMin_, uMax_, degU_, openStructure_){
+  NeutralNurbsPosition1s::NeutralNurbsPosition1s(Element* parent_, const VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
+    NeutralNurbs1s(parent_, nodes, nodeOffset_, uMin_, uMax_, degU_, openStructure_){
     // TODO Auto-generated constructor stub
     
   }
@@ -50,9 +50,11 @@ namespace MBSimFlexibleBody {
 
 
   void NeutralNurbsPosition1s::buildNodelist(){
-    for (int i = 0; i < numOfNodes; i++) {
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsForFrame(contourPoints.at(i), position);
-      Nodelist.set(i, trans(contourPoints.at(i).getFrameOfReference().getPosition()));
+    NodeFrame frame;
+    for (int i = 0; i < nodes.size(); i++) {
+      frame.setNodeNumber(nodes(i));
+      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame,  position);
+      Nodelist.set(i, trans(frame.getPosition()));
     }
 //    cout << "neutralPosition"<< Nodelist << endl << endl;
   }

@@ -12,8 +12,8 @@
 namespace MBSimFlexibleBody {
 
 
-  NeutralNurbs1s::NeutralNurbs1s(Element* parent_, std::vector<ContourPointData>& ContourPoints_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
-      curve(), parent(parent_), contourPoints(ContourPoints_), nodeOffset(nodeOffset_), numOfNodes(ContourPoints_.size()), Nodelist(ContourPoints_.size(), NONINIT), uMin(uMin_), uMax(uMax_), degU(degU_), openStructure(openStructure_){
+  NeutralNurbs1s::NeutralNurbs1s(Element* parent_, const VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
+      curve(), parent(parent_), nodes(nodes), nodeOffset(nodeOffset_), Nodelist(nodes.size(), NONINIT), uMin(uMin_), uMax(uMax_), degU(degU_), openStructure(openStructure_){
 
   }
 

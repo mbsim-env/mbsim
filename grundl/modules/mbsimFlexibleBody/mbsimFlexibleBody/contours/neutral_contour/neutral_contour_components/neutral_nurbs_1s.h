@@ -19,7 +19,7 @@ namespace MBSimFlexibleBody {
   
   class NeutralNurbs1s {
     public:
-      NeutralNurbs1s(Element* parent_, std::vector<ContourPointData>& ContourPoints_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
+      NeutralNurbs1s(Element* parent_, const fmatvec::VecInt &nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbs1s();
       virtual void computeCurve(bool update = false);
       virtual void update(ContourPointData &cp) = 0;
@@ -30,9 +30,8 @@ namespace MBSimFlexibleBody {
       virtual void buildNodelist() = 0;
       MBSim::NurbsCurve curve;
       Element *parent;
-      std::vector<ContourPointData>& contourPoints;
+      fmatvec::VecInt nodes;
       double nodeOffset;
-      int numOfNodes;
       MatVx3 Nodelist;
       double uMin;
       double uMax;

@@ -12,8 +12,8 @@
 
 namespace MBSimFlexibleBody {
   
-  Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_, FlexibleBody1sCosserat* parent_, std::vector<int> transNodes_, std::vector<int> rotNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
-      Contour1sNeutralFactory(name_), transNodes(transNodes_), rotNodes(rotNodes_), nodeOffset(nodeOffset_), numOfTransNodes(transNodes_.size()), numOfRotNodes(rotNodes_.size()), uMin(uMin_), uMax(uMax_), degU(degU_), openStructure(openStructure_), ANGLE(new Cardan()), NP(NULL), NV(NULL), NA(NULL), NDA(NULL) {
+  Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_, FlexibleBody1sCosserat* parent_, const VecInt & transNodes_, const VecInt & rotNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
+      Contour1sNeutralFactory(name_, uMin_, uMax_, openStructure_), transNodes(transNodes_), rotNodes(rotNodes_), nodeOffset(nodeOffset_), numOfTransNodes(transNodes_.size()), numOfRotNodes(rotNodes_.size()), degU(degU_), ANGLE(new Cardan()), NP(NULL), NV(NULL), NA(NULL), NDA(NULL) {
 
     parent_->addContour(this);
   }
@@ -31,19 +31,19 @@ namespace MBSimFlexibleBody {
   }
 
   NeutralNurbsPosition1s* Contour1sNeutralCosserat::createNeutralPosition() {
-    return new NeutralNurbsPosition1s(parent, transContourPoints, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsPosition1s(parent, transNodes, nodeOffset, uMin, uMax, degU, openStructure);
   }
 
   NeutralNurbsVelocity1s* Contour1sNeutralCosserat::createNeutralVelocity() {
-    return new NeutralNurbsVelocity1s(parent, transContourPoints, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsVelocity1s(parent, transNodes, nodeOffset, uMin, uMax, degU, openStructure);
   }
 
   NeutralNurbsAngle1s* Contour1sNeutralCosserat::createNeutralAngle() {
-    return new NeutralNurbsAngle1s(parent, rotContourPoints, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsAngle1s(parent, rotNodes, nodeOffset, uMin, uMax, degU, openStructure);
   }
 
   NeutralNurbsDotangle1s* Contour1sNeutralCosserat::createNeutralDotangle() {
-    return new NeutralNurbsDotangle1s(parent, rotContourPoints, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsDotangle1s(parent, rotNodes, nodeOffset, uMin, uMax, degU, openStructure);
   }
 
   void Contour1sNeutralCosserat::init(MBSim::InitStage stage) {
@@ -58,16 +58,16 @@ namespace MBSimFlexibleBody {
 
     }
     else if (stage == worldFrameContourLocation) {
-        R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
-        R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
+      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
+      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
     }
     else if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
       for (int i = 0; i < numOfTransNodes; i++)
-        transContourPoints.push_back(ContourPointData(transNodes.at(i)));
+        transContourPoints.push_back(ContourPointData(transNodes(i)));
 
       //construct contourPoint for rotational nodes
       for (int i = 0; i < numOfRotNodes; i++)
-        rotContourPoints.push_back(ContourPointData(rotNodes.at(i), STAGGEREDNODE));
+        rotContourPoints.push_back(ContourPointData(rotNodes(i), STAGGEREDNODE));
 
       NP = createNeutralPosition();
       NV = createNeutralVelocity();
@@ -85,7 +85,7 @@ namespace MBSimFlexibleBody {
       nodes.push_back(uMax);
     }
 
-    Contour::init(stage);
+    Contour1sNeutralFactory::init(stage);
   }
 
   void Contour1sNeutralCosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) {

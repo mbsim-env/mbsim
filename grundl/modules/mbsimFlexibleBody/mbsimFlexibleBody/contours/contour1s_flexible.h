@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
        * \param name of contour
        */
       Contour1sFlexible(const std::string &name) :
-          Contour1s(name) {
+          Contour1s(name), neutral(0) {
       }
 
       /* INHERITED INTERFACE OF ELEMENT */

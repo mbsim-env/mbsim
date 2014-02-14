@@ -20,7 +20,7 @@ namespace MBSimFlexibleBody {
   
   class Contour1sNeutralCosserat : public MBSimFlexibleBody::Contour1sNeutralFactory {
     public:
-      Contour1sNeutralCosserat(const std::string &name_, FlexibleBody1sCosserat* parent_, std::vector<int> transNodes_, std::vector<int> rotNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
+      Contour1sNeutralCosserat(const std::string &name_, FlexibleBody1sCosserat* parent_, const fmatvec::VecInt & transNodes_, const fmatvec::VecInt & rotNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~Contour1sNeutralCosserat();
 //      virtual std::string getType() const {
 //        return "Contour1sNeutralCosserat";
@@ -44,17 +44,14 @@ namespace MBSimFlexibleBody {
       }
       
     protected:
-      std::vector<int> transNodes;  // TODO: can this be type of reference, No! as a contour, it should contains the nodes.
-      std::vector<int> rotNodes;
+      fmatvec::VecInt transNodes;  // TODO: can this be type of reference, No! as a contour, it should contains the nodes.
+      fmatvec::VecInt rotNodes;
       double nodeOffset;
       std::vector<ContourPointData> transContourPoints;
       std::vector<ContourPointData> rotContourPoints;
       int numOfTransNodes;
       int numOfRotNodes;
-      double uMin;
-      double uMax;
       int degU;
-      bool openStructure;
 
       CardanPtr ANGLE;
       NeutralNurbsPosition1s* NP;
