@@ -100,7 +100,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     {
       OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
       cuboid->setNumberOfSpinePoints(elements * 4 + 1); // resolution of visualisation
-      cuboid->setDiffuseColor(0.5, 0.5, 0); // color in (minimalColorValue, maximalColorValue)
+      cuboid->setDiffuseColor(244./360., 1, 200./255.); // color in (minimalColorValue, maximalColorValue)
       cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
       vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
       OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
@@ -182,7 +182,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
     cuboid->setNumberOfSpinePoints(elements * 4 + 1); // resolution of visualisation
-    cuboid->setDiffuseColor(0.7, 0, 0); // color in (minimalColorValue, maximalColorValue)
+    cuboid->setDiffuseColor(56./360., 132./255., 166./255.); // color in (minimalColorValue, maximalColorValue)
     cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
     vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
     OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
