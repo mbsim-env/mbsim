@@ -89,7 +89,7 @@ DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
   if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
     writeXMLFile(ele);
   else 
-    writeXMLFile(absolutePath?(mw->getUniqueTempDir().toStdString()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
+    writeXMLFile(absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
   return ele;
 }
 
