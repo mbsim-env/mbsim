@@ -21,6 +21,9 @@
 #ifndef _BOOST_PARAMETERS_H_
 #define _BOOST_PARAMETERS_H_
 
+// set the maximal number or arguments (only boost libs use only 5 newer use already 8)
+#define BOOST_PARAMETER_MAX_ARITY 8
+
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/keyword.hpp>
 #include <boost/parameter/preprocessor.hpp>
