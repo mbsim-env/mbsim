@@ -353,9 +353,9 @@ namespace MBSimFlexibleBody {
 
       initM();
     }
-    else if(stage==MBSim::plot) {
+    else if (stage == MBSim::plot) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+      ((OpenMBV::SpineExtrusion*) openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
       FlexibleBodyContinuum<double>::init(stage);
     }

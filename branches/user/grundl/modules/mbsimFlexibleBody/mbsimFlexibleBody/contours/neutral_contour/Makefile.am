@@ -1,7 +1,8 @@
 SUBDIRS = neutral_contour_components .
 
 noinst_LTLIBRARIES = libneutralcontour.la
-libneutralcontour_la_SOURCES = contour_1s_neutral_cosserat.cc\
+libneutralcontour_la_SOURCES = contour_1s_neutral_factory.cc\
+                               contour_1s_neutral_cosserat.cc\
 							   contour_1s_neutral_linear_external_FFR.cc\
 							   contour_2s_neutral_linear_external_FFR.cc	
 

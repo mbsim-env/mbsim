@@ -14,7 +14,7 @@ namespace MBSimFlexibleBody {
   
   class NeutralNurbsVelocity1s : public MBSimFlexibleBody::NeutralNurbs1s {
     public:
-      NeutralNurbsVelocity1s(Element* parent_, std::vector<ContourPointData>& ContourPoints_, double nodeOffset, double uMin_, double uMax_, int degU_, bool openStructure_);
+      NeutralNurbsVelocity1s(Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsVelocity1s();
       virtual void update(ContourPointData &cp) ;
     protected:

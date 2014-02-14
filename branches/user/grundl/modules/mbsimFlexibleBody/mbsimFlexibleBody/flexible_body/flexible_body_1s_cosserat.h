@@ -23,7 +23,6 @@
 
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 
-
 namespace MBSimFlexibleBody {
 
   /**
@@ -41,7 +40,7 @@ namespace MBSimFlexibleBody {
    *    geometrically exact beams
    */
   class Contour1sNeutralCosserat;
-  class FlexibleBody1sCosserat: public FlexibleBodyContinuum<double>{
+  class FlexibleBody1sCosserat : public FlexibleBodyContinuum<double> {
     public:
 
       /**
@@ -61,53 +60,78 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat)=0;
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0)=0;
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0)=0;
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ), const int & deg = 3, const bool & writePsFile = false)=0;
-      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ))=0;
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0)=0;
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0)=0;
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false)=0;
+      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string())=0;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(MBSim::InitStage stage)=0;
       virtual double computePotentialEnergy()=0;
-      virtual void facLLM(int i=0)=0;
+      virtual void facLLM(int i = 0)=0;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int i=0);
+      virtual void updateh(double t, int i = 0);
       virtual void updateStateDependentVariables(double t);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1)=0;
-      virtual std::string getType() const { return "FlexibleBody1sCosserat"; }
+      virtual void plot(double t, double dt = 1)=0;
+      virtual std::string getType() const {
+        return "FlexibleBody1sCosserat";
+      }
       /***************************************************/
 
       /* GETTER / SETTER */
       virtual void setNumberElements(int n)=0;
       void setLength(double L_);
-      void setEGModuls(double E_,double G_);
+      void setEGModuls(double E_, double G_);
       void setDensity(double rho_);
       void setCrossSectionalArea(double A_);
 
-      virtual void setMomentsInertia(double I1_,double I2_,double I0_){};
-      virtual void setMomentsInertia(double I1_){};
+      virtual void setMomentsInertia(double I1_, double I2_, double I0_) {
+      }
+      ;
+      virtual void setMomentsInertia(double I1_) {
+      }
+      ;
 
-      virtual void setCurlRadius(double R1_,double R2_){};
-      virtual void setCurlRadius(double R1_){};
-      virtual void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_){};
-      virtual void setMaterialDamping(double cEps0D_,double cEps1D_){};
+      virtual void setCurlRadius(double R1_, double R2_) {
+      }
+      ;
+      virtual void setCurlRadius(double R1_) {
+      }
+      ;
+      virtual void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
+      }
+      ;
+      virtual void setMaterialDamping(double cEps0D_, double cEps1D_) {
+      }
+      ;
 
       void setCylinder(double cylinderRadius_);
-      void setCuboid(double cuboidBreadth_,double cuboidHeight_);
+      void setCuboid(double cuboidBreadth_, double cuboidHeight_);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body, Contour1sNeutralCosserat * openMBVneutralFibre_) { openMBVBody=body; openMBVNeturalFibre = openMBVneutralFibre_;}
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body, Contour1sNeutralCosserat * openMBVneutralFibre_) {
+        openMBVBody = body;
+        openMBVNeturalFibre = openMBVneutralFibre_;
+      }
 #endif
 
-      virtual int getNumberOfElementDOF() const {throw MBSim::MBSimError("ERROR(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");}
-      virtual int getNumberElements() const { return Elements; }
-      virtual double getLength() const { return L; }
-      virtual bool isOpenStructure() const { return openStructure; }
+      virtual int getNumberOfElementDOF() const {
+        throw MBSim::MBSimError("ERROR(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");
+      }
+      virtual int getNumberElements() const {
+        return Elements;
+      }
+      virtual double getLength() const {
+        return L;
+      }
+      virtual bool isOpenStructure() const {
+        return openStructure;
+      }
       /***************************************************/
 
       /**
@@ -263,13 +287,27 @@ namespace MBSimFlexibleBody {
        */
       virtual void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
   };
-  inline void FlexibleBody1sCosserat::setLength(double L_) { L = L_; }
-  inline void FlexibleBody1sCosserat::setEGModuls(double E_,double G_) { E = E_; G = G_; }
-  inline void FlexibleBody1sCosserat::setDensity(double rho_) { rho = rho_;}
-  inline void FlexibleBody1sCosserat::setCrossSectionalArea(double A_) { A = A_; }
+  inline void FlexibleBody1sCosserat::setLength(double L_) {
+    L = L_;
+  }
+  inline void FlexibleBody1sCosserat::setEGModuls(double E_, double G_) {
+    E = E_;
+    G = G_;
+  }
+  inline void FlexibleBody1sCosserat::setDensity(double rho_) {
+    rho = rho_;
+  }
+  inline void FlexibleBody1sCosserat::setCrossSectionalArea(double A_) {
+    A = A_;
+  }
 
-  inline void FlexibleBody1sCosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius_; }
-  inline void FlexibleBody1sCosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
+  inline void FlexibleBody1sCosserat::setCylinder(double cylinderRadius_) {
+    cylinderRadius = cylinderRadius_;
+  }
+  inline void FlexibleBody1sCosserat::setCuboid(double cuboidBreadth_, double cuboidHeight_) {
+    cuboidBreadth = cuboidBreadth_;
+    cuboidHeight = cuboidHeight_;
+  }
 }
 
 #endif /* FLEXIBLE_BODY_1S_COSSERAT_H_ */

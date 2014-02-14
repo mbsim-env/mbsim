@@ -11,8 +11,8 @@
 namespace MBSimFlexibleBody {
 //  class FlexibleBodyContinuum<double>;
 
-  NeutralNurbsDotangle1s::NeutralNurbsDotangle1s(Element* parent_, std::vector<ContourPointData>& rotContourPoints_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
-    NeutralNurbs1s(parent_, rotContourPoints_, nodeOffset_, uMin_, uMax_, degU_, openStructure_){
+  NeutralNurbsDotangle1s::NeutralNurbsDotangle1s(Element* parent_, const VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
+      NeutralNurbs1s(parent_, nodes, nodeOffset_, uMin_, uMax_, degU_, openStructure_) {
     // TODO Auto-generated constructor stub
 
   }
@@ -21,34 +21,36 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  void NeutralNurbsDotangle1s::update(ContourPointData &cp){
+  void NeutralNurbsDotangle1s::update(ContourPointData &cp) {
     double uStaggered;
     double oringnalPosition = cp.getLagrangeParameterPosition()(0);
 
     if (oringnalPosition < nodeOffset)  // on the first half transElement
-     uStaggered = uMax + oringnalPosition - nodeOffset;
+      uStaggered = uMax + oringnalPosition - nodeOffset;
     else
-     uStaggered = oringnalPosition - nodeOffset;
+      uStaggered = oringnalPosition - nodeOffset;
 
     Vec3 Tmpv = curve.pointAt(uStaggered);
     cp.getFrameOfReference().setDotAnglesOfOrientation(Tmpv);
   }
 
-  void NeutralNurbsDotangle1s::buildNodelist(){
-    for (int i = 0; i < numOfNodes; i++) {
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsForFrame(contourPoints.at(i), dotAngle);
-      Nodelist.set(i, trans(contourPoints.at(i).getFrameOfReference().getDotAnglesOfOrientation()));
+  void NeutralNurbsDotangle1s::buildNodelist() {
+    NodeFrame frame;
+    for (int i = 0; i < nodes.size(); i++) {
+      frame.setNodeNumber(nodes(i));
+      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, dotAngle);
+      Nodelist.set(i, trans(frame.getDotAnglesOfOrientation()));
     }
-    cout << "neutralDotAngle"<< Nodelist << endl << endl;
+    cout << "neutralDotAngle" << Nodelist << endl << endl;
   }
 
-  void NeutralNurbsDotangle1s::computeCurve(bool update){
+  void NeutralNurbsDotangle1s::computeCurve(bool update) {
     buildNodelist();
 
     if (update)
       curve.update(Nodelist);
     else {
-        curve.globalInterp(Nodelist, uMin, uMax, degU, true);
+      curve.globalInterp(Nodelist, uMin, uMax, degU, true);
     }
     cout << "Neutral nurbs dotAngle 1s curve: " << endl;
 //    stringstream x;
@@ -56,7 +58,7 @@ namespace MBSimFlexibleBody {
     stringstream z;
     z << "zdA = [";
     for (int i = 0; i < 100; i++) {
-      double u = (uMax-uMin)/100 * i;
+      double u = (uMax - uMin) / 100 * i;
 //      x << curve.pointAt(u)(0) << ", ";
       z << curve.pointAt(u)(2) << ", ";
     }

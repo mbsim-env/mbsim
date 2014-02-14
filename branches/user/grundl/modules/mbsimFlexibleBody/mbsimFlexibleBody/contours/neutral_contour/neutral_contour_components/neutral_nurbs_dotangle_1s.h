@@ -14,7 +14,7 @@ namespace MBSimFlexibleBody {
   
   class NeutralNurbsDotangle1s : public MBSimFlexibleBody::NeutralNurbs1s {
     public:
-      NeutralNurbsDotangle1s(Element* parent_, std::vector<ContourPointData>& rotContourPoints_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
+      NeutralNurbsDotangle1s(Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsDotangle1s();
       virtual void update(ContourPointData &cp) ;
       virtual void computeCurve(bool update);

@@ -19,6 +19,8 @@ namespace MBSimFlexibleBody {
   
   class Contour1sNeutralLinearExternalFFR : public MBSimFlexibleBody::Contour1sNeutralFactory {
     public:
+      Contour1sNeutralLinearExternalFFR(const std::string &name_);
+
       Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~Contour1sNeutralLinearExternalFFR();
       virtual void init(MBSim::InitStage stage);
@@ -26,9 +28,20 @@ namespace MBSimFlexibleBody {
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsLocalPosition1s* createNeutralLocalPosition();
       virtual void createNeutralModeShape();
+
+      /*!
+       * \brief read the node numbers from a file
+       */
+      void readTransNodes(std::string file);
+
+
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual void updateStateDependentVariables(double t);
+
+      /* GETTER / SETTER*/
+      fmatvec::VecInt getTransNodes();
+
     protected:
 
       /*!
@@ -36,14 +49,10 @@ namespace MBSimFlexibleBody {
        *
        * REMARK: MBSim starts indexing with 0. If external programs (e.g. abaqus) start indexing with 1 the user has to substract one for each node-index
        */
-      std::vector<int> transNodes;
+      fmatvec::VecInt transNodes;
       double nodeOffset;
       std::vector<ContourPointData> transContourPoints;
-      int numOfTransNodes;
-      double uMin;
-      double uMax;
       int degU;
-      bool openStructure;
 
       NeutralNurbsPosition1s* NP;
       NeutralNurbsLocalPosition1s* NLP;

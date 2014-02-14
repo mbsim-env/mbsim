@@ -11,11 +11,11 @@
 
 namespace MBSimFlexibleBody {
 
-  NeutralNurbsAngle1s::NeutralNurbsAngle1s(Element* parent_, std::vector<ContourPointData>& ContourPoints_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
-    NeutralNurbs1s(parent_, ContourPoints_, nodeOffset_, uMin_, uMax_, degU_, openStructure_), ANGLE(new Cardan()){
+  NeutralNurbsAngle1s::NeutralNurbsAngle1s(Element* parent_, const VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
+    NeutralNurbs1s(parent_, nodes, nodeOffset_, uMin_, uMax_, degU_, openStructure_), ANGLE(new Cardan()){
     // TODO Auto-generated constructor stub
 //    Nodelist.resize(numOfNodes + degU + degU);  // add num of deg nodes in the beginning and the end of the angle curve
-    Nodelist.resize(numOfNodes + 1);
+    Nodelist.resize(nodes.size() + 1);
   }
   
   NeutralNurbsAngle1s::~NeutralNurbsAngle1s() {
@@ -57,10 +57,11 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsAngle1s::buildNodelist(){
-
-    for (int i = 0; i < numOfNodes; i++) {
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsForFrame(contourPoints.at(i), angle);
-      Nodelist.set(i, trans(contourPoints.at(i).getFrameOfReference().getAnglesOfOrientation()));
+    NodeFrame frame;
+    for (int i = 0; i < nodes.size(); i++) {
+      frame.setNodeNumber(nodes(i));
+      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, angle);
+      Nodelist.set(i, trans(frame.getAnglesOfOrientation()));
     }
 //    for (int i = 0; i < degU; i++){
 //      RowVec temp(3,INIT,0);
@@ -72,8 +73,8 @@ namespace MBSimFlexibleBody {
     // TODO: only for closed structure
     RowVec temp(3,INIT,0);
     temp(2) = 2 * M_PI;
-    temp = trans(contourPoints.at(0).getFrameOfReference().getAnglesOfOrientation()) -temp;
-    Nodelist.set(numOfNodes, temp);
+    temp = trans(frame.getAnglesOfOrientation()) -temp;
+    Nodelist.set(nodes.size(), temp);
 
 //    cout << "neutralAngle"<< Nodelist << endl << endl;
   }
