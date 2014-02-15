@@ -17,9 +17,24 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <iostream>
+#ifndef _FUNCTION_WIDGET_H_
+#define _FUNCTION_WIDGET_H_
 
-void initializeOctave();
+#include "widget.h"
 
-std::string evalOctaveExpression(const std::string &str);
+class FunctionWidget : public Widget {
+  Q_OBJECT
+  public:
+    FunctionWidget() {}
+    virtual ~FunctionWidget() {}
+    virtual int getArg1Size() const {return 0;}
+    virtual int getArg2Size() const {return 0;}
+    virtual void setArg1Size(int i) {}
+  protected:
+  public slots:
+    virtual void resize_(int m, int n) {}
+  signals:
+    void arg1SizeChanged(int);
+};
 
+#endif

@@ -37,9 +37,9 @@ class Link;
 class Observer;
 class TextWidget;
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class Element : public TreeItemData {
@@ -49,15 +49,16 @@ class Element : public TreeItemData {
     static int IDcounter;
     std::string ID;
     ExtProperty name, embed;
+    std::vector<Parameter*> parameter;
   public:
     Element(const std::string &name, Element *parent);
     virtual Element* clone() const {return 0;}
     virtual std::string getPath();
     std::string getXMLPath(Element *ref=0, bool rel=false);
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    virtual void initializeUsingXMLEmbed(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFileEmbed(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize() {}
@@ -65,7 +66,7 @@ class Element : public TreeItemData {
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual std::string getType() const { return "Element"; }
-    virtual std::string getNameSpace() const { return MBSIMNS; }
+    virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
     std::string getValue() const { return getType(); }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
@@ -102,6 +103,8 @@ class Element : public TreeItemData {
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
+    void addParameter(Parameter *param) { parameter.push_back(param); embed.setActive(true); }
+    Parameter *getParameter(int i) { return parameter[i]; }
 };
 
 template<class T>

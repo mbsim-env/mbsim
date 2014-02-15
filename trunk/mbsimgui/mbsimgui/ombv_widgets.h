@@ -25,10 +25,19 @@
 
 class ExtWidget;
 class QVBoxLayout;
-class QStackedWidget;
 class QListWidget;
 class QComboBox;
 class RigidBody;
+
+class OMBVBodyWidgetFactory : public WidgetFactory {
+  public:
+    OMBVBodyWidgetFactory();
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<QString> name;
+};
 
 class OMBVObjectWidget : public Widget {
 
@@ -149,20 +158,13 @@ class IvBodyWidget : public OMBVBodyWidget {
 class OMBVBodyChoiceWidget;
 
 class CompoundRigidBodyWidget : public OMBVBodyWidget {
-  Q_OBJECT
 
   friend class CompoundRigidBodyProperty;
 
   public:
     CompoundRigidBodyWidget(const QString &name="NOTSET");
   protected:
-    QStackedWidget *stackedWidget; 
-    QListWidget *bodyList; 
-  protected slots:
-    void changeCurrent(int idx);
-    void openContextMenu(const QPoint &pos);
-    void addBody();
-    void removeBody();
+    ExtWidget *bodies; 
 };
 
 class OMBVBodySelectionWidget : public Widget {

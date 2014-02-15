@@ -47,8 +47,8 @@ class Body : public Object {
 
     void initialize();
 
-    void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
     QMenu* createContextMenu() {return new BodyContextMenu(this);}
@@ -56,7 +56,8 @@ class Body : public Object {
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
     std::vector<Element*> removedElement;
-    ExtProperty R;
+    ExtProperty q0, u0, R;
+
 };
 
 #endif

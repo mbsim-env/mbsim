@@ -20,23 +20,28 @@
 #ifndef _PROPERTIES_H_
 #define _PROPERTIES_H_
 
-#define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
-#define MBSIMNS "{"MBSIMNS_"}"
-#define PARAMNS_ "http://openmbv.berlios.de/MBXMLUtils/parameter"
-#define PARAMNS "{"PARAMNS_"}"
-#define PVNS_ "http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-#define PVNS "{"PVNS_"}"
-#define OPENMBVNS_ "http://openmbv.berlios.de/OpenMBV"
-#define OPENMBVNS "{"OPENMBVNS_"}"
-#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
-#define MBSIMINTNS "{"MBSIMINTNS_"}"
-#define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
-#define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
+#include<string>
+#include <xercesc/util/XercesDefs.hpp>
+#include <mbxmlutilshelper/dom.h>
+
+extern MBXMLUtils::NamespaceURI MBSIM;
+extern MBXMLUtils::NamespaceURI PARAM;
+extern MBXMLUtils::NamespaceURI OPENMBV;
+extern MBXMLUtils::NamespaceURI MBSIMINT;
+extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
+extern MBXMLUtils::NamespaceURI MBSIMXML;
+
+namespace XERCES_CPP_NAMESPACE {
+  class DOMNode;
+  class DOMElement;
+}
+
+class QWidget;
 
 class PropertyInterface {
   public:
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) = 0;
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) = 0;
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) = 0;
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) = 0;
     virtual void fromWidget(QWidget *widget) = 0;
     virtual void toWidget(QWidget *widget) = 0;
     virtual void initialize() {}
@@ -49,6 +54,13 @@ class Property : public PropertyInterface {
     Property() {}
     virtual ~Property() {}
     virtual Property* clone() const {return 0;}
+};
+
+class PropertyFactory {
+  public:
+    virtual Property* createProperty(int i=0) = 0;
+    virtual MBXMLUtils::FQN getName(int i=0) const { return ""; }
+    virtual int getSize() const { return 0; }
 };
 
 #endif

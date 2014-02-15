@@ -23,10 +23,21 @@
 #include "extended_properties.h"
 #include "integrator_property_dialog.h"
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
+
+class TolerancePropertyFactory: public PropertyFactory {
+  public:
+    TolerancePropertyFactory(const std::string &type);
+    Property* createProperty(int i=0);
+    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<MBXMLUtils::FQN> name;
+    std::string type;
+};
 
 class Integrator {
   friend class IntegratorPropertyDialog;
@@ -35,8 +46,8 @@ class Integrator {
   public:
     Integrator();
     virtual ~Integrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     static Integrator* readXMLFile(const std::string &filename);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
@@ -48,8 +59,8 @@ class DOPRI5Integrator : public Integrator {
   friend class DOPRI5IntegratorPropertyDialog;
   public:
     DOPRI5Integrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "DOPRI5Integrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
   protected:
@@ -60,8 +71,8 @@ class RADAU5Integrator : public Integrator {
   friend class RADAU5IntegratorPropertyDialog;
   public:
     RADAU5Integrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "RADAU5Integrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
   protected:
@@ -72,8 +83,8 @@ class LSODEIntegrator : public Integrator {
   friend class LSODEIntegratorPropertyDialog;
   public:
     LSODEIntegrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "LSODEIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
   protected:
@@ -84,8 +95,8 @@ class LSODARIntegrator : public Integrator {
   friend class LSODARIntegratorPropertyDialog;
   public:
     LSODARIntegrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "LSODARIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
   protected:
@@ -96,8 +107,8 @@ class TimeSteppingIntegrator : public Integrator {
   friend class TimeSteppingIntegratorPropertyDialog;
   public:
     TimeSteppingIntegrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "TimeSteppingIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
   protected:
@@ -108,8 +119,8 @@ class EulerExplicitIntegrator : public Integrator {
   friend class EulerExplicitIntegratorPropertyDialog;
   public:
     EulerExplicitIntegrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "EulerExplicitIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
   protected:
@@ -120,8 +131,8 @@ class RKSuiteIntegrator : public Integrator {
   friend class RKSuiteIntegratorPropertyDialog;
   public:
     RKSuiteIntegrator();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "RKSuiteIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
   protected:

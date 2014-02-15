@@ -125,8 +125,9 @@ class ConstraintContextContextMenu : public QMenu {
 
   protected slots:
     void addGearConstraint();
-    void addTimeDependentKinematicConstraint();
-    void addStateDependentKinematicConstraint();
+    void addGeneralizedPositionConstraint();
+    void addGeneralizedVelocityConstraint();
+    void addGeneralizedAccelerationConstraint();
     void addJointConstraint();
 
   protected:
@@ -141,11 +142,14 @@ class LinkContextContextMenu : public QMenu {
 
   protected slots:
     void addSpringDamper();
+    void addDirectionalSpringDamper();
+    void addGeneralizedSpringDamper();
     void addKineticExcitation();
     void addJoint();
     void addContact();
     void addActuator();
     void addSignal();
+    void addLinearTransferSystem();
 
   protected:
     Element *element;

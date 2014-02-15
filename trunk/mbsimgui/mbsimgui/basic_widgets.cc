@@ -94,6 +94,7 @@ LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Fram
   layout->addWidget(frame);
   selectedFrame = element->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+  updateWidget();
 }
 
 void LocalFrameOfReferenceWidget::updateWidget() {
@@ -140,6 +141,7 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Fr
   layout->addWidget(frame);
   selectedFrame = element->getParent()->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+  updateWidget();
 }
 
 void ParentFrameOfReferenceWidget::updateWidget() {
@@ -190,6 +192,7 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   QPushButton *button = new QPushButton(tr("Browse"));
   connect(button,SIGNAL(clicked(bool)),frameBrowser,SLOT(show()));
   layout->addWidget(button);
+  updateWidget();
 }
 
 void FrameOfReferenceWidget::updateWidget() {
@@ -430,7 +433,7 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
   setLayout(layout);
 
   relativeFilePath = new QLineEdit;
-  relativeFilePath->setReadOnly(true);
+//  relativeFilePath->setReadOnly(true);
   layout->addWidget(relativeFilePath);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
@@ -441,6 +444,7 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
 void FileWidget::setFile(const QString &str) {
   file = str;
   relativeFilePath->setText(mbsDir.relativeFilePath(file));
+  cout << "file path = "<< relativeFilePath->text().toStdString() << endl;
 }
 
 void FileWidget::selectFile() {
@@ -463,6 +467,19 @@ SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
   value->setMinimum(min);
   value->setMaximum(max);
   layout->addWidget(value);
+  connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
+}
+
+ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  value = new QComboBox;
+  value->addItems(names);
+  value->setCurrentIndex(currentIndex);
+  layout->addWidget(value);
+  connect(value,SIGNAL(currentIndexChanged(int)),this,SIGNAL(valueChanged(int)));
 }
 
 TextWidget::TextWidget(const QString &text_, bool readOnly) {
@@ -531,91 +548,6 @@ ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element
 void ConnectContoursWidget::updateWidget() {
   for(unsigned int i=0; i<widget.size(); i++)
     widget[i]->updateWidget();
-}
-
-DependenciesWidget::DependenciesWidget(Element *element_) : element(element_) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  setLayout(layout);
-  layout->setMargin(0);
-  bodyList = new QListWidget;
-  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
-  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
-  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
-  layout->addWidget(bodyList);
-  stackedWidget = new QStackedWidget;
-  connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
-  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  layout->addWidget(stackedWidget,0,Qt::AlignTop);
-}
-
-void DependenciesWidget::openContextMenu(const QPoint &pos) {
- if(bodyList->itemAt(pos)) {
-   QMenu menu(this);
-   QAction *add = new QAction(tr("Remove"), this);
-   connect(add, SIGNAL(triggered()), this, SLOT(removeDependency()));
-   menu.addAction(add);
-   menu.exec(QCursor::pos());
- }
- else {
-   QMenu menu(this);
-   QAction *add = new QAction(tr("Add"), this);
-   connect(add, SIGNAL(triggered()), this, SLOT(addDependency()));
-   menu.addAction(add);
-   menu.exec(QCursor::pos());
- }
-}
-
-void DependenciesWidget::setNumberOfBodies(int n) {
-  if(refBody.size() != n) {
-    for(unsigned int i=0; i<refBody.size(); i++)
-      stackedWidget->removeWidget(refBody[i]);
-    selectedBody.clear();
-    refBody.clear();
-    bodyList->clear();
-    for(unsigned int i=0; i<n; i++) {
-      selectedBody.push_back(0);
-      refBody.push_back(new RigidBodyOfReferenceWidget(element,0));
-      connect(refBody[i],SIGNAL(bodyChanged()),this,SLOT(updateList()));
-      bodyList->addItem("Undefined");
-      stackedWidget->addWidget(refBody[i]);
-    }
-  }
-}
-
-void DependenciesWidget::updateWidget() {
-  for(unsigned int i=0; i<refBody.size(); i++)
-    refBody[i]->updateWidget();
-}
-
-void DependenciesWidget::updateList() {
-  emit bodyChanged();
-  for(int i=0; i<bodyList->count(); i++)
-    if(refBody[i]->getSelectedBody())
-      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getSelectedBody()->getName()));
-}
-
-void DependenciesWidget::addDependency() {
-  int i = refBody.size();
-  selectedBody.push_back(0);
-  refBody.push_back(new RigidBodyOfReferenceWidget(element,0));
-  connect(refBody[i],SIGNAL(bodyChanged()),this,SLOT(updateList()));
-  bodyList->addItem("Undefined");
-  stackedWidget->addWidget(refBody[i]);
-  updateWidget();
-}
-
-void DependenciesWidget::removeDependency() {
-  int i = bodyList->currentRow();
-  if(selectedBody[i])
-    selectedBody[i]->setConstrained(false);
-  selectedBody.pop_back();
-
-  stackedWidget->removeWidget(refBody[i]);
-  delete refBody[i];
-  refBody.erase(refBody.begin()+i);
-  delete bodyList->takeItem(i);
-
-  updateList();
 }
 
 SolverChoiceWidget::SolverChoiceWidget() {
@@ -697,105 +629,6 @@ PlotFeature::PlotFeature(const QString &name_) : name(name_) {
   layout->addWidget(status);
 }
 
-GearDependencyWidget::GearDependencyWidget(Element *element) {
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  layout->setMargin(0);
-
-  refBody = new RigidBodyOfReferenceWidget(element,0);
-  layout->addWidget(refBody);
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
-  ratio = new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input));
-  layout->addWidget(ratio);
-}
-
-GearDependenciesWidget::GearDependenciesWidget(Element *element_) : element(element_) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  setLayout(layout);
-  layout->setMargin(0);
-  bodyList = new QListWidget;
-  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
-  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
-  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
-  layout->addWidget(bodyList);
-  stackedWidget = new QStackedWidget;
-  connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
-  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  layout->addWidget(stackedWidget,0,Qt::AlignTop);
-}
-
-void GearDependenciesWidget::openContextMenu(const QPoint &pos) {
- if(bodyList->itemAt(pos)) {
-   QMenu menu(this);
-   QAction *add = new QAction(tr("Remove"), this);
-   connect(add, SIGNAL(triggered()), this, SLOT(removeDependency()));
-   menu.addAction(add);
-   menu.exec(QCursor::pos());
- }
- else {
-   QMenu menu(this);
-   QAction *add = new QAction(tr("Add"), this);
-   connect(add, SIGNAL(triggered()), this, SLOT(addDependency()));
-   menu.addAction(add);
-   menu.exec(QCursor::pos());
- }
-}
-
-void GearDependenciesWidget::setNumberOfBodies(int n) {
-  if(refBody.size() != n) {
-    for(unsigned int i=0; i<refBody.size(); i++)
-      stackedWidget->removeWidget(refBody[i]);
-    selectedBody.clear();
-    refBody.clear();
-    bodyList->clear();
-    for(unsigned int i=0; i<n; i++) {
-      selectedBody.push_back(0);
-      refBody.push_back(new GearDependencyWidget(element));
-      connect(refBody[i]->getRigidBodyOfReferenceWidget(),SIGNAL(bodyChanged()),this,SLOT(updateList()));
-      bodyList->addItem("Undefined");
-      stackedWidget->addWidget(refBody[i]);
-    }
-  }
-}
-
-void GearDependenciesWidget::updateWidget() {
-  for(unsigned int i=0; i<refBody.size(); i++)
-    refBody[i]->updateWidget();
-}
-
-void GearDependenciesWidget::updateList() {
-  emit bodyChanged();
-  for(int i=0; i<bodyList->count(); i++)
-    if(refBody[i]->getSelectedBody())
-      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getSelectedBody()->getName()));
-}
-
-void GearDependenciesWidget::addDependency() {
-  int i = refBody.size();
-  selectedBody.push_back(0);
-  refBody.push_back(new GearDependencyWidget(element));
-  connect(refBody[i]->getRigidBodyOfReferenceWidget(),SIGNAL(bodyChanged()),this,SLOT(updateList()));
-  bodyList->addItem("Undefined");
-  stackedWidget->addWidget(refBody[i]);
-  updateWidget();
-}
-
-void GearDependenciesWidget::removeDependency() {
-  int i = bodyList->currentRow();
-  if(selectedBody[i])
-    selectedBody[i]->setConstrained(false);
-  selectedBody.pop_back();
-
-  stackedWidget->removeWidget(refBody[i]);
-  delete refBody[i];
-  refBody.erase(refBody.begin()+i);
-  delete bodyList->takeItem(i);
-
-  updateList();
-}
-
 EmbedWidget::EmbedWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
@@ -806,7 +639,7 @@ EmbedWidget::EmbedWidget() {
   layout->addWidget(count);
   counterName = new ExtWidget("Counter name", new TextWidget, true);
   layout->addWidget(counterName);
-  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
+  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)", 1), true);
   layout->addWidget(parameterList);
 }
 
@@ -822,88 +655,6 @@ SignalReferenceWidget::SignalReferenceWidget(Element *element) {
   input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
   factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
   layout->addWidget(factor);
-}
-
-SignalReferencesWidget::SignalReferencesWidget(Element *element_) : element(element_) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  setLayout(layout);
-  layout->setMargin(0);
-  signalList = new QListWidget;
-  signalList->setContextMenuPolicy (Qt::CustomContextMenu);
-  signalList->setMinimumWidth(signalList->sizeHint().width()/3);
-  signalList->setMaximumWidth(signalList->sizeHint().width()/3);
-  layout->addWidget(signalList);
-  stackedWidget = new QStackedWidget;
-  connect(signalList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
-  connect(signalList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  layout->addWidget(stackedWidget,0,Qt::AlignTop);
-}
-
-void SignalReferencesWidget::openContextMenu(const QPoint &pos) {
- if(signalList->itemAt(pos)) {
-   QMenu menu(this);
-   QAction *add = new QAction(tr("Remove"), this);
-   connect(add, SIGNAL(triggered()), this, SLOT(removeReference()));
-   menu.addAction(add);
-   menu.exec(QCursor::pos());
- }
- else {
-   QMenu menu(this);
-   QAction *add = new QAction(tr("Add"), this);
-   connect(add, SIGNAL(triggered()), this, SLOT(addReference()));
-   menu.addAction(add);
-   menu.exec(QCursor::pos());
- }
-}
-
-void SignalReferencesWidget::setNumberOfSignals(int n) {
-  if(refSignal.size() != n) {
-    for(unsigned int i=0; i<refSignal.size(); i++)
-      stackedWidget->removeWidget(refSignal[i]);
-    selectedSignal.clear();
-    refSignal.clear();
-    signalList->clear();
-    for(unsigned int i=0; i<n; i++) {
-      selectedSignal.push_back(0);
-      refSignal.push_back(new SignalReferenceWidget(element));
-      connect(refSignal[i]->getSignalOfReferenceWidget(),SIGNAL(signalChanged()),this,SLOT(updateList()));
-      signalList->addItem("Undefined");
-      stackedWidget->addWidget(refSignal[i]);
-    }
-  }
-}
-
-void SignalReferencesWidget::updateWidget() {
-  for(unsigned int i=0; i<refSignal.size(); i++)
-    refSignal[i]->updateWidget();
-}
-
-void SignalReferencesWidget::updateList() {
-  for(int i=0; i<signalList->count(); i++)
-    if(refSignal[i]->getSelectedSignal())
-      signalList->item(i)->setText(QString::fromStdString(refSignal[i]->getSelectedSignal()->getName()));
-}
-
-void SignalReferencesWidget::addReference() {
-  int i = refSignal.size();
-  selectedSignal.push_back(0);
-  refSignal.push_back(new SignalReferenceWidget(element));
-  connect(refSignal[i]->getSignalOfReferenceWidget(),SIGNAL(signalChanged()),this,SLOT(updateList()));
-  signalList->addItem("Undefined");
-  stackedWidget->addWidget(refSignal[i]);
-  updateWidget();
-}
-
-void SignalReferencesWidget::removeReference() {
-  int i = signalList->currentRow();
-  selectedSignal.pop_back();
-
-  stackedWidget->removeWidget(refSignal[i]);
-  delete refSignal[i];
-  refSignal.erase(refSignal.begin()+i);
-  delete signalList->takeItem(i);
-
-  updateList();
 }
 
 ColorWidget::ColorWidget() {

@@ -27,6 +27,24 @@
 
 using namespace std;
 
+ToleranceWidgetFactory::ToleranceWidgetFactory() {
+  name.push_back("Scalar");
+  name.push_back("Vector");
+}
+
+QWidget* ToleranceWidgetFactory::createWidget(int i) {
+  if(i==0) {
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
+    return new ExtPhysicalVarWidget(input);
+  }
+  if(i==1) {
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new VecWidget(0),QStringList(),1));
+    return new ExtPhysicalVarWidget(input);
+  }
+}
+
 IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), integrator(integrator_) {
   addTab("General");
   addTab("Initial conditions");
@@ -71,32 +89,13 @@ DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator 
   addTab("Tolerances");
   addTab("Step size");
 
-  vector<PhysicalVariableWidget*> input;
-  vector<QWidget*> widget;
-  vector<QString> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  input.clear();
-  aTol = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
   addToTab("Tolerances", absTol);
 
-  input.clear();
-  widget.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  input.clear();
-  rTol = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(rTol,noUnitUnits(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
+  relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
   addToTab("Tolerances", relTol);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", initialStepSize);
@@ -134,32 +133,13 @@ RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator 
   addTab("Tolerances");
   addTab("Step size");
 
-  vector<PhysicalVariableWidget*> input;
-  vector<QWidget*> widget;
-  vector<QString> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  input.clear();
-  aTol = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
   addToTab("Tolerances", absTol);
 
-  input.clear();
-  widget.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  input.clear();
-  rTol = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(rTol,noUnitUnits(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
+  relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
   addToTab("Tolerances", relTol);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", initialStepSize);
@@ -198,21 +178,10 @@ LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *in
   addTab("Step size");
   addTab("Extra");
 
-  vector<PhysicalVariableWidget*> input;
-  vector<QWidget*> widget;
-  vector<QString> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  input.clear();
-  aTol = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
   addToTab("Tolerances", absTol);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   addToTab("Tolerances", relTol);
@@ -268,21 +237,10 @@ LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator 
   addTab("Step size");
   addTab("Extra");
 
-  vector<PhysicalVariableWidget*> input;
-  vector<QWidget*> widget;
-  vector<QString> name;
-  name.push_back("Scalar");
-  name.push_back("Vector");
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  input.clear();
-  aTol = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
-  widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory));
   addToTab("Tolerances", absTol);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   addToTab("Tolerances", relTol);

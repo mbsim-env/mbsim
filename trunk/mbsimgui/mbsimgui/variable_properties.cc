@@ -24,13 +24,13 @@
 #include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
-#include "octaveutils.h"
 #include <QDir>
-#include <mbxmlutilstinyxml/tinyxml.h>
-#include <mbxmlutilstinyxml/tinynamespace.h>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 extern QDir mbsDir;
 extern bool absolutePath;
@@ -77,34 +77,36 @@ void VariableProperty::toWidget(QWidget *widget) {
   static_cast<VariableWidget*>(widget)->setValue(QString::fromStdString(getValue()));
 }
 
-TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+DOMElement* OctaveExpressionProperty::initializeUsingXML(DOMElement *element) {
+  DOMText* text = E(element)->getFirstTextChild();
   if(!text)
     return 0;
-  setValue(text->Value());
+  setValue(X()%text->getData());
   return element;
 }
 
-TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlText *text = new TiXmlText(getValue());
-  parent->LinkEndChild(text);
+DOMElement* OctaveExpressionProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMText *text = doc->createTextNode(X()%getValue());
+  parent->insertBefore(text, NULL);
   return 0;
 }
 
-TiXmlElement* ScalarProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+DOMElement* ScalarProperty::initializeUsingXML(DOMElement *element) {
+  DOMText* text = E(element)->getFirstTextChild();
   if(!text)
     return 0;
-  string str = text->Value();
+  string str = X()%text->getData();
   if(str.find("\n")!=string::npos)
     return 0;
   setValue(str);
   return element;
 }
 
-TiXmlElement* ScalarProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlText *text = new TiXmlText(getValue());
-  parent->LinkEndChild(text);
+DOMElement* ScalarProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMText *text = doc->createTextNode(X()%getValue());
+  parent->insertBefore(text, NULL);
   return 0;
 }
 
@@ -116,30 +118,29 @@ VecProperty::VecProperty(int size) : value(size) {
 VecProperty::~VecProperty() {
 }
 
-TiXmlElement* VecProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *element=parent->FirstChildElement();
-  if(!element || element->ValueStr() != (PVNS"xmlVector"))
+DOMElement* VecProperty::initializeUsingXML(DOMElement *parent) {
+  DOMElement *element=parent->getFirstElementChild();
+  if(!element || E(element)->getTagName() != PV%"xmlVector")
     return 0;
-  TiXmlElement *ei=element->FirstChildElement();
-  int i=0;
+  DOMElement *ei=element->getFirstElementChild();
   value.clear();
-  while(ei && ei->ValueStr()==PVNS"ele") {
-    value.push_back(ei->GetText());
-    ei=ei->NextSiblingElement();
-    i++;
+  while(ei && E(ei)->getTagName()==PV%"ele") {
+    value.push_back(X()%E(ei)->getFirstTextChild()->getData());
+    ei=ei->getNextElementSibling();
   }
   return element;
 }
 
-TiXmlElement* VecProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(PVNS"xmlVector");
+DOMElement* VecProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
   for(unsigned int i=0; i<size(); i++) {
-    TiXmlElement *elei = new TiXmlElement(PVNS"ele");
-    TiXmlText *text = new TiXmlText(value[i]);
-    elei->LinkEndChild(text);
-    ele->LinkEndChild(elei);
+    DOMElement *elei = D(doc)->createElement(PV%"ele");
+    DOMText *text = doc->createTextNode(X()%value[i]);
+    elei->insertBefore(text, NULL);
+    ele->insertBefore(elei, NULL);
   }
-  parent->LinkEndChild(ele);
+  parent->insertBefore(ele, NULL);
   return 0;
 }
 
@@ -160,41 +161,42 @@ MatProperty::MatProperty(int rows, int cols) {
   }
 }
 
-TiXmlElement* MatProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *element=parent->FirstChildElement();
-  if(!element || element->ValueStr() != (PVNS"xmlMatrix"))
+DOMElement* MatProperty::initializeUsingXML(DOMElement *parent) {
+  DOMElement *element=parent->getFirstElementChild();
+  if(!element || E(element)->getTagName() != (PV%"xmlMatrix"))
     return 0;
-  TiXmlElement *ei=element->FirstChildElement();
+  DOMElement *ei=element->getFirstElementChild();
   int i=0;
   value.clear();
-  while(ei && ei->ValueStr()==PVNS"row") {
-    TiXmlElement *ej=ei->FirstChildElement();
+  while(ei && E(ei)->getTagName()==PV%"row") {
+    DOMElement *ej=ei->getFirstElementChild();
     int j=0;
     value.push_back(vector<string>());
-    while(ej && ej->ValueStr()==PVNS"ele") {
-      value[i].push_back(ej->GetText());
-      ej=ej->NextSiblingElement();
+    while(ej && E(ej)->getTagName()==PV%"ele") {
+      value[i].push_back(X()%E(ej)->getFirstTextChild()->getData());
+      ej=ej->getNextElementSibling();
       j++;
     }
     i++;
-    ei=ei->NextSiblingElement();
+    ei=ei->getNextElementSibling();
   }
   return element;
 }
 
-TiXmlElement* MatProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(PVNS"xmlMatrix");
+DOMElement* MatProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
   for(unsigned int i=0; i<rows(); i++) {
-    TiXmlElement *elei = new TiXmlElement(PVNS"row");
+    DOMElement *elei = D(doc)->createElement(PV%"row");
     for(unsigned int j=0; j<cols(); j++) {
-      TiXmlElement *elej = new TiXmlElement(PVNS"ele");
-      TiXmlText *text = new TiXmlText(value[i][j]);
-      elej->LinkEndChild(text);
-      elei->LinkEndChild(elej);
+      DOMElement *elej = D(doc)->createElement(PV%"ele");
+      DOMText *text = doc->createTextNode(X()%value[i][j]);
+      elej->insertBefore(text, NULL);
+      elei->insertBefore(elej, NULL);
     }
-    ele->LinkEndChild(elei);
+    ele->insertBefore(elei, NULL);
   }
-  parent->LinkEndChild(ele);
+  parent->insertBefore(ele, NULL);
   return 0;
 }
 
@@ -206,28 +208,82 @@ void MatProperty::toWidget(QWidget *widget) {
   static_cast<BasicMatWidget*>(widget)->setMat(fromStdMat(getMat()));
 }
 
-TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = (xmlName=="")?parent:parent->FirstChildElement(xmlName);
+CardanProperty::CardanProperty() : angles(3,"0"), unit("degree") {
+}
+
+CardanProperty::~CardanProperty() {
+}
+
+DOMElement* CardanProperty::initializeUsingXML(DOMElement *parent) {
+  DOMElement *element=parent->getFirstElementChild();
+  if(!element || E(element)->getTagName() != (PV%"cardan"))
+    return 0;
+  angles.clear();
+  DOMElement *ei=E(element)->getFirstElementChildNamed(PV%"alpha");
+  angles.push_back(X()%E(ei)->getFirstTextChild()->getData());
+  ei=ei->getNextElementSibling();
+  angles.push_back(X()%E(ei)->getFirstTextChild()->getData());
+  ei=ei->getNextElementSibling();
+  angles.push_back(X()%E(ei)->getFirstTextChild()->getData());
+  if(E(element)->hasAttribute("unit"))
+    unit = E(element)->getAttribute("unit");
+  return element;
+}
+
+DOMElement* CardanProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele = D(doc)->createElement(PV%"cardan");
+  DOMElement *elei = D(doc)->createElement(PV%"alpha");
+  DOMText *text = doc->createTextNode(X()%angles[0]);
+  elei->insertBefore(text, NULL);
+  ele->insertBefore(elei, NULL);
+  elei = D(doc)->createElement(PV%"beta");
+  text = doc->createTextNode(X()%angles[1]);
+  elei->insertBefore(text, NULL);
+  ele->insertBefore(elei, NULL);
+  elei = D(doc)->createElement(PV%"gamma");
+  text = doc->createTextNode(X()%angles[2]);
+  elei->insertBefore(text, NULL);
+  ele->insertBefore(elei, NULL);
+  if(unit!="")
+    E(ele)->setAttribute("unit", unit);
+  parent->insertBefore(ele, NULL);
+  return 0;
+}
+
+void CardanProperty::fromWidget(QWidget *widget) {
+  setAngles(toStdVec(static_cast<CardanWidget*>(widget)->getAngles()));
+  unit = static_cast<CardanWidget*>(widget)->getUnit().toStdString();
+}
+
+void CardanProperty::toWidget(QWidget *widget) {
+  static_cast<CardanWidget*>(widget)->setAngles(fromStdVec(getAngles()));
+  static_cast<CardanWidget*>(widget)->setUnit(QString::fromStdString(unit));
+}
+
+DOMElement* PhysicalVariableProperty::initializeUsingXML(DOMElement *parent) {
+  DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
   if(e) {
     if(value->initializeUsingXML(e)) {
-      if(e->Attribute("unit"))
-        setUnit(e->Attribute("unit"));
+      if(E(e)->hasAttribute("unit"))
+        setUnit(E(e)->getAttribute("unit"));
       return e;
     }
   } 
   return 0;
 }
 
-TiXmlElement* PhysicalVariableProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele;
-  if(xmlName!="") {
-    ele = new TiXmlElement(xmlName);
-    parent->LinkEndChild(ele);
+DOMElement* PhysicalVariableProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele;
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    ele = D(doc)->createElement(xmlName);
+    parent->insertBefore(ele, NULL);
   } 
   else
-    ele = (TiXmlElement*)parent;
+    ele = (DOMElement*)parent;
   if(unit!="")
-    ele->SetAttribute("unit", getUnit());
+    E(ele)->setAttribute("unit", getUnit());
   value->writeXMLFile(ele);
   return 0;
 }
@@ -242,54 +298,16 @@ void PhysicalVariableProperty::toWidget(QWidget *widget) {
   static_cast<PhysicalVariableWidget*>(widget)->setUnit(QString::fromStdString(getUnit()));
 }
 
-string VecFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("ret=load('") + file + "')");
+string FromFileProperty::getValue() const {
+  return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("'" + file + "'"));
 }
 
-TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
-  if(!text)
+DOMElement* FromFileProperty::initializeUsingXML(DOMElement *parent) {
+  DOMElement *element=parent->getFirstElementChild();
+  if(!element || E(element)->getTagName() != (PV%"fromFile"))
     return 0;
-  string str = text->Value();
-  if(str.substr(0,8)!="ret=load")
-    return 0;
-  int pos1 = str.find_first_of('\''); 
-  int pos2 = str.find_last_of('\''); 
-  file = str.substr(pos1+1,pos2-pos1-1).c_str();
-  QFileInfo fileInfo(QString::fromStdString(file));
-  file = fileInfo.canonicalFilePath().toStdString();
 
-  return element;
-}
-
-TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
-  TiXmlText *text = new TiXmlText(filePath);
-  parent->LinkEndChild(text);
-  return 0;
-}
-
-void VecFromFileProperty::fromWidget(QWidget *widget) {
-  file = static_cast<VecFromFileWidget*>(widget)->getFile().toStdString();
-}
-
-void VecFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<VecFromFileWidget*>(widget)->blockSignals(true);
-  static_cast<VecFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
-  static_cast<VecFromFileWidget*>(widget)->blockSignals(false);
-}
-
-string MatFromFileProperty::getValue() const {
-  return evalOctaveExpression("ret=load('" + file + "')");
-}
-
-TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
-  if(!text)
-    return 0;
-  string str = text->Value();
-  if(str.substr(0,8)!="ret=load")
-    return 0;
+  string str = E(element)->getAttribute("href");
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   file = str.substr(pos1+1,pos2-pos1-1).c_str();
@@ -298,19 +316,99 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   return element;
 }
 
-TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
-  TiXmlText *text = new TiXmlText(filePath);
-  parent->LinkEndChild(text);
+// DOMText* text = E(element)->getFirstTextChild();
+//  if(!text)
+//    return 0;
+//  string str = X()%text->getData();
+//  if(str.substr(0,8)!="ret=load")
+//    return 0;
+//  int pos1 = str.find_first_of('\''); 
+//  int pos2 = str.find_last_of('\''); 
+//  file = str.substr(pos1+1,pos2-pos1-1).c_str();
+//  QFileInfo fileInfo(QString::fromStdString(file));
+//  file = fileInfo.canonicalFilePath().toStdString();
+//  return element;
+//}
+
+
+DOMElement* FromFileProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele = D(doc)->createElement(PV%"fromFile");
+  string filePath = "'"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"'";
+  //string filePath = file;
+  E(ele)->setAttribute("href",filePath);
+  parent->insertBefore(ele, NULL);
   return 0;
 }
 
-void MatFromFileProperty::fromWidget(QWidget *widget) {
-  file = static_cast<MatFromFileWidget*>(widget)->getFile().toStdString();
+void FromFileProperty::fromWidget(QWidget *widget) {
+  file = static_cast<FromFileWidget*>(widget)->getFile().toStdString();
+  cout << file << endl;
 }
 
-void MatFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<MatFromFileWidget*>(widget)->blockSignals(true);
-  static_cast<MatFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
-  static_cast<MatFromFileWidget*>(widget)->blockSignals(false);
+void FromFileProperty::toWidget(QWidget *widget) {
+  static_cast<FromFileWidget*>(widget)->blockSignals(true);
+  static_cast<FromFileWidget*>(widget)->setFile(QString::fromStdString(file));
+  static_cast<FromFileWidget*>(widget)->blockSignals(false);
+}
+
+ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const FQN &xmlName_) : value(value_), name(2), unit(2,"m"), xmlName(xmlName_) {
+}
+
+ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const FQN &xmlName_, const vector<string> &unit_) : value(value_), name(2), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* ScalarPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new ScalarProperty(value), unit[0], xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
+}
+
+VecPropertyFactory::VecPropertyFactory(int m, const FQN &xmlName_) : x(getScalars<string>(m,"0")), name(3), unit(3,"m"), xmlName(xmlName_) {
+}
+
+VecPropertyFactory::VecPropertyFactory(int m, const FQN &xmlName_, const vector<string> &unit_) : x(getScalars<string>(m,"0")), name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+VecPropertyFactory::VecPropertyFactory(const vector<string> &x_, const FQN &xmlName_, const vector<string> &unit_) : x(x_), name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* VecPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new VecProperty(x), unit[0], xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
+  if(i==2)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[2], xmlName);
+}
+
+RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_) : name(3), unit(3,""), xmlName(xmlName_) {
+}
+
+RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_, const vector<string> &unit_) : name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* RotMatPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new CardanProperty,unit[1],xmlName);
+  if(i==2)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+}
+
+MatPropertyFactory::MatPropertyFactory(const FQN &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
+}
+
+MatPropertyFactory::MatPropertyFactory(const vector<vector<string> > &A_, const FQN &xmlName_, const vector<string> &unit_) : A(A_), name(3), xmlName(xmlName_), unit(unit_) {
+}
+
+Property* MatPropertyFactory::createProperty(int i) {
+  if(i==0)
+    return new PhysicalVariableProperty(new MatProperty(A),unit[0],xmlName);
+  if(i==1)
+    return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
+  if(i==2)
+    return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
 }

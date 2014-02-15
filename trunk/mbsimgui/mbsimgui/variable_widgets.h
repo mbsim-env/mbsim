@@ -29,6 +29,9 @@
 #include <QLineEdit>
 #include <QSyntaxHighlighter>
 
+class EvalDialog;
+class QLabel;
+
 class OctaveHighlighter : public QSyntaxHighlighter {
 
   public:
@@ -79,8 +82,8 @@ class ScalarWidget : public VariableWidget {
   public:
     ScalarWidget(const QString &d="1");
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
-    QString getValue() const {return box->text();}
-    void setValue(const QString &str) {box->setText(str);}
+    QString getValue() const {return box->text().isEmpty()?"0":box->text();}
+    void setValue(const QString &str) {box->setText(str=="0"?"":str);}
     virtual QString getType() const {return "Scalar";}
     bool validate(const std::vector<std::vector<QString> > &A) const;
 };
@@ -99,6 +102,7 @@ class VecWidget : public BasicVecWidget {
     VecWidget(int size, bool transpose=false);
     VecWidget(const std::vector<QString> &x, bool transpose=false);
     void resize_(int size);
+    void resize_(int rows, int cols) { resize_(rows); }
     std::vector<QString> getVec() const;
     void setVec(const std::vector<QString> &x);
     void setReadOnly(bool flag);
@@ -164,11 +168,8 @@ class VecSizeVarWidget : public BasicVecWidget {
   public:
     VecSizeVarWidget(int size, int minSize, int maxSize);
     std::vector<QString> getVec() const {return widget->getVec();}
-    void setVec(const std::vector<QString> &x) {
-      sizeCombo->setValue(x.size());
-      widget->setVec(x);
-    }
-    void resize_(int size) {widget->resize_(size);}
+    void setVec(const std::vector<QString> &x);
+    void resize_(int size);
     int size() const {return sizeCombo->value();}
     QString getValue() const {return toQStr(getVec());}
     void setValue(const QString &str) {setVec(strToVec(str));}
@@ -189,18 +190,44 @@ class MatColsVarWidget : public BasicMatWidget {
 
   private:
     MatWidget *widget;
+    QLabel *rowsLabel;
     QSpinBox* colsCombo;
     int minCols, maxCols;
   public:
     MatColsVarWidget(int rows, int cols, int minCols, int maxCols);
     std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
-    void setMat(const std::vector<std::vector<QString> > &A) {
-      colsCombo->setValue(A[0].size());
-      widget->setMat(A);
-    }
-    void resize_(int rows, int cols) {widget->resize_(rows,cols);}
+    void setMat(const std::vector<std::vector<QString> > &A);
+    void resize_(int rows, int cols);
     int rows() const {return widget->rows();}
     int cols() const {return colsCombo->value();}
+    QString getValue() const {return toQStr(getMat());}
+    void setValue(const QString &str) {setMat(strToMat(str));}
+    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
+    virtual QString getType() const {return "Matrix";}
+    bool validate(const std::vector<std::vector<QString> > &A) const;
+
+  public slots:
+    void currentIndexChanged(int);
+  signals:
+    void sizeChanged(int);
+};
+
+class MatRowsVarWidget : public BasicMatWidget {
+
+  Q_OBJECT
+
+  private:
+    MatWidget *widget;
+    QSpinBox *rowsCombo;
+    QLabel *colsLabel;
+    int minRows, maxRows;
+  public:
+    MatRowsVarWidget(int rows, int cols, int minRows, int maxRows);
+    std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
+    void setMat(const std::vector<std::vector<QString> > &A);
+    void resize_(int rows, int cols);
+    int rows() const {return rowsCombo->value();}
+    int cols() const {return widget->cols();}
     QString getValue() const {return toQStr(getMat());}
     void setValue(const QString &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
@@ -224,12 +251,8 @@ class MatRowsColsVarWidget : public BasicMatWidget {
   public:
     MatRowsColsVarWidget(int rows, int cols, int minRows, int maxRows, int minCols, int maxCols);
     std::vector<std::vector<QString> > getMat() const {return widget->getMat();}
-    void setMat(const std::vector<std::vector<QString> > &A) {
-      rowsCombo->setValue(A.size());
-      colsCombo->setValue(A[0].size());
-      widget->setMat(A);
-    }
-    void resize_(int rows, int cols) {widget->resize_(rows,cols);}
+    void setMat(const std::vector<std::vector<QString> > &A);
+    void resize_(int rows, int cols);
     int rows() const {return rowsCombo->value();}
     int cols() const {return colsCombo->value();}
     QString getValue() const {return toQStr(getMat());}
@@ -250,16 +273,20 @@ class CardanWidget : public VariableWidget {
 
   private:
     std::vector<QLineEdit*> box;
-    bool transpose;
+    QComboBox* unit;
   public:
-    CardanWidget(bool transpose=false);
-    CardanWidget(const std::vector<QString> &x, bool transpose=false);
-    std::vector<QString> getCardan() const;
-    void setCardan(const std::vector<QString> &x);
+    CardanWidget();
+    void resize_(int size);
+    std::vector<QString> getAngles() const;
+    void setAngles(const std::vector<QString> &x);
     void setReadOnly(bool flag);
-    QString getValue() const {return toQStr(getCardan());}
-    void setValue(const QString &str) {setCardan(strToVec(str));}
+    QString getValue() const {return toQStr(getAngles());}
+    void setValue(const QString &str) {setAngles(strToVec(str));}
+    int size() const {return box.size();}
     virtual QString getType() const {return "Cardan";}
+    bool validate(const std::vector<std::vector<QString> > &A) const;
+    QString getUnit() const {return unit->currentText();}
+    void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
 };
 
 class PhysicalVariableWidget : public VariableWidget {
@@ -271,6 +298,9 @@ class PhysicalVariableWidget : public VariableWidget {
     QComboBox* unit;
     QStringList units;
     int defaultUnit;
+    EvalDialog *evalDialog;
+  protected slots:
+    void openEvalDialog();
   public:
     PhysicalVariableWidget(VariableWidget *widget, const QStringList &units, int defaultUnit);
     QString getValue() const {return widget->getValue();}
@@ -283,52 +313,155 @@ class PhysicalVariableWidget : public VariableWidget {
     bool validate(const std::vector<std::vector<QString> > &A) const {return widget->validate(A);}
     QString getUnit() const {return unit->currentText();}
     void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+    void resize_(int rows, int cols) { widget->resize_(rows,cols); }
 };
 
-class VecFromFileWidget : public VariableWidget {
+//class VecFromFileWidget : public VariableWidget {
+//  Q_OBJECT
+//
+//  friend class VecFromFileProperty;
+//
+//  public:
+//    VecFromFileWidget();
+//    QString getValue() const;
+//    void setValue(const QString &str) {}
+//    QString getFile() const {return file;}
+//    void setFile(const QString &str);
+//    virtual QString getType() const {return "File";}
+//
+//  protected:
+//    QLineEdit *relativeFilePath;
+//    QString file; 
+//
+//  protected slots:
+//    void selectFile();
+//
+//};
+
+class FromFileWidget : public VariableWidget {
   Q_OBJECT
 
-  friend class VecFromFileProperty;
+  friend class FromFileProperty;
 
   public:
-    VecFromFileWidget();
-    QString getValue() const;
-    void setValue(const QString &str) {}
-    QString getFile() const {return file;}
-    void setFile(const QString &str);
-    virtual QString getType() const {return "File";}
-
-  protected:
-    QLineEdit *relativeFilePath;
-    QString file; 
-
-  protected slots:
-    void selectFile();
-
-};
-
-class MatFromFileWidget : public VariableWidget {
-  Q_OBJECT
-
-  friend class MatFromFileProperty;
-
-  public:
-    MatFromFileWidget();
+    FromFileWidget();
     QString getValue() const; 
     void setValue(const QString &str) {}
-    QString getFile() const {return file;}
+    QString getFile() const {return relativeFilePath->text();}
     void setFile(const QString &str);
     virtual QString getType() const {return "File";}
 
   protected:
     QLineEdit *relativeFilePath;
-    QString file; 
+//    QString file; 
 
   protected slots:
     void selectFile();
 
 };
 
+class ScalarWidgetFactory : public WidgetFactory {
+  public:
+    ScalarWidgetFactory(const QString &value);
+    ScalarWidgetFactory(const QString &value, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    QString value;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
+class VecWidgetFactory : public WidgetFactory {
+  public:
+    VecWidgetFactory(int m);
+    VecWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    VecWidgetFactory(int m, const std::vector<QStringList> &unit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    int m;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
+class VecSizeVarWidgetFactory : public WidgetFactory {
+  public:
+    VecSizeVarWidgetFactory(int m);
+    VecSizeVarWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    VecSizeVarWidgetFactory(int m, const std::vector<QStringList> &unit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    int m;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
+class MatWidgetFactory : public WidgetFactory {
+  public:
+    MatWidgetFactory();
+    MatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    MatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::vector<QString> > A;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
+class MatRowsVarWidgetFactory : public WidgetFactory {
+  public:
+    MatRowsVarWidgetFactory();
+    MatRowsVarWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    MatRowsVarWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::vector<QString> > A;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
+class RotMatWidgetFactory : public WidgetFactory {
+  public:
+    RotMatWidgetFactory();
+    RotMatWidgetFactory(const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
+class SymMatWidgetFactory : public WidgetFactory {
+  public:
+    SymMatWidgetFactory();
+    SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::vector<QString> > A;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
 
 #endif
 
