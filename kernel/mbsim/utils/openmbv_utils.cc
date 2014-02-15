@@ -131,6 +131,7 @@ namespace MBSim {
 
   OpenMBV::Cuboid* OpenMBVLine::createOpenMBV(TiXmlElement *e) {
     OpenMBV::Cuboid* object = new OpenMBV::Cuboid;
+    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -149,6 +150,7 @@ namespace MBSim {
 
   OpenMBV::Cuboid* OpenMBVPlane::createOpenMBV(TiXmlElement *e) {
     OpenMBV::Cuboid* object = new OpenMBV::Cuboid;
+    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
@@ -167,6 +169,7 @@ namespace MBSim {
 
   OpenMBV::Cuboid* OpenMBVCuboid::createOpenMBV(TiXmlElement *e) {
     OpenMBV::Cuboid* object = new OpenMBV::Cuboid;
+    if(e) initializeUsingXML(e);
     initializeObject(object);
     return object;
   }
