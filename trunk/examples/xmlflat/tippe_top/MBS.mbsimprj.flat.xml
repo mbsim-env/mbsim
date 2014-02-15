@@ -13,7 +13,11 @@
     <contours>
       <Plane name="Plane">
         <frameOfReference ref="../Frame[Os]"/>
-      </Plane>
+        <enableOpenMBV>
+          <length>[0.2;0.2]</length>
+          <transparency>0.5</transparency>
+        </enableOpenMBV>
+     </Plane>
     </contours>
     <groups/>
     <objects>
