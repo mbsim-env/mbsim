@@ -48,6 +48,7 @@ namespace MBSim {
   void OpenMBVObject::initializeObject(OpenMBV::DynamicColoredBody* object) {
     object->setDiffuseColor(dc(0),dc(1),dc(2));
     object->setTransparency(tp);
+    object->setID(id);
   }
 
   void OpenMBVArrow::initializeUsingXML(TiXmlElement *e) {
