@@ -108,5 +108,13 @@ class ParameterList {
   private:
     std::vector<std::string> name, value, type;
 };
+ 
+class Parameters {
+  protected:
+    std::vector<Parameter*> parameter;
+  public:
+    void addParameter(Parameter *param) { parameter.push_back(param); }
+    Parameter *getParameter(int i) { return parameter[i]; }
+};
 
 #endif

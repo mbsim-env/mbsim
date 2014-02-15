@@ -49,6 +49,7 @@ class Element : public TreeItemData {
     static int IDcounter;
     std::string ID;
     ExtProperty name, embed;
+    std::vector<Parameter*> parameter;
   public:
     Element(const std::string &name, Element *parent);
     virtual Element* clone() const {return 0;}
@@ -102,6 +103,8 @@ class Element : public TreeItemData {
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
+    void addParameter(Parameter *param) { parameter.push_back(param); embed.setActive(true); }
+    Parameter *getParameter(int i) { return parameter[i]; }
 };
 
 template<class T>

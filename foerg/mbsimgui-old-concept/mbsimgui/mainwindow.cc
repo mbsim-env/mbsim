@@ -52,29 +52,6 @@ QDir mbsDir;
 
 MainWindow *mw;
 
-bool removeDir(const QString &dirName) {
-  bool result = true;
-  QDir dir(dirName);
-
-  if (dir.exists(dirName)) {
-    Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
-      if (info.isDir()) {
-        result = removeDir(info.absoluteFilePath());
-      }
-      else {
-        result = QFile::remove(info.absoluteFilePath());
-      }
-
-      if (!result) {
-        return result;
-      }
-    }
-    result = dir.rmdir(dirName);
-  }
-
-  return result;
-}
-
 shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(false);
 MBXMLUtils::OctEval *MainWindow::octEval=NULL;
 MBXMLUtils::NewParamLevel *MainWindow::octEvalParamLevel=NULL;
@@ -178,9 +155,6 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
   integratorView = new IntegratorView;
 
-  action = new QAction("Add string parameter", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
-  parameterList->insertAction(0,action);
   action = new QAction("Add scalar parameter", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
   parameterList->insertAction(0,action);
@@ -189,6 +163,9 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   parameterList->insertAction(0,action);
   action = new QAction("Add matrix parameter", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
+  parameterList->insertAction(0,action);
+  action = new QAction("Add string parameter", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
   parameterList->insertAction(0,action);
   parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -432,12 +409,47 @@ void MainWindow::loadProject(const QString &file) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
     DOMElement *e=doc->getDocumentElement();
     DOMElement *ele0=doc->getDocumentElement();
-    cout << E(ele0)->getAttribute("name") << endl;
     setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
 
+    Solver *solver=0;
     DOMElement *ele1 = ele0->getFirstElementChild();
-    Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele1,0));
-    solver->initializeUsingXML(ele1);
+    if(E(ele1)->getTagName()==PV%"Embed") {
+      DOMElement *ele2 = 0;
+      if(E(ele1)->hasAttribute("href"))
+        solver=Solver::readXMLFile(E(ele1)->getAttribute("href"));
+      else {
+        ele2 = E(ele1)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+        solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele2,0));
+      }
+      solver->initializeUsingXMLEmbed(ele1);
+      if(ele2)
+        solver->initializeUsingXML(ele2);
+      if(E(ele1)->hasAttribute("parameterHref")) {
+        shared_ptr<DOMDocument> doc=MainWindow::parser->parse(E(ele1)->getAttribute("parameterHref"));
+        ele2=doc->getDocumentElement();
+      }
+      else
+        ele2=E(ele1)->getFirstElementChildNamed(PV%"Parameter");
+      if(ele2)
+        ele2=ele2->getFirstElementChild();
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex pindex = pmodel->index(0,0); 		
+      for(int i=0; i<pmodel->rowCount(QModelIndex()); i++) 		
+        delete pmodel->getItem(pindex.sibling(i,0))->getItemData(); 		
+      pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
+      while(ele2) {
+        Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele2);
+        parameter->initializeUsingXML(ele2);
+        pmodel->createParameterItem(parameter);
+        solver->addParameter(parameter);
+        ele2=ele2->getNextElementSibling();
+      }
+      updateOctaveParameters();
+    }
+    else {
+      solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele1,0));
+      solver->initializeUsingXML(ele1);
+    }
     solver->initialize();
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
@@ -446,34 +458,24 @@ void MainWindow::loadProject(const QString &file) {
     model->removeRow(index.row(), index.parent());
     model->createGroupItem(solver);
 
- //   ele1 = E(ele0)->getFirstElementChildNamed(MBSIM%"parameters");
- //   ele2 = ele1->getFirstElementChild();
- //   ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
- //   index = pmodel->index(0,0);
- //   for(int i=0; i<pmodel->rowCount(QModelIndex()); i++)
- //     delete pmodel->getItem(index.sibling(i,0))->getItemData();
- //   pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
- //   DOMElement *ELE=ele2->getFirstElementChild();
- //   vector<QString> refFrame;
- //   while(ELE) {
- //     Parameter *parameter=ObjectFactory::getInstance()->createParameter(ELE);
- //     parameter->initializeUsingXML(ELE);
- //     pmodel->createParameterItem(parameter);
- //     ELE=ELE->getNextElementSibling();
- //   }
- //   updateOctaveParameters();
-
     ele1 = ele1->getNextElementSibling();
-    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(ele1);
-    integrator->initializeUsingXML(ele1);
-    integratorView->setIntegrator(integrator);
 
-//    ele1 = E(ele0)->getFirstElementChildNamed(MBSIM%"mPaths");
-//    ele2=ele1->getFirstElementChild();
-//    while(ele2) {
-//      mPath << E(ele2)->getAttribute("href").c_str();
-//      ele2=ele2->getNextElementSibling();
-//    }
+    Integrator *integrator;
+    if(E(ele1)->getTagName()==PV%"Embed") {
+      DOMElement *ele2 = 0;
+      if(E(ele1)->hasAttribute("href"))
+        integrator=Integrator::readXMLFile(E(ele1)->getAttribute("href"));
+      else {
+        ele2 = ele1->getFirstElementChild();
+        integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
+      }
+      if(ele2)
+        integrator->initializeUsingXML(ele2);
+    } else {
+      integrator=ObjectFactory::getInstance()->createIntegrator(ele1);
+      integrator->initializeUsingXML(ele1);
+    }
+    integratorView->setIntegrator(integrator);
 
     actionSaveProject->setDisabled(false);
 
@@ -510,7 +512,10 @@ void MainWindow::saveProject(const QString &fileName) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
   Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
-  solver->writeXMLFile(ele0);
+  if(solver->isEmbedded())
+    solver->writeXMLFileEmbed(ele0);
+  else
+    solver->writeXMLFile(ele0);
   integratorView->getIntegrator()->writeXMLFile(ele0);
 
   QString file = fileProject->text();
@@ -606,6 +611,13 @@ void MainWindow::addStringParameter() {
   StringParameter *parameter = new StringParameter("a"+toStr(model->getItem(index)->getID()));
   model->createParameterItem(parameter,index);
   updateOctaveParameters();
+
+  {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+  solver->addParameter(parameter);
+  }
 }
 
 void MainWindow::addScalarParameter() {
@@ -614,6 +626,13 @@ void MainWindow::addScalarParameter() {
   ScalarParameter *parameter = new ScalarParameter("a"+toStr(model->getItem(index)->getID()));
   model->createParameterItem(parameter,index);
   updateOctaveParameters();
+
+  {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+  solver->addParameter(parameter);
+  }
 }
 
 void MainWindow::addVectorParameter() {
@@ -622,6 +641,13 @@ void MainWindow::addVectorParameter() {
   VectorParameter *parameter = new VectorParameter("a"+toStr(model->getItem(index)->getID()));
   model->createParameterItem(parameter,index);
   updateOctaveParameters();
+
+  {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+  solver->addParameter(parameter);
+  }
 }
 
 void MainWindow::addMatrixParameter() {
@@ -630,6 +656,13 @@ void MainWindow::addMatrixParameter() {
   MatrixParameter *parameter = new MatrixParameter("a"+toStr(model->getItem(index)->getID()));
   model->createParameterItem(parameter,index);
   updateOctaveParameters();
+
+  {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+  solver->addParameter(parameter);
+  }
 }
 
 void MainWindow::newParameterList(bool ask) {
@@ -676,7 +709,7 @@ void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
     delete octEvalParamLevel;
     octEvalParamLevel=new NewParamLevel(*octEval);
     // add parameter
-    octEval->addParamSet(ele0);
+//    octEval->addParamSet(ele0);
   }
   catch(string e) {
     cout << "An exception occurred in updateOctaveParameters: " << e << endl;

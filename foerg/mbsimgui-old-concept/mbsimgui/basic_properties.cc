@@ -378,6 +378,7 @@ DOMElement* FileProperty::writeXMLFile(DOMNode *parent) {
 
 void FileProperty::fromWidget(QWidget *widget) {
   file = static_cast<FileWidget*>(widget)->getFile().toStdString();
+  cout << file << endl;
 }
 
 void FileProperty::toWidget(QWidget *widget) {
@@ -741,28 +742,36 @@ DOMElement* EmbedProperty::initializeUsingXML(DOMElement *parent) {
     counterName.setActive(true);
     static_cast<TextProperty*>(counterName.getProperty())->setText(E(parent)->getAttribute("counterName"));
   }
-  DOMElement *ele = E(parent)->getFirstElementChildNamed(PV%"localParameter");
-  if(ele) {
+  if(E(parent)->hasAttribute("parameterHref")) {
     parameterList.setActive(true);
-    string file = E(ele)->getAttribute("href");
-    static_cast<FileProperty*>(parameterList.getProperty())->setFile(file);
+    static_cast<FileProperty*>(parameterList.getProperty())->setFile(E(parent)->getAttribute("parameterHref"));
   }
+//  DOMElement *ele = E(parent)->getFirstElementChildNamed(PV%"parameterHref");
+//  if(ele) {
+//    parameterList.setActive(true);
+//    string file = E(ele)->getAttribute("href");
+//    static_cast<FileProperty*>(parameterList.getProperty())->setFile(file);
+//  }
 }
 
 DOMElement* EmbedProperty::writeXMLFile(DOMNode *parent) {
   DOMDocument *doc=parent->getOwnerDocument();
-  DOMElement *ele0=D(doc)->createElement(PV%"embed");
-  if(href.isActive())
-    E(ele0)->setAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFile());
+  DOMElement *ele0=D(doc)->createElement(PV%"Embed");
+  if(href.isActive()) {
+    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(getFile())).toStdString();
+    E(ele0)->setAttribute("href", relFileName);
+  }
   if(count.isActive())
     E(ele0)->setAttribute("count", boost::lexical_cast<string>(static_cast<IntegerProperty*>(count.getProperty())->getValue()));
   if(counterName.isActive())
     E(ele0)->setAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
   if(parameterList.isActive()) {
-    DOMElement *ele1=D(doc)->createElement(PV%"localParameter");
-    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
-    E(ele1)->setAttribute("href", filePath);
-    ele0->insertBefore(ele1, NULL);
+    //DOMElement *ele1=D(doc)->createElement(PV%"parameterHref");
+//    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
+    //E(ele1)->setAttribute("parameterHref", filePath);
+    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(getParameterFile())).toStdString();
+    E(ele0)->setAttribute("parameterHref", relFileName);
+    //ele0->insertBefore(ele1, NULL);
   }
   parent->insertBefore(ele0, NULL);
   return ele0;
