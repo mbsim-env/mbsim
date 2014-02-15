@@ -6,6 +6,8 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimInterface/Makefile.am])
 LT_INIT([win32-dll])
 
+AC_CANONICAL_SYSTEM
+
 : ${CFLAGS=""}
 : ${CXXFLAGS=""}
 : ${FCFLAGS=""}
@@ -31,6 +33,11 @@ AC_ARG_WITH([boost-system-lib],
 AC_SUBST([BOOST_SYSTEM_LIB])
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl mbxmlutilstinyxml)
+
+if test "_$host_os" = "_mingw32"; then
+  EXTRA_LIBS="-lws2_32"
+fi
+AC_SUBST([EXTRA_LIBS])
 
 dnl process _SI_interfaceMessages_SI_
 AS_IF([test "1==1"], [
