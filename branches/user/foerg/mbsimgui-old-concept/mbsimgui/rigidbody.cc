@@ -109,14 +109,12 @@ void RigidBody::initializeUsingXML(DOMElement *element) {
   e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
   Frame *f;
   while(e) {
-    if(E(e)->getTagName()==PV%"embed") {
+    if(E(e)->getTagName()==PV%"Embed") {
       DOMElement *ee = 0;
       if(E(e)->hasAttribute("href"))
         f=Frame::readXMLFile(E(e)->getAttribute("href"),this);
       else {
         ee = e->getFirstElementChild();
-        if(E(ee)->getTagName() == PV%"localParameter")
-          ee = ee->getNextElementSibling();
         f=ObjectFactory::getInstance()->createFrame(ee,this);
       }
       if(f) {
@@ -138,14 +136,12 @@ void RigidBody::initializeUsingXML(DOMElement *element) {
   e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
   Contour *c;
   while(e) {
-    if(E(e)->getTagName()==PV%"embed") {
+    if(E(e)->getTagName()==PV%"Embed") {
       DOMElement *ee = 0;
       if(E(e)->hasAttribute("href"))
         c=Contour::readXMLFile(E(e)->getAttribute("href"),this);
       else {
         ee = e->getFirstElementChild();
-        if(E(ee)->getTagName() == PV%"localParameter")
-          ee = ee->getNextElementSibling();
         c=ObjectFactory::getInstance()->createContour(ee,this);
       }
       if(c) {
@@ -208,7 +204,7 @@ DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
   translationDependentRotation.writeXMLFile(ele0);
   coordinateTransformationForRotation.writeXMLFile(ele0);
 
-  DOMDocument *doc=parent->getOwnerDocument();
+  DOMDocument *doc=ele0->getOwnerDocument();
   ele1 = D(doc)->createElement( MBSIM%"frames" );
   for(int i=1; i<frame.size(); i++)
     if(frame[i]->isEmbedded())

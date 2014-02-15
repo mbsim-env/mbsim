@@ -433,7 +433,7 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
   setLayout(layout);
 
   relativeFilePath = new QLineEdit;
-  relativeFilePath->setReadOnly(true);
+//  relativeFilePath->setReadOnly(true);
   layout->addWidget(relativeFilePath);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
@@ -444,6 +444,7 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
 void FileWidget::setFile(const QString &str) {
   file = str;
   relativeFilePath->setText(mbsDir.relativeFilePath(file));
+  cout << "file path = "<< relativeFilePath->text().toStdString() << endl;
 }
 
 void FileWidget::selectFile() {
@@ -638,7 +639,7 @@ EmbedWidget::EmbedWidget() {
   layout->addWidget(count);
   counterName = new ExtWidget("Counter name", new TextWidget, true);
   layout->addWidget(counterName);
-  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
+  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)", 1), true);
   layout->addWidget(parameterList);
 }
 

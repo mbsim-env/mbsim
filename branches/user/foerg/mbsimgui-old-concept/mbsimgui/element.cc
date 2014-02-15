@@ -35,6 +35,7 @@
 
 extern MainWindow *mw;
 extern bool absolutePath;
+extern QDir mbsDir;
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -85,11 +86,39 @@ void Element::initializeUsingXMLEmbed(DOMElement *element) {
 }
 
 DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
   DOMElement *ele = embed.writeXMLFile(parent);
+
+  if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
+    string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
+    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
+    doc->insertBefore( ele1, NULL );
+    for(int i=0; i<parameter.size(); i++)
+      parameter[i]->writeXMLFile(ele1);
+    string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
+    QFileInfo info(QString::fromStdString(name));
+    QDir dir;
+    if(!dir.exists(info.absolutePath()))
+      dir.mkpath(info.absolutePath());
+    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  }
+  else {
+    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
+    ele->insertBefore( ele1, NULL );
+    for(int i=0; i<parameter.size(); i++)
+      parameter[i]->writeXMLFile(ele1);
+  }
+
   if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
     writeXMLFile(ele);
-  else 
-    writeXMLFile(absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
+  else {
+    string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getFile();
+    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
+    string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
+    writeXMLFile(name);
+  }
   return ele;
 }
 

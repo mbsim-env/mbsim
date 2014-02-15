@@ -245,7 +245,7 @@ void CircleSolidPropertyDialog::fromWidget(Element *element) {
   static_cast<CircleSolid*>(element)->visu.fromWidget(visu);
 }
 
-GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f,kinematics), position(0), orientation(0), frameOfReference(0) {
+GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
   if(kinematics) {
     addTab("Kinematics",1);
 
