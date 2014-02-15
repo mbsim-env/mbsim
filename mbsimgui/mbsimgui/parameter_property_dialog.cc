@@ -40,6 +40,22 @@ void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
   parameter->name.fromWidget(name);
 }
 
+StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+  value = new ExtWidget("Value",new TextWidget("0"));
+  addToTab("General", value);
+}
+
+void StringParameterPropertyDialog::toWidget(Parameter *parameter) {
+  ParameterPropertyDialog::toWidget(parameter);
+  static_cast<StringParameter*>(parameter)->value.toWidget(value);
+}
+
+void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
+  ParameterPropertyDialog::fromWidget(parameter);
+  static_cast<StringParameter*>(parameter)->value.fromWidget(value);
+  parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
+}
+
 ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));

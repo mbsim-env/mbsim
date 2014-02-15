@@ -18,37 +18,15 @@
 */
 
 #include <config.h>
-#include "octaveutils.h"
-#include <string>
-#include <mbxmlutilstinyxml/getinstallpath.h>
-#include <mbxmlutilstinyxml/tinyxml.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include "mainwindow.h"
-#include <mbxmlutils/utils.h>
+#include "function_property.h"
+
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
-void initializeOctave() {
-  MBXMLUtils::OctaveEvaluator::initialize();
-
-  // preserve whitespace and newline in TiXmlText nodes
-  TiXmlBase::SetCondenseWhiteSpace(false);
+DOMElement* FunctionProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
+  parent->insertBefore(ele0, NULL);
+  return ele0;
 }
-
-string evalOctaveExpression(const string &str) {
-  string ret;
-  if(str!="") {
-    bool error = false;
-    try{
-      MainWindow::octEval->octaveEvalRet(str, 0, false);
-      ret = MainWindow::octEval->octaveGetRet();
-    }
-    catch (string e) {
-      cout << "An exception occurred in evalOctaveExpression: " << e << endl;
-    }
-  }
-  return ret;
-}
-

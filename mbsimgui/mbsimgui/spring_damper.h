@@ -29,12 +29,40 @@ class SpringDamper : public Link {
     SpringDamper(const std::string &str, Element *element);
     ~SpringDamper();
     std::string getType() const { return "SpringDamper"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   protected:
-    ExtProperty forceFunction, connections, forceDirection, coilSpring;
+    ExtProperty forceFunction, connections, coilSpring, forceArrow;
+};
+
+class DirectionalSpringDamper : public Link {
+  friend class DirectionalSpringDamperPropertyDialog;
+  public:
+    DirectionalSpringDamper(const std::string &str, Element *element);
+    ~DirectionalSpringDamper();
+    std::string getType() const { return "DirectionalSpringDamper"; }
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
+  protected:
+    ExtProperty forceDirection, forceFunction, connections, coilSpring, forceArrow;
+};
+
+class GeneralizedSpringDamper : public Link {
+  friend class GeneralizedSpringDamperPropertyDialog;
+  public:
+    GeneralizedSpringDamper(const std::string &str, Element *element);
+    ~GeneralizedSpringDamper();
+    std::string getType() const { return "GeneralizedSpringDamper"; }
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
+  protected:
+    ExtProperty function, body, connections, coilSpring, forceArrow, momentArrow;
 };
 
 #endif

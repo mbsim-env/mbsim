@@ -26,8 +26,9 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
-GeneralizedForceLawProperty::GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p) : forceFunc(static_cast<Function2Property*>(p.forceFunc->clone())) {
+GeneralizedForceLawProperty::GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p) : forceFunc(static_cast<FunctionProperty*>(p.forceFunc->clone())) {
 }
     
 GeneralizedForceLawProperty::~GeneralizedForceLawProperty() {
@@ -36,17 +37,18 @@ GeneralizedForceLawProperty::~GeneralizedForceLawProperty() {
 
 GeneralizedForceLawProperty& GeneralizedForceLawProperty::operator=(const GeneralizedForceLawProperty &p) {
   delete forceFunc;
-  forceFunc=static_cast<Function2Property*>(p.forceFunc->clone());
+  forceFunc=static_cast<FunctionProperty*>(p.forceFunc->clone());
 }
 
-TiXmlElement* GeneralizedForceLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+DOMElement* GeneralizedForceLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
   if(forceFunc) {
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"forceFunction" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"forceFunction" );
     forceFunc->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
-  parent->LinkEndChild(ele0);
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
@@ -58,13 +60,13 @@ void RegularizedBilateralConstraintProperty::defineFunction(int index_) {
   }
 }
 
-TiXmlElement* RegularizedBilateralConstraintProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"forceFunction");
-  TiXmlElement *e1 = e->FirstChildElement();
-  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedBilateralConstraint") {
+DOMElement* RegularizedBilateralConstraintProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
+  e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+  DOMElement *e1 = e->getFirstElementChild();
+  if(e1 && E(e1)->getTagName() == MBSIM%"LinearRegularizedBilateralConstraint") {
     defineFunction(0);
-    forceFunc->initializeUsingXML(e->FirstChildElement());
+    forceFunc->initializeUsingXML(e->getFirstElementChild());
   }
   return e;
 }
@@ -90,13 +92,13 @@ void RegularizedUnilateralConstraintProperty::defineFunction(int index_) {
   }
 }
 
-TiXmlElement* RegularizedUnilateralConstraintProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"forceFunction");
-  TiXmlElement *e1 = e->FirstChildElement();
-  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedUnilateralConstraint") {
+DOMElement* RegularizedUnilateralConstraintProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
+  e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+  DOMElement *e1 = e->getFirstElementChild();
+  if(e1 && E(e1)->getTagName() == MBSIM%"LinearRegularizedUnilateralConstraint") {
     defineFunction(0);
-    forceFunc->initializeUsingXML(e->FirstChildElement());
+    forceFunc->initializeUsingXML(e->getFirstElementChild());
   }
   return e;
 }
@@ -114,25 +116,26 @@ void RegularizedUnilateralConstraintProperty::toWidget(QWidget *widget) {
   forceFunc->toWidget(static_cast<RegularizedUnilateralConstraintWidget*>(widget)->forceFunc);
 }
 
-TiXmlElement* GeneralizedImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-  parent->LinkEndChild(ele0);
+DOMElement* GeneralizedImpactLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
 UnilateralNewtonImpactProperty::UnilateralNewtonImpactProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"restitutionCoefficient"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"restitutionCoefficient"));
   restitutionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* UnilateralNewtonImpactProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* UnilateralNewtonImpactProperty::initializeUsingXML(DOMElement *element) {
   restitutionCoefficient.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* UnilateralNewtonImpactProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = GeneralizedImpactLawProperty::writeXMLFile(parent);
+DOMElement* UnilateralNewtonImpactProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele = GeneralizedImpactLawProperty::writeXMLFile(parent);
   restitutionCoefficient.writeXMLFile(ele);
   return ele;
 }
@@ -145,7 +148,7 @@ void UnilateralNewtonImpactProperty::toWidget(QWidget *widget) {
   restitutionCoefficient.toWidget(static_cast<UnilateralNewtonImpactWidget*>(widget)->restitutionCoefficient);
 }
 
-FrictionForceLawProperty::FrictionForceLawProperty(const FrictionForceLawProperty &p) : frictionForceFunc(static_cast<Function2Property*>(p.frictionForceFunc->clone())) {
+FrictionForceLawProperty::FrictionForceLawProperty(const FrictionForceLawProperty &p) : frictionForceFunc(static_cast<FunctionProperty*>(p.frictionForceFunc->clone())) {
 }
 
 FrictionForceLawProperty::~FrictionForceLawProperty() {
@@ -154,33 +157,34 @@ FrictionForceLawProperty::~FrictionForceLawProperty() {
 
 FrictionForceLawProperty& FrictionForceLawProperty::operator=(const FrictionForceLawProperty &p) {
   delete frictionForceFunc; 
-  frictionForceFunc=static_cast<Function2Property*>(p.frictionForceFunc->clone());
+  frictionForceFunc=static_cast<FunctionProperty*>(p.frictionForceFunc->clone());
 }
 
-TiXmlElement* FrictionForceLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+DOMElement* FrictionForceLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
   if(frictionForceFunc) {
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frictionForceFunction" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frictionForceFunction" );
     frictionForceFunc->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
-  parent->LinkEndChild(ele0);
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
 PlanarCoulombFrictionProperty::PlanarCoulombFrictionProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* PlanarCoulombFrictionProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* PlanarCoulombFrictionProperty::initializeUsingXML(DOMElement *element) {
   frictionCoefficient.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* PlanarCoulombFrictionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
+DOMElement* PlanarCoulombFrictionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
   frictionCoefficient.writeXMLFile(ele);
   return ele;
 }
@@ -195,17 +199,17 @@ void PlanarCoulombFrictionProperty::toWidget(QWidget *widget) {
 
 SpatialCoulombFrictionProperty::SpatialCoulombFrictionProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* SpatialCoulombFrictionProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* SpatialCoulombFrictionProperty::initializeUsingXML(DOMElement *element) {
   frictionCoefficient.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* SpatialCoulombFrictionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
+DOMElement* SpatialCoulombFrictionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
   frictionCoefficient.writeXMLFile(ele);
   return ele;
 }
@@ -225,14 +229,14 @@ void RegularizedPlanarFrictionProperty::defineFunction(int index_) {
     frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
 }
 
-TiXmlElement* RegularizedPlanarFrictionProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
-  TiXmlElement *e1 = e->FirstChildElement();
-  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedCoulombFriction")
+DOMElement* RegularizedPlanarFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
+  e=E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
+  DOMElement *e1 = e->getFirstElementChild();
+  if(e1 && E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
     index = 0;
   defineFunction(0);
-  frictionForceFunc->initializeUsingXML(e->FirstChildElement());
+  frictionForceFunc->initializeUsingXML(e->getFirstElementChild());
   return e;
 }
 
@@ -256,14 +260,14 @@ void RegularizedSpatialFrictionProperty::defineFunction(int index_) {
     frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
 }
 
-TiXmlElement* RegularizedSpatialFrictionProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
-  TiXmlElement *e1 = e->FirstChildElement();
-  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedCoulombFriction")
+DOMElement* RegularizedSpatialFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
+  e=E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
+  DOMElement *e1 = e->getFirstElementChild();
+  if(e1 && E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
     index = 0;
   defineFunction(0);
-  frictionForceFunc->initializeUsingXML(e->FirstChildElement());
+  frictionForceFunc->initializeUsingXML(e->getFirstElementChild());
   return e;
 }
 
@@ -280,25 +284,26 @@ void RegularizedSpatialFrictionProperty::toWidget(QWidget *widget) {
   frictionForceFunc->toWidget(static_cast<RegularizedSpatialFrictionWidget*>(widget)->frictionForceFunc);
 }
 
-TiXmlElement* FrictionImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-  parent->LinkEndChild(ele0);
+DOMElement* FrictionImpactLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
 PlanarCoulombImpactProperty::PlanarCoulombImpactProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* PlanarCoulombImpactProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* PlanarCoulombImpactProperty::initializeUsingXML(DOMElement *element) {
   frictionCoefficient.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* PlanarCoulombImpactProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
+DOMElement* PlanarCoulombImpactProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
   frictionCoefficient.writeXMLFile(ele);
   return ele;
 }
@@ -313,17 +318,17 @@ void PlanarCoulombImpactProperty::toWidget(QWidget *widget) {
 
 SpatialCoulombImpactProperty::SpatialCoulombImpactProperty() {
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-TiXmlElement* SpatialCoulombImpactProperty::initializeUsingXML(TiXmlElement *element) {
+DOMElement* SpatialCoulombImpactProperty::initializeUsingXML(DOMElement *element) {
   frictionCoefficient.initializeUsingXML(element);
   return element;
 }
 
-TiXmlElement* SpatialCoulombImpactProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
+DOMElement* SpatialCoulombImpactProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
   frictionCoefficient.writeXMLFile(ele);
   return ele;
 }
@@ -349,18 +354,18 @@ void GeneralizedForceLawChoiceProperty::defineForceLaw(int index_) {
     generalizedForceLaw = new RegularizedUnilateralConstraintProperty;  
 }
 
-TiXmlElement* GeneralizedForceLawChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(xmlName);
+DOMElement* GeneralizedForceLawChoiceProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement  *e=E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
+    DOMElement* ee=e->getFirstElementChild();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"BilateralConstraint")
+      if(E(ee)->getTagName() == MBSIM%"BilateralConstraint")
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"RegularizedBilateralConstraint")
+      else if(E(ee)->getTagName() == MBSIM%"RegularizedBilateralConstraint")
         index = 1;
-      else if(ee->ValueStr() == MBSIMNS"UnilateralConstraint")
+      else if(E(ee)->getTagName() == MBSIM%"UnilateralConstraint")
         index = 2;
-      else if(ee->ValueStr() == MBSIMNS"RegularizedUnilateralConstraint")
+      else if(E(ee)->getTagName() == MBSIM%"RegularizedUnilateralConstraint")
         index = 3;
       defineForceLaw(index);
       generalizedForceLaw->initializeUsingXML(ee);
@@ -369,11 +374,12 @@ TiXmlElement* GeneralizedForceLawChoiceProperty::initializeUsingXML(TiXmlElement
   return e;
 }
 
-TiXmlElement* GeneralizedForceLawChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+DOMElement* GeneralizedForceLawChoiceProperty::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0 = D(doc)->createElement(xmlName);
   if(generalizedForceLaw)
     generalizedForceLaw->writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
+  parent->insertBefore(ele0, NULL);
 
   return 0;
 }
@@ -400,14 +406,14 @@ void GeneralizedImpactLawChoiceProperty::defineImpactLaw(int index_) {
     generalizedImpactLaw = new UnilateralNewtonImpactProperty;  
 }
 
-TiXmlElement* GeneralizedImpactLawChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+DOMElement* GeneralizedImpactLawChoiceProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
+    DOMElement* ee=e->getFirstElementChild();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"BilateralImpact")
+      if(E(ee)->getTagName() == MBSIM%"BilateralImpact")
         index = 0;
-      if(ee->ValueStr() == MBSIMNS"UnilateralNewtonImpact")
+      if(E(ee)->getTagName() == MBSIM%"UnilateralNewtonImpact")
         index = 1;
       defineImpactLaw(index);
       generalizedImpactLaw->initializeUsingXML(ee);
@@ -417,12 +423,13 @@ TiXmlElement* GeneralizedImpactLawChoiceProperty::initializeUsingXML(TiXmlElemen
   return 0;
 }
 
-TiXmlElement* GeneralizedImpactLawChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+DOMElement* GeneralizedImpactLawChoiceProperty::writeXMLFile(DOMNode *parent) {
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(xmlName);
     if(generalizedImpactLaw)
       generalizedImpactLaw->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+    parent->insertBefore(ele0, NULL);
   }
   else
     generalizedImpactLaw->writeXMLFile(parent);
@@ -456,18 +463,18 @@ void FrictionForceLawChoiceProperty::defineFrictionLaw(int index_) {
     frictionForceLaw = new RegularizedSpatialFrictionProperty;  
 }
 
-TiXmlElement* FrictionForceLawChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+DOMElement* FrictionForceLawChoiceProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
+    DOMElement* ee=e->getFirstElementChild();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"PlanarCoulombFriction")
+      if(E(ee)->getTagName() == MBSIM%"PlanarCoulombFriction")
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"RegularizedPlanarFriction")
+      else if(E(ee)->getTagName() == MBSIM%"RegularizedPlanarFriction")
         index = 1;
-      else if(ee->ValueStr() == MBSIMNS"SpatialCoulombFriction")
+      else if(E(ee)->getTagName() == MBSIM%"SpatialCoulombFriction")
         index = 2;
-      else if(ee->ValueStr() == MBSIMNS"RegularizedSpatialFriction")
+      else if(E(ee)->getTagName() == MBSIM%"RegularizedSpatialFriction")
         index = 3;
       defineFrictionLaw(index);
       frictionForceLaw->initializeUsingXML(ee);
@@ -477,12 +484,13 @@ TiXmlElement* FrictionForceLawChoiceProperty::initializeUsingXML(TiXmlElement *e
   return 0;
 }
 
-TiXmlElement* FrictionForceLawChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+DOMElement* FrictionForceLawChoiceProperty::writeXMLFile(DOMNode *parent) {
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(xmlName);
     if(frictionForceLaw)
       frictionForceLaw->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+    parent->insertBefore(ele0, NULL);
   }
   else
     frictionForceLaw->writeXMLFile(parent);
@@ -512,14 +520,14 @@ void FrictionImpactLawChoiceProperty::defineFrictionImpactLaw(int index_) {
     frictionImpactLaw = new SpatialCoulombImpactProperty;  
 }
 
-TiXmlElement* FrictionImpactLawChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+DOMElement* FrictionImpactLawChoiceProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
+    DOMElement* ee=e->getFirstElementChild();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"PlanarCoulombImpact")
+      if(E(ee)->getTagName() == MBSIM%"PlanarCoulombImpact")
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"SpatialCoulombImpact")
+      else if(E(ee)->getTagName() == MBSIM%"SpatialCoulombImpact")
         index = 1;
       defineFrictionImpactLaw(index);
       frictionImpactLaw->initializeUsingXML(ee);
@@ -529,12 +537,13 @@ TiXmlElement* FrictionImpactLawChoiceProperty::initializeUsingXML(TiXmlElement *
   return 0;
 }
 
-TiXmlElement* FrictionImpactLawChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+DOMElement* FrictionImpactLawChoiceProperty::writeXMLFile(DOMNode *parent) {
+  if(xmlName!=FQN()) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(xmlName);
     if(frictionImpactLaw)
       frictionImpactLaw->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+    parent->insertBefore(ele0, NULL);
   }
   else
     frictionImpactLaw->writeXMLFile(parent);
@@ -553,156 +562,4 @@ void FrictionImpactLawChoiceProperty::toWidget(QWidget *widget) {
   static_cast<FrictionImpactLawChoiceWidget*>(widget)->comboBox->blockSignals(false);;
   static_cast<FrictionImpactLawChoiceWidget*>(widget)->defineFrictionImpactLaw(index);
   frictionImpactLaw->toWidget(static_cast<FrictionImpactLawChoiceWidget*>(widget)->frictionImpactLaw);
-}
-
-
-GeneralizedForceChoiceProperty::GeneralizedForceChoiceProperty(ExtProperty &arrow_, const std::string &xmlName_) : arrow(arrow_), generalizedImpactLaw(0,false), xmlName(xmlName_) {
-
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"direction"));
-  mat.setProperty(new ExtPhysicalVarProperty(input));
-
-  generalizedForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"generalizedForceLaw"));
-
-  generalizedImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(MBSIMNS"generalizedImpactLaw"));
-  generalizedImpactLaw.setXMLName(MBSIMNS"generalizedImpactLaw");
-}
-
-TiXmlElement* GeneralizedForceChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
-  if(e) {
-    mat.initializeUsingXML(e);
-    generalizedForceLaw.initializeUsingXML(e);
-    generalizedImpactLaw.initializeUsingXML(e);
-    arrow.initializeUsingXML(e);
-  }
-  return e;
-}
-
-TiXmlElement* GeneralizedForceChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  mat.writeXMLFile(ele0);
-  generalizedForceLaw.writeXMLFile(ele0);
-  generalizedImpactLaw.writeXMLFile(ele0);
-  arrow.writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
-
-  return 0;
-}
-
-void GeneralizedForceChoiceProperty::fromWidget(QWidget *widget) {
-  mat.fromWidget(static_cast<GeneralizedForceChoiceWidget*>(widget)->mat);
-  generalizedForceLaw.fromWidget(static_cast<GeneralizedForceChoiceWidget*>(widget)->generalizedForceLaw);
-  generalizedImpactLaw.fromWidget(static_cast<GeneralizedForceChoiceWidget*>(widget)->generalizedImpactLaw);
-}
-
-void GeneralizedForceChoiceProperty::toWidget(QWidget *widget) {
-  mat.toWidget(static_cast<GeneralizedForceChoiceWidget*>(widget)->mat);
-  generalizedForceLaw.toWidget(static_cast<GeneralizedForceChoiceWidget*>(widget)->generalizedForceLaw);
-  generalizedImpactLaw.toWidget(static_cast<GeneralizedForceChoiceWidget*>(widget)->generalizedImpactLaw);
-}
-
-ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string &xmlName_) : arrow(arrow_), xmlName(xmlName_) {
-
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"directionVectors"));
-  mat.setProperty(new ExtPhysicalVarProperty(input));
-
-  vector<Property*> property;
-  property.push_back(new ConstantFunction1Property("VS"));
-  property.push_back(new QuadraticFunction1Property);
-  property.push_back(new SinusFunction1Property);
-  property.push_back(new TabularFunction1Property);
-  property.push_back(new SummationFunction1Property);
-  property.push_back(new SymbolicFunction1Property("VS","t"));
-  forceLaw.setProperty(new ChoiceProperty(MBSIMNS"function",property));
-}
-
-TiXmlElement* ForceChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
-  if(e) {
-    mat.initializeUsingXML(e);
-    forceLaw.initializeUsingXML(e);
-    arrow.initializeUsingXML(e);
-  }
-  return e;
-}
-
-TiXmlElement* ForceChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  mat.writeXMLFile(ele0);
-  forceLaw.writeXMLFile(ele0);
-  arrow.writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
-
-  return 0;
-}
-
-void ForceChoiceProperty::fromWidget(QWidget *widget) {
-  mat.fromWidget(static_cast<ForceChoiceWidget*>(widget)->mat);
-  forceLaw.fromWidget(static_cast<ForceChoiceWidget*>(widget)->forceLaw);
-}
-
-void ForceChoiceProperty::toWidget(QWidget *widget) {
-  mat.toWidget(static_cast<ForceChoiceWidget*>(widget)->mat);
-  forceLaw.toWidget(static_cast<ForceChoiceWidget*>(widget)->forceLaw);
-}
-
-ForceDirectionProperty::ForceDirectionProperty(Element *element, const string &xmlName_) : xmlName(xmlName_) {
-
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"direction"));
-  mat.setProperty(new ExtPhysicalVarProperty(input));
-  refFrame.setProperty(new FrameOfReferenceProperty("",element,MBSIMNS"frameOfReference"));
-}
-TiXmlElement* ForceDirectionProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
-  if(e) {
-    refFrame.initializeUsingXML(e);
-    mat.initializeUsingXML(e);
-  }
-  return e;
-}
-
-TiXmlElement* ForceDirectionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  refFrame.writeXMLFile(ele0);
-  mat.writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
-
-  return 0;
-}
-
-void ForceDirectionProperty::fromWidget(QWidget *widget) {
-  mat.fromWidget(static_cast<ForceDirectionWidget*>(widget)->mat);
-  refFrame.fromWidget(static_cast<ForceDirectionWidget*>(widget)->refFrame);
-}
-
-void ForceDirectionProperty::toWidget(QWidget *widget) {
-  mat.toWidget(static_cast<ForceDirectionWidget*>(widget)->mat);
-  refFrame.toWidget(static_cast<ForceDirectionWidget*>(widget)->refFrame);
-}
-
-GeneralizedForceDirectionProperty::GeneralizedForceDirectionProperty(const string &xmlName) {
-
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",xmlName));
-  mat.setProperty(new ExtPhysicalVarProperty(input));
-}
-
-TiXmlElement* GeneralizedForceDirectionProperty::initializeUsingXML(TiXmlElement *element) {
-  return mat.initializeUsingXML(element);
-}
-
-TiXmlElement* GeneralizedForceDirectionProperty::writeXMLFile(TiXmlNode *parent) {
-  mat.writeXMLFile(parent);
-  return 0;
-}
-
-void GeneralizedForceDirectionProperty::fromWidget(QWidget *widget) {
-  mat.fromWidget(static_cast<GeneralizedForceDirectionWidget*>(widget)->mat);
-}
-
-void GeneralizedForceDirectionProperty::toWidget(QWidget *widget) {
-  mat.toWidget(static_cast<GeneralizedForceDirectionWidget*>(widget)->mat);
 }

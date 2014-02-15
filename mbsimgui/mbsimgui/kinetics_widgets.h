@@ -24,7 +24,7 @@
 #include "basic_widgets.h"
 #include <QComboBox>
 
-class Function2Widget;
+class FunctionWidget;
 class QVBoxLayout;
 class ExtWidget;
 class ExtPhysicalVarWidget;
@@ -37,7 +37,7 @@ class GeneralizedForceLawWidget : public Widget {
     GeneralizedForceLawWidget() : forceFunc(0) {}
     virtual QString getType() const { return "GeneralizedForceLaw"; }
    protected:
-    Function2Widget *forceFunc;
+    FunctionWidget *forceFunc;
 };
 
 class BilateralConstraintWidget : public GeneralizedForceLawWidget {
@@ -115,7 +115,7 @@ class FrictionForceLawWidget : public Widget {
     FrictionForceLawWidget() : frictionForceFunc(0) {}
     virtual QString getType() const { return "FrictionForceLaw"; }
    protected:
-    Function2Widget *frictionForceFunc;
+    FunctionWidget *frictionForceFunc;
 };
 
 class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
@@ -273,64 +273,6 @@ class FrictionImpactLawChoiceWidget : public Widget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     FrictionImpactLawWidget *frictionImpactLaw;
-};
-
-class GeneralizedForceChoiceWidget : public Widget {
-
-  friend class GeneralizedForceChoiceProperty;
-
-  public:
-    GeneralizedForceChoiceWidget();
-
-    int getSize() const; 
-
-  protected:
-    QVBoxLayout *layout;
-    ExtWidget *generalizedForceLaw, *generalizedImpactLaw, *mat;
-};
-
-class ForceChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class ForceChoiceProperty;
-
-  public:
-    ForceChoiceWidget();
-
-    int getSize() const; 
-
-  public slots:
-    void resizeVariables();
-
-  protected:
-    QVBoxLayout *layout;
-    ExtWidget *forceLaw, *mat;
-};
-
-class ForceDirectionWidget : public Widget {
-
-  friend class ForceDirectionProperty;
-
-  public:
-    ForceDirectionWidget(Element *element);
-
-  protected:
-    QWidget *forceDirWidget;
-    Element *element;
-    ExtWidget *refFrame, *mat;
-};
-
-class GeneralizedForceDirectionWidget : public Widget {
-
-  friend class GeneralizedForceDirectionProperty;
-
-  public:
-    GeneralizedForceDirectionWidget();
-
-    int getSize() const;
-
-  protected:
-    ExtWidget *mat;
 };
 
 #endif

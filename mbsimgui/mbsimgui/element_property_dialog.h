@@ -37,14 +37,17 @@ class RigidBody;
 class Constraint;
 class GearConstraint;
 class KinematicConstraint;
-class TimeDependentKinematicConstraint;
-class StateDependentKinematicConstraint;
+class GeneralizedPositionConstraint;
+class GeneralizedVelocityConstraint;
+class GeneralizedAccelerationConstraint;
 class JointConstraint;
 class SignalProcessingSystem;
 class LinearTransferSystem;
 class Link;
 class KineticExcitation;
 class SpringDamper;
+class DirectionalSpringDamper;
+class GeneralizedSpringDamper;
 class Joint;
 class Contact;
 class Actuator;
@@ -170,29 +173,27 @@ class SolverPropertyDialog : public GroupPropertyDialog {
 };
 
 class ObjectPropertyDialog : public ElementPropertyDialog {
-  Q_OBJECT;
 
   public:
     ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    virtual void resizeGeneralizedPosition() {}
-    virtual void resizeGeneralizedVelocity() {}
-  protected:
-    ExtWidget *q0, *u0;
-    VecWidget *q0_, *u0_;
-  public slots:
-    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
 };
 
 class BodyPropertyDialog : public ObjectPropertyDialog {
+  Q_OBJECT;
 
   public:
     BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
+    virtual void resizeGeneralizedPosition() {}
+    virtual void resizeGeneralizedVelocity() {}
   protected:
-    ExtWidget *R;
+    ExtWidget *q0, *u0, *R;
+    VecWidget *q0_, *u0_;
+  public slots:
+    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
 };
 
 class RigidBodyPropertyDialog : public BodyPropertyDialog {
@@ -206,7 +207,7 @@ class RigidBodyPropertyDialog : public BodyPropertyDialog {
     int getqRelSize() const; 
     int getuRelSize() const; 
   protected:
-    ExtWidget *K, *mass, *inertia, *translation, *rotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow, *isFrameOfBodyForRotation;
+    ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
     RigidBody *body;
 };
 
@@ -224,7 +225,6 @@ class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
-    RigidBody *refBody;
 };
 
 class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
@@ -235,45 +235,61 @@ class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *dependentBody, *constraintForceArrow, *constraintMomentArrow;
-    RigidBody *refBody;
 };
 
-class TimeDependentKinematicConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+class GeneralizedPositionConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
   Q_OBJECT
 
   public:
-    TimeDependentKinematicConstraintPropertyDialog(TimeDependentKinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *generalizedPositionFunction;
+    ExtWidget *constraintFunction;
   protected slots:
     void resizeVariables();
 };
 
-class StateDependentKinematicConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+class GeneralizedVelocityConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
   Q_OBJECT
 
   public:
-    StateDependentKinematicConstraintPropertyDialog(StateDependentKinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    void resizeGeneralizedPosition();
   protected:
-    ExtWidget *generalizedVelocityFunction;
+    ExtWidget *constraintFunction, *x0;
+    VecWidget *x0_;
+  protected slots:
+    void resizeVariables();
+};
+
+class GeneralizedAccelerationConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+  Q_OBJECT
+
+  public:
+    GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *constraintFunction, *x0;
+    VecWidget *x0_;
   protected slots:
     void resizeVariables();
 };
 
 class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
+  Q_OBJECT
 
   public:
     JointConstraintPropertyDialog(JointConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
-    void resizeGeneralizedPosition();
   protected:
-    ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *jointForceArrow, *jointMomentArrow;
+    ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *jointForceArrow, *jointMomentArrow, *q0;
+    VecWidget *q0_;
+  protected slots:
+    void resizeVariables();
 };
 
 class LinkPropertyDialog : public ElementPropertyDialog {
@@ -295,24 +311,17 @@ class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
     ExtWidget *signalRef;
 };
 
-class LinearTransferSystemPropertyDialog : public SignalProcessingSystemPropertyDialog {
-
-  public:
-    LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
-  protected:
-    ExtWidget *choice;
-};
-
 class KineticExcitationPropertyDialog : public LinkPropertyDialog {
+  Q_OBJECT
 
   public:
     KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *force, *moment, *connections, *frameOfReference, *forceArrow, *momentArrow;
+    ExtWidget *refFrameID, *forceDirection, *forceFunction, *momentDirection, *momentFunction, *connections, *forceArrow, *momentArrow;
+  protected slots:
+    void resizeVariables();
 };
 
 class SpringDamperPropertyDialog : public LinkPropertyDialog {
@@ -322,7 +331,27 @@ class SpringDamperPropertyDialog : public LinkPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *forceFunction, *connections, *forceDirection, *coilSpring;
+    ExtWidget *forceFunction, *connections, *coilSpring, *forceArrow;
+};
+
+class DirectionalSpringDamperPropertyDialog : public LinkPropertyDialog {
+
+  public:
+    DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *forceDirection, *forceFunction, *connections, *coilSpring, *forceArrow;
+};
+
+class GeneralizedSpringDamperPropertyDialog : public LinkPropertyDialog {
+
+  public:
+    GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *function, *body, *connections, *coilSpring, *forceArrow, *momentArrow;
 };
 
 class JointPropertyDialog : public LinkPropertyDialog {
@@ -332,7 +361,7 @@ class JointPropertyDialog : public LinkPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *force, *moment, *connections, *forceArrow, *momentArrow;
+    ExtWidget *refFrameID, *forceDirection, *forceLaw, *momentDirection, *momentLaw, *connections, *forceArrow, *momentArrow;
 };
 
 class ContactPropertyDialog : public LinkPropertyDialog {

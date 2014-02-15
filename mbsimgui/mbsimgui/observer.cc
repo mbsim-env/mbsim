@@ -22,28 +22,25 @@
 #include "basic_properties.h"
 #include "ombv_properties.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
 }
 
 Observer* Observer::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Observer *observer=ObjectFactory::getInstance()->createObserver(e,parent);
-    if(observer) {
-      observer->initializeUsingXML(e);
-      observer->initialize();
-    }
-    return observer;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Observer *observer=ObjectFactory::getInstance()->createObserver(e, parent);
+  if(observer) {
+    observer->initializeUsingXML(e);
+    observer->initialize();
   }
-  return 0;
+  return observer;
 }
 
 Element * Observer::getByPathSearch(string path) {
@@ -59,16 +56,16 @@ Element * Observer::getByPathSearch(string path) {
 
 CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false) {
 
-  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
   position.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  position.setXMLName(MBSIMNS"openMBVPositionArrow",false);
+  position.setXMLName(MBSIM%"openMBVPositionArrow",false);
 
   velocity.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  velocity.setXMLName(MBSIMNS"openMBVVelocityArrow",false);
+  velocity.setXMLName(MBSIM%"openMBVVelocityArrow",false);
 
   acceleration.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  acceleration.setXMLName(MBSIMNS"openMBVAccelerationArrow",false);
+  acceleration.setXMLName(MBSIM%"openMBVAccelerationArrow",false);
 }
 
 void CoordinatesObserver::initialize() {
@@ -76,7 +73,7 @@ void CoordinatesObserver::initialize() {
   frame.initialize();
 }
 
-void CoordinatesObserver::initializeUsingXML(TiXmlElement *element) {
+void CoordinatesObserver::initializeUsingXML(DOMElement *element) {
   Observer::initializeUsingXML(element);
   frame.initializeUsingXML(element);
   position.initializeUsingXML(element);
@@ -84,9 +81,8 @@ void CoordinatesObserver::initializeUsingXML(TiXmlElement *element) {
   acceleration.initializeUsingXML(element);
 }
 
-TiXmlElement* CoordinatesObserver::writeXMLFile(TiXmlNode *parent) {
-
-  TiXmlElement *ele0 = Observer::writeXMLFile(parent);
+DOMElement* CoordinatesObserver::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Observer::writeXMLFile(parent);
   frame.writeXMLFile(ele0);
   position.writeXMLFile(ele0);
   velocity.writeXMLFile(ele0);
@@ -96,22 +92,22 @@ TiXmlElement* CoordinatesObserver::writeXMLFile(TiXmlNode *parent) {
 
 KinematicsObserver::KinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
-  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
   position.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  position.setXMLName(MBSIMNS"openMBVPositionArrow",false);
+  position.setXMLName(MBSIM%"openMBVPositionArrow",false);
 
   velocity.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  velocity.setXMLName(MBSIMNS"openMBVVelocityArrow",false);
+  velocity.setXMLName(MBSIM%"openMBVVelocityArrow",false);
 
   angularVelocity.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  angularVelocity.setXMLName(MBSIMNS"openMBVAngularVelocityArrow",false);
+  angularVelocity.setXMLName(MBSIM%"openMBVAngularVelocityArrow",false);
 
   acceleration.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  acceleration.setXMLName(MBSIMNS"openMBVAccelerationArrow",false);
+  acceleration.setXMLName(MBSIM%"openMBVAccelerationArrow",false);
 
   angularAcceleration.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
-  angularAcceleration.setXMLName(MBSIMNS"openMBVAngularAccelerationArrow",false);
+  angularAcceleration.setXMLName(MBSIM%"openMBVAngularAccelerationArrow",false);
 }
 
 void KinematicsObserver::initialize() {
@@ -119,7 +115,7 @@ void KinematicsObserver::initialize() {
   frame.initialize();
 }
 
-void KinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+void KinematicsObserver::initializeUsingXML(DOMElement *element) {
   Observer::initializeUsingXML(element);
   frame.initializeUsingXML(element);
   position.initializeUsingXML(element);
@@ -129,9 +125,9 @@ void KinematicsObserver::initializeUsingXML(TiXmlElement *element) {
   angularAcceleration.initializeUsingXML(element);
 }
 
-TiXmlElement* KinematicsObserver::writeXMLFile(TiXmlNode *parent) {
+DOMElement* KinematicsObserver::writeXMLFile(DOMNode *parent) {
 
-  TiXmlElement *ele0 = Observer::writeXMLFile(parent);
+  DOMElement *ele0 = Observer::writeXMLFile(parent);
   frame.writeXMLFile(ele0);
   position.writeXMLFile(ele0);
   velocity.writeXMLFile(ele0);
@@ -143,7 +139,7 @@ TiXmlElement* KinematicsObserver::writeXMLFile(TiXmlNode *parent) {
 
 RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str, Element *parent) : KinematicsObserver(str, parent) {
 
-  refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frameOfReference"));
 }
 
 void RelativeKinematicsObserver::initialize() {
@@ -151,14 +147,14 @@ void RelativeKinematicsObserver::initialize() {
   refFrame.initialize();
 }
 
-void RelativeKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+void RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
   KinematicsObserver::initializeUsingXML(element);
   refFrame.initializeUsingXML(element);
 }
 
-TiXmlElement* RelativeKinematicsObserver::writeXMLFile(TiXmlNode *parent) {
+DOMElement* RelativeKinematicsObserver::writeXMLFile(DOMNode *parent) {
 
-  TiXmlElement *ele0 = KinematicsObserver::writeXMLFile(parent);
+  DOMElement *ele0 = KinematicsObserver::writeXMLFile(parent);
   refFrame.writeXMLFile(ele0);
   return ele0;
 }

@@ -30,13 +30,10 @@ class Object : public Element {
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
     static Object* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual Element* getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
-  protected:
-    ExtProperty q0, u0;
-
 };
 
 #endif

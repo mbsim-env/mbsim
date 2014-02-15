@@ -17,24 +17,23 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _CONTACT__H_
-#define _CONTACT__H_
+#ifndef _FUNCTION_PROPERTY_H_
+#define _FUNCTION_PROPERTY_H_
 
-#include "link.h"
-#include "extended_properties.h"
+#include "property.h"
 
-class Contact : public Link {
-  friend class ContactPropertyDialog;
+class FunctionProperty : public Property {
   public:
-    Contact(const std::string &str, Element *parent);
-    ~Contact();
-    std::string getType() const { return "Contact"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
-  protected:
-    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
+    FunctionProperty() {}
+    virtual ~FunctionProperty() {}
+    virtual int getArg1Size() const {return 0;}
+    virtual int getArg2Size() const {return 0;}
+    virtual std::string getType() const { return "Function"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
+    void fromWidget(QWidget *widget) { }
+    void toWidget(QWidget *widget) { }
 };
 
 #endif
+
