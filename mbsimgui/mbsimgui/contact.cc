@@ -43,15 +43,16 @@ Contact::Contact(const string &str, Element *parent) : Link(str, parent), contac
   frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
   frictionImpactLaw.setXMLName(MBSIM%"tangentialImpactLaw",false);
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIM%"enableOpenMBVContactPoints"));
-  enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
+//  vector<PhysicalVariableProperty> input;
+//  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIM%"enableOpenMBVContactPoints"));
+//  enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
+  enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
-  normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  normalForceArrow.setXMLName(MBSIM%"openMBVNormalForceArrow",false);
+  normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  normalForceArrow.setXMLName(MBSIM%"enableOpenMBVNormalForce",false);
 
-  frictionArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  frictionArrow.setXMLName(MBSIM%"openMBVTangentialForceArrow",false);
+  frictionArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  frictionArrow.setXMLName(MBSIM%"enableOpenMBVTangentialForce",false);
 }
 
 Contact::~Contact() {

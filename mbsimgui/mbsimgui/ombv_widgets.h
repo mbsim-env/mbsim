@@ -70,14 +70,14 @@ class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
 };
 
 
-class OMBVArrowWidget : public OMBVDynamicColoredObjectWidget {
+class OMBVArrowWidget : public OMBVObjectWidget {
 
   friend class OMBVArrowProperty;
 
   public:
     OMBVArrowWidget(const QString &name="NOTSET", bool fromPoint=false);
   protected:
-    ExtWidget *diameter, *headDiameter, *headLength, *type, *referencePoint, *scaleLength;
+    ExtWidget *scaleLength, *scaleSize, *referencePoint;
 };
 
 class OMBVCoilSpringWidget : public OMBVObjectWidget {

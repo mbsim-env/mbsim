@@ -42,11 +42,11 @@ Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forc
   
   connections.setProperty(new ConnectFramesProperty(2,this,MBSIMCONTROL%"connect"));
 
-  actuatorForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  actuatorForceArrow.setXMLName(MBSIMCONTROL%"openMBVActuatorForceArrow",false);
+  actuatorForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  actuatorForceArrow.setXMLName(MBSIMCONTROL%"enableOpenMBVForce",false);
 
-  actuatorMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  actuatorMomentArrow.setXMLName(MBSIMCONTROL%"openMBVActuatorMomentArrow",false);
+  actuatorMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  actuatorMomentArrow.setXMLName(MBSIMCONTROL%"enableOpenMBVMoment",false);
 }
 
 

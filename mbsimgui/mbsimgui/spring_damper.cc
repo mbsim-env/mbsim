@@ -35,11 +35,11 @@ SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, paren
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET",getID()));
-  coilSpring.setXMLName(MBSIM%"openMBVCoilSpring",false);
+  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
+  coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIM%"openMBVForceArrow",false);
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 }
 
 SpringDamper::~SpringDamper() {
@@ -78,11 +78,11 @@ DirectionalSpringDamper::DirectionalSpringDamper(const string &str, Element *par
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET",getID()));
-  coilSpring.setXMLName(MBSIM%"openMBVCoilSpring",false);
+  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
+  coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIM%"openMBVForceArrow",false);
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 }
 
 DirectionalSpringDamper::~DirectionalSpringDamper() {
@@ -119,14 +119,14 @@ GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *par
 
   body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET",getID()));
-  coilSpring.setXMLName(MBSIM%"openMBVCoilSpring",false);
+  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
+  coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIM%"openMBVForceArrow",false);
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  momentArrow.setXMLName(MBSIM%"openMBVMomentArrow",false);
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
 }
 
 GeneralizedSpringDamper::~GeneralizedSpringDamper() {

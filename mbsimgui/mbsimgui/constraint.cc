@@ -73,11 +73,11 @@ GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(
   independentBodies.setProperty(new ListProperty(new GearConstraintPropertyFactory(this,""),MBSIM%"independentRigidBody"));
   independentBodies.setXMLName(MBSIM%"independentRigidBodies");
 
-  gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  gearForceArrow.setXMLName(MBSIM%"openMBVGearForceArrow",false);
+  gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  gearForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-  gearMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  gearMomentArrow.setXMLName(MBSIM%"openMBVGearMomentArrow",false);
+  gearMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  gearMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
 }
 
 void GearConstraint::initialize() {
@@ -118,11 +118,11 @@ KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : C
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
-  constraintForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  constraintForceArrow.setXMLName(MBSIM%"openMBVConstraintForceArrow",false);
+  constraintForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  constraintForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-  constraintMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  constraintMomentArrow.setXMLName(MBSIM%"openMBVConstraintMomentArrow",false);
+  constraintMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  constraintMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
 }
 
 void KinematicConstraint::initialize() {
@@ -249,11 +249,11 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
-  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  jointForceArrow.setXMLName(MBSIM%"openMBVJointForceArrow",false);
+  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  jointForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  jointMomentArrow.setXMLName(MBSIM%"openMBVJointMomentArrow",false);
+  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  jointMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
 
   input.clear();
   input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialGuess"));

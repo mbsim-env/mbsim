@@ -65,7 +65,7 @@ void OMBVObjectProperty::writeXMLFileID(DOMNode *parent) {
   }
 }
 
-OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), xmlName(xmlName_) {
+OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"size"));
@@ -168,127 +168,117 @@ void OMBVDynamicColoredObjectProperty::toWidget(QWidget *widget) {
   transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
 }
 
-OMBVArrowProperty::OMBVArrowProperty(const string &name, const std::string &ID, bool fromPoint) : OMBVDynamicColoredObjectProperty(name,ID), referencePoint(0,false) {
-  readXMLType = true;
+OMBVArrowProperty::OMBVArrowProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID, bool fromPoint) : OMBVObjectProperty(name,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBV%"diameter"));
-  diameter.setProperty(new ExtPhysicalVarProperty(input));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleLength"));
+  scaleLength.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBV%"headDiameter"));
-  headDiameter.setProperty(new ExtPhysicalVarProperty(input));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleSize"));
+  scaleSize.setProperty(new ExtPhysicalVarProperty(input));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBV%"headLength"));
-  headLength.setProperty(new ExtPhysicalVarProperty(input));
-
-  type.setProperty(new TextProperty("toHead", OPENMBV%"type", true));
-
-  referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", OPENMBV%"referencePoint", true));
+  referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", MBSIM%"referencePoint", true));
   if(fromPoint)
     referencePoint.setActive(true);
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleLength"));
-  scaleLength.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 DOMElement* OMBVArrowProperty::initializeUsingXML(DOMElement *element) {
-  DOMElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
-    diameter.initializeUsingXML(e);
-    headDiameter.initializeUsingXML(e);
-    headLength.initializeUsingXML(e);
-    type.initializeUsingXML(e);
-    referencePoint.initializeUsingXML(e);
     scaleLength.initializeUsingXML(e);
+    scaleSize.initializeUsingXML(e);
+    referencePoint.initializeUsingXML(e);
   }
   return e;
 }
 
 DOMElement* OMBVArrowProperty::writeXMLFile(DOMNode *parent) {
-  DOMElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
-  diameter.writeXMLFile(e);
-  headDiameter.writeXMLFile(e);
-  headLength.writeXMLFile(e);
-  type.writeXMLFile(e);
-  referencePoint.writeXMLFile(e);
-  scaleLength.writeXMLFile(e);
-  return e;
+  DOMDocument *doc=parent->getOwnerDocument();
+  if(xmlName!=FQN()) {
+    DOMElement *e=D(doc)->createElement(xmlName);
+    writeXMLFileID(e);
+    parent->insertBefore(e, NULL);
+    scaleLength.writeXMLFile(e);
+    scaleSize.writeXMLFile(e);
+    referencePoint.writeXMLFile(e);
+    return e;
+  }
+  else {
+    writeXMLFileID(parent);
+    scaleLength.writeXMLFile(parent);
+    scaleSize.writeXMLFile(parent);
+    referencePoint.writeXMLFile(parent);
+    return 0;
+  }
 }
 
 void OMBVArrowProperty::fromWidget(QWidget *widget) {
-  OMBVDynamicColoredObjectProperty::fromWidget(widget);
-  diameter.fromWidget(static_cast<OMBVArrowWidget*>(widget)->diameter);
-  headDiameter.fromWidget(static_cast<OMBVArrowWidget*>(widget)->headDiameter);
-  headLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->headLength);
-  type.fromWidget(static_cast<OMBVArrowWidget*>(widget)->type);
-  referencePoint.fromWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
   scaleLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
+  scaleSize.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleSize);
+  referencePoint.fromWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
 }
 
 void OMBVArrowProperty::toWidget(QWidget *widget) {
-  OMBVDynamicColoredObjectProperty::toWidget(widget);
-  diameter.toWidget(static_cast<OMBVArrowWidget*>(widget)->diameter);
-  headDiameter.toWidget(static_cast<OMBVArrowWidget*>(widget)->headDiameter);
-  headLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->headLength);
-  type.toWidget(static_cast<OMBVArrowWidget*>(widget)->type);
-  referencePoint.toWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
   scaleLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
+  scaleSize.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleSize);
+  referencePoint.toWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
 }
 
-OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const std::string &ID) : OMBVObjectProperty(name,ID), crossSectionRadius(0,false), nominalLength(0,false) {
+OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), xmlName(xmlName_) {
 
-  type.setProperty(new TextProperty("tube", OPENMBV%"type", true));
+  type.setProperty(new TextProperty("tube", MBSIM%"type", true));
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "-", OPENMBV%"numberOfCoils"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "", MBSIM%"numberOfCoils"));
   numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBV%"springRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", MBSIM%"springRadius"));
   springRadius.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", OPENMBV%"crossSectionRadius"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"crossSectionRadius"));
   crossSectionRadius.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", OPENMBV%"nominalLength"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"nominalLength"));
   nominalLength.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleFactor"));
-  scaleFactor.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 DOMElement* OMBVCoilSpringProperty::initializeUsingXML(DOMElement *element) {
-  DOMElement *e=E(element)->getFirstElementChildNamed(OPENMBV%getType());
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
     type.initializeUsingXML(e);
     numberOfCoils.initializeUsingXML(e);
     springRadius.initializeUsingXML(e);
     crossSectionRadius.initializeUsingXML(e);
     nominalLength.initializeUsingXML(e);
-    scaleFactor.initializeUsingXML(e);
   }
   return e;
 }
 
 DOMElement* OMBVCoilSpringProperty::writeXMLFile(DOMNode *parent) {
   DOMDocument *doc=parent->getOwnerDocument();
-  DOMElement *e=D(doc)->createElement(OPENMBV%getType());
-  parent->insertBefore(e, NULL);
-  E(e)->setAttribute("name", "dummy");
-  writeXMLFileID(e);
-  type.writeXMLFile(e);
-  numberOfCoils.writeXMLFile(e);
-  springRadius.writeXMLFile(e);
-  crossSectionRadius.writeXMLFile(e);
-  nominalLength.writeXMLFile(e);
-  scaleFactor.writeXMLFile(e);
-  return e;
+  if(xmlName!=FQN()) {
+    DOMElement *e=D(doc)->createElement(xmlName);
+    writeXMLFileID(e);
+    parent->insertBefore(e, NULL);
+    type.writeXMLFile(e);
+    numberOfCoils.writeXMLFile(e);
+    springRadius.writeXMLFile(e);
+    crossSectionRadius.writeXMLFile(e);
+    nominalLength.writeXMLFile(e);
+    return e;
+  } else {
+    writeXMLFileID(parent);
+    type.writeXMLFile(parent);
+    numberOfCoils.writeXMLFile(parent);
+    springRadius.writeXMLFile(parent);
+    crossSectionRadius.writeXMLFile(parent);
+    nominalLength.writeXMLFile(parent);
+    return 0;
+  }
 }
 
 void OMBVCoilSpringProperty::fromWidget(QWidget *widget) {
@@ -297,7 +287,6 @@ void OMBVCoilSpringProperty::fromWidget(QWidget *widget) {
   springRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
   crossSectionRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
   nominalLength.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
-  scaleFactor.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->scaleFactor);
 }
 
 void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
@@ -306,7 +295,6 @@ void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
   springRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
   crossSectionRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
   nominalLength.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
-  scaleFactor.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->scaleFactor);
 }
 
 OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
@@ -619,19 +607,14 @@ DOMElement* OMBVEmptyProperty::writeXMLFile(DOMNode *parent) {
 OMBVPlaneProperty::OMBVPlaneProperty(const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty("Plane",ID), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"size"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(2,"1")), "m", MBSIM%"length"));
   size.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("10"), "", MBSIM%"numberOfLines"));
-  numberOfLines.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 DOMElement* OMBVPlaneProperty::initializeUsingXML(DOMElement *element) {
   DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
   if(e) {
     size.initializeUsingXML(e);
-    numberOfLines.initializeUsingXML(e);
   }
   return e;
 }
@@ -642,16 +625,13 @@ DOMElement* OMBVPlaneProperty::writeXMLFile(DOMNode *parent) {
   writeXMLFileID(e);
   parent->insertBefore(e, NULL);
   size.writeXMLFile(e);
-  numberOfLines.writeXMLFile(e);
   return e;
 }
 
 void OMBVPlaneProperty::fromWidget(QWidget *widget) {
   size.fromWidget(static_cast<OMBVPlaneWidget*>(widget)->size);
-  numberOfLines.fromWidget(static_cast<OMBVPlaneWidget*>(widget)->numberOfLines);
 }
 
 void OMBVPlaneProperty::toWidget(QWidget *widget) {
   size.toWidget(static_cast<OMBVPlaneWidget*>(widget)->size);
-  numberOfLines.toWidget(static_cast<OMBVPlaneWidget*>(widget)->numberOfLines);
 }

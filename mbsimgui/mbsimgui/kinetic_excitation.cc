@@ -50,11 +50,11 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
  // connections.setProperty(new ChoiceProperty2("",widget,2)); 
   connections.setProperty(new ChoiceProperty2(new ConnectFramesPropertyFactory(this),"",4)); 
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIM%"openMBVForceArrow",false);
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  momentArrow.setXMLName(MBSIM%"openMBVMomentArrow",false);
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
 }
 
 void KineticExcitation::initialize() {

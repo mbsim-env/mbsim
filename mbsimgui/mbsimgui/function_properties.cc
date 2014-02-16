@@ -448,7 +448,7 @@ SymbolicFunctionProperty::SymbolicFunctionProperty(const string &ext_, const vec
 DOMElement* SymbolicFunctionProperty::initializeUsingXML(DOMElement *element) {
   f.initializeUsingXML(element);
   for(int i=1; i<ext.size(); i++) {
-    string str = "arg"+toStr(i)+"name";
+    string str = "arg"+toStr(i);
     if(E(element)->hasAttribute(str))
       static_cast<TextProperty*>(argname[i-1].getProperty())->setText(E(element)->getAttribute(str.c_str()));
     str = "arg"+toStr(i)+"dim";
