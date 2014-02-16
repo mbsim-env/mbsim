@@ -57,6 +57,7 @@ namespace MBSim {
     if(ee) sL = Element::getDouble(ee);
     ee = e->FirstChildElement(MBSIMNS"scaleSize");
     if(ee) sS = Element::getDouble(ee);
+    ee = e->FirstChildElement(MBSIMNS"referencePoint");
     if(ee) {
       string rP=string(ee->GetText()).substr(1,string(ee->GetText()).length()-2);
       if(rP=="toPoint")   refPoint=OpenMBV::Arrow::toPoint;
