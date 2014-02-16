@@ -44,11 +44,11 @@ Joint::Joint(const string &str, Element *parent) : Link(str, parent), refFrameID
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  forceArrow.setXMLName(MBSIM%"openMBVForceArrow",false);
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  momentArrow.setXMLName(MBSIM%"openMBVMomentArrow",false);
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
 }
 
 Joint::~Joint() {

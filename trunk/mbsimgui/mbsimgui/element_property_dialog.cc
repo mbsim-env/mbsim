@@ -1079,9 +1079,10 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   frictionImpactLaw = new ExtWidget("Tangential impact law",new FrictionImpactLawChoiceWidget,true);
   addToTab("Kinetics", frictionImpactLaw);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
-  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
+//  vector<PhysicalVariableWidget*> input;
+//  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
+//  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
+  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new OMBVFrameWidget("NOTSET"),true,true);
   addToTab("Visualisation",enableOpenMBVContactPoints);
 
   normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);

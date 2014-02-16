@@ -61,14 +61,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
-  weightArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  weightArrow.setXMLName(MBSIM%"openMBVWeightArrow",false);
+  weightArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  weightArrow.setXMLName(MBSIM%"enableOpenMBVWeight",false);
 
-  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  jointForceArrow.setXMLName(MBSIM%"openMBVJointForceArrow",false);
+  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  jointForceArrow.setXMLName(MBSIM%"enableOpenMBVJointForce",false);
 
-  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
-  jointMomentArrow.setXMLName(MBSIM%"openMBVJointMomentArrow",false);
+  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+  jointMomentArrow.setXMLName(MBSIM%"enableOpenMBVJointMoment",false);
 
 }
 

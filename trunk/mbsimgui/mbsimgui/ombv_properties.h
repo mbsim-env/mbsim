@@ -77,11 +77,10 @@ class OMBVDynamicColoredObjectProperty : public OMBVObjectProperty {
     bool readXMLType;
 };
 
-
-class OMBVArrowProperty : public OMBVDynamicColoredObjectProperty {
+class OMBVArrowProperty : public OMBVObjectProperty {
 
   public:
-    OMBVArrowProperty(const std::string &name="NOTSET", const std::string &ID_=0, bool fromPoint=false);
+    OMBVArrowProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID, bool fromPoint=false);
     virtual Property* clone() const {return new OMBVArrowProperty(*this);}
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
@@ -89,13 +88,14 @@ class OMBVArrowProperty : public OMBVDynamicColoredObjectProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ExtProperty diameter, headDiameter, headLength, type, referencePoint, scaleLength;
+    ExtProperty scaleLength, scaleSize, referencePoint;
+    MBXMLUtils::FQN xmlName;
 };
 
 class OMBVCoilSpringProperty : public OMBVObjectProperty {
 
   public:
-    OMBVCoilSpringProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    OMBVCoilSpringProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID_);
     virtual Property* clone() const {return new OMBVCoilSpringProperty(*this);}
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
@@ -103,7 +103,8 @@ class OMBVCoilSpringProperty : public OMBVObjectProperty {
     void toWidget(QWidget *widget);
    virtual std::string getType() const { return "CoilSpring"; }
   protected:
-    ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength, scaleFactor;
+    ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength;
+    MBXMLUtils::FQN xmlName;
 };
 
 class OMBVBodyProperty : public OMBVDynamicColoredObjectProperty {
