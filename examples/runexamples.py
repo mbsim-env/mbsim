@@ -22,6 +22,9 @@ import traceback
 import tarfile
 import re
 import hashlib
+import codecs
+import threading
+import time
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -98,6 +101,7 @@ cfgOpts.add_argument("--buildType", default="", type=str, help="Description of t
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
+cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -124,7 +128,7 @@ class MultiFile(object):
       self.filelist.append(second)
   def write(self, str):
     for f in self.filelist:
-      f.write(str.encode("utf-8").decode("utf-8"))
+      f.write(str)
   def flush(self):
     for f in self.filelist:
       f.flush()
@@ -132,9 +136,32 @@ class MultiFile(object):
     for f in self.filelist:
       if f!=sys.stdout and f!=sys.stderr:
         f.close()
+# kill the called subprocess
+def killSubprocessCall(proc, f, killed):
+  killed.set()
+  f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
+  f.write("The maximal execution time (%d min) has reached (option --maxExecutionTime),\n"%(args.maxExecutionTime))
+  f.write("but the program is still running. Terminating the program now.\n")
+  f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
+  proc.terminate()
+  time.sleep(30)
+  # if proc has not terminated after 30 seconds kill it
+  if proc.poll()==None:
+    f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
+    f.write("Program has not terminated after 30 seconds, killing the program now.\n")
+    f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
+    proc.kill()
 # subprocess call with MultiFile output
-def subprocessCall(args, f, env=os.environ):
+def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
+  # start the program to execute
   proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
+  # a guard for the maximal execution time for the starte program
+  guard=None
+  killed=threading.Event()
+  if maxExecutionTime>0:
+    guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed))
+    guard.start()
+  # read all output in 100 byte blocks
   lineNP=b'' # not already processed bytes (required since we read 100 bytes which may break a unicode multi byte character)
   while True:
     line=lineNP+proc.stdout.read(100)
@@ -145,7 +172,16 @@ def subprocessCall(args, f, env=os.environ):
     except UnicodeDecodeError as ex: # catch broken multibyte unicode characters and append it to next line
       print(line[0:ex.start].decode("utf-8"), end="", file=f) # print up to first broken character
       lineNP=ex.object[ex.start:] # add broken characters to next line
-  return proc.wait()
+  # wait for the call program to exit
+  ret=proc.wait()
+  # stop the execution time guard thread
+  if maxExecutionTime>0:
+    if killed.isSet():
+      return None # return None to indicate that the program was terminated/killed
+    else:
+      guard.cancel()
+  # return the return value ot the called programm
+  return ret
 
 # rotate
 def rotateOutput():
@@ -300,7 +336,7 @@ def main():
   # write empty RSS feed
   writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
   # create index.html
-  mainFD=open(pj(args.reportOutDir, "index.html"), "w")
+  mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('<?xml version="1.0" encoding="UTF-8"?>', file=mainFD)
   print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=mainFD)
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
@@ -445,14 +481,14 @@ def pkgconfig(module, options):
   comm=["pkg-config", module]
   comm.extend(options)
   try:
-    output=subprocess.check_output(comm)
+    output=subprocess.check_output(comm).decode("utf-8")
   except subprocess.CalledProcessError as ex:
     if ex.returncode==0:
       raise
     else:
       print("Error: pkg-config module "+module+" not found. Trying to continue.", file=sys.stderr)
-      output=("pkg_config_"+module+"_not_found").encode("ascii")
-  return output.rstrip().decode("utf-8")
+      output="pkg_config_"+module+"_not_found"
+  return output.rstrip()
 
 
 
@@ -476,7 +512,7 @@ def sortDirectories(directoriesSet, dirs):
   unsortedDir=[]
   for example in directoriesSet:
     if os.path.isfile(pj(example, "reference", "time.dat")):
-      refTimeFD=open(pj(example, "reference", "time.dat"), "r")
+      refTimeFD=codecs.open(pj(example, "reference", "time.dat"), "r", encoding="utf-8")
       refTime=float(refTimeFD.read())
       refTimeFD.close()
     else:
@@ -509,7 +545,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       d[m]=False
     # check for MBSim modules in src examples
     if src:
-      filecont=open(pj(root, "Makefile"), "rb").read().decode('utf-8')
+      filecont=codecs.open(pj(root, "Makefile"), "r", encoding="utf-8").read()
       for m in mbsimModules:
         if re.search("\\b"+m+"\\b", filecont): d[m]=True
     # check for MBSim modules in xml and flatxml examples
@@ -517,7 +553,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       for filedir, _, filenames in os.walk(root):
         for filename in fnmatch.filter(filenames, "*.xml"):
           if filename[0:4]==".pp.": continue # skip generated .pp.* files
-          filecont=open(pj(filedir, filename), "rb").read().decode('utf-8')
+          filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
           for m in mbsimModules:
             if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): d[m]=True
     # evaluate filter
@@ -548,7 +584,7 @@ def runExample(resultQueue, example):
       if os.path.isfile("time.dat"): os.remove("time.dat")
       list(map(os.remove, glob.glob("*.h5")))
 
-      executeFD=MultiFile(open(pj(args.reportOutDir, executeFN), "w"), args.printToConsole)
+      executeFD=MultiFile(codecs.open(pj(args.reportOutDir, executeFN), "w", encoding="utf-8"), args.printToConsole)
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
@@ -561,7 +597,7 @@ def runExample(resultQueue, example):
         executeRet=1
         dt=0
       executeFD.close()
-    if executeRet!=0: runExampleRet=1
+    if executeRet==None or executeRet!=0: runExampleRet=1
     # get reference time
     refTime=example[1]
     # print result to resultStr
@@ -573,7 +609,18 @@ def runExample(resultQueue, example):
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
-      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:'+('green' if executeRet==0 else 'red')+'">'+('passed' if executeRet==0 else 'failed')+'</span></a></td>'
+      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'">'
+      if executeRet==None or executeRet!=0:
+        resultStr+='<span style="color:red">'
+      else:
+        resultStr+='<span style="color:green">'
+      if executeRet==None:
+        resultStr+='timed out'
+      elif executeRet!=0:
+        resultStr+='failed'
+      else:
+        resultStr+='passed'
+      resultStr+='</span></a></td>'
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
@@ -597,7 +644,7 @@ def runExample(resultQueue, example):
 
     # write time to time.dat for possible later copying it to the reference
     if not args.disableRun:
-      refTimeFD=open("time.dat", "w")
+      refTimeFD=codecs.open("time.dat", "w", encoding="utf-8")
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
@@ -628,7 +675,7 @@ def runExample(resultQueue, example):
     # validate XML
     if not args.disableValidate:
       htmlOutputFN=pj(example[0], "validateXML.html")
-      htmlOutputFD=open(pj(args.reportOutDir, htmlOutputFN), "w")
+      htmlOutputFD=codecs.open(pj(args.reportOutDir, htmlOutputFN), "w", encoding="utf-8")
       # write header
       print('<?xml version="1.0" encoding="UTF-8"?>', file=htmlOutputFD)
       print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=htmlOutputFD)
@@ -690,7 +737,7 @@ def runExample(resultQueue, example):
 
   except:
     fatalScriptErrorFN=pj(example[0], "fatalScriptError.txt")
-    fatalScriptErrorFD=MultiFile(open(pj(args.reportOutDir, fatalScriptErrorFN), "w"), args.printToConsole)
+    fatalScriptErrorFD=MultiFile(codecs.open(pj(args.reportOutDir, fatalScriptErrorFN), "w", encoding="utf-8"), args.printToConsole)
     print("Fatal Script Errors should not happen. So this is a bug in runexamples.py which should be fixed.", file=fatalScriptErrorFD)
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
@@ -727,10 +774,11 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  if subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD, env=mainEnv)!=0: return 1, 0
+  ret=subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+                     env=mainEnv, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return 0, dt
+  return ret, dt
 
 
 
@@ -741,11 +789,11 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                    ["MBS.mbsimprj.xml"], executeFD)!=0: return 1, 0
+  ret=subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+                     ["MBS.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return 0, dt
+  return ret, dt
 
 
 
@@ -756,11 +804,11 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
-                    executeFD)!=0: return 1, 0
+  ret=subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+                     executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return 0, dt
+  return ret, dt
 
 
 
@@ -771,7 +819,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   if not os.path.isdir(diffDir): os.makedirs(diffDir)
 
   # create html page
-  diffHTMLPlotFD=open(diffHTMLFileName, "w")
+  diffHTMLPlotFD=codecs.open(diffHTMLFileName, "w", encoding="utf-8")
   print('<?xml version="1.0" encoding="UTF-8"?>', file=diffHTMLPlotFD)
   print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=diffHTMLPlotFD)
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=diffHTMLPlotFD)
@@ -834,7 +882,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   diffGPFileName=pj(diffDir, "diffplot.gnuplot")
   SVGFileName=pj(diffDir, "plot.svg")
   dataFileName=pj(diffDir, "data.dat")
-  diffGPFD=open(diffGPFileName, "w")
+  diffGPFD=codecs.open(diffGPFileName, "w", encoding="utf-8")
   print("set terminal svg size 900, 1400", file=diffGPFD)
   print("set output '"+SVGFileName+"'", file=diffGPFD)
   print("set multiplot layout 3, 1", file=diffGPFD)
@@ -925,10 +973,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       refLabels=refObj.attrs["Column Label"]
       # append missing dummy labels
       for x in range(len(refLabels), refObjCols):
-        refLabels=numpy.append(refLabels, ('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
+        refLabels=numpy.append(refLabels, ('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>').encode("utf-8"))
     except KeyError:
       refLabels=numpy.array(list(map(
-        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("utf-8"),
         range(refObjCols))), dtype=bytes
       )
     # get labels from current
@@ -936,10 +984,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       curLabels=curObj.attrs["Column Label"]
       # append missing dummy labels
       for x in range(len(curLabels), curObjCols):
-        curLabels=numpy.append(curLabels, ('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
+        curLabels=numpy.append(curLabels, ('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>').encode("utf-8"))
     except KeyError:
       curLabels=numpy.array(list(map(
-        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("utf-8"),
         range(refObjCols))), dtype=bytes
       )
     # loop over all columns
@@ -1007,7 +1055,7 @@ def appendDatasetName(curMemberNames, datasetName, curObj):
 def compareExample(example, compareFN):
   import h5py
 
-  compareFD=open(pj(args.reportOutDir, compareFN), "w")
+  compareFD=codecs.open(pj(args.reportOutDir, compareFN), "w", encoding="utf-8")
 
   # print html header
   print('<?xml version="1.0" encoding="UTF-8"?>', file=compareFD)
@@ -1119,9 +1167,9 @@ def copyAndSHA1AndAppendIndex(src, dst):
   # copy src to dst
   shutil.copyfile(src, dst)
   # create sha1 hash of dst (save to <dst>.sha1)
-  open(dst+".sha1", "w").write(hashlib.sha1(open(dst, "rb").read()).hexdigest())
+  codecs.open(dst+".sha1", "w", encoding="utf-8").write(hashlib.sha1(codecs.open(dst, "rb").read()).hexdigest())
   # add file to index
-  index=open(pj(os.path.dirname(dst), "index.txt"), "a")
+  index=codecs.open(pj(os.path.dirname(dst), "index.txt"), "a", encoding="utf-8")
   index.write(os.path.basename(dst)+":")
 def pushReference():
   print("WARNING! pushReference is a internal action!")
@@ -1133,14 +1181,14 @@ def downloadFileIfDifferent(src):
   remoteSHA1Url=args.updateURL+"/"+myurllib.pathname2url(src+".sha1")
   remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
   try:
-    localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
+    localSHA1=hashlib.sha1(codecs.open(src, "rb").read()).hexdigest()
   except IOError: 
     localSHA1=""
   if remoteSHA1!=localSHA1:
     remoteUrl=args.updateURL+"/"+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
     if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
-    open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
+    codecs.open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
 def updateReference():
   curNumber=0
   lenDirs=len(directories)
@@ -1175,7 +1223,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
         outputFN=pj(example[0], filename+".txt")
-        outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)
+        outputFD=MultiFile(codecs.open(pj(args.reportOutDir, outputFN), "w", encoding="utf-8"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
@@ -1197,7 +1245,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 def writeRSSFeed(nrFailed, nrTotal):
   rssFN="result.rss.xml"
-  rssFD=open(pj(args.reportOutDir, os.pardir, rssFN), "w")
+  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
