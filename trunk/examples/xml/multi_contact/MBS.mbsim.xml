@@ -9,7 +9,7 @@
   <contours>
     <Plane name="Ground">
       <enableOpenMBV>
-        <length>1,1</length>   
+        <length>[1;1]</length>   
       </enableOpenMBV>
     </Plane>
   </contours>
