@@ -2514,7 +2514,24 @@
   </xs:element>
   <xs:complexType name="PointType">
     <xs:complexContent>
-      <xs:extension base="RigidContourType"/>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar" minOccurs="0"/>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
