@@ -49,6 +49,62 @@ class OMBVObjectProperty : public Property {
     void writeXMLFileID(xercesc::DOMNode *parent);
 };
 
+class MBSOMBVProperty : public OMBVObjectProperty {
+
+  public:
+    MBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+    virtual Property* clone() const {return new MBSOMBVProperty(*this);}
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+    virtual xercesc::DOMElement* initXMLFile(xercesc::DOMNode *element); 
+    virtual xercesc::DOMElement* writeProperties(xercesc::DOMElement *e); 
+    virtual std::string getType() const { return "MBSOMBVProperty"; }
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty diffuseColor, transparency;
+    MBXMLUtils::FQN xmlName;
+};
+
+class PointMBSOMBVProperty : public MBSOMBVProperty {
+
+  public:
+    PointMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+    virtual Property* clone() const {return new PointMBSOMBVProperty(*this);}
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty size;
+};
+
+class LineMBSOMBVProperty : public MBSOMBVProperty {
+
+  public:
+    LineMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+    virtual Property* clone() const {return new LineMBSOMBVProperty(*this);}
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty length;
+};
+
+class PlaneMBSOMBVProperty : public MBSOMBVProperty {
+
+  public:
+    PlaneMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+    virtual Property* clone() const {return new PlaneMBSOMBVProperty(*this);}
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty length;
+};
+
 class OMBVFrameProperty : public OMBVObjectProperty {
 
   public:
@@ -60,7 +116,7 @@ class OMBVFrameProperty : public OMBVObjectProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ExtProperty size, offset;
+    ExtProperty size, offset, transparency;
     MBXMLUtils::FQN xmlName;
 };
 
@@ -88,7 +144,7 @@ class OMBVArrowProperty : public OMBVObjectProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ExtProperty scaleLength, scaleSize, referencePoint;
+    ExtProperty scaleLength, scaleSize, referencePoint, diffuseColor, transparency;
     MBXMLUtils::FQN xmlName;
 };
 
@@ -103,7 +159,7 @@ class OMBVCoilSpringProperty : public OMBVObjectProperty {
     void toWidget(QWidget *widget);
    virtual std::string getType() const { return "CoilSpring"; }
   protected:
-    ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength;
+    ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength, diffuseColor, transparency;
     MBXMLUtils::FQN xmlName;
 };
 

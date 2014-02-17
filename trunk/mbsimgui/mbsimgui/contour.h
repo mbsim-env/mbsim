@@ -40,17 +40,29 @@ class Contour : public Element {
 };
 
 class Point : public Contour {
+  friend class PointPropertyDialog;
   public:
     Point(const std::string &str, Element *parent);
     ~Point();
     std::string getType() const { return "Point"; }
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new PointPropertyDialog(this);}
+  protected:
+    ExtProperty visu;
 };
 
 class Line : public Contour {
+  friend class LinePropertyDialog;
   public:
     Line(const std::string &str, Element *parent);
     ~Line();
     std::string getType() const { return "Line"; }
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new LinePropertyDialog(this);}
+  protected:
+    ExtProperty visu;
 };
 
 class Plane : public Contour {

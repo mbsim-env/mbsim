@@ -48,6 +48,46 @@ class OMBVObjectWidget : public Widget {
     QString name;
 };
 
+class MBSOMBVWidget : public OMBVObjectWidget {
+
+  friend class MBSOMBVProperty;
+
+  public:
+    MBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *diffuseColor, *transparency;
+};
+
+class PointMBSOMBVWidget : public MBSOMBVWidget {
+
+  friend class PointMBSOMBVProperty;
+
+  public:
+    PointMBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *size;
+};
+
+class LineMBSOMBVWidget : public MBSOMBVWidget {
+
+  friend class LineMBSOMBVProperty;
+
+  public:
+    LineMBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *length;
+};
+
+class PlaneMBSOMBVWidget : public MBSOMBVWidget {
+
+  friend class PlaneMBSOMBVProperty;
+
+  public:
+    PlaneMBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *length;
+};
+
 class OMBVFrameWidget : public OMBVObjectWidget {
 
   friend class OMBVFrameProperty;
@@ -55,7 +95,7 @@ class OMBVFrameWidget : public OMBVObjectWidget {
   public:
     OMBVFrameWidget(const QString &name="NOTSET");
   protected:
-    ExtWidget *size, *offset;
+    ExtWidget *size, *offset, *transparency;
 };
 
 class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
@@ -69,7 +109,6 @@ class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
     ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
 };
 
-
 class OMBVArrowWidget : public OMBVObjectWidget {
 
   friend class OMBVArrowProperty;
@@ -77,7 +116,7 @@ class OMBVArrowWidget : public OMBVObjectWidget {
   public:
     OMBVArrowWidget(const QString &name="NOTSET", bool fromPoint=false);
   protected:
-    ExtWidget *scaleLength, *scaleSize, *referencePoint;
+    ExtWidget *scaleLength, *scaleSize, *referencePoint, *diffuseColor, *transparency;
 };
 
 class OMBVCoilSpringWidget : public OMBVObjectWidget {
@@ -87,7 +126,7 @@ class OMBVCoilSpringWidget : public OMBVObjectWidget {
   public:
     OMBVCoilSpringWidget(const QString &name="NOTSET");
   protected:
-    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
+    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *diffuseColor, *transparency;
 };
 
 class OMBVBodyWidget : public OMBVDynamicColoredObjectWidget {
