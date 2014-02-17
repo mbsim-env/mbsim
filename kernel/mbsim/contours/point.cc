@@ -39,7 +39,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
     if(e) {
-      OpenMBVSphere ombv(1,"[-1;1;1]",0,"radius");
+      OpenMBVSphere ombv(0.001,"[-1;1;1]",0,"size");
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
 #endif
