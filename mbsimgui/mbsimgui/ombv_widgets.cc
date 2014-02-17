@@ -73,6 +73,41 @@ QWidget* OMBVBodyWidgetFactory::createWidget(int i) {
 //  return new ChoiceWidget(widget,name);
 //}
 
+MBSOMBVWidget::MBSOMBVWidget(const QString &name) : OMBVObjectWidget(name) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
+}
+
+PointMBSOMBVWidget::PointMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.001"), lengthUnits(), 4));
+  size = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  layout()->addWidget(size);
+}
+
+LineMBSOMBVWidget::LineMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
+  length = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  layout()->addWidget(length);
+}
+
+PlaneMBSOMBVWidget::PlaneMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(2,"1")), lengthUnits(), 4));
+  length = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  layout()->addWidget(length);
+}
+
 OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -89,6 +124,11 @@ OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
   offset = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
   offset->setToolTip("Set the offset of the frame");
   layout->addWidget(offset);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name) : OMBVObjectWidget(name) {
@@ -138,6 +178,14 @@ OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVObje
   if(fromPoint)
     referencePoint->setChecked(true);
   layout->addWidget(referencePoint);
+
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidget(name) {
@@ -171,6 +219,14 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidg
   list.push_back("polyline");
   type = new ExtWidget("Type",new TextChoiceWidget(list,0),true);
   layout->addWidget(type);
+
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVBodyWidget::OMBVBodyWidget(const QString &name) : OMBVDynamicColoredObjectWidget(name) {

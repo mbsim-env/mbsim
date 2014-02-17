@@ -180,10 +180,44 @@ void ContourPropertyDialog::fromWidget(Element *element) {
   static_cast<Contour*>(element)->refFrame.fromWidget(refFrame);
 }
 
+PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(point,parent,f) {
+  addTab("Visualisation",1);
+ 
+  visu = new ExtWidget("OpenMBV Point",new PointMBSOMBVWidget("NOTSET"),true,true);
+  addToTab("Visualisation", visu);
+}
+
+void PointPropertyDialog::toWidget(Element *element) {
+  ContourPropertyDialog::toWidget(element);
+  static_cast<Point*>(element)->visu.toWidget(visu);
+}
+
+void PointPropertyDialog::fromWidget(Element *element) {
+  ContourPropertyDialog::fromWidget(element);
+  static_cast<Point*>(element)->visu.fromWidget(visu);
+}
+
+LinePropertyDialog::LinePropertyDialog(Line *line, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(line,parent,f) {
+  addTab("Visualisation",1);
+ 
+  visu = new ExtWidget("OpenMBV Line",new LineMBSOMBVWidget("NOTSET"),true,true);
+  addToTab("Visualisation", visu);
+}
+
+void LinePropertyDialog::toWidget(Element *element) {
+  ContourPropertyDialog::toWidget(element);
+  static_cast<Line*>(element)->visu.toWidget(visu);
+}
+
+void LinePropertyDialog::fromWidget(Element *element) {
+  ContourPropertyDialog::fromWidget(element);
+  static_cast<Line*>(element)->visu.fromWidget(visu);
+}
+
 PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(plane,parent,f) {
   addTab("Visualisation",1);
  
-  visu = new ExtWidget("OpenMBV Plane",new OMBVPlaneWidget,true);
+  visu = new ExtWidget("OpenMBV Plane",new PlaneMBSOMBVWidget("NOTSET"),true,true);
   addToTab("Visualisation", visu);
 }
 
@@ -205,7 +239,7 @@ SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::
   radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
   addToTab("General", radius);
 
-  visu = new ExtWidget("OpenMBV Sphere",new OMBVEmptyWidget,true);
+  visu = new ExtWidget("OpenMBV Sphere",new MBSOMBVWidget("NOTSET"),true,true);
   addToTab("Visualisation", visu);
 }
 
@@ -229,7 +263,7 @@ CircleSolidPropertyDialog::CircleSolidPropertyDialog(CircleSolid *circle, QWidge
   radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
   addToTab("General", radius);
 
-  visu = new ExtWidget("OpenMBV CircleSolid",new OMBVEmptyWidget,true);
+  visu = new ExtWidget("OpenMBV CircleSolid",new MBSOMBVWidget("NOTSET"),true);
   addToTab("Visualisation", visu);
 }
 

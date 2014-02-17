@@ -80,20 +80,44 @@ Element *Contour::getByPathSearch(string path) {
 }
 
 Point::Point(const string &str, Element *parent) : Contour(str,parent) {
+  visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 }
 
 Point::~Point() {
 }
 
+void Point::initializeUsingXML(DOMElement *element) {
+  Contour::initializeUsingXML(element);
+  visu.initializeUsingXML(element);
+}
+
+DOMElement* Point::writeXMLFile(DOMNode *parent) {
+  DOMElement *e = Contour::writeXMLFile(parent);
+  visu.writeXMLFile(e);
+  return e;
+}
+
 Line::Line(const string &str, Element *parent) : Contour(str,parent) {
+  visu.setProperty(new LineMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 }
 
 Line::~Line() {
 }
 
+void Line::initializeUsingXML(DOMElement *element) {
+  Contour::initializeUsingXML(element);
+  visu.initializeUsingXML(element);
+}
+
+DOMElement* Line::writeXMLFile(DOMNode *parent) {
+  DOMElement *e = Contour::writeXMLFile(parent);
+  visu.writeXMLFile(e);
+  return e;
+}
+
 Plane::Plane(const string &str, Element *parent) : Contour(str,parent) {
 
-  visu.setProperty(new OMBVPlaneProperty(MBSIM%"enableOpenMBV",getID()));
+  visu.setProperty(new PlaneMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 }
 
 Plane::~Plane() {
@@ -116,7 +140,7 @@ Sphere::Sphere(const string &str, Element *parent) : Contour(str,parent) {
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
-  visu.setProperty(new OMBVEmptyProperty(MBSIM%"enableOpenMBV",getID()));
+  visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 
 }
 
@@ -142,7 +166,7 @@ CircleSolid::CircleSolid(const string &str, Element *parent) : Contour(str,paren
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
-  visu.setProperty(new OMBVEmptyProperty(MBSIM%"enableOpenMBV",getID()));
+  visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
 
 }
 

@@ -26,6 +26,8 @@ class Element;
 class Frame;
 class FixedRelativeFrame;
 class Contour;
+class Point;
+class Line;
 class Plane;
 class Sphere;
 class CircleSolid;
@@ -120,6 +122,26 @@ class ContourPropertyDialog : public ElementPropertyDialog {
     void fromWidget(Element *element);
   protected:
    ExtWidget *refFrame;
+};
+
+class PointPropertyDialog : public ContourPropertyDialog {
+
+  public:
+    PointPropertyDialog(Point *point, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *visu;
+};
+
+class LinePropertyDialog : public ContourPropertyDialog {
+
+  public:
+    LinePropertyDialog(Line *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *visu;
 };
 
 class PlanePropertyDialog : public ContourPropertyDialog {

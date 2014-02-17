@@ -65,7 +65,143 @@ void OMBVObjectProperty::writeXMLFileID(DOMNode *parent) {
   }
 }
 
-OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), xmlName(xmlName_) {
+MBSOMBVProperty::MBSOMBVProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), diffuseColor(0,false), transparency(0,false), xmlName(xmlName_) {
+
+  diffuseColor.setProperty(new ColorProperty(MBSIM%"diffuseColor"));
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
+  transparency.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+DOMElement* MBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
+  if(e) {
+    diffuseColor.initializeUsingXML(e);
+    transparency.initializeUsingXML(e);
+  }
+  return e;
+}
+
+DOMElement* MBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=initXMLFile(parent);
+  writeProperties(e);
+}
+
+DOMElement* MBSOMBVProperty::initXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *e=D(doc)->createElement(xmlName);
+  writeXMLFileID(e);
+  parent->insertBefore(e, NULL);
+  return e;
+}
+
+DOMElement* MBSOMBVProperty::writeProperties(DOMElement *e) {
+  diffuseColor.writeXMLFile(e);
+  transparency.writeXMLFile(e);
+}
+
+void MBSOMBVProperty::fromWidget(QWidget *widget) {
+  diffuseColor.fromWidget(static_cast<MBSOMBVWidget*>(widget)->diffuseColor);
+  transparency.fromWidget(static_cast<MBSOMBVWidget*>(widget)->transparency);
+}
+
+void MBSOMBVProperty::toWidget(QWidget *widget) {
+  diffuseColor.toWidget(static_cast<MBSOMBVWidget*>(widget)->diffuseColor);
+  transparency.toWidget(static_cast<MBSOMBVWidget*>(widget)->transparency);
+}
+
+PointMBSOMBVProperty::PointMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), size(0,false) {
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.001"), "m", MBSIM%"size"));
+  size.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+DOMElement* PointMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+  if(e) size.initializeUsingXML(e);
+  return e;
+}
+
+DOMElement* PointMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+  size.writeXMLFile(e);
+  writeProperties(e);
+  return e;
+}
+
+void PointMBSOMBVProperty::fromWidget(QWidget *widget) {
+  MBSOMBVProperty::fromWidget(widget);
+  size.fromWidget(static_cast<PointMBSOMBVWidget*>(widget)->size);
+}
+
+void PointMBSOMBVProperty::toWidget(QWidget *widget) {
+  MBSOMBVProperty::toWidget(widget);
+  size.toWidget(static_cast<PointMBSOMBVWidget*>(widget)->size);
+}
+
+LineMBSOMBVProperty::LineMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), length(0,false) {
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"length"));
+  length.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+DOMElement* LineMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+  if(e) length.initializeUsingXML(e);
+  return e;
+}
+
+DOMElement* LineMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+  length.writeXMLFile(e);
+  writeProperties(e);
+  return e;
+}
+
+void LineMBSOMBVProperty::fromWidget(QWidget *widget) {
+  MBSOMBVProperty::fromWidget(widget);
+  length.fromWidget(static_cast<LineMBSOMBVWidget*>(widget)->length);
+}
+
+void LineMBSOMBVProperty::toWidget(QWidget *widget) {
+  MBSOMBVProperty::toWidget(widget);
+  length.toWidget(static_cast<LineMBSOMBVWidget*>(widget)->length);
+}
+
+PlaneMBSOMBVProperty::PlaneMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), length(0,false) {
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(2,"1")), "m", MBSIM%"length"));
+  length.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+DOMElement* PlaneMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+  if(e) length.initializeUsingXML(e);
+  return e;
+}
+
+DOMElement* PlaneMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+  length.writeXMLFile(e);
+  writeProperties(e);
+  return e;
+}
+
+void PlaneMBSOMBVProperty::fromWidget(QWidget *widget) {
+  MBSOMBVProperty::fromWidget(widget);
+  length.fromWidget(static_cast<PlaneMBSOMBVWidget*>(widget)->length);
+}
+
+void PlaneMBSOMBVProperty::toWidget(QWidget *widget) {
+  MBSOMBVProperty::toWidget(widget);
+  length.toWidget(static_cast<PlaneMBSOMBVWidget*>(widget)->length);
+}
+
+OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), transparency(0,false), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"size"));
@@ -74,6 +210,10 @@ OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, co
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"offset"));
   offset.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
+  transparency.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 DOMElement* OMBVFrameProperty::initializeUsingXML(DOMElement *element) {
@@ -81,6 +221,7 @@ DOMElement* OMBVFrameProperty::initializeUsingXML(DOMElement *element) {
   if(e) {
     size.initializeUsingXML(e);
     offset.initializeUsingXML(e);
+    transparency.initializeUsingXML(e);
   }
   return e;
 }
@@ -93,12 +234,14 @@ DOMElement* OMBVFrameProperty::writeXMLFile(DOMNode *parent) {
     parent->insertBefore(e, NULL);
     size.writeXMLFile(e);
     offset.writeXMLFile(e);
+    transparency.writeXMLFile(e);
     return e;
   }
   else {
     writeXMLFileID(parent);
     size.writeXMLFile(parent);
     offset.writeXMLFile(parent);
+    transparency.writeXMLFile(parent);
     return 0;
   }
 }
@@ -106,11 +249,13 @@ DOMElement* OMBVFrameProperty::writeXMLFile(DOMNode *parent) {
 void OMBVFrameProperty::fromWidget(QWidget *widget) {
   size.fromWidget(static_cast<OMBVFrameWidget*>(widget)->size);
   offset.fromWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
+  transparency.fromWidget(static_cast<OMBVFrameWidget*>(widget)->transparency);
 }
 
 void OMBVFrameProperty::toWidget(QWidget *widget) {
   size.toWidget(static_cast<OMBVFrameWidget*>(widget)->size);
   offset.toWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
+  transparency.toWidget(static_cast<OMBVFrameWidget*>(widget)->transparency);
 }
 
 OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), diffuseColor(0,false), transparency(0,false), readXMLType(readXMLType_) {
@@ -168,7 +313,7 @@ void OMBVDynamicColoredObjectProperty::toWidget(QWidget *widget) {
   transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
 }
 
-OMBVArrowProperty::OMBVArrowProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID, bool fromPoint) : OMBVObjectProperty(name,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), xmlName(xmlName_) {
+OMBVArrowProperty::OMBVArrowProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID, bool fromPoint) : OMBVObjectProperty(name,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), diffuseColor(0,false), transparency(0,false), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleLength"));
@@ -181,6 +326,12 @@ OMBVArrowProperty::OMBVArrowProperty(const string &name, const MBXMLUtils::FQN &
   referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", MBSIM%"referencePoint", true));
   if(fromPoint)
     referencePoint.setActive(true);
+
+  diffuseColor.setProperty(new ColorProperty(MBSIM%"diffuseColor"));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
+  transparency.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 DOMElement* OMBVArrowProperty::initializeUsingXML(DOMElement *element) {
@@ -189,6 +340,8 @@ DOMElement* OMBVArrowProperty::initializeUsingXML(DOMElement *element) {
     scaleLength.initializeUsingXML(e);
     scaleSize.initializeUsingXML(e);
     referencePoint.initializeUsingXML(e);
+    diffuseColor.initializeUsingXML(e);
+    transparency.initializeUsingXML(e);
   }
   return e;
 }
@@ -202,6 +355,8 @@ DOMElement* OMBVArrowProperty::writeXMLFile(DOMNode *parent) {
     scaleLength.writeXMLFile(e);
     scaleSize.writeXMLFile(e);
     referencePoint.writeXMLFile(e);
+    diffuseColor.writeXMLFile(e);
+    transparency.writeXMLFile(e);
     return e;
   }
   else {
@@ -209,6 +364,8 @@ DOMElement* OMBVArrowProperty::writeXMLFile(DOMNode *parent) {
     scaleLength.writeXMLFile(parent);
     scaleSize.writeXMLFile(parent);
     referencePoint.writeXMLFile(parent);
+    diffuseColor.writeXMLFile(parent);
+    transparency.writeXMLFile(parent);
     return 0;
   }
 }
@@ -217,17 +374,19 @@ void OMBVArrowProperty::fromWidget(QWidget *widget) {
   scaleLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
   scaleSize.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleSize);
   referencePoint.fromWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
+  diffuseColor.fromWidget(static_cast<OMBVArrowWidget*>(widget)->diffuseColor);
+  transparency.fromWidget(static_cast<OMBVArrowWidget*>(widget)->transparency);
 }
 
 void OMBVArrowProperty::toWidget(QWidget *widget) {
   scaleLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
   scaleSize.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleSize);
   referencePoint.toWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
+  diffuseColor.toWidget(static_cast<OMBVArrowWidget*>(widget)->diffuseColor);
+  transparency.toWidget(static_cast<OMBVArrowWidget*>(widget)->transparency);
 }
 
-OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), xmlName(xmlName_) {
-
-  type.setProperty(new TextProperty("tube", MBSIM%"type", true));
+OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), diffuseColor(0,false), transparency(0,false), xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "", MBSIM%"numberOfCoils"));
@@ -244,6 +403,14 @@ OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const MBXMLUt
   input.clear();
   input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"nominalLength"));
   nominalLength.setProperty(new ExtPhysicalVarProperty(input));
+
+  type.setProperty(new TextProperty("tube", MBSIM%"type", true));
+
+  diffuseColor.setProperty(new ColorProperty(MBSIM%"diffuseColor"));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
+  transparency.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 DOMElement* OMBVCoilSpringProperty::initializeUsingXML(DOMElement *element) {
@@ -254,6 +421,8 @@ DOMElement* OMBVCoilSpringProperty::initializeUsingXML(DOMElement *element) {
     springRadius.initializeUsingXML(e);
     crossSectionRadius.initializeUsingXML(e);
     nominalLength.initializeUsingXML(e);
+    diffuseColor.initializeUsingXML(e);
+    transparency.initializeUsingXML(e);
   }
   return e;
 }
@@ -269,6 +438,8 @@ DOMElement* OMBVCoilSpringProperty::writeXMLFile(DOMNode *parent) {
     springRadius.writeXMLFile(e);
     crossSectionRadius.writeXMLFile(e);
     nominalLength.writeXMLFile(e);
+    diffuseColor.writeXMLFile(e);
+    transparency.writeXMLFile(e);
     return e;
   } else {
     writeXMLFileID(parent);
@@ -277,6 +448,8 @@ DOMElement* OMBVCoilSpringProperty::writeXMLFile(DOMNode *parent) {
     springRadius.writeXMLFile(parent);
     crossSectionRadius.writeXMLFile(parent);
     nominalLength.writeXMLFile(parent);
+    diffuseColor.writeXMLFile(parent);
+    transparency.writeXMLFile(parent);
     return 0;
   }
 }
@@ -287,6 +460,8 @@ void OMBVCoilSpringProperty::fromWidget(QWidget *widget) {
   springRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
   crossSectionRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
   nominalLength.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
+  diffuseColor.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->diffuseColor);
+  transparency.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->transparency);
 }
 
 void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
@@ -295,6 +470,8 @@ void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
   springRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
   crossSectionRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
   nominalLength.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
+  diffuseColor.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->diffuseColor);
+  transparency.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->transparency);
 }
 
 OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
