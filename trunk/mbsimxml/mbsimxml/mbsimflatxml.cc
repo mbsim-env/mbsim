@@ -10,7 +10,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/xmlnamespacemapping.h"
 #include "mbsim/integrators/integrator.h"
-#include "mbsimxml/mbsimflatxml.h"
+#include "mbsimflatxml.h"
 #define BOOST_CHRONO_HEADER_ONLY
 #include <boost/chrono.hpp>
 
