@@ -32,6 +32,7 @@
 #include "link.h"
 #include "observer.h"
 #include "mainwindow.h"
+#include <boost/bind.hpp>
 
 extern MainWindow *mw;
 extern bool absolutePath;
@@ -46,7 +47,7 @@ int Element::IDcounter=0;
 
 Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
   name.setProperty(new TextProperty(name_,""));
-  embed.setProperty(new EmbedProperty(this));
+  embed.setProperty(new EmbedProperty(boost::bind(&Element::getName, this)));
   ID=toStr(IDcounter++);
 }
 
@@ -95,6 +96,7 @@ DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
     doc->insertBefore( ele1, NULL );
+    cout << "parameter size of " << getName() << " = " << parameter.size() << endl;
     for(int i=0; i<parameter.size(); i++)
       parameter[i]->writeXMLFile(ele1);
     string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;

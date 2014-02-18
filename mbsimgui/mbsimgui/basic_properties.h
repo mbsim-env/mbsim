@@ -23,6 +23,7 @@
 #include <string>
 #include "utils.h"
 #include "extended_properties.h"
+#include <boost/function.hpp>
 
 class Element;
 class Frame;
@@ -316,7 +317,7 @@ class SolverParametersProperty : public Property {
 class EmbedProperty : public Property {
 
   public:
-    EmbedProperty(Element *element);
+    EmbedProperty(boost::function<const std::string&()> f);
     virtual Property* clone() const {return new EmbedProperty(*this);}
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

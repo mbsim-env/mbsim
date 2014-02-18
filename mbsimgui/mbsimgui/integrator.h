@@ -42,17 +42,22 @@ class TolerancePropertyFactory: public PropertyFactory {
 class Integrator {
   friend class IntegratorPropertyDialog;
   protected:
-    ExtProperty startTime, endTime, plotStepSize, initialState;
-  public:
+    ExtProperty startTime, endTime, plotStepSize, initialState, embed;
+    std::string name;
+ public:
     Integrator();
     virtual ~Integrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
     static Integrator* readXMLFile(const std::string &filename);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual std::string getType() const { return "Integrator"; }
+    const std::string& getName() const { return name; }
     virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
+    bool isEmbedded() const {return embed.isActive();}
 };
 
 class DOPRI5Integrator : public Integrator {

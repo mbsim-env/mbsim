@@ -69,6 +69,10 @@ IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator_, QWid
   input.push_back(new PhysicalVariableWidget(z0, QStringList(), 0));
   initialState= new ExtWidget("Initial state",new ExtPhysicalVarWidget(input),true);
   addToTab("Initial conditions", initialState);
+
+  addTab("Embedding");
+  embed = new ExtWidget("Embed", new EmbedWidget, true);
+  addToTab("Embedding",embed);
 }
 
 void IntegratorPropertyDialog::toWidget(Integrator *integrator) {
@@ -76,6 +80,7 @@ void IntegratorPropertyDialog::toWidget(Integrator *integrator) {
   static_cast<Integrator*>(integrator)->endTime.toWidget(endTime);
   static_cast<Integrator*>(integrator)->plotStepSize.toWidget(plotStepSize);
   static_cast<Integrator*>(integrator)->initialState.toWidget(initialState);
+  integrator->embed.toWidget(embed);
 }
 
 void IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
@@ -83,6 +88,7 @@ void IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<Integrator*>(integrator)->endTime.fromWidget(endTime);
   static_cast<Integrator*>(integrator)->plotStepSize.fromWidget(plotStepSize);
   static_cast<Integrator*>(integrator)->initialState.fromWidget(initialState);
+  integrator->embed.fromWidget(embed);
 }
 
 DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {

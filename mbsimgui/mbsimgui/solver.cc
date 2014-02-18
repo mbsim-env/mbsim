@@ -108,14 +108,8 @@ Solver* Solver::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
   shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
   DOMElement *e=doc->getDocumentElement();
-  Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, 0));
+  Solver *solver=static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, 0));
   solver->initializeUsingXML(e);
   solver->initialize();
   return solver;
-}
-
-void Solver::writeXMLFile(const string &name) {
-  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-  writeXMLFile(doc.get());
-  DOMParser::serialize(doc.get(), (name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
 }

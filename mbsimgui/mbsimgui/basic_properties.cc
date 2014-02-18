@@ -720,9 +720,9 @@ void SolverParametersProperty::toWidget(QWidget *widget) {
   tolerances.toWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
 }
 
-EmbedProperty::EmbedProperty(Element *element) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
+EmbedProperty::EmbedProperty(boost::function<const std::string&()> f) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
   href.setProperty(new FileProperty(""));
-  static_cast<FileProperty*>(href.getProperty())->setFile(element->getName()+".xml");
+  static_cast<FileProperty*>(href.getProperty())->setFile(f()+".xml");
   count.setProperty(new IntegerProperty(1,""));
   counterName.setProperty(new TextProperty("n",""));
   parameterList.setProperty(new FileProperty(""));

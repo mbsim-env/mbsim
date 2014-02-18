@@ -26,6 +26,7 @@
 #include <QtGui/QMenu>
 #include <QtGui/QFileDialog>
 #include <QtGui/QHBoxLayout>
+#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -33,6 +34,8 @@ using namespace xercesc;
 using namespace boost;
 
 extern MainWindow *mw;
+extern bool absolutePath;
+extern QDir mbsDir;
 
 TolerancePropertyFactory::TolerancePropertyFactory(const string &type_) : type(type_) {
   name.push_back(MBSIMINT%(type+"ToleranceScalar"));
@@ -52,7 +55,7 @@ Property* TolerancePropertyFactory::createProperty(int i) {
   }
 }
 
-Integrator::Integrator() : initialState(0,false) {
+Integrator::Integrator() : initialState(0,false), name("Integrator"), embed(0,false) {
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINT%"startTime"));
@@ -69,6 +72,8 @@ Integrator::Integrator() : initialState(0,false) {
   input.clear();
   input.push_back(PhysicalVariableProperty(new VecProperty(0), "", MBSIMINT%"initialState"));
   initialState.setProperty(new ExtPhysicalVarProperty(input));
+
+  embed.setProperty(new EmbedProperty(boost::bind(&Integrator::getName, this)));
 }
 
 Integrator::~Integrator() {
@@ -94,6 +99,48 @@ DOMElement* Integrator::writeXMLFile(DOMNode *parent) {
   return ele0;
 }
 
+void Integrator::initializeUsingXMLEmbed(DOMElement *element) {
+  embed.initializeUsingXML(element);
+  embed.setActive(true);
+}
+
+DOMElement* Integrator::writeXMLFileEmbed(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele = embed.writeXMLFile(parent);
+
+//  if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
+//    string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
+//    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
+//    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+//    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
+//    doc->insertBefore( ele1, NULL );
+//    for(int i=0; i<parameter.size(); i++)
+//      parameter[i]->writeXMLFile(ele1);
+//    string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
+//    QFileInfo info(QString::fromStdString(name));
+//    QDir dir;
+//    if(!dir.exists(info.absolutePath()))
+//      dir.mkpath(info.absolutePath());
+//    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+//  }
+//  else {
+//    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
+//    ele->insertBefore( ele1, NULL );
+//    for(int i=0; i<parameter.size(); i++)
+//      parameter[i]->writeXMLFile(ele1);
+//  }
+
+  if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
+    writeXMLFile(ele);
+  else {
+    string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getFile();
+    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
+    string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
+    writeXMLFile(name);
+  }
+  return ele;
+}
+
 Integrator* Integrator::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
   shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
@@ -107,7 +154,7 @@ Integrator* Integrator::readXMLFile(const string &filename) {
 void Integrator::writeXMLFile(const string &name) {
   shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
   writeXMLFile(doc.get());
-  DOMParser::serialize(doc.get(), name.substr(name.length()-13,13)==".mbsimint.xml"?name:name+".mbsimint.xml");
+  DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
 }
 
 DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
