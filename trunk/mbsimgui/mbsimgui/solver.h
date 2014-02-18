@@ -49,8 +49,6 @@ class Solver : public Group {
     std::string getFileExtension() const { return ".mbsim.xml"; }
 
     static Solver* readXMLFile(const std::string &filename);
-    void writeXMLFile(const std::string &name);
-    void writeXMLFile() { writeXMLFile(getName()); }
 
     ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new SolverContextMenu(this);}

@@ -46,13 +46,9 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
   addFrame(I);
 
   if(parent) {
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(3),"m",MBSIM%"position"));
-    position.setProperty(new ExtPhysicalVarProperty(input));
+    position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"position"),"",4));
 
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIM%"orientation"));
-    orientation.setProperty(new ExtPhysicalVarProperty(input));
+    orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"orientation"),"",4));
 
     frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }

@@ -283,14 +283,10 @@ GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::Wind
   if(kinematics) {
     addTab("Kinematics",1);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3),lengthUnits(),4));
-    position = new ExtWidget("Position",new ExtPhysicalVarWidget(input),true); 
+    position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
     addToTab("Kinematics", position);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
-    orientation = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
+    orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
     addToTab("Kinematics", orientation);
 
     frameOfReference = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(group,0),true);

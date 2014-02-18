@@ -224,7 +224,6 @@ void ExtProperty::toWidget(QWidget *widget) {
   static_cast<ExtWidget*>(widget)->setActive(active);
   static_cast<ExtWidget*>(widget)->setWidgetVisible(active);
   static_cast<ExtWidget*>(widget)->blockSignals(false);
-  if(active)
     property->toWidget(static_cast<ExtWidget*>(widget)->widget);
 }
 

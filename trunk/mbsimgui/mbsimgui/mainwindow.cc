@@ -469,6 +469,7 @@ void MainWindow::loadProject(const QString &file) {
         ele2 = ele1->getFirstElementChild();
         integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
       }
+      integrator->initializeUsingXMLEmbed(ele1);
       if(ele2)
         integrator->initializeUsingXML(ele2);
     } else {
@@ -516,7 +517,11 @@ void MainWindow::saveProject(const QString &fileName) {
     solver->writeXMLFileEmbed(ele0);
   else
     solver->writeXMLFile(ele0);
-  integratorView->getIntegrator()->writeXMLFile(ele0);
+  Integrator *integrator = integratorView->getIntegrator();
+  if(integrator->isEmbedded())
+    integrator->writeXMLFileEmbed(ele0);
+  else
+    integrator->writeXMLFile(ele0);
 
   QString file = fileProject->text();
   string name = (file.right(13)==".mbsimprj.xml"?file:file+".mbsimprj.xml").toStdString();

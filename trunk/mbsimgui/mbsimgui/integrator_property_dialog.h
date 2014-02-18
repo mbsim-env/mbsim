@@ -56,7 +56,7 @@ class IntegratorPropertyDialog : public PropertyDialog {
   protected:
     Integrator *integrator;
     VecWidget *z0;
-    ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
+    ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *embed;
 };
 
 class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {

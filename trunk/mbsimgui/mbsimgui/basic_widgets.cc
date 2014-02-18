@@ -639,7 +639,7 @@ EmbedWidget::EmbedWidget() {
   layout->addWidget(count);
   counterName = new ExtWidget("Counter name", new TextWidget, true);
   layout->addWidget(counterName);
-  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)", 1), true);
+  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.xml)", 1), true);
   layout->addWidget(parameterList);
 }
 
