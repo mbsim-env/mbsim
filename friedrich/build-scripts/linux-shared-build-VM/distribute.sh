@@ -264,10 +264,9 @@ This binary Linux build requires a Linux distribution with glibc >= 2.15.
   is unpacked does not contain any spaces.)
 - Test the installation:
   1)Run the program <install-dir>/mbsim/bin/mbsim-test to check the
-    installation. This will run the MBSim example xmlflat/hierachical_modelling,
-    xml/hydraulics_ballcheckvalve,
-    the xml/hierachical_modelling example, the h5plotserie program as well as
-    the openmbv program.
+    installation. This will run the MBSim examples xmlflat/hierachical_modelling,
+    xml/hydraulics_ballcheckvalve and xml/hierachical_modelling as well as the
+    program h5plotserie, openmbv and mbsimgui.
   2)If you have a compiler (GNU gcc) installed you can also run
     <install-dir>/mbsim/bin/mbsim-test <path-to-my-c++-compiler>.
     This will first try to compile a simple MBSim test program including all
@@ -275,8 +274,9 @@ This binary Linux build requires a Linux distribution with glibc >= 2.15.
     example will be compiled and executed. At least the same as in 1) is run.
 - Try any of the programs in <install-dir>/mbsim/bin
 - Build your own models using XML and run it with
-  <install-dir>/mbsim/bin/mbsimxml ...
+  <install-dir>/mbsim/bin/mbsimxml <mbsim-project-file.xml>
   View the plots with h5plotserie and view the animation with openmbv.
+- Build your own models using the GUI: mbsimgui
 - Try to compile and run your own source code models. Use the output of
   <install-dir>/mbsim/bin/mbsim-config --cflags and 
   <install-dir>/mbsim/bin/mbsim-config --libs as compiler and linker flags.
@@ -346,19 +346,19 @@ fi
 
 echo "XMLFLAT_HIERACHICAL_MODELLING"
 cd xmlflat/hierachical_modelling
-\$INSTDIR/bin/mbsimflatxml MBS.mbsim.flat.xml Integrator.mbsimint.xml || exit
+\$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml || exit
 cd ../..
 echo "DONE"
 
 echo "XML_HIERACHICAL_MODELLING"
 cd xml/hierachical_modelling
-\$INSTDIR/bin/mbsimxml --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles || exit
+\$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || exit
 cd ../..
 echo "DONE"
 
 echo "XML_HYDRAULICS_BALLCHECKVALVE"
 cd xml/hydraulics_ballcheckvalve
-\$INSTDIR/bin/mbsimxml --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml || exit
+\$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || exit
 cd ../..
 echo "DONE"
 

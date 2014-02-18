@@ -249,9 +249,8 @@ Using of the MBSim and Co. Package:
 - Test the installation:
   1)Run the program <install-dir>/mbsim/bin/mbsim-test.bat to check the
     installation. This will run the MBSim example xmlflat/hierachical_modelling,
-    xml/hydraulics_ballcheckvalve,
-    the xml/hierachical_modelling example, the h5plotserie program as well as
-    the openmbv program.
+    xml/hydraulics_ballcheckvalve and xml/hierachical_modelling as well as
+    the program h5plotserie, openmbv and mbsimgui.
   2)If you have a compiler installed you can also run
     <install-dir>/mbsim/bin/mbsim-test.bat <path-to-my-c++-compiler>.
     This will first try to compile a simple MBSim test program including all
@@ -262,8 +261,9 @@ Using of the MBSim and Co. Package:
           http://www.mingw.org (both differ and are incompatible)!
 - Try any of the programs in <install-dir>/mbsim/bin
 - Build your own models using XML and run it with
-  <install-dir>/mbsim/bin/mbsimxml ...
+  <install-dir>/mbsim/bin/mbsimxml <mbsim-project-file.xml>
   View the plots with h5plotserie and view the animation with openmbv.
+- Build your own models using the GUI: mbsimgui
 - Try to compile and run your own source code models. Use the output of
   <install-dir>/mbsim/bin/mbsim-config.bat --cflags and 
   <install-dir>/mbsim/bin/mbsim-config.bat --libs as compiler and linker flags.
@@ -350,21 +350,21 @@ if %CXX%!==! goto skipgcc
 
 echo XMLFLAT_HIERACHICAL_MODELLING
 cd xmlflat\hierachical_modelling
-"%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsim.flat.xml Integrator.mbsimint.xml
+"%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml
 if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
 
 echo XML_HIERACHICAL_MODELLING
 cd xml\hierachical_modelling
-"%INSTDIR%\bin\mbsimxml.exe" --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles
+"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
 if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
 
 echo XML_HYDRAULICS_BALLCHECKVALVE
 cd xml/hydraulics_ballcheckvalve
-"%INSTDIR%\bin\mbsimxml.exe" --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml
+"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
 if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
