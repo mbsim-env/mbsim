@@ -217,11 +217,11 @@ namespace MBSimHydraulics {
   }
 
   void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
-    throw;
+    throw runtime_error("Error in HNode::updatedhdqRef");
   }
 
   void HNode::updatedhduRef(const SqrMat& dhduParent, int j) {
-    throw;
+    throw runtime_error("Error in HNode::updatedhduRef");
   }
 
   void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
@@ -633,7 +633,7 @@ namespace MBSimHydraulics {
       }
     }
     else
-      throw;
+      throw runtime_error("Error in RigidCavitationNode::checkActive");
   }
 
   bool RigidCavitationNode::gActiveChanged() {

@@ -107,7 +107,7 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
     j=j+1;
   }
   if (!(j==N_diskret-1))
-    throw(123);
+    throw runtime_error("Error in ContourXY2angleXY");
   erg(j,0) = angleRxy(Nneu-1,0);
   erg(j,1) = angleRxy(Nneu-1,2);
   erg(j,2) = angleRxy(Nneu-1,3);

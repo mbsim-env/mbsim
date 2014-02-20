@@ -38,8 +38,9 @@ namespace MBSimElectronics {
           currentBranch->setEndTerminal(connectedTerminal[i]);
         }
         else {
-          cerr << "Fehler wegen flag = "<< (connectedTerminal[i]->getFlag()) << endl;
-          throw 5;
+          stringstream error;
+          error << "Fehler wegen flag = "<< (connectedTerminal[i]->getFlag()) << endl;
+          throw runtime_error(error.str());
         }
 
         if(getParent() == connectedTerminal[i]->getParent()) {
@@ -200,7 +201,7 @@ namespace MBSimElectronics {
 	else if(meshList[i]->getBranch(j)->getEndTerminal() == meshList[i]->getBranch(j-1)->getEndTerminal())
 	  meshList[i]->getBranch(j)->setvz(-1,meshList[i]);
 	else
-	  throw 5;
+	  throw runtime_error("Error 2 in ElectronicComponent::processModellList");
       }
       objectList.push_back(meshList[i]);
     }
@@ -222,8 +223,7 @@ namespace MBSimElectronics {
 	linkList.push_back(linkcomp);
       }
       else {
-	cerr << "Fehler" << endl;
-	throw 5;
+	throw runtime_error("Error 2 in ElectronicComponent::processModellList");
       }
     }
   }

@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
 
   /*void FiniteElement1s21ANCF::setCurleRadius(double R)
     {
-    if (R == 0.0) {cout << "CurleRadius muss ungleich 0 sein!\n"; throw(1);}
+    if (R == 0.0) { throw runtime_error("CurleRadius muss ungleich 0 sein!\n"); }
     wss0 = 1/R;
     }
     void FiniteElement1s21ANCF::setMaterialDamping(double depsilons)//, const double& dws)

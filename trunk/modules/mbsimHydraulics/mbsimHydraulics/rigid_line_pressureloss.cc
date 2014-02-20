@@ -125,7 +125,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
-    throw;
+    throw runtime_error("Error in RigidLinePressureLoss::updatedhduRef");
   }
 
   void RigidLinePressureLoss::updatedhdtRef(const Vec& dhdtParent, int i) {
@@ -171,7 +171,7 @@ namespace MBSimHydraulics {
       active=(gdn<=0);
     }
     else
-      throw;
+      throw runtime_error("Error in RigidLinePressureLoss::checkActive");
   }
 
   bool RigidLinePressureLoss::gActiveChanged() {
