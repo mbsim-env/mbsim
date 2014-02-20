@@ -347,7 +347,7 @@ namespace MBSimHydraulics {
       area= M_PI * diameter * opening;
     }
     else
-      throw(123);
+      throw runtime_error("Error in StatelessOrifice::calculateQ");
 
     /*double*/ sqrt_dp=0;
     const double dpReg=.1e5;
