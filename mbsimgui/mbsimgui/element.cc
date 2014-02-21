@@ -19,10 +19,7 @@
 
 #include <config.h>
 #include "element.h"
-#include <QtGui/QMenu>
 #include <QtGui/QFileDialog>
-#include <QtGui/QInputDialog>
-#include <QtGui/QMessageBox>
 #include <cmath>
 #include <boost/shared_ptr.hpp>
 #include "frame.h"
@@ -93,34 +90,21 @@ DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
   if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
     string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
     string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
-    doc->insertBefore( ele1, NULL );
-    cout << "parameter size of " << getName() << " = " << parameter.size() << endl;
-    for(int i=0; i<parameter.size(); i++)
-      parameter[i]->writeXMLFile(ele1);
     string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
-    QFileInfo info(QString::fromStdString(name));
-    QDir dir;
-    if(!dir.exists(info.absolutePath()))
-      dir.mkpath(info.absolutePath());
-    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+    parameters.writeXMLFile(name);
   }
-  else {
-    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
-    ele->insertBefore( ele1, NULL );
-    for(int i=0; i<parameter.size(); i++)
-      parameter[i]->writeXMLFile(ele1);
-  }
+  else
+    parameters.writeXMLFile(ele);
 
-  if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
-    writeXMLFile(ele);
-  else {
+  if(static_cast<const EmbedProperty*>(embed.getProperty())->hasFile()) {
     string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getFile();
     string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
     string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
     writeXMLFile(name);
   }
+  else 
+    writeXMLFile(ele);
+
   return ele;
 }
 

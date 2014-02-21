@@ -378,7 +378,6 @@ DOMElement* FileProperty::writeXMLFile(DOMNode *parent) {
 
 void FileProperty::fromWidget(QWidget *widget) {
   file = static_cast<FileWidget*>(widget)->getFile().toStdString();
-  cout << file << endl;
 }
 
 void FileProperty::toWidget(QWidget *widget) {

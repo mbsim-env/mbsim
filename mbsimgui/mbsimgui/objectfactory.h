@@ -17,6 +17,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef _OBJECTFACTORY__H_
+#define _OBJECTFACTORY__H_
+
 #include <set>
 #include <iostream>
 #include <map>
@@ -102,3 +105,4 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     Environment *getEnvironment(xercesc::DOMElement *element);
 };
 
+#endif

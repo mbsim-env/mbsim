@@ -34,12 +34,14 @@
 #include "element_view.h"
 #include "parameter_view.h"
 #include "integrator_view.h"
+#include "embed.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
 #include <mbxmlutils/octeval.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -52,11 +54,13 @@ QDir mbsDir;
 
 MainWindow *mw;
 
-shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(false);
+shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(true);
 MBXMLUtils::OctEval *MainWindow::octEval=NULL;
 MBXMLUtils::NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
 MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
+  parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___mbsim_berlios_de_MBSimXML"/"mbsimproject.xsd");
+
   mw = this;
 
   if(bfs::is_directory("/dev/shm"))
@@ -79,9 +83,6 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
   QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
   action->setStatusTip(tr("Change working directory"));
-
-  action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Octave m-files path", this, SLOT(changeOctavePath()));
-  action->setStatusTip(tr("Change path to the octave m-files directory"));
 
   GUIMenu->addSeparator();
 
@@ -320,11 +321,6 @@ void MainWindow::changeWorkingDir() {
   }
 }
 
-void MainWindow::changeOctavePath() {
-  QString path = QFileDialog::getExistingDirectory (0, "Path to octave m-files path", ".");
-  if(not(path.isEmpty())) mPath << path;
-}
-
 void MainWindow::closeEvent(QCloseEvent *event) {
   QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
       tr("MBS, parameter list or integrator may have been modified.\n"
@@ -395,7 +391,6 @@ void MainWindow::newProject(bool ask) {
     selectDOPRI5Integrator();
     actionSaveProject->setDisabled(true);
     fileProject->setText("");
-    mPath.clear();
   }
   setWindowTitle("Project");
 }
@@ -404,59 +399,31 @@ void MainWindow::loadProject(const QString &file) {
   if(file!="") {
     setCurrentProjectFile(file);
     fileProject->setText(file);
-    mPath.clear();
     MBSimObjectFactory::initialize();
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
     DOMElement *e=doc->getDocumentElement();
     DOMElement *ele0=doc->getDocumentElement();
     setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
 
-    Solver *solver=0;
     DOMElement *ele1 = ele0->getFirstElementChild();
-    if(E(ele1)->getTagName()==PV%"Embed") {
-      DOMElement *ele2 = 0;
-      if(E(ele1)->hasAttribute("href"))
-        solver=Solver::readXMLFile(E(ele1)->getAttribute("href"));
-      else {
-        ele2 = E(ele1)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
-        solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele2,0));
-      }
-      solver->initializeUsingXMLEmbed(ele1);
-      if(ele2)
-        solver->initializeUsingXML(ele2);
-      if(E(ele1)->hasAttribute("parameterHref")) {
-        shared_ptr<DOMDocument> doc=MainWindow::parser->parse(E(ele1)->getAttribute("parameterHref"));
-        ele2=doc->getDocumentElement();
-      }
-      else
-        ele2=E(ele1)->getFirstElementChildNamed(PV%"Parameter");
-      if(ele2)
-        ele2=ele2->getFirstElementChild();
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = pmodel->index(0,0); 		
-      for(int i=0; i<pmodel->rowCount(QModelIndex()); i++) 		
-        delete pmodel->getItem(pindex.sibling(i,0))->getItemData(); 		
-      pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
-      while(ele2) {
-        Parameter *parameter=ObjectFactory::getInstance()->createParameter(ele2);
-        parameter->initializeUsingXML(ele2);
-        pmodel->createParameterItem(parameter);
-        solver->addParameter(parameter);
-        ele2=ele2->getNextElementSibling();
-      }
-      updateOctaveParameters();
-    }
-    else {
-      solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(ele1,0));
-      solver->initializeUsingXML(ele1);
-    }
+    Solver *solver=Embed<Solver>::createAndInit(ele1,0);
     solver->initialize();
+
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     if(model->rowCount(index))
       delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
     model->createGroupItem(solver);
+
+    ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+    QModelIndex pindex = pmodel->index(0,0); 		
+    for(int i=0; i<pmodel->rowCount(QModelIndex()); i++) 		
+      delete pmodel->getItem(pindex.sibling(i,0))->getItemData(); 		
+    pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
+    for(int i=0; i<solver->getNumberOfParameters(); i++)
+      pmodel->createParameterItem(solver->getParameter(i));
+    updateOctaveParameters();
 
     ele1 = ele1->getNextElementSibling();
 
@@ -513,10 +480,8 @@ void MainWindow::saveProject(const QString &fileName) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
   Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
-  if(solver->isEmbedded())
-    solver->writeXMLFileEmbed(ele0);
-  else
-    solver->writeXMLFile(ele0);
+
+  Embed<Solver>::writeXML(solver,ele0);
   Integrator *integrator = integratorView->getIntegrator();
   if(integrator->isEmbedded())
     integrator->writeXMLFileEmbed(ele0);
@@ -692,6 +657,7 @@ void MainWindow::newParameterList(bool ask) {
 // The resource owner of the returned DOMElement is the caller!
 DOMElement* MainWindow::writeParameterList(shared_ptr<DOMDocument> &doc) {
   DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
+  doc->insertBefore(ele0, NULL);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
   for(int i=0; i<model->rowCount(QModelIndex()); i++)
@@ -705,8 +671,12 @@ void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
   DOMElement *ele0=NULL;
   shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
   ele0=writeParameterList(doc);
+DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename", X()%"/tmp/test.xml");
+  ele0->insertBefore(filenamePI, ele0->getFirstChild());
 
   paramList.writeXMLFile(ele0);
+
+  D(doc)->validate();
 
   try {
     // remove all parameters from octave using delete and new NewParamLevel
@@ -714,10 +684,10 @@ void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
     delete octEvalParamLevel;
     octEvalParamLevel=new NewParamLevel(*octEval);
     // add parameter
-//    octEval->addParamSet(ele0);
+    octEval->addParamSet(doc->getDocumentElement());
   }
-  catch(string e) {
-    cout << "An exception occurred in updateOctaveParameters: " << e << endl;
+  catch(DOMEvalExceptionList error) {
+    cout << "An exception occurred in updateOctaveParameters: " << error.what() << endl;
   }
   catch(...) {
     cout << "An unknown exception occurred in updateOctaveParameters." << endl;
@@ -800,10 +770,6 @@ void MainWindow::mbsimxml(int task) {
   QStringList arg;
   if(task==1)
     arg.append("--stopafterfirststep");
-  for(int i=0; i<mPath.size(); i++) {
-    arg.append("--mpath");
-    arg.append(mPath.at(i));
-  }
   arg.append(projectFile);
   mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
   mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);

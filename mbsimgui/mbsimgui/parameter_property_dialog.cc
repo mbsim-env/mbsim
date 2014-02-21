@@ -57,9 +57,7 @@ void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
 }
 
 ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()))));
   addToTab("General", value);
 }
 
@@ -71,13 +69,11 @@ void ScalarParameterPropertyDialog::toWidget(Parameter *parameter) {
 void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
   ParameterPropertyDialog::fromWidget(parameter);
   static_cast<ScalarParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<const ExtPhysicalVarProperty*>(static_cast<ScalarParameter*>(parameter)->value.getProperty())->getValue());
+  parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<ScalarParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
 }
 
 VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecSizeVarWidget(3,1,1000),QStringList(),0));
-  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  value = new ExtWidget("Value",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()))));
   addToTab("General", value);
 }
 
@@ -89,13 +85,11 @@ void VectorParameterPropertyDialog::toWidget(Parameter *parameter) {
 void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
   ParameterPropertyDialog::fromWidget(parameter);
   static_cast<VectorParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<const ExtPhysicalVarProperty*>(static_cast<VectorParameter*>(parameter)->value.getProperty())->getValue());
+  parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<VectorParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
 }
 
 MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new MatRowsColsVarWidget(3,3,1,1000,1,1000),QStringList(),0));
-  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3)));
   addToTab("General", value);
 }
 
@@ -107,6 +101,6 @@ void MatrixParameterPropertyDialog::toWidget(Parameter *parameter) {
 void MatrixParameterPropertyDialog::fromWidget(Parameter *parameter) {
   ParameterPropertyDialog::fromWidget(parameter);
   static_cast<MatrixParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<const ExtPhysicalVarProperty*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getValue());
+  parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
 
 }
