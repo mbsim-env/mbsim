@@ -38,7 +38,13 @@ $PREFIX/bin/casadi_interface.oct
 /usr/bin/h5repart
 /usr/bin/h5stat
 /usr/bin/octave
+/usr/lib/libgtk-x11-2.0.so.0
+/usr/lib/libgnomeui-2.so.0
+/usr/lib/libgnomevfs-2.so.0
+/usr/lib/libgconf-2.so.4
 "
+# Note: libgtk-x11, libgnomeui, libgnomevfs and libgconf are loaded at runtime by QGtkStyle, hence we must
+# include these to the release including all dependencies
 
 SHAREDIRS="
 doc
@@ -398,7 +404,13 @@ PREFIX=/home/user/MBSimLinux/local
 BINFILES="
 $PREFIX/bin/openmbv
 /usr/bin/h5import
+/usr/lib/libgtk-x11-2.0.so.0
+/usr/lib/libgnomeui-2.so.0
+/usr/lib/libgnomevfs-2.so.0
+/usr/lib/libgconf-2.so.4
 "
+# Note: libgtk-x11, libgnomeui, libgnomevfs and libgconf are loaded at runtime by QGtkStyle, hence we must
+# include these to the release including all dependencies
 
 SHAREDIRS="
 openmbv
