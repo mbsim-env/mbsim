@@ -98,6 +98,18 @@ class MatrixParameter : public Parameter {
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
 };
 
+class SearchPath : public Parameter {
+  friend class SearchPathPropertyDialog;
+  public:
+    SearchPath(const std::string &name);
+    virtual ~SearchPath() {}
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual std::string getType() const { return "searchPath"; }
+//    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
+};
+
+
 class ParameterList {
   public:
     bool readXMLFile(const std::string &filename);
@@ -115,6 +127,11 @@ class Parameters {
   public:
     void addParameter(Parameter *param) { parameter.push_back(param); }
     Parameter *getParameter(int i) { return parameter[i]; }
+    int getNumberOfParameters() const { return parameter.size(); }
+    void initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    static Parameters readXMLFile(const std::string &filename);
+    virtual void writeXMLFile(const std::string &name);
 };
 
 #endif

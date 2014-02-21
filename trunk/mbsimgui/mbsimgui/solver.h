@@ -48,7 +48,7 @@ class Solver : public Group {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }
 
-    static Solver* readXMLFile(const std::string &filename);
+    static Solver* readXMLFile(const std::string &filename, Element *parent=0);
 
     ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new SolverContextMenu(this);}

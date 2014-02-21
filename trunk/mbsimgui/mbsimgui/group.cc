@@ -33,6 +33,7 @@
 #include "observer.h"
 #include "basic_properties.h"
 #include "utils.h"
+#include "embed.h"
 #include "mbxmlutilshelper/dom.h"
 
 using namespace std;
@@ -309,26 +310,8 @@ void Group::initializeUsingXML(DOMElement *element) {
   DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
   Frame *f;
   while(ELE) {
-    if(E(ELE)->getTagName()==PV%"Embed") {
-      DOMElement *ELE2 = 0;
-      if(E(ELE)->hasAttribute("href"))
-        f=Frame::readXMLFile(E(ELE)->getAttribute("href"),this);
-      else {
-        ELE2 = ELE->getFirstElementChild();
-        f=ObjectFactory::getInstance()->createFrame(ELE2,this);
-      }
-      if(f) {
-        addFrame(f);
-        f->initializeUsingXMLEmbed(ELE);
-        if(ELE2)
-          f->initializeUsingXML(ELE2);
-      }
-    }
-    else {
-      f=ObjectFactory::getInstance()->createFrame(ELE,this);
-      addFrame(f);
-      f->initializeUsingXML(ELE);
-    }
+    f = Embed<Frame>::createAndInit(ELE,this);
+    if(f) addFrame(f);
     ELE=ELE->getNextElementSibling();
   }
 
@@ -336,28 +319,8 @@ void Group::initializeUsingXML(DOMElement *element) {
   ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
   Contour *c;
   while(ELE) {
-    if(E(ELE)->getTagName()==PV%"Embed") {
-      DOMElement *ELE2 = 0;
-      if(E(ELE)->hasAttribute("href"))
-        c=Contour::readXMLFile(E(ELE)->getAttribute("href"),this);
-      else {
-        ELE2 = ELE->getFirstElementChild();
-        c=ObjectFactory::getInstance()->createContour(ELE2,this);
-      }
-      if(c) {
-        addContour(c);
-        c->initializeUsingXMLEmbed(ELE);
-        if(ELE2)
-          c->initializeUsingXML(ELE2);
-      }
-    }
-    else {
-      c=ObjectFactory::getInstance()->createContour(ELE,this);
-      if(c) {
-        addContour(c);
-        c->initializeUsingXML(ELE);
-      }
-    }
+    c = Embed<Contour>::createAndInit(ELE,this);
+    if(c) addContour(c);
     ELE=ELE->getNextElementSibling();
   }
 
@@ -365,28 +328,8 @@ void Group::initializeUsingXML(DOMElement *element) {
   ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
   Group *g;
   while(ELE) {
-    if(E(ELE)->getTagName()==PV%"Embed") {
-      DOMElement *ELE2 = 0;
-      if(E(ELE)->hasAttribute("href"))
-        g=Group::readXMLFile(E(ELE)->getAttribute("href"),this);
-      else {
-        ELE2 = ELE->getFirstElementChild();
-        g=ObjectFactory::getInstance()->createGroup(ELE2,this);
-      }
-      if(g) {
-        addGroup(g);
-        g->initializeUsingXMLEmbed(ELE);
-        if(ELE2)
-          g->initializeUsingXML(ELE2);
-      }
-    }
-    else {
-      g=ObjectFactory::getInstance()->createGroup(ELE,this);
-      if(g) {
-        addGroup(g);
-        g->initializeUsingXML(ELE);
-      }
-    }
+    g = Embed<Group>::createAndInit(ELE,this);
+    if(g) addGroup(g);
     ELE=ELE->getNextElementSibling();
   }
 
@@ -394,28 +337,8 @@ void Group::initializeUsingXML(DOMElement *element) {
   ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
   Object *o;
   while(ELE) {
-    if(E(ELE)->getTagName()==PV%"Embed") {
-      DOMElement *ELE2 = 0;
-      if(E(ELE)->hasAttribute("href"))
-        o=Object::readXMLFile(E(ELE)->getAttribute("href"),this);
-      else {
-        ELE2 = ELE->getFirstElementChild();
-        o=ObjectFactory::getInstance()->createObject(ELE2,this);
-      }
-      if(o) {
-        addObject(o);
-        o->initializeUsingXMLEmbed(ELE);
-        if(ELE2)
-          o->initializeUsingXML(ELE2);
-      }
-    }
-    else {
-      o=ObjectFactory::getInstance()->createObject(ELE,this);
-      if(o) {
-        addObject(o);
-        o->initializeUsingXML(ELE);
-      }
-    }
+    o = Embed<Object>::createAndInit(ELE,this);
+    if(o) addObject(o);
     ELE=ELE->getNextElementSibling();
   }
 
@@ -423,28 +346,8 @@ void Group::initializeUsingXML(DOMElement *element) {
   ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
   Link *l;
   while(ELE) {
-    if(E(ELE)->getTagName()==PV%"Embed") {
-      DOMElement *ELE2 = 0;
-      if(E(ELE)->hasAttribute("href"))
-        l=Link::readXMLFile(E(ELE)->getAttribute("href"),this);
-      else {
-        ELE2 = ELE->getFirstElementChild();
-        l=ObjectFactory::getInstance()->createLink(ELE2,this);
-      }
-      if(l) {
-        addLink(l);
-        l->initializeUsingXMLEmbed(ELE);
-        if(ELE2)
-          l->initializeUsingXML(ELE2);
-      }
-    }
-    else {
-      l=ObjectFactory::getInstance()->createLink(ELE,this);
-      if(l) {
-        addLink(l);
-        l->initializeUsingXML(ELE);
-      }
-    }
+    l = Embed<Link>::createAndInit(ELE,this);
+    if(l) addLink(l);
     ELE=ELE->getNextElementSibling();
   }
 
@@ -453,28 +356,8 @@ void Group::initializeUsingXML(DOMElement *element) {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers")->getFirstElementChild();
     Observer *obsrv;
     while(ELE) {
-      if(E(ELE)->getTagName()==PV%"Embed") {
-        DOMElement *ELE2 = 0;
-        if(E(ELE)->hasAttribute("href"))
-          obsrv=Observer::readXMLFile(E(ELE)->getAttribute("href"),this);
-        else {
-          ELE2 = ELE->getFirstElementChild();
-          obsrv=ObjectFactory::getInstance()->createObserver(ELE2,this);
-        }
-        if(obsrv) {
-          addObserver(obsrv);
-          obsrv->initializeUsingXMLEmbed(ELE);
-          if(ELE2)
-            obsrv->initializeUsingXML(ELE2);
-        }
-      }
-      else {
-        obsrv=ObjectFactory::getInstance()->createObserver(ELE,this);
-        if(obsrv) {
-          addObserver(obsrv);
-          obsrv->initializeUsingXML(ELE);
-        }
-      }
+      obsrv = Embed<Observer>::createAndInit(ELE,this);
+      if(obsrv) addObserver(obsrv);
       ELE=ELE->getNextElementSibling();
     }
   }
@@ -501,51 +384,33 @@ DOMElement* Group::writeXMLFile(DOMNode *parent) {
 //  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
   ele1 = D(doc)->createElement( MBSIM%"frames" );
   for(int i=1; i<frame.size(); i++)
-    if(frame[i]->isEmbedded())
-      frame[i]->writeXMLFileEmbed(ele1);
-    else
-      frame[i]->writeXMLFile(ele1);
+    Embed<Frame>::writeXML(frame[i],ele1);
   ele0->insertBefore( ele1, NULL );
 
   ele1 = D(doc)->createElement( MBSIM%"contours" );
   for(int i=0; i<contour.size(); i++)
-    if(contour[i]->isEmbedded())
-      contour[i]->writeXMLFileEmbed(ele1);
-    else
-      contour[i]->writeXMLFile(ele1);
+    Embed<Contour>::writeXML(contour[i],ele1);
   ele0->insertBefore( ele1, NULL );
 
   ele1 = D(doc)->createElement( MBSIM%"groups" );
   for(int i=0; i<group.size(); i++)
-    if(group[i]->isEmbedded())
-      group[i]->writeXMLFileEmbed(ele1);
-    else
-      group[i]->writeXMLFile(ele1);
+    Embed<Group>::writeXML(group[i],ele1);
   ele0->insertBefore( ele1, NULL );
 
   ele1 = D(doc)->createElement( MBSIM%"objects" );
   for(int i=0; i<object.size(); i++)
-    if(object[i]->isEmbedded())
-      object[i]->writeXMLFileEmbed(ele1);
-    else
-      object[i]->writeXMLFile(ele1);
+    Embed<Object>::writeXML(object[i],ele1);
   ele0->insertBefore( ele1, NULL );
   
   ele1 = D(doc)->createElement( MBSIM%"links" );
   for(int i=0; i<link.size(); i++)
-    if(link[i]->isEmbedded())
-      link[i]->writeXMLFileEmbed(ele1);
-    else
-      link[i]->writeXMLFile(ele1);
+    Embed<Link>::writeXML(link[i],ele1);
   ele0->insertBefore( ele1, NULL );
 
   if(observer.size()) { 
     ele1 = D(doc)->createElement( MBSIM%"observers" );
     for(int i=0; i<observer.size(); i++)
-      if(observer[i]->isEmbedded())
-        observer[i]->writeXMLFileEmbed(ele1);
-      else
-        observer[i]->writeXMLFile(ele1);
+      Embed<Observer>::writeXML(observer[i],ele1);
     ele0->insertBefore( ele1, NULL );
   }
 

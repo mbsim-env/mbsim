@@ -435,6 +435,19 @@ class MatRowsVarWidgetFactory : public WidgetFactory {
     std::vector<int> defaultUnit;
 };
 
+class MatRowsColsVarWidgetFactory : public WidgetFactory {
+  public:
+    MatRowsColsVarWidgetFactory(int m=0, int n=0);
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<std::vector<QString> > A;
+    std::vector<QString> name;
+    std::vector<QStringList> unit;
+    std::vector<int> defaultUnit;
+};
+
 class RotMatWidgetFactory : public WidgetFactory {
   public:
     RotMatWidgetFactory();

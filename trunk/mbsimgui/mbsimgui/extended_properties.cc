@@ -129,7 +129,7 @@ DOMElement* ChoiceProperty2::initializeUsingXML(DOMElement *element) {
         DOMElement* ee=e;
         if(ee) {
           for(int i=0; i<factory->getSize(); i++) {
-            DOMElement *eee=ee->getFirstElementChild();
+            DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;;
             if(eee) {
               index = i;
               property = factory->createProperty(i);

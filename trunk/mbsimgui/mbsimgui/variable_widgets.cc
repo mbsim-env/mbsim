@@ -677,17 +677,17 @@ PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QS
 }
 
 void PhysicalVariableWidget::openEvalDialog() {
-  //evalInput = inputCombo->currentIndex();
-  QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
-  str = removeWhiteSpace(str);
-  vector<vector<QString> > A = strToMat(str);
-//  if(str=="" || (!inputWidget[0]->validate(A))) {
-//    QMessageBox::warning( this, "Validation", "Value not valid"); 
-//    return;
-//  }
-  evalDialog->setValue(A);
-  evalDialog->exec();
-  //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
+    //evalInput = inputCombo->currentIndex();
+    QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+    str = removeWhiteSpace(str);
+    vector<vector<QString> > A = strToMat(str);
+  //  if(str=="" || (!inputWidget[0]->validate(A))) {
+  //    QMessageBox::warning( this, "Validation", "Value not valid"); 
+  //    return;
+  //  }
+    evalDialog->setValue(A);
+    evalDialog->exec();
+    //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
 FromFileWidget::FromFileWidget() {
@@ -828,6 +828,21 @@ MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(const vector<vector<QString> > 
 QWidget* MatRowsVarWidgetFactory::createWidget(int i) {
   if(i==0)
     return new PhysicalVariableWidget(new MatRowsVarWidget(2,2,1,100), unit[0], defaultUnit[0]);
+  if(i==1)
+    return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+  if(i==2)
+    return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+}
+
+MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1) {
+  name[0] = "Matrix";
+  name[1] = "File";
+  name[2] = "Editor";
+}
+
+QWidget* MatRowsColsVarWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new PhysicalVariableWidget(new MatRowsColsVarWidget(2,2,1,100,1,100), unit[0], defaultUnit[0]);
   if(i==1)
     return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
   if(i==2)

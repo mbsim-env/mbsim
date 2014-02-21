@@ -71,7 +71,6 @@ class MainWindow : public QMainWindow {
     QString absoluteMBSFilePath;
     QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
     std::string currentID;
-    QStringList mPath;
     enum { maxRecentFiles = 5 };
     QAction *recentProjectFileActs[maxRecentFiles];
     void setCurrentProjectFile(const QString &fileName);
@@ -154,7 +153,6 @@ class MainWindow : public QMainWindow {
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
-    void changeOctavePath();
     void selectionChanged();
     void openPropertyDialog();
     void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);

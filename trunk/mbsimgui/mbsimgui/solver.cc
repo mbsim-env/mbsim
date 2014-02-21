@@ -104,11 +104,11 @@ DOMElement* Solver::writeXMLFile(DOMNode *parent) {
   return ele0;
 }
 
-Solver* Solver::readXMLFile(const string &filename) {
+Solver* Solver::readXMLFile(const string &filename, Element *parent) {
   MBSimObjectFactory::initialize();
   shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
   DOMElement *e=doc->getDocumentElement();
-  Solver *solver=static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, 0));
+  Solver *solver=static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, parent));
   solver->initializeUsingXML(e);
   solver->initialize();
   return solver;

@@ -29,6 +29,7 @@
 #include "kinematic_functions_properties.h"
 #include "function_properties.h"
 #include "function_property_factory.h"
+#include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -109,26 +110,8 @@ void RigidBody::initializeUsingXML(DOMElement *element) {
   e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
   Frame *f;
   while(e) {
-    if(E(e)->getTagName()==PV%"Embed") {
-      DOMElement *ee = 0;
-      if(E(e)->hasAttribute("href"))
-        f=Frame::readXMLFile(E(e)->getAttribute("href"),this);
-      else {
-        ee = e->getFirstElementChild();
-        f=ObjectFactory::getInstance()->createFrame(ee,this);
-      }
-      if(f) {
-        addFrame(f);
-        f->initializeUsingXMLEmbed(e);
-        if(ee)
-          f->initializeUsingXML(ee);
-      }
-    }
-    else {
-      f=ObjectFactory::getInstance()->createFrame(e,this);
-      addFrame(f);
-      f->initializeUsingXML(e);
-    }
+    f = Embed<Frame>::createAndInit(e,this);
+    if(f) addFrame(f);
     e=e->getNextElementSibling();
   }
 
@@ -136,28 +119,8 @@ void RigidBody::initializeUsingXML(DOMElement *element) {
   e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
   Contour *c;
   while(e) {
-    if(E(e)->getTagName()==PV%"Embed") {
-      DOMElement *ee = 0;
-      if(E(e)->hasAttribute("href"))
-        c=Contour::readXMLFile(E(e)->getAttribute("href"),this);
-      else {
-        ee = e->getFirstElementChild();
-        c=ObjectFactory::getInstance()->createContour(ee,this);
-      }
-      if(c) {
-        addContour(c);
-        c->initializeUsingXMLEmbed(e);
-        if(ee)
-          c->initializeUsingXML(ee);
-      }
-    }
-    else {
-      c=ObjectFactory::getInstance()->createContour(e,this);
-      if(c) {
-        addContour(c);
-        c->initializeUsingXML(e);
-      }
-    }
+    c = Embed<Contour>::createAndInit(e,this);
+    if(c) addContour(c);
     e=e->getNextElementSibling();
   }
 
@@ -207,18 +170,12 @@ DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
   DOMDocument *doc=ele0->getOwnerDocument();
   ele1 = D(doc)->createElement( MBSIM%"frames" );
   for(int i=1; i<frame.size(); i++)
-    if(frame[i]->isEmbedded())
-      frame[i]->writeXMLFileEmbed(ele1);
-    else
-      frame[i]->writeXMLFile(ele1);
+    Embed<Frame>::writeXML(frame[i],ele1);
   ele0->insertBefore( ele1, NULL );
 
   ele1 = D(doc)->createElement( MBSIM%"contours" );
   for(int i=0; i<contour.size(); i++)
-    if(contour[i]->isEmbedded())
-      contour[i]->writeXMLFileEmbed(ele1);
-    else
-      contour[i]->writeXMLFile(ele1);
+    Embed<Contour>::writeXML(contour[i],ele1);
   ele0->insertBefore( ele1, NULL );
 
   ombvEditor.writeXMLFile(ele0);
