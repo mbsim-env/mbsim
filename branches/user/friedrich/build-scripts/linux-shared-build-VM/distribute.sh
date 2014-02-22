@@ -78,6 +78,9 @@ DISTDIR=$DISTBASEDIR/mbsim
 
 # PKG config
 export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig
+# get includes and libs of all packages required for compiling mbsim source examples
+SRCINC=$(pkg-config --cflags mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
+SRCLIB=$(pkg-config --libs   mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
 
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
@@ -155,7 +158,7 @@ for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\
 done
 TMPDEPFILE=$DISTBASEDIR/distribute.dep
 rm -f $TMPDEPFILE
-g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimInterface mbsimxml mbxmlutils openmbv openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++" > $TMPDEPFILE
+g++ -M -MT 'DUMMY' $TMPINCFILE $SRCINC | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++" > $TMPDEPFILE
 for FSRC in $(cat $TMPDEPFILE); do
   FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
   
@@ -238,10 +241,8 @@ fi
 
 INSTDIR="\$(readlink -f \$(dirname \$0)/..)"
 
-# pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
-# pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimInterface mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
-CFLAGS="-m32 -DHAVE_BOOST_FILE_LOCK -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -DHAVE_NURBS -DHAVE_ISO_FRIEND_DECL -DHAS_COMPLEX_ABS -DHAS_COMPLEX_CONJ -I\$INSTDIR/include -I\$INSTDIR/include/cpp"
-LIBS="-m32 -L\$INSTDIR/lib -lmbsimControl -lmbsimHydraulics -lmbsimInterface -lmbsimFlexibleBody -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix -lmbsimPowertrain -lmbsimElectronics -lmbsim -lcasadi -ldl -lopenmbvcppinterface -lhdf5serie -lhdf5_cpp -lhdf5 -lmbxmlutilstinyxml -lfmatvec -llapack -lblas -lpthread -lgfortran -lm -lquadmath"
+CFLAGS="$(echo $SRCINC | sed -re "s|$PREFIX|\$INSTDIR|g")"
+LIBS="$(echo $SRCLIB | sed -re "s|$PREFIX|\$INSTDIR|g")"
 
 if [ "_\$1" = "_--cflags" ]; then
   echo "\$CFLAGS"
