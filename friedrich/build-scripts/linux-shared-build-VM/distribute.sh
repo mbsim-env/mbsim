@@ -79,8 +79,8 @@ DISTDIR=$DISTBASEDIR/mbsim
 # PKG config
 export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig
 # get includes and libs of all packages required for compiling mbsim source examples
-SRCINC=$(pkg-config --cflags openmbv mbxmlutils mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
-SRCLIB=$(pkg-config --libs   openmbv mbxmlutils mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
+SRCINC=$(pkg-config --cflags mbxmlutils mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
+SRCLIB=$(pkg-config --libs   mbxmlutils mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
 
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
@@ -153,7 +153,7 @@ fi
 # copy includes
 TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutils/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbv/\|/openmbvcppinterfacetinyxml/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutils/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/mbxmlutilshelper/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/distribute.dep
