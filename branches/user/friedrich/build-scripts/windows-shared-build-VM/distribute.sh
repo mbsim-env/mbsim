@@ -82,8 +82,8 @@ DISTDIR=$DISTBASEDIR/mbsim
 # PKG config
 export PKG_CONFIG_PATH=/home/user/MBSimWindows/local/lib/pkgconfig
 # get includes and libs of all packages required for compiling mbsim source examples
-SRCINC=$(pkg-config --cflags mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
-SRCLIB=$(pkg-config --libs   mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
+SRCINC=$(pkg-config --cflags openmbv mbxmlutils mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
+SRCLIB=$(pkg-config --libs   openmbv mbxmlutils mbsimxml mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
 
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
