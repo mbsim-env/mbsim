@@ -69,10 +69,18 @@ namespace MBSim {
 
       /*!
        * \brief set height of frustum
-       * \para height height of the frustum
+       * \param height height of the frustum
        */
       void setHeight(const double & height_);
+
+      /*!
+       * \brief return height of frustum
+       */
       double getHeight();
+
+      /*!
+       * \brief return height of frustum
+       */
       double getHeight() const;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -168,9 +176,9 @@ namespace MBSim {
 
       /*!
        * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
-       * \para x_0: starting point of the polynomial domain
-       * \para x_end: end point of the polynomial domain
-       * \para P: the given point
+       * \param x_0: starting point of the polynomial domain
+       * \param x_end: end point of the polynomial domain
+       * \param P: the given point
        * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
        */
       fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
@@ -229,11 +237,14 @@ namespace MBSim {
 
   /*!
    * \brief this class denotes polynomial equation like this:a0+a1*x+a2*x^2+...+an*x^n=rhs
-   * \para para: coefficient vector of the left side
+   * \param para: coefficient vector of the left side
    */
 
   class ContactPolyfun : public fmatvec::Function<double(double)> {
     public:
+      /*!
+       * \brief Constructor
+       */
       ContactPolyfun(const double & rhs, const PolynomialFrustum * frustum);
       virtual ~ContactPolyfun() {
       }

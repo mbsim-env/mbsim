@@ -444,6 +444,9 @@ namespace MBSim {
         }
     };
 
+  /*!
+   * \brief rotation class for rotation about all three axis using the cardan description
+   */
   template<class Arg> 
     class RotationAboutAxesXYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:

@@ -133,6 +133,11 @@ namespace MBSim {
       virtual void setgdTol(double tol);
       virtual void setgddTol(double tol);
       virtual void setrMax(double rMax_);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Frame* getopenMBVFrame();
+      OpenMBV::Arrow* getcontactArrow();
+      OpenMBV::Arrow* getfrictionArrow();
+#endif
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -162,7 +167,7 @@ namespace MBSim {
        */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        contactArrow=ombv.createOpenMBV(); 
+        contactArrow=ombv.createOpenMBV();
       }
 
       /** 
