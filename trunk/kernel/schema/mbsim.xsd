@@ -67,15 +67,7 @@
     <xs:sequence>
       <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="referencePoint" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="&quot;toPoint&quot;"/>
-            <xs:enumeration value="&quot;fromPoint&quot;"/>
-            <xs:enumeration value="&quot;midPoint&quot;"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullOctEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
     </xs:sequence>
@@ -87,15 +79,7 @@
       <xs:element name="springRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="crossSectionRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
-      <xs:element name="type" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="&quot;tube&quot;"/>
-            <xs:enumeration value="&quot;scaledTube&quot;"/>
-            <xs:enumeration value="&quot;polyline&quot;"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element name="type" minOccurs="0" type="pv:stringFullOctEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
     </xs:sequence>
