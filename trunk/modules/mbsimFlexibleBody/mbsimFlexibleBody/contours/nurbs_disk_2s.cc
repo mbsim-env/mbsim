@@ -211,7 +211,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_NURBS
   void NurbsDisk2s::computeUVector(const int NbPts) {
     uvec = new PLib::Vector<double>(NbPts);
-    uVec = new PLib::Vector<double>(NbPts + degU+1);
+    uVec = new PLib::Vector<double>(NbPts + degU + 1);
 
     const double stepU = 2 * M_PI / nj;
 

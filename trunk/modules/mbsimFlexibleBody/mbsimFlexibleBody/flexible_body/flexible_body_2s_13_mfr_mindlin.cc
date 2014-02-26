@@ -203,9 +203,10 @@ namespace MBSimFlexibleBody {
         r_ref(1) = -qext(RefDofs+node*NodeDofs+2)*computeThickness(NodeCoordinates(node,0))/2.; // azimuthal component
         r_ref(2) = qext(RefDofs+node*NodeDofs)+computeThickness(NodeCoordinates(node,0))/2.; //z-component
 
-        r_ref = BasicRotAIKz(NodeCoordinates(node,1))*r_ref; //transformation into local frame
-        r_ref = A*r_ref; //transformation into moving frame of reference
-        r_ref += qext(0,2); //translation of moving frame of reference relative to frame of reference
+        r_ref = BasicRotAIKz(NodeCoordinates(node,1))*r_ref; //transformation into local frame  ---->?  transformation from intermediate frame(which are initially parallel to the local frame) to the FFR
+        r_ref = A*r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
+        r_ref += qext(0,2); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
+        // TODO:  is qext in Reference frame R or in the world frame ?
         cp.getFrameOfReference().setPosition(R->getPosition()+R->getOrientation()*r_ref); //at last step: transformation into world frame
       }
 
