@@ -17,7 +17,7 @@ For the installation of the specific projects always the same \emph{procedures} 
 	\end{itemize}
 	\item \textsc{configure}: 
 	\begin{itemize}
-		\item[] \begin{verbatim}./configure F77=gfortran \end{verbatim}
+		\item[] \begin{verbatim}./configure \end{verbatim}
         \item[] with defining a location for the installation 
                 \begin{verbatim}--prefix=$HOME/.../Install\end{verbatim}
         \item[] possibly with FLAGS for debug information
@@ -173,7 +173,7 @@ to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpseri
 \end{verbatim}
 
 \paragraph{XML Utils}
-It is assumed that Octave with version 3.0 or newer is installed (cf. Sec.~\ref{sec:third_party}).\par
+It is assumed that Octave with version 3.0 or newer, Xerces and boost are installed.\par
 Then,
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
@@ -182,7 +182,7 @@ and use the procedures \textsc{automake}, \textsc{configure} for dynamic compila
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
-and FLAG \texttt{\-\-with-mkoctfile-path} (\texttt{Octave/bin}) and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files with Octave code.
+and (if not using Casadi) FLAG \texttt{--enable-only-mbxmlutilstinyxml} and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files.
 
 \paragraph{OpenMBV-C++Interface}
 It is assumed that 
@@ -212,7 +212,7 @@ Necessary for the installation of \MBSim{} are
 \item \FMatVec{}
 \item \OpenMBV{}-C++-Interface
 \end{itemize}
-For installation of \MBSim{} one types
+and Casadi from \texttt{https://github.com/casadi/casadi/wiki} until \texttt{make install}. For installation of \MBSim{} one types
 \begin{verbatim}
  cd $HOME/MBSim
  svn checkout http://mbsim-env.googlecode.com/svn/trunk/ mbsim
@@ -221,6 +221,11 @@ For installation of \MBSim{} one types
 Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
+\end{verbatim}
+as well as FLAGs 
+\begin{verbatim}
+  --with-casadi-inc-prefix="path-to-casadi-includes"
+  --with-casadi-lib-prefix="path-to-casadi-libs"
 \end{verbatim}
 \texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. In
 \begin{verbatim}
