@@ -157,7 +157,7 @@ done
 # copy includes
 TMPINCFILE=$DISTBASEDIR/tmp/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutils/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/mbxmlutilshelper/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/tmp/distribute.dep
@@ -189,6 +189,7 @@ mkdir -p $DISTDIR/lib/octave/$OCTAVEVERSION/oct
 cp -ruL $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$OCTAVEVERSION/oct
 
 # SPECIAL handling
+cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libboost_system-gcc47-1_48.dll.a $DISTDIR/lib
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
 # copy openmbvcppinterface SWIG files
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
