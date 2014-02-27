@@ -40,7 +40,7 @@ can be summarized as follows.\footnote{in detail: \url{www.gnu.org/software/[aut
 	\end{tabular}
 
 \subsection{Third Party Software}\label{sec:third_party}
-Necessary for the installation of a static visualisation part are the following preliminary steps with everything being installed in \texttt{/home/OpenMBV} and with some hints:
+Necessary for the installation of a static visualisation part are the following preliminary steps with everything being installed by package service or from scratch in \texttt{/home/OpenMBV} with some hints:
 \begin{itemize}
 \item \texttt{export PKG\_CONFIG\_PATH=/home/OpenMBV/local/lib/pkgconfig}
 \item Coin3d with version 3 or newer (3D scenegraphs)\\
@@ -51,7 +51,7 @@ Necessary for the installation of a static visualisation part are the following 
     \texttt{./configure -prefix /home/OpenMBV/local -static -nomake examples -nomake demos\\ -nomake docs -nomake translations -no-gif -no-libtiff -qt-libpng -no-libmng\\ -qt-libjpeg -no-openssl -no-glib}
 \item HDF5Serie (wrapper for file handling)\\
     \texttt{./configure --prefix=/home/OpenMBV/local --disable-shared --enable-static}
-\item SoQt with version 1.4.1 or newer (e.g. event invocation in coin due to hardware events)\\
+\item SoQt with version 1.4.1 or newer (e.g. event invocation in Coin due to hardware events)\\
     \texttt{in SoQtComponent.cpp:103' change "unsinged long key" to "uintptr\_t key"}\\
     \texttt{export QTDIR=/home/OpenMBV/local}\\
     \texttt{export CONFIG\_QTLIBS="\$(pkg-config --libs QtGui QtCore Qt3Support QtOpenGL)"}\\
