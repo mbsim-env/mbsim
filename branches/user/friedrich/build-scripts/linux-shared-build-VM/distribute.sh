@@ -153,7 +153,7 @@ fi
 # copy includes
 TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutils/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/mbxmlutilshelper/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/distribute.dep
@@ -209,6 +209,7 @@ rm -f $DISTDIR/include/features.h
 (cd $DISTDIR/lib; ln -s libcblas.so.3 libcblas.so)
 (cd $DISTDIR/lib; ln -s libatlas.so.3 libatlas.so)
 (cd $DISTDIR/lib; ln -s libstdc++.so.6 libstdc++.so)
+(cd $DISTDIR/lib; ln -s libboost_system.so.1.48.0 libboost_system.so)
 # copy openmbvcppinterface SWIG files
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
