@@ -27,7 +27,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   double l0 = 1.5; // length
-  double b0 = 0.1; // width
+  double b0 = 0.05; // width
   double E = 5.e7; // E-Modul
   double mu = 0.3; // Poisson ratio
   double G = E/(2*(1+mu)); // shear modulus
