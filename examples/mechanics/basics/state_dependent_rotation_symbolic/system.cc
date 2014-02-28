@@ -75,13 +75,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   o->setFrame(body->getFrame("C"));
  // OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
  // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
- // arrow->setStaticColor(0.5);
+ // arrow->setDiffuseColor(1/3.0, 1, 1);
   o->enableOpenMBVVelocity();
 
 //  arrow = new OpenMBV::Arrow;
 //  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
 //  arrow->setType(OpenMBV::Arrow::toDoubleHead);
-//  arrow->setStaticColor(0.4);
+//  arrow->setDiffuseColor(0.4, 1, 1);
   o->enableOpenMBVAngularVelocity();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

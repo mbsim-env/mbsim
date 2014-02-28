@@ -320,7 +320,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy5->setScaleFactor(1.);
 //  dummy5->setMinimalColorValue(0);
 //  dummy5->setMaximalColorValue(1);
-//  dummy5->setStaticColor(0.7);
+//  dummy5->setDiffuseColor(0.2, 1, 1);
 //  dummy5->setInitialRotation(-M_PI/2.,0 ,-M_PI/2);
 //  dummy5->setInitialTranslation(0,10*d,0);
 //  cup2->setOpenMBVRigidBody(dummy5);
