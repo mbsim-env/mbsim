@@ -46,6 +46,7 @@ int main (int argc, char* argv[]) {
 
     delete sys;
     delete integrator;
+    FileSerie::flushAllFiles(); // a hack since h5files are not correctly closed/deleted on delete sys
   }
 
   {
