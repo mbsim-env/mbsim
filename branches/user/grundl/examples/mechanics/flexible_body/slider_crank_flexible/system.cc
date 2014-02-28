@@ -88,7 +88,8 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   FixedRelativeFrame * kinematicsFrameCrank = new FixedRelativeFrame("LoadFrame", kinematicsFrameCrankPos);
   crank->addFrame(kinematicsFrameCrank);
   crank->setFrameForKinematics(kinematicsFrameCrank);
-
+  kinematicsFrameCrank->enableOpenMBV(0.5e-1);
+  crank->getFrameC()->enableOpenMBV(0.7e-1);
   crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   crank->setInitialGeneralizedVelocity(0.);
 
@@ -113,6 +114,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   SqrMat3 rodInitRot(EYE);
   rodInitRot = BasicRotAIKy(M_PI_2) * BasicRotAIKx(M_PI_2);
   FixedRelativeFrame * rodRefBigEnd = new FixedRelativeFrame("RodRefBigEnd", rodInitPos, rodInitRot);
+  rodRefBigEnd->enableOpenMBV(1e-1);
   addFrame(rodRefBigEnd);
 
   Vec3 rodCircleCenterDistance;
@@ -166,6 +168,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   Vec3 pistonInitPos;
   pistonInitPos(0) = rodInitPos(0) + centerPointDistance;
   FixedRelativeFrame * pistonRef = new FixedRelativeFrame("PistonRef", pistonInitPos);
+  pistonRef->enableOpenMBV(0.5e-1);
   addFrame(pistonRef);
 
   // Generalized coordinates
@@ -221,6 +224,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   Vec3 cylinderCenterPos;
   cylinderCenterPos(0) = length_crank / 2;
   FixedRelativeFrame * cylinderRef = new FixedRelativeFrame("CylinderRef", cylinderCenterPos);
+  cylinderRef->enableOpenMBV(0.3e-1);
   crank->addFrame(cylinderRef);
 
   MBSim::RigidContour * cylinderContour = new MBSim::RigidContour("CylinderContour");

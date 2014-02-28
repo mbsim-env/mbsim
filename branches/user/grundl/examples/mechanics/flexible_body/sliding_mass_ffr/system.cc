@@ -35,7 +35,7 @@ SlidingMass::SlidingMass(const string &projectName) :
   double A = b0 * b0; // cross-section area
   double I1 = 1. / 12. * b0 * b0 * b0 * b0; // moment inertia
   double rho = 9.2e2; // density
-  int elements = 2; // number of finite elements
+  int elements = 10; // number of finite elements
 
   double r = b0; // radius of ball
   double mass = 1.; // mass of ball
@@ -56,6 +56,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     FixedRelativeFrame * ffrRef = new FixedRelativeFrame("FFRReference", ffrDispl);
     ffrRef->setFrameOfReference(getFrameI());
     addFrame(ffrRef);
+    ffrRef->enableOpenMBV(1e-1);
 
     FlexibleBodyLinearExternalFFR *beam = new FlexibleBodyLinearExternalFFR("FFRBeam", false);
 
@@ -74,8 +75,10 @@ SlidingMass::SlidingMass(const string &projectName) :
     beam->setq0(q0FFR);
     beam->setu0(u0Beam);
 
+    beam->getFloatingFrameOfReference()->enableOpenMBV(1e-1);
+
     // Fix the beam at its FFR
-    Joint * fix = new Joint("Fix");
+    Joint * fix = new Joint("FFRFix");
     fix->connect(getFrameI(), beam->getFloatingFrameOfReference());
     fix->setForceDirection(Mat3x3(EYE));
     fix->setMomentDirection(Mat3x3(EYE));
@@ -237,8 +240,16 @@ SlidingMass::SlidingMass(const string &projectName) :
     cpdata.getLagrangeParameterPosition() = Vec(1, INIT, 0.);
     cpdata.getContourParameterType() = CONTINUUM;
     rod->addFrame("RJ", cpdata);
-    Joint *joint = new Joint("Clamping");
-    joint->connect(this->getFrame("I"), rod->getFrame("RJ"));
+
+    FixedRelativeFrame * fixFrameRCM = new FixedRelativeFrame("refFrameRCMFix");
+    Vec3 relRCMFixPos;
+    relRCMFixPos(0) = l0/2.;
+    fixFrameRCM->setRelativePosition(relRCMFixPos);
+    fixFrameRCM->setFrameOfReference(rcmRef);
+    addFrame(fixFrameRCM);
+
+    Joint *joint = new Joint("RCMFix");
+    joint->connect(fixFrameRCM, rod->getFrame("RJ"));
     joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
     joint->setForceLaw(new BilateralConstraint);
     joint->setImpactForceLaw(new BilateralImpact);

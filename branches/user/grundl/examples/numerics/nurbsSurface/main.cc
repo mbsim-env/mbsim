@@ -14,7 +14,7 @@ int main(){
   int i,j ;
   for(i=0;i<Pts.rows();++i){
     for(j=0;j<Pts.cols();++j){
-      Pts(i,j) = Point3Df(i,j,j);
+      Pts(i,j) = Point3Df(i,j,cos(j));
       cerr << Pts(i,j) << "";
     }
     cerr << endl;
@@ -43,7 +43,7 @@ int main(){
   Matrix_Point3Df pskl;
   surf.deriveAt(u, v, 1, pskl);
   cerr << "\t derive = " << pskl << endl ;
-  surf.writePS("tnurbsS1.ps",5,5,Point3Df(0,0,5),Point3Df(1.5,2,0)) ;
+  surf.writePS("tnurbsS1.ps",5,5,Point3Df(-5,-5,5),Point3Df(0,0,1),1) ;
 
 
   MBSim::NurbsSurface fsurf;
@@ -94,12 +94,12 @@ int main(){
   surf.write("tnurbsS.ns") ;
   surf.read("tnurbsS.ns");
   surf.writeVRML("tnurbsS.wrl") ;
-  surf.writePS("tnurbsS.ps",5,5,Point3Df(10,10,10),Point3Df(0,0,0)) ;
+  surf.writePS("tnurbsS.ps",5,5,Point3Df(10,10,10),Point3Df(0,0,0),1) ;
 
   // for surface closed interpolatin
   surf.makeTorus(Point3Df(0,0,0),4,1) ;
   surf.writeVRML("torus.wrl");
-  surf.writePS("tnurbs4.ps",5,5,Point3Df(10,10,10),Point3Df(0,0,0)) ;
+  surf.writePS("tnurbs4.ps",5,5,Point3Df(10,10,10),Point3Df(0,0,0),1) ;
 
   /******   fmatvec ********/
   int eleU = 10;

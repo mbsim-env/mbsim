@@ -153,7 +153,7 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    mij.resize(nNodes + 1, NONINIT);
+    mij.resize(nNodes, NONINIT);
 
     /* read mij */
     ifstream mijInfile((inFilePath + "/mij.dat").c_str());
@@ -161,9 +161,17 @@ namespace MBSimFlexibleBody {
       cout << "Can not open file " << inFilePath << "mij.dat" << endl;
       throw 1;
     }
+
+    double totalMass = 0;
+
     int i = 0;
-    for (double a; mijInfile >> a; i++)
+    for (double a; mijInfile >> a; i++) {
       mij(i) = a * power;
+      totalMass += mij(i);
+    }
+
+    cout << "The total mass is " << totalMass << " [kg]" <<  endl;
+
     
     if (output) {
       cout << "The lumped masses are: " << mij << endl;
@@ -225,7 +233,7 @@ namespace MBSimFlexibleBody {
 //      phi >> "phi.out";
 
 //      cout << "KFull" << KFull << endl;
-      cout << "K" << KFull << endl;
+//      cout << "K" << KFull << endl;
 
       cout << "mij 0: " << mij(0) << endl;
       cout << "mij 1: " << mij(1) << endl;
