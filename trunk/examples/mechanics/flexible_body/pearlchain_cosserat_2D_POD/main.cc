@@ -19,7 +19,7 @@ int main (int argc, char* argv[]) {
   System *sys;
   TimeSteppingIntegrator *integrator;
 
-  double tEnd = 0.05;
+  double tEnd = 0.005;
   double dtFull = 5e-6;
   double dtRed = 1.e1*dtFull;
   double dtPlot = 1*dtRed;
@@ -46,6 +46,7 @@ int main (int argc, char* argv[]) {
 
     delete sys;
     delete integrator;
+    FileSerie::flushAllFiles(); // a hack since h5files are not correctly closed/deleted on delete sys
   }
 
   {
