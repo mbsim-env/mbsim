@@ -136,7 +136,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->enableOpenMBVContactPoints();
   this->addLink(contact);
   
-  // 
+  // joint 
   ContourPointData cpdata;
   cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
   cpdata.getContourParameterType() = CONTINUUM;
