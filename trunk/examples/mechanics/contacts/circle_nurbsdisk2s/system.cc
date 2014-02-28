@@ -189,7 +189,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obj1->setHeight(l_axis);
   obj1->setInitialRotation(-M_PI/2,0.,0.);
   obj1->setInitialTranslation(0.,l_axis*0.5,0.);
-  obj1->setStaticColor(0.75);
+  obj1->setDiffuseColor(0.16667, 1, 1);
   axis->setOpenMBVRigidBody(obj1);
 
   /* pole */

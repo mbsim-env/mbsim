@@ -312,7 +312,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
-  cuboid->setStaticColor(0.0); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setDiffuseColor(2/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   double h0 = 50.0e-3;
@@ -411,7 +411,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Sphere *cylinder=new OpenMBV::Sphere;
     cylinder->setRadius(radiiDisks(i));
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(1/3.0, 1, 1);
     disk->setOpenMBVRigidBody(cylinder);
 #endif
 

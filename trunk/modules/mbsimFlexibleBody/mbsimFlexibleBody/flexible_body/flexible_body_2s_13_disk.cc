@@ -319,7 +319,7 @@ namespace MBSimFlexibleBody {
           OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
 
           drawDegree = 30/nj;
-          Diskbody->setStaticColor(0.3);
+          Diskbody->setDiffuseColor(0.46667, 1, 1);
           Diskbody->setMinimalColorValue(0.);
           Diskbody->setMaximalColorValue(1.);
           Diskbody->setDrawDegree(drawDegree);
