@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -15,13 +15,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #include <config.h>
-#include <mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
-#include <mbsim/utils/eps.h>
-#include <fstream>
+#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -159,7 +157,6 @@ namespace MBSimFlexibleBody {
       hLocal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*l0h3 + 362880*bR*EA*eps*l0h3 + 46656*Power(bR,3)*EA*eps*l0h3 + 362880*bR*EA*Power(eps,2)*l0h3 + 23328*Power(bR,3)*EA*Power(eps,2)*l0h3 - 7776*Power(bL,3)*EA*Power(1 + eps,2)*l0h3 + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h3 + 7840*aLp*Arho*bR*bRp*l0h4 + 57400*Arho*aRp*bR*bRp*l0h4 - 315*Arho*Power(bLp,2)*bR*l0h5 - 2940*Arho*bLp*bR*bRp*l0h5 + 7385*Arho*bR*Power(bRp,2)*l0h5 + 8820*Arho*bLp*epsp*l0h5 + 196980*Arho*bRp*epsp*l0h5 + 235200*Arho*bRp*eps*epsp*l0h5 - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*l0h4*phiSp + 57400*Arho*aRp*bR*l0h4*phiSp - 2310*Arho*bLp*bR*l0h5*phiSp + 188160*Arho*epsp*l0h5*phiSp + 235200*Arho*eps*epsp*l0h5*phiSp - 7700*Arho*bR*l0h5*Power(phiSp,2) - 6*bL*l0*(1411200*EI + l0h2*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*l0h2*wss0 - 5880*Arho*l0h3*(8*(aL + 13*aR)*gx*cos(bR + phiS) + 3*l0*(gy*cos(bL - phiS) + (-(bL*gx) + 5*bR*gx + 15*gy + 20*eps*gy)*cos(bR + phiS) + gx*sin(bL - phiS)) + (8*(aL + 13*aR)*gy - 3*(5*(3 + 4*eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS)))/(2.8224e6*l0h2);
 
       // damping
-     
       hdLocal(3) = - depsilon * epsp; // eps
 
       hIntermediate << hLocal + hdLocal - MLocal * Jegp * qpElement;
@@ -179,7 +176,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s21RCM::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
-    Vec    qLocal(8,fmatvec::NONINIT), qpLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,fmatvec::NONINIT), qpLocal(8,fmatvec::NONINIT);
 
     double &phiS   = qLocal(2);      double &eps   = qLocal(3);
     double &aL     = qLocal(4);      double &bL    = qLocal(5);
@@ -204,7 +201,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s21RCM::computeGravitationalEnergy(const Vec& qElement) {
-    Vec    qLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,fmatvec::NONINIT);
 
     double &xS     = qLocal(0);
     double &yS     = qLocal(1);
@@ -220,11 +217,10 @@ namespace MBSimFlexibleBody {
     return - (Arho*l0*(480*(gx*xS + gy*yS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*cos(bL - phiS) + (-8*(aL + 13*aR)*gy + 60*(1 + eps)*gx*l0 + 3*(bL - 5*bR)*gy*l0)*cos(bR + phiS) + (-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 20*(1 + eps)*gy)*l0)*sin(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*sin(bR + phiS)))/480.;
   }
 
-
   double FiniteElement1s21RCM::computeElasticEnergy(const Vec& qElement) {
-    Vec    qLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,fmatvec::NONINIT);
 
-    double &eps   = qLocal(3);
+    double &eps    = qLocal(3);
     double &aL     = qLocal(4);      double &bL    = qLocal(5);
     double &aR     = qLocal(6);      double &bR    = qLocal(7);
 
@@ -241,7 +237,6 @@ namespace MBSimFlexibleBody {
   void FiniteElement1s21RCM::setMaterialDamping(double depsilons) {
     depsilon  += depsilons;
     Damp(3,3) += - depsilon;
-
   }
 
   void FiniteElement1s21RCM::setLehrDamping(double D) {
@@ -249,7 +244,6 @@ namespace MBSimFlexibleBody {
     double weps = sqrt(12.*EA/(Arho*l0h2));
     depsilon  += 2.0 * D * weps * ( Arho*l0h3/12. );
     Damp(3,3) += - 2.0 * D * weps * ( Arho*l0h3/12. );
-
   }
 
   Vec FiniteElement1s21RCM::LocateBeam(const Vec& qElement, const double& s) {
@@ -262,7 +256,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FiniteElement1s21RCM::StateBeam(const Vec& qElement, const Vec& qpElement, const double& s) {
-    Vec  qLocal(8,fmatvec::INIT,0.0);
+    Vec qLocal(8,fmatvec::INIT,0.0);
     Vec qpLocal(8,fmatvec::INIT,0.0);
     SqrMat  Jeg(8,fmatvec::INIT,0.0);
     SqrMat Jegp(8,fmatvec::INIT,0.0);
@@ -277,7 +271,7 @@ namespace MBSimFlexibleBody {
   Mat FiniteElement1s21RCM::JGeneralizedInternal(const Vec& qElement, const double& s) {
     Mat J(8,3);
 
-    Vec  qLocal(8);
+    Vec qLocal(8);
 
     BuildqLocal(qElement,qLocal);
 
@@ -285,7 +279,7 @@ namespace MBSimFlexibleBody {
     double &aL     = qLocal(4);      double &bL    = qLocal(5);
     double &aR     = qLocal(6);      double &bR    = qLocal(7);
 
-    if( s < 0 ) { // left beam part
+    if(s < 0) { // left beam part
       // translation
       J(0,0) = 1;
       J(0,1) = 0;
@@ -355,7 +349,7 @@ namespace MBSimFlexibleBody {
   Mat FiniteElement1s21RCM::JpGeneralized(const Vec& qElement, const Vec& qpElement, const double& s, const double& sp) {
     Mat Jp(8,3,NONINIT);
 
-    Vec  qLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,fmatvec::NONINIT);
     Vec qpLocal(8,fmatvec::NONINIT);
     SqrMat  Jeg(8,fmatvec::INIT,0.0);
     SqrMat Jegp(8,fmatvec::INIT,0.0);
@@ -440,12 +434,12 @@ namespace MBSimFlexibleBody {
     SqrMat Jeg(8,fmatvec::NONINIT), Jegp(8,fmatvec::NONINIT);
 
     double &xS     = qLocal(0);      double &yS     = qLocal(1);
-    double &eps   = qLocal(3);
+    double &eps    = qLocal(3);
     double &aL     = qLocal(4);      double &bL    = qLocal(5);
     double &aR     = qLocal(6);      double &bR    = qLocal(7);
 
     double &xSp    = qpLocal(0);     double &ySp   = qpLocal(1);
-    double &epsp  = qpLocal(3);
+    double &epsp   = qpLocal(3);
     double &aLp    = qpLocal(4);     double &bLp   = qpLocal(5);
     double &aRp    = qpLocal(6);     double &bRp   = qpLocal(7);
 
@@ -710,7 +704,6 @@ namespace MBSimFlexibleBody {
 
     // gravitation
     double gx = g(0);
-    //if(fabs(g(1))>epsroot()) throw MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
 
     // q-derivative
     SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);
