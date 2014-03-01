@@ -84,6 +84,11 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
+       * \brief calculate constant mass matrix
+       */
+      void initM();
+
+      /**
        * \brief return the Cartesian position at a contour point
        * \param generalised coordinates
        * \param contour point
@@ -110,9 +115,24 @@ namespace MBSimFlexibleBody {
 
     private:
       /** 
-       * \brief length, line-density, longitudinal and bending stiffness
+       * \brief beam element length
        */
-      double l0, Arho, EA, EI;
+      double l0;
+
+      /** 
+       * \brief line-density
+       */
+      double Arho;
+
+      /**
+       * \brief longitudinal stiffness
+       */
+      double EA;
+
+      /**
+       * \brief bending stiffness
+       */
+      double EI;
 
       /**
        * \brief predefined bending curvature
@@ -145,16 +165,32 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat Damp;
 
       /**
-       * \brief derivative of right hand side with respect to positions and velocities
+       * \brief derivative of right hand side with respect to positions
        */
-      fmatvec::SqrMat Dhq, Dhqp;
-      
-      /*!
+      fmatvec::SqrMat Dhq;
+
+      /**
+       * \brief derivative of right hand side with respect to velocities
+       */
+      fmatvec::SqrMat Dhqp;
+
+      /**
        * \brief default constructor is declared private 
        */
       FiniteElement1s21ANCF();
+
+      /**
+       * \brief copy constructor is declared private
+       */
+      FiniteElement1s21ANCF(const FiniteElement1s21ANCF&);
+
+      /**
+       * \brief assignment operator is declared private
+       */
+      FiniteElement1s21ANCF& operator=(const FiniteElement1s21ANCF&);
   };
 
+  inline void  FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s21ANCF::computeM): Not implemented"); }
 }
 
 #endif /* _FINITE_ELEMENT_1S_21_ANCF_H_ */

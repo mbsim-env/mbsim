@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_ancf.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
@@ -27,27 +26,14 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 
-#ifdef HAVE_NURBS
-#include "nurbs++/nurbs.h"
-#include "nurbs++/vector.h"
-
-using namespace PLib;
-#endif
-
-
 using namespace fmatvec;
 using namespace std;
 using namespace MBSim;
 
-
 namespace MBSimFlexibleBody {
 
 
-  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), openStructure(openStructure_), initialized(false) {
-
-    contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
-    addContour(contour1sFlexible);
-  }
+  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), openStructure(openStructure_), initialised(false) {}
 
   void FlexibleBody1s21ANCF::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 4 * n;
@@ -55,7 +41,7 @@ namespace MBSimFlexibleBody {
     if(n < Elements - 1 || openStructure==true) {
       gloVec(j,j+7) += locVec;
     }
-    else { // ring closure at finite element (end,1) with angle difference 2*M_PI
+    else { // ring closure at finite element (end,1)
       gloVec(j,j+3) += locVec(0,3);
       gloVec(0,  3) += locVec(4,7);
     }
@@ -67,7 +53,7 @@ namespace MBSimFlexibleBody {
     if(n < Elements - 1 || openStructure==true) {
       gloMat(Index(j,j+7),Index(j,j+7)) += locMat;
     }
-    else { // ring closure at finite element (end,1) with angle difference 2*M_PI
+    else { // ring closure at finite element (end,1)
       gloMat(Index(j,j+3),Index(j,j+3)) += locMat(Index(0,3),Index(0,3));
       gloMat(Index(j,j+3),Index(0,3)) += locMat(Index(0,3),Index(4,7));
       gloMat(Index(0,3),Index(j,j+3)) += locMat(Index(4,7),Index(0,3));
@@ -170,8 +156,8 @@ namespace MBSimFlexibleBody {
         Jacobian(Index(4*currentElement,4*currentElement+7),All) = Jtmp;
       }
       else { // ringstructure
-        Jacobian(Index(4*currentElement,4*currentElement+4),All) = Jtmp(Index(0,3),All);
-        Jacobian(Index(               0,                 2),All) = Jtmp(Index(4,7),All);
+        Jacobian(Index(4*currentElement,4*currentElement+3),All) = Jtmp(Index(0,3),All);
+        Jacobian(Index(               0,                 3),All) = Jtmp(Index(4,7),All);
       }
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
@@ -198,16 +184,7 @@ namespace MBSimFlexibleBody {
     if(stage==unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
 
-      initialized = true;
-
-      contour1sFlexible->getFrame()->setOrientation(R->getOrientation());
-      contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
-      if(userContourNodes.size()==0) {
-        Vec contourNodes(Elements+1);
-        for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; // search area for each finite element contact search
-        contour1sFlexible->setNodes(contourNodes);
-      }
-      else contour1sFlexible->setNodes(userContourNodes);
+      initialised = true;
 
       l0 = L/Elements;
       Vec g = R->getOrientation()(Index(0,2),Index(0,1)).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
@@ -216,20 +193,12 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));
         discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g));
+        if (fabs(rc) > epsroot())
+          static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
       }
-
+      initM();
     }
     else if(stage==MBSim::plot) {
-      for(int i=0;i<plotElements.size();i++) {
-        plotColumns.push_back("x1 ("+numtostr(plotElements(i))+")"); // 0
-        plotColumns.push_back("y1 ("+numtostr(plotElements(i))+")"); // 1
-        plotColumns.push_back("dx1 ("+numtostr(plotElements(i))+")"); // 2
-        plotColumns.push_back("dy1 ("+numtostr(plotElements(i))+")"); // 3
-        plotColumns.push_back("x2 ("+numtostr(plotElements(i))+")"); // 4
-        plotColumns.push_back("y2 ("+numtostr(plotElements(i))+")"); // 5
-        plotColumns.push_back("dx2 ("+numtostr(plotElements(i))+")"); // 6
-        plotColumns.push_back("dy2 ("+numtostr(plotElements(i))+")"); // 7
-      }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
@@ -295,8 +264,6 @@ namespace MBSimFlexibleBody {
         qElement[i](0,3) << q(n,n+3);
         uElement[i](0,3) << u(n,n+3);
         qElement[i](4,7) << q(0,3);
-        if(qElement[i](2)-q(2)>0.0) qElement[i](7) += 2*M_PI;
-        else qElement[i](7) -= 2*M_PI;
         uElement[i](4,7) << u(0,3);
       }
     }
@@ -318,38 +285,34 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21ANCF::initRelaxed(double alpha) {
-    if(!initialized) {
-      if(Elements==0)
-        throw(new MBSimError("ERROR (FlexibleBody1s21ANCF::initRelaxed): Set number of finite elements!"));
-      Vec q0Dummy(q0.size(),INIT,0.);
-      if(openStructure) {
-        Vec direction(2);
-        direction(0) = cos(alpha);
-        direction(1) = sin(alpha);
-
-        for(int i=0;i<=Elements;i++) {
-          q0Dummy(4*i+0,4*i+1) = direction*double(L/Elements*i);
-          q0Dummy(4*i+2)       = alpha;
-        }
-      }
-      else {
-        double R  = L/(2*M_PI);
-        double a_ = sqrt(R*R + (L/Elements*L/Elements)/16.) - R;
-
-        for(int i=0;i<Elements;i++) {
-          double alpha_ = i*(2*M_PI)/Elements;
-          q0Dummy(4*i+0) = R*cos(alpha_);
-          q0Dummy(4*i+1) = R*sin(alpha_);
-          q0Dummy(4*i+2) = alpha_ + M_PI/2.;
-          q0Dummy(4*i+3) = a_;
-          q0Dummy(4*i+4) = a_;
-        }
-      }
-      setq0(q0Dummy);
-      setu0(Vec(q0Dummy.size(),INIT,0.));
+  void FlexibleBody1s21ANCF::initM() {
+    for (int i = 0; i < (int) discretization.size(); i++)
+      static_cast<FiniteElement1s21ANCF*>(discretization[i])->initM(); // compute attributes of finite element
+    for (int i = 0; i < (int) discretization.size(); i++)
+      GlobalMatrixContribution(i, discretization[i]->getM(), M[0]); // assemble
+    for (int i = 0; i < (int) discretization.size(); i++) {
+      int j = 4 * i;
+      LLM[0](Index(j, j + 3)) = facLL(M[0](Index(j, j + 3)));
+      if (openStructure && i == (int) discretization.size() - 1)
+        LLM[0](Index(j + 4, j + 7)) = facLL(M[0](Index(j + 4, j + 7)));
     }
   }
+
+ // void FlexibleBody1s21ANCF::initRelaxed(double alpha) {
+ //   double R  = L/(2*M_PI);
+ //   double a_ = sqrt(R*R + (L/Elements*L/Elements)/16.) - R;
+
+ //   for(int i=0;i<Elements;i++) {
+ //     double alpha_ = i*(2*M_PI)/Elements;
+ //     q0Dummy(4*i+0) = R*cos(alpha_);
+ //     q0Dummy(4*i+1) = R*sin(alpha_);
+ //     q0Dummy(4*i+2) = alpha_ + M_PI/2.;
+ //     q0Dummy(4*i+3) = a_;
+ //     q0Dummy(4*i+4) = a_;
+ //   }
+ //   setq0(q0Dummy);
+ //   setu0(Vec(q0Dummy.size(),INIT,0.));
+ // }
 
 }
 
