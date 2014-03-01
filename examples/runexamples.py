@@ -660,7 +660,9 @@ def runExample(resultQueue, example):
         resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
 
     # check for deprecated features
-    if(not args.disableRun):
+    if args.disableRun:
+      resultStr+='<td><span style="color:orange">not run</span></td>'
+    else:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
         match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
