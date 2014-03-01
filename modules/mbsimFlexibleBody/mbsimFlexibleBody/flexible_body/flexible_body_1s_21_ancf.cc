@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include <boost/swap.hpp>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_ancf.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -91,7 +92,7 @@ namespace MBSimFlexibleBody {
         tmp(0) = -sin(X(2)); tmp(1) = cos(X(2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (Cartesian system)
 
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
         tmp(0) = X(3); tmp(1) = X(4); tmp(2) = 0.;
@@ -114,14 +115,17 @@ namespace MBSimFlexibleBody {
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) =  cos(q(4*node+2)); tmp(1) = sin(q(4*node+2)); tmp(2) = 0.;
+        tmp(0) =  q(4*node+2); tmp(1) = q(4*node+3); tmp(2) = 0.;
+        tmp /= nrm2(tmp);
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = -sin(q(4*node+2)); tmp(1) = cos(q(4*node+2)); tmp(2) = 0.;
+        tmp(0) =  q(4*node+2); tmp(1) = -q(4*node+3); tmp(2) = 0.;
+        tmp /= nrm2(tmp);
+        boost::swap(tmp(0),tmp(1));
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (Cartesian system)
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = u(4*node+0); tmp(1) = u(4*node+1); tmp(2) = 0.;
@@ -129,8 +133,7 @@ namespace MBSimFlexibleBody {
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(4*node+2);
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
+        throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): angularVelocity not implemented for ContourPointDataType 'NODE'");
       }
     }
     else throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -161,8 +164,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
-      int node = cp.getNodeNumber();
-      Jacobian(Index(4*node,4*node+2),All) << DiagMat(3,INIT,1.0);
+      throw MBSimError("ERROR(FlexibleBody1s21ANCF::updateJacobiansForFrame): ContourPointDataType 'NODE' not implemented");
     }
     else throw MBSimError("ERROR(FlexibleBody1s21ANCF::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
@@ -297,22 +299,50 @@ namespace MBSimFlexibleBody {
         LLM[0](Index(j + 4, j + 7)) = facLL(M[0](Index(j + 4, j + 7)));
     }
   }
+  
+  void FlexibleBody1s21ANCF::initInfo() {
+    FlexibleBodyContinuum<double>::init(unknownStage);
+    l0 = L/Elements;
+    Vec g = Vec("[0.;0.;0.]");
+    for(int i=0;i<Elements;i++) {
+      discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g));
+      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+    }
+    BuildElements();
+  }
 
- // void FlexibleBody1s21ANCF::initRelaxed(double alpha) {
- //   double R  = L/(2*M_PI);
- //   double a_ = sqrt(R*R + (L/Elements*L/Elements)/16.) - R;
+  void FlexibleBody1s21ANCF::initRelaxed(double alpha) {
+    if(!initialised) {
+      if(Elements==0)
+        throw(new MBSimError("ERROR (FlexibleBody1s21ANCF::initRelaxed): Set number of finite elements!"));
+      Vec q0Dummy(q0.size(),INIT,0.);
+      if(openStructure) {
+        Vec direction(2);
+        direction(0) = cos(alpha);
+        direction(1) = sin(alpha);
 
- //   for(int i=0;i<Elements;i++) {
- //     double alpha_ = i*(2*M_PI)/Elements;
- //     q0Dummy(4*i+0) = R*cos(alpha_);
- //     q0Dummy(4*i+1) = R*sin(alpha_);
- //     q0Dummy(4*i+2) = alpha_ + M_PI/2.;
- //     q0Dummy(4*i+3) = a_;
- //     q0Dummy(4*i+4) = a_;
- //   }
- //   setq0(q0Dummy);
- //   setu0(Vec(q0Dummy.size(),INIT,0.));
- // }
+        for(int i=0;i<=Elements;i++) {
+          q0Dummy(4*i+0,4*i+1) = direction*double(L/Elements*i);
+          q0Dummy(4*i+2) = direction(0);
+          q0Dummy(4*i+3) = direction(1);
+        }
+      }
+      else {
+        double R = L/(2*M_PI);
+
+        for(int i=0;i<Elements;i++) {
+          double alpha_ = i*(2*M_PI)/Elements;
+          q0Dummy(4*i+0) = R*cos(alpha_);
+          q0Dummy(4*i+1) = R*sin(alpha_);
+          q0Dummy(4*i+2) = -sin(alpha_);
+          q0Dummy(4*i+3) = cos(alpha_);
+        }
+      }
+      setq0(q0Dummy);
+      setu0(Vec(q0Dummy.size(),INIT,0.));
+    }
+  }
 
 }
 
