@@ -57,7 +57,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SqrMat K=Cardan2AIK(alpha,beta,gamma);
   
   this->addFrame(new FixedRelativeFrame("R",VecMove,K,this->getFrame("I")));
-  this->getFrame("R")->enableOpenMBV();
   rod->setFrameOfReference(this->getFrame("R"));
   rod->setNumberElements(elements);
   Vec q0 = Vec(4*elements+4,INIT,0.);
@@ -133,7 +132,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
-  contact->enableOpenMBVContactPoints();
   this->addLink(contact);
   
   // joint 

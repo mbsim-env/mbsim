@@ -120,7 +120,7 @@ namespace MBSimFlexibleBody {
       gloVec(0, 2) += locVec(1, 3);
       gloVec(qFull.size() - 1) += locVec(0);
     }
-    else if (n >> 0 && n < rotationalElements) {
+    else if (n > 0 && n < rotationalElements) {
       gloVec(j - 1, j + 2) += locVec;
     }
   }
