@@ -34,6 +34,8 @@ namespace MBSimFlexibleBody {
    *
    * \date 2014-02-27 basic revision
    *
+   * \todo JGeneralized not checked up to now
+   *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
@@ -89,27 +91,27 @@ namespace MBSimFlexibleBody {
       void initM();
 
       /**
-       * \brief return the Cartesian position at a contour point
+       * \brief return the planar position and angle at a contour point
        * \param generalised coordinates
        * \param contour point
-       * \return Cartesian position
+       * \return planar position and angle
        */
       fmatvec::Vec LocateBalken(const fmatvec::Vec& qElement, const double& s); 
 
       /**
-       * \brief return the Cartesian position and velocity at a contour point
+       * \brief return the planar state at a contour point
        * \param generalised positions
        * \param generalised velocities
        * \param contour point
-       * \return Cartesian position and velocity
+       * \return planar state
        */
       fmatvec::Vec StateBalken(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double&s); 
 
       /**
-       * \brief return the JACOBIAN of Cartesian position with respect to generalised coordinates
+       * \brief return the JACOBIAN of translation and rotation with respect to generalised coordinates
        * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of Cartesian position with respect to generalised coordinates
+       * \return JACOBIAN of translation and rotation with respect to generalised coordinates
        */
       fmatvec::Mat JGeneralized(const fmatvec::Vec& qElement, const double& s);
 

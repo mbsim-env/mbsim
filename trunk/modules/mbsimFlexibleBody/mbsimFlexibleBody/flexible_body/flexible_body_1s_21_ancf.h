@@ -88,6 +88,8 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
+      int getNumberElements(){ return Elements; }
+      double getLength(){ return L; }
       /***************************************************/
 
       /**
@@ -95,6 +97,17 @@ namespace MBSimFlexibleBody {
        * \param Lagrangian coordinate
        */
       fmatvec::Vec computeState(double x);
+
+      /**
+       * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
+       */
+      void initInfo();
+
+      /**
+       * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring
+       * \param angle of slope in case of cantilever
+       */
+      void initRelaxed(double alpha);
 
     private:
       /**
