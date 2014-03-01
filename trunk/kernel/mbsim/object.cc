@@ -32,7 +32,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   Object::Object(const string &name) :
-      Element(name), qSize(0), qInd(0) {
+      Element(name), qSize(0), qInd(0), xSize(0), xInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
