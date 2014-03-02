@@ -780,20 +780,6 @@ namespace MBSim {
     }
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Frame* Contact::getopenMBVFrame() {
-    return openMBVFrame;
-  }
-
-  OpenMBV::Arrow* Contact::getcontactArrow() {
-    return contactArrow;
-  }
-
-  OpenMBV::Arrow* Contact::getfrictionArrow() {
-    return frictionArrow;
-  }
-#endif
-
   void Contact::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;

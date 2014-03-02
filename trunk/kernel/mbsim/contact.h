@@ -134,9 +134,9 @@ namespace MBSim {
       virtual void setgddTol(double tol);
       virtual void setrMax(double rMax_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Frame* getopenMBVFrame();
-      OpenMBV::Arrow* getcontactArrow();
-      OpenMBV::Arrow* getfrictionArrow();
+      OpenMBV::Frame* getOpenMBVFrame() { return openMBVFrame; }
+      OpenMBV::Arrow* getOpenMBVNormalForceArrow() { return contactArrow; }
+      OpenMBV::Arrow* getOpenMBVTangentialForceArrow() { return frictionArrow; }
 #endif
       /***************************************************/
 
