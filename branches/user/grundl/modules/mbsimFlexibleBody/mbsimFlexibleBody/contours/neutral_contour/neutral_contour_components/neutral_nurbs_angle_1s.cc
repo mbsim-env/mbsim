@@ -88,19 +88,19 @@ namespace MBSimFlexibleBody {
         curve.globalInterp(Nodelist, uMin, uMax, degU, true); // do open interpolation to avoid jumping for closed structure
     }
 
-    cout << "Neutral nurbs angle 1s curve: " << endl;
-//    stringstream x;
-//    x << "xa = [";
-    stringstream z;
-    z << "za = [";
-    for (int i = 0; i < 100; i++) {
-      double u = (uMax-uMin)/100 * i;
-//      x << curve.pointAt(u)(0) << ", ";
-      z << curve.pointAt(u)(2) << ", ";
-    }
-//    x << "];" << endl;
-    z << "];" << endl;
-    cout << z.str();
+//    cout << "Neutral nurbs angle 1s curve: " << endl;
+////    stringstream x;
+////    x << "xa = [";
+//    stringstream z;
+//    z << "za = [";
+//    for (int i = 0; i < 100; i++) {
+//      double u = (uMax-uMin)/100 * i;
+////      x << curve.pointAt(u)(0) << ", ";
+//      z << curve.pointAt(u)(2) << ", ";
+//    }
+////    x << "];" << endl;
+//    z << "];" << endl;
+//    cout << z.str();
   }
 
 } /* namespace MBSimFlexibleBody */

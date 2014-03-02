@@ -5,6 +5,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/kinetic_excitation.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
@@ -15,13 +16,13 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class Moment : public Function1<fmatvec::Vec, double> {
+class Moment : public Function<VecV(double)> {
   public:
-    fmatvec::Vec operator()(const double& t, const void * =NULL) { 
+    VecV operator()(const double& t) { 
       double t0 = 1;
       double t1 = 1.5;
       double M0 = 0*0.2;
-      Vec M(1);
+      VecV M(1);
       if(t<t0)
 	M(0) = t*M0/t0;
       else if(t<t1)
@@ -59,26 +60,26 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   RigidBody* body1 = new RigidBody("body1");
   addObject(body1);
-  body1->addFrame("Q", Kr,SqrMat(3,EYE));
+  body1->addFrame(new FixedRelativeFrame("Q", Kr,SqrMat(3,EYE)));
 
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
   body1->setMass(m1);
   Theta(2,2)=J1;
   body1->setInertiaTensor(Theta);
-  body1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body1->setInitialGeneralizedPosition(Vec(1,INIT,phi1)); 
 
   Kr(0) = d;
   Kr(2) = 0.02;
-  addFrame("Q",Kr,SqrMat(3,EYE) );  
+  addFrame(new FixedRelativeFrame("Q",Kr,SqrMat(3,EYE)));  
 
   RigidBody* body2 = new RigidBody("body2");
   addObject(body2);
   Kr(0) = b/2;
   Kr(2) = 0;
-  body2->addFrame("P",-Kr,SqrMat(3,EYE));
-  body2->addFrame("Q", Kr,SqrMat(3,EYE));
+  body2->addFrame(new FixedRelativeFrame("P",-Kr,SqrMat(3,EYE)));
+  body2->addFrame(new FixedRelativeFrame("Q", Kr,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body2->getFrame("Q")->enableOpenMBV(0.3);
 #endif
@@ -87,7 +88,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setMass(m2);
   Theta(2,2)=J2;
   body2->setInertiaTensor(Theta);
-  body2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
@@ -96,7 +97,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body3->setMass(m3);
   Theta(2,2)=J3;
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearTranslation(Vec("[1;0;0]")));
+  body3->setTranslation(new TranslationAlongXAxis<VecV>);
 
   vector<RigidBody*> bd1; bd1.push_back(body2);
   vector<RigidBody*> bd2; bd2.push_back(body3);
@@ -111,7 +112,8 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   KineticExcitation *load = new KineticExcitation("Motor");
   addLink(load);
-  load->setMoment("[0;0;1]",new Moment);
+  load->setMomentDirection("[0;0;1]");
+  load->setMomentFunction(new Moment);
   load->connect(body1->getFrame("C"));
 
 #if HAVE_OPENMBVCPPINTERFACE
@@ -119,15 +121,15 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   dummy->setBaseRadius(r);
   dummy->setTopRadius(r);
   dummy->setHeight(0.02);
-  dummy->setStaticColor(0.1);
+  dummy->setDiffuseColor(90./360.,1,1);
   body1->setOpenMBVRigidBody(dummy);
   OpenMBV::Cuboid* dummy1 = new OpenMBV::Cuboid;
   dummy1->setLength(b,0.02,0.02);
-  dummy1->setStaticColor(0.5);
+  dummy1->setDiffuseColor(180./360.,1,1);
   body2->setOpenMBVRigidBody(dummy1);
   OpenMBV::Cuboid* dummy2 = new OpenMBV::Cuboid;
   dummy2->setLength(c,c/2,0.02);
-  dummy2->setStaticColor(0.8);
+  dummy2->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy2);
 #endif
 

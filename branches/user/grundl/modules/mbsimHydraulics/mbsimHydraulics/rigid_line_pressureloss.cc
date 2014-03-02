@@ -35,6 +35,7 @@ using namespace MBSimControl;
 namespace MBSimHydraulics {
 
   RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(true), active0(true), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), gfl(NULL), gil(NULL) {
+    pressureLoss->setLine(line);
     if (dynamic_cast<LinePressureLoss*>(pressureLoss))
       linePressureLoss = (LinePressureLoss*)(pressureLoss);
     else if (dynamic_cast<ClosablePressureLoss*>(pressureLoss))
@@ -124,7 +125,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
-    throw;
+    throw runtime_error("Error in RigidLinePressureLoss::updatedhduRef");
   }
 
   void RigidLinePressureLoss::updatedhdtRef(const Vec& dhdtParent, int i) {
@@ -170,7 +171,7 @@ namespace MBSimHydraulics {
       active=(gdn<=0);
     }
     else
-      throw;
+      throw runtime_error("Error in RigidLinePressureLoss::checkActive");
   }
 
   bool RigidLinePressureLoss::gActiveChanged() {
@@ -195,13 +196,13 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateh(double t, int j) {
     if (linePressureLoss)
-      laSmooth=(*linePressureLoss)(line->getQIn()(0), line);
+      laSmooth=(*linePressureLoss)(line->getQIn()(0));
     else if (closablePressureLoss)
-      laSmooth=(*closablePressureLoss)(line->getQIn()(0), line);
+      laSmooth=(*closablePressureLoss)(line->getQIn()(0));
     else if (leakagePressureLoss)
-      laSmooth=(*leakagePressureLoss)(line->getQIn()(0), line);
+      laSmooth=(*leakagePressureLoss)(line->getQIn()(0));
     else if (unilateral || unidirectionalPressureLoss) {
-      laSmooth=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0), line));
+      laSmooth=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0)));
     }
     h[j][0]-=trans(line->getJacobian())*laSmooth;
   }

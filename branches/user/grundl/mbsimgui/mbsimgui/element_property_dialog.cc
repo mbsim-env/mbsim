@@ -24,6 +24,7 @@
 #include "kinematics_widgets.h"
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
+#include "kinematic_functions_widgets.h"
 #include "ombv_widgets.h"
 #include "integrator_widgets.h"
 #include "extended_widgets.h"
@@ -43,9 +44,58 @@
 #include "parameter.h"
 #include "integrator.h"
 #include "sensor.h"
+#include "function_widget_factory.h"
 #include <QPushButton>
 
 using namespace std;
+
+class SignalAdditionWidgetFactory : public WidgetFactory {
+  public:
+    SignalAdditionWidgetFactory(Element *element_) : element(element_) { }
+    Widget* createWidget(int i=0);
+  protected:
+    Element *element;
+};
+
+Widget* SignalAdditionWidgetFactory::createWidget(int i) {
+  return new SignalReferenceWidget(element);
+}
+
+class GearConstraintWidgetFactory : public WidgetFactory {
+  public:
+    GearConstraintWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
+    Widget* createWidget(int i=0);
+  protected:
+    Element *element;
+    QWidget *parent;
+};
+
+Widget* GearConstraintWidgetFactory::createWidget(int i) {
+
+  ContainerWidget *widget = new ContainerWidget;
+  widget->addWidget(new RigidBodyOfReferenceWidget(element,0));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
+  widget->addWidget(new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input)));
+  return widget;
+}
+
+class RigidBodyOfReferenceWidgetFactory : public WidgetFactory {
+  public:
+    RigidBodyOfReferenceWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
+    Widget* createWidget(int i=0);
+  protected:
+    Element *element;
+    QWidget *parent;
+};
+
+Widget* RigidBodyOfReferenceWidgetFactory::createWidget(int i) {
+  RigidBodyOfReferenceWidget *widget = new RigidBodyOfReferenceWidget(element,0);
+  if(parent)
+    QObject::connect(widget,SIGNAL(bodyChanged()),parent,SLOT(resizeVariables()));
+  return widget;
+}
 
 ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), embed(0) {
   addTab("General");
@@ -91,14 +141,10 @@ void FramePropertyDialog::fromWidget(Element *element) {
 FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
   addTab("Kinematics",1);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(3), lengthUnits(), 4));
-  position = new ExtWidget("Relative position", new ExtPhysicalVarWidget(input),true);
+  position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
   addToTab("Kinematics", position);
 
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
-  orientation = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
+  orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
   addToTab("Kinematics", orientation);
 
   refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true);
@@ -134,10 +180,44 @@ void ContourPropertyDialog::fromWidget(Element *element) {
   static_cast<Contour*>(element)->refFrame.fromWidget(refFrame);
 }
 
+PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(point,parent,f) {
+  addTab("Visualisation",1);
+ 
+  visu = new ExtWidget("OpenMBV Point",new PointMBSOMBVWidget("NOTSET"),true,true);
+  addToTab("Visualisation", visu);
+}
+
+void PointPropertyDialog::toWidget(Element *element) {
+  ContourPropertyDialog::toWidget(element);
+  static_cast<Point*>(element)->visu.toWidget(visu);
+}
+
+void PointPropertyDialog::fromWidget(Element *element) {
+  ContourPropertyDialog::fromWidget(element);
+  static_cast<Point*>(element)->visu.fromWidget(visu);
+}
+
+LinePropertyDialog::LinePropertyDialog(Line *line, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(line,parent,f) {
+  addTab("Visualisation",1);
+ 
+  visu = new ExtWidget("OpenMBV Line",new LineMBSOMBVWidget("NOTSET"),true,true);
+  addToTab("Visualisation", visu);
+}
+
+void LinePropertyDialog::toWidget(Element *element) {
+  ContourPropertyDialog::toWidget(element);
+  static_cast<Line*>(element)->visu.toWidget(visu);
+}
+
+void LinePropertyDialog::fromWidget(Element *element) {
+  ContourPropertyDialog::fromWidget(element);
+  static_cast<Line*>(element)->visu.fromWidget(visu);
+}
+
 PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(plane,parent,f) {
   addTab("Visualisation",1);
  
-  visu = new ExtWidget("OpenMBV Plane",new OMBVPlaneWidget,true);
+  visu = new ExtWidget("OpenMBV Plane",new PlaneMBSOMBVWidget("NOTSET"),true,true);
   addToTab("Visualisation", visu);
 }
 
@@ -159,7 +239,7 @@ SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::
   radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
   addToTab("General", radius);
 
-  visu = new ExtWidget("OpenMBV Sphere",new OMBVEmptyWidget,true);
+  visu = new ExtWidget("OpenMBV Sphere",new MBSOMBVWidget("NOTSET"),true,true);
   addToTab("Visualisation", visu);
 }
 
@@ -183,7 +263,7 @@ CircleSolidPropertyDialog::CircleSolidPropertyDialog(CircleSolid *circle, QWidge
   radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
   addToTab("General", radius);
 
-  visu = new ExtWidget("OpenMBV CircleSolid",new OMBVEmptyWidget,true);
+  visu = new ExtWidget("OpenMBV CircleSolid",new MBSOMBVWidget("NOTSET"),true);
   addToTab("Visualisation", visu);
 }
 
@@ -199,18 +279,14 @@ void CircleSolidPropertyDialog::fromWidget(Element *element) {
   static_cast<CircleSolid*>(element)->visu.fromWidget(visu);
 }
 
-GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f,kinematics), position(0), orientation(0), frameOfReference(0) {
+GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
   if(kinematics) {
     addTab("Kinematics",1);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3),lengthUnits(),4));
-    position = new ExtWidget("Position",new ExtPhysicalVarWidget(input),true); 
+    position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
     addToTab("Kinematics", position);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
-    orientation = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
+    orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
     addToTab("Kinematics", orientation);
 
     frameOfReference = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(group,0),true);
@@ -241,15 +317,15 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addTab("Solver parameters",2);
   addTab("Extra",3);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
-  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
+//  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
+//  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
+  environment = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits()))),true);
   addToTab("Environment", environment);
 
   solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
   addToTab("Solver parameters",solverParameters);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new BoolWidget("1"),QStringList(),1));
   inverseKinetics = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", inverseKinetics);
@@ -270,80 +346,84 @@ void SolverPropertyDialog::fromWidget(Element *element) {
 }
 
 ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
-  addTab("Initial conditions",1);
-  vector<PhysicalVariableWidget*> input;
-  q0_ = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
-  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-  q0 = new ExtWidget("Initial generalized position",var,true);
-  addToTab("Initial conditions", q0);
-
-  input.clear();
-  u0_ = new VecWidget(0);
-  input.push_back(new PhysicalVariableWidget(u0_,QStringList(),1));
-  var = new ExtPhysicalVarWidget(input);  
-  u0 = new ExtWidget("Initial generalized velocity",var,true);
-  addToTab("Initial conditions", u0);
-
-  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void ObjectPropertyDialog::toWidget(Element *element) {
   ElementPropertyDialog::toWidget(element);
-  static_cast<Object*>(element)->q0.toWidget(q0);
-  static_cast<Object*>(element)->u0.toWidget(u0);
 }
 
 void ObjectPropertyDialog::fromWidget(Element *element) {
   ElementPropertyDialog::fromWidget(element);
-  static_cast<Object*>(element)->q0.fromWidget(q0);
-  static_cast<Object*>(element)->u0.fromWidget(u0);
 }
 
 BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-  addTab("Kinematics",2);
+  addTab("Kinematics");
+  addTab("Initial conditions");
+
+  q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+  addToTab("Initial conditions", q0);
+
+  u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+  addToTab("Initial conditions", u0);
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+
   R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",R);
 }
 
 void BodyPropertyDialog::toWidget(Element *element) {
   ObjectPropertyDialog::toWidget(element);
+  static_cast<Body*>(element)->q0.toWidget(q0);
+  static_cast<Body*>(element)->u0.toWidget(u0);
   static_cast<Body*>(element)->R.toWidget(R);
 }
 
 void BodyPropertyDialog::fromWidget(Element *element) {
   ObjectPropertyDialog::fromWidget(element);
+  static_cast<Body*>(element)->q0.fromWidget(q0);
+  static_cast<Body*>(element)->u0.fromWidget(u0);
   static_cast<Body*>(element)->R.fromWidget(R);
 }
 
 RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
-  addTab("Visualisation",3);
-  addTab("Extra",4);
+  addTab("Visualisation");
+  addTab("Extra");
 
   K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",K);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),massUnits(),2));
-  mass = new ExtWidget("Mass",new ExtPhysicalVarWidget(input));
-  addToTab("General", mass);
+  mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()))));
+  addToTab("General",mass);
 
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new SymMatWidget(getEye<QString>(3,3,"0.01","0")),inertiaUnits(),2));
-  inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
-  addToTab("General", inertia);
+  inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2))));
+  addToTab("General",inertia);
 
-  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
-  translation = new ExtWidget("Translation",translation_,true);
+  frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
+  addToTab("General",frameForInertiaTensor);
+
+  translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4),true);
   addToTab("Kinematics", translation);
-  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
-  connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
-  rotation = new ExtWidget("Rotation",rotation_,true);
+ // connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+ // connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+ // connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4),true);
   addToTab("Kinematics", rotation);
-  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
-  connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+//  connect(static_cast<const ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget()),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+//  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+//  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true); 
+  addToTab("Kinematics", translationDependentRotation);
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true); 
+  addToTab("Kinematics", coordinateTransformationForRotation);
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditor);
@@ -357,10 +437,6 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",jointMomentArrow);
 
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-  isFrameOfBodyForRotation = new ExtWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
-  addToTab("Extra", isFrameOfBodyForRotation);
 }
 
 void RigidBodyPropertyDialog::toWidget(Element *element) {
@@ -368,14 +444,16 @@ void RigidBodyPropertyDialog::toWidget(Element *element) {
   static_cast<RigidBody*>(element)->K.toWidget(K);
   static_cast<RigidBody*>(element)->mass.toWidget(mass);
   static_cast<RigidBody*>(element)->inertia.toWidget(inertia);
+  static_cast<RigidBody*>(element)->frameForInertiaTensor.toWidget(frameForInertiaTensor);
   static_cast<RigidBody*>(element)->translation.toWidget(translation);
   static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
+  static_cast<RigidBody*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
+  static_cast<RigidBody*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
   static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
   static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
   static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
   static_cast<RigidBody*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
-  static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.toWidget(isFrameOfBodyForRotation);
-  resizeVariables();
+  //resizeVariables();
 }
 
 void RigidBodyPropertyDialog::fromWidget(Element *element) {
@@ -383,87 +461,64 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
   static_cast<RigidBody*>(element)->K.fromWidget(K);
   static_cast<RigidBody*>(element)->mass.fromWidget(mass);
   static_cast<RigidBody*>(element)->inertia.fromWidget(inertia);
+  static_cast<RigidBody*>(element)->frameForInertiaTensor.fromWidget(frameForInertiaTensor);
   static_cast<RigidBody*>(element)->translation.fromWidget(translation);
   static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
+  static_cast<RigidBody*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
+  static_cast<RigidBody*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
   static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
   static_cast<RigidBody*>(element)->weightArrow.fromWidget(weightArrow);
   static_cast<RigidBody*>(element)->jointForceArrow.fromWidget(jointForceArrow);
   static_cast<RigidBody*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
-  static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.fromWidget(isFrameOfBodyForRotation);
 }
 
 int RigidBodyPropertyDialog::getqRelSize() const {
-  int nq=0, nqT=0, nqR=0;
+  int nqT=0, nqR=0;
   if(translation->isActive()) {
-    TranslationChoiceWidget *trans = static_cast<TranslationChoiceWidget*>(translation->getWidget());
-    if(trans->isIndependent())
-      nqT = trans->getqTSize();
-    else
-      nq = trans->getqSize();
+    ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
+    ChoiceWidget2 *trans = static_cast<ChoiceWidget2*>(extWidget->getWidget());
+    nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
   }
   if(rotation->isActive()) {
-    RotationChoiceWidget *rot = static_cast<RotationChoiceWidget*>(rotation->getWidget());
-    if(rot->isIndependent())
-      nqR = rot->getqRSize();
-    else {
-      int nqtmp = rot->getqSize();
-      if(nq) assert(nq==nqtmp);
-      nq = nqtmp;
-    }
+    ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget());
+    ChoiceWidget2 *rot = static_cast<ChoiceWidget2*>(extWidget->getWidget());
+    nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
   }
-  if(nq == 0)
-    nq = nqT + nqR;
+  int nq = nqT + nqR;
   return nq;
 }
 
 int RigidBodyPropertyDialog::getuRelSize() const {
-  int nu=0, nuT=0, nuR=0;
-  if(translation->isActive()) {
-    TranslationChoiceWidget *trans = static_cast<TranslationChoiceWidget*>(translation->getWidget());
-    if(trans->isIndependent())
-      nuT = trans->getuTSize();
-    else
-      nu = trans->getuSize();
-  }
-  if(rotation->isActive()) {
-    RotationChoiceWidget *rot = static_cast<RotationChoiceWidget*>(rotation->getWidget());
-    if(rot->isIndependent())
-      nuR = rot->getuRSize();
-    else {
-      int nutmp = rot->getuSize();
-      if(nu) assert(nu==nutmp);
-      nu = nutmp;
-    }
-  }
-  if(nu == 0)
-    nu = nuT + nuR;
-  return nu;
+  return getqRelSize();
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
   int size =  body->isConstrained() ? 0 : getqRelSize();
-  if(q0_ && q0_->size() != size)
-    q0_->resize_(size);
+  ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(q0->getWidget());
+  choice->resize_(size,1);
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
   int size =  body->isConstrained() ? 0 : getuRelSize();
-  if(u0_ && u0_->size() != size)
-    u0_->resize_(size);
+  ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(u0->getWidget());
+  choice->resize_(size,1);
 }
 
 ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {
 }
 
-GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
+GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
   addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
   addToTab("General", dependentBody);
 
-  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
-  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
-  addToTab("General", independentBodies);
+//  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
+//  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+//  addToTab("General", independentBodies);
+
+  independentBodies = new ExtWidget("Independent bodies",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Body"));
+  addToTab("General",independentBodies);
 
   gearForceArrow = new ExtWidget("OpenMBV gear force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",gearForceArrow);
@@ -496,7 +551,7 @@ void GearConstraintPropertyDialog::fromWidget(Element *element) {
     body->setConstrained(true);
 }
 
-KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
+KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
   addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -511,7 +566,9 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
 void KinematicConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
+  dependentBody->getWidget()->blockSignals(true);
   static_cast<KinematicConstraint*>(element)->dependentBody.toWidget(dependentBody);
+  dependentBody->getWidget()->blockSignals(false);
   static_cast<KinematicConstraint*>(element)->constraintForceArrow.toWidget(constraintForceArrow);
   static_cast<KinematicConstraint*>(element)->constraintMomentArrow.toWidget(constraintMomentArrow);
 }
@@ -529,110 +586,177 @@ void KinematicConstraintPropertyDialog::fromWidget(Element *element) {
     body->setConstrained(true);
 }
 
-TimeDependentKinematicConstraintPropertyDialog::TimeDependentKinematicConstraintPropertyDialog(TimeDependentKinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("t"));
-  name.push_back("Symbolic function");
-  generalizedPositionFunction = new ExtWidget("Generalized position function",new ChoiceWidget(widget,name));
-  addToTab("General", generalizedPositionFunction);
-  connect((ChoiceWidget*)generalizedPositionFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2));
+  addToTab("General", constraintFunction);
+  connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void TimeDependentKinematicConstraintPropertyDialog::resizeVariables() {
+void GeneralizedPositionConstraintPropertyDialog::resizeVariables() {
+  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
   int size = refBody?refBody->getqRelSize():0;
-  ((ChoiceWidget*)generalizedPositionFunction->getWidget())->resize_(size,1);
+  static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
 }
 
-void TimeDependentKinematicConstraintPropertyDialog::toWidget(Element *element) {
+void GeneralizedPositionConstraintPropertyDialog::toWidget(Element *element) {
   KinematicConstraintPropertyDialog::toWidget(element);
-  static_cast<TimeDependentKinematicConstraint*>(element)->generalizedPositionFunction.toWidget(generalizedPositionFunction);
+  static_cast<GeneralizedPositionConstraint*>(element)->constraintFunction.toWidget(constraintFunction);
 }
 
-void TimeDependentKinematicConstraintPropertyDialog::fromWidget(Element *element) {
+void GeneralizedPositionConstraintPropertyDialog::fromWidget(Element *element) {
   KinematicConstraintPropertyDialog::fromWidget(element);
-  static_cast<TimeDependentKinematicConstraint*>(element)->generalizedPositionFunction.fromWidget(generalizedPositionFunction);
+  static_cast<GeneralizedPositionConstraint*>(element)->constraintFunction.fromWidget(constraintFunction);
 }
 
-StateDependentKinematicConstraintPropertyDialog::StateDependentKinematicConstraintPropertyDialog(StateDependentKinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+  addTab("Initial conditions");
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("q"));
-  name.push_back("Symbolic function");
-  generalizedVelocityFunction = new ExtWidget("Generalized velocity function",new ChoiceWidget(widget,name));
-  addToTab("General", generalizedVelocityFunction);
-  connect((ChoiceWidget*)generalizedVelocityFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
+  addToTab("General", constraintFunction);
+  connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
+  vector<PhysicalVariableWidget*> input;
+  x0_ = new VecWidget(0);
+  input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  x0 = new ExtWidget("Initial state",var,true);
+  addToTab("Initial conditions", x0);
+
+  connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void StateDependentKinematicConstraintPropertyDialog::resizeGeneralizedPosition() {
-  int size = refBody->getqRelSize();
-  if(q0_ && q0_->size() != size)
-    q0_->resize_(size);
+void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
+  //RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
+  //int size = refBody?refBody->getqRelSize():0;
+  //((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
+  //if(x0_ && x0_->size() != size)
+  //  x0_->resize_(size);
+  //static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
 }
 
-void StateDependentKinematicConstraintPropertyDialog::resizeVariables() {
-  int size = refBody?refBody->getqRelSize():0;
-  ((ChoiceWidget*)generalizedVelocityFunction->getWidget())->resize_(size,1);
-}
-
-void StateDependentKinematicConstraintPropertyDialog::toWidget(Element *element) {
+void GeneralizedVelocityConstraintPropertyDialog::toWidget(Element *element) {
   KinematicConstraintPropertyDialog::toWidget(element);
-  static_cast<StateDependentKinematicConstraint*>(element)->generalizedVelocityFunction.toWidget(generalizedVelocityFunction);
+  static_cast<GeneralizedVelocityConstraint*>(element)->constraintFunction.toWidget(constraintFunction);
+  static_cast<GeneralizedVelocityConstraint*>(element)->x0.toWidget(x0);
 }
 
-void StateDependentKinematicConstraintPropertyDialog::fromWidget(Element *element) {
+void GeneralizedVelocityConstraintPropertyDialog::fromWidget(Element *element) {
   KinematicConstraintPropertyDialog::fromWidget(element);
-  static_cast<StateDependentKinematicConstraint*>(element)->generalizedVelocityFunction.fromWidget(generalizedVelocityFunction);
+  static_cast<GeneralizedVelocityConstraint*>(element)->constraintFunction.fromWidget(constraintFunction);
+  static_cast<GeneralizedVelocityConstraint*>(element)->x0.fromWidget(x0);
+}
+
+GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+  addTab("Initial conditions");
+
+  constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
+  addToTab("General", constraintFunction);
+  connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+//  connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  vector<PhysicalVariableWidget*> input;
+  x0_ = new VecWidget(0);
+  input.push_back(new PhysicalVariableWidget(x0_,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  x0 = new ExtWidget("Initial state",var,true);
+  addToTab("Initial conditions", x0);
+
+  connect(dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+}
+
+void GeneralizedAccelerationConstraintPropertyDialog::resizeVariables() {
+  RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
+  int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
+  static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
+  if(x0_ && x0_->size() != size)
+    x0_->resize_(size);
+  static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+}
+
+void GeneralizedAccelerationConstraintPropertyDialog::toWidget(Element *element) {
+  KinematicConstraintPropertyDialog::toWidget(element);
+  static_cast<GeneralizedAccelerationConstraint*>(element)->constraintFunction.toWidget(constraintFunction);
+  static_cast<GeneralizedAccelerationConstraint*>(element)->x0.toWidget(x0);
+  resizeVariables();
+}
+
+void GeneralizedAccelerationConstraintPropertyDialog::fromWidget(Element *element) {
+  KinematicConstraintPropertyDialog::fromWidget(element);
+  static_cast<GeneralizedAccelerationConstraint*>(element)->constraintFunction.fromWidget(constraintFunction);
+  static_cast<GeneralizedAccelerationConstraint*>(element)->x0.fromWidget(x0);
 }
 
 JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
 
   addTab("Kinetics",1);
   addTab("Visualisation");
+  addTab("Initial conditions");
 
   independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
   addToTab("General", independentBody);
 
-  DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(constraint);
-  dependentBodiesFirstSide = new ExtWidget("Dependendent bodies first side",dependentBodiesFirstSide_);
-  addToTab("General", dependentBodiesFirstSide);
-  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  dependentBodiesFirstSide = new ExtWidget("Dependendent bodies first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+  addToTab("General",dependentBodiesFirstSide);
+  connect(dependentBodiesFirstSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(constraint);
-  dependentBodiesSecondSide = new ExtWidget("Dependendent bodies second side",dependentBodiesSecondSide_);
-  addToTab("General", dependentBodiesSecondSide);
-  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  dependentBodiesSecondSide = new ExtWidget("Dependendent bodies second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+  addToTab("General",dependentBodiesSecondSide);
+  connect(dependentBodiesSecondSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
+  addToTab("Kinetics", refFrameID);
+
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  force = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics", force);
+
+  input.clear();
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
+  moment = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics", moment);
 
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,constraint));
   addToTab("Kinetics", connections);
-
-  force = new ExtWidget("Force",new GeneralizedForceDirectionWidget,true);
-  addToTab("Kinetics", force);
-
-  moment = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
-  addToTab("Kinetics", moment);
 
   jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",jointForceArrow);
 
   jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",jointMomentArrow);
+
+  input.clear();
+  q0_ = new VecWidget(0);
+  input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  q0 = new ExtWidget("Initial guess",var,true);
+  addToTab("Initial conditions", q0);
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
+void JointConstraintPropertyDialog::resizeVariables() {
   int size = 0;
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i))
-    size += ((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i)->getqRelSize();
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i))
-      size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i)->getqRelSize();
+  ListWidget *list = static_cast<ListWidget*>(dependentBodiesFirstSide->getWidget());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
+    if(body)
+      size += body->getqRelSize();
+  }
+  list = static_cast<ListWidget*>(dependentBodiesSecondSide->getWidget());
+  for(int i=0; i<list->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceWidget*>(list->getWidget(i))->getSelectedBody();
+    if(body)
+      size += body->getqRelSize();
+  }
   if(q0_->size() != size)
     q0_->resize_(size);
 }
@@ -640,44 +764,55 @@ void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
 void JointConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<JointConstraint*>(element)->independentBody.toWidget(independentBody);
+  dependentBodiesFirstSide->getWidget()->blockSignals(true);
   static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.toWidget(dependentBodiesFirstSide);
+  dependentBodiesFirstSide->getWidget()->blockSignals(false);
+  dependentBodiesSecondSide->getWidget()->blockSignals(true);
   static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.toWidget(dependentBodiesSecondSide);
-  static_cast<JointConstraint*>(element)->connections.toWidget(connections);
+  dependentBodiesSecondSide->getWidget()->blockSignals(false);
+  static_cast<JointConstraint*>(element)->refFrameID.toWidget(refFrameID);
   static_cast<JointConstraint*>(element)->force.toWidget(force);
   static_cast<JointConstraint*>(element)->moment.toWidget(moment);
+  static_cast<JointConstraint*>(element)->connections.toWidget(connections);
   static_cast<JointConstraint*>(element)->jointForceArrow.toWidget(jointForceArrow);
   static_cast<JointConstraint*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
+  static_cast<JointConstraint*>(element)->q0.toWidget(q0);
+  resizeVariables();
 }
 
 void JointConstraintPropertyDialog::fromWidget(Element *element) {
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+  ListProperty *list1 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty());
+  for(int i=0; i<list1->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+  ListProperty *list2 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty());
+  for(int i=0; i<list2->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list2->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
   static_cast<JointConstraint*>(element)->independentBody.fromWidget(independentBody);
   static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.fromWidget(dependentBodiesFirstSide);
   static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.fromWidget(dependentBodiesSecondSide);
-  static_cast<JointConstraint*>(element)->connections.fromWidget(connections);
+  static_cast<JointConstraint*>(element)->refFrameID.fromWidget(refFrameID);
   static_cast<JointConstraint*>(element)->force.fromWidget(force);
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
+  static_cast<JointConstraint*>(element)->connections.fromWidget(connections);
   static_cast<JointConstraint*>(element)->jointForceArrow.fromWidget(jointForceArrow);
   static_cast<JointConstraint*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+  for(int i=0; i<list1->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
-  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
-    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+  for(int i=0; i<list2->getSize(); i++) {
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list2->getProperty(i))->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
+  static_cast<JointConstraint*>(element)->q0.fromWidget(q0);
 }
 
 SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {
@@ -693,83 +828,6 @@ void SignalProcessingSystemPropertyDialog::toWidget(Element *element) {
 void SignalProcessingSystemPropertyDialog::fromWidget(Element *element) {
   LinkPropertyDialog::fromWidget(element);
   static_cast<SignalProcessingSystem*>(element)->signalRef.fromWidget(signalRef);
-}
-
-LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent, Qt::WindowFlags f) : SignalProcessingSystemPropertyDialog(lts,parent,f) {
-  ContainerWidget *propertyContainer = new ContainerWidget;
-  vector<QWidget*> choiceWidget;
-  vector<QString> name;
-  name.push_back("PID");
-  name.push_back("ABCD");
-  name.push_back("Integrator");
-  name.push_back("PT1");
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("P",new ExtPhysicalVarWidget(input)));
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("I",new ExtPhysicalVarWidget(input)));
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
-
-  choiceWidget.push_back(propertyContainer);
-
-  propertyContainer = new ContainerWidget;
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("A",new ExtPhysicalVarWidget(input)));
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("B",new ExtPhysicalVarWidget(input)));
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("C",new ExtPhysicalVarWidget(input)));
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
-
-  choiceWidget.push_back(propertyContainer);
-
-  propertyContainer = new ContainerWidget;
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("gain",new ExtPhysicalVarWidget(input)));
-
-  choiceWidget.push_back(propertyContainer);
-
-  propertyContainer = new ContainerWidget;
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("P",new ExtPhysicalVarWidget(input)));
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),noUnitUnits(),1));
-  propertyContainer->addWidget(new ExtWidget("T",new ExtPhysicalVarWidget(input)));
-
-  choiceWidget.push_back(propertyContainer);
-
-  choice = new ExtWidget("Type",new ChoiceWidget(choiceWidget,name,QBoxLayout::LeftToRight));
-  addToTab("General", choice);
-}
-
-void LinearTransferSystemPropertyDialog::toWidget(Element *element) {
-  SignalProcessingSystemPropertyDialog::toWidget(element);
-  static_cast<LinearTransferSystem*>(element)->choice.toWidget(choice);
-}
-
-void LinearTransferSystemPropertyDialog::fromWidget(Element *element) {
-  SignalProcessingSystemPropertyDialog::fromWidget(element);
-  static_cast<LinearTransferSystem*>(element)->choice.fromWidget(choice);
 }
 
 LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
@@ -788,133 +846,247 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
+  QStringList names;
+  names << "Frame 1" << "Frame 2";
+  refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
+  addToTab("Kinetics", refFrameID);
+
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics",forceDirection);
+
+  connect(forceDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
+  connect(forceDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
+
+  forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2),true);
+  addToTab("Kinetics",forceFunction);
+
+  connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  input.clear();
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
+  momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics",momentDirection);
+
+  connect(momentDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
+  connect(momentDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
+
+  momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2),true);
+  addToTab("Kinetics",momentFunction);
+
+  connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectFramesWidgetFactory(kineticExcitation)));
+  addToTab("Kinetics",connections);
+
   forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",forceArrow);
 
   momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",momentArrow);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  name.push_back("1 frame");
-  name.push_back("2 frames");
-  widget.push_back(new ConnectFramesWidget(1,kineticExcitation));
-  widget.push_back(new ConnectFramesWidget(2,kineticExcitation));
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+}
 
-  connections = new ExtWidget("Connections",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight));
-  addToTab("Kinetics",connections);
-
-  ForceChoiceWidget *f = new ForceChoiceWidget;
-  connect(buttonResize, SIGNAL(clicked(bool)), f, SLOT(resizeVariables()));
-  force = new ExtWidget("Force",f,true);
-  addToTab("Kinetics",force);
-
-  ForceChoiceWidget *m = new ForceChoiceWidget;
-  moment = new ExtWidget("Moment",m,true);
-  addToTab("Kinetics",moment);
-
-  FrameOfReferenceWidget* ref = new FrameOfReferenceWidget(kineticExcitation,0);
-  frameOfReference = new ExtWidget("Frame of reference",ref,true);
-  addToTab("Kinetics",frameOfReference);
+void KineticExcitationPropertyDialog::resizeVariables() {
+  int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
+  cout << size << endl;
+  static_cast<ChoiceWidget2*>(forceFunction->getWidget())->resize_(size,1);
 }
 
 void KineticExcitationPropertyDialog::toWidget(Element *element) {
   LinkPropertyDialog::toWidget(element);
+  static_cast<KineticExcitation*>(element)->refFrameID.toWidget(refFrameID);
+  static_cast<KineticExcitation*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<KineticExcitation*>(element)->forceFunction.toWidget(forceFunction);
+  static_cast<KineticExcitation*>(element)->momentDirection.toWidget(momentDirection);
+  static_cast<KineticExcitation*>(element)->momentFunction.toWidget(momentFunction);
+  static_cast<KineticExcitation*>(element)->connections.toWidget(connections);
   static_cast<KineticExcitation*>(element)->forceArrow.toWidget(forceArrow);
   static_cast<KineticExcitation*>(element)->momentArrow.toWidget(momentArrow);
-  static_cast<KineticExcitation*>(element)->connections.toWidget(connections);
-  static_cast<KineticExcitation*>(element)->force.toWidget(force);
-  static_cast<KineticExcitation*>(element)->moment.toWidget(moment);
-  static_cast<KineticExcitation*>(element)->frameOfReference.toWidget(frameOfReference);
 }
 
 void KineticExcitationPropertyDialog::fromWidget(Element *element) {
   LinkPropertyDialog::fromWidget(element);
+  static_cast<KineticExcitation*>(element)->refFrameID.fromWidget(refFrameID);
+  static_cast<KineticExcitation*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<KineticExcitation*>(element)->forceFunction.fromWidget(forceFunction);
+  static_cast<KineticExcitation*>(element)->momentDirection.fromWidget(momentDirection);
+  static_cast<KineticExcitation*>(element)->momentFunction.fromWidget(momentFunction);
+  static_cast<KineticExcitation*>(element)->connections.fromWidget(connections);
   static_cast<KineticExcitation*>(element)->forceArrow.fromWidget(forceArrow);
   static_cast<KineticExcitation*>(element)->momentArrow.fromWidget(momentArrow);
-  static_cast<KineticExcitation*>(element)->connections.fromWidget(connections);
-  static_cast<KineticExcitation*>(element)->force.fromWidget(force);
-  static_cast<KineticExcitation*>(element)->moment.fromWidget(moment);
-  static_cast<KineticExcitation*>(element)->frameOfReference.fromWidget(frameOfReference);
 }
 
 SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
+  forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory));
+  addToTab("Kinetics", forceFunction);
+
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
   addToTab("Kinetics", connections);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new LinearSpringDamperForceWidget);
-  name.push_back("Linear spring damper force");
-  QStringList var;
-  var << "g" << "gd";
-  widget.push_back(new SymbolicFunction2Widget(var,1));
-  name.push_back("Symbolic function");
-  forceFunction = new ExtWidget("Force function",new ChoiceWidget(widget,name));
-  addToTab("Kinetics", forceFunction);
-
-  forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
-  addToTab("Kinetics", forceDirection);
-
-  coilSpring = new ExtWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
   addToTab("Visualisation", coilSpring);
+
+  forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation", forceArrow);
 }
 
 void SpringDamperPropertyDialog::toWidget(Element *element) {
   LinkPropertyDialog::toWidget(element);
-  static_cast<SpringDamper*>(element)->connections.toWidget(connections);
   static_cast<SpringDamper*>(element)->forceFunction.toWidget(forceFunction);
-  static_cast<SpringDamper*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<SpringDamper*>(element)->connections.toWidget(connections);
   static_cast<SpringDamper*>(element)->coilSpring.toWidget(coilSpring);
+  static_cast<SpringDamper*>(element)->forceArrow.toWidget(forceArrow);
 }
 
 void SpringDamperPropertyDialog::fromWidget(Element *element) {
   LinkPropertyDialog::fromWidget(element);
-  static_cast<SpringDamper*>(element)->connections.fromWidget(connections);
   static_cast<SpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
-  static_cast<SpringDamper*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<SpringDamper*>(element)->connections.fromWidget(connections);
   static_cast<SpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
+  static_cast<SpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
+}
+
+DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
+  forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input));
+  addToTab("Kinetics", forceDirection);
+
+  forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory));
+  addToTab("Kinetics", forceFunction);
+
+  connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
+  addToTab("Kinetics", connections);
+
+  coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  addToTab("Visualisation", coilSpring);
+
+  forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation", forceArrow);
+}
+
+void DirectionalSpringDamperPropertyDialog::toWidget(Element *element) {
+  LinkPropertyDialog::toWidget(element);
+  static_cast<DirectionalSpringDamper*>(element)->forceFunction.toWidget(forceFunction);
+  static_cast<DirectionalSpringDamper*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<DirectionalSpringDamper*>(element)->connections.toWidget(connections);
+  static_cast<DirectionalSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
+  static_cast<DirectionalSpringDamper*>(element)->forceArrow.toWidget(forceArrow);
+}
+
+void DirectionalSpringDamperPropertyDialog::fromWidget(Element *element) {
+  LinkPropertyDialog::fromWidget(element);
+  static_cast<DirectionalSpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
+  static_cast<DirectionalSpringDamper*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<DirectionalSpringDamper*>(element)->connections.fromWidget(connections);
+  static_cast<DirectionalSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
+  static_cast<DirectionalSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
+}
+
+GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
+
+  function = new ExtWidget("GeneralizedForceFunction",new ChoiceWidget2(new SpringDamperWidgetFactory));
+  addToTab("Kinetics", function);
+
+  body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(springDamper,0));
+  addToTab("General", body);
+
+  coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  addToTab("Visualisation", coilSpring);
+
+  forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation", forceArrow);
+
+  momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation", momentArrow);
+}
+
+void GeneralizedSpringDamperPropertyDialog::toWidget(Element *element) {
+  LinkPropertyDialog::toWidget(element);
+  static_cast<GeneralizedSpringDamper*>(element)->function.toWidget(function);
+  static_cast<GeneralizedSpringDamper*>(element)->body.toWidget(body);
+  static_cast<GeneralizedSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
+  static_cast<GeneralizedSpringDamper*>(element)->forceArrow.toWidget(forceArrow);
+  static_cast<GeneralizedSpringDamper*>(element)->momentArrow.toWidget(momentArrow);
+}
+
+void GeneralizedSpringDamperPropertyDialog::fromWidget(Element *element) {
+  LinkPropertyDialog::fromWidget(element);
+  static_cast<GeneralizedSpringDamper*>(element)->function.fromWidget(function);
+  static_cast<GeneralizedSpringDamper*>(element)->body.fromWidget(body);
+  static_cast<GeneralizedSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
+  static_cast<GeneralizedSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
+  static_cast<GeneralizedSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
 }
 
 JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
+  refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
+  addToTab("Kinetics", refFrameID);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics", forceDirection);
+
+  forceLaw = new ExtWidget("Force law",new GeneralizedForceLawChoiceWidget,true);
+  addToTab("Kinetics", forceLaw);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+  addToTab("Kinetics", momentDirection);
+
+  momentLaw = new ExtWidget("Moment law",new GeneralizedForceLawChoiceWidget,true);
+  addToTab("Kinetics", momentLaw);
+
+  connections = new ExtWidget("Connections",new ConnectFramesWidget(2,joint));
+  addToTab("Kinetics", connections);
+
   forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",forceArrow);
 
   momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",momentArrow);
-
-  connections = new ExtWidget("Connections",new ConnectFramesWidget(2,joint));
-  addToTab("Kinetics", connections);
-
-  force = new ExtWidget("Force",new GeneralizedForceChoiceWidget,true);
-  addToTab("Kinetics", force);
-
-  moment = new ExtWidget("Moment",new GeneralizedForceChoiceWidget,true);
-  addToTab("Kinetics", moment);
 }
 
 void JointPropertyDialog::toWidget(Element *element) {
   LinkPropertyDialog::toWidget(element);
+  static_cast<Joint*>(element)->refFrameID.toWidget(refFrameID);
+  static_cast<Joint*>(element)->forceDirection.toWidget(forceDirection);
+  static_cast<Joint*>(element)->forceLaw.toWidget(forceLaw);
+  static_cast<Joint*>(element)->momentDirection.toWidget(momentDirection);
+  static_cast<Joint*>(element)->momentLaw.toWidget(momentLaw);
+  static_cast<Joint*>(element)->connections.toWidget(connections);
   static_cast<Joint*>(element)->forceArrow.toWidget(forceArrow);
   static_cast<Joint*>(element)->momentArrow.toWidget(momentArrow);
-  static_cast<Joint*>(element)->connections.toWidget(connections);
-  static_cast<Joint*>(element)->force.toWidget(force);
-  static_cast<Joint*>(element)->moment.toWidget(moment);
 }
 
 void JointPropertyDialog::fromWidget(Element *element) {
   LinkPropertyDialog::fromWidget(element);
+  static_cast<Joint*>(element)->refFrameID.fromWidget(refFrameID);
+  static_cast<Joint*>(element)->forceDirection.fromWidget(forceDirection);
+  static_cast<Joint*>(element)->forceLaw.fromWidget(forceLaw);
+  static_cast<Joint*>(element)->momentDirection.fromWidget(momentDirection);
+  static_cast<Joint*>(element)->momentLaw.fromWidget(momentLaw);
+  static_cast<Joint*>(element)->connections.fromWidget(connections);
   static_cast<Joint*>(element)->forceArrow.fromWidget(forceArrow);
   static_cast<Joint*>(element)->momentArrow.fromWidget(momentArrow);
-  static_cast<Joint*>(element)->connections.fromWidget(connections);
-  static_cast<Joint*>(element)->force.fromWidget(force);
-  static_cast<Joint*>(element)->moment.fromWidget(moment);
 }
 
 ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(contact,parent,f) {
@@ -925,27 +1097,28 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
   addToTab("Kinetics", connections);
 
-  contactForceLaw = new ExtWidget("Contact force law",new GeneralizedForceLawChoiceWidget);
+  contactForceLaw = new ExtWidget("Normal force law",new GeneralizedForceLawChoiceWidget);
   addToTab("Kinetics", contactForceLaw);
 
-  contactImpactLaw = new ExtWidget("Contact impact law",new GeneralizedImpactLawChoiceWidget,true);
+  contactImpactLaw = new ExtWidget("Normal impact law",new GeneralizedImpactLawChoiceWidget,true);
   addToTab("Kinetics", contactImpactLaw);
 
-  frictionForceLaw = new ExtWidget("Friction force law",new FrictionForceLawChoiceWidget,true);
+  frictionForceLaw = new ExtWidget("Tangential force law",new FrictionForceLawChoiceWidget,true);
   addToTab("Kinetics", frictionForceLaw);
 
-  frictionImpactLaw = new ExtWidget("Friction impact law",new FrictionImpactLawChoiceWidget,true);
+  frictionImpactLaw = new ExtWidget("Tangential impact law",new FrictionImpactLawChoiceWidget,true);
   addToTab("Kinetics", frictionImpactLaw);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
-  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
+//  vector<PhysicalVariableWidget*> input;
+//  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
+//  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
+  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new OMBVFrameWidget("NOTSET"),true,true);
   addToTab("Visualisation",enableOpenMBVContactPoints);
 
   normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",normalForceArrow);
 
-  frictionArrow = new ExtWidget("OpenMBV friction arrow",new OMBVArrowWidget("NOTSET"),true);
+  frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",frictionArrow);
 }
 
@@ -978,10 +1151,16 @@ ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *pare
   addTab("Kinetics",1);
   addTab("Visualisation",2);
 
-  forceDir = new ExtWidget("Force",new GeneralizedForceDirectionWidget,true);
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  forceDir = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", forceDir);
 
-  momentDir = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
+  input.clear();
+  MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
+  momentDir = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinetics", momentDir);
 
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,actuator));
@@ -1166,7 +1345,11 @@ GeneralizedVelocitySensorPropertyDialog::GeneralizedVelocitySensorPropertyDialog
 AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0));
   addToTab("General", frame);
-  direction = new ExtWidget("Direction",new GeneralizedForceDirectionWidget);
+
+  vector<PhysicalVariableWidget*> input;
+  MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
+  direction = new ExtWidget("Direction",new ExtPhysicalVarWidget(input),true);
   addToTab("General", direction);
 }
 
@@ -1189,21 +1372,7 @@ AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(Absol
 }
 
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new ConstantFunction1Widget(true,1));
-  name.push_back("Constant function");
-  widget.push_back(new QuadraticFunction1Widget(1));
-  name.push_back("Quadratic function");
-  widget.push_back(new SinusFunction1Widget(1));
-  name.push_back("Sinus function");
-  widget.push_back(new TabularFunction1Widget(1));
-  name.push_back("Tabular function");
-  widget.push_back(new SummationFunction1Widget(1));
-  name.push_back("Summation function");
-  widget.push_back(new SymbolicFunction1Widget("t"));
-  name.push_back("Symbolic function");
-  function = new ExtWidget("Function",new ChoiceWidget(widget,name));
+  function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
   addToTab("General", function);
 }
 
@@ -1233,7 +1402,7 @@ void SignalProcessingSystemSensorPropertyDialog::fromWidget(Element *element) {
 }
 
 SignalAdditionPropertyDialog::SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-  signalReferences = new ExtWidget("Signal references",new SignalReferencesWidget(signal));
+  signalReferences = new ExtWidget("Signal references",new ListWidget(new SignalAdditionWidgetFactory(signal),"Signal"));
   addToTab("General", signalReferences);
 }
 
@@ -1291,13 +1460,8 @@ UnarySignalOperationPropertyDialog::UnarySignalOperationPropertyDialog(UnarySign
   sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
   addToTab("General", sRef);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("x"));
-  name.push_back("Symbolic function");
-  f = new ExtWidget("Function",new ChoiceWidget(widget,name));
+  f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("x"))));
   addToTab("General", f);
-  //connect((ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 }
 
 void UnarySignalOperationPropertyDialog::toWidget(Element *element) {
@@ -1319,15 +1483,10 @@ BinarySignalOperationPropertyDialog::BinarySignalOperationPropertyDialog(BinaryS
   s2Ref = new ExtWidget("Input 2 signal",new SignalOfReferenceWidget(signal,0));
   addToTab("General", s2Ref);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
   QStringList var;
   var << "x1" << "x2";
-  widget.push_back(new SymbolicFunction2Widget(var));
-  name.push_back("Symbolic function");
-  f = new ExtWidget("Function",new ChoiceWidget(widget,name));
+  f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var)));
   addToTab("General", f);
-  //connect((ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 }
 
 void BinarySignalOperationPropertyDialog::toWidget(Element *element) {

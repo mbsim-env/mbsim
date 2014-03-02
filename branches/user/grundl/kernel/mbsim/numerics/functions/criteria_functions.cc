@@ -34,7 +34,7 @@ namespace MBSim {
      CriteriaFunction(), tolerance(tolerance_), criteriaResults(0) {
   }
 
-  int GlobalCriteriaFunction::operator ()(const Vec & x, const void *) {
+  int GlobalCriteriaFunction::operator ()(const Vec &x) {
     criteriaResults.push_back(computeResults(x));
 
     if (criteriaResults.back() < tolerance)
@@ -62,7 +62,7 @@ namespace MBSim {
       CriteriaFunction(), tolerances(tolerances_), criteriaResults(0) {
   }
 
-  int LocalCriteriaFunction::operator ()(const Vec & x, const void *) {
+  int LocalCriteriaFunction::operator ()(const Vec &x) {
     criteriaResults.push_back(computeResults(x));
 
     int i = 0;

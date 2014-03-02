@@ -21,12 +21,10 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 #include "mbsimHydraulics/defines.h"
@@ -46,22 +44,18 @@ namespace MBSimHydraulics {
 
   HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0)
 # ifdef HAVE_OPENMBVCPPINTERFACE
-                                     , openMBVGrp(NULL), openMBVSphere(NULL), WrON(3)
+                                     , openMBVGrp(NULL), openMBVSphere(NULL), WrON()
 #endif
                                      {
                                      }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void HNode::enableOpenMBV(double size, double pMin, double pMax, Vec WrON_) {
-    if(size>=0) {
-      openMBVSphere=new OpenMBV::Sphere;
-      openMBVSphere->setRadius(size);
-      openMBVSphere->setMinimalColorValue(pMin);
-      openMBVSphere->setMaximalColorValue(pMax);
-      WrON=WrON_;
-    }
-    else 
-      openMBVSphere=0;
+  void HNode::enableOpenMBV(double size, double pMin, double pMax, const Vec3 &WrON_) {
+    openMBVSphere=new OpenMBV::Sphere;
+    openMBVSphere->setRadius(size);
+    openMBVSphere->setMinimalColorValue(pMin);
+    openMBVSphere->setMaximalColorValue(pMax);
+    WrON=WrON_;
   }
 #endif
 
@@ -83,17 +77,17 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVSphere");
     if (e) {
       TiXmlElement * ee;
+      double size=1, pMin=0e5, pMax=10e5;
+      Vec3 localWrON;
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"size");
-      double size=Element::getDouble(ee);
+      if(ee) size=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressure");
-      double pMin=Element::getDouble(ee);
+      if(ee) pMin=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"maximalPressure");
-      double pMax=Element::getDouble(ee);
+      if(ee) pMax=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"position");
-      Vec localWrON(3, INIT, 0);
-      if (ee)
-        localWrON=Element::getVec(ee, 3);
-      enableOpenMBV(size, pMin, pMax, localWrON);
+      if (ee) localWrON=Element::getVec(ee, 3);
+      enableOpenMBVSphere(size, pMin, pMax, localWrON);
     }
 #endif
   }
@@ -125,9 +119,9 @@ namespace MBSimHydraulics {
   void HNode::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       for (unsigned int i=0; i<refInflowString.size(); i++)
-        addInFlow(getByPath<HLine>(process_hline_string(refInflowString[i])));
+        addInFlow(getByPath<HLine>(refInflowString[i]));
       for (unsigned int i=0; i<refOutflowString.size(); i++)
-        addOutFlow(getByPath<HLine>(process_hline_string(refOutflowString[i])));
+        addOutFlow(getByPath<HLine>(refOutflowString[i]));
       Link::init(stage);
     }
     else if (stage==MBSim::resize) {
@@ -223,11 +217,11 @@ namespace MBSimHydraulics {
   }
 
   void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
-    throw;
+    throw runtime_error("Error in HNode::updatedhdqRef");
   }
 
   void HNode::updatedhduRef(const SqrMat& dhduParent, int j) {
-    throw;
+    throw runtime_error("Error in HNode::updatedhduRef");
   }
 
   void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
@@ -305,8 +299,7 @@ namespace MBSimHydraulics {
   void ConstrainedNode::initializeUsingXML(TiXmlElement *element) {
     HNode::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
-    pFun->initializeUsingXML(e->FirstChildElement());
+    pFun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, EnvironmentNode, MBSIMHYDRAULICSNS"EnvironmentNode")
@@ -640,7 +633,7 @@ namespace MBSimHydraulics {
       }
     }
     else
-      throw;
+      throw runtime_error("Error in RigidCavitationNode::checkActive");
   }
 
   bool RigidCavitationNode::gActiveChanged() {
@@ -873,7 +866,7 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       HNode::init(stage);
       if (pSignalString!="")
-        setpSignal(getByPath<MBSimControl::Signal>(process_signal_string(pSignalString)));
+        setpSignal(getByPath<MBSimControl::Signal>(pSignalString));
     }
     else
       HNode::init(stage);

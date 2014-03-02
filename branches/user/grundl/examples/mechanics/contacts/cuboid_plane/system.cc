@@ -1,5 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
@@ -18,7 +19,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  addFrame("Os",Vec(3),SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("Os",Vec(3),SqrMat(3,EYE)));
 
   Plane *wall = new Plane("WandUnten");
   double phi = M_PI/2;
@@ -29,9 +30,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  wall->enableOpenMBV(true, 10, 5);
+  wall->enableOpenMBV(1, 0.5);
 #endif
-  addContour(wall,Vec(3),AWK);
+  addFrame(new FixedRelativeFrame("WandUnten",Vec(3),AWK));
+  wall->setFrameOfReference(getFrame("WandUnten"));
+  addContour(wall);
+
+  addContour(new Plane("WandTest"));
 
   RigidBody* body = new RigidBody("Wuerfel");
   addObject(body);
@@ -40,8 +45,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   Mat J("[1,0,0;0,1,0;0,0,1]");
-  body->setTranslation(new LinearTranslation(J));
-  body->setRotation(new CardanAngles);
+  body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  body->setRotation(new RotationAboutAxesXYZ<VecV>);
   double m = 0.1;
   double l,b,h;
   l = 0.1;
@@ -65,16 +70,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setXLength(l);
   cuboid->setYLength(h);
   cuboid->setZLength(b);
-  body->addContour(cuboid,Vec(3),SqrMat(3,EYE));
+  body->addContour(cuboid);
 
   Contact *cnf = new Contact("Kontakt_Wuerfel");
-  cnf->setContactForceLaw(new UnilateralConstraint);
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.4));
-  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.3));
-  cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.3));
+  cnf->setNormalForceLaw(new UnilateralConstraint);
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.4));
+  cnf->setTangentialForceLaw(new SpatialCoulombFriction(0.3));
+  cnf->setTangentialImpactLaw(new SpatialCoulombImpact(0.3));
   //cnf->setPlotFeature(linkKinematics,disabled);
-  //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
-  //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  //cnf->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
+  //cnf->setTangentialForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
   cnf->connect(getContour("WandUnten"), body->getContour("Wuerfel"));
   addLink(cnf);
 

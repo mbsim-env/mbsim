@@ -9,21 +9,19 @@
       <diameter>.003</diameter>
       <alpha>.7</alpha>
       <relativeAlphaPA>
-        <Function1_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
-          <TabularFunction1_VS>
-            <x>[0; .4; .45; 1]</x>
-            <y>[1;  1;  0; 0]</y>
-          </TabularFunction1_VS>
-        </Function1_SS_from_VS>
+        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+          <x>[0; .4; .45; 1]</x>
+          <y>[1;  1;  0; 0]</y>
+        </TabularFunction>
       </relativeAlphaPA>
       <minimalRelativeAlpha>.05</minimalRelativeAlpha>
       <bilateralConstrained/>
       <offset>.05</offset>
-      <relativePosition ref="../../Group[Control]/Signal[PT1ControlvalveOutputLimitted]"/>
-      <inflowP ref="../HLine[lineP]"/>
-      <outflowA ref="../HLine[lineA]"/>
-      <outflowB ref="../HLine[lineB]"/>
-      <outflowT ref="../HLine[lineT]"/>
+      <relativePosition ref="../../Group[Control]/Link[PT1ControlvalveOutputLimitted]"/>
+      <inflowP ref="../Object[lineP]"/>
+      <outflowA ref="../Object[lineA]"/>
+      <outflowB ref="../Object[lineB]"/>
+      <outflowT ref="../Object[lineT]"/>
     </Controlvalve43>  
   </groups>
   <objects>
@@ -102,15 +100,15 @@
   </objects>
   <links>
     <ConstrainedNode name="sourceP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <outflow ref="../HLine[lineP]"/>
+      <outflow ref="../Object[lineP]"/>
       <function>
-        <ConstantFunction1_SS xmlns="http://mbsim.berlios.de/MBSim">
-          <value>40e5</value>
-        </ConstantFunction1_SS>
+        <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
+          <a0>40e5</a0>
+        </ConstantFunction>
       </function>
     </ConstrainedNode>
     <EnvironmentNode name="sourceT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
-      <inflow ref="../HLine[lineT]"/>
+      <inflow ref="../Object[lineT]"/>
     </EnvironmentNode>
   </links>
 </Group>

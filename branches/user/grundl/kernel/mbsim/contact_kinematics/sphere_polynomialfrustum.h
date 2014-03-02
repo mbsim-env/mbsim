@@ -28,7 +28,7 @@
 
 namespace MBSim {
 
-  class PolyFurstumSphereContact : public Function1<fmatvec::Vec, fmatvec::Vec> {
+  class PolyFurstumSphereContact : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       PolyFurstumSphereContact(const PolynomialFrustum * frustum) :
         frustum(frustum) {
@@ -41,7 +41,7 @@ namespace MBSim {
         sphereCenter = sphereCenter_;
       }
 
-      fmatvec::Vec operator()(const fmatvec::Vec &x, const void* = NULL);
+      fmatvec::Vec operator()(const fmatvec::Vec &x);
 
     protected:
       /*!
@@ -68,7 +68,7 @@ namespace MBSim {
         sphereCenter = sphereCenter_;
       }
 
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, const void* = NULL);
+      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x);
 
     protected:
       /*!

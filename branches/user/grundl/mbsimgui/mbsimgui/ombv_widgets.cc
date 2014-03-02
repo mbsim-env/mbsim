@@ -27,6 +27,87 @@
 
 using namespace std;
 
+OMBVBodyWidgetFactory::OMBVBodyWidgetFactory() {
+  name.push_back("Cube");
+  name.push_back("Cuboid");
+  name.push_back("Frustum");
+  name.push_back("Sphere");
+  name.push_back("IvBody");
+  name.push_back("CompoundRigidBody");
+  name.push_back("InvisibleBody");
+}
+
+QWidget* OMBVBodyWidgetFactory::createWidget(int i) {
+  if(i==0)
+    return new CubeWidget;
+  if(i==1)
+    return new CuboidWidget;
+  if(i==2)
+    return new FrustumWidget;
+  if(i==3)
+    return new SphereWidget;
+  if(i==4)
+    return new IvBodyWidget;
+  if(i==5)
+    return new CompoundRigidBodyWidget;
+  if(i==6)
+    return new InvisibleBodyWidget;
+}
+
+//class OmbvBodyWidgetFactory : public WidgetFactory {
+//  public:
+//    OmbvBodyWidgetFactory() { }
+//    Widget* createWidget(int i);
+//};
+//
+//Widget* OmbvBodyWidgetFactory::createWidget(int i) {
+//
+//  vector<QWidget*> widget;
+//  vector<QString> name;
+//  widget.push_back(new CubeWidget); name.push_back("Cube");
+//  widget.push_back(new CuboidWidget); name.push_back("Cuboid");
+//  widget.push_back(new FrustumWidget); name.push_back("Frustum");
+//  widget.push_back(new SphereWidget); name.push_back("Sphere");
+//  widget.push_back(new IvBodyWidget); name.push_back("IvBody");
+//  widget.push_back(new InvisibleBodyWidget); name.push_back("InvisibleBody");
+//  return new ChoiceWidget(widget,name);
+//}
+
+MBSOMBVWidget::MBSOMBVWidget(const QString &name) : OMBVObjectWidget(name) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
+}
+
+PointMBSOMBVWidget::PointMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.001"), lengthUnits(), 4));
+  size = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  layout()->addWidget(size);
+}
+
+LineMBSOMBVWidget::LineMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
+  length = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  layout()->addWidget(length);
+}
+
+PlaneMBSOMBVWidget::PlaneMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(2,"1")), lengthUnits(), 4));
+  length = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  layout()->addWidget(length);
+}
+
 OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -34,15 +115,20 @@ OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-  size = new ExtWidget("Size",new ExtPhysicalVarWidget(input));
+  size = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
   size->setToolTip("Set the size of the frame");
   layout->addWidget(size);
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-  offset = new ExtWidget("Offset",new ExtPhysicalVarWidget(input));
+  offset = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
   offset->setToolTip("Set the offset of the frame");
   layout->addWidget(offset);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name) : OMBVObjectWidget(name) {
@@ -69,35 +155,22 @@ OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &na
   layout->addWidget(transparency);
 }
 
-OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVDynamicColoredObjectWidget(name) {
+OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVObjectWidget(name) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"), lengthUnits(), 4));
-  diameter = new ExtWidget("Diameter",new ExtPhysicalVarWidget(input));
-  layout->addWidget(diameter);
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
+  scaleLength = new ExtWidget("Scale length",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(scaleLength);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.2"), lengthUnits(), 4));
-  headDiameter = new ExtWidget("Head diameter",new ExtPhysicalVarWidget(input));
-  layout->addWidget(headDiameter);
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.2"), lengthUnits(), 4));
-  headLength = new ExtWidget("Head length",new ExtPhysicalVarWidget(input));
-  layout->addWidget(headLength);
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
+  scaleSize = new ExtWidget("Scale size",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(scaleSize);
 
   vector<QString> list;
-  list.push_back("line");
-  list.push_back("fromHead");
-  list.push_back("toHead");
-  list.push_back("bothHeads");
-  list.push_back("formDoubleHead");
-  list.push_back("toDoubleHead");
-  list.push_back("bothDoubleHeads");
-  type = new ExtWidget("Type",new TextChoiceWidget(list,2));
-  layout->addWidget(type);
-
-  list.clear();
   list.push_back("toPoint");
   list.push_back("fromPoint");
   list.push_back("midPoint");
@@ -106,10 +179,13 @@ OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVDyna
     referencePoint->setChecked(true);
   layout->addWidget(referencePoint);
 
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-  scaleLength = new ExtWidget("Scale length",new ExtPhysicalVarWidget(input));
-  layout->addWidget(scaleLength);
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidget(name) {
@@ -117,21 +193,14 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidg
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<QString> list;
-  list.push_back("tube");
-  list.push_back("scaledTube");
-  list.push_back("polyline");
-  type = new ExtWidget("Type",new TextChoiceWidget(list,0));
-  layout->addWidget(type);
-
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("3"), noUnitUnits(), 1));
-  numberOfCoils= new ExtWidget("Number of coils",new ExtPhysicalVarWidget(input));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("3"), QStringList(), 1));
+  numberOfCoils= new ExtWidget("Number of coils",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(numberOfCoils);
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"), lengthUnits(), 4));
-  springRadius= new ExtWidget("Spring radius",new ExtPhysicalVarWidget(input));
+  springRadius= new ExtWidget("Spring radius",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(springRadius);
 
   input.clear();
@@ -144,10 +213,20 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidg
   nominalLength= new ExtWidget("Nominal length",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(nominalLength);
 
+  vector<QString> list;
+  list.push_back("tube");
+  list.push_back("scaledTube");
+  list.push_back("polyline");
+  type = new ExtWidget("Type",new TextChoiceWidget(list,0),true);
+  layout->addWidget(type);
+
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-  scaleFactor = new ExtWidget("Scale factor",new ExtPhysicalVarWidget(input));
-  layout->addWidget(scaleFactor);
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVBodyWidget::OMBVBodyWidget(const QString &name) : OMBVDynamicColoredObjectWidget(name) {
@@ -239,74 +318,8 @@ IvBodyWidget::IvBodyWidget(const QString &name) : OMBVBodyWidget(name) {
 }
 
 CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVBodyWidget(name) {
-  QGroupBox *box = new QGroupBox("Bodies");
-  QHBoxLayout *sublayout = new QHBoxLayout;
-  box->setLayout(sublayout);
-  layout->addWidget(box);
-  bodyList = new QListWidget;
-  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
-  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
-  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
-  sublayout->addWidget(bodyList);
-  stackedWidget = new QStackedWidget;
-  connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
-  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  sublayout->addWidget(stackedWidget);
-}
-
-void CompoundRigidBodyWidget::changeCurrent(int idx) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(idx);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-}
-
-void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
-  if(bodyList->itemAt(pos)) {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Remove"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(removeBody()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-  else {
-    QMenu menu(this);
-    QAction *add = new QAction(tr("Add"), this);
-    connect(add, SIGNAL(triggered()), this, SLOT(addBody()));
-    menu.addAction(add);
-    menu.exec(QCursor::pos());
-  }
-}
-
-void CompoundRigidBodyWidget::addBody() {
-  int i = stackedWidget->count();
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new CubeWidget);
-  name.push_back("Cube");
-  widget.push_back(new CuboidWidget);
-  name.push_back("Cuboid");
-  widget.push_back(new FrustumWidget);
-  name.push_back("Frustum");
-  widget.push_back(new SphereWidget);
-  name.push_back("Sphere");
-  widget.push_back(new IvBodyWidget);
-  name.push_back("IvBody");
-  widget.push_back(new InvisibleBodyWidget);
-  name.push_back("InvisibleBody");
-  bodyList->addItem((QString("Body")+QString::number(i+1)));
-  stackedWidget->addWidget(new ChoiceWidget(widget,name));
-  if(i>0)
-    stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-}
-
-void CompoundRigidBodyWidget::removeBody() {
-  int i = bodyList->currentRow();
-
-  delete stackedWidget->widget(i);
-  stackedWidget->removeWidget(stackedWidget->widget(i));
-  delete bodyList->takeItem(i);
+  bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVBodyWidgetFactory),"Body",1,1));
+  layout->addWidget(bodies);
 }
 
 OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
@@ -315,26 +328,26 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  widget.push_back(new CubeWidget);
-  name.push_back("Cube");
-  widget.push_back(new CuboidWidget);
-  name.push_back("Cuboid");
-  widget.push_back(new FrustumWidget);
-  name.push_back("Frustum");
-  widget.push_back(new SphereWidget);
-  name.push_back("Sphere");
-  widget.push_back(new IvBodyWidget);
-  name.push_back("IvBody");
-  widget.push_back(new CompoundRigidBodyWidget);
-  name.push_back("CompoundRigidBody");
-  widget.push_back(new InvisibleBodyWidget);
-  name.push_back("InvisibleBody");
-  ombv = new ExtWidget("Body",new ChoiceWidget(widget,name));
-//  ombv = new OMBVBodyChoiceWidget("NOTSET");
+//  vector<QWidget*> widget;
+//  vector<QString> name;
+//  widget.push_back(new CubeWidget);
+//  name.push_back("Cube");
+//  widget.push_back(new CuboidWidget);
+//  name.push_back("Cuboid");
+//  widget.push_back(new FrustumWidget);
+//  name.push_back("Frustum");
+//  widget.push_back(new SphereWidget);
+//  name.push_back("Sphere");
+//  widget.push_back(new IvBodyWidget);
+//  name.push_back("IvBody");
+//  widget.push_back(new CompoundRigidBodyWidget);
+//  name.push_back("CompoundRigidBody");
+//  widget.push_back(new InvisibleBodyWidget);
+//  name.push_back("InvisibleBody");
+//  ombv = new ExtWidget("Body",new ChoiceWidget(widget,name));
+  ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVBodyWidgetFactory),true);
 
-  ref=new ExtWidget("Frame of reference", new LocalFrameOfReferenceWidget(body));
+  ref=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true);
   layout->addWidget(ombv);
   layout->addWidget(ref);
 }
@@ -351,12 +364,7 @@ OMBVPlaneWidget::OMBVPlaneWidget(const QString &name) : OMBVObjectWidget(name) {
   setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"), lengthUnits(), 4));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(2,"1")), lengthUnits(), 4));
   size = new ExtWidget("Size",new ExtPhysicalVarWidget(input));
   layout->addWidget(size);
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("10"), QStringList(), 0));
-  numberOfLines = new ExtWidget("Number of lines",new ExtPhysicalVarWidget(input));
-  layout->addWidget(numberOfLines);
 }

@@ -54,12 +54,6 @@ namespace MBSimHydraulics {
 #endif
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void HNodeMec::enableOpenMBVArrows(double size) {
-    openMBVArrowSize=(size>.0)?size:.0;
-  }
-#endif
-
   unsigned int HNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
     connectedTransFrameStruct transFrame;
     transFrame.frame = f;
@@ -479,8 +473,7 @@ namespace MBSimHydraulics {
   void ConstrainedNodeMec::initializeUsingXML(TiXmlElement *element) {
     HNodeMec::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
-    pFun->initializeUsingXML(e->FirstChildElement());
+    pFun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, EnvironmentNodeMec, MBSIMHYDRAULICSNS"EnvironmentNodeMec")

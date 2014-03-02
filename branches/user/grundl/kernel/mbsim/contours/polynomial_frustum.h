@@ -20,16 +20,14 @@
 #ifndef POLYNOMIAL_FRUSTUM_H_
 #define POLYNOMIAL_FRUSTUM_H_
 #include <iostream>
-
 #include <mbsim/contour.h>
-
 #include <mbsim/contours/rectangle.h>
-
 #include <mbsim/utils/colors.h>
-
 #include <fmatvec/fmatvec.h>
-
-#include <mbsim/utils/function.h>
+#include <fmatvec/function.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/boost_parameters.h>
+#endif
 
 namespace MBSim {
 
@@ -71,10 +69,18 @@ namespace MBSim {
 
       /*!
        * \brief set height of frustum
-       * \para height height of the frustum
+       * \param height height of the frustum
        */
       void setHeight(const double & height_);
+
+      /*!
+       * \brief return height of frustum
+       */
       double getHeight();
+
+      /*!
+       * \brief return height of frustum
+       */
       double getHeight() const;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -84,7 +90,7 @@ namespace MBSim {
        * \param polynomialPoints how fine should the grid be in polynomial direction
        * \param circulaPoints    how fine should the grid be in circular direction
        */
-      void enableOpenMBV(bool enable = true, int polynomialPoints = 0, int circularPoints = 25);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (polynomialPoints,(int),0)(circularPoints,(int),25)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { enableOpenMBV_(diffuseColor,transparency,polynomialPoints,circularPoints); }
 
       /*!
        * \brief set color of body
@@ -170,9 +176,9 @@ namespace MBSim {
 
       /*!
        * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
-       * \para x_0: starting point of the polynomial domain
-       * \para x_end: end point of the polynomial domain
-       * \para P: the given point
+       * \param x_0: starting point of the polynomial domain
+       * \param x_end: end point of the polynomial domain
+       * \param P: the given point
        * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
        */
       fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
@@ -225,21 +231,25 @@ namespace MBSim {
        */
       void createInventorFile();
 
+      void enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints, int circularPoints);
 #endif
   };
 
   /*!
    * \brief this class denotes polynomial equation like this:a0+a1*x+a2*x^2+...+an*x^n=rhs
-   * \para para: coefficient vector of the left side
+   * \param para: coefficient vector of the left side
    */
 
-  class ContactPolyfun : public MBSim::Function1<double, double> {
+  class ContactPolyfun : public fmatvec::Function<double(double)> {
     public:
+      /*!
+       * \brief Constructor
+       */
       ContactPolyfun(const double & rhs, const PolynomialFrustum * frustum);
       virtual ~ContactPolyfun() {
       }
 
-      virtual double operator()(const double & x, const void * = NULL);
+      virtual double operator()(const double &x);
       void initializeUsingXML() {
       }
 

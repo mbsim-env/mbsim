@@ -29,13 +29,13 @@ using namespace std;
 
 namespace MBSim {
 
-  Vec PolyFurstumSphereContact::operator()(const Vec &x, const void*) {
+  Vec PolyFurstumSphereContact::operator()(const Vec &x) {
     double res = x(0) - sphereCenter(0) + frustum->getValueD1(x(0)) * frustum->getValue(x(0)) - frustum->getValueD1(x(0)) *sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2));
 
     return Vec(1, INIT, res);;
   }
 
-  SqrMat PolyFurstumSphereContactJacobian::operator()(const Vec &x, const void*) {
+  SqrMat PolyFurstumSphereContactJacobian::operator()(const Vec &x) {
     double res = 1 + frustum->getValueD1(x(0)) * frustum->getValueD1(x(0)) + frustum->getValueD2(x(0)) * (frustum->getValue(x(0)) - sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2)));
 
     return SqrMat(1, INIT, res);;

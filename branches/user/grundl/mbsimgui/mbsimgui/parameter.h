@@ -30,20 +30,20 @@ class PropertyWidget;
 class PropertyDialog;
 class ExtWidget;
 class TextWidget;
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class Parameter : public TreeItemData {
   friend class ParameterPropertyDialog;
   public:
     Parameter(const std::string &name);
-    virtual ~Parameter();
+    virtual ~Parameter() {}
     virtual std::string getValue() const {return valuestr;}
     void setValue(const std::string &value) {valuestr = value;}
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
@@ -54,13 +54,24 @@ class Parameter : public TreeItemData {
     std::string valuestr;
 };
 
+class StringParameter : public Parameter {
+  friend class StringParameterPropertyDialog;
+  public:
+    StringParameter(const std::string &name);
+    virtual ~StringParameter() {}
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual std::string getType() const { return "stringParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new StringParameterPropertyDialog(this);}
+};
+
 class ScalarParameter : public Parameter {
   friend class ScalarParameterPropertyDialog;
   public:
     ScalarParameter(const std::string &name);
-    virtual ~ScalarParameter();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual ~ScalarParameter() {}
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "scalarParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
 };
@@ -69,9 +80,9 @@ class VectorParameter : public Parameter {
   friend class VectorParameterPropertyDialog;
   public:
     VectorParameter(const std::string &name);
-    virtual ~VectorParameter();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual ~VectorParameter() {}
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "vectorParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
 };
@@ -80,26 +91,47 @@ class MatrixParameter : public Parameter {
   friend class MatrixParameterPropertyDialog;
   public:
     MatrixParameter(const std::string &name);
-    virtual ~MatrixParameter();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual ~MatrixParameter() {}
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "matrixParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
 };
 
+class SearchPath : public Parameter {
+  friend class SearchPathPropertyDialog;
+  public:
+    SearchPath(const std::string &name);
+    virtual ~SearchPath() {}
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    virtual std::string getType() const { return "searchPath"; }
+//    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
+};
+
+
 class ParameterList {
   public:
     bool readXMLFile(const std::string &filename);
-    //virtual void writeXMLFile(const std::string &name);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) const;
     int getSize() const {return name.size();}
-    void addParameter(const std::string &name_, const std::string &value_) {name.push_back(name_); value.push_back(value_);}
+    void addParameter(const std::string &name, const std::string &value, const std::string &type);
     void addParameterList(const ParameterList &list); 
-    const std::string& getParameterName(int i) const {return name[i];}
-    const std::string& getParameterValue(int i) const {return value[i];}
-    //void printList() const;
-    //void clear() {name.clear(); value.clear();}
-      private:
-    std::vector<std::string> name, value;
+  private:
+    std::vector<std::string> name, value, type;
+};
+ 
+class Parameters {
+  protected:
+    std::vector<Parameter*> parameter;
+  public:
+    void addParameter(Parameter *param) { parameter.push_back(param); }
+    Parameter *getParameter(int i) { return parameter[i]; }
+    int getNumberOfParameters() const { return parameter.size(); }
+    void initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    static Parameters readXMLFile(const std::string &filename);
+    virtual void writeXMLFile(const std::string &name);
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include "mbsim/gear.h"
 #include "mbsim/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -55,7 +56,7 @@ namespace MBSimPowertrain {
 
     sun->setFrameOfReference(housing->getFrame("C"));
     sun->setFrameForKinematics(sun->getFrame("C"));
-    sun->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    sun->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
     sun->setMass(mS);
     Theta(2,2) = JS;
@@ -71,11 +72,11 @@ namespace MBSimPowertrain {
 
     r(2) = lS/2-lH/2*1.0;
     r(1) = 0;
-    housing->addFrame("Q",r,BasicRotAKIy(0));
+    housing->addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(0)));
 
     annulus->setFrameOfReference(housing->getFrame("Q"));
     annulus->setFrameForKinematics(annulus->getFrame("C"));
-    annulus->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    annulus->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     annulus->getFrame("C")->enableOpenMBV(0.3);
 #endif
@@ -89,10 +90,10 @@ namespace MBSimPowertrain {
 
     r.init(0);
     r(2) = lS/2+lT/2;
-    housing->addFrame("R",r,BasicRotAKIy(0));
+    housing->addFrame(new FixedRelativeFrame("R",r,BasicRotAKIy(0)));
     carrier->setFrameOfReference(housing->getFrame("R"));
     carrier->setFrameForKinematics(carrier->getFrame("C"));
-    carrier->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    carrier->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     carrier->getFrame("C")->enableOpenMBV(0.3);
 #endif
@@ -106,7 +107,7 @@ namespace MBSimPowertrain {
     r(2) = -lT/2-lP/2;
     r(1) = rT2;
 
-    vector<Frame*> P;
+    vector<FixedRelativeFrame*> P;
     vector<RigidBody*> planet;
     int numP = 3;
     for(int i=0; i<numP; i++) {
@@ -114,13 +115,13 @@ namespace MBSimPowertrain {
       stringstream shaftName;
       str << "P" << i;
       shaftName << "Planet" << i;
-      P.push_back(new Frame(str.str()));
-      carrier->addFrame(P[i],BasicRotAKIz(M_PI*2*i/3.)*r,BasicRotAKIy(0));
+      P.push_back(new FixedRelativeFrame(str.str(),BasicRotAKIz(M_PI*2*i/3.)*r,BasicRotAKIy(0)));
+      carrier->addFrame(P[i]);
       planet.push_back(new RigidBody(shaftName.str()));
       addObject(planet[i]);
       planet[i]->setFrameOfReference(carrier->getFrame(str.str()));
       planet[i]->setFrameForKinematics(planet[i]->getFrame("C"));
-      planet[i]->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+      planet[i]->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
       planet[i]->getFrame("C")->enableOpenMBV(0.3);
 #endif
@@ -134,15 +135,15 @@ namespace MBSimPowertrain {
     if(model==1) {
       GearConstraint* constraint = new GearConstraint("C1",carrier);
       addObject(constraint);
-      constraint->addDependency(sun,0.5*rS/rT2);
-      constraint->addDependency(annulus,0.5*rH/rT2);
+      constraint->addTransmission(Transmission(sun,0.5*rS/rT2));
+      constraint->addTransmission(Transmission(annulus,0.5*rH/rT2));
     } else if(model==0) {
       Gear *gear;
       gear = new Gear("Gear1");
       addLink(gear);
       gear->setDependentBody(carrier);
-      gear->addDependency(sun,0.5*rS/rT2);
-      gear->addDependency(annulus,0.5*rH/rT2);
+      gear->addTransmission(Transmission(sun,0.5*rS/rT2));
+      gear->addTransmission(Transmission(annulus,0.5*rH/rT2));
       //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
      // gear->setDependentBody(sun);
@@ -161,15 +162,15 @@ namespace MBSimPowertrain {
       if(model==1) {
         GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str(),planet[i]);
         addObject(constraint);
-        constraint->addDependency(sun,-0.5*(rS/rP+rS/rT2));
-        constraint->addDependency(annulus,0.5*(rH/rP-rH/rT2));
+        constraint->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
+        constraint->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
       } else if (model==0) {
         Gear *gear;
         gear = new Gear(string("Gear_")+shaftName.str());
         addLink(gear);
         gear->setDependentBody(planet[i]);
-        gear->addDependency(sun,-0.5*(rS/rP+rS/rT2));
-        gear->addDependency(annulus,0.5*(rH/rP-rH/rT2));
+        gear->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
+        gear->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
         //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
         //gear->setDependentBody(annulus);
@@ -199,7 +200,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rS/2);
     cylinder->setBaseRadius(rS/2);
     cylinder->setHeight(lS*5);
-    cylinder->setStaticColor(0.1);
+    cylinder->setDiffuseColor(0.1,1,1);
     cylinder->setInitialTranslation(0,0,0);
     cylinder->setName("frustum1");
     sunOMBV->addRigidBody(cylinder);
@@ -207,7 +208,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rS);
     cylinder->setBaseRadius(rS);
     cylinder->setHeight(lS);
-    cylinder->setStaticColor(0.1);
+    cylinder->setDiffuseColor(0.1,1,1);
     cylinder->setInitialTranslation(0,0,0);
     cylinder->setName("frustum2");
     sunOMBV->addRigidBody(cylinder);
@@ -219,7 +220,7 @@ namespace MBSimPowertrain {
     //  cylinder->setTopRadius(rS);
     //  cylinder->setBaseRadius(rS);
     //  cylinder->setHeight(lS);
-    //  cylinder->setStaticColor(0.1);
+    //  cylinder->setDiffuseColor(0.1,1,1);
     //  sun->setOpenMBVRigidBody(cylinder);
     //  cylinder->setInitialTranslation(0,0,lS/2);
 
@@ -227,7 +228,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rH);
     cylinder->setBaseRadius(rH);
     cylinder->setHeight(lH);
-    cylinder->setStaticColor(0.3);
+    cylinder->setDiffuseColor(0.3,1,1);
     annulus->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,lH/2);
 
@@ -235,7 +236,7 @@ namespace MBSimPowertrain {
     cylinder->setTopRadius(rT1);
     cylinder->setBaseRadius(rT1);
     cylinder->setHeight(lT);
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(0.5,1,1);
     carrier->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,lT/2);
 
@@ -245,7 +246,7 @@ namespace MBSimPowertrain {
       cylinder->setTopRadius(rP);
       cylinder->setBaseRadius(rP);
       cylinder->setHeight(lP);
-      cylinder->setStaticColor(0.8);
+      cylinder->setDiffuseColor(0.8,1,1);
       planet[i]->setOpenMBVRigidBody(cylinder);
       cylinder->setInitialTranslation(0,0,lP/2);
     }

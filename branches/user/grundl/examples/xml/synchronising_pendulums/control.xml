@@ -8,81 +8,45 @@
   <groups>
   </groups>
   <objects>
-    <embed count="1" counterName="n" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <localParameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
-          <scalarParameter name="timeMove">1.</scalarParameter>
-          <matrixParameter name="xValue">
-            <![CDATA[
-            tBound=200;
-            tStartVal=linspace(tStart(i), tStart(i)+timeMove, 200);
-            tEndVal=linspace(tEnd(i), tEnd(i)+timeMove, 200);
-            tSection1=linspace(-tBound, tStartVal(1)-diff(tStartVal(1:2)), 200);
-            tSection2=linspace(tStartVal(length(tStartVal))+diff(tStartVal(1:2)), tEndVal(1)-diff(tEndVal(1:2)), 200);
-            tSection3=linspace(tEndVal(length(tEndVal))+diff(tEndVal(1:2)), tBound, 200);
-            timeValue=[tSection1 tStartVal tSection2 tEndVal tSection3];
+    <Embed count="1" counterName="n" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <scalarParameter name="timeMove">1.</scalarParameter>
+        <matrixParameter name="xValue">
+          <![CDATA[
+          tBound=200;
+          tStartVal=linspace(tStart(i), tStart(i)+timeMove, 200);
+          tEndVal=linspace(tEnd(i), tEnd(i)+timeMove, 200);
+          tSection1=linspace(-tBound, tStartVal(1)-diff(tStartVal(1:2)), 200);
+          tSection2=linspace(tStartVal(length(tStartVal))+diff(tStartVal(1:2)), tEndVal(1)-diff(tEndVal(1:2)), 200);
+          tSection3=linspace(tEndVal(length(tEndVal))+diff(tEndVal(1:2)), tBound, 200);
+          timeValue=[tSection1 tStartVal tSection2 tEndVal tSection3];
 
-            tVal=[-tBound tStart(i) tStart(i)+timeMove tEnd(i) tEnd(i)+timeMove tBound];
-            xVal=[0 0 -.05 -.05 0 0];
-            xValue=interp1(tVal, xVal, timeValue, 'pchip');
-            xValue=interp1(tVal, xVal, timeValue);
-            ret=[timeValue' xValue' 0*xValue' 0*xValue'];
-            ]]>
-          </matrixParameter>
-        </parameter>
-      </localParameter>
+          tVal=[-tBound tStart(i) tStart(i)+timeMove tEnd(i) tEnd(i)+timeMove tBound];
+          xVal=[0 0 -.05 -.05 0 0];
+          xValue=interp1(tVal, xVal, timeValue, 'pchip');
+          xValue=interp1(tVal, xVal, timeValue);
+          ret=[timeValue' xValue' 0*xValue' 0*xValue'];
+          ]]>
+        </matrixParameter>
+      </Parameter>
       <RigidBody name="Body" xmlns="http://mbsim.berlios.de/MBSim">
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>1.</mass>
         <inertiaTensor>eye(3)</inertiaTensor>
-        <translation>
-          <TimeDependentTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <translationFunction>
-              <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
-                <orderOfDerivative>0</orderOfDerivative>
-                <x>xValue(:,1)</x>
-                <y>xValue(:,2:4)</y>
-                <cSplineNatural/>
-              </PiecewisePolynom1_VS>
-            </translationFunction>
-          </TimeDependentTranslation>
-        </translation>
-        <rotation>
-        </rotation>
-        <guidingVelocityOfTranslation>
-          <TimeDependentGuidingVelocity xmlns="http://mbsim.berlios.de/MBSim">
-            <guidingVelocityFunction>
-              <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
-                <orderOfDerivative>1</orderOfDerivative>
-                <x>xValue(:,1)</x>
-                <y>xValue(:,2:4)</y>
-                <cSplineNatural/>
-              </PiecewisePolynom1_VS>
-            </guidingVelocityFunction>
-          </TimeDependentGuidingVelocity>
-        </guidingVelocityOfTranslation>
-        <derivativeOfGuidingVelocityOfTranslation>
-          <TimeDependentDerivativeOfGuidingVelocity>
-            <derivativeOfGuidingVelocityFunction>
-              <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
-                <orderOfDerivative>2</orderOfDerivative>
-                <x>xValue(:,1)</x>
-                <y>xValue(:,2:4)</y>
-                <cSplineNatural/>
-              </PiecewisePolynom1_VS>
-            </derivativeOfGuidingVelocityFunction>
-          </TimeDependentDerivativeOfGuidingVelocity>
-        </derivativeOfGuidingVelocityOfTranslation>
+        <timeDependentTranslation>
+          <PiecewisePolynomFunction xmlns="http://mbsim.berlios.de/MBSim">
+            <x>xValue(:,1)</x>
+            <y>xValue(:,2:4)</y>
+            <cSplineNatural/>
+          </PiecewisePolynomFunction>
+        </timeDependentTranslation>
         <frames>
         </frames>
         <contours>
-          <contour>
-            <Line name="cTop"/>
-            <frameOfReference ref="Frame[C]"/>
-            <position>[0 0 0]'</position>
-            <orientation>eye(3)</orientation>
-          </contour>
+          <Line name="cTop">
+            <frameOfReference ref="../Frame[C]"/>
+          </Line>
         </contours>
         <!--
            -<openMBVRigidBody>
@@ -97,28 +61,28 @@
            -</enableOpenMBVFrameC>
            -->
       </RigidBody>
-    </embed>
+    </Embed>
   </objects>
   <links>
     <Contact name="contactMetronome" xmlns="http://mbsim.berlios.de/MBSim">
-      <contactForceLaw>
+      <normalForceLaw>
         <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-      </contactForceLaw>
-      <contactImpactLaw>
+      </normalForceLaw>
+      <normalImpactLaw>
         <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
           <restitutionCoefficient>0</restitutionCoefficient>
         </UnilateralNewtonImpact>
-      </contactImpactLaw>
-      <frictionForceLaw>
+      </normalImpactLaw>
+      <tangentialForceLaw>
         <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombFriction>
-      </frictionForceLaw>
-      <frictionImpactLaw>
+      </tangentialForceLaw>
+      <tangentialImpactLaw>
         <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
-      </frictionImpactLaw>
+      </tangentialImpactLaw>
       <connect ref1="../Object[Body]/Contour[cTop]" ref2="../../Group[Metronome{i}]/Object[Base]/Contour[cBottom]"/>
     </Contact>
   </links>

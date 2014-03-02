@@ -22,9 +22,9 @@
 
 #include <QWidget>
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-  class TiXmlNode;
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
 }
 
 class WidgetInterface {
@@ -38,6 +38,13 @@ class WidgetInterface {
 class Widget : public QWidget, public WidgetInterface {
   public:
     Widget() {}
+};
+
+class WidgetFactory {
+  public:
+    virtual QWidget* createWidget(int i=0) = 0;
+    virtual QString getName(int i=0) const { return ""; }
+    virtual int getSize() const { return 0; }
 };
 
 #endif

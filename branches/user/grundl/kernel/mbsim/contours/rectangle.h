@@ -25,6 +25,10 @@
 #include "fmatvec/linear_algebra_double.h"
 #include "fmatvec/linear_algebra.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
 namespace MBSim {
 
   /**
@@ -38,7 +42,11 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Rectangle(const std::string &name);
+      Rectangle(const std::string &name="", Frame *R=0);
+
+      Rectangle(const std::string &name, double yL, double zL, Frame *R=0);
+
+      Rectangle(const std::string &name, double yL, double zL, double t, Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const {
@@ -113,7 +121,10 @@ namespace MBSim {
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual void enableOpenMBV(bool enable = true, int number = 10);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
+      }
 #endif
 
     protected:

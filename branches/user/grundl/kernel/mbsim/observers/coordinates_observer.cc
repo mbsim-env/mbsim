@@ -90,43 +90,6 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void CoordinatesObserver::enableOpenMBVPosition(double diameter, double headDiameter, double headLength, double color) {
-    openMBVPosition=new OpenMBV::Arrow;
-    openMBVPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
-    openMBVPosition->setDiameter(diameter);
-    openMBVPosition->setHeadDiameter(headDiameter);
-    openMBVPosition->setHeadLength(headLength);
-    openMBVPosition->setStaticColor(color);
-  }
-
-  void CoordinatesObserver::enableOpenMBVVelocity(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVVelocity=new OpenMBV::Arrow;
-    openMBVVelocity->setScaleLength(scale);
-    openMBVVelocity->setReferencePoint(refPoint);
-    openMBVVelocity->setDiameter(diameter);
-    openMBVVelocity->setHeadDiameter(headDiameter);
-    openMBVVelocity->setHeadLength(headLength);
-    openMBVVelocity->setStaticColor(color);
-  }
-
-  void CoordinatesObserver::enableOpenMBVAcceleration(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
-    openMBVAcceleration=new OpenMBV::Arrow;
-    openMBVAcceleration->setScaleLength(scale);
-    openMBVAcceleration->setReferencePoint(refPoint);
-    openMBVAcceleration->setDiameter(diameter);
-    openMBVAcceleration->setHeadDiameter(headDiameter);
-    openMBVAcceleration->setHeadLength(headLength);
-    openMBVAcceleration->setStaticColor(color);
-  }
-
-  void CoordinatesObserver::enableOpenMBVFrame(double size, double offset) {
-    openMBVFrame=new OpenMBV::Frame;
-    openMBVFrame->setSize(size);
-    openMBVFrame->setOffset(offset);
-  }
-#endif
-
   void CoordinatesObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -186,33 +149,23 @@ namespace MBSim {
     if(e) saved_frame=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
     if(e) {
-      enableOpenMBVPosition(getDouble(e->FirstChildElement(MBSIMNS"diameter")),
-          getDouble(e->FirstChildElement(MBSIMNS"headDiameter")),
-          getDouble(e->FirstChildElement(MBSIMNS"headLength")),
-          getDouble(e->FirstChildElement(MBSIMNS"staticColor")));
+        OpenMBVArrow ombv;
+        openMBVPosition=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVPositionArrow");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
     if(e) {
-      OpenMBV::Arrow *a=new OpenMBV::Arrow;
-      setOpenMBVPositionArrow(a);
-      a->initializeUsingXML(e->FirstChildElement());
+        OpenMBVArrow ombv;
+        openMBVVelocity=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVVelocityArrow");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
     if(e) {
-      OpenMBV::Arrow *a=new OpenMBV::Arrow;
-      setOpenMBVVelocityArrow(a);
-      a->initializeUsingXML(e->FirstChildElement());
-    }
-    e=element->FirstChildElement(MBSIMNS"openMBVAccelerationArrow");
-    if(e) {
-      OpenMBV::Arrow *a=new OpenMBV::Arrow;
-      setOpenMBVAccelerationArrow(a);
-      a->initializeUsingXML(e->FirstChildElement());
+        OpenMBVArrow ombv;
+        openMBVAcceleration=ombv.createOpenMBV(e); 
     }
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrame");
     if(e) {
-      enableOpenMBVFrame(getDouble(e->FirstChildElement(MBSIMNS"size")),
-          getDouble(e->FirstChildElement(MBSIMNS"offset")));
+        OpenMBVFrame ombv;
+        openMBVFrame=ombv.createOpenMBV(e); 
     }
   }
 

@@ -10,18 +10,18 @@
 
 #include <mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h>
 #include "mbsimFlexibleBody/pointer.h"
-#include "contour_1s_neutral_factory.h"
+#include <mbsimFlexibleBody/contours/contour_1s_neutral_factory.h>
 #include "neutral_contour_components/neutral_nurbs_velocity_1s.h"
 #include "neutral_contour_components/neutral_nurbs_position_1s.h"
 #include "neutral_contour_components/neutral_nurbs_local_position_1s.h"
 
 namespace MBSimFlexibleBody {
   
-  class Contour1sNeutralLinearExternalFFR : public MBSimFlexibleBody::Contour1sNeutralFactory {
+  class Contour1sNeutralLinearExternalFFR : public Contour1sNeutralFactory {
     public:
       Contour1sNeutralLinearExternalFFR(const std::string &name_);
 
-      Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
+//      Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~Contour1sNeutralLinearExternalFFR();
       virtual void init(MBSim::InitStage stage);
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
@@ -50,9 +50,9 @@ namespace MBSimFlexibleBody {
        * REMARK: MBSim starts indexing with 0. If external programs (e.g. abaqus) start indexing with 1 the user has to substract one for each node-index
        */
       fmatvec::VecInt transNodes;
-      double nodeOffset;
-      std::vector<ContourPointData> transContourPoints;
-      int degU;
+//      double nodeOffset;
+//      std::vector<ContourPointData> transContourPoints;
+//      int degU;
 
       NeutralNurbsPosition1s* NP;
       NeutralNurbsLocalPosition1s* NLP;

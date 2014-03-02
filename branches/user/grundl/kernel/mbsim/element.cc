@@ -59,8 +59,6 @@ namespace MBSim {
 
   void Element::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(plotVectorSerie) delete plotVectorSerie;
-      delete plotGroup;
     }
   }
 
@@ -208,23 +206,34 @@ namespace MBSim {
                 e->ValueStr()==MBSIMNS"plotFeatureForChildren" ||
                 e->ValueStr()==MBSIMNS"plotFeatureRecursive")) {
       PlotFeatureStatus status;
-      if(e->Attribute("feature")[0]=='+') status=enabled; else status=disabled;
+      if(e->Attribute("feature")[0]=='+') status=enabled;
+      else if(e->Attribute("feature")[0]=='-') status=disabled;
+      else {
+        ostringstream str;
+        str<<"Plot feature must start with '+' or '-' but is "<<e->Attribute("feature");
+        throw MBSimErrorInXML(str.str(), e);
+      }
       PlotFeature feature=plotRecursive;
-      if(string(e->Attribute("feature")).substr(1)=="plotRecursive") feature=plotRecursive;
-      if(string(e->Attribute("feature")).substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
-      if(string(e->Attribute("feature")).substr(1)=="state") feature=state;
-      if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
-      if(string(e->Attribute("feature")).substr(1)=="notMinimalState") feature=notMinimalState;
-      if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
-      if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
-      if(string(e->Attribute("feature")).substr(1)=="globalVelocity") feature=globalVelocity;
-      if(string(e->Attribute("feature")).substr(1)=="globalAcceleration") feature=globalAcceleration;
-      if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
-      if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
-      if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;
-      if(string(e->Attribute("feature")).substr(1)=="linkKinematics") feature=linkKinematics;
-      if(string(e->Attribute("feature")).substr(1)=="stopVector") feature=stopVector;
-      if(string(e->Attribute("feature")).substr(1)=="debug") feature=debug;
+      if     (string(e->Attribute("feature")).substr(1)=="plotRecursive") feature=plotRecursive;
+      else if(string(e->Attribute("feature")).substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
+      else if(string(e->Attribute("feature")).substr(1)=="state") feature=state;
+      else if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
+      else if(string(e->Attribute("feature")).substr(1)=="notMinimalState") feature=notMinimalState;
+      else if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
+      else if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
+      else if(string(e->Attribute("feature")).substr(1)=="globalVelocity") feature=globalVelocity;
+      else if(string(e->Attribute("feature")).substr(1)=="globalAcceleration") feature=globalAcceleration;
+      else if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
+      else if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
+      else if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;
+      else if(string(e->Attribute("feature")).substr(1)=="linkKinematics") feature=linkKinematics;
+      else if(string(e->Attribute("feature")).substr(1)=="stopVector") feature=stopVector;
+      else if(string(e->Attribute("feature")).substr(1)=="debug") feature=debug;
+      else {
+        ostringstream str;
+        str<<"Unknown plot feature: "<<e->Attribute("feature");
+        throw MBSimErrorInXML(str.str(), e);
+      }
       if(e->ValueStr()==MBSIMNS"plotFeature") setPlotFeature(feature, status);
       if(e->ValueStr()==MBSIMNS"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
       if(e->ValueStr()==MBSIMNS"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
@@ -246,10 +255,9 @@ namespace MBSim {
       return m(0,0);
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
-           "where a scalar was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a scalar was requested.";
+      throw MBSimErrorInXML(str.str(), e);
     }
   }
 
@@ -259,10 +267,9 @@ namespace MBSim {
       return lround(m(0,0));
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a scalar integer was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return 0;
   }
@@ -274,9 +281,8 @@ namespace MBSim {
       return false;
     else {
       ostringstream str;
-      str<<": Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      str<<"Wrong type: Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
+      throw MBSimErrorInXML(str.str(), e);
     }
     return 0;
   }
@@ -292,10 +298,9 @@ namespace MBSim {
       return m.col(0);
     else if(m.rows()) {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a vector of size "<<((rows==0)?-1:rows)<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return Vec();
   }
@@ -311,10 +316,9 @@ namespace MBSim {
       return m;
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a matrix of size "<<((rows==0)?-1:rows)<<"x"<<((cols==0)?-1:cols)<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return Mat();
   }
@@ -330,10 +334,9 @@ namespace MBSim {
       return SqrMat(m);
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a square matrix of size "<<size<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return SqrMat();
   }
@@ -355,10 +358,9 @@ namespace MBSim {
       return SymMat(m);
     else {
       ostringstream str;
-      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a symmetric matrix of size "<<size<<" was requested for element "<<e->ValueStr();
-      TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type"+str.str());
+      throw MBSimErrorInXML(str.str(), e);
     }
     return SymMat();
   }

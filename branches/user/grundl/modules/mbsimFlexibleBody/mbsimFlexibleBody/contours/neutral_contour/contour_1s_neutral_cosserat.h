@@ -10,7 +10,7 @@
 
 #include <mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h>
 #include "mbsimFlexibleBody/pointer.h"
-#include "contour_1s_neutral_factory.h"
+#include <mbsimFlexibleBody/contours/contour_1s_neutral_factory.h>
 #include "neutral_contour_components/neutral_nurbs_velocity_1s.h"
 #include "neutral_contour_components/neutral_nurbs_position_1s.h"
 #include "neutral_contour_components/neutral_nurbs_angle_1s.h"
@@ -20,7 +20,7 @@ namespace MBSimFlexibleBody {
   
   class Contour1sNeutralCosserat : public MBSimFlexibleBody::Contour1sNeutralFactory {
     public:
-      Contour1sNeutralCosserat(const std::string &name_, FlexibleBody1sCosserat* parent_, const fmatvec::VecInt & transNodes_, const fmatvec::VecInt & rotNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
+      Contour1sNeutralCosserat(const std::string &name_);
       virtual ~Contour1sNeutralCosserat();
 //      virtual std::string getType() const {
 //        return "Contour1sNeutralCosserat";
@@ -35,6 +35,10 @@ namespace MBSimFlexibleBody {
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
       virtual void updateStateDependentVariables(double t);
 
+      void setTransNodes(const fmatvec::VecInt & transNodes_);
+      void setRotNodes(const fmatvec::VecInt & rotNodes_);
+      void setNodeOffest(const double nodeOffset_);
+
       double getuMax() const {
         return uMax;
       }
@@ -44,14 +48,20 @@ namespace MBSimFlexibleBody {
       }
       
     protected:
-      fmatvec::VecInt transNodes;  // TODO: can this be type of reference, No! as a contour, it should contains the nodes.
+      /*!
+       * \brief index of the translational Nodes
+       */
+      fmatvec::VecInt transNodes;
+
+      /*!
+       * \brief index of the rotational Nodes
+       */
       fmatvec::VecInt rotNodes;
+
+      /*!
+       * \brief offset between translationa and rotational nodes
+       */
       double nodeOffset;
-      std::vector<ContourPointData> transContourPoints;
-      std::vector<ContourPointData> rotContourPoints;
-      int numOfTransNodes;
-      int numOfRotNodes;
-      int degU;
 
       CardanPtr ANGLE;
       NeutralNurbsPosition1s* NP;

@@ -8,6 +8,8 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contact_kinematics/circle_frustum.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -78,17 +80,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   Contact *contact = new Contact("Contact");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  /*Print arrows for contacts*/
-  OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
-  normalArrow->setScaleLength(0.001);
-  OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
-  frArrow->setScaleLength(0.001);
-  frArrow->setStaticColor(0.75);
-
   //fancy stuff
   contact->enableOpenMBVContactPoints(0.01);
-  contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVFrictionArrow(frArrow);
+  contact->enableOpenMBVNormalForce(_scaleLength=0.001);
+  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
 #endif
 
   double stiffness = 1e5;
@@ -102,30 +97,30 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1/stiffness);
     MaxwellUnilateralConstraint* mfl = new MaxwellUnilateralConstraint(damping);
     mfl->addContourCoupling(ground, ground, infl);
-    contact->setContactForceLaw(mfl);
+    contact->setNormalForceLaw(mfl);
 
     //Frictional force
-//    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
     //Normal force
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
+    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
 
     //Frictional force
-//    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+//    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if (contactlaw == 2) { //Unilateral Constraint Contact
     //Normal force
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0));
+    contact->setNormalForceLaw(new UnilateralConstraint);
+    contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
 
     //Frictional force
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   this->addLink(contact);
 
@@ -149,7 +144,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     balls[k]->setFrameForKinematics(balls[k]->getFrame("C"));
     balls[k]->setMass(mass);
     balls[k]->setInertiaTensor(Theta);
-    balls[k]->setTranslation(new LinearTranslation(SqrMat(3,EYE))); // only translational dof because of point masses
+    balls[k]->setTranslation(new TranslationAlongAxesXYZ<VecV>); // only translational dof because of point masses
 
     Vec u0(3,INIT,0);
     u0(1) = -1;

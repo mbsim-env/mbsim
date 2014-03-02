@@ -6,27 +6,23 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
-      <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-        </LinearTranslation>
-      </translation>
-      <rotation>
+      <stateDependentTranslation>
+        <TranslationAlongAxesXY/>
+      </stateDependentTranslation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis>
           <axisOfRotation>[0;0;1]</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="O"/>
-          <position>[0;lO;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
-        <frame>
-          <Frame name="U"/>
-          <position>[0;-lU;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
+        <FixedRelativeFrame name="O">
+          <relativePosition>[0;lO;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="U">
+          <relativePosition>[0;-lU;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>

@@ -34,24 +34,21 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneWithFrustum, MBSIMNS"PlaneWithFrustum")
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void PlaneWithFrustum::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Frustum;
-      if (hFrustum<0) {
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerBaseRadius(rFrustumOnPlane);
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerTopRadius(rFrustumOnTop);
-      }
-      else {
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
-      }
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(hFrustum);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(0, M_PI/2., 0);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(hFrustum, 0, 0);
+  void PlaneWithFrustum::enableOpenMBV() {
+    openMBVRigidBody=new OpenMBV::Frustum;
+    if (hFrustum<0) {
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerBaseRadius(rFrustumOnPlane);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerTopRadius(rFrustumOnTop);
     }
-    else openMBVRigidBody=0;
+    else {
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
+    }
+    ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(hFrustum);
+    ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(0, M_PI/2., 0);
+    ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(hFrustum, 0, 0);
   }
 #endif
 

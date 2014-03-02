@@ -17,9 +17,13 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef _OBJECTFACTORY__H_
+#define _OBJECTFACTORY__H_
+
 #include <set>
 #include <iostream>
 #include <map>
+#include <xercesc/dom/DOMElement.hpp>
 class Element;
 class Frame;
 class Contour;
@@ -31,9 +35,6 @@ class Integrator;
 class Parameter;
 class Environment;
 class TreeItem;
-namespace MBXMLUtils {
-  class TiXmlElement;
-}
 
 class ObjectFactoryBase {
   protected:
@@ -44,15 +45,15 @@ class ObjectFactoryBase {
     typedef std::pair<double, P_NSPRE> P_PRINSPRE;
   public:
     typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
-    virtual Frame* createFrame(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element) { return NULL; }
-    virtual Parameter* createParameter(MBXMLUtils::TiXmlElement *element) { return NULL; }
-    virtual Environment *getEnvironment(MBXMLUtils::TiXmlElement *element) { return NULL; }
+    virtual Frame* createFrame(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Contour* createContour(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Group* createGroup(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
+    virtual Integrator* createIntegrator(xercesc::DOMElement *element) { return NULL; }
+    virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
+    virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
     virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
       static MM_PRINSPRE ret;
       return ret;
@@ -71,15 +72,15 @@ class ObjectFactory : public ObjectFactoryBase {
     void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
     void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
-    Frame* createFrame(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
-    Parameter* createParameter(MBXMLUtils::TiXmlElement *element);
-    Environment *getEnvironment(MBXMLUtils::TiXmlElement *element);
+    Frame* createFrame(xercesc::DOMElement *element, Element *parent);
+    Contour* createContour(xercesc::DOMElement *element, Element *parent);
+    Group* createGroup(xercesc::DOMElement *element, Element *parent);
+    Object* createObject(xercesc::DOMElement *element, Element *parent);
+    Link* createLink(xercesc::DOMElement *element, Element *parent);
+    Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+    Integrator* createIntegrator(xercesc::DOMElement *element);
+    Parameter* createParameter(xercesc::DOMElement *element);
+    Environment *getEnvironment(xercesc::DOMElement *element);
     M_NSPRE getNamespacePrefixMapping();
 };
 
@@ -93,14 +94,15 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     // objects from MBSimObjectFactory
     static void initialize();
   protected:
-    Frame* createFrame(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
-    Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
-    Parameter* createParameter(MBXMLUtils::TiXmlElement *element);
-    Environment *getEnvironment(MBXMLUtils::TiXmlElement *element);
+    Frame* createFrame(xercesc::DOMElement *element, Element *parent);
+    Contour* createContour(xercesc::DOMElement *element, Element *parent);
+    Group* createGroup(xercesc::DOMElement *element, Element *parent);
+    Object* createObject(xercesc::DOMElement *element, Element *parent);
+    Link* createLink(xercesc::DOMElement *element, Element *parent);
+    Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+    Integrator* createIntegrator(xercesc::DOMElement *element);
+    Parameter* createParameter(xercesc::DOMElement *element);
+    Environment *getEnvironment(xercesc::DOMElement *element);
 };
 
+#endif

@@ -142,40 +142,14 @@ namespace MBSim {
       Element::init(stage);
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Frame::enableOpenMBV(double size, double offset) {
-    if(size>=0) {
-      openMBVFrame=new OpenMBV::Frame;
-      openMBVFrame->setSize(size);
-      openMBVFrame->setOffset(offset);
-    }
-    else {
-      openMBVFrame=0;
-    }
-  }
-#endif
-
   void Frame::initializeUsingXML(TiXmlElement *element) {
     Element::initializeUsingXML(element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    TiXmlElement *ee;
-    if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
-      enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
-          getDouble(ee->FirstChildElement(MBSIMNS"offset")));
-
-      // pass a OPENMBV_ID processing instruction to the OpenMBV Frame object
-      for(TiXmlNode *child=ee->FirstChild(); child; child=child->NextSibling()) {
-        TiXmlUnknown *unknown=child->ToUnknown();
-        const size_t length=strlen("?OPENMBV_ID ");
-        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
-          openMBVFrame->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
-      }
-    }
-    if((ee=element->FirstChildElement(MBSIMNS"openMBVFrame"))) {
-      OpenMBV::Frame *f=new OpenMBV::Frame;
-      setOpenMBVFrame(f);
-      f->initializeUsingXML(ee->FirstChildElement());
+    TiXmlElement *ee=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    if(ee) {
+      OpenMBVFrame ombv;
+      openMBVFrame=ombv.createOpenMBV(ee); 
     }
 #endif
   }
@@ -204,7 +178,7 @@ namespace MBSim {
     else if (path.substr(0, 3)=="../") // relative path
       return parent->getByPathSearch(path.substr(3));
     else { // local path
-      throw;
+      throw MBSimError("Internal error: local path");
     }
   }
 

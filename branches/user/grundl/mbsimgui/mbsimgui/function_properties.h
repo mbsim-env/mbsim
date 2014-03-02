@@ -20,87 +20,42 @@
 #ifndef _FUNCTION_PROPERTIES_H_
 #define _FUNCTION_PROPERTIES_H_
 
+#include "function_property.h"
 #include "extended_properties.h"
 
-class ChoiceProperty;
-
-class Function1Property : public Property {
+class ConstantFunctionProperty : public FunctionProperty {
   public:
-    Function1Property(const std::string &ext_="") : ext(ext_) {}
-    virtual ~Function1Property() {}
-    virtual std::string getType() const { return "Function1_"+ext; }
-    virtual std::string getExt() const { return ext; }
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-  protected:
-    std::string ext;
-};
-
-class Function2Property : public Property {
-  public:
-    Function2Property(const std::string &ext_="") : ext(ext_) {}
-    virtual ~Function2Property() {}
-    virtual std::string getType() const { return "Function2_"+ext; }
-    virtual std::string getExt() const { return ext; }
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-  protected:
-    std::string ext;
-};
-
-class SymbolicFunction1Property : public Function1Property {
-  public:
-    SymbolicFunction1Property(const std::string &ext, const std::string &var);
-    virtual Property* clone() const {return new SymbolicFunction1Property(*this);}
-    inline std::string getType() const { return "SymbolicFunction1_"+ext; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-    int getArgDim() const;
-  protected:
-    ExtProperty f;
-    std::vector<ExtProperty> argname, argdim;
-};
-
-class DifferentiableFunction1Property : public Function1Property {
-  public:
-    DifferentiableFunction1Property(const std::string &ext="") : Function1Property(ext), order(0) {}
-    DifferentiableFunction1Property(const DifferentiableFunction1Property &p);
-    ~DifferentiableFunction1Property();
-    DifferentiableFunction1Property& operator=(const DifferentiableFunction1Property &p);
-    const Function1Property& getDerivative(int degree) const { return *(derivatives[degree]); }
-    Function1Property& getDerivative(int degree) { return *(derivatives[degree]); }
-    void addDerivative(Function1Property *diff) { derivatives.push_back(diff); }
-    void setDerivative(Function1Property *diff,size_t degree);
-
-    void setOrderOfDerivative(int i) { order=i; }
-
-    std::string getType() const { return "DifferentiableFunction1"; }
-
-  protected:
-    std::vector<Function1Property*> derivatives;
-    int order;
-};
-
-class ConstantFunction1Property : public Function1Property {
-  public:
-    ConstantFunction1Property(const std::string &ext);
-    virtual Property* clone() const {return new ConstantFunction1Property(*this);}
-    inline std::string getType() const { return "ConstantFunction1_"+ext; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ConstantFunctionProperty(int m=1);
+    virtual Property* clone() const {return new ConstantFunctionProperty(*this);}
+    inline std::string getType() const { return "ConstantFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ExtProperty c;
+    ExtProperty a0;
 };
 
-class QuadraticFunction1Property : public DifferentiableFunction1Property {
+class LinearFunctionProperty : public FunctionProperty {
   public:
-    QuadraticFunction1Property();
-    virtual Property* clone() const {return new QuadraticFunction1Property(*this);}
-    inline std::string getType() const { return "QuadraticFunction1_VS"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    LinearFunctionProperty(int m=1);
+    virtual Property* clone() const {return new LinearFunctionProperty(*this);}
+    inline std::string getType() const { return "LinearFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty a0, a1;
+};
+
+class QuadraticFunctionProperty : public FunctionProperty {
+  public:
+    QuadraticFunctionProperty(int m=1);
+    virtual Property* clone() const {return new QuadraticFunctionProperty(*this);}
+    inline std::string getType() const { return "QuadraticFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -108,13 +63,27 @@ class QuadraticFunction1Property : public DifferentiableFunction1Property {
     ExtProperty a0, a1, a2;
 };
 
-class SinusFunction1Property : public DifferentiableFunction1Property {
+class PolynomFunctionProperty : public FunctionProperty {
   public:
-    SinusFunction1Property();
-    virtual Property* clone() const {return new SinusFunction1Property(*this);}
-    inline std::string getType() const { return "SinusFunction1_VS"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    PolynomFunctionProperty(int m=1);
+    virtual Property* clone() const {return new PolynomFunctionProperty(*this);}
+    inline std::string getType() const { return "PolynomFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty a;
+};
+
+class SinusoidalFunctionProperty : public FunctionProperty {
+  public:
+    SinusoidalFunctionProperty(int m=1);
+    virtual Property* clone() const {return new SinusoidalFunctionProperty(*this);}
+    inline std::string getType() const { return "SinusoidalFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -122,57 +91,123 @@ class SinusFunction1Property : public DifferentiableFunction1Property {
     ExtProperty a, f, p, o;
 };
 
-class TabularFunction1Property : public Function1Property {
+//class StepFunctionProperty : public FunctionProperty {
+//}
+
+//class PositiveFunctionProperty : public FunctionProperty {
+//}
+
+class ScaledFunctionProperty : public FunctionProperty {
   public:
-    TabularFunction1Property();
-    virtual Property* clone() const {return new TabularFunction1Property(*this);}
-    inline std::string getType() const { return "TabularFunction1_VS"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ScaledFunctionProperty();
+    virtual Property* clone() const {return new ScaledFunctionProperty(*this);}
+    int getArg1Size() const;
+    inline std::string getType() const { return "ScaledFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
-    ChoiceProperty choice;
+    ExtProperty function, factor;
 };
 
-class SummationFunction1Property : public Function1Property {
+class SummationFunctionProperty : public FunctionProperty {
 
   public:
-    SummationFunction1Property() {}
-    virtual Property* clone() const {return new SummationFunction1Property(*this);}
-    inline std::string getType() const { return "SummationFunction1_VS"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    SummationFunctionProperty();
+    virtual Property* clone() const {return new SummationFunctionProperty(*this);}
+    inline std::string getType() const { return "SummationFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<ContainerProperty> function;
+    ExtProperty functions;
 };
 
-class SymbolicFunction2Property : public Function2Property {
+class VectorValuedFunctionProperty : public FunctionProperty {
   public:
-    SymbolicFunction2Property(const std::string &ext, const std::vector<std::string> &var);
-    virtual Property* clone() const {return new SymbolicFunction2Property(*this);}
-    inline std::string getType() const { return "SymbolicFunction2_"+ext; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    VectorValuedFunctionProperty(int m=0);
+    virtual Property* clone() const {return new VectorValuedFunctionProperty(*this);}
+    inline std::string getType() const { return "VectorValuedFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    int getArgDim(int i) const;
   protected:
+    ExtProperty functions;
+};
+
+class NestedFunctionProperty : public FunctionProperty {
+  public:
+    //NestedFunctionProperty(const std::string &ext, const std::vector<Property*> &property);
+    NestedFunctionProperty(PropertyFactory *factoryo, PropertyFactory *factoryi);
+    virtual Property* clone() const {return new NestedFunctionProperty(*this);}
+    int getArg1Size() const;
+    inline std::string getType() const { return "NestedFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    std::string ext;
+    ExtProperty fo, fi;
+};
+
+class PiecewiseDefinedFunctionProperty : public FunctionProperty {
+  public:
+    PiecewiseDefinedFunctionProperty();
+    virtual Property* clone() const {return new PiecewiseDefinedFunctionProperty(*this);}
+    inline std::string getType() const { return "PiecewiseDefinedFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty functions;
+    ExtProperty contDiff;
+};
+
+class SymbolicFunctionProperty : public FunctionProperty {
+  public:
+    SymbolicFunctionProperty(const std::string &ext, const std::vector<std::string> &var, int m);
+    virtual Property* clone() const {return new SymbolicFunctionProperty(*this);}
+    int getArg1Size() const;
+    int getArg2Size() const;
+    inline std::string getType() const { return "SymbolicFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    std::string ext;
     ExtProperty f;
     std::vector<ExtProperty> argname, argdim;
 };
 
-class LinearSpringDamperForceProperty : public Function2Property {
+class TabularFunctionProperty : public FunctionProperty {
+  public:
+    TabularFunctionProperty();
+    virtual Property* clone() const {return new TabularFunctionProperty(*this);}
+    inline std::string getType() const { return "TabularFunction"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ChoiceProperty2 choice;
+};
+
+class LinearSpringDamperForceProperty : public FunctionProperty {
   public:
     LinearSpringDamperForceProperty();
     virtual Property* clone() const {return new LinearSpringDamperForceProperty(*this);}
-    inline std::string getType() const { return "LinearSpringDamperForce"+ext; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    inline std::string getType() const { return "LinearSpringDamperForce"; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -180,13 +215,13 @@ class LinearSpringDamperForceProperty : public Function2Property {
     ExtProperty c, d, l0;
 };
 
-class LinearRegularizedBilateralConstraintProperty: public Function2Property {
+class LinearRegularizedBilateralConstraintProperty: public FunctionProperty {
   public:
     LinearRegularizedBilateralConstraintProperty();
     virtual Property* clone() const {return new LinearRegularizedBilateralConstraintProperty(*this);}
     std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -194,15 +229,15 @@ class LinearRegularizedBilateralConstraintProperty: public Function2Property {
     ExtProperty c, d;
 };
 
-class LinearRegularizedUnilateralConstraintProperty: public Function2Property {
+class LinearRegularizedUnilateralConstraintProperty: public FunctionProperty {
   public:
     LinearRegularizedUnilateralConstraintProperty(); 
 
     virtual Property* clone() const {return new LinearRegularizedUnilateralConstraintProperty(*this);}
     virtual std::string getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -210,15 +245,15 @@ class LinearRegularizedUnilateralConstraintProperty: public Function2Property {
     ExtProperty c, d;
 };
 
-class LinearRegularizedCoulombFrictionProperty: public Function2Property {
+class LinearRegularizedCoulombFrictionProperty: public FunctionProperty {
   public:
     LinearRegularizedCoulombFrictionProperty(); 
 
     virtual Property* clone() const {return new LinearRegularizedCoulombFrictionProperty(*this);}
     virtual std::string getType() const { return "LinearRegularizedCoulombFriction"; }
 
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 

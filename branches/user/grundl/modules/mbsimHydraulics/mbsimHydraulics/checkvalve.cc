@@ -26,6 +26,7 @@
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/kinematic_functions.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
@@ -33,6 +34,7 @@
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/utils/boost_parameters.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
@@ -75,7 +77,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Checkvalve, MBSIMHYDRAULICSNS"Checkvalve")
 
-  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
+  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new DirectionalSpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)
 #endif
@@ -99,11 +101,11 @@ namespace MBSimHydraulics {
   void Checkvalve::setLineSetValued(bool setValued) {line->setBilateral(setValued); }
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
   void Checkvalve::setBallInitialPosition(double x0) {ball->setInitialGeneralizedPosition(x0); }
-  void Checkvalve::setSpringForceFunction(Function2<double,double,double> *func) {spring->setForceFunction(func); }
-  void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setContactImpactLaw(GIL); }
-  void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setContactForceLaw(GFL); }
-  void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setContactImpactLaw(GIL); }
-  void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setContactForceLaw(GFL); }
+  void Checkvalve::setSpringForceFunction(Function<double(double,double)> *func) {spring->setForceFunction(func); }
+  void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setNormalImpactLaw(GIL); }
+  void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setNormalForceLaw(GFL); }
+  void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setNormalImpactLaw(GIL); }
+  void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setNormalForceLaw(GFL); }
 
   void Checkvalve::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
@@ -119,25 +121,28 @@ namespace MBSimHydraulics {
       ballSeat->setMass(0);
       ballSeat->setInertiaTensor(SymMat(3, INIT, 0));
       ballSeat->setFrameForKinematics(ballSeat->getFrame("C"));
-      ballSeat->addFrame("BallMount", h0*Vec("[1; 0; 0]"), SqrMat(3, EYE));
-      ballSeat->addFrame("SpringMount", (rBall+h0+hMax)*Vec("[1;0;0]"), SqrMat(3, EYE));
-      ballSeat->addContour(new Line("ContourSeat"), (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0));
-      ballSeat->addContour(new Line("ContourMaxOpening"), (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI));
+      ballSeat->addFrame(new FixedRelativeFrame("BallMount", h0*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
+      ballSeat->addFrame(new FixedRelativeFrame("SpringMount", (rBall+h0+hMax)*Vec("[1;0;0]"), SqrMat(3, EYE)));
+      ballSeat->addFrame(new FixedRelativeFrame("ContourSeat", (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0)));
+      ballSeat->addContour(new Line("ContourSeat", ballSeat->getFrame("ContourSeat")));
+      ballSeat->addFrame(new FixedRelativeFrame("ContourMaxOpening", (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI)));
+      ballSeat->addContour(new Line("ContourMaxOpening", ballSeat->getFrame("ContourMaxOpening")));
 
       ball->setInertiaTensor(SymMat(3, EYE) * 2./5. * mBall * rBall * rBall);
       ball->setFrameOfReference(ballSeat->getFrame("BallMount"));
       ball->setFrameForKinematics(ball->getFrame("C"));
-      ball->setTranslation(new LinearTranslation("[1;0;0]"));
-      ball->addContour(new CircleSolid("ContourBall", rBall), Vec(3, INIT, 0), SqrMat(3, EYE));
-      ball->addFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE));
-      ball->addFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE));
+      ball->setTranslation(new LinearTranslation<VecV>("[1;0;0]"));
+
+      ball->addContour(new CircleSolid("ContourBall", rBall));
+      ball->addFrame(new FixedRelativeFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE)));
+      ball->addFrame(new FixedRelativeFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
 
       seatContact->connect(ballSeat->getContour("ContourSeat"), ball->getContour("ContourBall"));
 
       maxContact->connect(ballSeat->getContour("ContourMaxOpening"), ball->getContour("ContourBall"));
 
       spring->connect(ball->getFrame("HighPressureSide"), ballSeat->getFrame("SpringMount"));
-      spring->setProjectionDirection(ballSeat->getFrame("C"), "[1; 0; 0]");
+      spring->setForceDirection("[1; 0; 0]");
 
       xOpen->setObject(ball);
       xOpen->setIndex(0);
@@ -159,11 +164,7 @@ namespace MBSimHydraulics {
 
         addLink(new colorLink("BallColorLink", ballVisu, line));
 
-        OpenMBV::CoilSpring* springVisu=new OpenMBV::CoilSpring();
-        springVisu->setSpringRadius(rBall/2.);
-        springVisu->setCrossSectionRadius(.05*hMax);
-        springVisu->setNumberOfCoils(5);
-        spring->setOpenMBVSpring(springVisu);
+        spring->enableOpenMBVCoilSpring(_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
       }
       if (openMBVArrows) {
         ((CircleSolid*)ball->getContour("ContourBall"))->enableOpenMBV(true);
@@ -223,8 +224,7 @@ namespace MBSimHydraulics {
     setLineDiameter(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"checkvalvePressureLoss");
     TiXmlElement * eee = ee->FirstChildElement();
-    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<Function>::create<CheckvalveClosablePressureLoss>(eee);
-    ccpl_->initializeUsingXML(eee);
+    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<FunctionBase>::createAndInit<CheckvalveClosablePressureLoss>(eee);
     setLinePressureLoss(ccpl_);
     eee = ee->FirstChildElement(MBSIMHYDRAULICSNS"minimalXOpen");
     setLineMinimalXOpen(Element::getDouble(eee));
@@ -239,36 +239,31 @@ namespace MBSimHydraulics {
       setBallInitialPosition(getDouble(ee));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Spring");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"forceFunction");
-    Function2<double,double,double> *f=MBSim::ObjectFactory<Function>::create<Function2<double,double,double> >(ee->FirstChildElement());
-    f->initializeUsingXML(ee->FirstChildElement());
+    Function<double(double,double)> *f=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(ee->FirstChildElement());
     setSpringForceFunction(f);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"SeatContact");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactForceLaw");
-    GeneralizedForceLaw *gflS=MBSim::ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
-    gflS->initializeUsingXML(ee->FirstChildElement());
+    GeneralizedForceLaw *gflS=MBSim::ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
     setSeatContactForceLaw(gflS);
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactImpactLaw");
-    GeneralizedImpactLaw *gilS=MBSim::ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
+    GeneralizedImpactLaw *gilS=MBSim::ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
     if (gilS) {
-      gilS->initializeUsingXML(ee->FirstChildElement());
       setSeatContactImpactLaw(gilS);
     }
     setMaximalOpening(getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"maximalOpening")));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"MaximalOpeningContact");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactForceLaw");
-    GeneralizedForceLaw * gflM=MBSim::ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(ee->FirstChildElement());
-    gflM->initializeUsingXML(ee->FirstChildElement());
+    GeneralizedForceLaw * gflM=MBSim::ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(ee->FirstChildElement());
     setMaximalContactForceLaw(gflM);
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactImpactLaw");
-    GeneralizedImpactLaw * gilM=MBSim::ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(ee->FirstChildElement());
+    GeneralizedImpactLaw * gilM=MBSim::ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(ee->FirstChildElement());
     if (gilM) {
-      gilM->initializeUsingXML(ee->FirstChildElement());
       setMaximalContactImpactLaw(gilM);
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    enableOpenMBVBodies(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVBodies"));
-    enableOpenMBVFrames(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVFrames"));
-    enableOpenMBVArrows(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows"));
+    if(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVBodies")) enableOpenMBVBodies();
+    if(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVFrames")) enableOpenMBVFrames();
+    if(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows")) enableOpenMBVArrows();
 #endif
   }
 }

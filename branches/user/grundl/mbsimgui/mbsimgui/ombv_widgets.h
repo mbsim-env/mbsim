@@ -25,10 +25,19 @@
 
 class ExtWidget;
 class QVBoxLayout;
-class QStackedWidget;
 class QListWidget;
 class QComboBox;
 class RigidBody;
+
+class OMBVBodyWidgetFactory : public WidgetFactory {
+  public:
+    OMBVBodyWidgetFactory();
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<QString> name;
+};
 
 class OMBVObjectWidget : public Widget {
 
@@ -39,6 +48,46 @@ class OMBVObjectWidget : public Widget {
     QString name;
 };
 
+class MBSOMBVWidget : public OMBVObjectWidget {
+
+  friend class MBSOMBVProperty;
+
+  public:
+    MBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *diffuseColor, *transparency;
+};
+
+class PointMBSOMBVWidget : public MBSOMBVWidget {
+
+  friend class PointMBSOMBVProperty;
+
+  public:
+    PointMBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *size;
+};
+
+class LineMBSOMBVWidget : public MBSOMBVWidget {
+
+  friend class LineMBSOMBVProperty;
+
+  public:
+    LineMBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *length;
+};
+
+class PlaneMBSOMBVWidget : public MBSOMBVWidget {
+
+  friend class PlaneMBSOMBVProperty;
+
+  public:
+    PlaneMBSOMBVWidget(const QString &name="NOTSET");
+  protected:
+    ExtWidget *length;
+};
+
 class OMBVFrameWidget : public OMBVObjectWidget {
 
   friend class OMBVFrameProperty;
@@ -46,7 +95,7 @@ class OMBVFrameWidget : public OMBVObjectWidget {
   public:
     OMBVFrameWidget(const QString &name="NOTSET");
   protected:
-    ExtWidget *size, *offset;
+    ExtWidget *size, *offset, *transparency;
 };
 
 class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
@@ -60,15 +109,14 @@ class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
     ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
 };
 
-
-class OMBVArrowWidget : public OMBVDynamicColoredObjectWidget {
+class OMBVArrowWidget : public OMBVObjectWidget {
 
   friend class OMBVArrowProperty;
 
   public:
     OMBVArrowWidget(const QString &name="NOTSET", bool fromPoint=false);
   protected:
-    ExtWidget *diameter, *headDiameter, *headLength, *type, *referencePoint, *scaleLength;
+    ExtWidget *scaleLength, *scaleSize, *referencePoint, *diffuseColor, *transparency;
 };
 
 class OMBVCoilSpringWidget : public OMBVObjectWidget {
@@ -78,7 +126,7 @@ class OMBVCoilSpringWidget : public OMBVObjectWidget {
   public:
     OMBVCoilSpringWidget(const QString &name="NOTSET");
   protected:
-    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
+    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *diffuseColor, *transparency;
 };
 
 class OMBVBodyWidget : public OMBVDynamicColoredObjectWidget {
@@ -149,20 +197,13 @@ class IvBodyWidget : public OMBVBodyWidget {
 class OMBVBodyChoiceWidget;
 
 class CompoundRigidBodyWidget : public OMBVBodyWidget {
-  Q_OBJECT
 
   friend class CompoundRigidBodyProperty;
 
   public:
     CompoundRigidBodyWidget(const QString &name="NOTSET");
   protected:
-    QStackedWidget *stackedWidget; 
-    QListWidget *bodyList; 
-  protected slots:
-    void changeCurrent(int idx);
-    void openContextMenu(const QPoint &pos);
-    void addBody();
-    void removeBody();
+    ExtWidget *bodies; 
 };
 
 class OMBVBodySelectionWidget : public Widget {

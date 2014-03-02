@@ -29,8 +29,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  CompoundContour::CompoundContour(const string &name) :
-      RigidContour(name),
+  CompoundContour::CompoundContour(const string &name, Frame *R) :
+      RigidContour(name,R),
 #ifdef HAVE_OPENMBVCPPINTERFACE
           openMBVGroup(0)
 #endif

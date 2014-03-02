@@ -7,6 +7,8 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -42,8 +44,9 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   inertiaBar(2,2)=1./4.*mBar*rBar*rBar+1./12.*mBar*lBar*lBar;
   cout << "inertiaBar=" << inertiaBar*1e3*1e6 << " [g*mm^2]." << endl;
 
-  addFrame("I2", Vec("[-.2; -.25; .1]"), BasicRotAIKx(.3)*BasicRotAIKy(.7)*BasicRotAIKz(-0.7));
-  addContour(new PlaneWithFrustum("Plane", R, r, h, rho), "[0; 0; 0]", BasicRotAIKz(M_PI/2.), getFrame("I2"));
+  addFrame(new FixedRelativeFrame("I2", Vec("[-.2; -.25; .1]"), BasicRotAIKx(.3)*BasicRotAIKy(.7)*BasicRotAIKz(-0.7)));
+  addFrame(new FixedRelativeFrame("I3", "[0; 0; 0]", BasicRotAIKz(M_PI/2.), getFrame("I2")));
+  addContour(new PlaneWithFrustum("Plane", R, r, h, rho, getFrame("I3")));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // nur fuer Visualisierung
@@ -66,7 +69,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     mVisu->setTopRadius(r);
   }
   mVisu->setHeight(h);
-  mVisu->setStaticColor(.3);
+  mVisu->setDiffuseColor(0.3333,1,0.6666);
   mVisu->setInitialRotation(-M_PI/2., 0, 0);
   mVisu->setInitialTranslation(0, h, 0);
   m->getFrame("C")->enableOpenMBV(2.*rBar, .9);
@@ -81,18 +84,19 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   Vec SysBar_r_cog_Top(3);
   SysBar_r_cog_Top(1)=lBar/2.;
   cout << "SysBar_r_cog_Top=" << SysBar_r_cog_Top << endl;
-  b->addFrame("Top0", SysBar_r_cog_Top, SqrMat(3, EYE));
-  b->addFrame("Top1", SysBar_r_cog_Top+rBar*(+1.)*Vec("[1;0;0]"), SqrMat(3, EYE));
-  b->addFrame("Top2", SysBar_r_cog_Top+rBar*(-1.)*Vec("[1;0;0]"), SqrMat(3, EYE));
-  b->addFrame("Top3", SysBar_r_cog_Top+rBar*(+1.)*Vec("[0;0;1]"), SqrMat(3, EYE));
-  b->addFrame("Top4", SysBar_r_cog_Top+rBar*(-1.)*Vec("[0;0;1]"), SqrMat(3, EYE));
+  b->addFrame(new FixedRelativeFrame("Top0", SysBar_r_cog_Top, SqrMat(3, EYE)));
+  b->addFrame(new FixedRelativeFrame("Top1", SysBar_r_cog_Top+rBar*(+1.)*Vec("[1;0;0]"), SqrMat(3, EYE)));
+  b->addFrame(new FixedRelativeFrame("Top2", SysBar_r_cog_Top+rBar*(-1.)*Vec("[1;0;0]"), SqrMat(3, EYE)));
+  b->addFrame(new FixedRelativeFrame("Top3", SysBar_r_cog_Top+rBar*(+1.)*Vec("[0;0;1]"), SqrMat(3, EYE)));
+  b->addFrame(new FixedRelativeFrame("Top4", SysBar_r_cog_Top+rBar*(-1.)*Vec("[0;0;1]"), SqrMat(3, EYE)));
   b->setMass(mBar);
   b->setInertiaTensor(inertiaBar);
-  b->setTranslation(new LinearTranslation("[1, 0, 0; 0, 1, 0; 0, 0, 1]"));
-  if (considerRotation)
-    b->setRotation(new CardanAngles());
+  b->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  if (considerRotation) {
+    b->setRotation(new RotationAboutAxesXYZ<VecV>);
+  }
   for (int i=0; i<5; i++)
-    b->addContour(new Point("Point"+numtostr(i)), Vec(3), SqrMat(3), b->getFrame("Top"+numtostr(i)));
+    b->addContour(new Point("Point"+numtostr(i), b->getFrame("Top"+numtostr(i))));
   if (considerRotation) {
     b->setInitialGeneralizedPosition("[.01; -.14; -.02; 0; 0; 0]");
     b->setInitialGeneralizedVelocity("[-1; 0; .5; 0; 2; 1]");
@@ -120,14 +124,14 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     addLink(c);
     c->connect(b->getContour("Point"+numtostr(i)), getContour("Plane"));
     if (setValued) {
-      c->setContactForceLaw(new UnilateralConstraint());
-      c->setContactImpactLaw(new UnilateralNewtonImpact());
-      c->setFrictionForceLaw(new SpatialCoulombFriction(mue));
-      c->setFrictionImpactLaw(new SpatialCoulombImpact(mue));
+      c->setNormalForceLaw(new UnilateralConstraint());
+      c->setNormalImpactLaw(new UnilateralNewtonImpact());
+      c->setTangentialForceLaw(new SpatialCoulombFriction(mue));
+      c->setTangentialImpactLaw(new SpatialCoulombImpact(mue));
     }
     else {
-      c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
-      c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
+      c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
+      c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
     c->enableOpenMBVContactPoints(.1*rBar);

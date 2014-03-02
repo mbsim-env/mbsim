@@ -23,7 +23,6 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -76,9 +75,8 @@ namespace MBSimHydraulics {
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    LinePressureLoss *p=MBSim::ObjectFactory<Function>::create<LinePressureLoss>(e->FirstChildElement());
+    LinePressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<LinePressureLoss>(e->FirstChildElement());
     setLinePressureLoss(p);
-    p->initializeUsingXML(e->FirstChildElement());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ClosableRigidLine,  MBSIMHYDRAULICSNS"ClosableRigidLine")
@@ -94,7 +92,7 @@ namespace MBSimHydraulics {
   void ClosableRigidLine::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if(refSignalString!="")
-        setSignal(getByPath<MBSimControl::Signal>(process_signal_string(refSignalString)));
+        setSignal(getByPath<MBSimControl::Signal>(refSignalString));
       RigidLine::init(stage);
     }
     else if (stage==MBSim::modelBuildup) {
@@ -113,9 +111,8 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"closablePressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    ClosablePressureLoss *p=MBSim::ObjectFactory<Function>::create<ClosablePressureLoss>(ee);
+    ClosablePressureLoss *p=MBSim::ObjectFactory< fmatvec::FunctionBase>::createAndInit<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
-    p->initializeUsingXML(ee);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
     refSignalString=ee->Attribute("ref");
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalChecksizeValue");
@@ -143,10 +140,9 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"unidirectionalPressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<Function>::create<UnidirectionalPressureLoss>(ee);
+    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<UnidirectionalPressureLoss>(ee);
     if (p) {
       setUnidirectionalPressureLoss(p);
-      p->initializeUsingXML(ee);
     }
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressureDrop");
     setMinimalPressureDrop(getDouble(ee));

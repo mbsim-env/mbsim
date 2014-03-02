@@ -6,6 +6,7 @@
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
@@ -38,8 +39,8 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   this->addObject(ball);
   ball->setMass(m);
   ball->setInertiaTensor(Theta);
-  ball->setRotation(new CardanAngles);
-  ball->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
+  ball->setRotation(new RotationAboutAxesXYZ<VecV>);
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ball->setFrameForKinematics(ball->getFrame("C"));
 
   // initial settings
@@ -47,7 +48,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   u0(0) = 5.0;
   u0(3) = 20.0;
   ball->setInitialGeneralizedVelocity(u0);
-  this->addFrame("R",Vec("[0;0.15;0]"),SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("R",Vec("[0;0.15;0]"),SqrMat(3,EYE)));
   ball->setFrameOfReference(this->getFrame("R"));
 
   // contour
@@ -56,26 +57,24 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sp->enableOpenMBV();
 #endif
-  ball->addContour(sp,Vec(3,INIT,0.),SqrMat(3,EYE));
+  ball->addContour(sp);
 
   // obstacles
   Plane* pl = new Plane("Table");
-  this->addContour(pl,Vec(3,INIT,0.),SqrMat("[0,-1,0;1,0,0;0,0,1]"));
+  addFrame(new FixedRelativeFrame("P",Vec(3,INIT,0.),SqrMat("[0,-1,0;1,0,0;0,0,1]")));
+  pl->setFrameOfReference(getFrame("P"));
+  this->addContour(pl);
 
   // contacts
   Contact *cr = new Contact("Contact");
-  cr->setContactForceLaw(new UnilateralConstraint);
-  cr->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cr->setFrictionForceLaw(new SpatialStribeckFriction(new Friction(mu0,mu1,mu2,kP)));
-  cr->setFrictionImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
+  cr->setNormalForceLaw(new UnilateralConstraint);
+  cr->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cr->setTangentialForceLaw(new SpatialStribeckFriction(new Friction(mu0,mu1,mu2,kP)));
+  cr->setTangentialImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
   cr->connect(pl,ball->getContour("Sphere"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
-  aC_N->setEnable(false);
-  cr->setOpenMBVNormalForceArrow(aC_N);
-  OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-  cr->setOpenMBVFrictionArrow(aC_T);
-  aC_T->setEnable(false);
+  cr->enableOpenMBVNormalForce();
+  cr->enableOpenMBVTangentialForce();
 #endif
   this->addLink(cr);
 }

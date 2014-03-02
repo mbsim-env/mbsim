@@ -10,7 +10,7 @@
 
 #include <mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h>
 #include "mbsimFlexibleBody/pointer.h"
-#include "contour_2s_neutral_factory.h"
+#include <mbsimFlexibleBody/contours/contour_2s_neutral_factory.h>
 #include "neutral_contour_components/neutral_nurbs_velocity_2s.h"
 #include "neutral_contour_components/neutral_nurbs_position_2s.h"
 #include "neutral_contour_components/neutral_nurbs_local_position_2s.h"

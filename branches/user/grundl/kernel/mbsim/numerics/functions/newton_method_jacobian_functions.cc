@@ -33,7 +33,7 @@ namespace MBSim {
     NewtonJacobianFunction() {
   }
 
-  SqrMat NumericalNewtonJacobianFunction::operator ()(const fmatvec::Vec & x, const void*) {
+  SqrMat NumericalNewtonJacobianFunction::operator ()(const fmatvec::Vec &x) {
     SqrMat J = SqrMat(x.size()); // initialise size
 
     double dx, xj;

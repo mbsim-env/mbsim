@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdexcept>
 
 using namespace std;
 
@@ -52,8 +53,7 @@ string FileTofmatvecString(const string &filename) {
   fmatvecString=fmatvecString.substr(0,fmatvecString.size()-1);
   fmatvecString+="]";
   if (fmatvecString.length()>maxSize) {
-    cout << "The input file is too long!" << endl;
-    throw(123);
+    throw runtime_error("The input file is too long!");
   }
   return fmatvecString;
 }

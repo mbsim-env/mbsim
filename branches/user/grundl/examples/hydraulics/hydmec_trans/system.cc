@@ -4,10 +4,13 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/utils/function.h"
+#include "fmatvec/function.h"
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
@@ -56,27 +59,27 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addObject(traeger);
   Vec KrCF(3, INIT, 0);
   KrCF(0)=-l/2.;
-  traeger->addFrame(getBodyName(0), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(0), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(0))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=-l/4.;
-  traeger->addFrame(getBodyName(1), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(1), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(1))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=0;
-  traeger->addFrame(getBodyName(2), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(2), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(2))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=l/4.;
-  traeger->addFrame(getBodyName(3), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(3), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(3))->enableOpenMBV(3.*lScheibe);
 #endif
   KrCF(0)=l/2.;
-  traeger->addFrame(getBodyName(4), KrCF, SqrMat(3, EYE));
+  traeger->addFrame(new FixedRelativeFrame(getBodyName(4), KrCF, SqrMat(3, EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(4))->enableOpenMBV(3.*lScheibe);
 #endif
@@ -84,8 +87,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setFrameForKinematics(traeger->getFrame("C"));
   traeger->setMass(2.);
   traeger->setInertiaTensor(0.001*SymMat(3, EYE));
-  traeger->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
-  traeger->setRotation(new CardanAngles());
+  traeger->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  traeger->setRotation(new RotationAboutAxesXYZ<VecV>);
   traeger->setInitialGeneralizedVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum * traegerVisu = new OpenMBV::Frustum();
@@ -94,7 +97,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisu->setHeight(l+lScheibe);
   traegerVisu->setInitialRotation(0, -M_PI/2., 0);
   traegerVisu->setInitialTranslation(-(l+lScheibe)/2., 0, 0);
-  traegerVisu->setStaticColor(0);
+  traegerVisu->setDiffuseColor(0.5,0.5,0.5);
   traeger->setOpenMBVRigidBody(traegerVisu);
 #endif
 
@@ -106,13 +109,13 @@ System::System(const string &name, bool unilateral) : Group(name) {
     RigidBody * scheibe = new RigidBody("Scheibe_"+getBodyName(i));
     addObject(scheibe);
     scheibe->setMass(2.);
-    scheibe->addFrame("L", vML, SqrMat(3, EYE));
-    scheibe->addFrame("R", vMR, SqrMat(3, EYE));
+    scheibe->addFrame(new FixedRelativeFrame("L", vML, SqrMat(3, EYE)));
+    scheibe->addFrame(new FixedRelativeFrame("R", vMR, SqrMat(3, EYE)));
     scheibe->setFrameOfReference(traeger->getFrame(getBodyName(i)));
     scheibe->setFrameForKinematics(scheibe->getFrame("C"));
     scheibe->setInertiaTensor(0.001*SymMat(3, EYE));
     if (i>0)
-      scheibe->setTranslation(new LinearTranslation(Vec("[1; 0; 0]")));
+      scheibe->setTranslation(new TranslationAlongXAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Frustum * scheibeVisu = new OpenMBV::Frustum();
     scheibeVisu->setBaseRadius(dA/2.);
@@ -122,7 +125,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibeVisu->setHeight(lScheibe);
     scheibeVisu->setInitialRotation(0, M_PI/2., 0);
     scheibeVisu->setInitialTranslation(lScheibe/2., 0, 0);
-    scheibeVisu->setStaticColor((i)/4.);
+    scheibeVisu->setDiffuseColor(i/4.,i/4.,i/4.);
     scheibe->setOpenMBVRigidBody(scheibeVisu);
 #endif
 
@@ -134,11 +137,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("R"), 
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("L"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
-      spVisu->setSpringRadius(.75*.5*dA);
-      spVisu->setCrossSectionRadius(.1*.25*dA);
-      spVisu->setNumberOfCoils(5);
-      sp->setOpenMBVSpring(spVisu);
+      sp->enableOpenMBVCoilSpring(_springRadius=.75*.5*dA,_crossSectionRadius=.1*.25*dA,_numberOfCoils=5);
 #endif
     }
   }
@@ -159,7 +158,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
-  n0->setpFunction(new ConstantFunction1<double, double>(1e5));
+  n0->setpFunction(new ConstantFunction<double>(1e5));
   n0->addOutFlow(l04);
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
@@ -169,7 +168,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
   n1->setInitialVolume(V0);
-  n1->setpFunction(new ConstantFunction1<double, double>(pressure));
+  n1->setpFunction(new ConstantFunction<double>(pressure));
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 

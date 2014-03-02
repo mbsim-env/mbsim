@@ -33,15 +33,15 @@ class RigidBody : public Body {
     int getquize() const {return constrained?0:getuRelSize();}
     int getqRelSize() const;
     int getuRelSize() const;
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     bool isConstrained() const {return constrained;} 
     void setConstrained(bool b) {constrained = b;}
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
   protected:
     bool constrained;
-    ExtProperty K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
+    ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow;
 };
 
 #endif

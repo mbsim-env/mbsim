@@ -22,9 +22,10 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *parent) : Link(str, parent) {
-  signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
+  signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
 }
 
 void SignalProcessingSystem::initialize() {
@@ -32,13 +33,13 @@ void SignalProcessingSystem::initialize() {
   signalRef.initialize();
 }
 
-void SignalProcessingSystem::initializeUsingXML(TiXmlElement *element) {
+void SignalProcessingSystem::initializeUsingXML(DOMElement *element) {
   Link::initializeUsingXML(element);
   signalRef.initializeUsingXML(element);
 }
 
-TiXmlElement* SignalProcessingSystem::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Link::writeXMLFile(parent);
+DOMElement* SignalProcessingSystem::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Link::writeXMLFile(parent);
   signalRef.writeXMLFile(ele0);
   return ele0;
 }

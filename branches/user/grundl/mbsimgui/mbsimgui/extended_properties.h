@@ -33,8 +33,8 @@ class ExtPhysicalVarProperty : public Property {
     int getNumberOfInputs() const {return inputProperty.size();}
     std::string getValue() const {return inputProperty[currentInput].getValue();}
     void setValue(const std::string &str) {inputProperty[currentInput].setValue(str);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -45,7 +45,7 @@ class ExtPhysicalVarProperty : public Property {
 
 class ExtProperty : public Property {
   public:
-    ExtProperty(Property *property_=0, bool active_=true, const std::string &xmlName_="", bool flag=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(flag) {}
+    ExtProperty(Property *property_=0, bool active_=true, const MBXMLUtils::FQN &xmlName_="", bool alwaysWriteXMLName_=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(alwaysWriteXMLName_) {}
     ExtProperty(const ExtProperty &p) : property(p.property?p.property->clone():0), xmlName(p.xmlName), active(p.active), alwaysWriteXMLName(p.alwaysWriteXMLName) {}
     ~ExtProperty() {delete property;}
     ExtProperty& operator=(const ExtProperty &p) {delete property; property=p.property?p.property->clone():0; xmlName=p.xmlName; active=p.active; alwaysWriteXMLName=p.alwaysWriteXMLName;}
@@ -53,10 +53,9 @@ class ExtProperty : public Property {
     Property* getProperty() {return property;}
     const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
-    void setXMLName(const std::string &xmlName_, bool flag=true) {xmlName = xmlName_; alwaysWriteXMLName=flag;}
-
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void setXMLName(const MBXMLUtils::FQN &xmlName_, bool alwaysWriteXMLName_=true) {xmlName = xmlName_; alwaysWriteXMLName=alwaysWriteXMLName_;}
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     void initialize() {property->initialize();}
@@ -65,38 +64,39 @@ class ExtProperty : public Property {
 
   protected:
     Property *property;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
     bool active, alwaysWriteXMLName;
 };
 
-class ChoiceProperty : public Property {
+class ChoiceProperty2 : public Property {
 
   public:
-    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0, const std::string &xmlBase_=MBSIMNS) : property(property_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_) {}
-    ChoiceProperty(const ChoiceProperty &p);
-    ~ChoiceProperty();
-    ChoiceProperty& operator=(const ChoiceProperty &p);
-    virtual Property* clone() const {return new ChoiceProperty(*this);}
+    ChoiceProperty2(PropertyFactory *factory_, const MBXMLUtils::FQN &xmlName_, int mode_=0, const MBXMLUtils::NamespaceURI &xmlBase_=MBSIM); 
+    ChoiceProperty2(const ChoiceProperty2 &p);
+    ~ChoiceProperty2();
+    ChoiceProperty2& operator=(const ChoiceProperty2 &p);
+    virtual Property* clone() const {return new ChoiceProperty2(*this);}
 
     void initialize();
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    Property* getProperty(int i) const {return property[i];}
-    Property* getProperty() const {return property[index];}
-    void setProperty(const std::vector<Property*> &property_) {property = property_;}
+    Property* getProperty() const {return property;}
+    void setProperty(Property *property_) {property = property_;}
 
   protected:
-    std::vector<Property*> property;
+    PropertyFactory *factory;
+    Property *property;
     int index, mode;
-    std::string xmlName, xmlBase;
+    MBXMLUtils::FQN xmlName;
+    MBXMLUtils::NamespaceURI nsuri;
 };
 
 class ContainerProperty : public Property {
   public:
-    ContainerProperty(const std::string &xmlName_="") : xmlName(xmlName_) {}
-    ContainerProperty(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), xmlName(xmlName_) {}
+    ContainerProperty(const MBXMLUtils::FQN &xmlName_="", int mode_=1) : xmlName(xmlName_), mode(mode_) {}
+    ContainerProperty(const std::vector<Property*> &property_, const MBXMLUtils::FQN &xmlName_="") : property(property_), xmlName(xmlName_) {}
     ContainerProperty(const ContainerProperty &p);
     ~ContainerProperty();
     ContainerProperty& operator=(const ContainerProperty &p);
@@ -104,14 +104,45 @@ class ContainerProperty : public Property {
 
     void initialize();
     void addProperty(Property *property_) {property.push_back(property_);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    Property* getProperty(int i) const { return property[i]; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
     std::vector<Property*> property;
-    std::string xmlName;
+    MBXMLUtils::FQN xmlName;
+    int mode;
+};
+
+class ListProperty : public Property {
+  public:
+    ListProperty(PropertyFactory *factory, const MBXMLUtils::FQN &xmlName="", int m=0, int mode=0);
+    ~ListProperty() { delete factory; }
+    virtual Property* clone() const {return new ListProperty(*this);}
+    int getSize() const { return property.size(); }
+    Property* getProperty(int i) const { return property[i]; }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void initialize();
+  protected:
+    std::vector<Property*> property;
+    PropertyFactory *factory;
+    MBXMLUtils::FQN xmlName;
+    int mode;
+};
+
+class ChoicePropertyFactory : public PropertyFactory {
+  public:
+    ChoicePropertyFactory(PropertyFactory *factory_, const MBXMLUtils::FQN xmlName_="", int mode_=1) : factory(factory_), xmlName(xmlName_), mode(mode_) { }
+    Property* createProperty(int i=0);
+  protected:
+    PropertyFactory *factory;
+    MBXMLUtils::FQN xmlName;
+    int mode;
 };
 
 #endif

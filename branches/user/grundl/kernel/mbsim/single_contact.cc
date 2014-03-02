@@ -25,13 +25,11 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <mbsim/utils/function.h>
+#include <fmatvec/function.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/frame.h>
-#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
@@ -50,7 +48,7 @@ namespace MBSim {
   SingleContact::SingleContact(const string &name) :
       LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVContactGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
+          , openMBVContactGrp(0), openMBVContactFrame(2), contactArrow(NULL), frictionArrow(NULL)
 #endif
           , saved_ref1(""), saved_ref2("") {
   }
@@ -157,7 +155,7 @@ namespace MBSim {
 
   void SingleContact::updateStopVector(double t) {
     if (gActive != gdActive[0])
-      throw;
+      throw MBSimError("Internal error");
     if (gActive) {
       sv(0) = gddN(0) > gddTol ? -1 : 1;
       if (gdActive[1]) {
@@ -321,7 +319,7 @@ namespace MBSim {
       laSize = gActive * gdActive[0];
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calcgSize(int j) {
@@ -336,7 +334,7 @@ namespace MBSim {
       gSize = gActive * gdActive[0];
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calcgdSize(int j) {
@@ -400,7 +398,7 @@ namespace MBSim {
 
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calcrFactorSize(int j) {
@@ -525,20 +523,16 @@ namespace MBSim {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || contactArrow || frictionArrow)) {
+        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
           openMBVContactGrp = new OpenMBV::Group();
           openMBVContactGrp->setName(name + "_ContactGroup");
           openMBVContactGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
 
-          if (openMBVContactFrameSize > epsroot()) {
+          if (openMBVContactFrame[0]) {
             for (unsigned int i = 0; i < 2; i++) { // frames
-              openMBVContactFrame.push_back(new OpenMBV::Frame);
-              openMBVContactFrame[i]->setOffset(1.);
-              openMBVContactFrame[i]->setSize(openMBVContactFrameSize);
               string name = string((i == 0 ? "A" : "B")) + string("_") + string(contour[i]->getShortName());
               openMBVContactFrame[i]->setName(name);
-              openMBVContactFrame[i]->setEnable(openMBVContactFrameEnabled);
               openMBVContactGrp->addObject(openMBVContactFrame[i]);
             }
           }
@@ -637,9 +631,9 @@ namespace MBSim {
   void SingleContact::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || contactArrow || frictionArrow)) {
+      if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
         // frames
-        if (openMBVContactFrameSize > epsroot()) {
+        if (openMBVContactFrame[0]) {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
             data.push_back(t);
@@ -1306,7 +1300,7 @@ namespace MBSim {
       }
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   int SingleContact::getFrictionDirections() {
@@ -1390,33 +1384,29 @@ namespace MBSim {
     TiXmlElement *e;
 
     //Set contact law
-    e = element->FirstChildElement(MBSIMNS"contactForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(e->FirstChildElement());
-    setContactForceLaw(gfl);
-    gfl->initializeUsingXML(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"normalForceLaw");
+    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
+    setNormalForceLaw(gfl);
 
     //Set impact law (if given)
-    e = e->NextSiblingElement();
-    GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(e->FirstChildElement());
-    if (gifl) {
-      setContactImpactLaw(gifl);
-      gifl->initializeUsingXML(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"normalImpactLaw");
+    if (e) {
+      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
+      setNormalImpactLaw(gifl);
     }
 
     //Set friction law (if given)
-    e = e->NextSiblingElement();
-    FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::create<FrictionForceLaw>(e->FirstChildElement());
-    if (ffl) {
-      setFrictionForceLaw(ffl);
-      ffl->initializeUsingXML(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"tangentialForceLaw");
+    if (e) {
+      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
+      setTangentialForceLaw(ffl);
     }
 
     //Set friction impact law (if given)
-    e = e->NextSiblingElement();
-    FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::create<FrictionImpactLaw>(e->FirstChildElement());
-    if (fil) {
-      setFrictionImpactLaw(fil);
-      fil->initializeUsingXML(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"tangentialImpactLaw");
+    if (e) {
+      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
+      setTangentialImpactLaw(fil);
     }
 
     //Save contour names for initialization
@@ -1425,28 +1415,23 @@ namespace MBSim {
     saved_ref2 = e->Attribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    //test what should be drawn to OpenMBV
-
     //Contact points
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
-      enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
-
-    //Normal force
-    e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVNormalForceArrow(arrow);
-      e = e->NextSiblingElement();
+    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")) {
+      OpenMBVFrame ombv;
+      openMBVContactFrame[0]=ombv.createOpenMBV(e); 
+      openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
     }
 
-    //Friction force
-    e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVNormalForce");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVFrictionArrow(arrow);
-      e = e->NextSiblingElement();
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      contactArrow=ombv.createOpenMBV(e); 
+    }
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVTangentialForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      frictionArrow=ombv.createOpenMBV(e); 
     }
 #endif
   }
@@ -1495,7 +1480,7 @@ namespace MBSim {
       }
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::calccorrSize(int j) {
@@ -1517,7 +1502,7 @@ namespace MBSim {
       corrSize += gActive * gdActive[0] * (1 + gdActive[1] * getFrictionDirections());
     }
     else
-      throw;
+      throw MBSimError("Internal error");
   }
 
   void SingleContact::checkRoot() {

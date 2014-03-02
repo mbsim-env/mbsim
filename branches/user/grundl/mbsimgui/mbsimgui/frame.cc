@@ -18,12 +18,16 @@
    */
 
 #include <config.h>
+#include <boost/shared_ptr.hpp>
 #include "frame.h"
 #include "ombv_properties.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
 
@@ -35,45 +39,39 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
  // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
  // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
-  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV",getID()));
+  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
 }
 
 Frame::~Frame() {
 }
 
 Frame* Frame::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Frame *frame=ObjectFactory::getInstance()->createFrame(e,parent);
-    if(frame) {
-      frame->initializeUsingXML(e);
-      frame->initialize();
-    }
-    return frame;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
+  if(frame) {
+    frame->initializeUsingXML(e);
+    frame->initialize();
   }
-  return 0;
+  return frame;
 }
 
-void Frame::initializeUsingXML(TiXmlElement *element) {
+void Frame::initializeUsingXML(DOMElement *element) {
   Element::initializeUsingXML(element);
   visu.initializeUsingXML(element);
 }
 
-TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+DOMElement* Frame::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Element::writeXMLFile(parent);
   visu.writeXMLFile(ele0);
   return ele0;
 }
 
-void Frame::initializeUsingXML2(TiXmlElement *element) {
+void Frame::initializeUsingXML2(DOMElement *element) {
   visu.initializeUsingXML(element);
 }
 
-TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
+DOMElement* Frame::writeXMLFile2(DOMNode *parent) {
   visu.writeXMLFile(parent);
   return 0;
 }
@@ -91,15 +89,11 @@ Element *Frame::getByPathSearch(string path) {
 
 FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIMNS"relativePosition"));
-  position.setProperty(new ExtPhysicalVarProperty(input));
+  position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"relativePosition"),"",4));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"relativeOrientation"));
-  orientation.setProperty(new ExtPhysicalVarProperty(input));
+  orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"relativeOrientation"),"",4));
 
-  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
 }
 
 FixedRelativeFrame::~FixedRelativeFrame() {
@@ -110,36 +104,19 @@ void FixedRelativeFrame::initialize() {
   refFrame.initialize();
 }
 
-void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
+void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
   Frame::initializeUsingXML(element);
   refFrame.initializeUsingXML(element);
   position.initializeUsingXML(element);
   orientation.initializeUsingXML(element);
 }
 
-TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
+DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
 
-  TiXmlElement *ele0 = Frame::writeXMLFile(parent);
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement *ele0 = Frame::writeXMLFile(parent);
   refFrame.writeXMLFile(ele0);
   position.writeXMLFile(ele0);
   orientation.writeXMLFile(ele0);
   return ele0;
 }
-
-void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
-  refFrame.initializeUsingXML(element);
-  string ref = ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->getFrame();
-  if(ref[0]=='F')
-    ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->setFrame(string("../")+ref);
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"position");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"position");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"orientation");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"orientation");
-  position.initializeUsingXML(element);
-  orientation.initializeUsingXML(element);
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"relativePosition");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"relativePosition");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(0)).setXmlName(MBSIMNS"relativeOrientation");
-  ((PhysicalVariableProperty&)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(1)).setXmlName(MBSIMNS"relativeOrientation");
-}
-

@@ -361,12 +361,6 @@ namespace MBSim {
       void updatehRef(const fmatvec::Vec &hRef, int i=0);
 
       /**
-       * \brief references to order one right hand side of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatefRef(const fmatvec::Vec &ref);
-
-      /**
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
@@ -647,37 +641,6 @@ namespace MBSim {
       void addFrame(FixedRelativeFrame *frame);
 
       /**
-       * \param frame to add
-       * \param relative position of frame
-       * \param relative orientation of frame
-       * \param relation frame
-       */
-      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
-
-      /**
-       * \param name of frame to add
-       * \param relative position of frame
-       * \param relative orientation of frame
-       * \param relation frame
-       */
-      void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
-
-      /**
-       * \param contour to add
-       * \param relative position of contour
-       * \param relative orientation of contour
-       * \param relation frame
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame=0);
-
-      /**
-       * \param contour to add
-       * \param relative position of contour
-       * \param relation frame
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat3(fmatvec::EYE),refFrame); }
-
-      /**
        * \param frame
        * \return index of frame TODO renaming
        */
@@ -948,6 +911,8 @@ namespace MBSim {
 
       int corrSize, corrInd;
       fmatvec::Vec corr;
+
+      std::string saved_frameOfReference;
   };
 }
 

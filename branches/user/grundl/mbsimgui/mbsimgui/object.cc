@@ -20,48 +20,34 @@
 #include <config.h>
 #include "object.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
-Object::Object(const string &str, Element *parent) : Element(str,parent), q0(0,false), u0(0,false) {
+Object::Object(const string &str, Element *parent) : Element(str,parent) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
-  q0.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
-  u0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 Object* Object::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Object *object=ObjectFactory::getInstance()->createObject(e,parent);
-    if(object) {
-      object->initializeUsingXML(e);
-      object->initialize();
-    }
-    return object;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Object *object=ObjectFactory::getInstance()->createObject(e, parent);
+  if(object) {
+    object->initializeUsingXML(e);
+    object->initialize();
   }
-  return 0;
+  return object;
 }
 
-void Object::initializeUsingXML(TiXmlElement *element) {
+void Object::initializeUsingXML(DOMElement *element) {
   Element::initializeUsingXML(element);
-  q0.initializeUsingXML(element);
-  u0.initializeUsingXML(element);
 }
 
-TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {    
-  TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  q0.writeXMLFile(ele0);
-  u0.writeXMLFile(ele0);
+DOMElement* Object::writeXMLFile(DOMNode *parent) {    
+  DOMElement *ele0 = Element::writeXMLFile(parent);
   return ele0;
 }
 

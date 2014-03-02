@@ -177,7 +177,6 @@ namespace MBSim {
       throw MBSimError("Degree is too small!");
     }
     if (d >= Q.rows()) {
-//      throw MBSimError("The degree specified is greater then Q.rows()+1\n");
       throw MBSimError("The degree specified should be smaller or equal than Q.rows()-1\n");
     }
 

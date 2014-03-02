@@ -8,6 +8,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -111,10 +112,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
   Mat JacTrans(3,2,INIT,0.); JacTrans(0,0) = 1.; JacTrans(1,1) = 1.;
-  ball->setTranslation(new LinearTranslation(JacTrans));
+  ball->setTranslation(new LinearTranslation<VecV>(JacTrans));
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addContour(point);
   ball->setInitialGeneralizedVelocity(Vec(2,INIT,0.));
   this->addObject(ball);
   
@@ -127,13 +130,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // elastic impact
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
   contact->enableOpenMBVContactPoints();
   this->addLink(contact);
   
-  // 
+  // joint 
   ContourPointData cpdata;
   cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
   cpdata.getContourParameterType() = CONTINUUM;
@@ -142,10 +145,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->connect(this->getFrame("R"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
   joint->setMomentDirection("[0; 0; 1]");
   joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
 }
 

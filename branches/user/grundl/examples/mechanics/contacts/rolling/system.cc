@@ -9,6 +9,8 @@
 #include "mbsim/contact.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -53,8 +55,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rD(0) = 15*d;
   rD(1) = d;
 
-  addFrame("Z",Vec(3),AZI,getFrame("I"));
-  addFrame("D",rD,SqrMat(3,EYE),getFrame("Z"));
+  addFrame(new FixedRelativeFrame("Z",Vec(3),AZI,getFrame("I")));
+  addFrame(new FixedRelativeFrame("D",rD,SqrMat(3,EYE),getFrame("Z")));
 
 
 
@@ -67,8 +69,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body->setFrameForKinematics(body->getFrame("C"));
     body->setMass(m);
     body->setInertiaTensor(Theta);
-    body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-    body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    body->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+    body->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
     body->setPlotFeature(energy, enabled);
 
@@ -82,8 +84,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(1,1) = m*d*d;
     Theta(2,2) = Theta(1,1);
     body2->setInertiaTensor(Theta);
-    body2->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-    body2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    body2->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+    body2->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
     body2->setPlotFeature(energy, enabled);
 
@@ -97,8 +99,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(1,1) = 2/5.0*m*d*d;
     Theta(2,2) = Theta(1,1);
     body3->setInertiaTensor(Theta);
-    body3->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-    body3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    body3->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+    body3->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
     body3->setPlotFeature(energy, enabled);
 
@@ -111,7 +113,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body4->setFrameForKinematics(body4->getFrame("C"));
   body4->setMass(m/100.);
   body4->setInertiaTensor(Theta);
-  body4->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
+  body4->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
  
 
   // Spring 
@@ -135,27 +137,30 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Contour of Cylinder
   CircleSolid *circlecontour=new CircleSolid("Circle",d);
-  body->addContour(circlecontour,Vec(3),SqrMat(3,EYE));
+  body->addContour(circlecontour);
 
   // Contour of HollowCylinder (outward)
   CircleSolid *circlecontour2=new CircleSolid("Circle2",d);
-  body2->addContour(circlecontour2,Vec(3),SqrMat(3,EYE));
+  body2->addContour(circlecontour2);
 
   // Contour of Sphere
   Sphere *spherecontour=new Sphere("Sphere",d);
-  body3->addContour(spherecontour,Vec(3),SqrMat(3,EYE));
+  body3->addContour(spherecontour);
  
   // Contour of Stopper
   Vec rBP(3), rBP2(3);
   rBP(1)=-d;
   rBP2(0)=-d/2.;
-  body4->addContour(new Point("PointStopper"),rBP,SqrMat(3,EYE)); // pairing with ground
-  body4->addContour(new Line("LineStopper"),rBP2,(SqrMat("[-1,0,0;0,-1,0;0,0,1]"))); // pairing with cylinders
-  body4->addContour(new Plane("PlaneStopper"),rBP2,(SqrMat("[-1,0,0;0,-1,0;0,0,1]"))); // pairing with sphere
+  body4->addFrame(new FixedRelativeFrame("S1",rBP,SqrMat(3,EYE)));
+  body4->addFrame(new FixedRelativeFrame("S2",rBP2,(SqrMat("[-1,0,0;0,-1,0;0,0,1]"))));
+  body4->addContour(new Point("PointStopper",body4->getFrame("S1")));
+  body4->addContour(new Line("LineStopper",body4->getFrame("S2")));
+  body4->addContour(new Plane("PlaneStopper",body4->getFrame("S2")));
 
   // Contour of ground plane (x-axis of Line/Plane || y_Z)
-  addContour(new Line("Line"),Vec(3),(SqrMat("[0,-1,0;1,0,0;0,0,1]")),getFrame("Z"));
-  addContour(new Plane("Plane"),Vec(3),(SqrMat("[0,-1,0;1,0,0;0,0,1]")),getFrame("Z"));
+  addFrame(new FixedRelativeFrame("S",Vec(3),(SqrMat("[0,-1,0;1,0,0;0,0,1]")),getFrame("Z")));
+  addContour(new Line("Line",getFrame("S")));
+  addContour(new Plane("Plane",getFrame("S")));
 
 
   // Contact between Cylinder and plane (Contact-Pairing: CircleSolid-Line)
@@ -163,14 +168,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc->connect(getContour("Line"),body->getContour("Circle"));
   addLink(rc);
   if(rigidContact) {
-    rc->setContactForceLaw(new UnilateralConstraint);
-    rc->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc->setNormalForceLaw(new UnilateralConstraint);
+    rc->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 
@@ -179,14 +184,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc2->connect(getContour("Line"),body2->getContour("Circle2"));
   addLink(rc2);
   if(rigidContact) {
-    rc2->setContactForceLaw(new UnilateralConstraint);
-    rc2->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc2->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc2->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc2->setNormalForceLaw(new UnilateralConstraint);
+    rc2->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc2->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc2->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc2->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc2->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   
@@ -195,14 +200,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc3->connect(getContour("Plane"),body3->getContour("Sphere"));
   addLink(rc3);
   if(rigidContact) {
-    rc3->setContactForceLaw(new UnilateralConstraint);
-    rc3->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc3->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc3->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc3->setNormalForceLaw(new UnilateralConstraint);
+    rc3->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc3->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc3->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc3->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc3->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 
@@ -211,14 +216,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc4->connect(getContour("Line"),body4->getContour("PointStopper"));
   addLink(rc4);
   if(rigidContact) {
-    rc4->setContactForceLaw(new UnilateralConstraint);
-    rc4->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc4->setFrictionForceLaw(new PlanarCoulombFriction(mu));
-    rc4->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
+    rc4->setNormalForceLaw(new UnilateralConstraint);
+    rc4->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc4->setTangentialForceLaw(new PlanarCoulombFriction(mu));
+    rc4->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc4->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc4->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc4->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc4->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact Stopper and Cylinder (Contact-Pairing: CircleSolid-Line)
@@ -226,14 +231,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc5->connect(body->getContour("Circle"),body4->getContour("LineStopper"));
   addLink(rc5);
   if(rigidContact) {
-    rc5->setContactForceLaw(new UnilateralConstraint);
-    rc5->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc5->setFrictionForceLaw(new PlanarCoulombFriction(0));
-    rc5->setFrictionImpactLaw(new PlanarCoulombImpact(0));
+    rc5->setNormalForceLaw(new UnilateralConstraint);
+    rc5->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc5->setTangentialForceLaw(new PlanarCoulombFriction(0));
+    rc5->setTangentialImpactLaw(new PlanarCoulombImpact(0));
   } 
   else {
-    rc5->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc5->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc5->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc5->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact Stopper and CylinderHollow (Contact-Pairing: CircleSolid-Line)
@@ -241,14 +246,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc6->connect(body2->getContour("Circle2"),body4->getContour("LineStopper"));
   addLink(rc6);
   if(rigidContact) {
-    rc6->setContactForceLaw(new UnilateralConstraint);
-    rc6->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc6->setFrictionForceLaw(new PlanarCoulombFriction(0));
-    rc6->setFrictionImpactLaw(new PlanarCoulombImpact(0));
+    rc6->setNormalForceLaw(new UnilateralConstraint);
+    rc6->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc6->setTangentialForceLaw(new PlanarCoulombFriction(0));
+    rc6->setTangentialImpactLaw(new PlanarCoulombImpact(0));
   } 
   else{
-    rc6->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc6->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc6->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc6->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact Stopper and Sphere (Contact-Pairing: Sphere-Plane)
@@ -256,14 +261,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rc7->connect(body3->getContour("Sphere"),body4->getContour("PlaneStopper"));
   addLink(rc7);
   if(rigidContact) {
-    rc7->setContactForceLaw(new UnilateralConstraint);
-    rc7->setContactImpactLaw(new UnilateralNewtonImpact);
-    rc7->setFrictionForceLaw(new PlanarCoulombFriction(0));
-    rc7->setFrictionImpactLaw(new PlanarCoulombImpact(0));
+    rc7->setNormalForceLaw(new UnilateralConstraint);
+    rc7->setNormalImpactLaw(new UnilateralNewtonImpact);
+    rc7->setTangentialForceLaw(new PlanarCoulombFriction(0));
+    rc7->setTangentialImpactLaw(new PlanarCoulombImpact(0));
   } 
   else{
-    rc7->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc7->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
+    rc7->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc7->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 
@@ -276,7 +281,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy->setScaleFactor(1.);
   dummy->setMinimalColorValue(0);
   dummy->setMaximalColorValue(1);
-  dummy->setStaticColor(1);
+  dummy->setDiffuseColor(0.3333,1,0.3333);
   body->setOpenMBVRigidBody(dummy);
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
@@ -289,7 +294,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy2->setScaleFactor(1.);
   dummy2->setMinimalColorValue(0);
   dummy2->setMaximalColorValue(1);
-  dummy2->setStaticColor(0.5);
+  dummy2->setDiffuseColor(0.3333,1,0.6666);
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
@@ -298,20 +303,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy3->setScaleFactor(1.);
   dummy3->setMinimalColorValue(0);
   dummy3->setMaximalColorValue(1);
-  dummy3->setStaticColor(0.1);
+  dummy3->setDiffuseColor(0.6666,1,1);
   body3->setOpenMBVRigidBody(dummy3);
 
   OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(d);
-  cuboid->setStaticColor(0.7);
+  cuboid->setDiffuseColor(0.6666,0.6666,1);
   body4->setOpenMBVRigidBody(cuboid);
   body4->getFrame("C")->enableOpenMBV(d);
 
-  OpenMBV::CoilSpring* openMBVspring=new OpenMBV::CoilSpring;
-  openMBVspring->setSpringRadius(d/5.);
-  openMBVspring->setCrossSectionRadius(d/50.);
-  openMBVspring->setNumberOfCoils(5);
-  spring->setOpenMBVSpring(openMBVspring);
+  spring->enableOpenMBVCoilSpring(_springRadius=d/5.,_crossSectionRadius=d/50.,_numberOfCoils=5);
 
   #endif
 }
