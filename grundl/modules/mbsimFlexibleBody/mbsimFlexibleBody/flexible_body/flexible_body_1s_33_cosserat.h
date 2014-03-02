@@ -79,6 +79,8 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
+      virtual void updateJacobiansAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ), const int & deg = 3, const bool & writePsFile = false);
@@ -135,12 +137,25 @@ namespace MBSimFlexibleBody {
       void initInfo();
 
       /**
-       * \brief detect current finite element (translation)
+       * \brief detect current finite element (t
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* spineExtrusion) {
+        openMBVSpineExtrusion = spineExtrusion;
+      }
+      OpenMBV::Body* getOpenMBVSpineExtrusion() {
+        return openMBVSpineExtrusion;
+      }
+#endifranslation)
        * \param global parametrisation
        * \param local parametrisation
        * \param finite element number
        */
       void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
+      /*!
+       * \brief automatically creates its neutral contour
+       */
+      virtual Contour1sNeutralCosserat* createNeutralPhase(const std::string & contourName = "Neutral");
 
     protected:
 

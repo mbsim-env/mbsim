@@ -13,14 +13,15 @@
 namespace MBSimFlexibleBody {
   
   Contour1sNeutralLinearExternalFFR::Contour1sNeutralLinearExternalFFR(const std::string &name_) :
-      Contour1sNeutralFactory(name_, 0, 1, true), transNodes(0), nodeOffset(0), degU(3), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
+      Contour1sNeutralFactory(name_), transNodes(0), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
   }
   
-  Contour1sNeutralLinearExternalFFR::Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
-      Contour1sNeutralFactory(name_, uMin_, uMax_, openStructure_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
-
-    parent_->addContour(this);
-  }
+//  Contour1sNeutralLinearExternalFFR::Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
+//      Contour1sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
+//
+//
+//    parent_->addContour(this);
+//  }
 
   Contour1sNeutralLinearExternalFFR::~Contour1sNeutralLinearExternalFFR() {
     delete NP;
@@ -44,15 +45,15 @@ namespace MBSimFlexibleBody {
   }
 
   NeutralNurbsVelocity1s* Contour1sNeutralLinearExternalFFR::createNeutralVelocity() {
-    return new NeutralNurbsVelocity1s(parent, transNodes, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsVelocity1s(parent, transNodes, 0, uMin, uMax, degU, openStructure);
   }
 
   NeutralNurbsPosition1s* Contour1sNeutralLinearExternalFFR::createNeutralPosition() {
-    return new NeutralNurbsPosition1s(parent, transNodes, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsPosition1s(parent, transNodes, 0, uMin, uMax, degU, openStructure);
   }
 
   NeutralNurbsLocalPosition1s* Contour1sNeutralLinearExternalFFR::createNeutralLocalPosition() {
-    return new NeutralNurbsLocalPosition1s(parent, transNodes, nodeOffset, uMin, uMax, degU, openStructure);
+    return new NeutralNurbsLocalPosition1s(parent, transNodes, 0, uMin, uMax, degU, openStructure);
   }
 
   void Contour1sNeutralLinearExternalFFR::createNeutralModeShape() {
@@ -79,7 +80,7 @@ namespace MBSimFlexibleBody {
     if (stage == resize) {
       // construct contourPoint for translation nodes
       nodes.reserve(transNodes.size());
-      transContourPoints.reserve(transNodes.size());
+//      transContourPoints.reserve(transNodes.size());
 //      rotContourPoints.reserve(numOfRotNodes);
 
 //        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
@@ -93,8 +94,8 @@ namespace MBSimFlexibleBody {
 
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
 
-      for (int i = 0; i < transNodes.size(); i++)
-        transContourPoints.push_back(ContourPointData(transNodes(i)));
+//      for (int i = 0; i < transNodes.size(); i++)
+//        transContourPoints.push_back(ContourPointData(transNodes(i)));
 
       NP = createNeutralPosition();
       NLP = createNeutralLocalPosition();

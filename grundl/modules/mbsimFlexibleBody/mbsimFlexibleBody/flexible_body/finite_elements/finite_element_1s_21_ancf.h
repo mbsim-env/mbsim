@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -15,7 +15,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #ifndef _FINITE_ELEMENT_1S_21_ANCF_H_
@@ -31,19 +30,18 @@ namespace MBSimFlexibleBody {
   /**
    * \brief finite element for planar beam using Absolute Nodal Coordinate Formulation (ANCF)
    * \author Roland Zander
+   * \author Thorsten Schindler
+   *
+   * \date 2014-02-27 basic revision
    *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
+   * SHABANE, A. A.: Dynamics of Multibody Systems. Cambridge University Press (2005)
    */
   class FiniteElement1s21ANCF : public MBSim::DiscretizationInterface
   {
     public:
-      /**
-       * \brief constructor
-       */
-      FiniteElement1s21ANCF()  ;
-
       /*!
        * \brief constructor 
        * \param undeformed lenght of element
@@ -68,48 +66,51 @@ namespace MBSimFlexibleBody {
       virtual int getuSize() const { return 8; }
       virtual void computeM(const fmatvec::Vec& qElement);
       virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
+      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computedhdz): not implemented!"); }
+      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeKineticEnergy): not implemented!"); }
+      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!"); }
+      virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeElasticEnergy): not implemented!"); }
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
+      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { return JGeneralized(qElement,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setCurleRadius(double) {};
-      void setMaterialDamping(double) {};
-      void setLehrDamping(double) {};
+      void setCurlRadius(double R);
+      void setMaterialDamping(double depsilons);
+      void setLehrDamping(double D);
       /***************************************************/
 
       /**
-       * \param global positions
+       * \brief return the Cartesian position at a contour point
+       * \param generalised coordinates
        * \param contour point
-       * \return positional beam state
+       * \return Cartesian position
        */
-      fmatvec::Vec LocateBalken(fmatvec::Vec&,double&); 
+      fmatvec::Vec LocateBalken(const fmatvec::Vec& qElement, const double& s); 
 
       /**
-       * \param global positions
-       * \param global velocities
+       * \brief return the Cartesian position and velocity at a contour point
+       * \param generalised positions
+       * \param generalised velocities
        * \param contour point
-       * \return beam state
+       * \return Cartesian position and velocity
        */
-      fmatvec::Vec StateBalken (fmatvec::Vec&q,fmatvec::Vec&u,double&s); 
+      fmatvec::Vec StateBalken(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double&s); 
 
       /**
-       * \param global positions
+       * \brief return the JACOBIAN of Cartesian position with respect to generalised coordinates
+       * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of beam cross section position with respect to generalised position in local coordinates
+       * \return JACOBIAN of Cartesian position with respect to generalised coordinates
        */
-      fmatvec::Mat JGeneralized(const fmatvec::Vec& qElement,const double& s);
+      fmatvec::Mat JGeneralized(const fmatvec::Vec& qElement, const double& s);
 
     private:
       /** 
-       * \brief length, density, longitudinal and bending stiffness
+       * \brief length, line-density, longitudinal and bending stiffness
        */
       double l0, Arho, EA, EI;
 
@@ -127,8 +128,6 @@ namespace MBSimFlexibleBody {
        * \brief gravitation
        */
       fmatvec::Vec g;
-
-      double l0h2;
 
       /**
        * \brief mass matrix
@@ -149,8 +148,13 @@ namespace MBSimFlexibleBody {
        * \brief derivative of right hand side with respect to positions and velocities
        */
       fmatvec::SqrMat Dhq, Dhqp;
+      
+      /*!
+       * \brief default constructor is declared private 
+       */
+      FiniteElement1s21ANCF();
   };
 
 }
 
-#endif
+#endif /* _FINITE_ELEMENT_1S_21_ANCF_H_ */

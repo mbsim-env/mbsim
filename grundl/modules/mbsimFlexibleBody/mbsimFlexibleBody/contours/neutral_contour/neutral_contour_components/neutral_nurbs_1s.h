@@ -31,6 +31,10 @@ namespace MBSimFlexibleBody {
       MBSim::NurbsCurve curve;
       Element *parent;
       fmatvec::VecInt nodes;
+
+      /*!
+       * \brief offset between "leading" nodeset and this nodeset (e.g. used in cosserat between translational (= leading) nodeset and rotational nodeset)
+       */
       double nodeOffset;
       MatVx3 Nodelist;
       double uMin;

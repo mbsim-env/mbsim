@@ -9,8 +9,10 @@
 #include "mbsim/contact_kinematics/point_line.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-#include "mbsim/rotational_spring_damper.h"
+#include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -33,7 +35,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Mat JT(3,2);
   JT(0,0) = 1;
   JT(1,1) = 1;
-  Vec JR(3);
+  Vec3 JR;
   JR(2) = 1;
 
   // Stange -------------------------------------
@@ -45,8 +47,12 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Line *lL = new Line("LineL");
   Line *lR = new Line("LineR");
 
-  this->addContour(lL, r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(0));
-  this->addContour(lR,-r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(M_PI));
+  this->addFrame(new FixedRelativeFrame("LineL", r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(0)));
+  this->addFrame(new FixedRelativeFrame("LineR",-r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(M_PI)));
+  lL->setFrameOfReference(this->getFrame("LineL"));
+  lR->setFrameOfReference(this->getFrame("LineR"));
+  this->addContour(lL);
+  this->addContour(lR);
 
   SymMat Theta(3);
   Vec WrOS(3);
@@ -64,11 +70,11 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   this->addObject(muffe);
 
   WrOS(1) = yMuffe0;
-  this->addFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I")));
   muffe->setFrameOfReference(this->getFrame("B"));
   muffe->setFrameForKinematics(muffe->getFrame("C"));
-  muffe->setTranslation(new LinearTranslation(JT));
-  muffe->setRotation(new RotationAboutFixedAxis(JR));
+  muffe->setTranslation(new LinearTranslation<VecV>(JT));
+  muffe->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 
   muffe->setInitialGeneralizedPosition(spiel*Vec("[0.2;0.0;0.0]"));
@@ -103,18 +109,20 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
               KrSPMuffe(0) = -R/2;   KrSPMuffe(1) = -hoehe/2.;
               break;
     }
-    muffe->addContour(pMuffe,KrSPMuffe,SqrMat(3,EYE));
-    contact->setContactForceLaw  (cntForceLaw );
-    contact->setContactImpactLaw (impForceLaw );
-    contact->setFrictionForceLaw (coulFriction);
-    contact->setFrictionImpactLaw(coulImptact );
+    muffe->addFrame(new FixedRelativeFrame(name.str(),KrSPMuffe,SqrMat(3,EYE)));
+    pMuffe->setFrameOfReference(muffe->getFrame(name.str()));
+    muffe->addContour(pMuffe);
+    contact->setNormalForceLaw  (cntForceLaw );
+    contact->setNormalImpactLaw (impForceLaw );
+    contact->setTangentialForceLaw (coulFriction);
+    contact->setTangentialImpactLaw(coulImptact );
     addLink(contact);
   }
 
   // Drehpunkt der Feder
   Vec KrSPFederDrehpunkt(3);
   KrSPFederDrehpunkt(0) = FDPunkt;
-  muffe->addFrame("Drehpunkt",KrSPFederDrehpunkt,SqrMat(3,EYE));
+  muffe->addFrame(new FixedRelativeFrame("Drehpunkt",KrSPFederDrehpunkt,SqrMat(3,EYE)));
 
   // Specht --------------------------------------
   double  mSpecht = 100.e-3;
@@ -122,13 +130,13 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   RigidBody *specht = new RigidBody("Specht");
   specht->setFrameOfReference(muffe->getFrame("Drehpunkt"));
-  specht->setRotation(new RotationAboutFixedAxis(JR));
+  specht->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  specht->setRotation(new RotationAboutZAxis());
   this->addObject(specht);
 
   Vec MrDrehpunkt(3); /* wird von Schwerpunkt aus bemast */
   MrDrehpunkt(0) = -2.0 * FDPunkt;
-  specht->addFrame("D",MrDrehpunkt,SqrMat(3,EYE),specht->getFrame("C"));
+  specht->addFrame(new FixedRelativeFrame("D",MrDrehpunkt,SqrMat(3,EYE),specht->getFrame("C")));
   specht->setFrameForKinematics(specht->getFrame("D"));
 
   Vec SrSchabelspitze(3);
@@ -140,21 +148,22 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInertiaTensor(Theta);
 
   Point* schnabel = new Point("Schabel");
-  specht->addContour(schnabel,SrSchabelspitze,SqrMat(3,EYE));
+  specht->addFrame(new FixedRelativeFrame("Schabel",SrSchabelspitze,SqrMat(3,EYE)));
+  schnabel->setFrameOfReference(specht->getFrame("Schabel"));
+  specht->addContour(schnabel);
 
-  RelativeRotationalSpringDamper *feder = new RelativeRotationalSpringDamper("Drehfeder");
-  feder->connect(muffe->getFrame("Drehpunkt"),specht->getFrame("D"));
-  feder->setRelativeBody(specht);
+  GeneralizedSpringDamper *feder = new GeneralizedSpringDamper("Drehfeder");
+  feder->setRigidBody(specht);
   double cDF = 0.5;
-  feder->setForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
+  feder->setGeneralizedForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
   addLink(feder);
 
   Contact *contact = new Contact("SchnabelKontakt");
   contact->connect(schnabel,this->getContour("LineL"));
-  contact->setContactForceLaw  (cntForceLaw );
-  contact->setContactImpactLaw (impForceLaw );
-  contact->setFrictionForceLaw (coulFriction);
-  contact->setFrictionImpactLaw(coulImptact );
+  contact->setNormalForceLaw  (cntForceLaw );
+  contact->setNormalImpactLaw (impForceLaw );
+  contact->setTangentialForceLaw (coulFriction);
+  contact->setTangentialImpactLaw(coulImptact );
   addLink(contact);
 
   specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));

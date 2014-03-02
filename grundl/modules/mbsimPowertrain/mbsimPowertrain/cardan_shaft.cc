@@ -1,6 +1,8 @@
 #include <config.h>
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -68,11 +70,11 @@ namespace MBSimPowertrain {
     SrSP.init(0);
     SrSP(2) = -data.lengthInputShaft/2;
 
-    welle1->addFrame("K",SrSP,SqrMat(3,EYE));
+    welle1->addFrame(new FixedRelativeFrame("K",SrSP,SqrMat(3,EYE)));
     welle1->setFrameForKinematics(welle1->getFrame("K"));
 
     SrSP(2) = data.lengthInputShaft/2;
-    welle1->addFrame("Q",SrSP,SqrMat(3,EYE));
+    welle1->addFrame(new FixedRelativeFrame("Q",SrSP,SqrMat(3,EYE)));
 
     welle2 = new RigidBody("IntermediateShaft");
     addObject(welle2);
@@ -80,16 +82,16 @@ namespace MBSimPowertrain {
     welle2->setMass(data.massIntermediateShaft);
     welle2->setInertiaTensor(data.inertiaTensorIntermediateShaft);
 
-    welle2->setTranslation(new LinearTranslation("[0;0;1]"));
-    welle2->setRotation(new RotationAboutAxesXY);
+    welle2->setTranslation(new TranslationAlongZAxis<VecV>);
+    welle2->setRotation(new RotationAboutAxesXY<VecV>);
     welle2->setFrameOfReference(welle1->getFrame("Q"));
     SrSP.init(0);
     SrSP(2) = -data.lengthIntermediateShaft/2;
-    welle2->addFrame("K",SrSP,SqrMat(3,EYE));
+    welle2->addFrame(new FixedRelativeFrame("K",SrSP,SqrMat(3,EYE)));
     welle2->setFrameForKinematics(welle2->getFrame("K"));
 
     SrSP(2) = data.lengthIntermediateShaft/2;
-    welle2->addFrame("Q",SrSP,BasicRotAKIz(M_PI/2));
+    welle2->addFrame(new FixedRelativeFrame("Q",SrSP,BasicRotAKIz(M_PI/2)));
 
     welle3 = new RigidBody("OutputShaft");
     addObject(welle3);
@@ -100,20 +102,20 @@ namespace MBSimPowertrain {
     SrSP.init(0);
     SrSP(2) = -data.lengthOutputShaft/2;
 
-    welle3->setRotation(new RotationAboutAxesXY);
+    welle3->setRotation(new RotationAboutAxesXY<VecV>);
     welle3->setFrameOfReference(welle2->getFrame("Q"));
-    welle3->addFrame("K",SrSP,SqrMat(3,EYE));
+    welle3->addFrame(new FixedRelativeFrame("K",SrSP,SqrMat(3,EYE)));
     welle3->setFrameForKinematics(welle3->getFrame("K"));
 
     SrSP(2) = data.lengthOutputShaft/2;
-    welle3->addFrame("Q",SrSP,SqrMat(3,EYE));
+    welle3->addFrame(new FixedRelativeFrame("Q",SrSP,SqrMat(3,EYE)));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Frustum *cylinder = new OpenMBV::Frustum;
     cylinder->setBaseRadius(data.radiusInputShaft);
     cylinder->setTopRadius(data.radiusInputShaft);
     cylinder->setHeight(data.lengthInputShaft);
-    cylinder->setStaticColor(0.3);
+    cylinder->setDiffuseColor(0.3,1,1);
     welle1->setOpenMBVRigidBody(cylinder);
     cylinder -> setInitialTranslation(0,0,data.lengthInputShaft/2);
     cylinder -> setInitialRotation(0,0,0);
@@ -122,7 +124,7 @@ namespace MBSimPowertrain {
     cylinder->setBaseRadius(data.radiusIntermediateShaft);
     cylinder->setTopRadius(data.radiusIntermediateShaft);
     cylinder->setHeight(data.lengthIntermediateShaft);
-    cylinder->setStaticColor(0.5);
+    cylinder->setDiffuseColor(0.5,1,1);
     welle2->setOpenMBVRigidBody(cylinder);
     cylinder -> setInitialTranslation(0,0,data.lengthIntermediateShaft/2);
     cylinder -> setInitialRotation(0,0,0);
@@ -131,7 +133,7 @@ namespace MBSimPowertrain {
     cylinder->setBaseRadius(data.radiusOutputShaft);
     cylinder->setTopRadius(data.radiusOutputShaft);
     cylinder->setHeight(data.lengthOutputShaft);
-    cylinder->setStaticColor(0.7);
+    cylinder->setDiffuseColor(0.7,1,1);
     welle3->setOpenMBVRigidBody(cylinder);
     cylinder -> setInitialTranslation(0,0,data.lengthOutputShaft/2);
     cylinder -> setInitialRotation(0,0,0);

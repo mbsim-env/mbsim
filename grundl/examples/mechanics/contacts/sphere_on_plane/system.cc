@@ -6,6 +6,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -21,9 +22,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  addFrame("Os",Vec(3),SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("Os",Vec(3),SqrMat(3,EYE)));
 
-  Plane *plane = new Plane("Plane");
   double phi = M_PI/2;
   SqrMat AWK(3);
   AWK(0,0) = cos(phi);
@@ -31,7 +31,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
-  addContour(plane,Vec(3),AWK);
+  addFrame(new FixedRelativeFrame("Plane",Vec(3),AWK));
+  addContour(new Plane("Plane",getFrame("Plane")));
 
   RigidBody* body = new RigidBody("Body");
   addObject(body);
@@ -39,9 +40,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameOfReference(getFrame("I"));
   body->setFrameForKinematics(body->getFrame("C"));
 
-  Mat J("[1,0,0;0,1,0;0,0,1]");
-  body->setTranslation(new LinearTranslation(J));
-  body->setRotation(new CardanAngles);
+  body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  body->setRotation(new RotationAboutAxesXYZ<VecV>);
   double m = 0.1;
   double r = 0.1;
   Vec q0(6);
@@ -66,15 +66,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sphere->enableOpenMBV();
 #endif
-  body->addContour(sphere,Vec(3),SqrMat(3,EYE));
+  body->addContour(sphere);
 
   Contact *cnf = new Contact("Contact");
-  cnf->setContactForceLaw(new UnilateralConstraint);
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-  //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e-6,100));
-  //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
-  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.1));
-  cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.1));
+  cnf->setNormalForceLaw(new UnilateralConstraint);
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+  //cnf->setNormalForceLaw(new LinearRegularizedUnilateralConstraint(1e-6,100));
+  //cnf->setTangentialForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  cnf->setTangentialForceLaw(new SpatialCoulombFriction(0.1));
+  cnf->setTangentialImpactLaw(new SpatialCoulombImpact(0.1));
   cnf->connect(getContour("Plane"), body->getContour("Sphere"));
   // cnf->setFrictionCoefficient(0.3);
   //cnf->setPlotLevel(2);

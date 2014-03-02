@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimControl/obsolet_hint.h"
 #include "mbsimControl/defines.h"
 
 using namespace std;
@@ -45,7 +44,7 @@ namespace MBSimControl {
   void SignalProcessingSystem::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (inputSignalString!="")
-        setInputSignal(getByPath<Signal>(process_signal_string(inputSignalString)));
+        setInputSignal(getByPath<Signal>(inputSignalString));
       Link::init(stage);
     }
     else

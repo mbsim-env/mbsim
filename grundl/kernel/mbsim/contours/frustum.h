@@ -22,6 +22,10 @@
 
 #include "mbsim/contour.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
 namespace MBSim {
 
   /**
@@ -36,7 +40,11 @@ namespace MBSim {
        * \brief constructor with contact from inside
        * \param name of contour
        */
-      Frustum(const std::string &name="") : RigidContour(name), h(0.), outCont(false) {}
+      Frustum(const std::string &name="", Frame *R=0) : RigidContour(name,R), h(0.), outCont(false) {}
+
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(false) {}
+
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=0) : RigidContour(name,R), r(r_), h(h_), outCont(outCont_) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum"; }
@@ -64,7 +72,10 @@ namespace MBSim {
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVFrustum ombv(1,1,1,diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV(); 
+      }
 #endif
       
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);

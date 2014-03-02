@@ -9,8 +9,8 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>0</mass>
       <inertiaTensor>0*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
+      <generalTranslation/>
+      <timeDependentRotation>
         <TimeDependentRotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
           <rotationalFunction>
@@ -24,7 +24,7 @@
             </Function1_SS_from_VS>
           </rotationalFunction>
         </TimeDependentRotationAboutFixedAxis>
-      </rotation>
+      </timeDependentRotation>
       <guidingVelocityOfRotation>
         <TimeDependentGuidingVelocity xmlns="http://mbsim.berlios.de/MBSim">
           <guidingVelocityFunction>
@@ -98,14 +98,14 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>3.25</mass>
       <inertiaTensor>1e-3*eye(3)</inertiaTensor>
-      <translation>
+      <stateDependentTranslation>
         <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
-      </translation>
-      <rotation>
+      </stateDependentTranslation>
+      <stateDependentRotation>
         <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
-      </rotation>
+      </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="fA">
           <enableOpenMBV>
@@ -150,10 +150,10 @@
       <frameForKinematics ref="Frame[fA]"/>
       <mass>3.25</mass>
       <inertiaTensor>1e-3*eye(3)</inertiaTensor>
-      <translation/>
-      <rotation>
+      <generalTranslation/>
+      <stateDependentRotation>
         <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
-      </rotation>
+      </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="fA">
           <enableOpenMBV>

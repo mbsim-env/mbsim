@@ -24,11 +24,16 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+#endif
+
 namespace MBSim {
 
   class KinematicExcitation : public LinkMechanics {
     protected:
-      Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func;
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
       RigidBody* body;
       Frame C;
     public:
@@ -48,16 +53,24 @@ namespace MBSim {
       void calcgSize(int j);
       void calcgdSize(int j);
 
-      void setForceFunction(Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func_) { func=func_; }
+      void setForceFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV(); 
+      }
+      void setOpenMBVForce(OpenMBV::Arrow *arrow) { FArrow=arrow; }
 
       /** \brief Visualize a moment arrow */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV(); 
+      }
+      void setOpenMBVMoment(OpenMBV::Arrow *arrow) { MArrow=arrow; }
 #endif
 
     protected:
@@ -67,14 +80,11 @@ namespace MBSim {
 
   };
 
-  class TimeDependentKinematicExcitation : public KinematicExcitation {
+  class GeneralizedPositionExcitation : public KinematicExcitation {
     protected:
-      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
-      Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func;
-      RigidBody* body;
-      Frame C;
+      fmatvec::Function<fmatvec::VecV(double)> *f;
     public:
-      TimeDependentKinematicExcitation(const std::string &name) : KinematicExcitation(name) {}
+      GeneralizedPositionExcitation(const std::string &name) : KinematicExcitation(name) {}
 
       void calcxSize();
 
@@ -83,19 +93,16 @@ namespace MBSim {
       void updategd(double t);
       void updatewb(double t, int i=0);
 
-      std::string getType() const { return "TimeDependentKinematicExcitation"; }
+      std::string getType() const { return "GeneralizedPositionExcitation"; }
 
-      void setGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
-      void setFirstDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
-      void setSecondDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
   };
 
-  class StateDependentKinematicExcitation : public KinematicExcitation {
+  class GeneralizedVelocityExcitation : public KinematicExcitation {
     protected:
-      Function1<fmatvec::VecV,fmatvec::Vec> *f;
-      Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec> *fd; 
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
     public:
-      StateDependentKinematicExcitation(const std::string &name) : KinematicExcitation(name) {}
+      GeneralizedVelocityExcitation(const std::string &name) : KinematicExcitation(name) {}
 
       void calcxSize();
 
@@ -104,10 +111,31 @@ namespace MBSim {
       void updategd(double t);
       void updatewb(double t, int i=0);
 
-      std::string getType() const { return "StateDependentKinematicExcitation"; }
+      std::string getType() const { return "GeneralizedVelocityExcitation"; }
 
-      void setGeneralizedVelocityFunction(Function1<fmatvec::VecV,fmatvec::Vec>* f_) { f = f_;}
-      void setFirstDerivativeOfGeneralizedVelocityFunction(Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec>* fd_) { fd = fd_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV>(f_);}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV>(f_);}
+  };
+
+  class GeneralizedAccelerationExcitation : public KinematicExcitation {
+    protected:
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
+    public:
+      GeneralizedAccelerationExcitation(const std::string &name) : KinematicExcitation(name) {}
+
+      void calcxSize();
+
+      void updatexd(double t);
+      void updateg(double t);
+      void updategd(double t);
+      void updatewb(double t, int i=0);
+
+      std::string getType() const { return "GeneralizedAccelerationExcitation"; }
+
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV>(f_);}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV>(f_);}
   };
 
 }

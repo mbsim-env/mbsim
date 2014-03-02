@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim" xmlns:ombv="http://openmbv.berlios.de/OpenMBV" xmlns:ctl="http://mbsim.berlios.de/MBSimControl" xmlns:flex="http://mbsim.berlios.de/MBSimFlexibleBody" xmlns:hyd="http://mbsim.berlios.de/MBSimHydraulics" xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator" xmlns:param="http://openmbv.berlios.de/MBXMLUtils/parameter" xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" xmlns:ns_1="http://openmbv.berlios.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
+<DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim" xmlns:ombv="http://openmbv.berlios.de/OpenMBV" xmlns:ctl="http://mbsim.berlios.de/MBSimControl" xmlns:flex="http://mbsim.berlios.de/MBSimFlexibleBody" xmlns:hyd="http://mbsim.berlios.de/MBSimHydraulics" xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator" xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" xmlns:ns_1="http://openmbv.berlios.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
     <frames />
     <contours />
     <groups />
@@ -25,33 +25,33 @@
                     </pv:row>
                 </pv:xmlMatrix>
             </inertiaTensor>
-            <translation>
-                <StateDependentTranslation>
-                    <translationFunction>
-                        <SymbolicFunction1_VV arg1name="x" arg1dim="1">[x;-c*x^2;0]</SymbolicFunction1_VV>
-                    </translationFunction>
-                </StateDependentTranslation>
-            </translation>
-            <rotation>
-                <StateDependentRotationAboutFixedAxis>
-                    <axisOfRotation unit="-">
-                        <pv:xmlVector>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>1</pv:ele>
-                        </pv:xmlVector>
-                    </axisOfRotation>
-                    <rotationalFunction>
-                        <SymbolicFunction1_SV arg1name="x" arg1dim="1">atan(-c*2*x)</SymbolicFunction1_SV>
-                    </rotationalFunction>
-                </StateDependentRotationAboutFixedAxis>
-            </rotation>
+            <stateDependentTranslation>
+              <SymbolicFunction arg1="x" arg1Dim="1">[x;-c*x^2;0]</SymbolicFunction>
+            </stateDependentTranslation>
+            <stateDependentRotation>
+              <NestedFunction>
+                <outerFunction>
+                  <RotationAboutFixedAxis>
+                      <axisOfRotation unit="-">
+                          <pv:xmlVector>
+                              <pv:ele>0</pv:ele>
+                              <pv:ele>0</pv:ele>
+                              <pv:ele>1</pv:ele>
+                          </pv:xmlVector>
+                      </axisOfRotation>
+                  </RotationAboutFixedAxis>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction arg1="x" arg1Dim="1">atan(-c*2*x)</SymbolicFunction>
+                </innerFunction>
+              </NestedFunction>
+            </stateDependentRotation>
+            <translationDependentRotation>true</translationDependentRotation>
             <frames />
             <contours />
             <openMBVRigidBody>
                 <ns_1:Cube name="NOTSET">
                     <?OPENMBV_ID 4?>
-                    <ns_1:staticColor unit="-">0</ns_1:staticColor>
                     <ns_1:initialTranslation unit="m">
                         <pv:xmlVector>
                             <pv:ele>0</pv:ele>
@@ -75,74 +75,38 @@
                 <size unit="m">1</size>
                 <offset unit="-">1</offset>
             </enableOpenMBVFrameC>
-            <openMBVWeightArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 4?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVWeightArrow>
-            <openMBVJointForceArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 4?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVJointForceArrow>
+            <enableOpenMBVWeight>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVWeight>
+            <enableOpenMBVJointForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointForce>
         </RigidBody>
-        <StateDependentKinematicConstraint name="KinematicConstraint2">
-            <initialGeneralizedPosition>
+        <GeneralizedVelocityConstraint name="KinematicConstraint2">
+            <dependentRigidBody ref="../Object[RigidBody1]" />
+            <enableOpenMBVForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVForce>
+            <enableOpenMBVMoment>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVMoment>
+            <initialState>
                 <pv:xmlVector>
                     <pv:ele>-l/2</pv:ele>
                 </pv:xmlVector>
-            </initialGeneralizedPosition>
-            <dependentRigidBody ref="../Object[RigidBody1]" />
-            <openMBVConstraintForceArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 6?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVConstraintForceArrow>
-            <openMBVConstraintMomentArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 6?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVConstraintMomentArrow>
-            <generalizedVelocityFunction>
-                <SymbolicFunction1_VV arg1name="q" arg1dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction1_VV>
-            </generalizedVelocityFunction>
-        </StateDependentKinematicConstraint>
+            </initialState>
+            <stateDependentConstraintFunction>
+              <SymbolicFunction arg1="q" arg1Dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction>
+            </stateDependentConstraintFunction>
+        </GeneralizedVelocityConstraint>
     </objects>
     <links />
     <observers>
         <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
             <frame ref="../Object[RigidBody1]/Frame[C]" />
-            <openMBVVelocityArrow>
-                <ns_1:Arrow name="dummy">
-                    <?OPENMBV_ID 7?>
-                    <ns_1:diameter unit="m">0.1</ns_1:diameter>
-                    <ns_1:headDiameter unit="m">0.2</ns_1:headDiameter>
-                    <ns_1:headLength unit="m">0.2</ns_1:headLength>
-                    <ns_1:type>&quot;toHead&quot;</ns_1:type>
-                    <ns_1:referencePoint>&quot;fromPoint&quot;</ns_1:referencePoint>
-                    <ns_1:scaleLength unit="-">0.1</ns_1:scaleLength>
-                </ns_1:Arrow>
-            </openMBVVelocityArrow>
+            <enableOpenMBVVelocity>
+               <scaleLength unit="-">0.1</scaleLength>
+            </enableOpenMBVVelocity>
         </AbsoluteKinematicsObserver>
     </observers>
     <enableOpenMBVFrameI>

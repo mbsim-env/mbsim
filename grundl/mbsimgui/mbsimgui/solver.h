@@ -26,8 +26,8 @@
 
 class Environment : public QObject {
   public:
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
     static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
   protected:
@@ -44,13 +44,11 @@ class Solver : public Group {
     Solver(const std::string &str, Element *parent);
     virtual Element* clone() const {return new Solver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }
 
-    static Solver* readXMLFile(const std::string &filename);
-    void writeXMLFile(const std::string &name);
-    void writeXMLFile() { writeXMLFile(getName()); }
+    static Solver* readXMLFile(const std::string &filename, Element *parent=0);
 
     ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new SolverContextMenu(this);}

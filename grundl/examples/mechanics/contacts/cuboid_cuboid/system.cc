@@ -1,13 +1,14 @@
 #include "system.h"
 #include "mbsim/contact.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/utils/function.h"
+#include "fmatvec/function.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #include "openmbvcppinterface/ivbody.h"
 #include "openmbvcppinterface/cube.h"
@@ -47,8 +48,8 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     cout << nameBody.str()<<endl;
 
     body[i] = new RigidBody(nameBody.str());
-    body[i]->setTranslation(new TranslationInXYZDirection);
-    body[i]->setRotation(new CardanAngles);
+    body[i]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    body[i]->setRotation(new RotationAboutAxesXYZ<VecV>);
     addObject(body[i]);
     body[i]->setMass(m);
     SymMat Theta(3);
@@ -82,10 +83,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     stringstream nameContact;
     nameContact << "ContactGround" << i;
     Contact *cnf = new Contact(nameContact.str());
-    cnf->setContactForceLaw(new UnilateralConstraint);
-    cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf->setNormalForceLaw(new UnilateralConstraint);
+    cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     cnf->connect(getContour("Ground"), body[i]->getContour("Cuboid"));
     addLink(cnf);
 
@@ -93,10 +94,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
       stringstream nameContact;
       nameContact << "ContactCuboid" << i << j;
       Contact *cnf = new Contact(nameContact.str());
-      cnf->setContactForceLaw(new UnilateralConstraint);
-      cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-      cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-      cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+      cnf->setNormalForceLaw(new UnilateralConstraint);
+      cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+      cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
       cnf->connect(body[j]->getContour("Cuboid"), body[i]->getContour("Cuboid"));
       addLink(cnf);
     }

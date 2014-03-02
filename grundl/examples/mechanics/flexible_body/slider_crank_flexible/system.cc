@@ -8,6 +8,8 @@
 #include "mbsim/environment.h"
 #include "mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_linear_external_FFR.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
+#include <mbsim/functions/kinematic_functions.h>
+#include <mbsim/functions/kinetic_functions.h>
 // Beginning Contact
 #include "mbsim/rigid_body.h"
 #include "mbsim/contour.h"
@@ -31,13 +33,13 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class Moment : public Function1<fmatvec::Vec, double> {
+class Moment : public Function<fmatvec::VecV(double)> {
   public:
-    fmatvec::Vec operator()(const double& t, const void * = NULL) {
+    fmatvec::VecV operator()(const double& t) {
       double t0 = 0.05;
       double t1 = 0.1;
       double M0 = 20;
-      Vec M(1);
+      VecV M(1);
       if (t < t0)
         M(0) = t * M0 / t0;
       else if (t < t1)
@@ -90,7 +92,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   crank->setFrameForKinematics(kinematicsFrameCrank);
   kinematicsFrameCrank->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
-  crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  crank->setRotation(new RotationAboutZAxis<VecV>());
   crank->setInitialGeneralizedVelocity(0.);
 
   double mass_crank = 2; //0.038; // m1
@@ -144,7 +146,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   ncc->setAlphaStart(Vec(2, INIT, 0));
   ncc->setAlphaEnd(Vec(2, INIT, 1));
 
-  if(1) {
+  if (1) {
     // enable plotting of all nodal frames
     rod->enableFramePlot(1e-3);
   }
@@ -175,7 +177,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   piston->setFrameOfReference(pistonRef);
 //  piston->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
-  piston->setTranslation(new LinearTranslation(Mat("[1;0;0]")));
+  piston->setTranslation(new TranslationAlongXAxis<VecV>());
   piston->setMass(mass_piston);
 
   // inertial properties
@@ -198,27 +200,22 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   /* Excitation of the crank */
   KineticExcitation *load = new KineticExcitation("Motor");
   addLink(load);
-  load->setMoment("[0;0;1]", new Moment);
+  load->setMomentFunction(new Moment);
+  load->setMomentDirection(Mat("[0;0;1]"));
   load->connect(kinematicsFrameCrank);
 
   Contact * contactCrankRod = new Contact("CrankRodContact");
   addLink(contactCrankRod);
   if (0) {
-    contactCrankRod->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7, 0.)));
+    contactCrankRod->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7, 0.)));
   }
   else {
-    contactCrankRod->setContactForceLaw(new UnilateralConstraint());
-    contactCrankRod->setContactImpactLaw(new UnilateralNewtonImpact(0.));
+    contactCrankRod->setNormalForceLaw(new UnilateralConstraint());
+    contactCrankRod->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
   }
   contactCrankRod->enableOpenMBVContactPoints(1e-5);
 
-  OpenMBV::Arrow * normalForceArrow = new OpenMBV::Arrow;
-  normalForceArrow->setDiameter(0.001);
-  normalForceArrow->setHeadLength(0.002);
-  normalForceArrow->setHeadDiameter(0.002);
-  normalForceArrow->setScaleLength(0.0001);
-  normalForceArrow->setDiffuseColor(360. / 360., 255. / 255., 125. / 255.);
-  contactCrankRod->setOpenMBVNormalForceArrow(normalForceArrow);
+  contactCrankRod->enableOpenMBVNormalForce();
 
   //Add contact to crank
   Vec3 cylinderCenterPos;
@@ -268,10 +265,8 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   addLink(joint_rod_piston);
   joint_rod_piston->setForceDirection("[1,0,0;0,1,0;0,0,1]");
   joint_rod_piston->setForceLaw(new BilateralConstraint());
-  joint_rod_piston->setImpactForceLaw(new BilateralImpact());
   joint_rod_piston->setMomentDirection("[1,0;0,1;0,0]");
   joint_rod_piston->setMomentLaw(new BilateralConstraint());
-  joint_rod_piston->setImpactMomentLaw(new BilateralImpact());
   joint_rod_piston->connect(piston->getFrameC(), rodRefSmallEnd);
 
   // The Rod could also just be fixed at two relative frames
@@ -280,10 +275,8 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     addLink(joint_crank_rod);
     joint_crank_rod->setForceDirection("[1,0,0;0,1,0;0,0,1]");
     joint_crank_rod->setForceLaw(new BilateralConstraint());
-    joint_crank_rod->setImpactForceLaw(new BilateralImpact());
     joint_crank_rod->setMomentDirection("[0,0;1,0;0,1]");
     joint_crank_rod->setMomentLaw(new BilateralConstraint());
-    joint_crank_rod->setImpactMomentLaw(new BilateralImpact());
     joint_crank_rod->connect(rod->getFloatingFrameOfReference(), cylinderRef);
   }
 

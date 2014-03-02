@@ -220,11 +220,14 @@ void BodyContextContextMenu::addRigidBody() {
 }
 
 ConstraintContextContextMenu::ConstraintContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-  QAction *action = new QAction("Add time dependent kinematic constraint", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addTimeDependentKinematicConstraint()));
+  QAction *action = new QAction("Add generalized position constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionConstraint()));
   addAction(action);
-  action = new QAction("Add state dependent kinematic constraint", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addStateDependentKinematicConstraint()));
+  action = new QAction("Add generalized velocity constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocityConstraint()));
+  addAction(action);
+  action = new QAction("Add generalized acceleration constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
   addAction(action);
   action = new QAction("Add gear constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
@@ -238,12 +241,16 @@ void ConstraintContextContextMenu::addGearConstraint() {
   mw->addObject(new GearConstraint("GearConstraint",element));
 }
 
-void ConstraintContextContextMenu::addTimeDependentKinematicConstraint() {
-  mw->addObject(new TimeDependentKinematicConstraint("KinematicConstraint",element));
+void ConstraintContextContextMenu::addGeneralizedPositionConstraint() {
+  mw->addObject(new GeneralizedPositionConstraint("GeneralizedPositionConstraint",element));
 }
 
-void ConstraintContextContextMenu::addStateDependentKinematicConstraint() {
-  mw->addObject(new StateDependentKinematicConstraint("KinematicConstraint",element));
+void ConstraintContextContextMenu::addGeneralizedVelocityConstraint() {
+  mw->addObject(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint",element));
+}
+
+void ConstraintContextContextMenu::addGeneralizedAccelerationConstraint() {
+  mw->addObject(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint",element));
 }
 
 void ConstraintContextContextMenu::addJointConstraint() {
@@ -257,6 +264,12 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString 
   action = new QAction("Add spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   addAction(action);
+  action = new QAction("Add directional spring damper", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
+  addAction(action);
+  action = new QAction("Add relative rotational spring damper", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
+  addAction(action);
   action = new QAction("Add joint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
   addAction(action);
@@ -268,6 +281,9 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString 
   addAction(action);
   QMenu *menu = new SignalContextContextMenu(element, "Add signal");
   addMenu(menu);
+  action = new QAction("Add linear transfer system", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
+  addAction(action);
 }
 
 void LinkContextContextMenu::addKineticExcitation() {
@@ -276,6 +292,14 @@ void LinkContextContextMenu::addKineticExcitation() {
 
 void LinkContextContextMenu::addSpringDamper() {
   mw->addLink(new SpringDamper("SpringDamper",element));
+}
+
+void LinkContextContextMenu::addDirectionalSpringDamper() {
+  mw->addLink(new DirectionalSpringDamper("DirectionalSpringDamper",element));
+}
+
+void LinkContextContextMenu::addGeneralizedSpringDamper() {
+  mw->addLink(new GeneralizedSpringDamper("GeneralizedSpringDamper",element));
 }
 
 void LinkContextContextMenu::addJoint() {
@@ -293,6 +317,10 @@ void LinkContextContextMenu::addActuator() {
 void LinkContextContextMenu::addSignal() {
   SignalContextContextMenu menu(element);
   menu.exec(QCursor::pos());
+}
+
+void LinkContextContextMenu::addLinearTransferSystem() {
+  mw->addLink(new LinearTransferSystem("LTS",element));
 }
 
 ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

@@ -33,7 +33,7 @@ namespace MBSim {
       DampingFunction(), kmax(kmax_) {
   }
 
-  double StandardDampingFunction::operator ()(const Vec & x, const fmatvec::Vec & dx, const void *) {
+  double StandardDampingFunction::operator ()(const Vec &x, const fmatvec::Vec &dx) {
     double alpha = 1;
     Vec xnew = x.copy();
 

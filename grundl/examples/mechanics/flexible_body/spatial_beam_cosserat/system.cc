@@ -7,6 +7,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
+#include <mbsim/functions/kinematic_functions.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 // End Contact
 #include "mbsim/environment.h"
@@ -77,27 +78,12 @@ System::System(const string &projectName) :
   rod->setu0(Vec(q0.size(), INIT, 0.));
   this->addObject(rod);
 
-  // add neutral contour to the rod
-  std::vector<int> transNodes(elements);
-  std::vector<int> rotNodes(elements);
-  for (int i = 0; i < elements; i++) {
-    transNodes[i] = i;
-    rotNodes[i] = i;
-  }
-  double uMin = 0;  // uMin has to be 0, otherwise Nurbscurve:globalInterpClosed():inv() fails;
-  double uMax = 1;
-  int degU = 3;
-  bool openStructure = false;
-  double nodeOffset = 0.5 * (uMax - uMin) / elements;
-  Contour1sNeutralCosserat* ncc = new Contour1sNeutralCosserat("neutralFibre", rod, transNodes, rotNodes, nodeOffset, uMin, uMax, degU, openStructure);
-  ncc->setFrameOfReference(rod->getFrameOfReference());
-  ncc->setAlphaStart(uMin);
-  ncc->setAlphaEnd(uMax);
+  Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(elements * 4 + 1);
-  cuboid->setStaticColor(0.5);
+  cuboid->setDiffuseColor(0.8, 1, 1);
   cuboid->setScaleFactor(1.);
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>;
   OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
@@ -109,20 +95,14 @@ System::System(const string &projectName) :
   OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
   cuboid->setContour(rectangle);
-  rod->setOpenMBVSpineExtrusion(cuboid, ncc);
+  rodCont->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
   FlexibleBand * top = new FlexibleBand("Top");
   top->setWidth(b0);
-  top->setNormalDistance(0.5*b0);
+  top->setNormalDistance(0.5 * b0);
   top->setCn(Vec("[1.;0.]"));
-  top->setNeutral(ncc);
-  top->setAlphaStart(uMin);
-  top->setAlphaEnd(uMax);
-  Vec contourNodes(elements + 1);
-  for (int i = 0; i <= elements; i++)
-    contourNodes(i) = (uMax - uMin) / elements * i;
-  top->setNodes(contourNodes);
+  top->setNeutral(rodCont);
 
   rod->addContour(top);
 
@@ -135,7 +115,7 @@ System::System(const string &projectName) :
   Vec WrOS0B(3, INIT, 0.);
   WrOS0B(0) = 0;
   WrOS0B(1) = R + r + 0.1;
-  this->addFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
@@ -144,7 +124,7 @@ System::System(const string &projectName) :
   Theta(1, 1) = 2. / 5. * mass * r * r;
   Theta(2, 2) = 2. / 5. * mass * r * r;
   ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearTranslation(Mat(3, 3, EYE)));
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
 
   Vec3 u0;
   u0(1) = -10;
@@ -153,38 +133,25 @@ System::System(const string &projectName) :
   MBSim::Point *point = new MBSim::Point("Point");
   Vec BR(3, INIT, 0.);
   BR(1) = -r;
-  ball->addContour(point, BR, SqrMat(3, EYE), ball->getFrame("C"));
+  ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addContour(point);
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
   sphere->setRadius(r);
-  sphere->setStaticColor(0.5);
+  sphere->setDiffuseColor(0.5, 1, 1);
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
   Contact *contact = new Contact("Contact");
-  contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7,0.)));
-//  contact->setContactForceLaw(new UnilateralConstraint);
-//  contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
-  /********************* changed heare ********************/
-//contact->connect(ball->getContour("Point"),rod->getContour("Top"));
-  contact->connect(ball->getContour("Point"), top);
-  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
-//a_n->setHeadDiameter(tP*0.05);
-//a_n->setHeadLength(tP*0.07);
-//a_n->setDiameter(tP*0.02);
-//a_n->setScaleLength(tP*0.1);
-//a_n->setEnable(false);
-  contact->setOpenMBVNormalForceArrow(a_n);
-  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
-//a_t->setHeadDiameter(tP*0.05);
-//a_t->setHeadLength(tP*0.07);
-//a_t->setDiameter(tP*0.02);
-//a_t->setScaleLength(tP*0.1);
-//a_t->setEnable(false);
-  contact->setOpenMBVFrictionArrow(a_t);
-  contact->enableOpenMBVContactPoints();
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+  contact->connect(ball->getContour("Point"), rod->getContour("Top"));
+  contact->enableOpenMBVNormalForce();
+  contact->enableOpenMBVTangentialForce();
+  contact->enableOpenMBVContactPoints(1e-2);
 
   this->addLink(contact);
 

@@ -6,6 +6,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -18,10 +19,12 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+System::System(const string &projectName) :
+    DynamicSystemSolver(projectName) {
 
   // acceleration of gravity
-  Vec grav(3,INIT,0.); grav(1) = -9.81;
+  Vec grav(3, INIT, 0.);
+  grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // input flexible ring
@@ -30,15 +33,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double rho = 2.5e3; // density alu
   int elements = 20; // number of finite elements
   double b0 = 0.02; // width
-  double A = b0*b0; // cross-section area
-  double I = 1./12.*b0*b0*b0*b0; // moment inertia
+  double A = b0 * b0; // cross-section area
+  double I = 1. / 12. * b0 * b0 * b0 * b0; // moment inertia
 
   // input infty-norm balls (cuboids)
   int nBalls = 80; // number of balls
   double mass = 0.025; // mass of ball
 
   // flexible ring
-  rod = new FlexibleBody1s21RCM("Rod",false);
+  rod = new FlexibleBody1s21RCM("Rod", false);
   rod->setLength(l0);
   rod->setEModul(E);
   rod->setCrossSectionalArea(A);
@@ -46,22 +49,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setDensity(rho);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
-  rod->initRelaxed(M_PI/2.);
+  rod->initRelaxed(M_PI / 2.);
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
-  cuboid->setNumberOfSpinePoints(elements*4); // resolution of visualisation
-  cuboid->setStaticColor(0.5); // color in (minimalColorValue, maximalColorValue)
+  OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
+  cuboid->setNumberOfSpinePoints(elements * 4); // resolution of visualisation
+  cuboid->setDiffuseColor(0.8, 1., 1.); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0*0.5,b0*0.5,1);
+  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0*0.5,-b0*0.5,1);
+  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0*0.5,-b0*0.5,1);
+  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0*0.5,b0*0.5,1);
+  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
@@ -70,43 +73,52 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // balls
   assert(nBalls>1);
-  double d = 7.*l0/(8.*nBalls); // thickness
-  double b = b0*1.5; // height / width
+  double d = 7. * l0 / (8. * nBalls); // thickness
+  double b = b0 * 1.5; // height / width
 
-  for(int i=0;i<nBalls;i++) {
+  for (int i = 0; i < nBalls; i++) {
     stringstream name;
     name << "Element_" << i;
     RigidBody *ball = new RigidBody(name.str());
     balls.push_back(ball);
     balls[i]->setFrameOfReference(this->getFrame("I"));
     balls[i]->setFrameForKinematics(balls[i]->getFrame("C"));
-    balls[i]->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
-    balls[i]->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    balls[i]->setTranslation(new TranslationAlongAxesXY<VecV>);
+    balls[i]->setRotation(new RotationAboutZAxis<VecV>);
     balls[i]->setMass(mass);
-    SymMat Theta(3,INIT,0.);
-    Theta(0,0) = 1./6.*mass*b*b;
-    Theta(1,1) = 1./12.*mass*(d*d + b*b);
-    Theta(2,2) = 1./12.*mass*(d*d + b*b);
+    SymMat Theta(3, INIT, 0.);
+    Theta(0, 0) = 1. / 6. * mass * b * b;
+    Theta(1, 1) = 1. / 12. * mass * (d * d + b * b);
+    Theta(2, 2) = 1. / 12. * mass * (d * d + b * b);
     balls[i]->setInertiaTensor(Theta);
     this->addObject(balls[i]);
 
     Point *pt = new Point("COG");
-    balls[i]->addContour(pt,Vec(3,INIT,0.),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addContour(pt);
 
     Point *tP = new Point("topPoint");
-    balls[i]->addContour(tP,d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("topPoint", d * Vec("[0.5;0;0]") + b * Vec("[0;0.5;0]"), SqrMat(3, EYE), balls[i]->getFrame("C")));
+    tP->setFrameOfReference(balls[i]->getFrame("topPoint"));
+    balls[i]->addContour(tP);
 
     Point *bP = new Point("bottomPoint");
-    balls[i]->addContour(bP,d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C"));
+    balls[i]->addFrame(new FixedRelativeFrame("bottomPoint", d * Vec("[0.5;0;0]") - b * Vec("[0;0.5;0]"), SqrMat(3, EYE), balls[i]->getFrame("C")));
+    bP->setFrameOfReference(balls[i]->getFrame("bottomPoint"));
+    balls[i]->addContour(bP);
 
     Plane *plane = new Plane("Plane");
-    SqrMat trafoPlane(3,INIT,0.); trafoPlane(0,0) = -1.; trafoPlane(1,1) = 1.; trafoPlane(2,2) = -1.;
-    balls[i]->addContour(plane,-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C"));
+    SqrMat trafoPlane(3, INIT, 0.);
+    trafoPlane(0, 0) = -1.;
+    trafoPlane(1, 1) = 1.;
+    trafoPlane(2, 2) = -1.;
+    balls[i]->addFrame(new FixedRelativeFrame("Plane", -d * Vec("[0.5;0;0]"), trafoPlane, balls[i]->getFrame("C")));
+    plane->setFrameOfReference(balls[i]->getFrame("Plane"));
+    balls[i]->addContour(plane);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Cuboid *cube=new OpenMBV::Cuboid;
-    cube->setLength(d,b,b);
-    cube->setStaticColor(1.);
+    OpenMBV::Cuboid *cube = new OpenMBV::Cuboid;
+    cube->setLength(d, b, b);
+    cube->setDiffuseColor(1., 1, 1);
     balls[i]->setOpenMBVRigidBody(cube);
 #endif
   }
@@ -123,59 +135,58 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rodInfo->initInfo();
   rodInfo->updateStateDependentVariables(0.);
 
-  for(unsigned int i=0;i<balls.size();i++) {
-    Vec q0(3,INIT,0.);
-    double xL = fmod(i*rodInfo->getLength()/balls.size() + rodInfo->getLength()*0.25,rodInfo->getLength());
+  for (unsigned int i = 0; i < balls.size(); i++) {
+    Vec q0(3, INIT, 0.);
+    double xL = fmod(i * rodInfo->getLength() / balls.size() + rodInfo->getLength() * 0.25, rodInfo->getLength());
     ContourPointData cp;
     cp.getContourParameterType() = CONTINUUM;
-    cp.getLagrangeParameterPosition() = Vec(1,INIT,xL);
+    cp.getLagrangeParameterPosition() = Vec(1, INIT, xL);
 
-    rodInfo->updateKinematicsForFrame(cp,position_cosy);
+    rodInfo->updateKinematicsForFrame(cp, position_cosy);
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);
-    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
+    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI * 0.5;
     balls[i]->setInitialGeneralizedPosition(q0);
   }
 
   delete rodInfo;
 
   // inertial ball constraint
-  this->addFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
+  this->addFrame(new FixedRelativeFrame("BearingFrame", l0 / (2 * M_PI) * Vec("[0;1;0]"), SqrMat(3, EYE), this->getFrame("I")));
   Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
-  joint->connect(this->getFrame("BearingFrame"),balls[0]->getFrame("C"));
+  joint->connect(this->getFrame("BearingFrame"), balls[0]->getFrame("C"));
   this->addLink(joint);
 
   // constraints balls on flexible band
-  for(int i=0;i<nBalls;i++) {
-    Contact *contact = new Contact("Band_"+balls[i]->getName());
-    contact->setContactForceLaw(new BilateralConstraint);
-    contact->setContactImpactLaw(new BilateralImpact);
-    contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
+  for (int i = 0; i < nBalls; i++) {
+    Contact *contact = new Contact("Band_" + balls[i]->getName());
+    contact->setNormalForceLaw(new BilateralConstraint);
+    contact->setNormalImpactLaw(new BilateralImpact);
+    contact->connect(balls[i]->getContour("COG"), rod->getContour("Contour1sFlexible"));
     contact->enableOpenMBVContactPoints(0.01);
     this->addLink(contact);
   }
 
   // inner-ball contacts
-  for(int i=0;i<nBalls;i++) {
-    stringstream namet,nameb;
+  for (int i = 0; i < nBalls; i++) {
+    stringstream namet, nameb;
     namet << "ContactTop_" << i;
     nameb << "ContactBot_" << i;
     Contact *ctrt = new Contact(namet.str());
     Contact *ctrb = new Contact(nameb.str());
-    ctrt->setContactForceLaw(new UnilateralConstraint);
-    ctrt->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-    ctrb->setContactForceLaw(new UnilateralConstraint);
-    ctrb->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-    if(i==nBalls-1) {
-      ctrt->connect(balls[0]->getContour("topPoint"),balls[i]->getContour("Plane"));
-      ctrb->connect(balls[0]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
+    ctrt->setNormalForceLaw(new UnilateralConstraint);
+    ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    ctrb->setNormalForceLaw(new UnilateralConstraint);
+    ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    if (i == nBalls - 1) {
+      ctrt->connect(balls[0]->getContour("topPoint"), balls[i]->getContour("Plane"));
+      ctrb->connect(balls[0]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
     }
     else {
-      ctrt->connect(balls[i+1]->getContour("topPoint"),balls[i]->getContour("Plane"));
-      ctrb->connect(balls[i+1]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
+      ctrt->connect(balls[i + 1]->getContour("topPoint"), balls[i]->getContour("Plane"));
+      ctrb->connect(balls[i + 1]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
     }
     this->addLink(ctrt);
     this->addLink(ctrb);

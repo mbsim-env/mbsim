@@ -124,7 +124,7 @@ namespace MBSim {
     Z1.setVelocity(P1->getVelocity() + crossProduct(P1->getAngularVelocity(),WrP1Z));
 
     Vec3 WvZ0Z1 = Z1.getVelocity()-Z0.getVelocity();
-    RigidBody* bodyP0 = dynamic_cast<RigidBody*>(P0->getParent());
+    RigidBody* bodyP0 = static_cast<RigidBody*>(P0->getParent());
     Mat3xV a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
     Wt = crossProduct(WrP0Z,a.col(0));
     Wt /= -nrm2(Wt);

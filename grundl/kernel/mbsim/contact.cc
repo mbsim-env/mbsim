@@ -26,14 +26,11 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <mbsim/utils/function.h>
+#include <fmatvec/function.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/frame.h>
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
 #endif
@@ -53,7 +50,7 @@ namespace MBSim {
   Contact::Contact(const string &name) :
       LinkMechanics(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(false), contactArrow(NULL), frictionArrow(NULL)
+          , openMBVGrp(0), openMBVFrame(0), contactArrow(NULL), frictionArrow(NULL)
 #endif
           , saved_ref(0) {
   }
@@ -67,9 +64,9 @@ namespace MBSim {
   }
 
   void Contact::setPlotFeatureContactKinematics(std::string cKName, MBSim::PlotFeature pf, MBSim::PlotFeatureStatus value) {
-    if(ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
+    if (ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
       pair<string, MBSim::PlotFeature> Pair(cKName, pf);
-      plotFeatureMap.insert(pair<pair<string, MBSim::PlotFeature>, MBSim::PlotFeatureStatus >(Pair, value));
+      plotFeatureMap.insert(pair<pair<string, MBSim::PlotFeature>, MBSim::PlotFeatureStatus>(Pair, value));
     }
   }
 
@@ -82,7 +79,7 @@ namespace MBSim {
   void Contact::updatewb(double t, int j) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewb(t,j);
+        jter->updatewb(t, j);
   }
 
   void Contact::updateW(double t, int j) {
@@ -353,7 +350,7 @@ namespace MBSim {
           if (contactKinematics[cK]->getNumberOfPotentialContactPoints() > 1)
             contactName << "_" << k;
           contacts[cK].push_back(SingleContact(contactName.str()));
-          contacts[cK][k].setContactKinematics(contactKinematics[cK]->getContactKinematics(k)?contactKinematics[cK]->getContactKinematics(k):contactKinematics[cK]);
+          contacts[cK][k].setContactKinematics(contactKinematics[cK]->getContactKinematics(k) ? contactKinematics[cK]->getContactKinematics(k) : contactKinematics[cK]);
           contacts[cK][k].connect(contour0);
           contacts[cK][k].connect(contour1);
           //Applies the plot feature to all children (make it possible to set only some children...)
@@ -362,7 +359,7 @@ namespace MBSim {
             MBSim::PlotFeatureStatus pfS = getPlotFeature(pf);
 
             pair<string, MBSim::PlotFeature> Pair(ckNames[cK], pf);
-            if(plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
+            if (plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
               pfS = plotFeatureMap.find(Pair)->second;
             }
 
@@ -388,18 +385,21 @@ namespace MBSim {
           jter->setDynamicSystemSolver(ds);
 
           //set contact laws for children
-          jter->setContactForceLaw(fcl);
-          jter->setContactImpactLaw(fnil);
-          jter->setFrictionForceLaw(fdf);
-          jter->setFrictionImpactLaw(ftil);
+          jter->setNormalForceLaw(fcl);
+          jter->setNormalImpactLaw(fnil);
+          jter->setTangentialForceLaw(fdf);
+          jter->setTangentialImpactLaw(ftil);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
           //Set OpenMBV-Properties to single contacts
           for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-              jter->enableOpenMBVContactPoints(openMBVContactFrameSize, openMBVContactFrameEnabled);
-              jter->setOpenMBVNormalForceArrow(contactArrow);
-              jter->setOpenMBVFrictionArrow(frictionArrow);
+              if (openMBVFrame)
+                jter->setOpenMBVContactPoints(new OpenMBV::Frame(*openMBVFrame));
+              if (contactArrow)
+                jter->setOpenMBVNormalForce(new OpenMBV::Arrow(*contactArrow));
+              if (frictionArrow)
+                jter->setOpenMBVTangentialForce(new OpenMBV::Arrow(*frictionArrow));
             }
           }
 #endif
@@ -708,7 +708,7 @@ namespace MBSim {
   }
 
   void Contact::computeCurvatures(Vec & r, int contactKinematicsIndex) const {
-    throw;
+    throw MBSimError("Not implemented");
     //TODO
   }
 
@@ -780,40 +780,48 @@ namespace MBSim {
     }
   }
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Frame* Contact::getopenMBVFrame() {
+    return openMBVFrame;
+  }
+
+  OpenMBV::Arrow* Contact::getcontactArrow() {
+    return contactArrow;
+  }
+
+  OpenMBV::Arrow* Contact::getfrictionArrow() {
+    return frictionArrow;
+  }
+#endif
+
   void Contact::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
 
-    /*Read Contact Force Law*/
-    e = element->FirstChildElement(MBSIMNS"contactForceLaw");
-
-    //Get contact force law
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::create<GeneralizedForceLaw>(e->FirstChildElement());
-    setContactForceLaw(gfl);
-    gfl->initializeUsingXML(e->FirstChildElement());
+    //Set contact law
+    e = element->FirstChildElement(MBSIMNS"normalForceLaw");
+    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
+    setNormalForceLaw(gfl);
 
     //Get Impact law
-    e = e->NextSiblingElement();
-    GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::create<GeneralizedImpactLaw>(e->FirstChildElement());
-    if (gifl) {
-      setContactImpactLaw(gifl);
-      gifl->initializeUsingXML(e->FirstChildElement());
-      e = e->NextSiblingElement();
+    e = element->FirstChildElement(MBSIMNS"normalImpactLaw");
+    if (e) {
+      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
+      setNormalImpactLaw(gifl);
     }
 
     //Get Friction Force Law
-    FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::create<FrictionForceLaw>(e->FirstChildElement());
-    if (ffl) {
-      setFrictionForceLaw(ffl);
-      ffl->initializeUsingXML(e->FirstChildElement());
-      e = e->NextSiblingElement();
+    e = element->FirstChildElement(MBSIMNS"tangentialForceLaw");
+    if (e) {
+      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
+      setTangentialForceLaw(ffl);
     }
 
     //Get Friction Impact Law
-    FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::create<FrictionImpactLaw>(e->FirstChildElement());
-    if (fil) {
-      setFrictionImpactLaw(fil);
-      fil->initializeUsingXML(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"tangentialImpactLaw");
+    if (e) {
+      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
+      setTangentialImpactLaw(fil);
     }
 
     /*Read all contour pairings*/
@@ -840,21 +848,21 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
-      enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
-    e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
-    if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVNormalForceArrow(arrow);
-      e = e->NextSiblingElement();
+    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")) {
+      OpenMBVFrame ombv;
+      openMBVFrame = ombv.createOpenMBV(e);
     }
-    e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVNormalForce");
     if (e) {
-      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
-      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVFrictionArrow(arrow);
-      e = e->NextSiblingElement();
+      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
+      contactArrow = ombv.createOpenMBV(e);
+    }
+
+    e = element->FirstChildElement(MBSIMNS"enableOpenMBVTangentialForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
+      frictionArrow = ombv.createOpenMBV(e);
     }
 #endif
   }
@@ -862,41 +870,41 @@ namespace MBSim {
   TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
     TiXmlElement *ele1;
-    ele1 = new TiXmlElement( MBSIMNS"contactForceLaw" );
-    if(fcl) 
+    ele1 = new TiXmlElement(MBSIMNS"normalForceLaw");
+    if (fcl)
       fcl->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
-    if(fnil) {
-      ele1 = new TiXmlElement( MBSIMNS"contactImpactLaw" );
+    if (fnil) {
+      ele1 = new TiXmlElement(MBSIMNS"normalImpactLaw");
       fnil->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
-    if(fdf) {
-      ele1 = new TiXmlElement( MBSIMNS"frictionForceLaw" );
+    if (fdf) {
+      ele1 = new TiXmlElement(MBSIMNS"tangentialForceLaw");
       fdf->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
-    if(ftil) {
-      ele1 = new TiXmlElement( MBSIMNS"frictionImpactLaw" );
+    if (ftil) {
+      ele1 = new TiXmlElement(MBSIMNS"tangentialImpactLaw");
       ftil->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
     ele1 = new TiXmlElement(MBSIMNS"connect");
     //for(unsigned int i=0; i<saved_ref.size(); i++) {
-      ele1->SetAttribute("ref1", contour[0]->getXMLPath(this,true)); // relative path
-      ele1->SetAttribute("ref2", contour[1]->getXMLPath(this,true)); // relative path
+    ele1->SetAttribute("ref1", contour[0]->getXMLPath(this, true)); // relative path
+    ele1->SetAttribute("ref2", contour[1]->getXMLPath(this, true)); // relative path
     //}
     ele0->LinkEndChild(ele1);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVContactFrameEnabled==true)
-      addElementText(ele0,MBSIMNS"enableOpenMBVContactPoints",openMBVContactFrameSize);
-    if(contactArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVNormalForceArrow" );
+//    if(openMBVContactFrameSize>0)
+//      addElementText(ele0,MBSIMNS"enableOpenMBVContactPoints",openMBVContactFrameSize);
+    if (contactArrow) {
+      ele1 = new TiXmlElement(MBSIMNS"openMBVNormalForceArrow");
       contactArrow->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }
-    if(frictionArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVFrictionArrow" );
+    if (frictionArrow) {
+      ele1 = new TiXmlElement(MBSIMNS"openMBVTangentialForceArrow");
       frictionArrow->writeXMLFile(ele1);
       ele0->LinkEndChild(ele1);
     }

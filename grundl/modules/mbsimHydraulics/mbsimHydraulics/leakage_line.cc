@@ -23,7 +23,6 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
@@ -52,11 +51,11 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       RigidHLine::init(stage);
       if (s1vPath!="")
-        setSurface1VelocitySignal(getByPath<Signal>(process_signal_string(s1vPath)));
+        setSurface1VelocitySignal(getByPath<Signal>(s1vPath));
       if (s2vPath!="")
-        setSurface2VelocitySignal(getByPath<Signal>(process_signal_string(s2vPath)));
+        setSurface2VelocitySignal(getByPath<Signal>(s2vPath));
       if (glPath!="")
-        setGapLengthSignal(getByPath<Signal>(process_signal_string(glPath)));
+        setGapLengthSignal(getByPath<Signal>(glPath));
     }
     else if (stage==MBSim::modelBuildup) {
       ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LeakagePressureLoss", this, lpl, false, false));
@@ -102,9 +101,8 @@ namespace MBSimHydraulics {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<Function>::create<PlaneLeakagePressureLoss>(e->FirstChildElement());
+    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<PlaneLeakagePressureLoss>(e->FirstChildElement());
     setPlaneLeakagePressureLoss(p);
-    p->initializeUsingXML(e->FirstChildElement());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircularLeakageLine,  MBSIMHYDRAULICSNS"CircularLeakageLine")
@@ -131,9 +129,8 @@ namespace MBSimHydraulics {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<Function>::create<CircularLeakagePressureLoss>(e->FirstChildElement());
+    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<CircularLeakagePressureLoss>(e->FirstChildElement());
     setCircularLeakagePressureLoss(p);
-    p->initializeUsingXML(e->FirstChildElement());
   }
 
 }

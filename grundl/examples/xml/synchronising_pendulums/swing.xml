@@ -3,32 +3,28 @@
   <position>[0 0 0]'</position>
   <orientation>eye(3)</orientation>
   <frames>
-    <frame>
-      <Frame name="fMountLeft">
-        <!--
-           -<enableOpenMBV>
-           -  <size>fSize</size>
-           -  <offset>1.</offset>
-           -</enableOpenMBV>
-           -->
-      </Frame>
-      <frameOfReference ref="Frame[I]"/>
-      <position>[-swingL/2; suspensionL; 0]</position>
-      <orientation>rotateAboutZ(-pi/2)</orientation>
-    </frame>
-    <frame>
-      <Frame name="fMountRight">
-        <!--
-           -<enableOpenMBV>
-           -  <size>fSize</size>
-           -  <offset>1.</offset>
-           -</enableOpenMBV>
-           -->
-      </Frame>
-      <frameOfReference ref="Frame[I]"/> <!-- optional -->
-      <position>[swingL/2; suspensionL; 0]</position>
-      <orientation>rotateAboutZ(-pi/2)</orientation>
-    </frame>
+    <FixedRelativeFrame name="fMountLeft">
+      <!--
+         -<enableOpenMBV>
+         -  <size>fSize</size>
+         -  <offset>1.</offset>
+         -</enableOpenMBV>
+         -->
+      <frameOfReference ref="../Frame[I]"/>
+      <relativePosition>[-swingL/2; suspensionL; 0]</relativePosition>
+      <relativeOrientation>rotateAboutZ(-pi/2)</relativeOrientation>
+    </FixedRelativeFrame>
+    <FixedRelativeFrame name="fMountRight">
+      <!--
+         -<enableOpenMBV>
+         -  <size>fSize</size>
+         -  <offset>1.</offset>
+         -</enableOpenMBV>
+         -->
+      <frameOfReference ref="../Frame[I]"/> <!-- optional -->
+      <relativePosition>[swingL/2; suspensionL; 0]</relativePosition>
+      <relativeOrientation>rotateAboutZ(-pi/2)</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours>
   </contours>
@@ -42,71 +38,59 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>swingMass</mass>
       <inertiaTensor>swingTheta</inertiaTensor>
-      <translation>
+      <stateDependentTranslation>
         <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
-      </translation>
-      <rotation>
-      </rotation>
+      </stateDependentTranslation>
       <frames>
-        <frame>
-          <Frame name="fMountLeft">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-swingL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fMountRight">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[swingL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fH">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[0 swingH/2 0]'</position>
-          <orientation>rotateAboutZ(pi/2)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fMountLeft">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-swingL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fMountRight">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[swingL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fH">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[0 swingH/2 0]'</relativePosition>
+          <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <Line name="cTop"/>
-          <frameOfReference ref="Frame[fH]"/>
-          <position>[0 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Line name="cTop">
+          <frameOfReference ref="../Frame[fH]"/>
+        </Line>
       </contours>
       <openMBVRigidBody>
         <Cuboid name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.2</staticColor>
+          <diffuseColor>.2*ones(3,1)</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
           <length>[swingL swingB swingH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
          -<enableOpenMBVFrameC>
@@ -122,50 +106,44 @@
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
       <inertiaTensor>suspensionTheta</inertiaTensor>
-      <translation/>
-      <rotation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fMountLeft">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-suspensionL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fMountRight">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[suspensionL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+          <FixedRelativeFrame name="fMountLeft">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-suspensionL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fMountRight">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[suspensionL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Cuboid name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.4</staticColor>
+          <diffuseColor>.4*ones(3,1)</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
           <length>[suspensionL suspensionB suspensionH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
          -<enableOpenMBVFrameC>
@@ -181,50 +159,44 @@
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
       <inertiaTensor>suspensionTheta</inertiaTensor>
-      <translation/>
-      <rotation>
+      <stateDependentRotation>
         <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
         </RotationAboutFixedAxis>
-      </rotation>
+      </stateDependentRotation>
       <frames>
-        <frame>
-          <Frame name="fMountLeft">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[-suspensionL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
-        <frame>
-          <Frame name="fMountRight">
-            <!--
-               -<enableOpenMBV>
-               -  <size>fSize</size>
-               -  <offset>1</offset>
-               -</enableOpenMBV>
-               -->
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>[suspensionL/2 0 0]'</position>
-          <orientation>eye(3)</orientation>
-        </frame>
+        <FixedRelativeFrame name="fMountLeft">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[-suspensionL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="fMountRight">
+          <!--
+             -<enableOpenMBV>
+             -  <size>fSize</size>
+             -  <offset>1</offset>
+             -</enableOpenMBV>
+             -->
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>[suspensionL/2 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <Cuboid name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>.4</staticColor>
+          <diffuseColor>.4*ones(3,1)</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
           <length>[suspensionL suspensionB suspensionH]'</length>
         </Cuboid>
-        <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
       <!--
          -<enableOpenMBVFrameC>
@@ -236,27 +208,17 @@
   </objects>
   <links>
     <Joint name="JointMountLeft" xmlns="http://mbsim.berlios.de/MBSim">
-      <force>
-        <direction>[1 0 0; 0 1 0]'</direction>
-        <generalizedForceLaw>
-          <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-          <BilateralImpact xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedImpactLaw>
-      </force>
+      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
+      <forceLaw>
+        <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+      </forceLaw>
       <connect ref1="../Object[Swing]/Frame[fMountLeft]" ref2="../Object[SuspensionLeft]/Frame[fMountRight]"/>
     </Joint>
     <Joint name="JointMountRight" xmlns="http://mbsim.berlios.de/MBSim">
-      <force>
-        <direction>[1 0 0; 0 1 0]'</direction>
-        <generalizedForceLaw>
-          <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedForceLaw>
-        <generalizedImpactLaw>
-          <BilateralImpact xmlns="http://mbsim.berlios.de/MBSim"/>
-        </generalizedImpactLaw>
-      </force>
+      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
+      <forceLaw>
+        <BilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+      </forceLaw>
       <connect ref1="../Object[Swing]/Frame[fMountRight]" ref2="../Object[SuspensionRight]/Frame[fMountRight]"/>
     </Joint>
   </links>

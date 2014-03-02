@@ -129,7 +129,7 @@ namespace MBSimFlexibleBody {
        * \brief cartesian kinematic on a node
        */
       virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
-    	  throw MBSim::MBSimError("Not implemented"); //TODO: make that interface prettier
+    	  throw MBSim::MBSimError("updateKinematicsAtNode(): Not implemented for " + getType()); //TODO: make that interface prettier
       }
 
       /**

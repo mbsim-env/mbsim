@@ -134,8 +134,9 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyLinearExternal::readMassMatrix(const string &massfilename) {
 	fstream datafile(massfilename.c_str(),ios::in);
 	if (!datafile.is_open()) {
-	  cout << "File " << massfilename << " containing massmatrix not found." << endl;
-	  throw 1;
+          stringstream error;
+	  error << "File " << massfilename << " containing massmatrix not found." << endl;
+	  throw runtime_error(error.str());
 	}
 	Mat MTemp;
 	datafile >> MTemp;
@@ -150,8 +151,9 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyLinearExternal::readStiffnessMatrix(const string &stiffnessfilename) {
     fstream datafile(stiffnessfilename.c_str(),ios::in);
     if (!datafile.is_open()) {
-      cout << "File " << stiffnessfilename << " containing stiffnessmatrix not found." << endl;
-      throw 1;
+      stringstream error;
+      error << "File " << stiffnessfilename << " containing stiffnessmatrix not found." << endl;
+      throw runtime_error(error.str());
     }
     SqrMat KTemp;
     datafile >> KTemp;
@@ -203,8 +205,9 @@ namespace MBSimFlexibleBody {
 
     fstream datafile(jacobifile.c_str(),ios::in);
     if (!datafile.is_open()) {
-      cout << "File " << jacobifile << " containing Jacobimatrix not found." << endl;
-      throw 1;
+      stringstream error;
+      error << "File " << jacobifile << " containing Jacobimatrix not found." << endl;
+      throw runtime_error(error.str());
     }
 
     //      cout << "reading from " << jacobifile << endl;

@@ -21,8 +21,9 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "dialogs.h"
-#include "octaveutils.h"
 #include <QtGui>
+#include "mainwindow.h"
+#include <mbxmlutils/octeval.h>
 
 using namespace std;
 
@@ -86,7 +87,7 @@ void ExtPhysicalVarWidget::setValue(const QString &str) {
 
 void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
-  QString str = QString::fromStdString(evalOctaveExpression(getValue().toStdString()));
+  QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
   str = removeWhiteSpace(str);
   vector<vector<QString> > A = strToMat(str);
   if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {
@@ -98,62 +99,48 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
-ChoiceWidget::ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir) {
-  QBoxLayout *layout = new QBoxLayout(dir);
+ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : factory(factory_), widget(0) {
+  layout = new QBoxLayout(dir);
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
-  for(int i=0; i<name.size(); i++)
-    comboBox->addItem(name[i]);
+  for(int i=0; i<factory->getSize(); i++)
+    comboBox->addItem(factory->getName(i));
   layout->addWidget(comboBox);
-  stackedWidget = new QStackedWidget;
-  stackedWidget->addWidget(widget[0]);
-  for(int i=1; i<widget.size(); i++) {
-    widget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    stackedWidget->addWidget(widget[i]);
-  }
-  layout->addWidget(stackedWidget);
+  defineWidget(0);
   connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
 }
 
-void ChoiceWidget::resize_(int m, int n) {
+void ChoiceWidget2::resize_(int m, int n) {
   dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
 }
 
-void ChoiceWidget::updateWidget() {
-  for(int i=0; i<stackedWidget->count(); i++)
-    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+void ChoiceWidget2::updateWidget() {
+  dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
 }
 
-QWidget* ChoiceWidget::getWidget() const {
-  return stackedWidget->currentWidget();
+QWidget* ChoiceWidget2::getWidget() const {
+  return widget;
 }
 
-QWidget* ChoiceWidget::getWidget(int i) const {
-  return stackedWidget->widget(i);
-}
-
-QString ChoiceWidget::getName() const {
+QString ChoiceWidget2::getName() const {
   return comboBox->currentText();
 }
 
-QString ChoiceWidget::getName(int i) const {
-  return comboBox->itemText(i);
+int ChoiceWidget2::getIndex() const {
+  return comboBox->currentIndex();
 }
 
-void ChoiceWidget::defineWidget(int index) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(index);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-  emit widgetChanged();
-  emit resize_();
+void ChoiceWidget2::defineWidget(int index) {
+  layout->removeWidget(widget);
+  delete widget;
+  widget = factory->createWidget(index);
+  layout->addWidget(widget);
   updateWidget();
 }
 
-ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
+ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
 
   QHBoxLayout *layout = new QHBoxLayout;
 
@@ -165,6 +152,18 @@ ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool deactivatable, b
   }
   setLayout(layout);
   layout->addWidget(widget);
+//  QPushButton *fold = new QPushButton("+");
+//  fold->setCheckable(true);
+//  layout->addWidget(fold);
+//  int w=QFontMetrics(fold->font()).width("+") * 1.2;
+//  int h=QFontMetrics(fold->font()).height() * 1.2;
+//  fold->setMinimumSize(w, h);
+//  fold->setMaximumSize(w, h);
+//  connect(fold, SIGNAL(toggled(bool)), widget, SLOT(setVisible(bool)));
+//  //layout->addStretch(0);
+//  layout->setAlignment(Qt::AlignLeft);
+////  fold->setChecked(true);
+//  widget->setVisible(false);
 }
 
 ContainerWidget::ContainerWidget() {
@@ -173,7 +172,125 @@ ContainerWidget::ContainerWidget() {
   layout->setMargin(0);
 }
 
+void ContainerWidget::resize_(int m, int n) {
+  for(unsigned int i=0; i<widget.size(); i++)
+    dynamic_cast<WidgetInterface*>(widget[i])->resize_(m,n);
+}
+
 void ContainerWidget::addWidget(QWidget *widget_) {
   layout->addWidget(widget_); 
   widget.push_back(widget_);
 }
+
+void ContainerWidget::updateWidget() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+}
+
+ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int n_, bool fixedSize) : factory(factory_), name(name_), n(n_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  spinBox = new QSpinBox;
+  spinBox->setDisabled(fixedSize);
+  spinBox->setRange(0,10);
+  QWidget *box = new QWidget;
+  QHBoxLayout *hbox = new QHBoxLayout;
+  box->setLayout(hbox);
+  hbox->setMargin(0);
+  hbox->addWidget(spinBox);
+  QObject::connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+  list = new QListWidget;
+  hbox->addWidget(list);
+  layout->addWidget(box);
+  stackedWidget = new QStackedWidget;
+  connect(list,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  layout->addWidget(stackedWidget);
+  spinBox->setValue(m);
+}
+
+ListWidget::~ListWidget() {
+  delete factory;
+}
+
+int ListWidget::getSize() const {
+  return stackedWidget->count();
+}
+
+void ListWidget::setSize(int m) {
+  spinBox->setValue(m);
+}
+
+QWidget* ListWidget::getWidget(int i) const {
+  return stackedWidget->widget(i);
+}
+
+void ListWidget::currentIndexChanged(int idx) {
+  int n = idx - list->count();
+  if(n>0) {
+    addElements(n);
+//    list->setCurrentRow(idx-1);
+  }
+  else if(n<0) {
+//    list->setCurrentRow(idx);
+    removeElements(-n);
+  }
+}
+
+void ListWidget::changeCurrent(int idx) {
+  if(idx>=0) {
+    if (stackedWidget->currentWidget() !=0)
+      stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    stackedWidget->setCurrentIndex(idx);
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    adjustSize();
+  }
+}
+
+void ListWidget::resize_(int m, int n) {
+  for(int i=0; i<stackedWidget->count(); i++)
+    dynamic_cast<WidgetInterface*>(stackedWidget->widget(i))->resize_(m,n);
+}
+
+void ListWidget::addElements(int n, bool emitSignals) {
+
+  int i = stackedWidget->count();
+
+  for(int j=1; j<=n; j++) {
+    list->addItem(name+" "+QString::number(i+j));
+
+    QWidget *widget = factory->createWidget();
+    stackedWidget->addWidget(widget);
+    dynamic_cast<WidgetInterface*>(widget)->updateWidget();
+    if(i>0)
+      widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+//    connect(dynamic_cast<WidgetInterface*>(stackedWidget->widget(i)),SIGNAL(resize_()),this,SIGNAL(resize_()));
+  }
+
+  if(i==0)
+    list->setCurrentRow(0);
+
+  if(emitSignals) {
+    emit resize_();
+  }
+}
+
+void ListWidget::removeElements(int n) {
+  for(int j=0; j<n; j++) {
+    int i = list->count()-1;
+    delete stackedWidget->widget(i);
+    stackedWidget->removeWidget(stackedWidget->widget(i));
+    delete list->takeItem(i);
+  }
+//  if(emitSignals) {
+    emit resize_();
+//  }
+}
+
+Widget* ChoiceWidgetFactory::createWidget(int i) {
+  return new ChoiceWidget2(factory);
+}
+
+

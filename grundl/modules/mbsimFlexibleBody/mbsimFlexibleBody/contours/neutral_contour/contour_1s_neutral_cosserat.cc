@@ -12,10 +12,9 @@
 
 namespace MBSimFlexibleBody {
   
-  Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_, FlexibleBody1sCosserat* parent_, const VecInt & transNodes_, const VecInt & rotNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
-      Contour1sNeutralFactory(name_, uMin_, uMax_, openStructure_), transNodes(transNodes_), rotNodes(rotNodes_), nodeOffset(nodeOffset_), numOfTransNodes(transNodes_.size()), numOfRotNodes(rotNodes_.size()), degU(degU_), ANGLE(new Cardan()), NP(NULL), NV(NULL), NA(NULL), NDA(NULL) {
+  Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_) :
+      Contour1sNeutralFactory(name_), transNodes(0), rotNodes(0), nodeOffset(0), ANGLE(new Cardan()), NP(NULL), NV(NULL), NA(NULL), NDA(NULL) {
 
-    parent_->addContour(this);
   }
   
   Contour1sNeutralCosserat::~Contour1sNeutralCosserat() {
@@ -48,27 +47,7 @@ namespace MBSimFlexibleBody {
 
   void Contour1sNeutralCosserat::init(MBSim::InitStage stage) {
 
-    if (stage == resize) {
-      // construct contourPoint for translation nodes
-      nodes.reserve(numOfTransNodes + 1);
-      transContourPoints.reserve(numOfTransNodes);
-      rotContourPoints.reserve(numOfRotNodes);
-
-//        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
-
-    }
-    else if (stage == worldFrameContourLocation) {
-      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
-      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
-    }
-    else if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
-      for (int i = 0; i < numOfTransNodes; i++)
-        transContourPoints.push_back(ContourPointData(transNodes(i)));
-
-      //construct contourPoint for rotational nodes
-      for (int i = 0; i < numOfRotNodes; i++)
-        rotContourPoints.push_back(ContourPointData(rotNodes(i), STAGGEREDNODE));
-
+    if (stage == preInit) {
       NP = createNeutralPosition();
       NV = createNeutralVelocity();
       NA = createNeutralAngle();
@@ -84,6 +63,17 @@ namespace MBSimFlexibleBody {
         nodes.push_back(u(i));
       nodes.push_back(uMax);
     }
+    else if (stage == resize) {
+      // construct contourPoint for translation nodes
+      nodes.reserve(transNodes.size() + 1);
+
+//        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
+
+    }
+    else if (stage == worldFrameContourLocation) {
+      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
+      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
+    }
 
     Contour1sNeutralFactory::init(stage);
   }
@@ -94,21 +84,31 @@ namespace MBSimFlexibleBody {
     if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
       NV->update(cp);
     if (ff == angle || ff == all)
-      NA->update(cp);
+      NA->update(cp); //TODO: use NP here also?
     if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
       // G(angle) * dotAngle
+      //TODO: use NP here also??
       NA->update(cp); // staggered stuff is handled inside the updateAngle()
       NDA->update(cp);
       Vec3 angles = cp.getFrameOfReference().getAnglesOfOrientation();
       Vec3 dotAngles = cp.getFrameOfReference().getDotAnglesOfOrientation();
       cp.getFrameOfReference().setAngularVelocity(ANGLE->computeOmega(angles, dotAngles));
     }
-    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      NA->updateAngleNormal(cp); // normal
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      NA->updateAngleFirstTangent(cp); // tangent
-    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      NA->updateAngleSecondTangent(cp); // binormal (cartesian system)
+    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      //TODO: using the position information of the angle curve seems not to work!
+//      NA->updateAngleNormal(cp); // normal
+      NP->updatePositionNormal(cp);
+    }
+    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      //TODO: using the position information of the angle curve seems not to work!
+//      NA->updateAngleFirstTangent(cp); // tangent
+      NP->updatePositionFirstTangent(cp);
+    }
+    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      //TODO: using the position information of the angle curve seems not to work!
+//      NA->updateAngleSecondTangent(cp); // binormal (cartesian system)
+      NP->updatePositionSecondTangent(cp);
+    }
   }
 
   void Contour1sNeutralCosserat::updateJacobiansForFrame(MBSim::ContourPointData &cp, int j) {
@@ -134,7 +134,7 @@ namespace MBSimFlexibleBody {
       // distribute the E to the nearby nodes
       SqrMat Jacobian_trans_total(3, EYE);
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
-      if (currentElementTrans == numOfTransNodes - 1) { // the last translation element
+      if (currentElementTrans == transNodes.size() - 1) { // the last translation element
         Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
         Jacobian_trans.set(Index(0, 2), Index(0, 2), weightRight * Jacobian_trans_total);
       }
@@ -147,7 +147,7 @@ namespace MBSimFlexibleBody {
       // distribute the E to the nearby nodes
       SqrMat Jacobian_trans_total(2, EYE);
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
-      if (currentElementTrans == numOfTransNodes - 1) { // the last translation element
+      if (currentElementTrans == transNodes.size() - 1) { // the last translation element
         Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
         Jacobian_trans.set(Index(0, 1), Index(0, 1), weightRight * Jacobian_trans_total);
       }
@@ -213,7 +213,7 @@ namespace MBSimFlexibleBody {
     NV->computeCurve(true);
     NA->computeCurve(true);
     NDA->computeCurve(true);
-    Contour::updateStateDependentVariables(t);
+    Contour1sNeutralFactory::updateStateDependentVariables(t);
 
     // debug
 
@@ -252,4 +252,16 @@ namespace MBSimFlexibleBody {
 //    cout << "dotAngleCurve" << TestDotAngle << endl << endl;
 
   }
-} /* namespace MBSimFlexibleBody */
+
+  void Contour1sNeutralCosserat::setTransNodes(const fmatvec::VecInt & transNodes_) {
+    transNodes.resize() = transNodes_;
+  }
+  void Contour1sNeutralCosserat::setRotNodes(const fmatvec::VecInt & rotNodes_) {
+    rotNodes.resize() = rotNodes_;
+  }
+  void Contour1sNeutralCosserat::setNodeOffest(const double nodeOffset_) {
+    nodeOffset = nodeOffset_;
+  }
+
+}
+/* namespace MBSimFlexibleBody */

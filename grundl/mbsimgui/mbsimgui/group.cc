@@ -29,12 +29,17 @@
 #include "contour.h"
 #include "object.h"
 #include "link.h"
+#include "mainwindow.h"
 #include "observer.h"
 #include "basic_properties.h"
 #include "utils.h"
+#include "embed.h"
+#include "mbxmlutilshelper/dom.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
@@ -42,15 +47,11 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
   addFrame(I);
 
   if(parent) {
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(3),"m",MBSIMNS"position"));
-    position.setProperty(new ExtPhysicalVarProperty(input));
+    position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"position"),"",4));
 
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"orientation"));
-    orientation.setProperty(new ExtPhysicalVarProperty(input));
+    orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"orientation"),"",4));
 
-    frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
+    frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
 }
 
@@ -274,36 +275,30 @@ void Group::removeElement(Element* element) {
 }
 
 Group* Group::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Group *group=ObjectFactory::getInstance()->createGroup(e,parent);
-    if(group) {
-      group->initializeUsingXML(e);
-      group->initialize();
-    }
-    return group;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
+  if(group) {
+    group->initializeUsingXML(e);
+    group->initialize();
   }
-  return 0;
+  return group;
 }
 
-void Group::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
+void Group::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
   Element::initializeUsingXML(element);
-  e=element->FirstChildElement();
+  e=element->getFirstElementChild();
 
   if(frameOfReference.getProperty())
     frameOfReference.initializeUsingXML(element);
 
   // search first element known by Group
   while(e && 
-      e->ValueStr()!=MBSIMNS"position" &&
-      e->ValueStr()!=MBSIMNS"orientation" &&
-      e->ValueStr()!=MBSIMNS"frames")
-    e=e->NextSiblingElement();
+      E(e)->getTagName()!=MBSIM%"position" &&
+      E(e)->getTagName()!=MBSIM%"orientation" &&
+      E(e)->getTagName()!=MBSIM%"frames")
+    e=e->getNextElementSibling();
 
   if(position.getProperty())
     position.initializeUsingXML(element);
@@ -312,224 +307,72 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     orientation.initializeUsingXML(element);
 
   // frames
-  TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-  while(E && E->ValueStr()==MBSIMNS"frame") {
-    TiXmlElement *ec=E->FirstChildElement();
-    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"),this);
-    addFrame(f);
-    f->initializeUsingXML(ec);
-    f->initializeUsingXML2(E);
-    E=E->NextSiblingElement();
-  }
+  DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
   Frame *f;
-  while(E) {
-    if(E->ValueStr()==PVNS"embed") {
-      TiXmlElement *EE = 0;
-      if(E->Attribute("href"))
-        f=Frame::readXMLFile(E->Attribute("href"),this);
-      else {
-        EE = E->FirstChildElement();
-        if(EE->ValueStr() == PVNS"localParameter")
-          EE = EE->NextSiblingElement();
-        f=ObjectFactory::getInstance()->createFrame(EE,this);
-      }
-      if(f) {
-        addFrame(f);
-        f->initializeUsingXMLEmbed(E);
-        if(EE)
-          f->initializeUsingXML(EE);
-      }
-    }
-    else {
-      f=ObjectFactory::getInstance()->createFrame(E,this);
-      addFrame(f);
-      f->initializeUsingXML(E);
-    }
-    E=E->NextSiblingElement();
+  while(ELE) {
+    f = Embed<Frame>::createAndInit(ELE,this);
+    if(f) addFrame(f);
+    ELE=ELE->getNextElementSibling();
   }
 
   // contours
-  E=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+  ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
   Contour *c;
-  while(E && E->ValueStr()==MBSIMNS"contour") {
-    TiXmlElement *ec=E->FirstChildElement();
-    c=ObjectFactory::getInstance()->createContour(ec,this);
-    if(c) {
-      addContour(c);
-      c->initializeUsingXML(ec);
-    }
-    FixedRelativeFrame *f=new FixedRelativeFrame("ContourFrame"+toStr(int(contour.size())),this);
-    addFrame(f);
-    f->initializeUsingXML(ec);
-    f->initializeUsingXML2(E);
-    c->setSavedFrameOfReference(string("../Frame[")+f->getName()+"]");
-    E=E->NextSiblingElement();
-  }
-  while(E) {
-    if(E->ValueStr()==PVNS"embed") {
-      TiXmlElement *EE = 0;
-      if(E->Attribute("href"))
-        c=Contour::readXMLFile(E->Attribute("href"),this);
-      else {
-        EE = E->FirstChildElement();
-        if(EE->ValueStr() == PVNS"localParameter")
-          EE = EE->NextSiblingElement();
-        c=ObjectFactory::getInstance()->createContour(EE,this);
-      }
-      if(c) {
-        addContour(c);
-        c->initializeUsingXMLEmbed(E);
-        if(EE)
-          c->initializeUsingXML(EE);
-      }
-    }
-    else {
-      c=ObjectFactory::getInstance()->createContour(E,this);
-      if(c) {
-        addContour(c);
-        c->initializeUsingXML(E);
-      }
-    }
-    E=E->NextSiblingElement();
+  while(ELE) {
+    c = Embed<Contour>::createAndInit(ELE,this);
+    if(c) addContour(c);
+    ELE=ELE->getNextElementSibling();
   }
 
   // groups
-  E=element->FirstChildElement(MBSIMNS"groups")->FirstChildElement();
+  ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
   Group *g;
-  while(E) {
-    if(E->ValueStr()==PVNS"embed") {
-      TiXmlElement *EE = 0;
-      if(E->Attribute("href"))
-        g=Group::readXMLFile(E->Attribute("href"),this);
-      else {
-        EE = E->FirstChildElement();
-        if(EE->ValueStr() == PVNS"localParameter")
-          EE = EE->NextSiblingElement();
-        g=ObjectFactory::getInstance()->createGroup(EE,this);
-      }
-      if(g) {
-        addGroup(g);
-        g->initializeUsingXMLEmbed(E);
-        if(EE)
-          g->initializeUsingXML(EE);
-      }
-    }
-    else {
-      g=ObjectFactory::getInstance()->createGroup(E,this);
-      if(g) {
-        addGroup(g);
-        g->initializeUsingXML(E);
-      }
-    }
-    E=E->NextSiblingElement();
+  while(ELE) {
+    g = Embed<Group>::createAndInit(ELE,this);
+    if(g) addGroup(g);
+    ELE=ELE->getNextElementSibling();
   }
 
   // objects
-  E=element->FirstChildElement(MBSIMNS"objects")->FirstChildElement();
+  ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
   Object *o;
-  while(E) {
-    if(E->ValueStr()==PVNS"embed") {
-      TiXmlElement *EE = 0;
-      if(E->Attribute("href"))
-        o=Object::readXMLFile(E->Attribute("href"),this);
-      else {
-        EE = E->FirstChildElement();
-        if(EE->ValueStr() == PVNS"localParameter")
-          EE = EE->NextSiblingElement();
-        o=ObjectFactory::getInstance()->createObject(EE,this);
-      }
-      if(o) {
-        addObject(o);
-        o->initializeUsingXMLEmbed(E);
-        if(EE)
-          o->initializeUsingXML(EE);
-      }
-    }
-    else {
-      o=ObjectFactory::getInstance()->createObject(E,this);
-      if(o) {
-        addObject(o);
-        o->initializeUsingXML(E);
-      }
-    }
-    E=E->NextSiblingElement();
+  while(ELE) {
+    o = Embed<Object>::createAndInit(ELE,this);
+    if(o) addObject(o);
+    ELE=ELE->getNextElementSibling();
   }
 
   // links
-  E=element->FirstChildElement(MBSIMNS"links")->FirstChildElement();
+  ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
   Link *l;
-  while(E) {
-    if(E->ValueStr()==PVNS"embed") {
-      TiXmlElement *EE = 0;
-      if(E->Attribute("href"))
-        l=Link::readXMLFile(E->Attribute("href"),this);
-      else {
-        EE = E->FirstChildElement();
-        if(EE->ValueStr() == PVNS"localParameter")
-          EE = EE->NextSiblingElement();
-        l=ObjectFactory::getInstance()->createLink(EE,this);
-      }
-      if(l) {
-        addLink(l);
-        l->initializeUsingXMLEmbed(E);
-        if(EE)
-          l->initializeUsingXML(EE);
-      }
-    }
-    else {
-      l=ObjectFactory::getInstance()->createLink(E,this);
-      if(l) {
-        addLink(l);
-        l->initializeUsingXML(E);
-      }
-    }
-    E=E->NextSiblingElement();
+  while(ELE) {
+    l = Embed<Link>::createAndInit(ELE,this);
+    if(l) addLink(l);
+    ELE=ELE->getNextElementSibling();
   }
 
   // observers
-  if(element->FirstChildElement(MBSIMNS"observers")) {
-    E=element->FirstChildElement(MBSIMNS"observers")->FirstChildElement();
+  if(E(element)->getFirstElementChildNamed(MBSIM%"observers")) {
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers")->getFirstElementChild();
     Observer *obsrv;
-    while(E) {
-      if(E->ValueStr()==PVNS"embed") {
-        TiXmlElement *EE = 0;
-        if(E->Attribute("href"))
-          obsrv=Observer::readXMLFile(E->Attribute("href"),this);
-        else {
-          EE = E->FirstChildElement();
-          if(EE->ValueStr() == PVNS"localParameter")
-            EE = EE->NextSiblingElement();
-          obsrv=ObjectFactory::getInstance()->createObserver(EE,this);
-        }
-        if(obsrv) {
-          addObserver(obsrv);
-          obsrv->initializeUsingXMLEmbed(E);
-          if(EE)
-            obsrv->initializeUsingXML(EE);
-        }
-      }
-      else {
-        obsrv=ObjectFactory::getInstance()->createObserver(E,this);
-        if(obsrv) {
-          addObserver(obsrv);
-          obsrv->initializeUsingXML(E);
-        }
-      }
-      E=E->NextSiblingElement();
+    while(ELE) {
+      obsrv = Embed<Observer>::createAndInit(ELE,this);
+      if(obsrv) addObserver(obsrv);
+      ELE=ELE->getNextElementSibling();
     }
   }
 
-  e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
+  e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
   if(e)
     getFrame(0)->initializeUsingXML2(e);
   else
     getFrame(0)->setOpenMBVFrame(false);
 }
 
-TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+DOMElement* Group::writeXMLFile(DOMNode *parent) {
+  DOMElement *ele0 = Element::writeXMLFile(parent);
 
-  TiXmlElement *ele1;
+  DOMElement *ele1;
 
   if(position.getProperty()) {
     frameOfReference.writeXMLFile(ele0);
@@ -537,61 +380,45 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
     orientation.writeXMLFile(ele0);
   }
 
-  ele1 = new TiXmlElement( MBSIMNS"frames" );
+  DOMDocument *doc=ele0->getOwnerDocument();
+//  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+  ele1 = D(doc)->createElement( MBSIM%"frames" );
   for(int i=1; i<frame.size(); i++)
-    if(frame[i]->isEmbedded())
-      frame[i]->writeXMLFileEmbed(ele1);
-    else
-      frame[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+    Embed<Frame>::writeXML(frame[i],ele1);
+  ele0->insertBefore( ele1, NULL );
 
-  ele1 = new TiXmlElement( MBSIMNS"contours" );
+  ele1 = D(doc)->createElement( MBSIM%"contours" );
   for(int i=0; i<contour.size(); i++)
-    if(contour[i]->isEmbedded())
-      contour[i]->writeXMLFileEmbed(ele1);
-    else
-      contour[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+    Embed<Contour>::writeXML(contour[i],ele1);
+  ele0->insertBefore( ele1, NULL );
 
-  ele1 = new TiXmlElement( MBSIMNS"groups" );
+  ele1 = D(doc)->createElement( MBSIM%"groups" );
   for(int i=0; i<group.size(); i++)
-    if(group[i]->isEmbedded())
-      group[i]->writeXMLFileEmbed(ele1);
-    else
-      group[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+    Embed<Group>::writeXML(group[i],ele1);
+  ele0->insertBefore( ele1, NULL );
 
-  ele1 = new TiXmlElement( MBSIMNS"objects" );
+  ele1 = D(doc)->createElement( MBSIM%"objects" );
   for(int i=0; i<object.size(); i++)
-    if(object[i]->isEmbedded())
-      object[i]->writeXMLFileEmbed(ele1);
-    else
-      object[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+    Embed<Object>::writeXML(object[i],ele1);
+  ele0->insertBefore( ele1, NULL );
   
-  ele1 = new TiXmlElement( MBSIMNS"links" );
+  ele1 = D(doc)->createElement( MBSIM%"links" );
   for(int i=0; i<link.size(); i++)
-    if(link[i]->isEmbedded())
-      link[i]->writeXMLFileEmbed(ele1);
-    else
-      link[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+    Embed<Link>::writeXML(link[i],ele1);
+  ele0->insertBefore( ele1, NULL );
 
   if(observer.size()) { 
-    ele1 = new TiXmlElement( MBSIMNS"observers" );
+    ele1 = D(doc)->createElement( MBSIM%"observers" );
     for(int i=0; i<observer.size(); i++)
-      if(observer[i]->isEmbedded())
-        observer[i]->writeXMLFileEmbed(ele1);
-      else
-        observer[i]->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
+      Embed<Observer>::writeXML(observer[i],ele1);
+    ele0->insertBefore( ele1, NULL );
   }
 
   Frame *I = getFrame(0);
   if(I->openMBVFrame()) {
-    ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
+    ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
     I->writeXMLFile2(ele1);
-    ele0->LinkEndChild(ele1);
+    ele0->insertBefore(ele1, NULL);
   }
 
   return ele0;

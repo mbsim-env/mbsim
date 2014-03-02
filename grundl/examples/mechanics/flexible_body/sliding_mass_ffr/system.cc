@@ -10,6 +10,7 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
+#include <mbsim/functions/kinematic_functions.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -83,9 +84,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     fix->setForceDirection(Mat3x3(EYE));
     fix->setMomentDirection(Mat3x3(EYE));
     fix->setForceLaw(new BilateralConstraint);
-    fix->setImpactForceLaw(new BilateralImpact);
     fix->setMomentLaw(new BilateralConstraint);
-    fix->setImpactMomentLaw(new BilateralImpact);
     addLink(fix);
 
     this->addObject(beam);
@@ -132,7 +131,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     ball1->setMass(mass);
     ball1->setInertiaTensor(Theta);
 
-    ball1->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    ball1->setTranslation(new TranslationAlongAxesXYZ<VecV>());
     Vec u0Ball1(3, INIT, 0.);
     u0Ball1(1) = u0;
     ball1->setInitialGeneralizedVelocity(u0Ball1);
@@ -151,8 +150,8 @@ SlidingMass::SlidingMass(const string &projectName) :
 #endif
 
     Contact *contact1 = new Contact("FFR_Contact");
-    contact1->setContactForceLaw(new BilateralConstraint);
-    contact1->setContactImpactLaw(new BilateralImpact);
+    contact1->setNormalForceLaw(new BilateralConstraint);
+    contact1->setNormalImpactLaw(new BilateralImpact);
     contact1->connect(ballContour1, ncc);
     this->addLink(contact1);
 
@@ -212,7 +211,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     ball2->setFrameOfReference(ball2Ref);
     ball2->setMass(mass);
     ball2->setInertiaTensor(Theta);
-    ball2->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    ball2->setTranslation(new TranslationAlongAxesXYZ<VecV>());
     Vec u0Ball(3, INIT, 0.);
     u0Ball(1) = u0;
     ball2->setInitialGeneralizedVelocity(u0Ball);
@@ -231,8 +230,8 @@ SlidingMass::SlidingMass(const string &projectName) :
 #endif
 
     Contact *contact = new Contact("RCM_Contact");
-    contact->setContactForceLaw(new BilateralConstraint);
-    contact->setContactImpactLaw(new BilateralImpact);
+    contact->setNormalForceLaw(new BilateralConstraint);
+    contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(ballContour, rod->getContour("NeutralFibre"));
     this->addLink(contact);
 
@@ -252,10 +251,8 @@ SlidingMass::SlidingMass(const string &projectName) :
     joint->connect(fixFrameRCM, rod->getFrame("RJ"));
     joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
     joint->setForceLaw(new BilateralConstraint);
-    joint->setImpactForceLaw(new BilateralImpact);
     joint->setMomentDirection("[0; 0; 1]");
     joint->setMomentLaw(new BilateralConstraint);
-    joint->setImpactMomentLaw(new BilateralImpact);
     this->addLink(joint);
   }
 

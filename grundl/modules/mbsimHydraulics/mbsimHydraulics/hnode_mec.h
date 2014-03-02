@@ -21,13 +21,7 @@
 #define  _HNODE_MEC_H_
 
 #include "hnode.h"
-#include "mbsim/utils/function.h"
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  class Arrow;
-}
-#endif
+#include <fmatvec/function.h>
 
 namespace MBSim {
   class Frame;
@@ -63,7 +57,9 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "HNodeMec"; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBVArrows(double size=1.);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVArrows, tag, (optional (size,(double),1))) { 
+        openMBVArrowSize=(size>.0)?size:.0;
+      }
 #endif
 
       void setInitialVolume(double V0_) {V0=V0_; }
@@ -118,7 +114,7 @@ namespace MBSimHydraulics {
       ~ConstrainedNodeMec() {};
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
-      void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
+      void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -128,7 +124,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      MBSim::Function1<double,double> * pFun;
+      fmatvec::Function<double(double)> * pFun;
   };
 
 

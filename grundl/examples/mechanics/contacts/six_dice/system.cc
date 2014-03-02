@@ -1,13 +1,15 @@
 #include "system.h"
 #include "mbsim/contact.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/utils/function.h"
+#include "fmatvec/function.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #include "openmbvcppinterface/ivbody.h"
 #include "openmbvcppinterface/cube.h"
@@ -16,9 +18,9 @@
 
 using namespace fmatvec;
 
-class Angle : public  Function1<double,double> {
+class Angle : public Function<double(double)> {
   public:
-    double operator()(const double& t, const void*) {
+    double operator()(const double& t) {
       double al;
       if(t <= 0.35)
 	al = 0.0;
@@ -28,19 +30,18 @@ class Angle : public  Function1<double,double> {
 	al = 2*(1.7-0.35);
       return al;
     }
-};
-
-class Omega : public  Function1<Vec3,double> {
-  public:
-    Vec3 operator()(const double& t, const void*) {
-      Vec3 om(3);
+    double parDer(const double& t) {
+      double om;
       if(t <= 0.35)
-	om(1) = 0.0;
+	om = 0.0;
       else if(t <= 1.7)
-	om(1) = 2;
+	om = 2;
       else
-	om(1) = 0;
+	om = 0;
       return om;
+    }
+    double parDerParDer(const double& t) {
+      return 0;
     }
 };
 
@@ -70,8 +71,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rB(2) = 0.6;
 
   RigidBody* cup = new RigidBody("Cup");
-  cup->setRotation(new TimeDependentRotationAboutFixedAxis(new Angle,"[0;1;0]"));
-  cup->setGuidingVelocityOfRotation(new TimeDependentGuidingVelocity(new Omega));
+  cup->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), new Angle));
   SymMat Theta(3);
   Theta(1,1) = 0.5*0.1*0.2*0.2;
   addFrame(new FixedRelativeFrame("Is",rB,SqrMat(3,EYE)));
@@ -107,8 +107,8 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     cout << nameBody.str()<<endl;
 
     body[i] = new RigidBody(nameBody.str());
-    body[i]->setTranslation(new TranslationInXYZDirection);
-    body[i]->setRotation(new CardanAngles);
+    body[i]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    body[i]->setRotation(new RotationAboutAxesXYZ<VecV>);
     addObject(body[i]);
     body[i]->setMass(m);
     SymMat Theta(3);
@@ -180,29 +180,29 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     nameContact <<"ContactCuboidCupFrustum" << i;
     Contact *cnf = new Contact(nameContact.str());
     cnf->connect(cup->getContour("CupFrustum"), body[i]->getContour("Cuboid"));
-    cnf->setContactForceLaw(new UnilateralConstraint);
-    cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf->setNormalForceLaw(new UnilateralConstraint);
+    cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     addLink(cnf);
 
     nameContact.clear();
     nameContact <<"ContactCuboidCupGround" << i;
     cnf = new Contact(nameContact.str());
     cnf->connect(cup->getContour("CupGround"), body[i]->getContour("Cuboid"));
-    cnf->setContactForceLaw(new UnilateralConstraint);
-    cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf->setNormalForceLaw(new UnilateralConstraint);
+    cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     addLink(cnf);
 
     nameContact.clear();
     nameContact << "ContactCuboidGround" << i;
     cnf = new Contact(nameContact.str());
-    cnf->setContactForceLaw(new UnilateralConstraint);
-    cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-    cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+    cnf->setNormalForceLaw(new UnilateralConstraint);
+    cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+    cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+    cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
     cnf->connect(getContour("Ground"), body[i]->getContour("Cuboid"));
     addLink(cnf);
 
@@ -210,10 +210,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
       stringstream nameContact;
       nameContact << "ContactCuboidCuboid" << i << j;
       Contact *cnf = new Contact(nameContact.str());
-      cnf->setContactForceLaw(new UnilateralConstraint);
-      cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-      cnf->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-      cnf->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+      cnf->setNormalForceLaw(new UnilateralConstraint);
+      cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+      cnf->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      cnf->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
       cnf->connect(body[j]->getContour("Cuboid"), body[i]->getContour("Cuboid"));
       addLink(cnf);
     }

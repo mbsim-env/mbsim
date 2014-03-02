@@ -20,9 +20,12 @@
 #include <config.h>
 #include "link.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
+using namespace xercesc;
 
 Link::Link(const string &str, Element *parent) : Element(str, parent) {
 }
@@ -31,20 +34,14 @@ Link::~Link() {
 }
 
 Link* Link::readXMLFile(const string &filename, Element *parent) {
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Link *link=ObjectFactory::getInstance()->createLink(e,parent);
-    if(link) {
-      link->initializeUsingXML(e);
-      link->initialize();
-    }
-    return link;
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Link *link=ObjectFactory::getInstance()->createLink(e, parent);
+  if(link) {
+    link->initializeUsingXML(e);
+    link->initialize();
   }
-  return 0;
+  return link;
 }
 
 Element * Link::getByPathSearch(string path) {
@@ -58,8 +55,8 @@ Element * Link::getByPathSearch(string path) {
   return NULL;
 }
 
-//void Link::initializeUsingXML(TiXmlElement *element) {
+//void Link::initializeUsingXML(DOMElement *element) {
 //}
 
-//TiXmlElement* Link::writeXMLFile(TiXmlNode *parent) {    
+//DOMElement* Link::writeXMLFile(DOMNode *parent) {    
 //}

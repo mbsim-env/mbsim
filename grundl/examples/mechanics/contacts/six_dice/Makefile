@@ -2,7 +2,7 @@ CC = g++
 sources = main.cc system.cc
 libsources = 
 objects = $(sources:.cc=.o) 
-CPPFLAGS= -g -Wall `pkg-config --cflags mbsim` 
+CPPFLAGS= -O3 -Wall `pkg-config --cflags mbsim` 
 
 
 

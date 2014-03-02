@@ -21,7 +21,8 @@
 
 
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/function_library.h"
+#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "rigid_contour_functions1s.h"
 
@@ -119,7 +120,7 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
     j=j+1;
   }
   if (!(j==N_diskret-1))
-    throw(123);
+    throw runtime_error("Error in ContourXY2angleXY");
   erg(j,0) = angleRxy(Nneu-1,0);
   erg(j,1) = angleRxy(Nneu-1,2);
   erg(j,2) = angleRxy(Nneu-1,3);
@@ -153,10 +154,10 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
   a.push_back(0);
   while(a.back()<2.*M_PI) {
     Vec p1=operator()(a.back());
-    class PointDistance : public Function1<double, double> {
+    class PointDistance : public Function<double(double)> {
       public:
         PointDistance(Vec p1_, FuncCrPC * f_, double d_) : p1(p1_), f(f_), d(d_) {}
-        double operator()(const double &alpha, const void * = NULL) {
+        double operator()(const double &alpha) {
           Vec p2=(*f)(alpha);
           return nrm2(p2-p1)-d;
         }
@@ -185,11 +186,11 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
     N.set(i, this->computeN(alp).T());
     curve(i)=this->computeCurvature(alp);
   }
-  tab_operator = new TabularFunction1_VS<Ref,Ref>(phi, Mat(O));
-  tab_T = new TabularFunction1_VS<Ref,Ref>(phi, Mat(T));
-  tab_B = new TabularFunction1_VS<Ref,Ref>(phi, Mat(B));
-  tab_N = new TabularFunction1_VS<Ref,Ref>(phi, Mat(N));
-  tab_curvature = new TabularFunction1_VS<Ref,Ref>(phi, curve);
+  tab_operator = new TabularFunction<Vec3>(phi, Mat(O));
+  tab_T = new TabularFunction<Vec3>(phi, Mat(T));
+  tab_B = new TabularFunction<Vec3>(phi, Mat(B));
+  tab_N = new TabularFunction<Vec3>(phi, Mat(N));
+  tab_curvature = new TabularFunction<Vec3>(phi, curve);
 
   operator_ = &FuncCrPC::operatorTabular;
   computeT_ = &FuncCrPC::computeTTabular;
@@ -202,8 +203,8 @@ Vec3 FuncCrPC::diff1(const double& alpha) {
   Vec3 f(NONINIT);
   const double alphaLoc=calculateLocalAlpha(alpha);
   f(0) = 0;
-  f(1) = ((pp_y).getDerivative(1))(alphaLoc)(0); 
-  f(2) = ((pp_z).getDerivative(1))(alphaLoc)(0); 
+  f(1) = (pp_y).parDer(alphaLoc)(0); 
+  f(2) = (pp_z).parDer(alphaLoc)(0); 
   return f;
 }
 
@@ -211,8 +212,8 @@ Vec3 FuncCrPC::diff2(const double& alpha) {
   Vec3 f(NONINIT);
   const double alphaLoc=calculateLocalAlpha(alpha);
   f(0) = 0;
-  f(1) = ((pp_y).getDerivative(2))(alphaLoc)(0); 
-  f(2) = ((pp_z).getDerivative(2))(alphaLoc)(0); 
+  f(1) = (pp_y).parDerParDer(alphaLoc)(0); 
+  f(2) = (pp_z).parDerParDer(alphaLoc)(0); 
   return f;
 }
 
@@ -220,8 +221,8 @@ Vec3 FuncCrPC::operatorPPolynom(const double& alpha) {
   Vec f(3,NONINIT);
   const double alphaLoc=calculateLocalAlpha(alpha);
   f(0) = 0;
-  f(1) = (pp_y.getDerivative(0))(alphaLoc)(0); 
-  f(2) = (pp_z.getDerivative(0))(alphaLoc)(0); 
+  f(1) = pp_y(alphaLoc)(0); 
+  f(2) = pp_z(alphaLoc)(0); 
   return f;
 } 
 
@@ -306,7 +307,7 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   Vec r(angleYZ.rows(), NONINIT);
   for (int i=0; i<r.size(); i++)
     r(i)=nrm2(angleYZ(Index(i,i), Index(1,2)));
-  pp_r=new PPolynom<Ref,Ref>();
+  pp_r=new PiecewisePolynomFunction<VecV>();
   pp_r->setXF(angleYZ.col(0), r, "csplinePer");
   updateData(1.);
 }   
@@ -387,9 +388,9 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
     alphaSave=calculateLocalAlpha(alpha);
     salphaSave=sin(alphaSave);
     calphaSave=cos(alphaSave);
-    rSave=(pp_r->getDerivative(0))(alphaSave)(0);
-    drdalphaSave=(pp_r->getDerivative(1))(alphaSave)(0);
-    d2rdalpha2Save=(pp_r->getDerivative(2))(alphaSave)(0);
+    rSave=(*pp_r)(alphaSave)(0);
+    drdalphaSave=pp_r->parDer(alphaSave)(0);
+    d2rdalpha2Save=pp_r->parDerParDer(alphaSave)(0);
   }
 }
 

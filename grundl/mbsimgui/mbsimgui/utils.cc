@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include <cstdio>
 #include "utils.h"
 #ifdef HAVE_UNORDERED_MAP
 #  include <unordered_map>
@@ -28,8 +29,8 @@
 #include <iostream>
 #include <cmath>
 #include <QtGui/QTreeWidgetItem>
-#include <mbxmlutilstinyxml/getinstallpath.h>
 #include <stdexcept>
+#include <mbxmlutilshelper/getinstallpath.h>
 
 using namespace std;
 
@@ -57,7 +58,7 @@ map<string, string>& Utils::getMBSimNamespacePrefixMapping() {
   static map<string, string> nsprefix;
   if(firstRun) {
     vector<string> arg;
-    arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimflatxml");
+    arg.push_back((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string());
     arg.push_back("--printNamespacePrefixMapping");
     FILE *f=popen((arg[0]+" "+arg[1]).c_str(), "r");
     if(f==NULL) throw runtime_error("Unable to create piped process.");

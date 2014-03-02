@@ -7,6 +7,8 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/circle.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -103,11 +105,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* Schwungrad */
   RigidBody *ScheibeS = new RigidBody("Schwungrad");
   Vec Wr0_S(3,INIT,0.); Wr0_S(0) = PosScheibeS;
-  this->addFrame("ScheibeS",Wr0_S,SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("ScheibeS",Wr0_S,SqrMat(3,EYE)));
   ScheibeS->setFrameForKinematics(ScheibeS->getFrame("C"));
   ScheibeS->setFrameOfReference(this->getFrame("ScheibeS")); 
-  ScheibeS->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
-  ScheibeS->setRotation(new CardanAngles());
+  ScheibeS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  ScheibeS->setRotation(new RotationAboutAxesXYZ<VecV>);
   ScheibeS->setMass(mScheibeS);
   ScheibeS->setInertiaTensor(ThetaScheibeS);
   this->addObject(ScheibeS);
@@ -130,8 +132,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ScheibeGLS = new RigidBody("Gleitlagerscheibe"); 
   ScheibeGLS->setFrameForKinematics(ScheibeGLS->getFrame("C"));
   ScheibeGLS->setFrameOfReference(this->getFrame("I")); 
-  ScheibeGLS->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
-  ScheibeGLS->setRotation(new CardanAngles());
+  ScheibeGLS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  ScheibeGLS->setRotation(new RotationAboutAxesXYZ<VecV>);
   ScheibeGLS->setMass(mScheibeGLS);
   ScheibeGLS->setInertiaTensor(ThetaScheibeGLS);
 
@@ -144,15 +146,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
   SqrMat AWK_cylsurf_GLS(3,INIT,0.); AWK_cylsurf_GLS(2,2) = 1.; AWK_cylsurf_GLS(0,0) = cos(M_PI/2.); AWK_cylsurf_GLS(1,1) = cos(M_PI/2.); AWK_cylsurf_GLS(0,1) = sin(M_PI/2.); AWK_cylsurf_GLS(1,0) = -sin(M_PI/2.);
   Vec KrKS_cylsurf_GLS(3,INIT,0.); KrKS_cylsurf_GLS(0) = -b_GLS;
-  ScheibeGLS->addContour(cylsurf_GLS,KrKS_cylsurf_GLS,AWK_cylsurf_GLS);
+  ScheibeGLS->addFrame(new FixedRelativeFrame("cylsurf_GLS",KrKS_cylsurf_GLS,AWK_cylsurf_GLS));
+  cylsurf_GLS->setFrameOfReference(ScheibeGLS->getFrame("cylsurf_GLS"));
+  ScheibeGLS->addContour(cylsurf_GLS);
   this->addObject(ScheibeGLS);
 
   /* Gleitlager */
   RigidBody *Gleitlager = new RigidBody("Gleitlager");
   Gleitlager->setFrameForKinematics(Gleitlager->getFrame("C")); 
   Gleitlager->setFrameOfReference(this->getFrame("I")); 
-  Gleitlager->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
-  Gleitlager->setRotation(new CardanAngles());
+  Gleitlager->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+  Gleitlager->setRotation(new RotationAboutAxesXYZ<VecV>);
   Gleitlager->setMass(m_GL);
   Gleitlager->setInertiaTensor(ThetaGL);
 
@@ -164,12 +168,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
   SqrMat AWK_rightCircle(3,INIT,0.); AWK_rightCircle(1,1) = 1.; AWK_rightCircle(0,0) = cos(M_PI/2.); AWK_rightCircle(2,2) = cos(M_PI/2.); AWK_rightCircle(0,2) = sin(M_PI/2.); AWK_rightCircle(2,0) = -sin(M_PI/2.);
   Vec PosRightCircle(3,INIT,0.); PosRightCircle(0) = b_GLS/2.;
-  Gleitlager->addContour(rightCircle,PosRightCircle,AWK_rightCircle);
+  Gleitlager->addFrame(new FixedRelativeFrame("rightCircle",PosRightCircle,AWK_rightCircle));
+  rightCircle->setFrameOfReference(Gleitlager->getFrame("rightCircle"));
+  Gleitlager->addContour(rightCircle);
   this->addObject(Gleitlager);
 
   /* Lager A */
   Vec VTemp(3,INIT,0.);
-  this->addFrame("Lager_A_Frame",VTemp,SqrMat(3,EYE)); 
+  this->addFrame(new FixedRelativeFrame("Lager_A_Frame",VTemp,SqrMat(3,EYE))); 
   Joint *alager = new Joint("Lager_A");
   alager->setForceDirection(Mat(3,3,EYE));
   alager->setMomentDirection(Mat(3,3,EYE));
@@ -180,7 +186,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* Lager B */
   VTemp(0) = L;
-  this->addFrame("Lager_B_Frame",VTemp,SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("Lager_B_Frame",VTemp,SqrMat(3,EYE)));
   Joint *blager = new Joint("Lager_B");
   blager->setForceDirection(Mat(3,3,EYE));
   blager->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(StiffnessLagerB,DampingLagerB)));
@@ -193,8 +199,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeS->setMomentDirection(Mat(3,3,EYE));
   VerbScheibeS->setForceLaw(new BilateralConstraint());
   VerbScheibeS->setMomentLaw(new BilateralConstraint());
-  VerbScheibeS->setImpactForceLaw(new BilateralImpact());
-  VerbScheibeS->setImpactMomentLaw(new BilateralImpact());
   VerbScheibeS->connect(ScheibeS->getFrame("C"),welle->getFrame("PosScheibeS"));
   this->addLink(VerbScheibeS);
 
@@ -204,18 +208,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeGLS->setMomentDirection(Mat(3,3,EYE));
   VerbScheibeGLS->setForceLaw(new BilateralConstraint());
   VerbScheibeGLS->setMomentLaw(new BilateralConstraint());
-  VerbScheibeGLS->setImpactForceLaw(new BilateralImpact());
-  VerbScheibeGLS->setImpactMomentLaw(new BilateralImpact());
   VerbScheibeGLS->connect(ScheibeGLS->getFrame("C"),welle->getFrame("Anfang"));
   this->addLink(VerbScheibeGLS);
 
   /* Kontakte im Gleitlager */
   Contact *cGL_Right = new Contact("KontaktGL0");
   cGL_Right->connect(Gleitlager->getContour("rightCircle"),ScheibeGLS->getContour("cylsurf_GLS"));
-  cGL_Right->setContactForceLaw(new UnilateralConstraint);
-  cGL_Right->setContactImpactLaw(new UnilateralNewtonImpact);
-  cGL_Right->setFrictionForceLaw(new SpatialCoulombFriction(mu));
-  cGL_Right->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
+  cGL_Right->setNormalForceLaw(new UnilateralConstraint);
+  cGL_Right->setNormalImpactLaw(new UnilateralNewtonImpact);
+  cGL_Right->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+  cGL_Right->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   this->addLink(cGL_Right);  
 }
 

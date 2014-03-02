@@ -2,15 +2,14 @@
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <frames>
-    <frame>
-      <Frame name="AnregungC"/>
-      <position>[0;pistonRadius; 0 ]</position>
-      <orientation>eye(3)</orientation>
-    </frame>
+    <FixedRelativeFrame name="AnregungC">
+      <relativePosition>[0;pistonRadius; 0 ]</relativePosition>
+      <relativeOrientation>eye(3)</relativeOrientation>
+    </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups>
-    <pv:embed href="BallCheckvalveSystem.xml" count="1" counterName="xxx"/>
+    <pv:Embed href="BallCheckvalveSystem.xml" count="1" counterName="xxx"/>
   </groups>
   <objects>
     <RigidBody name="Anregung">
@@ -21,71 +20,30 @@
       <frameForKinematics ref="Frame[C]"/>
       <mass>1.</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
-      <translation>
-        <TimeDependentTranslation>
-          <translationFunction>
-            <Function1_VS_from_SS>
-              <function>
-                <Function1_SS_from_VS>
-                  <SinusFunction1_VS>
-                    <amplitude>A</amplitude>
-                    <frequency>f</frequency>
-                    <phase>pi/2</phase>
-                  </SinusFunction1_VS>
-                </Function1_SS_from_VS>
-              </function>
-              <direction>[0;1;0]</direction>
-            </Function1_VS_from_SS>
-          </translationFunction>
-        </TimeDependentTranslation>
-      </translation>
-      <rotation/>
-      <guidingVelocityOfTranslation>
-        <TimeDependentGuidingVelocity>
-          <guidingVelocityFunction>
-            <SinusFunction1_VS>
-                <amplitude>2*pi*f * A *  [0;1;0]</amplitude>
-                <frequency>f*ones(3,1)</frequency>
-                <phase>pi*ones(3,1)</phase>
-              </SinusFunction1_VS>
-            </guidingVelocityFunction>
-            </TimeDependentGuidingVelocity>
-      </guidingVelocityOfTranslation>
-      <derivativeOfGuidingVelocityOfTranslation>
-        <TimeDependentDerivativeOfGuidingVelocity>
-          <derivativeOfGuidingVelocityFunction>
-            <SinusFunction1_VS>
-              <amplitude>(2*pi*f)^2 * A * [0;1;0]</amplitude>
-              <frequency>f*ones(3,1)</frequency>
-              <phase>1.5*pi*ones(3,1)</phase>
-            </SinusFunction1_VS>
-          </derivativeOfGuidingVelocityFunction>
-        </TimeDependentDerivativeOfGuidingVelocity>
-      </derivativeOfGuidingVelocityOfTranslation>
+      <timeDependentTranslation>
+        <SymbolicFunction arg1="t">
+          [0; A*sin(2*pi*f*t + pi/2); 0]
+        </SymbolicFunction>
+      </timeDependentTranslation>
       <frames>
-        <frame>
-          <Frame name="LineF">
-            <enableOpenMBV>
-              <size>.005</size>
-              <offset>1.</offset>
-            </enableOpenMBV>
-          </Frame>
-          <frameOfReference ref="Frame[C]"/>
-          <position>zeros(3,1)</position>
-          <orientation>[0,-1,0;1,0,0;0,0,1]'</orientation>
-        </frame>
+        <FixedRelativeFrame name="LineF">
+          <enableOpenMBV>
+            <size>.005</size>
+            <offset>1.</offset>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[C]"/>
+          <relativePosition>zeros(3,1)</relativePosition>
+          <relativeOrientation>[0,-1,0;1,0,0;0,0,1]'</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours>
-        <contour>
-          <Line name="Line"/>
-          <frameOfReference ref="Frame[LineF]"/>
-          <position>[0; 0; 0]</position>
-          <orientation>eye(3)</orientation>
-        </contour>
+        <Line name="Line">
+          <frameOfReference ref="../Frame[LineF]"/>
+        </Line>
       </contours>
       <openMBVRigidBody>
         <Frustum name="Frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <staticColor>0</staticColor>
+          <diffuseColor>[0.6666;1;1]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[pi/2; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -104,7 +62,7 @@
   </objects>
   <links>
     <Contact name="AnregungContact">
-      <contactForceLaw>
+      <normalForceLaw>
         <!--
         <UnilateralConstraint/>
         -->
@@ -116,16 +74,14 @@
             </LinearRegularizedUnilateralConstraint>
           </forceFunction>
         </RegularizedUnilateralConstraint>
-      </contactForceLaw>
-      <contactImpactLaw>
+      </normalForceLaw>
         <!--
+      <normalImpactLaw>
         <UnilateralNewtonImpact>
           <restitutionCoefficient>.1</restitutionCoefficient>
         </UnilateralNewtonImpact>
+      </normalImpactLaw>
         -->
-      </contactImpactLaw>
-      <frictionForceLaw/>
-      <frictionImpactLaw/>
       <connect ref1="../Object[Anregung]/Contour[Line]" ref2="../Group[BallCheckvalveSystem]/Object[Piston]/Contour[Contour]"/>
     </Contact>
     <AbsolutePositionSensor name="AnregungPos" xmlns="http://mbsim.berlios.de/MBSimControl">

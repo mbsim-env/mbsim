@@ -26,7 +26,7 @@
 class Signal : public Link {
   public:
     Signal(const std::string &str, Element *parent);
-    virtual std::string getNameSpace() const { return MBSIMCONTROLNS; }
+    virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
     ~Signal(); 
 };
 
@@ -36,8 +36,8 @@ class SignalAddition : public Signal {
     SignalAddition(const std::string &str, Element *parent);
     virtual std::string getType() const { return "SignalAddition"; }
     void initialize();
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new SignalAdditionPropertyDialog(this);}
   protected:
     ExtProperty signalReferences;
@@ -48,8 +48,8 @@ class PIDController : public Signal {
   public:
     PIDController(const std::string &str, Element *parent);
     std::string getType() const { return "PIDController"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
   protected:
@@ -61,8 +61,8 @@ class UnarySignalOperation : public Signal {
   public:
     UnarySignalOperation(const std::string &str, Element *parent);
     std::string getType() const { return "UnarySignalOperation"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
   protected:
@@ -74,8 +74,8 @@ class BinarySignalOperation : public Signal {
   public:
     BinarySignalOperation(const std::string &str, Element *parent);
     std::string getType() const { return "BinarySignalOperation"; }
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}
   protected:

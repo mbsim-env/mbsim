@@ -42,7 +42,7 @@ namespace MBSim {
        * \brief constructor
        * \param fct pointer to used fix-point-function
        */
-      MultiDimensionalFixpointSolver(Function1<fmatvec::Vec, fmatvec::Vec> *function_);
+      MultiDimensionalFixpointSolver(fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *function_);
 
       virtual ~MultiDimensionalFixpointSolver(){};
 
@@ -53,7 +53,7 @@ namespace MBSim {
        * info == -1:  no converge
        * info == 1:   process (seems to) converge but hasn't finished
        */
-      void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> *function_) {function = function_;}
+      void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *function_) {function = function_;}
       int getInfo() {
         return info;
       }
@@ -80,7 +80,7 @@ namespace MBSim {
       /**
        * \brief fixpoint function
        */
-      Function1<fmatvec::Vec, fmatvec::Vec> *function;
+      fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *function;
 
       /*
        * \brief criteria function

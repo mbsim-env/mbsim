@@ -23,7 +23,7 @@
 #include "mbsim/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_factory.h"
+#include "contour_1s_neutral_factory.h"
 
 namespace MBSim {
   class ContactKinematics;
@@ -38,6 +38,10 @@ namespace MBSimFlexibleBody {
    * \date 2009-03-18 initial comment (Thorsten Schindler)
    * \date 2009-04-05 adapted to non-template FlexibleBody (Schindler / Zander)
    * \date 2009-06-04 new file (Thorsten Schindler)
+   *
+   * \todo: make this class to be the neutral factory...
+   *        For it all "natural" contours of the bodies would have to implement a neutral_contour
+   *        Then it would not be the case, that the neutral_contour1s as a contour1s as well as this contour1s_flexible
    */
   class Contour1sFlexible : public MBSim::Contour1s {
     public:
@@ -45,9 +49,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const std::string &name) :
-          Contour1s(name), neutral(0) {
-      }
+      Contour1sFlexible(const std::string &name);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const {
@@ -60,7 +62,7 @@ namespace MBSimFlexibleBody {
         if (neutral)
           neutral->updateKinematicsForFrame(cp, ff);
         else
-          static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, ff);
+          static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, ff); //TODO: avoid asking parent body here!
       }
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) {
         if (neutral)
@@ -106,6 +108,11 @@ namespace MBSimFlexibleBody {
       }
 
     protected:
+      /*!
+       * \brief object for 1s-flexible curves that is the interface
+       *
+       * \todo: maybe this actually should be used for all 1s contours (as the same interface?)
+       */
       Contour1sNeutralFactory* neutral;
 
   };

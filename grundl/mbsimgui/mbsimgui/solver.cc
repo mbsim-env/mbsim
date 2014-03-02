@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "solver.h"
+#include "mainwindow.h"
 #include <QtGui/QMenu>
 #include "objectfactory.h"
 #include <string>
@@ -26,21 +27,22 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
-void Environment::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
+void Environment::initializeUsingXML(DOMElement *element) {
+  DOMElement *e;
+  e=E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
   //setAccelerationOfGravity(Element::getVec3(e));
 }
 
-TiXmlElement* Environment::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement* ele0 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
+DOMElement* Environment::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement* ele0 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
 
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"accelerationOfGravity" );
-  //TiXmlText *text;// = new TiXmlText( mat2str(getAccelerationOfGravity()) );
-  //ele1->LinkEndChild(text);
-  ele0->LinkEndChild( ele1 );
-  parent->LinkEndChild(ele0);
+  DOMElement *ele1 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );
+  ele0->insertBefore( ele1, NULL );
+  parent->insertBefore(ele0, NULL);
   return ele0;
 }
 
@@ -56,27 +58,28 @@ Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverPa
   g[0] = "0";
   g[1] = "-9.81";
   g[2] = "0";
-  input.push_back(PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIM%"accelerationOfGravity"));
   environment.setProperty(new ExtPhysicalVarProperty(input));
+  environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIM%"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
 
   solverParameters.setProperty(new SolverParametersProperty); 
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIMNS"inverseKinetics"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIM%"inverseKinetics"));
   inverseKinetics.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-void Solver::initializeUsingXML(TiXmlElement *element) {
+void Solver::initializeUsingXML(DOMElement *element) {
   Group::initializeUsingXML(element);
-  TiXmlElement *e;
+  DOMElement *e;
 
   // search first Environment element
-  e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
+  e=E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
   Environment *env;
   while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
     env->initializeUsingXML(e);
     environment.initializeUsingXML(e);
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
   }
 
   solverParameters.initializeUsingXML(element);
@@ -84,16 +87,15 @@ void Solver::initializeUsingXML(TiXmlElement *element) {
   inverseKinetics.initializeUsingXML(element);
 }
 
-TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Group::writeXMLFile(parent);
-  ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSim");
-  ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
+DOMElement* Solver::writeXMLFile(DOMNode *parent) {
+  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+  DOMElement *ele0 = Group::writeXMLFile(parent);
 
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
+  DOMElement *ele1 = D(doc)->createElement( MBSIM%"environments" );
+  DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
   environment.writeXMLFile(ele2);
-  ele1->LinkEndChild( ele2 );
-  ele0->LinkEndChild( ele1 );
+  ele1->insertBefore( ele2, NULL );
+  ele0->insertBefore( ele1, NULL );
 
   solverParameters.writeXMLFile(ele0);
 
@@ -102,27 +104,12 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Solver* Solver::readXMLFile(const string &filename) {
+Solver* Solver::readXMLFile(const string &filename, Element *parent) {
   MBSimObjectFactory::initialize();
-  TiXmlDocument doc;
-  if(doc.LoadFile(filename)) {
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e,0));
-    solver->initializeUsingXML(e);
-    solver->initialize();
-    return solver;
-  }
-  return 0;
-}
-
-void Solver::writeXMLFile(const string &name) {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  writeXMLFile(&doc);
-  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
-  doc.SaveFile((name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
+  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+  DOMElement *e=doc->getDocumentElement();
+  Solver *solver=static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, parent));
+  solver->initializeUsingXML(e);
+  solver->initialize();
+  return solver;
 }

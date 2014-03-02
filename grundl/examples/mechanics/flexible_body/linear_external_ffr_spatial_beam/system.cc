@@ -6,6 +6,9 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
+#include <mbsim/functions/kinematic_functions.h>
+#include <mbsim/functions/kinetic_functions.h>
+
 #include "mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_linear_external_FFR.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 // Beginning Contact
@@ -56,9 +59,7 @@ System::System(const string &projectName) :
   fix->setForceDirection(Mat3x3(EYE));
   fix->setMomentDirection(Mat3x3(EYE));
   fix->setForceLaw(new BilateralConstraint);
-  fix->setImpactForceLaw(new BilateralImpact);
   fix->setMomentLaw(new BilateralConstraint);
-  fix->setImpactMomentLaw(new BilateralImpact);
   addLink(fix);
 
   this->addObject(beam);
@@ -137,7 +138,7 @@ System::System(const string &projectName) :
   Theta(1, 1) = 2. / 5. * mass * r * r;
   Theta(2, 2) = 2. / 5. * mass * r * r;
   ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearTranslation(Mat(3, 3, EYE)));
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>());
 
   Vec3 u0Ball;
   u0Ball(1) = -50;
@@ -162,18 +163,16 @@ System::System(const string &projectName) :
 
   Contact *contact = new Contact("Contact");
   if (0) {
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7, 0.)));
+    contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7, 0.)));
   }
   else {
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
+    contact->setNormalForceLaw(new UnilateralConstraint);
+    contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
   }
 
   contact->connect(ball->getContour("Point"), ncc);
-  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
-  contact->setOpenMBVNormalForceArrow(a_n);
-  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
-  contact->setOpenMBVFrictionArrow(a_t);
+  contact->enableOpenMBVNormalForce();
+  contact->enableOpenMBVTangentialForce();
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);

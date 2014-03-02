@@ -20,3 +20,5 @@ mbsimxml_LDFLAGS = -Wl,-rpath -Wl,\$$ORIGIN/../lib
 mbsimxml_LDADD = $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
 mbsimxml_SOURCES = mbsimxml.cc
 
+schemadir = @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML
+dist_schema_DATA = mbsimproject.xsd

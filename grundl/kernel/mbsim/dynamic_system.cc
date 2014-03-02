@@ -429,16 +429,15 @@ namespace MBSim {
         link[i]->closePlot();
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->closePlot();
-
-      if (getPlotFeature(separateFilePerGroup) == enabled)
-        delete (H5::FileSerie*) plotGroup;
-      else
-        delete (H5::Group*) plotGroup;
     }
   }
 
   void DynamicSystem::init(InitStage stage) {
-    if (stage == preInit) {
+    if (stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+    }
+    else if (stage == preInit) {
       if (!R) {
         DynamicSystem *sys = dynamic_cast<DynamicSystem*>(parent);
         if (sys)
@@ -624,7 +623,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < frame.size()))
-        throw MBSimError("The object \"" + name + "\" comprises no frame \"" + name + "\"!");
+        throw MBSimError("The DynamicSystem \"" + this->name + "\" comprises no frame \"" + name + "\"!");
       assert(i < frame.size());
     }
     return NULL;
@@ -638,7 +637,7 @@ namespace MBSim {
     }
     if (check) {
       if (!(i < contour.size()))
-        throw MBSimError("The object \"" + name + "\" comprises no contour \"" + name + "\"!");
+        throw MBSimError("The DynamicSystem \"" + this->name + "\" comprises no contour \"" + name + "\"!");
       assert(i < contour.size());
     }
     return NULL;
@@ -706,6 +705,9 @@ namespace MBSim {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updatexRef(xParent);
 
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (**i).updatexRef(xParent);
+
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(xParent);
   }
@@ -714,6 +716,9 @@ namespace MBSim {
     xd >> xdParent(xInd, xInd + xSize - 1);
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updatexdRef(xdParent);
+
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updatexdRef(xdParent);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
@@ -735,16 +740,6 @@ namespace MBSim {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       if ((**i).hasSmoothPart())
         (**i).updatehRef(hParent, j);
-  }
-
-  void DynamicSystem::updatefRef(const Vec &fParent) {
-    f >> fParent(xInd, xInd + xSize - 1);
-
-    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatefRef(fParent);
-
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatefRef(fParent);
   }
 
   void DynamicSystem::updaterRef(const Vec &rParent, int j) {
@@ -1101,6 +1096,11 @@ namespace MBSim {
       xSize += (*i)->getxSize();
     }
 
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->calcxSize();
+      xSize += (*i)->getxSize();
+    }
+
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->calcxSize();
       xSize += (*i)->getxSize();
@@ -1111,6 +1111,10 @@ namespace MBSim {
     xInd = xInd_;
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->setxInd(xInd_);
+      xInd_ += (*i)->getxSize();
+    }
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
@@ -1193,9 +1197,6 @@ namespace MBSim {
       (*i)->setbInd(bInverseKineticsSize);
       bInverseKineticsSize += (*i)->getbSize();
     }
-//    cout << name << endl;
-//    cout << bInverseKineticsSize << endl;
-    //throw;
   }
 
   void DynamicSystem::calcgSize(int j) {
@@ -1296,49 +1297,20 @@ namespace MBSim {
 
   void DynamicSystem::addFrame(FixedRelativeFrame *frame_) {
     if (getFrame(frame_->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprises one Frame by the name \"" + name + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprises one Frame by the name \"" + name + "\"!");
       assert(getFrame(frame_->getName(),false)==NULL);
     }
     frame.push_back(frame_);
     frame_->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    Deprecated::registerMessage("Using DynamicSystem::addFrame(Frame*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
-    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(frame_->getName(), RrRF, ARF, refFrame);
-    if (frame_->getOpenMBVFrame())
-      environmentFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
-    addFrame(environmentFrame);
-  }
-
-  void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    Deprecated::registerMessage("Using DynamicSystem::addFrame(const string&, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
-    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(str, RrRF, ARF, refFrame);
-    addFrame(environmentFrame);
-  }
-
   void DynamicSystem::addContour(Contour* contour_) {
     if (getContour(contour_->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one Contour by the name \"" + name + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one Contour by the name \"" + name + "\"!");
       assert(getContour(contour_->getName(),false)==NULL);
     }
     contour.push_back(contour_);
     contour_->setParent(this);
-  }
-
-  void DynamicSystem::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
-    Deprecated::registerMessage("Using DynamicSystem::addContour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
-    stringstream frameName;
-    frameName << "ContourFrame" << contour.size();
-    Frame *contourFrame;
-    if (!refFrame && fabs(RrRC(0)) < 1e-10 && fabs(RrRC(1)) < 1e-10 && fabs(RrRC(2)) < 1e-10 && fabs(ARC(0, 0) - 1) < 1e-10 && fabs(ARC(1, 1) - 1) < 1e-10 && fabs(ARC(2, 2) - 1) < 1e-10)
-      contourFrame = frame[0];
-    else {
-      contourFrame = new FixedRelativeFrame(frameName.str(), RrRC, ARC, refFrame);
-      addFrame((FixedRelativeFrame*) contourFrame);
-    }
-    contour_->setFrameOfReference(contourFrame);
-    addContour(contour_);
   }
 
   int DynamicSystem::frameIndex(const Frame *frame_) const {
@@ -1379,7 +1351,7 @@ namespace MBSim {
 
   void DynamicSystem::addLink(Link *lnk) {
     if (getLink(lnk->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one Link by the name \"" + lnk->getName() + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one Link by the name \"" + lnk->getName() + "\"!");
       assert(getLink(lnk->getName(),false) == NULL);
     }
 
@@ -1389,7 +1361,7 @@ namespace MBSim {
 
   void DynamicSystem::addInverseKineticsLink(Link *lnk) {
     //if(getLink(lnk->getName(),false)) {
-    //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
+    //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << this->name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
     //  assert(getLink(lnk->getName(),false) == NULL);
     //}
     inverseKineticsLink.push_back(lnk);
@@ -1412,7 +1384,7 @@ namespace MBSim {
 
   void DynamicSystem::addModel(ModellingInterface *model_) {
     if (getModel(model_->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one model by the name \"" + model_->getName() + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one model by the name \"" + model_->getName() + "\"!");
       assert(getModel(model_->getName(),false) == NULL);
     }
     model.push_back(model_);
@@ -1435,7 +1407,7 @@ namespace MBSim {
 
   void DynamicSystem::addGroup(DynamicSystem *sys) {
     if (getGroup(sys->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one DynamicSystem by the name \"" + sys->getName() + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one DynamicSystem by the name \"" + sys->getName() + "\"!");
       assert(getGroup(sys->getName(),false) == NULL);
     }
     dynamicsystem.push_back(sys);
@@ -1444,7 +1416,7 @@ namespace MBSim {
 
   void DynamicSystem::addObject(Object *obj) {
     if (getObject(obj->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one Object by the name \"" + obj->getName() + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one Object by the name \"" + obj->getName() + "\"!");
       assert(getObject(obj->getName(),false) == NULL);
     }
     object.push_back(obj);
@@ -1509,7 +1481,7 @@ namespace MBSim {
 
   void DynamicSystem::addObserver(Observer *ele) {
     if (getObserver(ele->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one Observer by the name \"" + ele->getName() + "\"!");
+      throw MBSimError("The DynamicSystem \"" + this->name + "\" can only comprise one Observer by the name \"" + ele->getName() + "\"!");
       assert(getObserver(ele->getName(),false) == NULL);
     }
     observer.push_back(ele);

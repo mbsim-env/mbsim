@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -15,7 +15,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #ifndef _FINITE_ELEMENT_1S_21_RCM_H_
@@ -45,11 +44,6 @@ namespace MBSimFlexibleBody {
    */
   class FiniteElement1s21RCM : public MBSim::DiscretizationInterface {
     public:
-      /**
-       * \brief constructor
-       */
-      FiniteElement1s21RCM() {};
-
       /*!
        * \brief constructor 
        * \param undeformed lenght of element
@@ -78,11 +72,11 @@ namespace MBSimFlexibleBody {
       virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
+      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { return JGeneralized(qElement,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
       /*!
        * compute additional informations for element
@@ -90,50 +84,56 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec computeAdditionalElementData(fmatvec::Vec &qElement, fmatvec::Vec &qpElement);
 
       /* GETTER / SETTER */
-      void setCurlRadius(double);
-      void setMaterialDamping(double);
-      void setLehrDamping(double);
+      void setCurlRadius(double R);
+      void setMaterialDamping(double depsilons);
+      void setLehrDamping(double D);
       /***************************************************/
 
       /**
-       * \param global positions
+       * \brief return the Cartesian position at a contour point
+       * \param generalised coordinates
        * \param contour point
-       * \return positional beam state
+       * \return Cartesian position
        */
       fmatvec::Vec LocateBeam(const fmatvec::Vec&q, const double &s);
 
       /**
-       * \param global positions
-       * \param global velocities
+       * \brief return the Cartesian position and velocity at a contour point
+       * \param generalised positions
+       * \param generalised velocities
        * \param contour point
-       * \return beam state
+       * \return Cartesian position and velocity
        */
-      fmatvec::Vec StateBeam(const fmatvec::Vec&q, const fmatvec::Vec&u, const double &s);
+      fmatvec::Vec StateBeam(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double &s);
 
       /**
-       * \param global positions
+       * \brief return the JACOBIAN of Cartesian position with respect to generalised internal coordinates
+       * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of beam cross section position with respect to generalised position in global coordinates
+       * \return JACOBIAN of Cartesian position with respect to generalised internal coordinates
        */
       fmatvec::Mat JGeneralizedInternal(const fmatvec::Vec& qElement, const double& s);
 
       /**
-       * \param global positions
+       * \brief return the JACOBIAN of Cartesian position with respect to generalised global coordinates
+       * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of beam cross section position with respect to generalised position in local coordinates
+       * \return JACOBIAN of Cartesian position with respect to generalised global coordinates
        */
       fmatvec::Mat JGeneralized (const fmatvec::Vec& qElement, const double& s);
 
       /**
-       * \param global positions
-       * \param global velocities
+       * \brief return the derivative of the JACOBIAN of Cartesian position with respect to generalised global coordinates
+       * \param generalised coordinates
+       * \param generalised velocities
        * \param contour point
-       * \param TODO
-       * \return derivative of JACOBIAN of beam cross section position with respect to generalised position in local coordinates
+       * \param contour point derivative
+       * \return derivative of JACOBIAN of Cartesian position with respect to generalised global coordinates
        */
       fmatvec::Mat JpGeneralized(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double& s,const double& sp);
 
       /**
+       * \brief return some additional element data
        * \param global positions
        * \param global velocities
        * \return elongation, elongational velocity, cog position, cog velocity, bending angle sum, bending velocity sum
@@ -142,7 +142,7 @@ namespace MBSimFlexibleBody {
 
     protected:
       /** 
-       * \brief length, density, longitudinal and bending stiffness
+       * \brief length, line-density, longitudinal and bending stiffness
        */
       double l0, Arho, EA, EI;
 
@@ -231,15 +231,17 @@ namespace MBSimFlexibleBody {
       void BuildJacobi(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpIntern, fmatvec::SqrMat& Jeg, fmatvec::SqrMat& Jegp);
 
       /** 
+       * \brief calculates Cartesian position and velocity
        * \param local positions
        * \param local velocities
        * \param contour point
        * \param flag to calculate velocities
-       * \return beam state
+       * \return Cartesian position and velocity
        */
       fmatvec::Vec LocateLocalBeam(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const double& s, const bool calcAll=true);
 
       /**
+       * \brief calculates JACOBIAN of implicit integration
        * \param global positions
        * \param global velocities
        * \param local positions
@@ -256,11 +258,15 @@ namespace MBSimFlexibleBody {
        * \brief powers of the beam length
        */
       double l0h2, l0h3, l0h4, l0h5, l0h7, l0h8;
+      
+      /**
+       * \brief constructor is declared private
+       */
+      FiniteElement1s21RCM() {};
   };
 
   inline double Sec(const double& alpha) { return 1.0/cos(alpha); }
   inline double Power(double base, int exponent) { return pow(base,exponent); }
-
 }
 
 #endif /* _FINITE_ELEMENT_1S_21_RCM_H_ */

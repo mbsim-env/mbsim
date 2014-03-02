@@ -42,7 +42,7 @@ namespace MBSim {
   LinkMechanics::~LinkMechanics() {}
 
   void LinkMechanics::updatedhdz(double t) {
-    throw;
+    throw MBSimError("Internal error");
   }
 
   void LinkMechanics::plot(double t, double dt) {
@@ -127,11 +127,11 @@ namespace MBSim {
   } 
 
   void LinkMechanics::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
-    throw;
+    throw MBSimError("Internal error");
   }
 
   void LinkMechanics::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
-    throw;
+    throw MBSimError("Internal error");
   }
 
   void LinkMechanics::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {

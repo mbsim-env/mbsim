@@ -30,7 +30,7 @@ namespace MBSim {
 
   }
 
-  MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver(Function1<Vec, Vec> *function_) :
+  MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver(Function<Vec(Vec)> *function_) :
       function(function_), criteria(0), iter(0), itermax(1e3), norms(0), info(1) {
   }
 

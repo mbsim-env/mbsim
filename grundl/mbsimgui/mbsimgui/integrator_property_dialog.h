@@ -21,6 +21,7 @@
 #define _INTEGRATOR_PROPERTY_DIALOG_H_
 
 #include "property_dialog.h"
+#include "widget.h"
 
 class Integrator;
 class DOPRI5Integrator;
@@ -32,6 +33,16 @@ class EulerExplicitIntegrator;
 class RKSuiteIntegrator;
 class VecWidget;
 class ExtWidget;
+
+class ToleranceWidgetFactory : public WidgetFactory {
+  public:
+    ToleranceWidgetFactory();
+    QWidget* createWidget(int i=0);
+    QString getName(int i=0) const { return name[i]; }
+    int getSize() const { return name.size(); }
+  protected:
+    std::vector<QString> name;
+};
 
 class IntegratorPropertyDialog : public PropertyDialog {
 
@@ -45,7 +56,7 @@ class IntegratorPropertyDialog : public PropertyDialog {
   protected:
     Integrator *integrator;
     VecWidget *z0;
-    ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
+    ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *embed;
 };
 
 class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {

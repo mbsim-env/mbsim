@@ -5,6 +5,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
@@ -31,7 +32,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec WrOSStab(3);
   WrOSStab(0) = lStab;
   WrOSStab(1) = 0.5*sqrt(lStab*lStab+hStab*hStab)*sin(alpha0)+0.015;
-  addFrame("D",WrOSStab,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("D",WrOSStab,SqrMat(3,EYE)));
   
   stab->setFrameOfReference(this->getFrame("D"));
   stab->setFrameForKinematics(stab->getFrame("C"));
@@ -41,8 +42,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double JStab = 1./12. * mStab * lStab * lStab; 
   Theta(2,2) = JStab;
   stab->setInertiaTensor(Theta);
-  stab->setTranslation(new LinearTranslation("[1,0; 0,1; 0,0]"));
-  stab->setRotation(new RotationAboutFixedAxis("[0; 0; 1]"));
+  stab->setTranslation(new TranslationAlongAxesXY<VecV>);
+  stab->setRotation(new RotationAboutZAxis<VecV>);
   
   Vec q0Stab(3);
   q0Stab(2) = alpha0;
@@ -55,7 +56,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid* cuboid = new OpenMBV::Cuboid;
   cuboid->setLength(lStab,hStab,0.1);
-  cuboid->setStaticColor(0.1);
+  cuboid->setDiffuseColor(0.3333,1,0.3333);
   stab->setOpenMBVRigidBody(cuboid);
 #endif
 
@@ -63,59 +64,58 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec rSP(3);
   rSP(0) = -lStab/2.;
   rSP(1) = -hStab/2.;
-  Point *point = new Point("PunktUntenLinks");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktUntenLinks",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktUntenLinks",stab->getFrame("PunktUntenLinks")));
   
   rSP(0) = -lStab/2.;
   rSP(1) =  hStab/2.;
-  point = new Point("PunktUntenRechts");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktUntenRechts",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktUntenRechts",stab->getFrame("PunktUntenRechts")));
   
   rSP(0) =  lStab/2.;
   rSP(1) = -hStab/2.;
-  point = new Point("PunktObenLinks");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktObenLinks",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktObenLinks",stab->getFrame("PunktObenLinks")));
   
   rSP(0) = lStab/2.;
   rSP(1) = hStab/2.;
-  point = new Point("PunktObenRechts");
-  stab->addContour(point,rSP,SqrMat(3,EYE));
+  stab->addFrame(new FixedRelativeFrame("PunktObenRechts",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktObenRechts",stab->getFrame("PunktObenRechts")));
 
-  Plane *line = new Plane("Grund");
-  SqrMat lineRot("[0,1,0;1,0,0;0,0,1]");
-  addContour(line,Vec(3,INIT,0),lineRot);
+  addFrame(new FixedRelativeFrame("Grund",Vec(3,INIT,0),SqrMat("[0,1,0;1,0,0;0,0,1]")));
+  addContour(new Plane("Grund",getFrame("Grund")));
 
   // Contacts
   Contact *cnf = new Contact("KontaktUntenLinks");
   cnf->connect(stab->getContour("PunktUntenLinks"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(1.5));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(1.5));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(1.5));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(1.5));
   addLink(cnf);
   
   cnf = new Contact("KontaktObenLinks");
   cnf->connect(stab->getContour("PunktObenLinks"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(0.2));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(0.2));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(0.2));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(0.2));
   addLink(cnf);
   
   cnf = new Contact("KontaktObenRechts");
   cnf->connect(stab->getContour("PunktObenRechts"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(0.2));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(0.2));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(0.2));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(0.2));
   addLink(cnf);
   
   cnf = new Contact("KontaktUntenRechts");
   cnf->connect(stab->getContour("PunktUntenRechts"), getContour("Grund"));
-  cnf->setContactForceLaw(new UnilateralConstraint());
-  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.));
-  cnf->setFrictionForceLaw(new PlanarCoulombFriction(1.5));
-  cnf->setFrictionImpactLaw(new PlanarCoulombImpact(1.5));
+  cnf->setNormalForceLaw(new UnilateralConstraint());
+  cnf->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  cnf->setTangentialForceLaw(new PlanarCoulombFriction(1.5));
+  cnf->setTangentialImpactLaw(new PlanarCoulombImpact(1.5));
   addLink(cnf);
 }
 

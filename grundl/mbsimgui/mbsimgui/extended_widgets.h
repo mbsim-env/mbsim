@@ -26,10 +26,12 @@
 #include <QBoxLayout>
 
 class QStackedWidget;
+class QSpinBox;
 class VariableWidget;
 class PhysicalVariableWidget;
 class EvalDialog;
 class QVBoxLayout;
+class QListWidget;
 
 class ExtPhysicalVarWidget : public Widget {
   Q_OBJECT
@@ -65,41 +67,43 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
   friend class ExtProperty;
 
   public:
-    ExtWidget(const QString &name, Widget *widget, bool deactivatable=false, bool active=false);
-    Widget* getWidget() {return widget;}
-    virtual void updateWidget() {widget->updateWidget();}
-    virtual void resizeVariables() {widget->resizeVariables();}
+    ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false);
+    QWidget* getWidget() const {return widget;}
+    virtual void updateWidget() {dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
+    virtual void resizeVariables() {dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
+    void resize_(int m, int n) {dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
     void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
     void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
 
   protected:
-    Widget *widget;
+    QWidget *widget;
   signals:
     void resize_();
 };
 
-class ChoiceWidget : public Widget {
+class ChoiceWidget2 : public Widget {
   Q_OBJECT
 
-  friend class ChoiceProperty;
+  friend class ChoiceProperty2;
 
   public:
-    ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
+    ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
 
     void resize_(int m, int n);
-    QWidget* getWidget(int i) const;
     QWidget* getWidget() const;
-    QString getName(int i) const;
     QString getName() const;
+    int getIndex() const;
     void updateWidget();
-
   protected slots:
     void defineWidget(int);
 
   protected:
+    QBoxLayout *layout;
     QComboBox *comboBox;
-    QStackedWidget *stackedWidget;
+    QWidget *widget;
+    //QStackedWidget *stackedWidget;
+    WidgetFactory *factory;
 
   signals:
     void resize_();
@@ -113,12 +117,53 @@ class ContainerWidget : public Widget {
   public:
     ContainerWidget();
 
+    void resize_(int m, int n);
     void addWidget(QWidget *widget_);
     QWidget* getWidget(int i) const {return widget[i];}
+    void updateWidget();
 
   protected:
     QVBoxLayout *layout;
     std::vector<QWidget*> widget;
+};
+
+class ListWidget : public Widget {
+  Q_OBJECT
+
+  friend class ListProperty;
+
+  public:
+    ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int n=1, bool fixedSize=false);
+    ~ListWidget();
+
+    void resize_(int m, int n);
+    int getSize() const;
+    void setSize(int m);
+    QWidget* getWidget(int i) const;
+
+  protected:
+    QStackedWidget *stackedWidget; 
+    QSpinBox* spinBox;
+    QListWidget *list; 
+    WidgetFactory *factory;
+    QString name;
+    int n;
+    void addElements(int n=1, bool emitSignals=true);
+
+  protected slots:
+    void removeElements(int n=1);
+    void changeCurrent(int idx);
+    void currentIndexChanged(int idx);
+  signals:
+    void resize_();
+};
+
+class ChoiceWidgetFactory : public WidgetFactory {
+  public:
+    ChoiceWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
+    Widget* createWidget(int i=0);
+  protected:
+    WidgetFactory *factory;
 };
 
 #endif
