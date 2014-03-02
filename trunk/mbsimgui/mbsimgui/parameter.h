@@ -98,17 +98,16 @@ class MatrixParameter : public Parameter {
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
 };
 
-class SearchPath : public Parameter {
-  friend class SearchPathPropertyDialog;
-  public:
-    SearchPath(const std::string &name);
-    virtual ~SearchPath() {}
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual std::string getType() const { return "searchPath"; }
-//    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
-};
-
+//class SearchPath : public Parameter {
+//  friend class SearchPathPropertyDialog;
+//  public:
+//    SearchPath(const std::string &name);
+//    virtual ~SearchPath() {}
+//    virtual void initializeUsingXML(xercesc::DOMElement *element);
+//    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+//    virtual std::string getType() const { return "searchPath"; }
+////    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
+//};
 
 class ParameterList {
   public:
