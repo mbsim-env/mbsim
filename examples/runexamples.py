@@ -41,8 +41,7 @@ directories=list() # a list of all examples sorted in descending order (filled r
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
 # pj('xml', 'time_dependent_kinematics')
-  pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD'),
-  pj('fmi', 'two_mass_oscillator')
+  pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD')
 ])
 
 # MBSim Modules
