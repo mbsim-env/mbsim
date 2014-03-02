@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimPlugin"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimPlugin"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="MBSimPlugin">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="schemas">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Schema" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="namespace" type="xs:anyURI" use="required"/>
+                  <xs:attribute name="schemaLocation" type="xs:anyURI" use="required"/>
+                </xs:complexType> 
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="libraries">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Library" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="basename" type="xs:string" use="required"/>
+                </xs:complexType> 
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

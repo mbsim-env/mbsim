@@ -5,6 +5,8 @@
 #include "mbxmlutilstinyxml/tinynamespace.h"
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/last_write_time.h>
+#include <mbxmlutilshelper/dom.h>
+#include <xercesc/dom/DOMDocument.hpp>
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
@@ -25,6 +27,7 @@
 #endif
 
 using namespace std;
+using namespace xercesc;
 using namespace MBXMLUtils;
 
 namespace {
@@ -89,19 +92,22 @@ boost::filesystem::path relLibName(const string &base) {
 // If a module plugin (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 void loadPlugins() {
-  static const boost::filesystem::path installDir(MBXMLUtils::getInstallPath());
+  static NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
+  static const boost::filesystem::path installDir(getInstallPath());
+  // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
+  static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
+
   set<boost::filesystem::path> pluginLibFile;
 
-  // read plugins
-  string line;
+  // read plugin libraries
   for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimxml"/"plugins");
       it!=boost::filesystem::directory_iterator(); it++) {
-    boost::filesystem::ifstream plugin(*it);
-    // read up to (including) the first empty line
-    do { getline(plugin, line); } while(!line.empty());
-    // read up to eof
-    while(!getline(plugin, line).eof())
-      pluginLibFile.insert(installDir/relLibName(line));
+    if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
+    boost::shared_ptr<DOMDocument> doc=parser->parse(*it);
+    for(DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries"))->
+        getFirstElementChildNamed(MBSIMPLUGIN%"Library");
+        e!=NULL; e=e->getNextElementSibling())
+      pluginLibFile.insert(installDir/relLibName(E(e)->getAttribute("basename")));
   }
 
   static set<SharedLibrary> loadedPlugin;
