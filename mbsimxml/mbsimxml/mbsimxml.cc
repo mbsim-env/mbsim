@@ -24,7 +24,6 @@
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
-using namespace xercesc;
 using namespace MBXMLUtils;
 namespace bfs=boost::filesystem;
 
@@ -93,8 +92,8 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
   string ns, loc;
   for(bfs::directory_iterator it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
     if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
-    boost::shared_ptr<DOMDocument> doc=parser->parse(*it);
-    for(DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
+    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+    for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
         getFirstElementChildNamed(MBSIMPLUGIN%"Schema");
         e!=NULL; e=e->getNextElementSibling())
       schema.push_back(make_pair(E(e)->getAttribute("namespace"), E(e)->getAttribute("schemaLocation")));
