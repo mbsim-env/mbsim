@@ -27,7 +27,6 @@
 #endif
 
 using namespace std;
-using namespace xercesc;
 using namespace MBXMLUtils;
 
 namespace {
@@ -103,8 +102,8 @@ void loadPlugins() {
   for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimxml"/"plugins");
       it!=boost::filesystem::directory_iterator(); it++) {
     if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
-    boost::shared_ptr<DOMDocument> doc=parser->parse(*it);
-    for(DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries"))->
+    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+    for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries"))->
         getFirstElementChildNamed(MBSIMPLUGIN%"Library");
         e!=NULL; e=e->getNextElementSibling())
       pluginLibFile.insert(installDir/relLibName(E(e)->getAttribute("basename")));
