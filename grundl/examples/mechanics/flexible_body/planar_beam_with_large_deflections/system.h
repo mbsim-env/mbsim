@@ -4,9 +4,9 @@
 #include "mbsim/dynamic_system_solver.h"
 #include <string>
 
-class SlidingMass : public MBSim::DynamicSystemSolver {
+class PlanarBeamWithLargeDeflectionSystem : public MBSim::DynamicSystemSolver {
   public:
-    SlidingMass(const std::string &projectName);
+    PlanarBeamWithLargeDeflectionSystem(const std::string &projectName);
 };
 
 #endif

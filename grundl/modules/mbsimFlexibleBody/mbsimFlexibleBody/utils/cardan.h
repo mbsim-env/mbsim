@@ -46,9 +46,9 @@ namespace MBSimFlexibleBody {
       /********************************************************/
 
       /* INTERFACE OF ANGLES */
-      virtual fmatvec::Vec computet(const fmatvec::Vec& q) const;		
-      virtual fmatvec::Vec computen(const fmatvec::Vec& q) const;		
-      virtual fmatvec::Vec computeb(const fmatvec::Vec& q) const;
+      virtual fmatvec::Vec3 computet(const fmatvec::Vec& q) const;
+      virtual fmatvec::Vec3 computen(const fmatvec::Vec& q) const;
+      virtual fmatvec::Vec3 computeb(const fmatvec::Vec& q) const;
       virtual fmatvec::Vec computentil(const fmatvec::Vec& q) const;		
       virtual fmatvec::Vec computebtil(const fmatvec::Vec& q) const;	
       virtual fmatvec::SqrMat computetq(const fmatvec::Vec& q) const;		

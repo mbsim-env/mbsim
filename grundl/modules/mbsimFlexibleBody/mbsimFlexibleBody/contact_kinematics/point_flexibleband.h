@@ -21,6 +21,7 @@
 #define POINT_FLEXIBLEBAND_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
+#include "mbsim/functions_contact.h"
 #include "mbsim/mbsim_event.h"
 
 namespace MBSim {
@@ -44,7 +45,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        */
       ContactKinematicsPointFlexibleBand();
-      
+
       /**
        * \brief destructor
        */
@@ -53,10 +54,12 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
       virtual void updateg(fmatvec::Vec& g, MBSim::ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("ERROR (ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }   
+      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData) {
+        throw MBSim::MBSimError("ERROR (ContactKinematicsPointFlexibleBand::updatewb): not implemented!");
+      }
       /***************************************************/
 
-    private:
+    protected:
       /** 
        * \brief contour index 
        */
@@ -67,6 +70,16 @@ namespace MBSimFlexibleBody {
        */
       MBSim::Point *point;
       FlexibleBand *band;
+
+      /*!
+       * \brief function for search
+       */
+      MBSim::FuncPairContour1sPoint *func;
+
+      /*!
+       * \brief search object to identify lagrange parameter position
+       */
+      MBSim::Contact1sSearch search;
   };
 
 }

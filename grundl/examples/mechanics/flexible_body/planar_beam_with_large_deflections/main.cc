@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
   StopWatch sw;
 
   sw.start();
-  SlidingMass *sys = new SlidingMass("MBS");
+  PlanarBeamWithLargeDeflectionSystem *sys = new PlanarBeamWithLargeDeflectionSystem("MBS");
 
   sys->setImpactSolver(RootFinding);
   sys->setStopIfNoConvergence(true, true);
@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(5e-1);
+  integrator.setEndTime(1.5e-1);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-3);
   integrator.integrate(*sys);

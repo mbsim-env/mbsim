@@ -27,20 +27,20 @@ namespace MBSimFlexibleBody {
 
   RevCardan::~RevCardan() {}
 
-  Vec RevCardan::computet(const Vec& q) const {
+  Vec3 RevCardan::computet(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec t(3);
+    Vec3 t(NONINIT);
     t(0) = cq2*cq1;
     t(1) = sq2*cq1;
     t(2) = -sq1;
-    return t.copy();
+    return t;
   }
 
-  Vec RevCardan::computen(const Vec& q) const {
+  Vec3 RevCardan::computen(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -48,14 +48,14 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec n(3);
+    Vec3 n(NONINIT);
     n(0) = -sq2*cq0+cq2*sq1*sq0;
     n(1) = cq2*cq0+sq2*sq1*sq0;
     n(2) = cq1*sq0;
-    return n.copy();
+    return n;
   }
 
-  Vec RevCardan::computeb(const Vec& q) const {
+  Vec3 RevCardan::computeb(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -63,11 +63,11 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec b(3);
+    Vec3 b(NONINIT);
     b(0) = sq2*sq0+cq2*sq1*cq0;
     b(1) = -cq2*sq0+sq2*sq1*cq0;
     b(2) = cq1*cq0;
-    return b.copy();
+    return b;
   }
 
   Vec RevCardan::computentil(const Vec& q) const {

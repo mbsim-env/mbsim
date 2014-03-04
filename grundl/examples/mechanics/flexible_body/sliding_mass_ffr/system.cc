@@ -26,7 +26,7 @@ using namespace std;
 SlidingMass::SlidingMass(const string &projectName) :
     DynamicSystemSolver(projectName) {
 
-  bool runRCM = true;
+  bool runRCM = false;
   bool runFFR = true;
 //  bool runCosserat = true;
 
@@ -236,7 +236,6 @@ SlidingMass::SlidingMass(const string &projectName) :
     this->addLink(contact);
 
     ContourPointData cpdata;
-    cpdata.getLagrangeParameterPosition() = Vec(1, INIT, 0.);
     cpdata.getContourParameterType() = CONTINUUM;
     rod->addFrame("RJ", cpdata);
 

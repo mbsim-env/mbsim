@@ -92,7 +92,7 @@ namespace MBSim {
        * \param contour with one contour parameter
        */
       FuncPairContour1sPoint(Point* point_, Contour1s *contour_) :
-          contour(contour_), point(point_), cp(fmatvec::VecV(1)) {
+          contour(contour_), point(point_), cp() {
       }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
@@ -138,7 +138,7 @@ namespace MBSim {
        * \param contour contour2s surface
        */
       FuncPairContour2sPoint(Point* point_, Contour2s *contour_) :
-          contour(contour_), point(point_), cp(fmatvec::VecV(2)) {
+          contour(contour_), point(point_), cp() {
       }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
@@ -632,6 +632,13 @@ namespace MBSim {
   class Contact1sSearch {
     public:
       /*! 
+       * \brief standard constructor
+       */
+      Contact1sSearch() :
+          func(0), jac(0), s0(0.), searchAll(false) {
+      }
+
+      /*!
        * \brief constructor 
        * \param root function
        * \default numerical Jacobian evaluation
@@ -652,6 +659,14 @@ namespace MBSim {
       }
 
       /* GETTER / SETTER */
+      void setFunction(DistanceFunction<double(double)> *func_) {
+        func = func_;
+      }
+
+      void setJacobianFunction(fmatvec::Function<double(double)> *jac_) {
+        jac = jac_;
+      }
+
       void setInitialValue(const double &s0_) {
         s0 = s0_;
       }

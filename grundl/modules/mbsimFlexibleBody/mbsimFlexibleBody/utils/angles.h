@@ -51,19 +51,19 @@ namespace MBSimFlexibleBody {
       /**
        * \return tangent 
        */
-      virtual fmatvec::Vec computet(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::Vec3 computet(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
        * \return normal
        */
-      virtual fmatvec::Vec computen(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::Vec3 computen(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
        * \return binormal 
        */
-      virtual fmatvec::Vec computeb(const fmatvec::Vec& q) const = 0;
+      virtual fmatvec::Vec3 computeb(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
