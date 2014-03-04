@@ -41,7 +41,6 @@ namespace MBSimFlexibleBody {
        * \param name of contour
        */
       FlexibleBand(const std::string& name);
-//      FlexibleBand(const std::string& name, bool openStructure_);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const {

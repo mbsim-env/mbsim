@@ -192,7 +192,7 @@ System::System(const string &projectName) :
     double xL = i * rodInfo->getLength() / balls.size();
     ContourPointData cp;
     cp.getContourParameterType() = CONTINUUM;
-    cp.getLagrangeParameterPosition() = Vec(1, INIT, xL);
+    cp.getLagrangeParameterPosition()(0) = xL;
 
     neutralFactory->updateKinematicsForFrame(cp, position_cosy);
 

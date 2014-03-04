@@ -41,12 +41,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBand::updateKinematicsForFrame(ContourPointData& cp, FrameFeature ff) {
     if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy)
-      neutral->updateKinematicsForFrame(cp, firstTangent);
+      Contour1sFlexible::updateKinematicsForFrame(cp, firstTangent);
     if (ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy) {
 //      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,normal);
 //      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,secondTangent);
-      neutral->updateKinematicsForFrame(cp, normal);
-      neutral->updateKinematicsForFrame(cp, secondTangent);
+      Contour1sFlexible::updateKinematicsForFrame(cp, normal);
+      Contour1sFlexible::updateKinematicsForFrame(cp, secondTangent);
 
       Vec WnLocal = cp.getFrameOfReference().getOrientation().col(0);
       Vec WbLocal = cp.getFrameOfReference().getOrientation().col(2);
@@ -56,21 +56,21 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().getOrientation().set(2, -WnLocal * Cn(1) + WbLocal * Cn(0));
     }
     if (ff == position || ff == position_cosy) {
-      neutral->updateKinematicsForFrame(cp, position);
+      Contour1sFlexible::updateKinematicsForFrame(cp, position_cosy);
       cp.getFrameOfReference().getPosition() += cp.getFrameOfReference().getOrientation().col(0) * nDist + cp.getFrameOfReference().getOrientation().col(2) * cp.getLagrangeParameterPosition()(1);
     }
     if (ff == angularVelocity || ff == velocities || ff == velocities_cosy) {
-      neutral->updateKinematicsForFrame(cp, angularVelocity);
+      Contour1sFlexible::updateKinematicsForFrame(cp, angularVelocity);
     }
     if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy) {
-      neutral->updateKinematicsForFrame(cp, velocity);
+      Contour1sFlexible::updateKinematicsForFrame(cp, velocity);
       Vec3 dist = cp.getFrameOfReference().getOrientation().col(0) * nDist + cp.getFrameOfReference().getOrientation().col(2) * cp.getLagrangeParameterPosition()(1);
       cp.getFrameOfReference().getVelocity() += crossProduct(cp.getFrameOfReference().getAngularVelocity(), dist);
     }
   }
 
   void FlexibleBand::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
-    neutral->updateJacobiansForFrame(cp);
+    Contour1sFlexible::updateJacobiansForFrame(cp);
     Vec WrPC = cp.getFrameOfReference().getOrientation().col(0) * nDist + cp.getFrameOfReference().getOrientation().col(2) * cp.getLagrangeParameterPosition()(1); // vector from neutral line to contour surface point
     SqrMat tWrPC = tilde(WrPC).copy(); // tilde matrix of above vector
     cp.getFrameOfReference().setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation() - tWrPC * cp.getFrameOfReference().getJacobianOfRotation()); // Jacobian of translation at contour surface with standard description assuming rigid cross-section

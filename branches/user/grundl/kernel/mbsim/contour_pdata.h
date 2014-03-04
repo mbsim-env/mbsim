@@ -27,7 +27,9 @@ namespace MBSim {
 
   class Point;
 
-  enum ContourParameterType { NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL, FFRORIGIN, FIXEDRELATIVEFRAME};
+  enum ContourParameterType {
+    NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL, FFRORIGIN, FIXEDRELATIVEFRAME
+  };
 
   /**
    * \brief struct for data-management for single point on a contour to describe contact kinematics
@@ -42,29 +44,63 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContourPointData() : type(CONTINUUM), ID(0) {}
-      ContourPointData(const double       &alpha_) : type(CONTINUUM), ID(0), alpha(1,fmatvec::INIT,alpha_) {}
-      ContourPointData(const fmatvec::VecV &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
-      ContourPointData(const int  &id_, const ContourParameterType type_ = NODE) : type(type_), ID(id_) {}
+      ContourPointData() :
+          type(CONTINUUM), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+      }
+      ContourPointData(const double &alpha_) :
+          type(CONTINUUM), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+        alpha(0) = alpha_;
+      }
+      ContourPointData(const fmatvec::Vec2 &alpha_) :
+          type(CONTINUUM), ID(0), alpha(alpha_), alphap(fmatvec::Vec2()) {
+      }
+      ContourPointData(const int &id_, const ContourParameterType type_ = NODE) :
+          type(type_), ID(id_), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+      }
 
       /**
        * \brief destructor
        */
-      virtual ~ContourPointData() {}
+      virtual ~ContourPointData() {
+      }
 
       /* GETTER / SETTER */
-      ContourParameterType& getContourParameterType() { return type; }
-      const ContourParameterType& getContourParameterType() const { return type; }
-      int& getNodeNumber() { return ID; }
-      const int& getNodeNumber() const { return ID; }
-      fmatvec::VecV& getLagrangeParameterPosition() { return alpha; }
-      const fmatvec::VecV& getLagrangeParameterPosition() const { return alpha; }
-      fmatvec::VecV& getLagrangeParameterVelocity() { return alphap; }
-      const fmatvec::VecV& getLagrangeParameterVelocity() const { return alphap; }
-      fmatvec::VecV& getInterpolationWeights() { return iWeights; }
-      const fmatvec::VecV& getInterpolationWeights() const { return iWeights; }
-      Frame& getFrameOfReference() { return cosy; }
-      const Frame& getFrameOfReference() const { return cosy; }
+      ContourParameterType& getContourParameterType() {
+        return type;
+      }
+      const ContourParameterType& getContourParameterType() const {
+        return type;
+      }
+      int& getNodeNumber() {
+        return ID;
+      }
+      const int& getNodeNumber() const {
+        return ID;
+      }
+      fmatvec::Vec2& getLagrangeParameterPosition() {
+        return alpha;
+      }
+      const fmatvec::Vec2& getLagrangeParameterPosition() const {
+        return alpha;
+      }
+      fmatvec::Vec2& getLagrangeParameterVelocity() {
+        return alphap;
+      }
+      const fmatvec::Vec2& getLagrangeParameterVelocity() const {
+        return alphap;
+      }
+      fmatvec::VecV& getInterpolationWeights() {
+        return iWeights;
+      }
+      const fmatvec::VecV& getInterpolationWeights() const {
+        return iWeights;
+      }
+      Frame& getFrameOfReference() {
+        return cosy;
+      }
+      const Frame& getFrameOfReference() const {
+        return cosy;
+      }
       /***************************************************/
 
     private:
@@ -81,12 +117,12 @@ namespace MBSim {
       /**
        * \brief contour parameter(s)
        */
-      fmatvec::VecV alpha;
+      fmatvec::Vec2 alpha;
 
       /**
        * \brief contour parameter(s) velocities
        */
-      fmatvec::VecV alphap;
+      fmatvec::Vec2 alphap;
 
       /** 
        * \brief interpolation weights

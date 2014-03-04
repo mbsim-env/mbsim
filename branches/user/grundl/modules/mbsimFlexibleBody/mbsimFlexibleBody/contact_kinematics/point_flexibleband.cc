@@ -22,7 +22,6 @@
 #include "mbsim/contour.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/functions_contact.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -31,9 +30,10 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   ContactKinematicsPointFlexibleBand::ContactKinematicsPointFlexibleBand() :
-      ContactKinematics(), ipoint(0), icontour(0), point(0), band(0) {
+      ContactKinematics(), ipoint(0), icontour(0), point(0), band(0), func(0), search() {
   }
   ContactKinematicsPointFlexibleBand::~ContactKinematicsPointFlexibleBand() {
+    delete func;
   }
 
   void ContactKinematicsPointFlexibleBand::assignContours(const vector<Contour*>& contour) {
@@ -49,22 +49,16 @@ namespace MBSimFlexibleBody {
       point = static_cast<Point*>(contour[1]);
       band = static_cast<FlexibleBand*>(contour[0]);
     }
+
+    func = new FuncPairContour1sPoint(point, band); // root function for searching contact parameters
+
+    search.setFunction(func);
+    search.setSearchAll(true); // for first search it is important to have a global search
+    search.setNodes(band->getNodes()); // defining search areas for contacts
   }
 
   void ContactKinematicsPointFlexibleBand::updateg(Vec& g, ContourPointData *cpData, int index) {
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
-
-    FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, band); // root function for searching contact parameters
-    Contact1sSearch search(func);
-    search.setNodes(band->getNodes()); // defining search areas for contacts
-
-    if (cpData[icontour].getLagrangeParameterPosition().size() != 0) { // select start value from last search
-      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
-    }
-    else { // define start search with regula falsi
-      search.setSearchAll(true);
-      cpData[icontour].getLagrangeParameterPosition() = Vec(2, NONINIT);
-    }
 
     cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fiber, only in the x direction.
 
@@ -83,6 +77,8 @@ namespace MBSimFlexibleBody {
       if (cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width)
         g(0) = 1.;
       else { // calculate the normal distance
+        search.setSearchAll(false);
+        search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
         cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1) * Wb;
         cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
         cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
@@ -90,7 +86,7 @@ namespace MBSimFlexibleBody {
         g(0) = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
       }
     }
-    delete func;
+
   }
 
 }
