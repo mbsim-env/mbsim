@@ -23,114 +23,118 @@
 #include "property_dialog.h"
 #include "widget.h"
 
-class Integrator;
-class DOPRI5Integrator;
-class RADAU5Integrator;
-class LSODEIntegrator;
-class LSODARIntegrator;
-class TimeSteppingIntegrator;
-class EulerExplicitIntegrator;
-class RKSuiteIntegrator;
-class VecWidget;
-class ExtWidget;
+namespace MBSimGUI {
 
-class ToleranceWidgetFactory : public WidgetFactory {
-  public:
-    ToleranceWidgetFactory();
-    QWidget* createWidget(int i=0);
-    QString getName(int i=0) const { return name[i]; }
-    int getSize() const { return name.size(); }
-  protected:
-    std::vector<QString> name;
-};
+  class Integrator;
+  class DOPRI5Integrator;
+  class RADAU5Integrator;
+  class LSODEIntegrator;
+  class LSODARIntegrator;
+  class TimeSteppingIntegrator;
+  class EulerExplicitIntegrator;
+  class RKSuiteIntegrator;
+  class VecWidget;
+  class ExtWidget;
 
-class IntegratorPropertyDialog : public PropertyDialog {
+  class ToleranceWidgetFactory : public WidgetFactory {
+    public:
+      ToleranceWidgetFactory();
+      QWidget* createWidget(int i=0);
+      QString getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<QString> name;
+  };
 
-  public:
-    IntegratorPropertyDialog(Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-    void toWidget() {toWidget(integrator);}
-    void fromWidget() {fromWidget(integrator);}
-    Integrator* getIntegrator() {return integrator;}
-  protected:
-    Integrator *integrator;
-    VecWidget *z0;
-    ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *embed;
-};
+  class IntegratorPropertyDialog : public PropertyDialog {
 
-class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      IntegratorPropertyDialog(Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+      void toWidget() {toWidget(integrator);}
+      void fromWidget() {fromWidget(integrator);}
+      Integrator* getIntegrator() {return integrator;}
+    protected:
+      Integrator *integrator;
+      VecWidget *z0;
+      ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *embed;
+  };
 
-  public:
-    DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    VecWidget *aTol, *rTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
-};
+  class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
-class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      VecWidget *aTol, *rTol;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+  };
 
-  public:
-    RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    VecWidget *aTol, *rTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
-};
+  class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
-class LSODEIntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      VecWidget *aTol, *rTol;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+  };
 
-  public:
-    LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    VecWidget *aTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
-};
+  class LSODEIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
-class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      VecWidget *aTol;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
+  };
 
-  public:
-    LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    VecWidget *aTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
-};
+  class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
-class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      VecWidget *aTol;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
+  };
 
-  public:
-    TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    ExtWidget *stepSize;
-};
+  class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
-class EulerExplicitIntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      ExtWidget *stepSize;
+  };
 
-  public:
-    EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    ExtWidget *stepSize;
-};
+  class EulerExplicitIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
-class RKSuiteIntegratorPropertyDialog : public IntegratorPropertyDialog {
+    public:
+      EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      ExtWidget *stepSize;
+  };
 
-  public:
-    RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    virtual void toWidget(Integrator *integrator);
-    virtual void fromWidget(Integrator *integrator);
-  protected:
-    ExtWidget *type, *relTol, *threshold, *initialStepSize;
-};
+  class RKSuiteIntegratorPropertyDialog : public IntegratorPropertyDialog {
+
+    public:
+      RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Integrator *integrator);
+      virtual void fromWidget(Integrator *integrator);
+    protected:
+      ExtWidget *type, *relTol, *threshold, *initialStepSize;
+  };
+
+}
 
 #endif

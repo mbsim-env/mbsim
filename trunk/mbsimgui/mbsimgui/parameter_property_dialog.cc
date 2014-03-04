@@ -26,81 +26,85 @@
 
 using namespace std;
 
-ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), parameter(parameter_) {
-  addTab("General");
-  name=new ExtWidget("Name",new TextWidget);
-  addToTab("General",name);
-}
+namespace MBSimGUI {
 
-void ParameterPropertyDialog::toWidget(Parameter *parameter) {
-  parameter->name.toWidget(name);
-}
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), parameter(parameter_) {
+    addTab("General");
+    name=new ExtWidget("Name",new TextWidget);
+    addToTab("General",name);
+  }
 
-void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  parameter->name.fromWidget(name);
-}
+  void ParameterPropertyDialog::toWidget(Parameter *parameter) {
+    parameter->name.toWidget(name);
+  }
 
-StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  value = new ExtWidget("Value",new TextWidget("0"));
-  addToTab("General", value);
-}
+  void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    parameter->name.fromWidget(name);
+  }
 
-void StringParameterPropertyDialog::toWidget(Parameter *parameter) {
-  ParameterPropertyDialog::toWidget(parameter);
-  static_cast<StringParameter*>(parameter)->value.toWidget(value);
-}
+  StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+    value = new ExtWidget("Value",new TextWidget("0"));
+    addToTab("General", value);
+  }
 
-void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  ParameterPropertyDialog::fromWidget(parameter);
-  static_cast<StringParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
-}
+  void StringParameterPropertyDialog::toWidget(Parameter *parameter) {
+    ParameterPropertyDialog::toWidget(parameter);
+    static_cast<StringParameter*>(parameter)->value.toWidget(value);
+  }
 
-ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()))));
-  addToTab("General", value);
-}
+  void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    ParameterPropertyDialog::fromWidget(parameter);
+    static_cast<StringParameter*>(parameter)->value.fromWidget(value);
+    parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
+  }
 
-void ScalarParameterPropertyDialog::toWidget(Parameter *parameter) {
-  ParameterPropertyDialog::toWidget(parameter);
-  static_cast<ScalarParameter*>(parameter)->value.toWidget(value);
-}
+  ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+    value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()))));
+    addToTab("General", value);
+  }
 
-void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  ParameterPropertyDialog::fromWidget(parameter);
-  static_cast<ScalarParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<ScalarParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
-}
+  void ScalarParameterPropertyDialog::toWidget(Parameter *parameter) {
+    ParameterPropertyDialog::toWidget(parameter);
+    static_cast<ScalarParameter*>(parameter)->value.toWidget(value);
+  }
 
-VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  value = new ExtWidget("Value",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()))));
-  addToTab("General", value);
-}
+  void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    ParameterPropertyDialog::fromWidget(parameter);
+    static_cast<ScalarParameter*>(parameter)->value.fromWidget(value);
+    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<ScalarParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+  }
 
-void VectorParameterPropertyDialog::toWidget(Parameter *parameter) {
-  ParameterPropertyDialog::toWidget(parameter);
-  static_cast<VectorParameter*>(parameter)->value.toWidget(value);
-}
+  VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+    value = new ExtWidget("Value",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    addToTab("General", value);
+  }
 
-void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  ParameterPropertyDialog::fromWidget(parameter);
-  static_cast<VectorParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<VectorParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
-}
+  void VectorParameterPropertyDialog::toWidget(Parameter *parameter) {
+    ParameterPropertyDialog::toWidget(parameter);
+    static_cast<VectorParameter*>(parameter)->value.toWidget(value);
+  }
 
-MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-  value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3)));
-  addToTab("General", value);
-}
+  void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    ParameterPropertyDialog::fromWidget(parameter);
+    static_cast<VectorParameter*>(parameter)->value.fromWidget(value);
+    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<VectorParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+  }
 
-void MatrixParameterPropertyDialog::toWidget(Parameter *parameter) {
-  ParameterPropertyDialog::toWidget(parameter);
-  static_cast<MatrixParameter*>(parameter)->value.toWidget(value);
-}
+  MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(MatrixParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
+    value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3)));
+    addToTab("General", value);
+  }
 
-void MatrixParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  ParameterPropertyDialog::fromWidget(parameter);
-  static_cast<MatrixParameter*>(parameter)->value.fromWidget(value);
-  parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+  void MatrixParameterPropertyDialog::toWidget(Parameter *parameter) {
+    ParameterPropertyDialog::toWidget(parameter);
+    static_cast<MatrixParameter*>(parameter)->value.toWidget(value);
+  }
+
+  void MatrixParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    ParameterPropertyDialog::fromWidget(parameter);
+    static_cast<MatrixParameter*>(parameter)->value.fromWidget(value);
+    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
+
+  }
 
 }

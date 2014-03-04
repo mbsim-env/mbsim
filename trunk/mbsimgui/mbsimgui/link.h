@@ -22,13 +22,17 @@
 
 #include "element.h"
 
-class Link : public Element {
-  public:
-    Link(const std::string &str, Element *parent);
-    ~Link();
-    static Link* readXMLFile(const std::string &filename, Element *parent);
-    virtual int getxSize() {return 0;}
-    virtual Element* getByPathSearch(std::string path);
-};
+namespace MBSimGUI {
+
+  class Link : public Element {
+    public:
+      Link(const std::string &str, Element *parent);
+      ~Link();
+      static Link* readXMLFile(const std::string &filename, Element *parent);
+      virtual int getxSize() {return 0;}
+      virtual Element* getByPathSearch(std::string path);
+  };
+
+}
 
 #endif

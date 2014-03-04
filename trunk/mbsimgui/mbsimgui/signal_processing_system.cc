@@ -24,23 +24,26 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *parent) : Link(str, parent) {
-  signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
-}
+namespace MBSimGUI {
 
-void SignalProcessingSystem::initialize() {
-  Link::initialize();
-  signalRef.initialize();
-}
+  SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *parent) : Link(str, parent) {
+    signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
+  }
 
-void SignalProcessingSystem::initializeUsingXML(DOMElement *element) {
-  Link::initializeUsingXML(element);
-  signalRef.initializeUsingXML(element);
-}
+  void SignalProcessingSystem::initialize() {
+    Link::initialize();
+    signalRef.initialize();
+  }
 
-DOMElement* SignalProcessingSystem::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  signalRef.writeXMLFile(ele0);
-  return ele0;
-}
+  void SignalProcessingSystem::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    signalRef.initializeUsingXML(element);
+  }
 
+  DOMElement* SignalProcessingSystem::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    signalRef.writeXMLFile(ele0);
+    return ele0;
+  }
+
+}

@@ -27,38 +27,41 @@ using namespace MBXMLUtils;
 using namespace boost;
 using namespace xercesc;
 
-Object::Object(const string &str, Element *parent) : Element(str,parent) {
+namespace MBSimGUI {
 
-}
+  Object::Object(const string &str, Element *parent) : Element(str,parent) {
 
-Object* Object::readXMLFile(const string &filename, Element *parent) {
-  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
-  DOMElement *e=doc->getDocumentElement();
-  Object *object=ObjectFactory::getInstance()->createObject(e, parent);
-  if(object) {
-    object->initializeUsingXML(e);
-    object->initialize();
   }
-  return object;
-}
 
-void Object::initializeUsingXML(DOMElement *element) {
-  Element::initializeUsingXML(element);
-}
+  Object* Object::readXMLFile(const string &filename, Element *parent) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    Object *object=ObjectFactory::getInstance()->createObject(e, parent);
+    if(object) {
+      object->initializeUsingXML(e);
+      object->initialize();
+    }
+    return object;
+  }
 
-DOMElement* Object::writeXMLFile(DOMNode *parent) {    
-  DOMElement *ele0 = Element::writeXMLFile(parent);
-  return ele0;
-}
+  void Object::initializeUsingXML(DOMElement *element) {
+    Element::initializeUsingXML(element);
+  }
 
-Element * Object::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") // absolut path
-    if(getParent())
-      return getParent()->getByPathSearch(path);
-    else
-      return getByPathSearch(path.substr(1));
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParent()->getByPathSearch(path.substr(3));
-  return NULL;
-}
+  DOMElement* Object::writeXMLFile(DOMNode *parent) {    
+    DOMElement *ele0 = Element::writeXMLFile(parent);
+    return ele0;
+  }
 
+  Element * Object::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(getParent())
+        return getParent()->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return getParent()->getByPathSearch(path.substr(3));
+    return NULL;
+  }
+
+}

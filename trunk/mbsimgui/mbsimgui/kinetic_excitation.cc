@@ -27,63 +27,66 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), forceArrow(0,true), momentArrow(0,true) {
+namespace MBSimGUI {
 
-  refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
+  KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), forceArrow(0,true), momentArrow(0,true) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
-  forceDirection.setProperty(new ExtPhysicalVarProperty(input));
+    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
 
-  forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"forceFunction",0));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
+    forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
-  momentDirection.setProperty(new ExtPhysicalVarProperty(input));
+    forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"forceFunction",0));
 
-  momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"momentFunction",0));
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
+    momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
- // vector<Property*> widget;
- // widget.push_back(new ConnectFramesProperty(1,this));
- // widget.push_back(new ConnectFramesProperty(2,this));
+    momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"momentFunction",0));
 
- // connections.setProperty(new ChoiceProperty2("",widget,2)); 
-  connections.setProperty(new ChoiceProperty2(new ConnectFramesPropertyFactory(this),"",4)); 
+    // vector<Property*> widget;
+    // widget.push_back(new ConnectFramesProperty(1,this));
+    // widget.push_back(new ConnectFramesProperty(2,this));
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+    // connections.setProperty(new ChoiceProperty2("",widget,2)); 
+    connections.setProperty(new ChoiceProperty2(new ConnectFramesPropertyFactory(this),"",4)); 
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+  }
+
+  void KineticExcitation::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
+
+  void KineticExcitation::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    refFrameID.initializeUsingXML(element);
+    forceDirection.initializeUsingXML(element);
+    forceFunction.initializeUsingXML(element);
+    momentDirection.initializeUsingXML(element);
+    momentFunction.initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+  }
+
+  DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    refFrameID.writeXMLFile(ele0);
+    forceDirection.writeXMLFile(ele0);
+    forceFunction.writeXMLFile(ele0);
+    momentDirection.writeXMLFile(ele0);
+    momentFunction.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }
-
-void KineticExcitation::initialize() {
-  Link::initialize();
-  connections.initialize();
-}
-
-void KineticExcitation::initializeUsingXML(DOMElement *element) {
-  Link::initializeUsingXML(element);
-  refFrameID.initializeUsingXML(element);
-  forceDirection.initializeUsingXML(element);
-  forceFunction.initializeUsingXML(element);
-  momentDirection.initializeUsingXML(element);
-  momentFunction.initializeUsingXML(element);
-  connections.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
-  momentArrow.initializeUsingXML(element);
-}
-
-DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  refFrameID.writeXMLFile(ele0);
-  forceDirection.writeXMLFile(ele0);
-  forceFunction.writeXMLFile(ele0);
-  momentDirection.writeXMLFile(ele0);
-  momentFunction.writeXMLFile(ele0);
-  connections.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
-  momentArrow.writeXMLFile(ele0);
-  return ele0;
-}
-

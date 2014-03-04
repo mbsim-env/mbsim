@@ -23,11 +23,13 @@
 #include "element.h"
 #include "extended_properties.h"
 
-class ExtWidget;
+namespace MBSimGUI {
 
-class Frame : public Element {
-  friend class FramePropertyDialog;
-  public:
+  class ExtWidget;
+
+  class Frame : public Element {
+    friend class FramePropertyDialog;
+    public:
     Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
     virtual Element* clone() const {return new Frame(*this);}
@@ -42,13 +44,13 @@ class Frame : public Element {
     virtual Element * getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FrameContextMenu(this);}
-  protected:
+    protected:
     ExtProperty visu;
-};
+  };
 
-class FixedRelativeFrame : public Frame {
-  friend class FixedRelativeFramePropertyDialog;
-  public:
+  class FixedRelativeFrame : public Frame {
+    friend class FixedRelativeFramePropertyDialog;
+    public:
     FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
     virtual Element* clone() const {return new FixedRelativeFrame(*this);}
@@ -58,8 +60,10 @@ class FixedRelativeFrame : public Frame {
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
-  protected:
+    protected:
     ExtProperty refFrame, position, orientation;
-};
+  };
+
+}
 
 #endif

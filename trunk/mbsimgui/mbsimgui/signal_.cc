@@ -32,143 +32,147 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-class SignalAdditionPropertyFactory : public PropertyFactory {
-  public:
-    SignalAdditionPropertyFactory(Element *element_) : element(element_) { }
-    Property* createProperty(int i=0);
-  protected:
-    Element *element;
-};
+namespace MBSimGUI {
 
-Property* SignalAdditionPropertyFactory::createProperty(int i) {
- return new SignalReferenceProperty(element);
-}
+  class SignalAdditionPropertyFactory : public PropertyFactory {
+    public:
+      SignalAdditionPropertyFactory(Element *element_) : element(element_) { }
+      Property* createProperty(int i=0);
+    protected:
+      Element *element;
+  };
 
-Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
-}
+  Property* SignalAdditionPropertyFactory::createProperty(int i) {
+    return new SignalReferenceProperty(element);
+  }
 
-Signal::~Signal() {
-}
+  Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
+  }
 
-SignalAddition::SignalAddition(const string &str, Element *parent) : Signal(str, parent) {
-  signalReferences.setProperty(new ListProperty(new SignalAdditionPropertyFactory(this),MBSIMCONTROL%"inputSignal"));
-}
+  Signal::~Signal() {
+  }
 
-void SignalAddition::initialize() {
-  Signal::initialize();
+  SignalAddition::SignalAddition(const string &str, Element *parent) : Signal(str, parent) {
+    signalReferences.setProperty(new ListProperty(new SignalAdditionPropertyFactory(this),MBSIMCONTROL%"inputSignal"));
+  }
 
-  signalReferences.initialize();
-}
+  void SignalAddition::initialize() {
+    Signal::initialize();
 
-void SignalAddition::initializeUsingXML(DOMElement *element) {
-  Signal::initializeUsingXML(element);
-  signalReferences.initializeUsingXML(element);
-}
+    signalReferences.initialize();
+  }
 
-DOMElement* SignalAddition::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Signal::writeXMLFile(parent);
-  signalReferences.writeXMLFile(ele0);
-  return ele0;
-}
+  void SignalAddition::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    signalReferences.initializeUsingXML(element);
+  }
 
-PIDController::PIDController(const string &str, Element *parent) : Signal(str, parent) {
-  sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
-  sdRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"derivativeOfInputSignal"));
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"P"));
-  P.setProperty(new ExtPhysicalVarProperty(input));
+  DOMElement* SignalAddition::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Signal::writeXMLFile(parent);
+    signalReferences.writeXMLFile(ele0);
+    return ele0;
+  }
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"I"));
-  I.setProperty(new ExtPhysicalVarProperty(input));
+  PIDController::PIDController(const string &str, Element *parent) : Signal(str, parent) {
+    sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
+    sdRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"derivativeOfInputSignal"));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROL%"P"));
+    P.setProperty(new ExtPhysicalVarProperty(input));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
-  D.setProperty(new ExtPhysicalVarProperty(input));
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"I"));
+    I.setProperty(new ExtPhysicalVarProperty(input));
 
-}
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
+    D.setProperty(new ExtPhysicalVarProperty(input));
 
-void PIDController::initialize() {
-  Signal::initialize();
-  sRef.initialize();
-  sdRef.initialize();
-}
+  }
 
-void PIDController::initializeUsingXML(DOMElement *element) {
-  Signal::initializeUsingXML(element);
-  sRef.initializeUsingXML(element);
-  sdRef.initializeUsingXML(element);
-  P.initializeUsingXML(element);
-  I.initializeUsingXML(element);
-  D.initializeUsingXML(element);
-}
+  void PIDController::initialize() {
+    Signal::initialize();
+    sRef.initialize();
+    sdRef.initialize();
+  }
 
-DOMElement* PIDController::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Signal::writeXMLFile(parent);
-  sRef.writeXMLFile(ele0);
-  sdRef.writeXMLFile(ele0);
-  P.writeXMLFile(ele0);
-  I.writeXMLFile(ele0);
-  D.writeXMLFile(ele0);
-  return ele0;
-}
+  void PIDController::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    sRef.initializeUsingXML(element);
+    sdRef.initializeUsingXML(element);
+    P.initializeUsingXML(element);
+    I.initializeUsingXML(element);
+    D.initializeUsingXML(element);
+  }
 
-UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
-  sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
+  DOMElement* PIDController::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Signal::writeXMLFile(parent);
+    sRef.writeXMLFile(ele0);
+    sdRef.writeXMLFile(ele0);
+    P.writeXMLFile(ele0);
+    I.writeXMLFile(ele0);
+    D.writeXMLFile(ele0);
+    return ele0;
+  }
 
-//  vector<Property*> property;
-//  vector<string> var;
-//  var.push_back("x");
-//  property.push_back(new SymbolicFunctionProperty("VV",var));
-//  f.setProperty(new ChoiceProperty(MBSIMCONTROL%"function",property));
-  f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
-}
+  UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
+    sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
 
-void UnarySignalOperation::initialize() {
-  Signal::initialize();
-  sRef.initialize();
-}
+    //  vector<Property*> property;
+    //  vector<string> var;
+    //  var.push_back("x");
+    //  property.push_back(new SymbolicFunctionProperty("VV",var));
+    //  f.setProperty(new ChoiceProperty(MBSIMCONTROL%"function",property));
+    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
+  }
 
-void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
-  Signal::initializeUsingXML(element);
-  sRef.initializeUsingXML(element);
-  f.initializeUsingXML(element);
-}
+  void UnarySignalOperation::initialize() {
+    Signal::initialize();
+    sRef.initialize();
+  }
 
-DOMElement* UnarySignalOperation::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Signal::writeXMLFile(parent);
-  sRef.writeXMLFile(ele0);
-  f.writeXMLFile(ele0);
-  return ele0;
-}
+  void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    sRef.initializeUsingXML(element);
+    f.initializeUsingXML(element);
+  }
 
-BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
-  s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"input1Signal"));
-  s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"input2Signal"));
+  DOMElement* UnarySignalOperation::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Signal::writeXMLFile(parent);
+    sRef.writeXMLFile(ele0);
+    f.writeXMLFile(ele0);
+    return ele0;
+  }
 
-  vector<string> var;
-  var.push_back("x1");
-  var.push_back("x2");
-  f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVV",var),MBSIMCONTROL%"function"));
-}
+  BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
+    s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"input1Signal"));
+    s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"input2Signal"));
 
-void BinarySignalOperation::initialize() {
-  Signal::initialize();
-  s1Ref.initialize();
-  s2Ref.initialize();
-}
+    vector<string> var;
+    var.push_back("x1");
+    var.push_back("x2");
+    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVV",var),MBSIMCONTROL%"function"));
+  }
 
-void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
-  Signal::initializeUsingXML(element);
-  s1Ref.initializeUsingXML(element);
-  s2Ref.initializeUsingXML(element);
-  f.initializeUsingXML(element);
-}
+  void BinarySignalOperation::initialize() {
+    Signal::initialize();
+    s1Ref.initialize();
+    s2Ref.initialize();
+  }
 
-DOMElement* BinarySignalOperation::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Signal::writeXMLFile(parent);
-  s1Ref.writeXMLFile(ele0);
-  s2Ref.writeXMLFile(ele0);
-  f.writeXMLFile(ele0);
-  return ele0;
+  void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    s1Ref.initializeUsingXML(element);
+    s2Ref.initializeUsingXML(element);
+    f.initializeUsingXML(element);
+  }
+
+  DOMElement* BinarySignalOperation::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Signal::writeXMLFile(parent);
+    s1Ref.writeXMLFile(ele0);
+    s2Ref.writeXMLFile(ele0);
+    f.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

@@ -23,37 +23,41 @@
 #include "parameter.h"
 #include "objectfactory.h"
 
-template <>
-Solver* Embed<Solver>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(element,parent));
-}
+namespace MBSimGUI {
 
-template <>
-Group* Embed<Group>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Group*>(ObjectFactory::getInstance()->createGroup(element,parent));
-}
+  template <>
+    Solver* Embed<Solver>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(element,parent));
+    }
 
-template <>
-Object* Embed<Object>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Object*>(ObjectFactory::getInstance()->createObject(element,parent));
-}
+  template <>
+    Group* Embed<Group>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Group*>(ObjectFactory::getInstance()->createGroup(element,parent));
+    }
 
-template <>
-Link* Embed<Link>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Link*>(ObjectFactory::getInstance()->createLink(element,parent));
-}
+  template <>
+    Object* Embed<Object>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Object*>(ObjectFactory::getInstance()->createObject(element,parent));
+    }
 
-template <>
-Observer* Embed<Observer>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Observer*>(ObjectFactory::getInstance()->createObserver(element,parent));
-}
+  template <>
+    Link* Embed<Link>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Link*>(ObjectFactory::getInstance()->createLink(element,parent));
+    }
 
-template <>
-Contour* Embed<Contour>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Contour*>(ObjectFactory::getInstance()->createContour(element,parent));
-}
+  template <>
+    Observer* Embed<Observer>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Observer*>(ObjectFactory::getInstance()->createObserver(element,parent));
+    }
 
-template <>
-Frame* Embed<Frame>::create(xercesc::DOMElement *element, Element *parent) {
-  return static_cast<Frame*>(ObjectFactory::getInstance()->createFrame(element,parent));
+  template <>
+    Contour* Embed<Contour>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Contour*>(ObjectFactory::getInstance()->createContour(element,parent));
+    }
+
+  template <>
+    Frame* Embed<Frame>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Frame*>(ObjectFactory::getInstance()->createFrame(element,parent));
+    }
+
 }

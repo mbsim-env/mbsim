@@ -31,103 +31,107 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
-}
+namespace MBSimGUI {
 
-Sensor::~Sensor() {
-}
+  Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
+  }
 
-GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROL%"object"));
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROL%"index"));
-  index.setProperty(new ExtPhysicalVarProperty(input));
-}
+  Sensor::~Sensor() {
+  }
 
-void GeneralizedCoordinateSensor::initialize() {
-  Sensor::initialize();
-  object.initialize();
-}
+  GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
+    object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROL%"object"));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROL%"index"));
+    index.setProperty(new ExtPhysicalVarProperty(input));
+  }
 
-void GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
-  Sensor::initializeUsingXML(element);
-  object.initializeUsingXML(element);
-  index.initializeUsingXML(element);
-}
+  void GeneralizedCoordinateSensor::initialize() {
+    Sensor::initialize();
+    object.initialize();
+  }
 
-DOMElement* GeneralizedCoordinateSensor::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Sensor::writeXMLFile(parent);
-  object.writeXMLFile(ele0);
-  index.writeXMLFile(ele0);
-  return ele0;
-}
+  void GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
+    Sensor::initializeUsingXML(element);
+    object.initializeUsingXML(element);
+    index.initializeUsingXML(element);
+  }
 
-AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROL%"frame"));
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"direction"));
-  direction.setProperty(new ExtPhysicalVarProperty(input));
-}
+  DOMElement* GeneralizedCoordinateSensor::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Sensor::writeXMLFile(parent);
+    object.writeXMLFile(ele0);
+    index.writeXMLFile(ele0);
+    return ele0;
+  }
 
-void AbsoluteCoordinateSensor::initialize() {
-  Sensor::initialize();
-  frame.initialize();
-}
+  AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
+    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROL%"frame"));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"direction"));
+    direction.setProperty(new ExtPhysicalVarProperty(input));
+  }
 
-void AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
-  Sensor::initializeUsingXML(element);
-  frame.initializeUsingXML(element);
-  direction.initializeUsingXML(element);
-}
+  void AbsoluteCoordinateSensor::initialize() {
+    Sensor::initialize();
+    frame.initialize();
+  }
 
-DOMElement* AbsoluteCoordinateSensor::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Sensor::writeXMLFile(parent);
-  frame.writeXMLFile(ele0);
-  direction.writeXMLFile(ele0);
-  return ele0;
-}
+  void AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
+    Sensor::initializeUsingXML(element);
+    frame.initializeUsingXML(element);
+    direction.initializeUsingXML(element);
+  }
 
-FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
-//  vector<Property*> property;
-//  property.push_back(new ConstantFunctionProperty);
-//  property.push_back(new LinearFunctionProperty);
-//  property.push_back(new QuadraticFunctionProperty);
-//  property.push_back(new SinusoidalFunctionProperty);
-//  property.push_back(new TabularFunctionProperty);
-//  property.push_back(new SummationFunctionProperty);
-//  vector<string> var;
-//  var.push_back("t");
-//  property.push_back(new SymbolicFunctionProperty("VS",var));
-  function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMCONTROL%"function"));
-}
+  DOMElement* AbsoluteCoordinateSensor::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Sensor::writeXMLFile(parent);
+    frame.writeXMLFile(ele0);
+    direction.writeXMLFile(ele0);
+    return ele0;
+  }
 
-void FunctionSensor::initializeUsingXML(DOMElement *element) {
-  Sensor::initializeUsingXML(element);
-  function.initializeUsingXML(element);
-}
+  FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
+    //  vector<Property*> property;
+    //  property.push_back(new ConstantFunctionProperty);
+    //  property.push_back(new LinearFunctionProperty);
+    //  property.push_back(new QuadraticFunctionProperty);
+    //  property.push_back(new SinusoidalFunctionProperty);
+    //  property.push_back(new TabularFunctionProperty);
+    //  property.push_back(new SummationFunctionProperty);
+    //  vector<string> var;
+    //  var.push_back("t");
+    //  property.push_back(new SymbolicFunctionProperty("VS",var));
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMCONTROL%"function"));
+  }
 
-DOMElement* FunctionSensor::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Sensor::writeXMLFile(parent);
-  function.writeXMLFile(ele0);
-  return ele0;
-}
+  void FunctionSensor::initializeUsingXML(DOMElement *element) {
+    Sensor::initializeUsingXML(element);
+    function.initializeUsingXML(element);
+  }
 
-SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROL%"signalProcessingSystem"));
-}
+  DOMElement* FunctionSensor::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Sensor::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  }
 
-void SignalProcessingSystemSensor::initialize() {
-  Sensor::initialize();
-  spsRef.initialize();
-}
+  SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str, Element *parent) : Sensor(str, parent) {
+    spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROL%"signalProcessingSystem"));
+  }
 
-void SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
-  Sensor::initializeUsingXML(element);
-  spsRef.initializeUsingXML(element);
-}
+  void SignalProcessingSystemSensor::initialize() {
+    Sensor::initialize();
+    spsRef.initialize();
+  }
 
-DOMElement* SignalProcessingSystemSensor::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Sensor::writeXMLFile(parent);
-  spsRef.writeXMLFile(ele0);
-  return ele0;
+  void SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
+    Sensor::initializeUsingXML(element);
+    spsRef.initializeUsingXML(element);
+  }
+
+  DOMElement* SignalProcessingSystemSensor::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Sensor::writeXMLFile(parent);
+    spsRef.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

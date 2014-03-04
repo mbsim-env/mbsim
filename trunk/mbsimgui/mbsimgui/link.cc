@@ -27,36 +27,40 @@ using namespace MBXMLUtils;
 using namespace boost;
 using namespace xercesc;
 
-Link::Link(const string &str, Element *parent) : Element(str, parent) {
-}
+namespace MBSimGUI {
 
-Link::~Link() {
-}
-
-Link* Link::readXMLFile(const string &filename, Element *parent) {
-  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
-  DOMElement *e=doc->getDocumentElement();
-  Link *link=ObjectFactory::getInstance()->createLink(e, parent);
-  if(link) {
-    link->initializeUsingXML(e);
-    link->initialize();
+  Link::Link(const string &str, Element *parent) : Element(str, parent) {
   }
-  return link;
+
+  Link::~Link() {
+  }
+
+  Link* Link::readXMLFile(const string &filename, Element *parent) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    Link *link=ObjectFactory::getInstance()->createLink(e, parent);
+    if(link) {
+      link->initializeUsingXML(e);
+      link->initialize();
+    }
+    return link;
+  }
+
+  Element * Link::getByPathSearch(string path) {
+    if (path.substr(0, 3)=="../") // relative path
+      return getParent()->getByPathSearch(path.substr(3));
+    else // absolut path
+      if(getParent())
+        return getParent()->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    return NULL;
+  }
+
+  //void Link::initializeUsingXML(DOMElement *element) {
+  //}
+
+  //DOMElement* Link::writeXMLFile(DOMNode *parent) {    
+  //}
+
 }
-
-Element * Link::getByPathSearch(string path) {
-  if (path.substr(0, 3)=="../") // relative path
-    return getParent()->getByPathSearch(path.substr(3));
-  else // absolut path
-    if(getParent())
-      return getParent()->getByPathSearch(path);
-    else
-      return getByPathSearch(path.substr(1));
-  return NULL;
-}
-
-//void Link::initializeUsingXML(DOMElement *element) {
-//}
-
-//DOMElement* Link::writeXMLFile(DOMNode *parent) {    
-//}

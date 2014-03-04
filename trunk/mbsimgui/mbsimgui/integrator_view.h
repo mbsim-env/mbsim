@@ -23,45 +23,48 @@
 #include <QLineEdit>
 #include <QMenu>
 
-class Integrator;
-class IntegratorPropertyDialog;
+namespace MBSimGUI {
 
-class IntegratorViewContextMenu : public QMenu {
+  class Integrator;
+  class IntegratorPropertyDialog;
 
-  public:
-    IntegratorViewContextMenu(QWidget * parent = 0);
-};
+  class IntegratorViewContextMenu : public QMenu {
 
+    public:
+      IntegratorViewContextMenu(QWidget * parent = 0);
+  };
 
-class IntegratorView : public QLineEdit {
-  Q_OBJECT
-  public:
-    IntegratorView();
-    ~IntegratorView();
-    void setIntegrator(int i_) {i = i_; updateText();}
-    Integrator* getIntegrator() {return integrator[i];}
-    void setIntegrator(Integrator *integrator_);
-    void updateText() {setText(type[i]);}
-    QMenu* createContextMenu() {return new IntegratorViewContextMenu;}
-  protected:
-    std::vector<Integrator*> integrator;
-    std::vector<QString> type;
-    int i;
-  protected slots:
-    void openContextMenu();
-};
+  class IntegratorView : public QLineEdit {
+    Q_OBJECT
+    public:
+      IntegratorView();
+      ~IntegratorView();
+      void setIntegrator(int i_) {i = i_; updateText();}
+      Integrator* getIntegrator() {return integrator[i];}
+      void setIntegrator(Integrator *integrator_);
+      void updateText() {setText(type[i]);}
+      QMenu* createContextMenu() {return new IntegratorViewContextMenu;}
+    protected:
+      std::vector<Integrator*> integrator;
+      std::vector<QString> type;
+      int i;
+      protected slots:
+        void openContextMenu();
+  };
 
-class IntegratorMouseEvent : public QObject {
-  Q_OBJECT
-  public:
-    IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
-  protected:
-    IntegratorView *view;
-    IntegratorPropertyDialog *editor;
-    bool eventFilter(QObject *obj, QEvent *event);
-  protected slots:
-    void dialogFinished(int result);
-    void apply();
-};
+  class IntegratorMouseEvent : public QObject {
+    Q_OBJECT
+    public:
+      IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
+    protected:
+      IntegratorView *view;
+      IntegratorPropertyDialog *editor;
+      bool eventFilter(QObject *obj, QEvent *event);
+      protected slots:
+        void dialogFinished(int result);
+      void apply();
+  };
+
+}
 
 #endif

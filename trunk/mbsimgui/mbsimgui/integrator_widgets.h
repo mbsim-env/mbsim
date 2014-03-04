@@ -23,14 +23,18 @@
 #include "widget.h"
 #include <QComboBox>
 
-class RKSuiteTypeWidget : public Widget {
+namespace MBSimGUI {
 
-  friend class RKSuiteTypeProperty;
+  class RKSuiteTypeWidget : public Widget {
 
-  public:
+    friend class RKSuiteTypeProperty;
+
+    public:
     RKSuiteTypeWidget();
-  protected:
+    protected:
     QComboBox *comboBox;
-};
+  };
+
+}
 
 #endif

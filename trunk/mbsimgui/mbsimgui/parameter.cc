@@ -29,206 +29,209 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
 
-extern QDir mbsDir;
-extern bool absolutePath;
+namespace MBSimGUI {
 
-Parameter::Parameter(const string &name_) {
-  name.setProperty(new TextProperty(name_,""));
-}
+  extern QDir mbsDir;
+  extern bool absolutePath;
+
+  Parameter::Parameter(const string &name_) {
+    name.setProperty(new TextProperty(name_,""));
+  }
 
   //return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
 
-void Parameter::initializeUsingXML(DOMElement *element) {
-}
-
-DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
-  DOMDocument *doc=parent->getOwnerDocument();
-  DOMElement *ele0=D(doc)->createElement(PARAM%getType());
-  E(ele0)->setAttribute("name", getName());
-  parent->insertBefore(ele0, NULL);
-  return ele0;
-}
-
-StringParameter::StringParameter(const string &name) : Parameter(name) {
-
-  value.setProperty(new TextProperty("0","",true));
-  setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
-}
-
-void StringParameter::initializeUsingXML(DOMElement *element) {
-  Parameter::initializeUsingXML(element);
-  TextProperty *val = static_cast<TextProperty*>(value.getProperty());
-  val->initializeUsingXML(element);
-  setValue(val->getText());
-}
-
-DOMElement* StringParameter::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Parameter::writeXMLFile(parent);
-  TextProperty *val = static_cast<TextProperty*>(value.getProperty());
-  val->writeXMLFile(ele0);
-  return ele0;
-}
-
-ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
-
-  value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0","",vector<string>(2,"")),"",5));
-  setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-}
-
-void ScalarParameter::initializeUsingXML(DOMElement *element) {
-  Parameter::initializeUsingXML(element);
-  value.initializeUsingXML(element);
-  setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-}
-
-DOMElement* ScalarParameter::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Parameter::writeXMLFile(parent);
-  value.writeXMLFile(ele0);
-  return ele0;
-}
-
-VectorParameter::VectorParameter(const string &name) : Parameter(name) {
-
-  value.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,"",vector<string>(3,"")),"",5));
-  setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-}
-
-void VectorParameter::initializeUsingXML(DOMElement *element) {
-  Parameter::initializeUsingXML(element);
-  value.initializeUsingXML(element);
-  setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-}
-
-DOMElement* VectorParameter::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Parameter::writeXMLFile(parent);
-  value.writeXMLFile(ele0);
-  return ele0;
-}
-
-MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
-
-  value.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,3,"0"),"",vector<string>(3,"")),"",5));
-  setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-}
-
-void MatrixParameter::initializeUsingXML(DOMElement *element) {
-  Parameter::initializeUsingXML(element);
-  value.initializeUsingXML(element);
-  setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-}
-
-DOMElement* MatrixParameter::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Parameter::writeXMLFile(parent);
-  value.writeXMLFile(ele0);
-  return ele0;
-}
-
-//SearchPath::SearchPath(const string &name) : Parameter(name) {
-//
-////  vector<PhysicalVariableProperty> input;
-////  input.push_back(PhysicalVariableProperty(new MatProperty(3,3),"",""));
-////  value.setProperty(new ExtPhysicalVarProperty(input));
-////  setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
-//}
-//
-//void SearchPath::initializeUsingXML(DOMElement *element) {
-////  Parameter::initializeUsingXML(element);
-////  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
-////  val->initializeUsingXML(element);
-////  setValue(val->getValue());
-//   string value = E(element)->getAttribute("href"); 
-//   setValue(mbsDir.absoluteFilePath(QString::fromStdString(value)).toStdString());
-//   setValue(mbsDir.relativeFilePath(QString::fromStdString(value)).toStdString());
-//   cout << value << endl;
-//   cout << MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("\'"+value+"\'")) << endl;
-//
-//}
-//
-//DOMElement* SearchPath::writeXMLFile(DOMNode *parent) {
-//  DOMDocument *doc=parent->getOwnerDocument();
-//  DOMElement *ele0=D(doc)->createElement(PARAM%getType());
-//  parent->insertBefore(ele0, NULL);
-//  string relFileName = absolutePath?getValue():mbsDir.relativeFilePath(QString::fromStdString(getValue())).toStdString();
-//  relFileName = getValue();
-//  E(ele0)->setAttribute("href", relFileName);
-////  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
-////  val->writeXMLFile(ele0);
-//  return ele0;
-//}
-
-void ParameterList::addParameter(const string &name_, const string &value_, const string &type_) {
-  name.push_back(name_); 
-  value.push_back(value_);
-  type.push_back(type_);
-}
-
-void ParameterList::addParameterList(const ParameterList &list) {
-  for(int i=0; i<list.getSize(); i++)
-    addParameter(list.name[i],list.value[i],list.type[i]);
-}
-
-bool ParameterList::readXMLFile(const string &filename) {
-  MBSimObjectFactory::initialize();
-  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
-  DOMElement *e=doc->getDocumentElement();
-  DOMElement *E=e->getFirstElementChild();
-  vector<QString> refFrame;
-  while(E) {
-    Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-    parameter->initializeUsingXML(E);
-    addParameter(parameter->getName(),parameter->getValue(),parameter->getType());
-    delete parameter;
-    E=E->getNextElementSibling();
+  void Parameter::initializeUsingXML(DOMElement *element) {
   }
-  return true;
-}
 
-DOMElement* ParameterList::writeXMLFile(DOMNode *parent) const {
-  DOMDocument *doc=parent->getOwnerDocument();
-  for(int i=0; i<getSize(); i++) {
-    DOMElement *p=D(doc)->createElement(PARAM%type[i]);
-    parent->insertBefore(p, NULL);
-    E(p)->setAttribute("name", name[i]);
-    DOMText *t=doc->createTextNode(X()%value[i]);
-    p->insertBefore(t, NULL);
+  DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0=D(doc)->createElement(PARAM%getType());
+    E(ele0)->setAttribute("name", getName());
+    parent->insertBefore(ele0, NULL);
+    return ele0;
   }
-}
 
-Parameters Parameters::readXMLFile(const string &filename) {
-  MBSimObjectFactory::initialize();
-  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
-  DOMElement *e=doc->getDocumentElement();
-  Parameters param;
-  param.initializeUsingXML(e);
-  return param;
-}
+  StringParameter::StringParameter(const string &name) : Parameter(name) {
 
-void Parameters::initializeUsingXML(DOMElement *element) {
-  DOMElement *e=element->getFirstElementChild();
-  while(e) {
-    Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
-    parameter->initializeUsingXML(e);
-    addParameter(parameter);
-    e=e->getNextElementSibling();
+    value.setProperty(new TextProperty("0","",true));
+    setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
   }
-}
 
-DOMElement* Parameters::writeXMLFile(DOMNode *parent) {
-  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-  DOMElement *ele0 = D(doc)->createElement(PARAM%string("Parameter"));
-  parent->insertBefore(ele0, NULL);
-  for(int i=0; i<parameter.size(); i++)
-    parameter[i]->writeXMLFile(ele0);
-  return ele0;
-}
+  void StringParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    TextProperty *val = static_cast<TextProperty*>(value.getProperty());
+    val->initializeUsingXML(element);
+    setValue(val->getText());
+  }
 
-void Parameters::writeXMLFile(const string &name) {
-  shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-  writeXMLFile(doc.get());
-  QFileInfo info(QString::fromStdString(name));
-  QDir dir;
-  if(!dir.exists(info.absolutePath()))
-    dir.mkpath(info.absolutePath());
-  DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
-}
+  DOMElement* StringParameter::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Parameter::writeXMLFile(parent);
+    TextProperty *val = static_cast<TextProperty*>(value.getProperty());
+    val->writeXMLFile(ele0);
+    return ele0;
+  }
 
+  ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
+
+    value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0","",vector<string>(2,"")),"",5));
+    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  void ScalarParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    value.initializeUsingXML(element);
+    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  DOMElement* ScalarParameter::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Parameter::writeXMLFile(parent);
+    value.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  VectorParameter::VectorParameter(const string &name) : Parameter(name) {
+
+    value.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,"",vector<string>(3,"")),"",5));
+    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  void VectorParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    value.initializeUsingXML(element);
+    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  DOMElement* VectorParameter::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Parameter::writeXMLFile(parent);
+    value.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
+
+    value.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,3,"0"),"",vector<string>(3,"")),"",5));
+    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  void MatrixParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    value.initializeUsingXML(element);
+    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  }
+
+  DOMElement* MatrixParameter::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Parameter::writeXMLFile(parent);
+    value.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  //SearchPath::SearchPath(const string &name) : Parameter(name) {
+  //
+  ////  vector<PhysicalVariableProperty> input;
+  ////  input.push_back(PhysicalVariableProperty(new MatProperty(3,3),"",""));
+  ////  value.setProperty(new ExtPhysicalVarProperty(input));
+  ////  setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
+  //}
+  //
+  //void SearchPath::initializeUsingXML(DOMElement *element) {
+  ////  Parameter::initializeUsingXML(element);
+  ////  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  ////  val->initializeUsingXML(element);
+  ////  setValue(val->getValue());
+  //   string value = E(element)->getAttribute("href"); 
+  //   setValue(mbsDir.absoluteFilePath(QString::fromStdString(value)).toStdString());
+  //   setValue(mbsDir.relativeFilePath(QString::fromStdString(value)).toStdString());
+  //   cout << value << endl;
+  //   cout << MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("\'"+value+"\'")) << endl;
+  //
+  //}
+  //
+  //DOMElement* SearchPath::writeXMLFile(DOMNode *parent) {
+  //  DOMDocument *doc=parent->getOwnerDocument();
+  //  DOMElement *ele0=D(doc)->createElement(PARAM%getType());
+  //  parent->insertBefore(ele0, NULL);
+  //  string relFileName = absolutePath?getValue():mbsDir.relativeFilePath(QString::fromStdString(getValue())).toStdString();
+  //  relFileName = getValue();
+  //  E(ele0)->setAttribute("href", relFileName);
+  ////  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  ////  val->writeXMLFile(ele0);
+  //  return ele0;
+  //}
+
+  void ParameterList::addParameter(const string &name_, const string &value_, const string &type_) {
+    name.push_back(name_); 
+    value.push_back(value_);
+    type.push_back(type_);
+  }
+
+  void ParameterList::addParameterList(const ParameterList &list) {
+    for(int i=0; i<list.getSize(); i++)
+      addParameter(list.name[i],list.value[i],list.type[i]);
+  }
+
+  bool ParameterList::readXMLFile(const string &filename) {
+    MBSimObjectFactory::initialize();
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    DOMElement *E=e->getFirstElementChild();
+    vector<QString> refFrame;
+    while(E) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
+      parameter->initializeUsingXML(E);
+      addParameter(parameter->getName(),parameter->getValue(),parameter->getType());
+      delete parameter;
+      E=E->getNextElementSibling();
+    }
+    return true;
+  }
+
+  DOMElement* ParameterList::writeXMLFile(DOMNode *parent) const {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(int i=0; i<getSize(); i++) {
+      DOMElement *p=D(doc)->createElement(PARAM%type[i]);
+      parent->insertBefore(p, NULL);
+      E(p)->setAttribute("name", name[i]);
+      DOMText *t=doc->createTextNode(X()%value[i]);
+      p->insertBefore(t, NULL);
+    }
+  }
+
+  Parameters Parameters::readXMLFile(const string &filename) {
+    MBSimObjectFactory::initialize();
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    Parameters param;
+    param.initializeUsingXML(e);
+    return param;
+  }
+
+  void Parameters::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=element->getFirstElementChild();
+    while(e) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
+      parameter->initializeUsingXML(e);
+      addParameter(parameter);
+      e=e->getNextElementSibling();
+    }
+  }
+
+  DOMElement* Parameters::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(PARAM%string("Parameter"));
+    parent->insertBefore(ele0, NULL);
+    for(int i=0; i<parameter.size(); i++)
+      parameter[i]->writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void Parameters::writeXMLFile(const string &name) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    writeXMLFile(doc.get());
+    QFileInfo info(QString::fromStdString(name));
+    QDir dir;
+    if(!dir.exists(info.absolutePath()))
+      dir.mkpath(info.absolutePath());
+    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  }
+
+}

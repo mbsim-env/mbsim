@@ -27,24 +27,28 @@ namespace XERCES_CPP_NAMESPACE {
   class DOMNode;
 }
 
-class WidgetInterface {
+namespace MBSimGUI {
 
-  public:
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-    virtual void resize_(int m, int n) {}
-};
+  class WidgetInterface {
 
-class Widget : public QWidget, public WidgetInterface {
-  public:
-    Widget() {}
-};
+    public:
+      virtual void updateWidget() {}
+      virtual void resizeVariables() {}
+      virtual void resize_(int m, int n) {}
+  };
 
-class WidgetFactory {
-  public:
-    virtual QWidget* createWidget(int i=0) = 0;
-    virtual QString getName(int i=0) const { return ""; }
-    virtual int getSize() const { return 0; }
-};
+  class Widget : public QWidget, public WidgetInterface {
+    public:
+      Widget() {}
+  };
+
+  class WidgetFactory {
+    public:
+      virtual QWidget* createWidget(int i=0) = 0;
+      virtual QString getName(int i=0) const { return ""; }
+      virtual int getSize() const { return 0; }
+  };
+
+}
 
 #endif

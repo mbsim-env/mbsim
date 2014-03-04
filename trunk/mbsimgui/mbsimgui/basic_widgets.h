@@ -24,426 +24,430 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
-class Element;
-class Object;
-class Link;
-class RigidBody;
-class Frame;
-class Contour;
-class Parameter;
-class Signal;
+class QPushButton;
 class QComboBox;
 class QCheckBox;
 class QStackedWidget;
 class QListWidget;
-class FrameBrowser;
-class ContourBrowser;
-class RigidBodyBrowser;
-class ObjectBrowser;
-class LinkBrowser;
-class SignalBrowser;
-class ExtWidget;
-class QPushButton;
-
-class LocalFrameComboBox : public QComboBox {
-  Q_OBJECT
-  public:
-    LocalFrameComboBox(Element *element, QWidget *parent = 0);
-  protected:
-    Element *element;
-    std::string oldID;
-    virtual void showPopup();
-    virtual void hidePopup();
-  protected slots:
-    void highlightObject(const QString &str);
-};
-
-class ParentFrameComboBox : public QComboBox {
-  Q_OBJECT
-  public:
-    ParentFrameComboBox(Element *element, QWidget *parent = 0);
-  protected:
-    Element *element;
-    std::string oldID;
-    virtual void showPopup();
-    virtual void hidePopup();
-  protected slots:
-    void highlightObject(const QString &str);
-};
-
-class LocalFrameOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
-
-    void updateWidget();
-    QString getFrame() const;
-    void setFrame(const QString &str, Frame *framePtr);
-
-  protected:
-    QComboBox *frame;
-    Element* element;
-    Frame *selectedFrame, *omitFrame;
-
-  protected slots:
-    void setFrame(const QString &str);
-};
-
-class ParentFrameOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
-
-    void updateWidget();
-    QString getFrame() const; 
-    void setFrame(const QString &str, Frame *framePtr);
-
-  protected:
-    QComboBox *frame;
-    Element* element;
-    Frame *selectedFrame, *omitFrame;
-
-  protected slots:
-    void setFrame(const QString &str);
-};
-
-class FrameOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
-
-    void updateWidget();
-    void setFrame(const QString &str, Frame *framePtr);
-    QString getFrame() const;
-
-  protected:
-    QLineEdit *frame;
-    Element* element;
-    FrameBrowser *frameBrowser;
-    Frame *selectedFrame;
-
-  public slots:
-    void setFrame(); 
-};
-
-class ContourOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    ContourOfReferenceWidget(Element* element, Contour* selectedContour);
-
-    void updateWidget();
-    void setContour(const QString &str, Contour *contourPtr);
-    QString getContour() const;
-
-  protected:
-    QLineEdit *contour;
-    Element* element;
-    ContourBrowser *contourBrowser;
-    Contour *selectedContour;
-
-  public slots:
-    void setContour();
-};
+ 
+namespace MBSimGUI {
+
+  class Element;
+  class Object;
+  class Link;
+  class RigidBody;
+  class Frame;
+  class Contour;
+  class Parameter;
+  class Signal;
+  class FrameBrowser;
+  class ContourBrowser;
+  class RigidBodyBrowser;
+  class ObjectBrowser;
+  class LinkBrowser;
+  class SignalBrowser;
+  class ExtWidget;
+
+  class LocalFrameComboBox : public QComboBox {
+    Q_OBJECT
+    public:
+      LocalFrameComboBox(Element *element, QWidget *parent = 0);
+    protected:
+      Element *element;
+      std::string oldID;
+      virtual void showPopup();
+      virtual void hidePopup();
+    protected slots:
+      void highlightObject(const QString &str);
+  };
+
+  class ParentFrameComboBox : public QComboBox {
+    Q_OBJECT
+    public:
+      ParentFrameComboBox(Element *element, QWidget *parent = 0);
+    protected:
+      Element *element;
+      std::string oldID;
+      virtual void showPopup();
+      virtual void hidePopup();
+    protected slots:
+      void highlightObject(const QString &str);
+  };
+
+  class LocalFrameOfReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
+
+      void updateWidget();
+      QString getFrame() const;
+      void setFrame(const QString &str, Frame *framePtr);
+
+    protected:
+      QComboBox *frame;
+      Element* element;
+      Frame *selectedFrame, *omitFrame;
+
+    protected slots:
+      void setFrame(const QString &str);
+  };
+
+  class ParentFrameOfReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
+
+      void updateWidget();
+      QString getFrame() const; 
+      void setFrame(const QString &str, Frame *framePtr);
+
+    protected:
+      QComboBox *frame;
+      Element* element;
+      Frame *selectedFrame, *omitFrame;
+
+    protected slots:
+      void setFrame(const QString &str);
+  };
+
+  class FrameOfReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
+
+      void updateWidget();
+      void setFrame(const QString &str, Frame *framePtr);
+      QString getFrame() const;
+
+    protected:
+      QLineEdit *frame;
+      Element* element;
+      FrameBrowser *frameBrowser;
+      Frame *selectedFrame;
+
+    public slots:
+      void setFrame(); 
+  };
 
-class RigidBodyOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
-
-    void updateWidget();
-    void setBody(const QString &str, RigidBody *bodyPtr);
-    QString getBody() const;
-    RigidBody* getSelectedBody() {return selectedBody;}
-
-  protected:
-    QLineEdit* body;
-    Element* element;
-    RigidBodyBrowser* bodyBrowser;
-    RigidBody* selectedBody;
-
-  public slots:
-    void setBody();
+  class ContourOfReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
-  signals:
-    void bodyChanged();
-};
+      void updateWidget();
+      void setContour(const QString &str, Contour *contourPtr);
+      QString getContour() const;
 
-class ObjectOfReferenceWidget : public Widget {
-  Q_OBJECT
+    protected:
+      QLineEdit *contour;
+      Element* element;
+      ContourBrowser *contourBrowser;
+      Contour *selectedContour;
+
+    public slots:
+      void setContour();
+  };
 
-  public:
-    ObjectOfReferenceWidget(Element* element, Object* selectedObject);
-
-    void updateWidget();
-    void setObject(const QString &str, Object *objectPtr);
-    QString getObject() const;
-    Object* getSelectedObject() {return selectedObject;}
-
-  protected:
-    QLineEdit* object;
-    Element* element;
-    ObjectBrowser* objectBrowser;
-    Object* selectedObject;
-
-  public slots:
-    void setObject();
-
-  signals:
-    void objectChanged();
-};
-
-class LinkOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    LinkOfReferenceWidget(Element* element, Link* selectedLink);
-
-    void updateWidget();
-    void setLink(const QString &str, Link *linkPtr);
-    QString getLink() const;
-    Link* getSelectedLink() {return selectedLink;}
-
-  protected:
-    QLineEdit* link;
-    Element* element;
-    LinkBrowser* linkBrowser;
-    Link* selectedLink;
-
-  public slots:
-    void setLink();
+  class RigidBodyOfReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
-  signals:
-    void linkChanged();
-};
+      void updateWidget();
+      void setBody(const QString &str, RigidBody *bodyPtr);
+      QString getBody() const;
+      RigidBody* getSelectedBody() {return selectedBody;}
+
+    protected:
+      QLineEdit* body;
+      Element* element;
+      RigidBodyBrowser* bodyBrowser;
+      RigidBody* selectedBody;
 
-class SignalOfReferenceWidget : public Widget {
-  Q_OBJECT
+    public slots:
+      void setBody();
 
-  public:
-    SignalOfReferenceWidget(Element* element, Signal* selectedSignal);
+    signals:
+      void bodyChanged();
+  };
 
-    void updateWidget();
-    void setSignal(const QString &str, Signal *signalPtr);
-    QString getSignal() const;
-    Signal* getSelectedSignal() {return selectedSignal;}
+  class ObjectOfReferenceWidget : public Widget {
+    Q_OBJECT
 
-  protected:
-    QLineEdit* signal;
-    Element* element;
-    SignalBrowser* signalBrowser;
-    Signal* selectedSignal;
+    public:
+      ObjectOfReferenceWidget(Element* element, Object* selectedObject);
 
-  public slots:
-    void setSignal();
+      void updateWidget();
+      void setObject(const QString &str, Object *objectPtr);
+      QString getObject() const;
+      Object* getSelectedObject() {return selectedObject;}
 
-  signals:
-    void signalChanged();
-};
+    protected:
+      QLineEdit* object;
+      Element* element;
+      ObjectBrowser* objectBrowser;
+      Object* selectedObject;
 
-class FileWidget : public Widget {
-  Q_OBJECT
+    public slots:
+      void setObject();
 
-  public:
-    FileWidget(const QString &description, const QString &extensions, int mode=0);
-    QString getFile() const {return file;}
-    void setFile(const QString &str);
+    signals:
+      void objectChanged();
+  };
 
-  protected:
-    QLineEdit *relativeFilePath;
-    QString file, description, extensions;
-    bool mode;
+  class LinkOfReferenceWidget : public Widget {
+    Q_OBJECT
 
-  protected slots:
-    void selectFile();
+    public:
+      LinkOfReferenceWidget(Element* element, Link* selectedLink);
 
-  signals:
-    void fileChanged(const QString &str);
-};
+      void updateWidget();
+      void setLink(const QString &str, Link *linkPtr);
+      QString getLink() const;
+      Link* getSelectedLink() {return selectedLink;}
 
-class IntegerWidget : public Widget {
+    protected:
+      QLineEdit* link;
+      Element* element;
+      LinkBrowser* linkBrowser;
+      Link* selectedLink;
 
-  public:
-    virtual int getValue() = 0;
-    virtual void setValue(int val) = 0;
-};
+    public slots:
+      void setLink();
 
-class SpinBoxWidget : public IntegerWidget {
-  Q_OBJECT
+    signals:
+      void linkChanged();
+  };
 
-  public:
-    SpinBoxWidget(int val=0, int min=0, int max=99);
-    int getValue() {return value->value();}
-    void setValue(int val) {value->setValue(val);}
+  class SignalOfReferenceWidget : public Widget {
+    Q_OBJECT
 
-  protected:
-    QSpinBox *value;
-  signals:
-    void valueChanged(int);
-};
+    public:
+      SignalOfReferenceWidget(Element* element, Signal* selectedSignal);
 
-class ComboBoxWidget : public IntegerWidget {
-  Q_OBJECT
+      void updateWidget();
+      void setSignal(const QString &str, Signal *signalPtr);
+      QString getSignal() const;
+      Signal* getSelectedSignal() {return selectedSignal;}
 
-  public:
-    ComboBoxWidget(const QStringList &names, int currentIndex=0);
-    int getValue() {return value->currentIndex();}
-    void setValue(int val) {value->setCurrentIndex(val);}
+    protected:
+      QLineEdit* signal;
+      Element* element;
+      SignalBrowser* signalBrowser;
+      Signal* selectedSignal;
 
-  protected:
-    QComboBox *value;
-  signals:
-    void valueChanged(int);
-};
+    public slots:
+      void setSignal();
 
-class BasicTextWidget : public Widget {
+    signals:
+      void signalChanged();
+  };
 
-  public:
-    virtual QString getText() const = 0;
-    virtual void setText(const QString &text) = 0;
-};
+  class FileWidget : public Widget {
+    Q_OBJECT
 
-class TextWidget : public BasicTextWidget {
-  //Q_OBJECT
+    public:
+      FileWidget(const QString &description, const QString &extensions, int mode=0);
+      QString getFile() const {return file;}
+      void setFile(const QString &str);
 
-  public:
-    TextWidget(const QString &text="", bool readOnly=false);
+    protected:
+      QLineEdit *relativeFilePath;
+      QString file, description, extensions;
+      bool mode;
 
-    QString getText() const {return text->text();}
-    void setText(const QString &text_) {text->setText(text_);}
+    protected slots:
+      void selectFile();
 
-  //public slots:
+    signals:
+      void fileChanged(const QString &str);
+  };
 
-  protected:
-    QLineEdit *text;
-};
+  class IntegerWidget : public Widget {
 
-class TextChoiceWidget : public BasicTextWidget {
+    public:
+      virtual int getValue() = 0;
+      virtual void setValue(int val) = 0;
+  };
 
-  public:
-    TextChoiceWidget(const std::vector<QString> &list, int num);
-    QString getText() const {return text->currentText();}
-    void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
+  class SpinBoxWidget : public IntegerWidget {
+    Q_OBJECT
 
-  protected:
-    QComboBox *text;
-};
+    public:
+      SpinBoxWidget(int val=0, int min=0, int max=99);
+      int getValue() {return value->value();}
+      void setValue(int val) {value->setValue(val);}
 
-class ConnectFramesWidget : public Widget {
+    protected:
+      QSpinBox *value;
 
-  friend class ConnectFramesProperty;
+    signals:
+      void valueChanged(int);
+  };
 
-  public:
+  class ComboBoxWidget : public IntegerWidget {
+    Q_OBJECT
+
+    public:
+      ComboBoxWidget(const QStringList &names, int currentIndex=0);
+      int getValue() {return value->currentIndex();}
+      void setValue(int val) {value->setCurrentIndex(val);}
+
+    protected:
+      QComboBox *value;
+
+    signals:
+      void valueChanged(int);
+  };
+
+  class BasicTextWidget : public Widget {
+
+    public:
+      virtual QString getText() const = 0;
+      virtual void setText(const QString &text) = 0;
+  };
+
+  class TextWidget : public BasicTextWidget {
+
+    public:
+      TextWidget(const QString &text="", bool readOnly=false);
+
+      QString getText() const {return text->text();}
+      void setText(const QString &text_) {text->setText(text_);}
+
+    protected:
+      QLineEdit *text;
+  };
+
+  class TextChoiceWidget : public BasicTextWidget {
+
+    public:
+      TextChoiceWidget(const std::vector<QString> &list, int num);
+      QString getText() const {return text->currentText();}
+      void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
+
+    protected:
+      QComboBox *text;
+  };
+
+  class ConnectFramesWidget : public Widget {
+
+    friend class ConnectFramesProperty;
+
+    public:
     ConnectFramesWidget(int n, Element* element);
 
     void updateWidget();
 
-  protected:
+    protected:
     std::vector<FrameOfReferenceWidget*> widget;
     Element* element;
-};
+  };
 
-class ConnectContoursWidget : public Widget {
+  class ConnectContoursWidget : public Widget {
 
-  friend class ConnectContoursProperty;
+    friend class ConnectContoursProperty;
 
-  public:
+    public:
     ConnectContoursWidget(int n, Element* element);
 
     void updateWidget();
 
-  protected:
+    protected:
     std::vector<ContourOfReferenceWidget*> widget;
     Element* element;
-};
+  };
 
-class SolverChoiceWidget : public Widget {
-  friend class SolverChoiceProperty;
+  class SolverChoiceWidget : public Widget {
+    friend class SolverChoiceProperty;
 
-  public:
+    public:
     SolverChoiceWidget();
     QString getSolver() const {return choice->currentText();}
     void setSolver(const QString &str) {choice->setCurrentIndex(choice->findText(str));}
 
-  protected:
+    protected:
     QComboBox *choice;
-};
+  };
 
-class SolverTolerancesWidget : public Widget {
-  friend class SolverTolerancesProperty;
+  class SolverTolerancesWidget : public Widget {
+    friend class SolverTolerancesProperty;
 
-  public:
+    public:
     SolverTolerancesWidget();
 
-  protected:
+    protected:
     ExtWidget *projection, *g, *gd, *gdd, *la, *La;
-};
+  };
 
-class SolverParametersWidget : public Widget {
+  class SolverParametersWidget : public Widget {
 
-  friend class SolverParametersProperty;
+    friend class SolverParametersProperty;
 
-  public:
+    public:
     SolverParametersWidget();
 
-  protected:
+    protected:
     ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;
-};
+  };
 
-class PlotFeature : public Widget {
-  public:
-    PlotFeature(const QString &name);
+  class PlotFeature : public Widget {
+    public:
+      PlotFeature(const QString &name);
 
-  protected:
-    QString name;
-    QComboBox *status;
-};
+    protected:
+      QString name;
+      QComboBox *status;
+  };
 
-class EmbedWidget : public Widget {
+  class EmbedWidget : public Widget {
 
-  friend class EmbedProperty;
+    friend class EmbedProperty;
 
-  public:
+    public:
     EmbedWidget();
 
-  protected:
+    protected:
     ExtWidget *href, *count, *counterName, *parameterList;
 
-};
+  };
 
-class SignalReferenceWidget : public Widget {
+  class SignalReferenceWidget : public Widget {
 
-  friend class SignalReferenceProperty;
+    friend class SignalReferenceProperty;
 
-  public:
+    public:
     SignalReferenceWidget(Element* element);
     Signal* getSelectedSignal() {return refSignal->getSelectedSignal();}
     SignalOfReferenceWidget* getSignalOfReferenceWidget() {return refSignal;}
     void updateWidget() {refSignal->updateWidget();}
-  protected:
-   SignalOfReferenceWidget* refSignal;
-   ExtWidget *factor;
-};
+    protected:
+    SignalOfReferenceWidget* refSignal;
+    ExtWidget *factor;
+  };
 
-class ColorWidget : public Widget {
-  Q_OBJECT
+  class ColorWidget : public Widget {
+    Q_OBJECT
 
-  friend class ColorProperty;
+    friend class ColorProperty;
 
-  public:
+    public:
     ColorWidget();
     void updateWidget();
 
-  protected:
+    protected:
     ExtWidget *color;
     QPushButton *button;
 
-  protected slots:
-    void setColor(); 
-};
+    protected slots:
+      void setColor(); 
+  };
+
+}
 
 #endif

@@ -26,40 +26,43 @@
 #include "mainwindow.h"
 #include <QEvent>
 
-extern MainWindow *mw;
+namespace MBSimGUI {
 
-void ParameterView::mouseDoubleClickEvent ( QMouseEvent * event ) {
-  if(!editor) {
-    index = selectionModel()->currentIndex();
-    if(index.isValid()) {
-      Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(model())->getItem(index)->getItemData());
-      editor = parameter->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+  extern MainWindow *mw;
+
+  void ParameterView::mouseDoubleClickEvent ( QMouseEvent * event ) {
+    if(!editor) {
+      index = selectionModel()->currentIndex();
+      if(index.isValid()) {
+        Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(model())->getItem(index)->getItemData());
+        editor = parameter->createPropertyDialog();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->toWidget();
+        editor->show();
+        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      }
     }
   }
-}
 
-void ParameterView::mousePressEvent ( QMouseEvent * event ) {
-  if(!editor)
-    QTreeView::mousePressEvent(event);
-}
+  void ParameterView::mousePressEvent ( QMouseEvent * event ) {
+    if(!editor)
+      QTreeView::mousePressEvent(event);
+  }
 
-void ParameterView::dialogFinished(int result) {
-  if(result != 0) {
+  void ParameterView::dialogFinished(int result) {
+    if(result != 0) {
+      mw->updateOctaveParameters();
+      mw->mbsimxml(1);
+    }
+    editor = 0;
+  }
+
+  void ParameterView::apply() {
+    update(index);
+    update(index.sibling(index.row(),1));
     mw->updateOctaveParameters();
     mw->mbsimxml(1);
   }
-  editor = 0;
-}
 
-void ParameterView::apply() {
-  update(index);
-  update(index.sibling(index.row(),1));
-  mw->updateOctaveParameters();
-  mw->mbsimxml(1);
 }
-

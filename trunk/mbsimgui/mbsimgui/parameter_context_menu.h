@@ -22,10 +22,14 @@
 
 #include <QMenu>
 
-class ParameterContextMenu : public QMenu {
+namespace MBSimGUI {
 
-  public:
-    ParameterContextMenu(QWidget * parent = 0);
-};
+  class ParameterContextMenu : public QMenu {
+
+    public:
+      ParameterContextMenu(QWidget * parent = 0);
+  };
+
+}
 
 #endif

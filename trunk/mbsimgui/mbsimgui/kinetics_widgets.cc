@@ -26,243 +26,247 @@
 
 using namespace std;
 
-RegularizedBilateralConstraintWidget::RegularizedBilateralConstraintWidget() {
+namespace MBSimGUI {
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  funcList = new QComboBox;
-  funcList->addItem(tr("Linear regularized bilateral constraint"));
-  layout->addWidget(funcList);
-  setLayout(layout);
-  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  forceFunc = new LinearRegularizedBilateralConstraintWidget;  
-  layout->addWidget(forceFunc);
-}
+  RegularizedBilateralConstraintWidget::RegularizedBilateralConstraintWidget() {
 
-void RegularizedBilateralConstraintWidget::defineFunction(int index) {
-  if(index==0) {
-    layout->removeWidget(forceFunc);
-    delete forceFunc;
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    funcList = new QComboBox;
+    funcList->addItem(tr("Linear regularized bilateral constraint"));
+    layout->addWidget(funcList);
+    setLayout(layout);
+    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
     forceFunc = new LinearRegularizedBilateralConstraintWidget;  
     layout->addWidget(forceFunc);
   }
-}
 
-RegularizedUnilateralConstraintWidget::RegularizedUnilateralConstraintWidget() {
+  void RegularizedBilateralConstraintWidget::defineFunction(int index) {
+    if(index==0) {
+      layout->removeWidget(forceFunc);
+      delete forceFunc;
+      forceFunc = new LinearRegularizedBilateralConstraintWidget;  
+      layout->addWidget(forceFunc);
+    }
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  funcList = new QComboBox;
-  funcList->addItem(tr("Linear regularized unilateral constraint"));
-  layout->addWidget(funcList);
-  setLayout(layout);
-  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
-  layout->addWidget(forceFunc);
-}
+  RegularizedUnilateralConstraintWidget::RegularizedUnilateralConstraintWidget() {
 
-void RegularizedUnilateralConstraintWidget::defineFunction(int index) {
-  if(index==0) {
-    layout->removeWidget(forceFunc);
-    delete forceFunc;
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    funcList = new QComboBox;
+    funcList->addItem(tr("Linear regularized unilateral constraint"));
+    layout->addWidget(funcList);
+    setLayout(layout);
+    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
     forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
     layout->addWidget(forceFunc);
   }
-}
 
-UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  restitutionCoefficient = new ExtWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
-  layout->addWidget(restitutionCoefficient);
-}
+  void RegularizedUnilateralConstraintWidget::defineFunction(int index) {
+    if(index==0) {
+      layout->removeWidget(forceFunc);
+      delete forceFunc;
+      forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
+      layout->addWidget(forceFunc);
+    }
+  }
 
-PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-  layout->addWidget(frictionCoefficient);
-}
+  UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    restitutionCoefficient = new ExtWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
+    layout->addWidget(restitutionCoefficient);
+  }
 
-SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-  layout->addWidget(frictionCoefficient);
-}
+  PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    layout->addWidget(frictionCoefficient);
+  }
 
-RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
+  SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    layout->addWidget(frictionCoefficient);
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  funcList = new QComboBox;
-  funcList->addItem(tr("Linear regularized coulomb friction"));
-  layout->addWidget(funcList);
-  setLayout(layout);
-  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
-  layout->addWidget(frictionForceFunc);
-}
+  RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
 
-void RegularizedPlanarFrictionWidget::defineFunction(int index) {
-  if(index==0) {
-    layout->removeWidget(frictionForceFunc);
-    delete frictionForceFunc;
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    funcList = new QComboBox;
+    funcList->addItem(tr("Linear regularized coulomb friction"));
+    layout->addWidget(funcList);
+    setLayout(layout);
+    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
     frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
     layout->addWidget(frictionForceFunc);
   }
-}
 
-RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
+  void RegularizedPlanarFrictionWidget::defineFunction(int index) {
+    if(index==0) {
+      layout->removeWidget(frictionForceFunc);
+      delete frictionForceFunc;
+      frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
+      layout->addWidget(frictionForceFunc);
+    }
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  funcList = new QComboBox;
-  funcList->addItem(tr("Linear regularized coulomb friction"));
-  layout->addWidget(funcList);
-  setLayout(layout);
-  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
-  layout->addWidget(frictionForceFunc);
-}
+  RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
 
-void RegularizedSpatialFrictionWidget::defineFunction(int index) {
-  if(index==0) {
-    layout->removeWidget(frictionForceFunc);
-    delete frictionForceFunc;
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    funcList = new QComboBox;
+    funcList->addItem(tr("Linear regularized coulomb friction"));
+    layout->addWidget(funcList);
+    setLayout(layout);
+    connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
     frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
     layout->addWidget(frictionForceFunc);
   }
-}
 
-PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-  layout->addWidget(frictionCoefficient);
-}
+  void RegularizedSpatialFrictionWidget::defineFunction(int index) {
+    if(index==0) {
+      layout->removeWidget(frictionForceFunc);
+      delete frictionForceFunc;
+      frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
+      layout->addWidget(frictionForceFunc);
+    }
+  }
 
-SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-  layout->addWidget(frictionCoefficient);
-}
+  PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    layout->addWidget(frictionCoefficient);
+  }
 
-GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget() : generalizedForceLaw(0) {
+  SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+    layout->addWidget(frictionCoefficient);
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+  GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget() : generalizedForceLaw(0) {
 
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Bilateral constraint"));
-  comboBox->addItem(tr("Regularized bilateral constraint"));
-  comboBox->addItem(tr("Unilateral constraint"));
-  comboBox->addItem(tr("Regularized unilateral constraint"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-  defineForceLaw(0);
-}
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
 
-void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
-  layout->removeWidget(generalizedForceLaw);
-  delete generalizedForceLaw;
-  if(index==0)
-    generalizedForceLaw = new BilateralConstraintWidget;  
-  else if(index==1)
-    generalizedForceLaw = new RegularizedBilateralConstraintWidget;  
-  else if(index==2)
-    generalizedForceLaw = new UnilateralConstraintWidget;  
-  else if(index==3)
-    generalizedForceLaw = new RegularizedUnilateralConstraintWidget;  
-  layout->addWidget(generalizedForceLaw);
-}
+    comboBox = new QComboBox;
+    comboBox->addItem(tr("Bilateral constraint"));
+    comboBox->addItem(tr("Regularized bilateral constraint"));
+    comboBox->addItem(tr("Unilateral constraint"));
+    comboBox->addItem(tr("Regularized unilateral constraint"));
+    layout->addWidget(comboBox);
+    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
+    defineForceLaw(0);
+  }
 
-GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget() : generalizedImpactLaw(0) {
+  void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
+    layout->removeWidget(generalizedForceLaw);
+    delete generalizedForceLaw;
+    if(index==0)
+      generalizedForceLaw = new BilateralConstraintWidget;  
+    else if(index==1)
+      generalizedForceLaw = new RegularizedBilateralConstraintWidget;  
+    else if(index==2)
+      generalizedForceLaw = new UnilateralConstraintWidget;  
+    else if(index==3)
+      generalizedForceLaw = new RegularizedUnilateralConstraintWidget;  
+    layout->addWidget(generalizedForceLaw);
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+  GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget() : generalizedImpactLaw(0) {
 
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Bilateral impact"));
-  comboBox->addItem(tr("Unilateral Newton impact"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
-  defineImpactLaw(0);
-}
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
 
-void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
-  layout->removeWidget(generalizedImpactLaw);
-  delete generalizedImpactLaw;
-  if(index==0)
-    generalizedImpactLaw = new BilateralImpactWidget;  
-  else if(index==1)
-    generalizedImpactLaw = new UnilateralNewtonImpactWidget;  
-  layout->addWidget(generalizedImpactLaw);
-}
+    comboBox = new QComboBox;
+    comboBox->addItem(tr("Bilateral impact"));
+    comboBox->addItem(tr("Unilateral Newton impact"));
+    layout->addWidget(comboBox);
+    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
+    defineImpactLaw(0);
+  }
 
-FrictionForceLawChoiceWidget::FrictionForceLawChoiceWidget() : frictionForceLaw(0) {
+  void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
+    layout->removeWidget(generalizedImpactLaw);
+    delete generalizedImpactLaw;
+    if(index==0)
+      generalizedImpactLaw = new BilateralImpactWidget;  
+    else if(index==1)
+      generalizedImpactLaw = new UnilateralNewtonImpactWidget;  
+    layout->addWidget(generalizedImpactLaw);
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+  FrictionForceLawChoiceWidget::FrictionForceLawChoiceWidget() : frictionForceLaw(0) {
 
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Planar coulomb friction"));
-  comboBox->addItem(tr("Regularized planar friction"));
-  comboBox->addItem(tr("Spatial coulomb friction"));
-  comboBox->addItem(tr("Regularized spatial friction"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
-  defineFrictionLaw(0);
-}
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
 
-void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
-  layout->removeWidget(frictionForceLaw);
-  delete frictionForceLaw;
-  if(index==0)
-    frictionForceLaw = new PlanarCoulombFrictionWidget;  
-  if(index==1)
-    frictionForceLaw = new RegularizedPlanarFrictionWidget;  
-  if(index==2)
-    frictionForceLaw = new SpatialCoulombFrictionWidget;  
-  if(index==3)
-    frictionForceLaw = new RegularizedSpatialFrictionWidget;  
-  layout->addWidget(frictionForceLaw);
-}
+    comboBox = new QComboBox;
+    comboBox->addItem(tr("Planar coulomb friction"));
+    comboBox->addItem(tr("Regularized planar friction"));
+    comboBox->addItem(tr("Spatial coulomb friction"));
+    comboBox->addItem(tr("Regularized spatial friction"));
+    layout->addWidget(comboBox);
+    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
+    defineFrictionLaw(0);
+  }
 
-FrictionImpactLawChoiceWidget::FrictionImpactLawChoiceWidget() : frictionImpactLaw(0) {
+  void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
+    layout->removeWidget(frictionForceLaw);
+    delete frictionForceLaw;
+    if(index==0)
+      frictionForceLaw = new PlanarCoulombFrictionWidget;  
+    if(index==1)
+      frictionForceLaw = new RegularizedPlanarFrictionWidget;  
+    if(index==2)
+      frictionForceLaw = new SpatialCoulombFrictionWidget;  
+    if(index==3)
+      frictionForceLaw = new RegularizedSpatialFrictionWidget;  
+    layout->addWidget(frictionForceLaw);
+  }
 
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+  FrictionImpactLawChoiceWidget::FrictionImpactLawChoiceWidget() : frictionImpactLaw(0) {
 
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Planar coloumb impact"));
-  comboBox->addItem(tr("Spatial coloumb impact"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
-  defineFrictionImpactLaw(0);
-}
+    layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
 
-void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
-  layout->removeWidget(frictionImpactLaw);
-  delete frictionImpactLaw;
-  if(index==0)
-    frictionImpactLaw = new PlanarCoulombImpactWidget;  
-  else if(index==1)
-    frictionImpactLaw = new SpatialCoulombImpactWidget;  
-  layout->addWidget(frictionImpactLaw);
+    comboBox = new QComboBox;
+    comboBox->addItem(tr("Planar coloumb impact"));
+    comboBox->addItem(tr("Spatial coloumb impact"));
+    layout->addWidget(comboBox);
+    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
+    defineFrictionImpactLaw(0);
+  }
+
+  void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
+    layout->removeWidget(frictionImpactLaw);
+    delete frictionImpactLaw;
+    if(index==0)
+      frictionImpactLaw = new PlanarCoulombImpactWidget;  
+    else if(index==1)
+      frictionImpactLaw = new SpatialCoulombImpactWidget;  
+    layout->addWidget(frictionImpactLaw);
+  }
+
 }
