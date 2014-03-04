@@ -29,94 +29,98 @@ using namespace MBXMLUtils;
 using namespace boost;
 using namespace xercesc;
 
-Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
+namespace MBSimGUI {
 
- // properties->addTab("Plotting");
- // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
- // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
- // plotFeature.push_back(new ExtWidget("Plot global velocity", new PlotFeature("globalVelocity"),true));
- // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
- // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
- // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+  Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
 
-  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
-}
+    // properties->addTab("Plotting");
+    // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
+    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+    // plotFeature.push_back(new ExtWidget("Plot global velocity", new PlotFeature("globalVelocity"),true));
+    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+    // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
+    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
-Frame::~Frame() {
-}
-
-Frame* Frame::readXMLFile(const string &filename, Element *parent) {
-  shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
-  DOMElement *e=doc->getDocumentElement();
-  Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
-  if(frame) {
-    frame->initializeUsingXML(e);
-    frame->initialize();
+    visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
   }
-  return frame;
-}
 
-void Frame::initializeUsingXML(DOMElement *element) {
-  Element::initializeUsingXML(element);
-  visu.initializeUsingXML(element);
-}
+  Frame::~Frame() {
+  }
 
-DOMElement* Frame::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Element::writeXMLFile(parent);
-  visu.writeXMLFile(ele0);
-  return ele0;
-}
+  Frame* Frame::readXMLFile(const string &filename, Element *parent) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
+    if(frame) {
+      frame->initializeUsingXML(e);
+      frame->initialize();
+    }
+    return frame;
+  }
 
-void Frame::initializeUsingXML2(DOMElement *element) {
-  visu.initializeUsingXML(element);
-}
+  void Frame::initializeUsingXML(DOMElement *element) {
+    Element::initializeUsingXML(element);
+    visu.initializeUsingXML(element);
+  }
 
-DOMElement* Frame::writeXMLFile2(DOMNode *parent) {
-  visu.writeXMLFile(parent);
-  return 0;
-}
+  DOMElement* Frame::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Element::writeXMLFile(parent);
+    visu.writeXMLFile(ele0);
+    return ele0;
+  }
 
-Element *Frame::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") // absolut path
-    if(getParent())
-      return getParent()->getByPathSearch(path);
-    else
-      return getByPathSearch(path.substr(1));
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParent()->getByPathSearch(path.substr(3));
-  return NULL;
-}
+  void Frame::initializeUsingXML2(DOMElement *element) {
+    visu.initializeUsingXML(element);
+  }
 
-FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
+  DOMElement* Frame::writeXMLFile2(DOMNode *parent) {
+    visu.writeXMLFile(parent);
+    return 0;
+  }
 
-  position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"relativePosition"),"",4));
+  Element *Frame::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(getParent())
+        return getParent()->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return getParent()->getByPathSearch(path.substr(3));
+    return NULL;
+  }
 
-  orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"relativeOrientation"),"",4));
+  FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
 
-  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
-}
+    position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"relativePosition"),"",4));
 
-FixedRelativeFrame::~FixedRelativeFrame() {
-}
+    orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"relativeOrientation"),"",4));
 
-void FixedRelativeFrame::initialize() {
-  Frame::initialize();
-  refFrame.initialize();
-}
+    refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
+  }
 
-void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
-  Frame::initializeUsingXML(element);
-  refFrame.initializeUsingXML(element);
-  position.initializeUsingXML(element);
-  orientation.initializeUsingXML(element);
-}
+  FixedRelativeFrame::~FixedRelativeFrame() {
+  }
 
-DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
+  void FixedRelativeFrame::initialize() {
+    Frame::initialize();
+    refFrame.initialize();
+  }
 
-  DOMDocument *doc=parent->getOwnerDocument();
-  DOMElement *ele0 = Frame::writeXMLFile(parent);
-  refFrame.writeXMLFile(ele0);
-  position.writeXMLFile(ele0);
-  orientation.writeXMLFile(ele0);
-  return ele0;
+  void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
+    Frame::initializeUsingXML(element);
+    refFrame.initializeUsingXML(element);
+    position.initializeUsingXML(element);
+    orientation.initializeUsingXML(element);
+  }
+
+  DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
+
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = Frame::writeXMLFile(parent);
+    refFrame.writeXMLFile(ele0);
+    position.writeXMLFile(ele0);
+    orientation.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

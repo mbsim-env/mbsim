@@ -22,15 +22,18 @@
 
 #include "element.h"
 #include "extended_properties.h"
-class Frame;
-class Contour;
-class Object;
-class Link;
-class Observer;
 
-class Group : public Element {
-  friend class GroupPropertyDialog;
-  protected:
+namespace MBSimGUI {
+
+  class Frame;
+  class Contour;
+  class Object;
+  class Link;
+  class Observer;
+
+  class Group : public Element {
+    friend class GroupPropertyDialog;
+    protected:
     ExtProperty position, orientation, frameOfReference; 
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
@@ -40,7 +43,7 @@ class Group : public Element {
     std::vector<Observer*> observer;
     std::vector<Element*> removedElement;
 
-  public:
+    public:
     Group(const std::string &str, Element *parent);
     Group(const Group &g);
     ~Group();
@@ -84,6 +87,8 @@ class Group : public Element {
     void removeElement(Element *element);
     ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
     QMenu* createContextMenu() {return new GroupContextMenu(this);}
-};
+  };
+
+}
 
 #endif

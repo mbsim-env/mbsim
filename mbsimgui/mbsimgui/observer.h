@@ -23,81 +23,85 @@
 #include "element.h"
 #include "extended_properties.h"
 
-class Observer : public Element {
-  public:
-    Observer(const std::string &str, Element *parent);
-    static Observer* readXMLFile(const std::string &filename, Element *parent);
-    virtual int getxSize() {return 0;}
-    virtual Element* getByPathSearch(std::string path);
-};
+namespace MBSimGUI {
 
-class CoordinatesObserver : public Observer {
-  friend class CoordinatesObserverPropertyDialog;
-  public:
+  class Observer : public Element {
+    public:
+      Observer(const std::string &str, Element *parent);
+      static Observer* readXMLFile(const std::string &filename, Element *parent);
+      virtual int getxSize() {return 0;}
+      virtual Element* getByPathSearch(std::string path);
+  };
+
+  class CoordinatesObserver : public Observer {
+    friend class CoordinatesObserverPropertyDialog;
+    public:
     CoordinatesObserver(const std::string &str, Element *parent);
     std::string getType() const { return "CoordinatesObserver"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new CoordinatesObserverPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty frame, position, velocity, acceleration;
-};
+  };
 
-class CartesianCoordinatesObserver : public CoordinatesObserver {
-  friend class CartesianCoordinatesObserverPropertyDialog;
-  public:
+  class CartesianCoordinatesObserver : public CoordinatesObserver {
+    friend class CartesianCoordinatesObserverPropertyDialog;
+    public:
     CartesianCoordinatesObserver(const std::string &str, Element *parent) : CoordinatesObserver(str,parent) {}
     std::string getType() const { return "CartesianCoordinatesObserver"; }
     ElementPropertyDialog* createPropertyDialog() {return new CartesianCoordinatesObserverPropertyDialog(this);}
-};
+  };
 
-class CylinderCoordinatesObserver : public CoordinatesObserver {
-  friend class CylinderCoordinatesObserverPropertyDialog;
-  public:
+  class CylinderCoordinatesObserver : public CoordinatesObserver {
+    friend class CylinderCoordinatesObserverPropertyDialog;
+    public:
     CylinderCoordinatesObserver(const std::string &str, Element *parent) : CoordinatesObserver(str,parent) {}
     std::string getType() const { return "CylinderCoordinatesObserver"; }
     ElementPropertyDialog* createPropertyDialog() {return new CylinderCoordinatesObserverPropertyDialog(this);}
-};
+  };
 
-class NaturalCoordinatesObserver : public CoordinatesObserver {
-  friend class NaturalCoordinatesObserverPropertyDialog;
-  public:
+  class NaturalCoordinatesObserver : public CoordinatesObserver {
+    friend class NaturalCoordinatesObserverPropertyDialog;
+    public:
     NaturalCoordinatesObserver(const std::string &str, Element *parent) : CoordinatesObserver(str,parent) {}
     std::string getType() const { return "NaturalCoordinatesObserver"; }
     ElementPropertyDialog* createPropertyDialog() {return new NaturalCoordinatesObserverPropertyDialog(this);}
-};
+  };
 
-class KinematicsObserver : public Observer {
-  friend class KinematicsObserverPropertyDialog;
-  public:
+  class KinematicsObserver : public Observer {
+    friend class KinematicsObserverPropertyDialog;
+    public:
     KinematicsObserver(const std::string &str, Element *parent);
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
-  protected:
+    protected:
     ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
-};
+  };
 
-class AbsoluteKinematicsObserver : public KinematicsObserver {
-  friend class AbsoluteKinematicsObserverPropertyDialog;
-  public:
+  class AbsoluteKinematicsObserver : public KinematicsObserver {
+    friend class AbsoluteKinematicsObserverPropertyDialog;
+    public:
     AbsoluteKinematicsObserver(const std::string &str, Element *parent) : KinematicsObserver(str,parent) {}
     std::string getType() const { return "AbsoluteKinematicsObserver"; }
     ElementPropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
-};
+  };
 
-class RelativeKinematicsObserver : public KinematicsObserver {
-  friend class RelativeKinematicsObserverPropertyDialog;
-  public:
+  class RelativeKinematicsObserver : public KinematicsObserver {
+    friend class RelativeKinematicsObserverPropertyDialog;
+    public:
     RelativeKinematicsObserver(const std::string &str, Element *parent);
     std::string getType() const { return "RelativeKinematicsObserver"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty refFrame;
-};
+  };
+
+}
 
 #endif

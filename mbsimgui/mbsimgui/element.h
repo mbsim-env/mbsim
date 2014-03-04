@@ -27,30 +27,32 @@
 #include "element_context_menu.h"
 #include "parameter.h"
 
-class Element;
-class Frame;
-class Contour;
-class Group;
-class Object;
-class ExtraDynamic;
-class Link;
-class Observer;
-class TextWidget;
+namespace MBSimGUI {
 
-namespace XERCES_CPP_NAMESPACE {
-  class DOMElement;
-  class DOMNode;
-}
+  class Element;
+  class Frame;
+  class Contour;
+  class Group;
+  class Object;
+  class ExtraDynamic;
+  class Link;
+  class Observer;
+  class TextWidget;
 
-class Element : public TreeItemData {
-  friend class ElementPropertyDialog;
-  protected:
+  namespace XERCES_CPP_NAMESPACE {
+    class DOMElement;
+    class DOMNode;
+  }
+
+  class Element : public TreeItemData {
+    friend class ElementPropertyDialog;
+    protected:
     Element *parent;
     static int IDcounter;
     std::string ID;
     ExtProperty name, embed;
     Parameters parameters;
-  public:
+    public:
     Element(const std::string &name, Element *parent);
     virtual Element* clone() const {return 0;}
     virtual std::string getPath();
@@ -108,12 +110,14 @@ class Element : public TreeItemData {
     Parameter *getParameter(int i) { return parameters.getParameter(i); }
     void setParameters(const Parameters &param) { parameters = param; }
     const Parameters& getParameters() const { return parameters; }
-};
+  };
 
-template<class T>
-T* Element::getByPath(std::string path) {
-  Element * e = getByPathSearch(path);
-  return dynamic_cast<T*>(e);
+  template<class T>
+    T* Element::getByPath(std::string path) {
+      Element * e = getByPathSearch(path);
+      return dynamic_cast<T*>(e);
+    }
+
 }
 
 #endif

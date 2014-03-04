@@ -38,29 +38,33 @@ namespace XERCES_CPP_NAMESPACE {
 
 class QWidget;
 
-class PropertyInterface {
-  public:
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) = 0;
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) = 0;
-    virtual void fromWidget(QWidget *widget) = 0;
-    virtual void toWidget(QWidget *widget) = 0;
-    virtual void initialize() {}
-    virtual void deinitialize() {}
-    virtual std::string getType() const {return "";}
-};
+namespace MBSimGUI {
 
-class Property : public PropertyInterface {
-  public:
-    Property() {}
-    virtual ~Property() {}
-    virtual Property* clone() const {return 0;}
-};
+  class PropertyInterface {
+    public:
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) = 0;
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) = 0;
+      virtual void fromWidget(QWidget *widget) = 0;
+      virtual void toWidget(QWidget *widget) = 0;
+      virtual void initialize() {}
+      virtual void deinitialize() {}
+      virtual std::string getType() const {return "";}
+  };
 
-class PropertyFactory {
-  public:
-    virtual Property* createProperty(int i=0) = 0;
-    virtual MBXMLUtils::FQN getName(int i=0) const { return ""; }
-    virtual int getSize() const { return 0; }
-};
+  class Property : public PropertyInterface {
+    public:
+      Property() {}
+      virtual ~Property() {}
+      virtual Property* clone() const {return 0;}
+  };
+
+  class PropertyFactory {
+    public:
+      virtual Property* createProperty(int i=0) = 0;
+      virtual MBXMLUtils::FQN getName(int i=0) const { return ""; }
+      virtual int getSize() const { return 0; }
+  };
+
+}
 
 #endif

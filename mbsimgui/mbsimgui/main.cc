@@ -24,6 +24,7 @@
 #include <QLocale>
 
 using namespace std;
+using namespace MBSimGUI;
 
 int main(int argc, char *argv[]) {
   // environment variables

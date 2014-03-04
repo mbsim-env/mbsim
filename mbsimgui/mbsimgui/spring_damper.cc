@@ -29,129 +29,133 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
+namespace MBSimGUI {
 
-  forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"forceFunction"));
+  SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
 
-  connections.setProperty(new ConnectFramesProperty(2,this));
+    forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"forceFunction"));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-  coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
+    connections.setProperty(new ConnectFramesProperty(2,this));
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-}
+    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
+    coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
 
-SpringDamper::~SpringDamper() {
-}
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+  }
 
-void SpringDamper::initialize() {
-  Link::initialize();
-  connections.initialize();
-}
+  SpringDamper::~SpringDamper() {
+  }
 
-void SpringDamper::initializeUsingXML(DOMElement *element) {
-  DOMElement *e;
-  Link::initializeUsingXML(element);
-  forceFunction.initializeUsingXML(element);
-  connections.initializeUsingXML(element);
-  coilSpring.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
-}
+  void SpringDamper::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
 
-DOMElement* SpringDamper::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  forceFunction.writeXMLFile(ele0);
-  connections.writeXMLFile(ele0);
-  coilSpring.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
-  return ele0;
-}
+  void SpringDamper::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
+    Link::initializeUsingXML(element);
+    forceFunction.initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    coilSpring.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+  }
 
-DirectionalSpringDamper::DirectionalSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
+  DOMElement* SpringDamper::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    forceFunction.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
+    coilSpring.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    return ele0;
+  }
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIM%"forceDirection"));
-  forceDirection.setProperty(new ExtPhysicalVarProperty(input));
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
 
-  forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"forceFunction"));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIM%"forceDirection"));
+    forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  connections.setProperty(new ConnectFramesProperty(2,this));
+    forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"forceFunction"));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-  coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
+    connections.setProperty(new ConnectFramesProperty(2,this));
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-}
+    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
+    coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
 
-DirectionalSpringDamper::~DirectionalSpringDamper() {
-}
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+  }
 
-void DirectionalSpringDamper::initialize() {
-  Link::initialize();
-  connections.initialize();
-}
+  DirectionalSpringDamper::~DirectionalSpringDamper() {
+  }
 
-void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
-  DOMElement *e;
-  Link::initializeUsingXML(element);
-  forceDirection.initializeUsingXML(element);
-  forceFunction.initializeUsingXML(element);
-  connections.initializeUsingXML(element);
-  coilSpring.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
-}
+  void DirectionalSpringDamper::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
 
-DOMElement* DirectionalSpringDamper::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  forceDirection.writeXMLFile(ele0);
-  forceFunction.writeXMLFile(ele0);
-  connections.writeXMLFile(ele0);
-  coilSpring.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
-  return ele0;
-}
+  void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
+    Link::initializeUsingXML(element);
+    forceDirection.initializeUsingXML(element);
+    forceFunction.initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    coilSpring.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+  }
 
-GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+  DOMElement* DirectionalSpringDamper::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    forceDirection.writeXMLFile(ele0);
+    forceFunction.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
+    coilSpring.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    return ele0;
+  }
 
-  function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"generalizedForceFunction"));
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
 
-  body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
+    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"generalizedForceFunction"));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-  coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
+    body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
+    coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-}
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-GeneralizedSpringDamper::~GeneralizedSpringDamper() {
-}
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+  }
 
-void GeneralizedSpringDamper::initialize() {
-  Link::initialize();
-}
+  GeneralizedSpringDamper::~GeneralizedSpringDamper() {
+  }
 
-void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
-  DOMElement *e;
-  Link::initializeUsingXML(element);
-  function.initializeUsingXML(element);
-  body.initializeUsingXML(element);
-  coilSpring.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
-  momentArrow.initializeUsingXML(element);
-}
+  void GeneralizedSpringDamper::initialize() {
+    Link::initialize();
+  }
 
-DOMElement* GeneralizedSpringDamper::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  function.writeXMLFile(ele0);
-  body.writeXMLFile(ele0);
-  coilSpring.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
-  momentArrow.writeXMLFile(ele0);
-  return ele0;
+  void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
+    Link::initializeUsingXML(element);
+    function.initializeUsingXML(element);
+    body.initializeUsingXML(element);
+    coilSpring.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+  }
+
+  DOMElement* GeneralizedSpringDamper::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    body.writeXMLFile(ele0);
+    coilSpring.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

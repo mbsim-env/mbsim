@@ -22,88 +22,92 @@
 
 #include "signal_.h"
 
-class Sensor : public Signal {
-  public:
-    Sensor(const std::string &str, Element *parent);
-    ~Sensor(); 
-};
+namespace MBSimGUI {
 
-class GeneralizedCoordinateSensor : public Sensor {
-  friend class GeneralizedCoordinateSensorPropertyDialog;
-  public:
+  class Sensor : public Signal {
+    public:
+      Sensor(const std::string &str, Element *parent);
+      ~Sensor(); 
+  };
+
+  class GeneralizedCoordinateSensor : public Sensor {
+    friend class GeneralizedCoordinateSensorPropertyDialog;
+    public:
     GeneralizedCoordinateSensor(const std::string &str, Element *parent);
     virtual std::string getType() const { return "GeneralizedCoordinateSensor"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
-  protected:
+    protected:
     ExtProperty object, index;
-};
+  };
 
-class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
-  public:
-    GeneralizedPositionSensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
-    virtual std::string getType() const { return "GeneralizedPositionSensor"; }
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionSensorPropertyDialog(this);}
+  class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
+    public:
+      GeneralizedPositionSensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
+      virtual std::string getType() const { return "GeneralizedPositionSensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionSensorPropertyDialog(this);}
 
-};
+  };
 
-class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
-  public:
-    GeneralizedVelocitySensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
-    virtual std::string getType() const { return "GeneralizedVelocitySensor"; }
-    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocitySensorPropertyDialog(this);}
-};
+  class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
+    public:
+      GeneralizedVelocitySensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
+      virtual std::string getType() const { return "GeneralizedVelocitySensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocitySensorPropertyDialog(this);}
+  };
 
-class AbsoluteCoordinateSensor : public Sensor {
-  friend class AbsoluteCoordinateSensorPropertyDialog;
-  public:
+  class AbsoluteCoordinateSensor : public Sensor {
+    friend class AbsoluteCoordinateSensorPropertyDialog;
+    public:
     AbsoluteCoordinateSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
-  protected:
+    protected:
     ExtProperty frame, direction;
-};
+  };
 
-class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
-  public:
-    AbsolutePositionSensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
-    virtual std::string getType() const { return "AbsolutePositionSensor"; }
-    ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
-};
+  class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
+    public:
+      AbsolutePositionSensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
+      virtual std::string getType() const { return "AbsolutePositionSensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
+  };
 
-class AbsoluteVelocitySensor : public AbsoluteCoordinateSensor {
-  public:
-    AbsoluteVelocitySensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
-    virtual std::string getType() const { return "AbsoluteVelocitySensor"; }
-    ElementPropertyDialog* createPropertyDialog() {return new AbsoluteVelocitySensorPropertyDialog(this);}
-};
+  class AbsoluteVelocitySensor : public AbsoluteCoordinateSensor {
+    public:
+      AbsoluteVelocitySensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
+      virtual std::string getType() const { return "AbsoluteVelocitySensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new AbsoluteVelocitySensorPropertyDialog(this);}
+  };
 
-class FunctionSensor : public Sensor {
-  friend class FunctionSensorPropertyDialog;
-  public:
+  class FunctionSensor : public Sensor {
+    friend class FunctionSensorPropertyDialog;
+    public:
     FunctionSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "FunctionSensor"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty function;
-};
+  };
 
-class SignalProcessingSystemSensor : public Sensor {
-  friend class SignalProcessingSystemSensorPropertyDialog;
-  public:
+  class SignalProcessingSystemSensor : public Sensor {
+    friend class SignalProcessingSystemSensorPropertyDialog;
+    public:
     SignalProcessingSystemSensor(const std::string &str, Element *parent); 
     void initialize();
     virtual std::string getType() const { return "SignalProcessingSystemSensor"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemSensorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty spsRef;
-};
+  };
+
+}
 
 #endif

@@ -23,9 +23,11 @@
 #include "link.h"
 #include "extended_properties.h"
 
-class SpringDamper : public Link {
-  friend class SpringDamperPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class SpringDamper : public Link {
+    friend class SpringDamperPropertyDialog;
+    public:
     SpringDamper(const std::string &str, Element *element);
     ~SpringDamper();
     std::string getType() const { return "SpringDamper"; }
@@ -33,13 +35,13 @@ class SpringDamper : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty forceFunction, connections, coilSpring, forceArrow;
-};
+  };
 
-class DirectionalSpringDamper : public Link {
-  friend class DirectionalSpringDamperPropertyDialog;
-  public:
+  class DirectionalSpringDamper : public Link {
+    friend class DirectionalSpringDamperPropertyDialog;
+    public:
     DirectionalSpringDamper(const std::string &str, Element *element);
     ~DirectionalSpringDamper();
     std::string getType() const { return "DirectionalSpringDamper"; }
@@ -47,13 +49,13 @@ class DirectionalSpringDamper : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty forceDirection, forceFunction, connections, coilSpring, forceArrow;
-};
+  };
 
-class GeneralizedSpringDamper : public Link {
-  friend class GeneralizedSpringDamperPropertyDialog;
-  public:
+  class GeneralizedSpringDamper : public Link {
+    friend class GeneralizedSpringDamperPropertyDialog;
+    public:
     GeneralizedSpringDamper(const std::string &str, Element *element);
     ~GeneralizedSpringDamper();
     std::string getType() const { return "GeneralizedSpringDamper"; }
@@ -61,8 +63,10 @@ class GeneralizedSpringDamper : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty function, body, connections, coilSpring, forceArrow, momentArrow;
-};
+  };
+
+}
 
 #endif

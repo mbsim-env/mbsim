@@ -24,25 +24,29 @@
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-RKSuiteTypeProperty::RKSuiteTypeProperty() : index(0) {
-  method.push_back(MBSIMINT%"method23");
-  method.push_back(MBSIMINT%"method45");
-  method.push_back(MBSIMINT%"method67");
-}
+namespace MBSimGUI {
 
-void RKSuiteTypeProperty::fromWidget(QWidget *widget) {
-  index = static_cast<RKSuiteTypeWidget*>(widget)->comboBox->currentIndex();
-}
+  RKSuiteTypeProperty::RKSuiteTypeProperty() : index(0) {
+    method.push_back(MBSIMINT%"method23");
+    method.push_back(MBSIMINT%"method45");
+    method.push_back(MBSIMINT%"method67");
+  }
 
-void RKSuiteTypeProperty::toWidget(QWidget *widget) {
-  static_cast<RKSuiteTypeWidget*>(widget)->comboBox->setCurrentIndex(index);
-}
+  void RKSuiteTypeProperty::fromWidget(QWidget *widget) {
+    index = static_cast<RKSuiteTypeWidget*>(widget)->comboBox->currentIndex();
+  }
 
-DOMElement* RKSuiteTypeProperty::initializeUsingXML(DOMElement *element) {}
+  void RKSuiteTypeProperty::toWidget(QWidget *widget) {
+    static_cast<RKSuiteTypeWidget*>(widget)->comboBox->setCurrentIndex(index);
+  }
 
-DOMElement* RKSuiteTypeProperty::writeXMLFile(DOMNode *element) {
-  DOMDocument *doc=element->getOwnerDocument();
-  DOMElement *ele = D(doc)->createElement(method[index]);
-  element->insertBefore(ele, NULL);
-  return 0;
+  DOMElement* RKSuiteTypeProperty::initializeUsingXML(DOMElement *element) {}
+
+  DOMElement* RKSuiteTypeProperty::writeXMLFile(DOMNode *element) {
+    DOMDocument *doc=element->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(method[index]);
+    element->insertBefore(ele, NULL);
+    return 0;
+  }
+
 }

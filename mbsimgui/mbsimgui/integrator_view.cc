@@ -25,101 +25,105 @@
 #include "mainwindow.h"
 #include <QEvent>
 
-extern MainWindow *mw;
+namespace MBSimGUI {
 
-IntegratorViewContextMenu::IntegratorViewContextMenu(QWidget *parent) : QMenu(parent) {
-  QAction *action = new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectDOPRI5Integrator()));
-  addAction(action);
-  action = new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectRADAU5Integrator()));
-  addAction(action);
-  action = new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODEIntegrator()));
-  addAction(action);
-  action = new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODARIntegrator()));
-  addAction(action);
-  action = new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectTimeSteppingIntegrator()));
-  addAction(action);
-  action = new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectEulerExplicitIntegrator()));
-  addAction(action);
-  action = new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(selectRKSuiteIntegrator()));
-  addAction(action);
-}
+  extern MainWindow *mw;
 
-IntegratorView::IntegratorView() : i(0) {
-  integrator.push_back(new DOPRI5Integrator);
-  integrator.push_back(new RADAU5Integrator);
-  integrator.push_back(new LSODEIntegrator);
-  integrator.push_back(new LSODARIntegrator);
-  integrator.push_back(new TimeSteppingIntegrator);
-  integrator.push_back(new EulerExplicitIntegrator);
-  integrator.push_back(new RKSuiteIntegrator);
-  type.push_back("DOPRI5");
-  type.push_back("RADAU5");
-  type.push_back("LSODE");
-  type.push_back("LSODAR");
-  type.push_back("Time stepping");
-  type.push_back("Euler explicit");
-  type.push_back("RKSuite");
-  setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
+  IntegratorViewContextMenu::IntegratorViewContextMenu(QWidget *parent) : QMenu(parent) {
+    QAction *action = new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectDOPRI5Integrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectRADAU5Integrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODEIntegrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODARIntegrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectTimeSteppingIntegrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectEulerExplicitIntegrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectRKSuiteIntegrator()));
+    addAction(action);
+  }
 
-  installEventFilter(new IntegratorMouseEvent(this));
-  setReadOnly(true);
-}
+  IntegratorView::IntegratorView() : i(0) {
+    integrator.push_back(new DOPRI5Integrator);
+    integrator.push_back(new RADAU5Integrator);
+    integrator.push_back(new LSODEIntegrator);
+    integrator.push_back(new LSODARIntegrator);
+    integrator.push_back(new TimeSteppingIntegrator);
+    integrator.push_back(new EulerExplicitIntegrator);
+    integrator.push_back(new RKSuiteIntegrator);
+    type.push_back("DOPRI5");
+    type.push_back("RADAU5");
+    type.push_back("LSODE");
+    type.push_back("LSODAR");
+    type.push_back("Time stepping");
+    type.push_back("Euler explicit");
+    type.push_back("RKSuite");
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
-IntegratorView::~IntegratorView() {
-  for(int i=0; i<integrator.size(); i++)
+    installEventFilter(new IntegratorMouseEvent(this));
+    setReadOnly(true);
+  }
+
+  IntegratorView::~IntegratorView() {
+    for(int i=0; i<integrator.size(); i++)
+      delete integrator[i];
+  }
+
+  void IntegratorView::openContextMenu() {
+    QMenu *menu = createContextMenu();
+    menu->exec(QCursor::pos());
+    delete menu;
+  }
+
+  void IntegratorView::setIntegrator(Integrator *integrator_) {
+    if(dynamic_cast<DOPRI5Integrator*>(integrator_))
+      i=0;
+    else if(dynamic_cast<RADAU5Integrator*>(integrator_))
+      i=1;
+    else if(dynamic_cast<LSODEIntegrator*>(integrator_))
+      i=2;
+    else if(dynamic_cast<LSODARIntegrator*>(integrator_))
+      i=3;
+    else if(dynamic_cast<TimeSteppingIntegrator*>(integrator_))
+      i=4;
+    else if(dynamic_cast<EulerExplicitIntegrator*>(integrator_))
+      i=5;
+    else if(dynamic_cast<RKSuiteIntegrator*>(integrator_))
+      i=6;
     delete integrator[i];
-}
+    integrator[i] = integrator_;
+    updateText();
+  }
 
-void IntegratorView::openContextMenu() {
-  QMenu *menu = createContextMenu();
-  menu->exec(QCursor::pos());
-  delete menu;
-}
+  bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::MouseButtonDblClick) {
+      editor = view->getIntegrator()->createPropertyDialog();
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      return true;
+    } else
+      return QObject::eventFilter(obj, event);
+  }
 
-void IntegratorView::setIntegrator(Integrator *integrator_) {
-  if(dynamic_cast<DOPRI5Integrator*>(integrator_))
-    i=0;
-  else if(dynamic_cast<RADAU5Integrator*>(integrator_))
-    i=1;
-  else if(dynamic_cast<LSODEIntegrator*>(integrator_))
-    i=2;
-  else if(dynamic_cast<LSODARIntegrator*>(integrator_))
-    i=3;
-  else if(dynamic_cast<TimeSteppingIntegrator*>(integrator_))
-    i=4;
-  else if(dynamic_cast<EulerExplicitIntegrator*>(integrator_))
-    i=5;
-  else if(dynamic_cast<RKSuiteIntegrator*>(integrator_))
-    i=6;
-  delete integrator[i];
-  integrator[i] = integrator_;
-  updateText();
-}
+  void IntegratorMouseEvent::dialogFinished(int result) {
+    editor = 0;
+  }
 
-bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
-  if (event->type() == QEvent::MouseButtonDblClick) {
-    editor = view->getIntegrator()->createPropertyDialog();
-    editor->setAttribute(Qt::WA_DeleteOnClose);
-    editor->toWidget();
-    editor->show();
-    connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-    connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
-    return true;
-  } else
-    return QObject::eventFilter(obj, event);
-}
+  void IntegratorMouseEvent::apply() {
+  }
 
-void IntegratorMouseEvent::dialogFinished(int result) {
-  editor = 0;
-}
-
-void IntegratorMouseEvent::apply() {
 }

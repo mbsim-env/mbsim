@@ -23,9 +23,11 @@
 #include "link.h"
 #include "extended_properties.h"
 
-class Contact : public Link {
-  friend class ContactPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class Contact : public Link {
+    friend class ContactPropertyDialog;
+    public:
     Contact(const std::string &str, Element *parent);
     ~Contact();
     std::string getType() const { return "Contact"; }
@@ -33,8 +35,10 @@ class Contact : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
-};
+  };
+
+}
 
 #endif

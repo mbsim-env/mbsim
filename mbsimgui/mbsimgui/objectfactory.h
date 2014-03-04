@@ -24,85 +24,90 @@
 #include <iostream>
 #include <map>
 #include <xercesc/dom/DOMElement.hpp>
-class Element;
-class Frame;
-class Contour;
-class Group;
-class Object;
-class Link;
-class Observer;
-class Integrator;
-class Parameter;
-class Environment;
-class TreeItem;
 
-class ObjectFactoryBase {
-  protected:
-    ObjectFactoryBase() {}
-    virtual ~ObjectFactoryBase() {}
-    typedef std::pair<std::string, std::string> P_NSPRE;
-    typedef std::map<std::string, std::string> M_NSPRE;
-    typedef std::pair<double, P_NSPRE> P_PRINSPRE;
-  public:
-    typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
-    virtual Frame* createFrame(xercesc::DOMElement *element, Element *parent) { return NULL; }
-    virtual Contour* createContour(xercesc::DOMElement *element, Element *parent) { return NULL; }
-    virtual Group* createGroup(xercesc::DOMElement *element, Element *parent) { return NULL; }
-    virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
-    virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
-    virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
-    virtual Integrator* createIntegrator(xercesc::DOMElement *element) { return NULL; }
-    virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
-    virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
-    virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
-      static MM_PRINSPRE ret;
-      return ret;
-    }
-};
+namespace MBSimGUI {
 
-class ObjectFactory : public ObjectFactoryBase {
-  protected:
-    ObjectFactory() {}
-    virtual ~ObjectFactory() {}
-  private:
-    static ObjectFactory *instance;
-    std::set<ObjectFactoryBase*> factories;
-  public:
-    static ObjectFactory* getInstance() { return instance?instance:instance=new ObjectFactory; }
-    void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
-    void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
+  class Element;
+  class Frame;
+  class Contour;
+  class Group;
+  class Object;
+  class Link;
+  class Observer;
+  class Integrator;
+  class Parameter;
+  class Environment;
+  class TreeItem;
 
-    Frame* createFrame(xercesc::DOMElement *element, Element *parent);
-    Contour* createContour(xercesc::DOMElement *element, Element *parent);
-    Group* createGroup(xercesc::DOMElement *element, Element *parent);
-    Object* createObject(xercesc::DOMElement *element, Element *parent);
-    Link* createLink(xercesc::DOMElement *element, Element *parent);
-    Observer* createObserver(xercesc::DOMElement *element, Element *parent);
-    Integrator* createIntegrator(xercesc::DOMElement *element);
-    Parameter* createParameter(xercesc::DOMElement *element);
-    Environment *getEnvironment(xercesc::DOMElement *element);
-    M_NSPRE getNamespacePrefixMapping();
-};
+  class ObjectFactoryBase {
+    protected:
+      ObjectFactoryBase() {}
+      virtual ~ObjectFactoryBase() {}
+      typedef std::pair<std::string, std::string> P_NSPRE;
+      typedef std::map<std::string, std::string> M_NSPRE;
+      typedef std::pair<double, P_NSPRE> P_PRINSPRE;
+    public:
+      typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
+      virtual Frame* createFrame(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Contour* createContour(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Group* createGroup(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Integrator* createIntegrator(xercesc::DOMElement *element) { return NULL; }
+      virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
+      virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
+      virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
+        static MM_PRINSPRE ret;
+        return ret;
+      }
+  };
+
+  class ObjectFactory : public ObjectFactoryBase {
+    protected:
+      ObjectFactory() {}
+      virtual ~ObjectFactory() {}
+    private:
+      static ObjectFactory *instance;
+      std::set<ObjectFactoryBase*> factories;
+    public:
+      static ObjectFactory* getInstance() { return instance?instance:instance=new ObjectFactory; }
+      void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
+      void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
+
+      Frame* createFrame(xercesc::DOMElement *element, Element *parent);
+      Contour* createContour(xercesc::DOMElement *element, Element *parent);
+      Group* createGroup(xercesc::DOMElement *element, Element *parent);
+      Object* createObject(xercesc::DOMElement *element, Element *parent);
+      Link* createLink(xercesc::DOMElement *element, Element *parent);
+      Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+      Integrator* createIntegrator(xercesc::DOMElement *element);
+      Parameter* createParameter(xercesc::DOMElement *element);
+      Environment *getEnvironment(xercesc::DOMElement *element);
+      M_NSPRE getNamespacePrefixMapping();
+  };
 
 
-class MBSimObjectFactory : protected ObjectFactoryBase  {
-  private:
-    static MBSimObjectFactory *instance;
-    MBSimObjectFactory() {}
-  public:
-    // This static function must be called before the ObjectFactory is used to create
-    // objects from MBSimObjectFactory
-    static void initialize();
-  protected:
-    Frame* createFrame(xercesc::DOMElement *element, Element *parent);
-    Contour* createContour(xercesc::DOMElement *element, Element *parent);
-    Group* createGroup(xercesc::DOMElement *element, Element *parent);
-    Object* createObject(xercesc::DOMElement *element, Element *parent);
-    Link* createLink(xercesc::DOMElement *element, Element *parent);
-    Observer* createObserver(xercesc::DOMElement *element, Element *parent);
-    Integrator* createIntegrator(xercesc::DOMElement *element);
-    Parameter* createParameter(xercesc::DOMElement *element);
-    Environment *getEnvironment(xercesc::DOMElement *element);
-};
+  class MBSimObjectFactory : protected ObjectFactoryBase  {
+    private:
+      static MBSimObjectFactory *instance;
+      MBSimObjectFactory() {}
+    public:
+      // This static function must be called before the ObjectFactory is used to create
+      // objects from MBSimObjectFactory
+      static void initialize();
+    protected:
+      Frame* createFrame(xercesc::DOMElement *element, Element *parent);
+      Contour* createContour(xercesc::DOMElement *element, Element *parent);
+      Group* createGroup(xercesc::DOMElement *element, Element *parent);
+      Object* createObject(xercesc::DOMElement *element, Element *parent);
+      Link* createLink(xercesc::DOMElement *element, Element *parent);
+      Observer* createObserver(xercesc::DOMElement *element, Element *parent);
+      Integrator* createIntegrator(xercesc::DOMElement *element);
+      Parameter* createParameter(xercesc::DOMElement *element);
+      Environment *getEnvironment(xercesc::DOMElement *element);
+  };
+
+}
 
 #endif

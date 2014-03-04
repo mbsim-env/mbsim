@@ -23,16 +23,20 @@
 #include "extended_properties.h"
 #include <vector>
 
-class RKSuiteTypeProperty : public Property {
-  public:
-    RKSuiteTypeProperty();
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
-  protected:
-    int index;
-    std::vector<MBXMLUtils::FQN> method;
-};
+namespace MBSimGUI {
+
+  class RKSuiteTypeProperty : public Property {
+    public:
+      RKSuiteTypeProperty();
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+    protected:
+      int index;
+      std::vector<MBXMLUtils::FQN> method;
+  };
+
+}
 
 #endif
