@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(0.4);
+  integrator.setEndTime(1.);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
   integrator.integrate(*sys);
@@ -26,6 +26,5 @@ int main (int argc, char* argv[]) {
   delete sys;
 
   return 0;
-
 }
 
