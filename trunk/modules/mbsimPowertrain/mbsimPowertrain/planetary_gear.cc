@@ -133,8 +133,9 @@ namespace MBSimPowertrain {
     }
 
     if(model==1) {
-      GearConstraint* constraint = new GearConstraint("C1",carrier);
+      GearConstraint* constraint = new GearConstraint("C1");
       addObject(constraint);
+      constraint->setDependentBody(carrier);
       constraint->addTransmission(Transmission(sun,0.5*rS/rT2));
       constraint->addTransmission(Transmission(annulus,0.5*rH/rT2));
     } else if(model==0) {
@@ -160,8 +161,9 @@ namespace MBSimPowertrain {
       str << "P" << i;
       shaftName << "Planet" << i;
       if(model==1) {
-        GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str(),planet[i]);
+        GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str());
         addObject(constraint);
+        constraint->setDependentBody(planet[i]);
         constraint->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
         constraint->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
       } else if (model==0) {
@@ -185,7 +187,8 @@ namespace MBSimPowertrain {
         gear = new Gearing(string("S_")+shaftName.str());
         addLink(gear);
         gear->connect(rS,sun->getFrame("C"),rP,planet[i]->getFrame("C"));//,rS,sun->getFrame("C"));
-        gear = new Gearing(string("A_")+shaftName.str(),true);
+        gear = new Gearing(string("A_")+shaftName.str());
+        gear->setReverse(true);
         addLink(gear);
         gear->connect(rP,planet[i]->getFrame("C"),rH,annulus->getFrame("C"));
       }
@@ -227,6 +230,8 @@ namespace MBSimPowertrain {
     cylinder=new OpenMBV::Frustum;
     cylinder->setTopRadius(rH);
     cylinder->setBaseRadius(rH);
+    cylinder->setInnerTopRadius(rH);
+    cylinder->setInnerBaseRadius(rH);
     cylinder->setHeight(lH);
     cylinder->setDiffuseColor(0.3,1,1);
     annulus->setOpenMBVRigidBody(cylinder);
