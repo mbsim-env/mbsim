@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       * \brief compute Cartesian position and velocity at Lagrangian coordinate
+       * \brief compute planar state at Lagrangian coordinate
        * \param Lagrangian coordinate
        */
       fmatvec::Vec computeState(double x);
@@ -172,11 +172,6 @@ namespace MBSimFlexibleBody {
        * \param finite element number
        */
       void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
-
-      /**
-       * \brief default constructor is declared private 
-       */
-      FlexibleBody1s21ANCF();
 
       /**
        * \brief copy constructor is declared private

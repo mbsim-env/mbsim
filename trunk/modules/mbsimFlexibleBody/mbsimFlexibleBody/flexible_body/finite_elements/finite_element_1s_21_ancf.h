@@ -70,10 +70,10 @@ namespace MBSimFlexibleBody {
       virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeKineticEnergy): not implemented!"); }
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!"); }
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeElasticEnergy): not implemented!"); }
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
+      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp);
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp);
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { return JGeneralized(qElement,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
 
@@ -112,6 +112,21 @@ namespace MBSimFlexibleBody {
        * \return JACOBIAN of translation and rotation with respect to generalised coordinates
        */
       fmatvec::Mat JGeneralized(const fmatvec::Vec& qElement, const double& s);
+
+      /**
+       * \brief return the matrix of global shape functions
+       * \param contour point
+       * \return matrix of global shape functions
+       */
+      fmatvec::Mat GlobalShapeFunctions(const double& s);
+
+      /**
+       * \brief returns the tangent
+       * \param generalised coordinates
+       * \param contour point
+       * \return tangent
+       * */
+      fmatvec::Vec tangent(const fmatvec::Vec& qElement, const double& s);
 
     private:
       /** 
