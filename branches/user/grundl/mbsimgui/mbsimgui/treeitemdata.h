@@ -24,14 +24,18 @@
 
 class QMenu;
 
-class TreeItemData {
-  public:
-    virtual ~TreeItemData() {}
-    virtual const std::string& getName() const = 0;
-    virtual std::string getValue() const = 0;
-    virtual void setName(const std::string &data) = 0;
-    virtual void setValue(const std::string &data) {}
-    virtual QMenu* createContextMenu() = 0;
-};
+namespace MBSimGUI {
+
+  class TreeItemData {
+    public:
+      virtual ~TreeItemData() {}
+      virtual const std::string& getName() const = 0;
+      virtual std::string getValue() const = 0;
+      virtual void setName(const std::string &data) = 0;
+      virtual void setValue(const std::string &data) {}
+      virtual QMenu* createContextMenu() = 0;
+  };
+
+}
 
 #endif

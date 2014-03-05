@@ -23,9 +23,11 @@
 #include "link.h"
 #include "extended_properties.h"
 
-class Actuator : public Link {
-  friend class ActuatorPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class Actuator : public Link {
+    friend class ActuatorPropertyDialog;
+    public:
     Actuator(const std::string &str, Element *parent);
     ~Actuator();
     std::string getType() const { return "Actuator"; }
@@ -34,8 +36,10 @@ class Actuator : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ActuatorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty forceDir, momentDir, frameOfReference, inputSignal, connections, actuatorForceArrow, actuatorMomentArrow;
-};
+  };
+
+}
 
 #endif

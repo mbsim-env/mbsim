@@ -24,68 +24,72 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QStyle>
-
 #include <iostream>
+
 using namespace std;
 
-PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
+namespace MBSimGUI {
 
-  QGridLayout *layout = new QGridLayout;
-  setLayout(layout);
-  tabWidget = new QTabWidget(this);
-  layout->addWidget(tabWidget,0,0,1,2);
-  buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
-  connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
-  layout->addWidget(buttonBox,1,1);
-  //buttonResize = new QPushButton(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"), "Resize");
-  buttonResize = new QPushButton(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DialogResetButton)), "Resize");
-  layout->addWidget(buttonResize,1,0);
-  setWindowTitle(QString("Properties"));
-}
+  PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
-PropertyDialog::~PropertyDialog() {
-}
-
-void PropertyDialog::clicked(QAbstractButton *button) {
-  if(button == buttonBox->button(QDialogButtonBox::Ok)) {
-    fromWidget();
-    accept();
+    QGridLayout *layout = new QGridLayout;
+    setLayout(layout);
+    tabWidget = new QTabWidget(this);
+    layout->addWidget(tabWidget,0,0,1,2);
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
+    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
+    layout->addWidget(buttonBox,1,1);
+    //buttonResize = new QPushButton(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"), "Resize");
+    buttonResize = new QPushButton(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DialogResetButton)), "Resize");
+    layout->addWidget(buttonResize,1,0);
+    setWindowTitle(QString("Properties"));
   }
-  else if(button == buttonBox->button(QDialogButtonBox::Apply)) {
-    fromWidget();
-    emit apply();
+
+  PropertyDialog::~PropertyDialog() {
   }
-  else if(button == buttonBox->button(QDialogButtonBox::Cancel))
-    reject();
-}
 
-void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
-  layout[name]->addWidget(widget_);
-  widget.push_back(widget_);
-}
+  void PropertyDialog::clicked(QAbstractButton *button) {
+    if(button == buttonBox->button(QDialogButtonBox::Ok)) {
+      fromWidget();
+      accept();
+    }
+    else if(button == buttonBox->button(QDialogButtonBox::Apply)) {
+      fromWidget();
+      emit apply();
+    }
+    else if(button == buttonBox->button(QDialogButtonBox::Cancel))
+      reject();
+  }
 
-void PropertyDialog::addStretch() {
-  for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
-    (*it).second->addStretch(1);
-}
+  void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
+    layout[name]->addWidget(widget_);
+    widget.push_back(widget_);
+  }
 
-void PropertyDialog::updateWidget() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
-}
+  void PropertyDialog::addStretch() {
+    for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
+      (*it).second->addStretch(1);
+  }
 
-void PropertyDialog::addTab(const QString &name, int i) {  
-  QScrollArea *tab = new QScrollArea;
-  tab->setWidgetResizable(true);
+  void PropertyDialog::updateWidget() {
+    for(unsigned int i=0; i<widget.size(); i++)
+      dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
+  }
 
-  QWidget *box = new QWidget;
-  QVBoxLayout *layout_ = new QVBoxLayout;
-  box->setLayout(layout_);
-  layout[name] = layout_;
+  void PropertyDialog::addTab(const QString &name, int i) {  
+    QScrollArea *tab = new QScrollArea;
+    tab->setWidgetResizable(true);
 
-  tab->setWidget(box);
-  if(i==-1)
-    tabWidget->addTab(tab, name);
-  else 
-    tabWidget->insertTab(i,tab,name);
+    QWidget *box = new QWidget;
+    QVBoxLayout *layout_ = new QVBoxLayout;
+    box->setLayout(layout_);
+    layout[name] = layout_;
+
+    tab->setWidget(box);
+    if(i==-1)
+      tabWidget->addTab(tab, name);
+    else 
+      tabWidget->insertTab(i,tab,name);
+  }
+
 }

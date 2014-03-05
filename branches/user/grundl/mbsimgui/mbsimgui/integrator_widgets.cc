@@ -21,13 +21,17 @@
 #include "integrator_widgets.h"
 #include <QtGui>
 
-RKSuiteTypeWidget::RKSuiteTypeWidget() {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  comboBox = new QComboBox;
-  comboBox->addItem("Method 23");
-  comboBox->addItem("Method 45");
-  comboBox->addItem("Method 67");
-  layout->addWidget(comboBox);
+namespace MBSimGUI {
+
+  RKSuiteTypeWidget::RKSuiteTypeWidget() {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    comboBox = new QComboBox;
+    comboBox->addItem("Method 23");
+    comboBox->addItem("Method 45");
+    comboBox->addItem("Method 67");
+    layout->addWidget(comboBox);
+  }
+
 }

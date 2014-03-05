@@ -28,23 +28,25 @@ namespace XERCES_CPP_NAMESPACE {
   class DOMNode;
 }
 
-class TolerancePropertyFactory: public PropertyFactory {
-  public:
-    TolerancePropertyFactory(const std::string &type);
-    Property* createProperty(int i=0);
-    MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
-    int getSize() const { return name.size(); }
-  protected:
-    std::vector<MBXMLUtils::FQN> name;
-    std::string type;
-};
+namespace MBSimGUI {
 
-class Integrator {
-  friend class IntegratorPropertyDialog;
-  protected:
+  class TolerancePropertyFactory: public PropertyFactory {
+    public:
+      TolerancePropertyFactory(const std::string &type);
+      Property* createProperty(int i=0);
+      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<MBXMLUtils::FQN> name;
+      std::string type;
+  };
+
+  class Integrator {
+    friend class IntegratorPropertyDialog;
+    protected:
     ExtProperty startTime, endTime, plotStepSize, initialState, embed;
     std::string name;
- public:
+    public:
     Integrator();
     virtual ~Integrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -58,92 +60,92 @@ class Integrator {
     const std::string& getName() const { return name; }
     virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
     bool isEmbedded() const {return embed.isActive();}
-};
+  };
 
-class DOPRI5Integrator : public Integrator {
-  friend class DOPRI5IntegratorPropertyDialog;
-  public:
+  class DOPRI5Integrator : public Integrator {
+    friend class DOPRI5IntegratorPropertyDialog;
+    public:
     DOPRI5Integrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "DOPRI5Integrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
-};
+  };
 
-class RADAU5Integrator : public Integrator {
-  friend class RADAU5IntegratorPropertyDialog;
-  public:
+  class RADAU5Integrator : public Integrator {
+    friend class RADAU5IntegratorPropertyDialog;
+    public:
     RADAU5Integrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "RADAU5Integrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
-};
+  };
 
-class LSODEIntegrator : public Integrator {
-  friend class LSODEIntegratorPropertyDialog;
-  public:
+  class LSODEIntegrator : public Integrator {
+    friend class LSODEIntegratorPropertyDialog;
+    public:
     LSODEIntegrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "LSODEIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, maxSteps, stiff;
-};
+  };
 
-class LSODARIntegrator : public Integrator {
-  friend class LSODARIntegratorPropertyDialog;
-  public:
+  class LSODARIntegrator : public Integrator {
+    friend class LSODARIntegratorPropertyDialog;
+    public:
     LSODARIntegrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "LSODARIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot;
-};
+  };
 
-class TimeSteppingIntegrator : public Integrator {
-  friend class TimeSteppingIntegratorPropertyDialog;
-  public:
+  class TimeSteppingIntegrator : public Integrator {
+    friend class TimeSteppingIntegratorPropertyDialog;
+    public:
     TimeSteppingIntegrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "TimeSteppingIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty stepSize;
-};
+  };
 
-class EulerExplicitIntegrator : public Integrator {
-  friend class EulerExplicitIntegratorPropertyDialog;
-  public:
+  class EulerExplicitIntegrator : public Integrator {
+    friend class EulerExplicitIntegratorPropertyDialog;
+    public:
     EulerExplicitIntegrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "EulerExplicitIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty stepSize;
-};
+  };
 
-class RKSuiteIntegrator : public Integrator {
-  friend class RKSuiteIntegratorPropertyDialog;
-  public:
+  class RKSuiteIntegrator : public Integrator {
+    friend class RKSuiteIntegratorPropertyDialog;
+    public:
     RKSuiteIntegrator();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "RKSuiteIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty type, relTol, threshold, initialStepSize;
-};
+  };
 
-
+}
 
 #endif

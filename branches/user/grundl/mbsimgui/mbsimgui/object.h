@@ -23,9 +23,11 @@
 #include "element.h"
 #include "extended_properties.h"
 
-class Object : public Element {
-  friend class ObjectPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class Object : public Element {
+    friend class ObjectPropertyDialog;
+    public:
     Object(const std::string &str, Element *parent);
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
@@ -34,6 +36,8 @@ class Object : public Element {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual Element* getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
-};
+  };
+
+}
 
 #endif

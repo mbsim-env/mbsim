@@ -113,8 +113,7 @@ System::System(const string &projectName) :
 
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3, INIT, 0.);
-  WrOS0B(0) = 0;
-  WrOS0B(1) = R + r + 0.1;
+  WrOS0B(0) = 2.*r; WrOS0B(1) = R+6.*r;
   this->addFrame(new FixedRelativeFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
@@ -131,8 +130,7 @@ System::System(const string &projectName) :
   ball->setInitialGeneralizedVelocity(u0);
 
   MBSim::Point *point = new MBSim::Point("Point");
-  Vec BR(3, INIT, 0.);
-  BR(1) = -r;
+  Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
   point->setFrameOfReference(ball->getFrame("Point"));
   ball->addContour(point);
@@ -141,17 +139,17 @@ System::System(const string &projectName) :
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
   sphere->setRadius(r);
-  sphere->setDiffuseColor(0.5, 1, 1);
+  sphere->setDiffuseColor(1/3.0, 1, 1);
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
   Contact *contact = new Contact("Contact");
   contact->setNormalForceLaw(new UnilateralConstraint);
-  contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"), rod->getContour("Top"));
   contact->enableOpenMBVNormalForce();
   contact->enableOpenMBVTangentialForce();
-  contact->enableOpenMBVContactPoints(1e-2);
+  contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);
 

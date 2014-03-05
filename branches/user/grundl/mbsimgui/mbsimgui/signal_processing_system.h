@@ -22,9 +22,11 @@
 
 #include "link.h"
 
-class SignalProcessingSystem : public Link {
-  friend class SignalProcessingSystemPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class SignalProcessingSystem : public Link {
+    friend class SignalProcessingSystemPropertyDialog;
+    public:
     SignalProcessingSystem(const std::string &str, Element *parent);
     std::string getType() const { return "SignalProcessingSystem"; }
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
@@ -32,8 +34,10 @@ class SignalProcessingSystem : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty signalRef;
-};
+  };
+
+}
 
 #endif

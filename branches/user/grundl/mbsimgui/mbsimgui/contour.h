@@ -23,9 +23,11 @@
 #include "element.h"
 #include "extended_properties.h"
 
-class Contour : public Element {
-  friend class ContourPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class Contour : public Element {
+    friend class ContourPropertyDialog;
+    public:
     Contour(const std::string &str, Element *parent);
     ~Contour();
     static Contour* readXMLFile(const std::string &filename, Element *parent);
@@ -35,73 +37,75 @@ class Contour : public Element {
     void setSavedFrameOfReference(const std::string &str);
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty refFrame;
-};
+  };
 
-class Point : public Contour {
-  friend class PointPropertyDialog;
-  public:
+  class Point : public Contour {
+    friend class PointPropertyDialog;
+    public:
     Point(const std::string &str, Element *parent);
     ~Point();
     std::string getType() const { return "Point"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new PointPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty visu;
-};
+  };
 
-class Line : public Contour {
-  friend class LinePropertyDialog;
-  public:
+  class Line : public Contour {
+    friend class LinePropertyDialog;
+    public:
     Line(const std::string &str, Element *parent);
     ~Line();
     std::string getType() const { return "Line"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new LinePropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty visu;
-};
+  };
 
-class Plane : public Contour {
-  friend class PlanePropertyDialog;
-  public:
+  class Plane : public Contour {
+    friend class PlanePropertyDialog;
+    public:
     Plane(const std::string &str, Element *parent);
     ~Plane();
     std::string getType() const { return "Plane"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty visu;
-};
+  };
 
-class Sphere : public Contour {
-  friend class SpherePropertyDialog;
-  public:
+  class Sphere : public Contour {
+    friend class SpherePropertyDialog;
+    public:
     Sphere(const std::string &str, Element *parent);
     ~Sphere();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "Sphere"; }
     ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty radius, visu;
-};
+  };
 
-class CircleSolid : public Contour {
-  friend class CircleSolidPropertyDialog;
-  public:
+  class CircleSolid : public Contour {
+    friend class CircleSolidPropertyDialog;
+    public:
     CircleSolid(const std::string &str, Element *parent);
     ~CircleSolid();
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "CircleSolid"; }
     ElementPropertyDialog* createPropertyDialog() {return new CircleSolidPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty radius, visu;
-};
+  };
+
+}
 
 #endif

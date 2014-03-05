@@ -104,7 +104,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     sphere.push_back(new OpenMBV::Sphere);
     sphere[k]->setRadius(r);
-    sphere[k]->setStaticColor((double)k/(double)nB);
+    sphere[k]->setDiffuseColor((1-(double)k/nB)*2/3, 1, 1);
     balls[k]->setOpenMBVRigidBody(sphere[k]);
 #endif
   }
@@ -161,7 +161,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //#ifdef HAVE_OPENMBVCPPINTERFACE
   //  OpenMBV::Cube* cube = new OpenMBV::Cube;
   //  cube->setLength(e);
-  //  cube->setStaticColor(0.5);
+  //  cube->setDiffuseColor(1/3.0, 1, 1);
   //  body->setOpenMBVRigidBody(cube);
   //#endif
   //

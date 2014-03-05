@@ -20,8 +20,11 @@
 #  include <process.h>
 #  include <windows.h>
 #endif
+#include <mbxmlutilshelper/dom.h>
+#include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
+using namespace MBXMLUtils;
 namespace bfs=boost::filesystem;
 
 int runProgram(const vector<string> &arg) {
@@ -78,15 +81,22 @@ void createOrTouch(const string &filename) {
 void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
-  // read plugins
+  static NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
+  static boost::shared_ptr<DOMParser> parser;
+  if(!parser) {
+    parser=DOMParser::create(true);
+    parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___mbsim_berlios_de_MBSimPlugin"/"plugin.xsd");
+  }
+
+  // read plugin schemas
   string ns, loc;
-  for(bfs::directory_iterator it=bfs::directory_iterator(MBXMLUtils::getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
-    bfs::ifstream plugin(*it);
-    // read up to the first empty line
-    for(getline(plugin, ns); !ns.empty(); getline(plugin, ns)) {
-      getline(plugin, loc);
-      schema.push_back(make_pair(ns, loc));
-    }
+  for(bfs::directory_iterator it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
+    if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
+    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+    for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
+        getFirstElementChildNamed(MBSIMPLUGIN%"Schema");
+        e!=NULL; e=e->getNextElementSibling())
+      schema.push_back(make_pair(E(e)->getAttribute("namespace"), E(e)->getAttribute("schemaLocation")));
   }
 
   // write MBSimXML schema
@@ -157,8 +167,8 @@ int main(int argc, char *argv[]) {
     EXEEXT="";
 #endif
   
-    bfs::path MBXMLUTILSBIN=MBXMLUtils::getInstallPath()/"bin";
-    bfs::path MBXMLUTILSSCHEMA=MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"schema";
+    bfs::path MBXMLUTILSBIN=getInstallPath()/"bin";
+    bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
   
     // parse parameters
 

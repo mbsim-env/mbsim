@@ -54,8 +54,8 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
-  cuboid->setNumberOfSpinePoints(11); // resolution of visualisation
-  cuboid->setDiffuseColor(0.6, 1, 1); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
+  cuboid->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
@@ -111,7 +111,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
   sphere->setRadius(r);
-  sphere->setDiffuseColor(1, 1, 1);
+  sphere->setDiffuseColor(1/3.0, 1, 1);
   ball->setOpenMBVRigidBody(sphere);
 #endif
 

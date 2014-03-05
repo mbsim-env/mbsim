@@ -29,7 +29,6 @@ namespace MBSimFlexibleBody {
 
   SqrMat differentiate_normalized_vector_respective_vector(const Vec &vector) {
     double norm = nrm2(vector);
-    ;
     return static_cast<SqrMat>((SqrMat(vector.size(),EYE) - vector*vector.T()/pow(norm,2.))/norm);
   }
 
@@ -58,7 +57,7 @@ namespace MBSimFlexibleBody {
     //  Damp(3,3) = -depsilon;
   }
 
-  void FiniteElement1s21ANCF::computeM(const Vec& qElement) {
+  void FiniteElement1s21ANCF::initM() {
     M(0,0) = Arho*l0*(1.3E1/3.5E1);
     M(0,2) = Arho*(l0*l0)*(1.1E1/2.1E2);
     M(0,4) = Arho*l0*(9.0/7.0E1);
@@ -144,16 +143,16 @@ namespace MBSimFlexibleBody {
     Vec hbe_q(8,NONINIT);
     hbe_q(0) = EI*e2x*1.0/(l0*l0*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*-6.0;
     hbe_q(1) = EI*e2y*1.0/(l0*l0*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*-6.0;
-    hbe_q(2) = EI*e2x*1.0/(l0*l0)*(e2x*x1*3.0-e2x*x2*3.0+e2y*y1*3.0-e2y*y2*3.0+dx1*e2x*l0*2.0+dx2*e2x*l0+dy1*e2y*l0*2.0+dy2*e2y*l0)*-2.0;
-    hbe_q(3) = EI*e2y*1.0/(l0*l0)*(e2x*x1*3.0-e2x*x2*3.0+e2y*y1*3.0-e2y*y2*3.0+dx1*e2x*l0*2.0+dx2*e2x*l0+dy1*e2y*l0*2.0+dy2*e2y*l0)*-2.0;
+    hbe_q(2) = -EI*e2x*1.0/(l0*l0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0+wss0*(l0*l0)+dx1*e2x*l0*4.0+dx2*e2x*l0*2.0+dy1*e2y*l0*4.0+dy2*e2y*l0*2.0);
+    hbe_q(3) = -EI*e2y*1.0/(l0*l0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0+wss0*(l0*l0)+dx1*e2x*l0*4.0+dx2*e2x*l0*2.0+dy1*e2y*l0*4.0+dy2*e2y*l0*2.0);
     hbe_q(4) = EI*e2x*1.0/(l0*l0*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*6.0;
     hbe_q(5) = EI*e2y*1.0/(l0*l0*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*6.0;
-    hbe_q(6) = EI*e2x*1.0/(l0*l0)*(e2x*x1*3.0-e2x*x2*3.0+e2y*y1*3.0-e2y*y2*3.0+dx1*e2x*l0+dx2*e2x*l0*2.0+dy1*e2y*l0+dy2*e2y*l0*2.0)*-2.0;
-    hbe_q(7) = EI*e2y*1.0/(l0*l0)*(e2x*x1*3.0-e2x*x2*3.0+e2y*y1*3.0-e2y*y2*3.0+dx1*e2x*l0+dx2*e2x*l0*2.0+dy1*e2y*l0+dy2*e2y*l0*2.0)*-2.0;
-   
+    hbe_q(6) = -EI*e2x*1.0/(l0*l0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0-wss0*(l0*l0)+dx1*e2x*l0*2.0+dx2*e2x*l0*4.0+dy1*e2y*l0*2.0+dy2*e2y*l0*4.0);
+    hbe_q(7) = -EI*e2y*1.0/(l0*l0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0-wss0*(l0*l0)+dx1*e2x*l0*2.0+dx2*e2x*l0*4.0+dy1*e2y*l0*2.0+dy2*e2y*l0*4.0);
+
     Vec hbe_e2(2,NONINIT);
-    hbe_e2(0) = EI*1.0/(l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0+dx2*l0)*(e2x*x1-e2x*x2+e2y*y1-e2y*y2+dx1*e2x*l0+dy1*e2y*l0)*6.0-EI*1.0/(l0*l0*l0)*(x1*3.0-x2*3.0+dx1*l0*2.0+dx2*l0)*(e2x*x1*3.0-e2x*x2*3.0+e2y*y1*3.0-e2y*y2*3.0+dx1*e2x*l0*2.0+dx2*e2x*l0+dy1*e2y*l0*2.0+dy2*e2y*l0)*4.0+EI*1.0/(l0*l0*l0)*(x1-x2+dx1*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*6.0;
-    hbe_e2(1) = EI*1.0/(l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0+dy2*l0)*(e2x*x1-e2x*x2+e2y*y1-e2y*y2+dx1*e2x*l0+dy1*e2y*l0)*6.0-EI*1.0/(l0*l0*l0)*(y1*3.0-y2*3.0+dy1*l0*2.0+dy2*l0)*(e2x*x1*3.0-e2x*x2*3.0+e2y*y1*3.0-e2y*y2*3.0+dx1*e2x*l0*2.0+dx2*e2x*l0+dy1*e2y*l0*2.0+dy2*e2y*l0)*4.0+EI*1.0/(l0*l0*l0)*(y1-y2+dy1*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*6.0;
+    hbe_e2(0) = -EI*1.0/(l0*l0*l0)*(x1*6.0-x2*6.0+dx1*l0*4.0+dx2*l0*2.0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0+wss0*(l0*l0)+dx1*e2x*l0*4.0+dx2*e2x*l0*2.0+dy1*e2y*l0*4.0+dy2*e2y*l0*2.0)+EI*1.0/(l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0*2.0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*3.0+EI*1.0/(l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0+dx2*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+wss0*(l0*l0)+dx1*e2x*l0*2.0+dy1*e2y*l0*2.0)*3.0;
+    hbe_e2(1) = -EI*1.0/(l0*l0*l0)*(y1*6.0-y2*6.0+dy1*l0*4.0+dy2*l0*2.0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0+wss0*(l0*l0)+dx1*e2x*l0*4.0+dx2*e2x*l0*2.0+dy1*e2y*l0*4.0+dy2*e2y*l0*2.0)+EI*1.0/(l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0*2.0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*3.0+EI*1.0/(l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0+dy2*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+wss0*(l0*l0)+dx1*e2x*l0*2.0+dy1*e2y*l0*2.0)*3.0;
 
     h = hgrav + hst_q + de1dq.T()*hst_e1 + hbe_q + de2dq.T()*hbe_e2; 
 
@@ -189,24 +188,6 @@ namespace MBSimFlexibleBody {
 
     return X.copy();
   }
-
-  //  Vec FiniteElement1s21ANCF::Tangente(Vec& qElement, double& s) {
-  //    double xi = s/l0;
-  //
-  //    double & x1 = qElement(0);    double & y1 = qElement(1);
-  //    double &dx1 = qElement(2);    double &dy1 = qElement(3);
-  //    double & x2 = qElement(4);    double & y2 = qElement(5);
-  //    double &dx2 = qElement(6);    double &dy2 = qElement(7);
-  //
-  //    Vec t(2);
-  //    //Tangente                                                                                  // wird gemeinsam unten normiert...
-  //    t(0) = (dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)));///(pow(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + pow(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
-  //    t(1) = (dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)));///(pow(dx1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(6*(x1 - x2)*(-1 + xi) + dx2*l0*(-2 + 3*xi)),2) + pow(dy1*l0*(-1 + xi)*(-1 + 3*xi) + xi*(dy2*l0*(-2 + 3*xi) + 6*(-1 + xi)*(y1 - y2)),2));
-  //
-  //    t /= nrm2(t);
-  //
-  //    return t;
-  //  }
 
   Mat FiniteElement1s21ANCF::JGeneralized(const Vec& qElement, const double& s) {
     Mat J(8,3,INIT,0.);

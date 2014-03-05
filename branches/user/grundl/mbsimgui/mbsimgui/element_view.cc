@@ -26,47 +26,51 @@
 #include "mainwindow.h"
 #include <QEvent>
 
-extern MainWindow *mw;
+namespace MBSimGUI {
 
-void ElementView::openEditor () {
-  if(!editor) {
-    index = selectionModel()->currentIndex();
-    element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
-    if(element) {
-      if(element->isEmbedded())
-        mw->updateOctaveParameters(element->getParameterList());
-      editor = element->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+  extern MainWindow *mw;
+
+  void ElementView::openEditor () {
+    if(!editor) {
+      index = selectionModel()->currentIndex();
+      element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
+      if(element) {
+        if(element->isEmbedded())
+          mw->updateOctaveParameters(element->getParameterList());
+        editor = element->createPropertyDialog();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->toWidget();
+        editor->show();
+        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      }
     }
   }
-}
 
-void ElementView::mouseDoubleClickEvent ( QMouseEvent * event ) {
-  openEditor();
-}
+  void ElementView::mouseDoubleClickEvent ( QMouseEvent * event ) {
+    openEditor();
+  }
 
-void ElementView::mousePressEvent ( QMouseEvent * event ) {
-  if(!editor)
-    QTreeView::mousePressEvent(event);
-}
+  void ElementView::mousePressEvent ( QMouseEvent * event ) {
+    if(!editor)
+      QTreeView::mousePressEvent(event);
+  }
 
-void ElementView::dialogFinished(int result) {
-  if(result != 0) {
+  void ElementView::dialogFinished(int result) {
+    if(result != 0) {
+      if(element->isEmbedded())
+        mw->updateOctaveParameters(ParameterList());
+      mw->mbsimxml(1);
+    }
+    editor = 0;
+    element = 0;
+  }
+
+  void ElementView::apply() {
+    update(index);
     if(element->isEmbedded())
-      mw->updateOctaveParameters(ParameterList());
+      mw->updateOctaveParameters(element->getParameterList());
     mw->mbsimxml(1);
   }
-  editor = 0;
-  element = 0;
-}
 
-void ElementView::apply() {
-  update(index);
-  if(element->isEmbedded())
-    mw->updateOctaveParameters(element->getParameterList());
-  mw->mbsimxml(1);
 }

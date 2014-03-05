@@ -234,7 +234,7 @@ HTML_OUTPUT          = ./html/
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard header.
 
-HTML_HEADER          = myheader.html
+HTML_HEADER          = @top_srcdir@/doc/myheader.html
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
@@ -389,7 +389,7 @@ TAGFILES             =
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE     =
+GENERATE_TAGFILE     =  kernel.tag
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed
 # in the class index. If set to NO only the inherited external classes

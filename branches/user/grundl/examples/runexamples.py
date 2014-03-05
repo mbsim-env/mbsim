@@ -41,8 +41,8 @@ directories=list() # a list of all examples sorted in descending order (filled r
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
 # pj('xml', 'time_dependent_kinematics')
-  pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD'),
-  pj('fmi', 'two_mass_oscillator')
+  pj("mechanics", "flexible_body", "beltdrive"),
+  pj("mechanics", "contacts", "self_siphoning_beads")
 ])
 
 # MBSim Modules
@@ -660,7 +660,9 @@ def runExample(resultQueue, example):
         resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
 
     # check for deprecated features
-    if(not args.disableRun):
+    if args.disableRun:
+      resultStr+='<td><span style="color:orange">not run</span></td>'
+    else:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
         match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)

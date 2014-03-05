@@ -23,9 +23,11 @@
 #include "link.h"
 #include "extended_properties.h"
 
-class Joint : public Link {
-  friend class JointPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class Joint : public Link {
+    friend class JointPropertyDialog;
+    public:
     Joint(const std::string &str, Element *parent);
     ~Joint();
     std::string getType() const { return "Joint"; }
@@ -33,8 +35,10 @@ class Joint : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty refFrameID, forceDirection, forceLaw, momentDirection, momentLaw, connections, forceArrow, momentArrow;
-};
+  };
+
+}
 
 #endif

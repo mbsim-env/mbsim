@@ -22,18 +22,22 @@
 
 #include "property.h"
 
-class FunctionProperty : public Property {
-  public:
-    FunctionProperty() {}
-    virtual ~FunctionProperty() {}
-    virtual int getArg1Size() const {return 0;}
-    virtual int getArg2Size() const {return 0;}
-    virtual std::string getType() const { return "Function"; }
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
-    void fromWidget(QWidget *widget) { }
-    void toWidget(QWidget *widget) { }
-};
+namespace MBSimGUI {
+
+  class FunctionProperty : public Property {
+    public:
+      FunctionProperty() {}
+      virtual ~FunctionProperty() {}
+      virtual int getArg1Size() const {return 0;}
+      virtual int getArg2Size() const {return 0;}
+      virtual std::string getType() const { return "Function"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
+      void fromWidget(QWidget *widget) { }
+      void toWidget(QWidget *widget) { }
+  };
+
+}
 
 #endif
 

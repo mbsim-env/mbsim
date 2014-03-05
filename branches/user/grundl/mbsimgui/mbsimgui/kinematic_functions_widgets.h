@@ -22,145 +22,149 @@
 
 #include "function_widget.h"
 
-class ExtWidget;
+namespace MBSimGUI {
 
-class TranslationAlongXAxisWidget : public FunctionWidget {
+  class ExtWidget;
 
-  public:
-    TranslationAlongXAxisWidget() { }
-    int getArg1Size() const {return 1;}
-};
+  class TranslationAlongXAxisWidget : public FunctionWidget {
 
-class TranslationAlongYAxisWidget : public FunctionWidget {
+    public:
+      TranslationAlongXAxisWidget() { }
+      int getArg1Size() const {return 1;}
+  };
 
-  public:
-    TranslationAlongYAxisWidget() { }
-    int getArg1Size() const {return 1;}
-};
+  class TranslationAlongYAxisWidget : public FunctionWidget {
 
-class TranslationAlongZAxisWidget : public FunctionWidget {
+    public:
+      TranslationAlongYAxisWidget() { }
+      int getArg1Size() const {return 1;}
+  };
 
-  public:
-    TranslationAlongZAxisWidget() { }
-    int getArg1Size() const {return 1;}
-};
+  class TranslationAlongZAxisWidget : public FunctionWidget {
 
-class TranslationAlongAxesXYWidget : public FunctionWidget {
+    public:
+      TranslationAlongZAxisWidget() { }
+      int getArg1Size() const {return 1;}
+  };
 
-  public:
-    TranslationAlongAxesXYWidget() { }
-    int getArg1Size() const {return 2;}
-};
+  class TranslationAlongAxesXYWidget : public FunctionWidget {
 
-class TranslationAlongAxesYZWidget : public FunctionWidget {
+    public:
+      TranslationAlongAxesXYWidget() { }
+      int getArg1Size() const {return 2;}
+  };
 
-  public:
-    TranslationAlongAxesYZWidget() { }
-    int getArg1Size() const {return 2;}
-};
+  class TranslationAlongAxesYZWidget : public FunctionWidget {
 
-class TranslationAlongAxesXZWidget : public FunctionWidget {
+    public:
+      TranslationAlongAxesYZWidget() { }
+      int getArg1Size() const {return 2;}
+  };
 
-  public:
-    TranslationAlongAxesXZWidget() { }
-    int getArg1Size() const {return 2;}
-};
+  class TranslationAlongAxesXZWidget : public FunctionWidget {
 
-class TranslationAlongAxesXYZWidget : public FunctionWidget {
+    public:
+      TranslationAlongAxesXZWidget() { }
+      int getArg1Size() const {return 2;}
+  };
 
-  public:
-    TranslationAlongAxesXYZWidget() { }
-    int getArg1Size() const {return 3;}
-};
+  class TranslationAlongAxesXYZWidget : public FunctionWidget {
 
-class TranslationAlongFixedAxisWidget : public FunctionWidget {
+    public:
+      TranslationAlongAxesXYZWidget() { }
+      int getArg1Size() const {return 3;}
+  };
 
-  friend class TranslationAlongFixedAxisProperty;
+  class TranslationAlongFixedAxisWidget : public FunctionWidget {
 
-  public:
+    friend class TranslationAlongFixedAxisProperty;
+
+    public:
     TranslationAlongFixedAxisWidget();
     int getArg1Size() const {return 1;}
-  protected:
+    protected:
     ExtWidget *a;
-};
+  };
 
-class LinearTranslationWidget : public FunctionWidget {
+  class LinearTranslationWidget : public FunctionWidget {
 
-  friend class LinearTranslationProperty;
+    friend class LinearTranslationProperty;
 
-  public:
+    public:
     LinearTranslationWidget(int m=1, int n=1);
     int getArg1Size() const;
     void resize_(int m, int n);
-  protected:
+    protected:
     ExtWidget *A, *b;
-};
+  };
 
-class RotationAboutXAxisWidget : public FunctionWidget {
+  class RotationAboutXAxisWidget : public FunctionWidget {
 
-  public:
-    RotationAboutXAxisWidget() { }
-    int getArg1Size() const {return 1;}
-};
+    public:
+      RotationAboutXAxisWidget() { }
+      int getArg1Size() const {return 1;}
+  };
 
-class RotationAboutYAxisWidget : public FunctionWidget {
+  class RotationAboutYAxisWidget : public FunctionWidget {
 
-  public:
-    RotationAboutYAxisWidget() { }
-    int getArg1Size() const {return 1;}
-};
+    public:
+      RotationAboutYAxisWidget() { }
+      int getArg1Size() const {return 1;}
+  };
 
-class RotationAboutZAxisWidget : public FunctionWidget {
+  class RotationAboutZAxisWidget : public FunctionWidget {
 
-  public:
-    RotationAboutZAxisWidget() { }
-    int getArg1Size() const {return 1;}
-};
+    public:
+      RotationAboutZAxisWidget() { }
+      int getArg1Size() const {return 1;}
+  };
 
-class RotationAboutAxesXYWidget : public FunctionWidget {
+  class RotationAboutAxesXYWidget : public FunctionWidget {
 
-  public:
-    RotationAboutAxesXYWidget() { }
-    int getArg1Size() const {return 2;}
-};
+    public:
+      RotationAboutAxesXYWidget() { }
+      int getArg1Size() const {return 2;}
+  };
 
-class RotationAboutAxesYZWidget : public FunctionWidget {
+  class RotationAboutAxesYZWidget : public FunctionWidget {
 
-  public:
-    RotationAboutAxesYZWidget() { }
-    int getArg1Size() const {return 2;}
-};
+    public:
+      RotationAboutAxesYZWidget() { }
+      int getArg1Size() const {return 2;}
+  };
 
-class RotationAboutAxesXZWidget : public FunctionWidget {
+  class RotationAboutAxesXZWidget : public FunctionWidget {
 
-  public:
-    RotationAboutAxesXZWidget() { }
-    int getArg1Size() const {return 2;}
-};
+    public:
+      RotationAboutAxesXZWidget() { }
+      int getArg1Size() const {return 2;}
+  };
 
-class RotationAboutAxesXYZWidget : public FunctionWidget {
+  class RotationAboutAxesXYZWidget : public FunctionWidget {
 
-  public:
-    RotationAboutAxesXYZWidget() { }
-    int getArg1Size() const {return 3;}
-};
+    public:
+      RotationAboutAxesXYZWidget() { }
+      int getArg1Size() const {return 3;}
+  };
 
-class RotationAboutFixedAxisWidget : public FunctionWidget {
+  class RotationAboutFixedAxisWidget : public FunctionWidget {
 
-  friend class RotationAboutFixedAxisProperty;
+    friend class RotationAboutFixedAxisProperty;
 
-  public:
+    public:
     RotationAboutFixedAxisWidget();
     int getArg1Size() const {return 1;}
-  protected:
+    protected:
     ExtWidget *a;
-};
+  };
 
-class TCardanAnglesWidget : public FunctionWidget {
+  class TCardanAnglesWidget : public FunctionWidget {
 
-  public:
-    TCardanAnglesWidget() { }
-    int getArg1Size() const {return 3;}
-};
+    public:
+      TCardanAnglesWidget() { }
+      int getArg1Size() const {return 3;}
+  };
+
+}
 
 #endif
