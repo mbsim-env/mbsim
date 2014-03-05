@@ -467,8 +467,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 #endif
 
-  GearConstraint *constraint = new GearConstraint("C0",shaft1);
+  GearConstraint *constraint = new GearConstraint("C0");
   addObject(constraint);
+  constraint->setDependentBody(shaft1);
   constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1));
 
   //actuator = new Actuator("Fahrwiderstand");

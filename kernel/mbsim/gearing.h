@@ -30,13 +30,13 @@ namespace MBSim {
     protected:
       fmatvec::Function<double(double,double)> *func;
       double r0, r1;
-      bool flag;
+      bool reverse;
       Frame Z0, Z1;
       Frame *P0, *P1;
       fmatvec::Vec3 WrP0Z, WrP1Z;
       fmatvec::Vec3 Wt;
     public:
-      Gearing(const std::string &name, bool flag = false);
+      Gearing(const std::string &name);
       void updateh(double, int i=0);
       void updateW(double, int i=0);
       void updateJacobians(double t, int j=0);
@@ -60,6 +60,7 @@ namespace MBSim {
       virtual void calcgdSize(int j);
 
       void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setReverse(bool reverse_) { reverse = reverse_; }
 
       void plot(double t, double dt=1);
 
