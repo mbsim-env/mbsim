@@ -34,8 +34,6 @@ namespace MBSimFlexibleBody {
    *
    * \date 2014-02-27 basic revision
    *
-   * \todo JGeneralized not checked up to now
-   *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
@@ -52,7 +50,7 @@ namespace MBSimFlexibleBody {
        * \param bending stiffness
        * \param vector of gravitational acceleration
        */
-      FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, fmatvec::Vec sg);
+      explicit FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, fmatvec::Vec sg);
 
       /**
        * \destructor
@@ -175,11 +173,6 @@ namespace MBSimFlexibleBody {
        * \brief derivative of right hand side with respect to velocities
        */
       fmatvec::SqrMat Dhqp;
-
-      /**
-       * \brief default constructor is declared private 
-       */
-      FiniteElement1s21ANCF();
 
       /**
        * \brief copy constructor is declared private
