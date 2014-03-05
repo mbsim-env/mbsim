@@ -36,11 +36,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I1 = 1./12.*b0*b0*b0*b0; // moment inertia
   double rho = 9.2e2; // density  
   int elements = 4; // number of finite elements
-  
+
   // data point mass
   double mass = 5.; // mass of ball
   double r = 1.e-2; // radius of ball
-  
+
   // beam with some angle around z-axis and shift
   FlexibleBody1s21ANCF *rod = new FlexibleBody1s21ANCF("Rod", true);
   rod->setLength(l0);
@@ -53,8 +53,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setCurlRadius(10.);
   Vec q0 = Vec(4*elements+4,INIT,0.);
   for(int i=0;i<=elements;i++) {
-	  q0(4*i) = l0*i/elements;
-	  q0(4*i+2) = 1;
+    q0(4*i) = l0*i/elements;
+    q0(4*i+2) = 1;
   }
   rod->setq0(q0);
   this->addObject(rod);
@@ -88,11 +88,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   top->setAlphaEnd(l0);  
   top->setNormalDistance(0.5*b0);
   rod->addContour(top);
-  
+
   // point mass with point contour at a specific surface point
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
-  WrOS0B(0) = 0.8*l0; WrOS0B(1) = b0*0.5+0.35;
+  WrOS0B(0) = 0.5*l0; WrOS0B(1) = b0*0.5+0.35;
   this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
@@ -111,7 +111,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->addContour(point);
   ball->setInitialGeneralizedVelocity(Vec(2,INIT,0.));
   this->addObject(ball);
-  
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
   sphere->setRadius(r);
@@ -125,7 +125,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.5));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
   this->addLink(contact);
-  
+
   // joint 
   ContourPointData cpdata;
   cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);

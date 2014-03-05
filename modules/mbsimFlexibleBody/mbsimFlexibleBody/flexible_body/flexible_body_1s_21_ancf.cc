@@ -77,31 +77,34 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21ANCF::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      Vec X = computeState(cp.getLagrangeParameterPosition()(0));
+      double sLocal;
+      int currentElement;
+      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // Lagrange parameter of affected FE
 
-      Vec tmp(3,NONINIT);
       if(ff==position || ff==position_cosy || ff==all) {
-        tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
+        Vec tmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->computePosition(qElement[currentElement],ContourPointData(sLocal));
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp); // position
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.;
+        Vec tmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->tangent(qElement[currentElement],sLocal);
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = -sin(X(2)); tmp(1) = cos(X(2)); tmp(2) = 0.;
+        Vec tmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->tangent(qElement[currentElement],sLocal);
+        tmp(1) *= -1.;
+        boost::swap(tmp(0),tmp(1));
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (Cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal 
 
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = X(3); tmp(1) = X(4); tmp(2) = 0.;
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
+        Vec tmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->computeVelocity(qElement[currentElement],uElement[currentElement],ContourPointData(sLocal));
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); //velocity
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = X(5);
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
+        Vec tmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->computeAngularVelocity(qElement[currentElement],uElement[currentElement],ContourPointData(sLocal));
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp); // angular velocity
       }
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
@@ -110,8 +113,8 @@ namespace MBSimFlexibleBody {
       Vec tmp(3,NONINIT);
 
       if(ff==position || ff==position_cosy || ff==all) {
-        tmp(0) = q(4*node+0); tmp(1) = q(4*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
+        tmp(0) = q(4*node+0); tmp(1) = q(4*node+1); tmp(2) = 0.; 
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp); // position
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -125,15 +128,16 @@ namespace MBSimFlexibleBody {
         boost::swap(tmp(0),tmp(1));
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (Cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = u(4*node+0); tmp(1) = u(4*node+1); tmp(2) = 0.;
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); // velocity
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): angularVelocity not implemented for ContourPointDataType 'NODE'");
+        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = (-q(4*node+3)*u(4*node+2)+q(4*node+2)*u(4*node+3))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); // angular velocity
       }
     }
     else throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -153,7 +157,7 @@ namespace MBSimFlexibleBody {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       double sLocal;
       int currentElement;
-      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
+      BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
       Mat Jtmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
       if(currentElement<Elements-1 || openStructure) {
         Jacobian(Index(4*currentElement,4*currentElement+7),All) = Jtmp;
@@ -164,7 +168,12 @@ namespace MBSimFlexibleBody {
       }
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
-      throw MBSimError("ERROR(FlexibleBody1s21ANCF::updateJacobiansForFrame): ContourPointDataType 'NODE' not implemented");
+      int node = cp.getNodeNumber();
+      Jacobian(4*node,0) = 1.;
+      Jacobian(4*node+1,1) = 1.;
+      Jacobian(4*node+2,2) = -q(4*node+3);
+      Jacobian(4*node+3,2) = q(4*node+2);
+      Jacobian(Index(4*node+2,4*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
     }
     else throw MBSimError("ERROR(FlexibleBody1s21ANCF::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
@@ -299,7 +308,7 @@ namespace MBSimFlexibleBody {
         LLM[0](Index(j + 4, j + 7)) = facLL(M[0](Index(j + 4, j + 7)));
     }
   }
-  
+
   void FlexibleBody1s21ANCF::initInfo() {
     FlexibleBodyContinuum<double>::init(unknownStage);
     l0 = L/Elements;
