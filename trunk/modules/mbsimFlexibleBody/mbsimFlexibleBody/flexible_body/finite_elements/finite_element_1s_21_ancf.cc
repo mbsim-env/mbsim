@@ -241,22 +241,22 @@ namespace MBSimFlexibleBody {
     const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
     const double & x2 = qElement(4);    const double & y2 = qElement(5);
     const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
-    
+
     const double & x1p = qpElement(0);    const double & y1p = qpElement(1);
     const double &dx1p = qpElement(2);    const double &dy1p = qpElement(3);
     const double & x2p = qpElement(4);    const double & y2p = qpElement(5);
     const double &dx2p = qpElement(6);    const double &dy2p = qpElement(7);
-    
+
     const double &s = cp.getLagrangeParameterPosition()(0);
 
     ang(2) = (1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0))*(y1p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2p*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1p*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0))-1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(x1p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2p*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1p*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0))*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));
-      
+
     return ang.copy();
   }
 
   Vec FiniteElement1s21ANCF::LocateBalken(const Vec& qElement, const double& s) {
     Vec coordinates = computePosition(qElement, ContourPointData(s));
-    
+
     Vec t = tangent(qElement,s);
 
     coordinates(2) = atan2(t(1),t(0));
@@ -271,7 +271,7 @@ namespace MBSimFlexibleBody {
     X(Index(3,5)) = J*qpElement;
 
     Vec t = tangent(qElement,s);
-    
+
     X(2) = atan2(t(1),t(0));
 
     return X.copy();
@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
     const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
     const double & x2 = qElement(4);    const double & y2 = qElement(5);
     const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
-    
+
     // calculate matrix of global shape functions
     Mat S = GlobalShapeFunctions(s);
 
@@ -322,12 +322,12 @@ namespace MBSimFlexibleBody {
 
   Vec FiniteElement1s21ANCF::tangent(const Vec& qElement, const double& s) {
     Vec t(3,INIT,0.);
-    
+
     const double & x1 = qElement(0);    const double & y1 = qElement(1);
     const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
     const double & x2 = qElement(4);    const double & y2 = qElement(5);
     const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
-    
+
     t(0) = -1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0));
     t(1) = -1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0));
 
