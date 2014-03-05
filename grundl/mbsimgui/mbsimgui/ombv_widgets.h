@@ -23,219 +23,224 @@
 #include "widget.h"
 #include "basic_widgets.h"
 
-class ExtWidget;
 class QVBoxLayout;
 class QListWidget;
 class QComboBox;
-class RigidBody;
 
-class OMBVBodyWidgetFactory : public WidgetFactory {
-  public:
-    OMBVBodyWidgetFactory();
-    QWidget* createWidget(int i=0);
-    QString getName(int i=0) const { return name[i]; }
-    int getSize() const { return name.size(); }
-  protected:
-    std::vector<QString> name;
-};
+namespace MBSimGUI {
 
-class OMBVObjectWidget : public Widget {
+  class ExtWidget;
+  class RigidBody;
 
-  public:
-    OMBVObjectWidget(const QString &name_="NOTSET") : name(name_) {}
-    void setName(const QString &name_) {name = name_;}
-  protected:
-    QString name;
-};
+  class OMBVBodyWidgetFactory : public WidgetFactory {
+    public:
+      OMBVBodyWidgetFactory();
+      QWidget* createWidget(int i=0);
+      QString getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<QString> name;
+  };
 
-class MBSOMBVWidget : public OMBVObjectWidget {
+  class OMBVObjectWidget : public Widget {
 
-  friend class MBSOMBVProperty;
+    public:
+      OMBVObjectWidget(const QString &name_="NOTSET") : name(name_) {}
+      void setName(const QString &name_) {name = name_;}
+    protected:
+      QString name;
+  };
 
-  public:
+  class MBSOMBVWidget : public OMBVObjectWidget {
+
+    friend class MBSOMBVProperty;
+
+    public:
     MBSOMBVWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *diffuseColor, *transparency;
-};
+  };
 
-class PointMBSOMBVWidget : public MBSOMBVWidget {
+  class PointMBSOMBVWidget : public MBSOMBVWidget {
 
-  friend class PointMBSOMBVProperty;
+    friend class PointMBSOMBVProperty;
 
-  public:
+    public:
     PointMBSOMBVWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *size;
-};
+  };
 
-class LineMBSOMBVWidget : public MBSOMBVWidget {
+  class LineMBSOMBVWidget : public MBSOMBVWidget {
 
-  friend class LineMBSOMBVProperty;
+    friend class LineMBSOMBVProperty;
 
-  public:
+    public:
     LineMBSOMBVWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *length;
-};
+  };
 
-class PlaneMBSOMBVWidget : public MBSOMBVWidget {
+  class PlaneMBSOMBVWidget : public MBSOMBVWidget {
 
-  friend class PlaneMBSOMBVProperty;
+    friend class PlaneMBSOMBVProperty;
 
-  public:
+    public:
     PlaneMBSOMBVWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *length;
-};
+  };
 
-class OMBVFrameWidget : public OMBVObjectWidget {
+  class OMBVFrameWidget : public OMBVObjectWidget {
 
-  friend class OMBVFrameProperty;
+    friend class OMBVFrameProperty;
 
-  public:
+    public:
     OMBVFrameWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *size, *offset, *transparency;
-};
+  };
 
-class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
+  class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
 
-  friend class OMBVDynamicColoredObjectProperty;
+    friend class OMBVDynamicColoredObjectProperty;
 
-  public:
+    public:
     OMBVDynamicColoredObjectWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     QVBoxLayout *layout;
     ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
-};
+  };
 
-class OMBVArrowWidget : public OMBVObjectWidget {
+  class OMBVArrowWidget : public OMBVObjectWidget {
 
-  friend class OMBVArrowProperty;
+    friend class OMBVArrowProperty;
 
-  public:
+    public:
     OMBVArrowWidget(const QString &name="NOTSET", bool fromPoint=false);
-  protected:
+    protected:
     ExtWidget *scaleLength, *scaleSize, *referencePoint, *diffuseColor, *transparency;
-};
+  };
 
-class OMBVCoilSpringWidget : public OMBVObjectWidget {
+  class OMBVCoilSpringWidget : public OMBVObjectWidget {
 
-  friend class OMBVCoilSpringProperty;
+    friend class OMBVCoilSpringProperty;
 
-  public:
+    public:
     OMBVCoilSpringWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *diffuseColor, *transparency;
-};
+  };
 
-class OMBVBodyWidget : public OMBVDynamicColoredObjectWidget {
+  class OMBVBodyWidget : public OMBVDynamicColoredObjectWidget {
 
-  friend class OMBVBodyProperty;
+    friend class OMBVBodyProperty;
 
-  public:
+    public:
     OMBVBodyWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *trans, *rot, *scale;
-};
+  };
 
-class InvisibleBodyWidget : public OMBVBodyWidget {
+  class InvisibleBodyWidget : public OMBVBodyWidget {
 
-  public:
-    InvisibleBodyWidget(const QString &name="NOTSET") : OMBVBodyWidget(name) {}
-};
+    public:
+      InvisibleBodyWidget(const QString &name="NOTSET") : OMBVBodyWidget(name) {}
+  };
 
-class CubeWidget : public OMBVBodyWidget {
+  class CubeWidget : public OMBVBodyWidget {
 
-  friend class CubeProperty;
+    friend class CubeProperty;
 
-  public:
+    public:
     CubeWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *length;
-};
+  };
 
-class CuboidWidget : public OMBVBodyWidget {
+  class CuboidWidget : public OMBVBodyWidget {
 
-  friend class CuboidProperty;
+    friend class CuboidProperty;
 
-  public:
+    public:
     CuboidWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *length;
-};
+  };
 
-class SphereWidget : public OMBVBodyWidget {
+  class SphereWidget : public OMBVBodyWidget {
 
-  friend class SphereProperty;
+    friend class SphereProperty;
 
-  public:
+    public:
     SphereWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *radius;
-};
+  };
 
-class FrustumWidget : public OMBVBodyWidget {
+  class FrustumWidget : public OMBVBodyWidget {
 
-  friend class FrustumProperty;
+    friend class FrustumProperty;
 
-  public:
+    public:
     FrustumWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *top, *base, *height, *innerBase, *innerTop;
-};
+  };
 
-class IvBodyWidget : public OMBVBodyWidget {
+  class IvBodyWidget : public OMBVBodyWidget {
 
-  friend class IvBodyProperty;
+    friend class IvBodyProperty;
 
-  public:
+    public:
     IvBodyWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
-};
-class OMBVBodyChoiceWidget;
+  };
+  class OMBVBodyChoiceWidget;
 
-class CompoundRigidBodyWidget : public OMBVBodyWidget {
+  class CompoundRigidBodyWidget : public OMBVBodyWidget {
 
-  friend class CompoundRigidBodyProperty;
+    friend class CompoundRigidBodyProperty;
 
-  public:
+    public:
     CompoundRigidBodyWidget(const QString &name="NOTSET");
-  protected:
+    protected:
     ExtWidget *bodies; 
-};
+  };
 
-class OMBVBodySelectionWidget : public Widget {
+  class OMBVBodySelectionWidget : public Widget {
 
-  friend class OMBVBodySelectionProperty;
+    friend class OMBVBodySelectionProperty;
 
-  public:
+    public:
 
     OMBVBodySelectionWidget(RigidBody* body);
 
     virtual void updateWidget() {ref->updateWidget();}
 
-  protected:
+    protected:
     ExtWidget *ombv, *ref;
-};
+  };
 
-class OMBVEmptyWidget : public OMBVObjectWidget {
+  class OMBVEmptyWidget : public OMBVObjectWidget {
 
-  public:
-    OMBVEmptyWidget(const QString &name="Empty");
+    public:
+      OMBVEmptyWidget(const QString &name="Empty");
 
-};
+  };
 
-class OMBVPlaneWidget : public OMBVObjectWidget {
+  class OMBVPlaneWidget : public OMBVObjectWidget {
 
-  friend class OMBVPlaneProperty;
+    friend class OMBVPlaneProperty;
 
-  public:
+    public:
     OMBVPlaneWidget(const QString &name="Plane");
 
-  protected:
+    protected:
     ExtWidget *size, *numberOfLines;
-};
+  };
+
+}
 
 #endif

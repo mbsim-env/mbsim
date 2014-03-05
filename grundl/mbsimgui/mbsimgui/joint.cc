@@ -26,60 +26,64 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-Joint::Joint(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false), forceArrow(0,false), momentArrow(0,false) {
+namespace MBSimGUI {
 
-  refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
+  Joint::Joint(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
-  forceDirection.setProperty(new ExtPhysicalVarProperty(input));
+    refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
 
-  forceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"forceLaw"));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
+    forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
-  momentDirection.setProperty(new ExtPhysicalVarProperty(input));
+    forceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"forceLaw"));
 
-  momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"momentLaw"));
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
+    momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-  connections.setProperty(new ConnectFramesProperty(2,this));
+    momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"momentLaw"));
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+    connections.setProperty(new ConnectFramesProperty(2,this));
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-}
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-Joint::~Joint() {
-}
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+  }
 
-void Joint::initialize() {
-  Link::initialize();
-  connections.initialize();
-}
+  Joint::~Joint() {
+  }
 
-void Joint::initializeUsingXML(DOMElement *element) {
-  Link::initializeUsingXML(element);
-  refFrameID.initializeUsingXML(element);
-  forceDirection.initializeUsingXML(element);
-  forceLaw.initializeUsingXML(element);
-  momentDirection.initializeUsingXML(element);
-  momentLaw.initializeUsingXML(element);
-  connections.initializeUsingXML(element);
-  forceArrow.initializeUsingXML(element);
-  momentArrow.initializeUsingXML(element);
-}
+  void Joint::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
 
-DOMElement* Joint::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  refFrameID.writeXMLFile(ele0);
-  forceDirection.writeXMLFile(ele0);
-  forceLaw.writeXMLFile(ele0);
-  momentDirection.writeXMLFile(ele0);
-  momentLaw.writeXMLFile(ele0);
-  connections.writeXMLFile(ele0);
-  forceArrow.writeXMLFile(ele0);
-  momentArrow.writeXMLFile(ele0);
-  return ele0;
+  void Joint::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    refFrameID.initializeUsingXML(element);
+    forceDirection.initializeUsingXML(element);
+    forceLaw.initializeUsingXML(element);
+    momentDirection.initializeUsingXML(element);
+    momentLaw.initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+  }
+
+  DOMElement* Joint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    refFrameID.writeXMLFile(ele0);
+    forceDirection.writeXMLFile(ele0);
+    forceLaw.writeXMLFile(ele0);
+    momentDirection.writeXMLFile(ele0);
+    momentLaw.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

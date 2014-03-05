@@ -23,166 +23,170 @@
 #include "function_property.h"
 #include "extended_properties.h"
 
-class TranslationAlongXAxisProperty: public FunctionProperty {
-  public:
-    TranslationAlongXAxisProperty() { }
-    virtual Property* clone() const {return new TranslationAlongXAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "TranslationAlongXAxis"; }
-};
+namespace MBSimGUI {
 
-class TranslationAlongYAxisProperty: public FunctionProperty {
-  public:
-    TranslationAlongYAxisProperty() { }
-    virtual Property* clone() const {return new TranslationAlongYAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "TranslationAlongYAxis"; }
-};
+  class TranslationAlongXAxisProperty: public FunctionProperty {
+    public:
+      TranslationAlongXAxisProperty() { }
+      virtual Property* clone() const {return new TranslationAlongXAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "TranslationAlongXAxis"; }
+  };
 
-class TranslationAlongZAxisProperty: public FunctionProperty {
-  public:
-    TranslationAlongZAxisProperty() { }
-    virtual Property* clone() const {return new TranslationAlongZAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "TranslationAlongZAxis"; }
-};
+  class TranslationAlongYAxisProperty: public FunctionProperty {
+    public:
+      TranslationAlongYAxisProperty() { }
+      virtual Property* clone() const {return new TranslationAlongYAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "TranslationAlongYAxis"; }
+  };
 
-class TranslationAlongAxesXYProperty: public FunctionProperty {
-  public:
-    TranslationAlongAxesXYProperty() { }
-    virtual Property* clone() const {return new TranslationAlongAxesXYProperty(*this);}
-    int getArg1Size() const {return 2;}
-    inline std::string getType() const { return "TranslationAlongAxesXY"; }
-};
+  class TranslationAlongZAxisProperty: public FunctionProperty {
+    public:
+      TranslationAlongZAxisProperty() { }
+      virtual Property* clone() const {return new TranslationAlongZAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "TranslationAlongZAxis"; }
+  };
 
-class TranslationAlongAxesYZProperty: public FunctionProperty {
-  public:
-    TranslationAlongAxesYZProperty() { }
-    virtual Property* clone() const {return new TranslationAlongAxesYZProperty(*this);}
-    int getArg1Size() const {return 2;}
-    inline std::string getType() const { return "TranslationAlongAxesYZ"; }
-};
+  class TranslationAlongAxesXYProperty: public FunctionProperty {
+    public:
+      TranslationAlongAxesXYProperty() { }
+      virtual Property* clone() const {return new TranslationAlongAxesXYProperty(*this);}
+      int getArg1Size() const {return 2;}
+      inline std::string getType() const { return "TranslationAlongAxesXY"; }
+  };
 
-class TranslationAlongAxesXZProperty: public FunctionProperty {
-  public:
-    TranslationAlongAxesXZProperty() { }
-    virtual Property* clone() const {return new TranslationAlongAxesXZProperty(*this);}
-    int getArg1Size() const {return 2;}
-    inline std::string getType() const { return "TranslationAlongAxesXZ"; }
-};
+  class TranslationAlongAxesYZProperty: public FunctionProperty {
+    public:
+      TranslationAlongAxesYZProperty() { }
+      virtual Property* clone() const {return new TranslationAlongAxesYZProperty(*this);}
+      int getArg1Size() const {return 2;}
+      inline std::string getType() const { return "TranslationAlongAxesYZ"; }
+  };
 
-class TranslationAlongAxesXYZProperty: public FunctionProperty {
-  public:
-    TranslationAlongAxesXYZProperty() { }
-    virtual Property* clone() const {return new TranslationAlongAxesXYZProperty(*this);}
-    int getArg1Size() const {return 3;}
-    inline std::string getType() const { return "TranslationAlongAxesXYZ"; }
-};
+  class TranslationAlongAxesXZProperty: public FunctionProperty {
+    public:
+      TranslationAlongAxesXZProperty() { }
+      virtual Property* clone() const {return new TranslationAlongAxesXZProperty(*this);}
+      int getArg1Size() const {return 2;}
+      inline std::string getType() const { return "TranslationAlongAxesXZ"; }
+  };
 
-class TranslationAlongFixedAxisProperty : public FunctionProperty {
-  public:
-    TranslationAlongFixedAxisProperty();
-    virtual Property* clone() const {return new TranslationAlongFixedAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "TranslationAlongFixedAxis"; }
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-  protected:
-    ExtProperty a;
-};
+  class TranslationAlongAxesXYZProperty: public FunctionProperty {
+    public:
+      TranslationAlongAxesXYZProperty() { }
+      virtual Property* clone() const {return new TranslationAlongAxesXYZProperty(*this);}
+      int getArg1Size() const {return 3;}
+      inline std::string getType() const { return "TranslationAlongAxesXYZ"; }
+  };
 
-class LinearTranslationProperty : public FunctionProperty {
-  public:
-    LinearTranslationProperty(int m=1, int n=1);
-    virtual Property* clone() const {return new LinearTranslationProperty(*this);}
-    int getArg1Size() const;
-    inline std::string getType() const { return "LinearTranslation"; }
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-  protected:
-    ExtProperty A, b;
-};
+  class TranslationAlongFixedAxisProperty : public FunctionProperty {
+    public:
+      TranslationAlongFixedAxisProperty();
+      virtual Property* clone() const {return new TranslationAlongFixedAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "TranslationAlongFixedAxis"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty a;
+  };
 
-class RotationAboutXAxisProperty : public FunctionProperty {
-  public:
-    RotationAboutXAxisProperty() { }
-    virtual Property* clone() const {return new RotationAboutXAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "RotationAboutXAxis"; }
-};
+  class LinearTranslationProperty : public FunctionProperty {
+    public:
+      LinearTranslationProperty(int m=1, int n=1);
+      virtual Property* clone() const {return new LinearTranslationProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "LinearTranslation"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty A, b;
+  };
 
-class RotationAboutYAxisProperty : public FunctionProperty {
-  public:
-    RotationAboutYAxisProperty() { }
-    virtual Property* clone() const {return new RotationAboutYAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "RotationAboutYAxis"; }
-};
+  class RotationAboutXAxisProperty : public FunctionProperty {
+    public:
+      RotationAboutXAxisProperty() { }
+      virtual Property* clone() const {return new RotationAboutXAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "RotationAboutXAxis"; }
+  };
 
-class RotationAboutZAxisProperty : public FunctionProperty {
-  public:
-    RotationAboutZAxisProperty() { }
-    virtual Property* clone() const {return new RotationAboutZAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "RotationAboutZAxis"; }
-};
+  class RotationAboutYAxisProperty : public FunctionProperty {
+    public:
+      RotationAboutYAxisProperty() { }
+      virtual Property* clone() const {return new RotationAboutYAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "RotationAboutYAxis"; }
+  };
 
-class RotationAboutAxesXYProperty : public FunctionProperty {
-  public:
-    RotationAboutAxesXYProperty() { }
-    virtual Property* clone() const {return new RotationAboutAxesXYProperty(*this);}
-    int getArg1Size() const {return 2;}
-    inline std::string getType() const { return "RotationAboutAxesXY"; }
-};
+  class RotationAboutZAxisProperty : public FunctionProperty {
+    public:
+      RotationAboutZAxisProperty() { }
+      virtual Property* clone() const {return new RotationAboutZAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "RotationAboutZAxis"; }
+  };
 
-class RotationAboutAxesYZProperty : public FunctionProperty {
-  public:
-    RotationAboutAxesYZProperty() { }
-    virtual Property* clone() const {return new RotationAboutAxesYZProperty(*this);}
-    int getArg1Size() const {return 2;}
-    inline std::string getType() const { return "RotationAboutAxesYZ"; }
-};
+  class RotationAboutAxesXYProperty : public FunctionProperty {
+    public:
+      RotationAboutAxesXYProperty() { }
+      virtual Property* clone() const {return new RotationAboutAxesXYProperty(*this);}
+      int getArg1Size() const {return 2;}
+      inline std::string getType() const { return "RotationAboutAxesXY"; }
+  };
 
-class RotationAboutAxesXZProperty : public FunctionProperty {
-  public:
-    RotationAboutAxesXZProperty() { }
-    virtual Property* clone() const {return new RotationAboutAxesXZProperty(*this);}
-    int getArg1Size() const {return 2;}
-    inline std::string getType() const { return "RotationAboutAxesXZ"; }
-};
+  class RotationAboutAxesYZProperty : public FunctionProperty {
+    public:
+      RotationAboutAxesYZProperty() { }
+      virtual Property* clone() const {return new RotationAboutAxesYZProperty(*this);}
+      int getArg1Size() const {return 2;}
+      inline std::string getType() const { return "RotationAboutAxesYZ"; }
+  };
 
-class RotationAboutAxesXYZProperty : public FunctionProperty {
-  public:
-    RotationAboutAxesXYZProperty() { }
-    virtual Property* clone() const {return new RotationAboutAxesXYZProperty(*this);}
-    int getArg1Size() const {return 3;}
-    inline std::string getType() const { return "RotationAboutAxesXYZ"; }
-};
+  class RotationAboutAxesXZProperty : public FunctionProperty {
+    public:
+      RotationAboutAxesXZProperty() { }
+      virtual Property* clone() const {return new RotationAboutAxesXZProperty(*this);}
+      int getArg1Size() const {return 2;}
+      inline std::string getType() const { return "RotationAboutAxesXZ"; }
+  };
 
-class RotationAboutFixedAxisProperty : public FunctionProperty {
-  public:
-    RotationAboutFixedAxisProperty();
-    virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
-    int getArg1Size() const {return 1;}
-    inline std::string getType() const { return "RotationAboutFixedAxis"; }
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-  protected:
-    ExtProperty a;
-};
+  class RotationAboutAxesXYZProperty : public FunctionProperty {
+    public:
+      RotationAboutAxesXYZProperty() { }
+      virtual Property* clone() const {return new RotationAboutAxesXYZProperty(*this);}
+      int getArg1Size() const {return 3;}
+      inline std::string getType() const { return "RotationAboutAxesXYZ"; }
+  };
 
-class TCardanAnglesProperty : public FunctionProperty {
-  public:
-    TCardanAnglesProperty() { }
-    virtual Property* clone() const {return new TCardanAnglesProperty(*this);}
-    int getArg1Size() const {return 3;}
-    inline std::string getType() const { return "TCardanAngles"; }
-};
+  class RotationAboutFixedAxisProperty : public FunctionProperty {
+    public:
+      RotationAboutFixedAxisProperty();
+      virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
+      int getArg1Size() const {return 1;}
+      inline std::string getType() const { return "RotationAboutFixedAxis"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty a;
+  };
+
+  class TCardanAnglesProperty : public FunctionProperty {
+    public:
+      TCardanAnglesProperty() { }
+      virtual Property* clone() const {return new TCardanAnglesProperty(*this);}
+      int getArg1Size() const {return 3;}
+      inline std::string getType() const { return "TCardanAngles"; }
+  };
+
+}
 
 #endif

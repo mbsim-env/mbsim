@@ -23,16 +23,18 @@
 #include "object.h"
 #include "extended_properties.h"
 
-class RigidBody;
+namespace MBSimGUI {
 
-class Constraint : public Object {
-  public:
-    Constraint(const std::string &str, Element *parent);
-};
+  class RigidBody;
 
-class GearConstraint : public Constraint {
-  friend class GearConstraintPropertyDialog;
-  public:
+  class Constraint : public Object {
+    public:
+      Constraint(const std::string &str, Element *parent);
+  };
+
+  class GearConstraint : public Constraint {
+    friend class GearConstraintPropertyDialog;
+    public:
     GearConstraint(const std::string &str, Element *parent);
     virtual Element* clone() const {return new GearConstraint(*this);}
     std::string getType() const { return "GearConstraint"; }
@@ -41,13 +43,13 @@ class GearConstraint : public Constraint {
     void initialize();
     void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty dependentBody, independentBodies, gearForceArrow, gearMomentArrow;
-};
+  };
 
-class KinematicConstraint : public Constraint {
-  friend class KinematicConstraintPropertyDialog;
-  public:
+  class KinematicConstraint : public Constraint {
+    friend class KinematicConstraintPropertyDialog;
+    public:
     KinematicConstraint(const std::string &str, Element *parent);
     std::string getType() const { return "KinematicConstraint"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -55,52 +57,52 @@ class KinematicConstraint : public Constraint {
     void initialize();
     void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty dependentBody, constraintForceArrow, constraintMomentArrow;
-};
+  };
 
-class GeneralizedPositionConstraint : public KinematicConstraint {
-  friend class GeneralizedPositionConstraintPropertyDialog;
-  public:
+  class GeneralizedPositionConstraint : public KinematicConstraint {
+    friend class GeneralizedPositionConstraintPropertyDialog;
+    public:
     GeneralizedPositionConstraint(const std::string &str, Element *parent);
     virtual Element* clone() const {return new GeneralizedPositionConstraint(*this);}
     std::string getType() const { return "GeneralizedPositionConstraint"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty constraintFunction;
-};
+  };
 
-class GeneralizedVelocityConstraint : public KinematicConstraint {
-  friend class GeneralizedVelocityConstraintPropertyDialog;
-  public:
+  class GeneralizedVelocityConstraint : public KinematicConstraint {
+    friend class GeneralizedVelocityConstraintPropertyDialog;
+    public:
     GeneralizedVelocityConstraint(const std::string &str, Element *parent);
     virtual Element* clone() const {return new GeneralizedVelocityConstraint(*this);}
     std::string getType() const { return "GeneralizedVelocityConstraint"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty constraintFunction, x0;
-};
+  };
 
-class GeneralizedAccelerationConstraint : public KinematicConstraint {
-  friend class GeneralizedAccelerationConstraintPropertyDialog;
-  public:
+  class GeneralizedAccelerationConstraint : public KinematicConstraint {
+    friend class GeneralizedAccelerationConstraintPropertyDialog;
+    public:
     GeneralizedAccelerationConstraint(const std::string &str, Element *parent);
     virtual Element* clone() const {return new GeneralizedAccelerationConstraint(*this);}
     std::string getType() const { return "GeneralizedAccelerationConstraint"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty constraintFunction, x0;
-};
+  };
 
-class JointConstraint : public Constraint {
-  friend class JointConstraintPropertyDialog;
-  public:
+  class JointConstraint : public Constraint {
+    friend class JointConstraintPropertyDialog;
+    public:
     JointConstraint(const std::string &str, Element *parent);
     virtual Element* clone() const {return new JointConstraint(*this);}
     std::string getType() const { return "JointConstraint"; }
@@ -109,9 +111,11 @@ class JointConstraint : public Constraint {
     void initialize();
     void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, refFrameID, force, moment, connections, jointForceArrow, jointMomentArrow, q0;
 
-};
+  };
+
+}
 
 #endif

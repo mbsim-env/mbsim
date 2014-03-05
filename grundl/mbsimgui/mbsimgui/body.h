@@ -22,9 +22,11 @@
 
 #include "object.h"
 
-class Body : public Object {
-  friend class BodyPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class Body : public Object {
+    friend class BodyPropertyDialog;
+    public:
     Body(const std::string &str, Element *parent);
     Body(const Body &b);
     ~Body();
@@ -52,12 +54,14 @@ class Body : public Object {
 
     ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
     QMenu* createContextMenu() {return new BodyContextMenu(this);}
-  protected:
+    protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
     std::vector<Element*> removedElement;
     ExtProperty q0, u0, R;
 
-};
+  };
+
+}
 
 #endif

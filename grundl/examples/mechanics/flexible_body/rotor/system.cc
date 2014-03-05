@@ -91,7 +91,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cylinder=new OpenMBV::SpineExtrusion;
   cylinder->setNumberOfSpinePoints(Elements*4+1); // resolution of visualisation
-  cylinder->setStaticColor(0.6); // color in (minimalColorValue, maximalColorValue)
+  cylinder->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cylinder->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *circle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   for(int i=0;i<20;i++) {
@@ -122,7 +122,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ScheibeSMBV->setScaleFactor(1.);
   ScheibeSMBV->setMinimalColorValue(0);
   ScheibeSMBV->setMaximalColorValue(1);
-  ScheibeSMBV->setStaticColor(0);
+  ScheibeSMBV->setDiffuseColor(2/3.0, 1, 1);
   ScheibeSMBV->setInitialTranslation(L/40.,0.,0.);
   ScheibeSMBV->setInitialRotation(0.,M_PI/2.,0.);
   ScheibeS->setOpenMBVRigidBody(ScheibeSMBV);

@@ -24,60 +24,64 @@
 #include <QModelIndex>
 #include <QVariant>
 
-class Frame;
-class Contour;
-class Group;
-class Object;
-class Link;
-class Observer;
-class Parameter;
-class TreeItem;
+namespace MBSimGUI {
 
-class TreeModel : public QAbstractItemModel {
-  public:
-    TreeModel(QObject *parent = 0);
-    ~TreeModel();
+  class Frame;
+  class Contour;
+  class Group;
+  class Object;
+  class Link;
+  class Observer;
+  class Parameter;
+  class TreeItem;
 
-    QVariant data(const QModelIndex &index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+  class TreeModel : public QAbstractItemModel {
+    public:
+      TreeModel(QObject *parent = 0);
+      ~TreeModel();
 
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-    QModelIndex parent(const QModelIndex &index) const;
+      QVariant data(const QModelIndex &index, int role) const;
+      QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    int columnCount(const QModelIndex &) const {return 2;}
+      QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+      QModelIndex parent(const QModelIndex &index) const;
 
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
+      int rowCount(const QModelIndex &parent = QModelIndex()) const;
+      int columnCount(const QModelIndex &) const {return 2;}
 
-    bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
+      Qt::ItemFlags flags(const QModelIndex &index) const;
+      bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+      bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
 
-    TreeItem *getItem(const QModelIndex &index) const;
+      bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
- protected:
-    TreeItem *rootItem;
-};
+      TreeItem *getItem(const QModelIndex &index) const;
 
-class ElementTreeModel : public TreeModel {
-  public:
-    ElementTreeModel(QObject *parent = 0);
+    protected:
+      TreeItem *rootItem;
+  };
 
-    void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
-    void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
-    void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
-    void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
-    void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
-    void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
+  class ElementTreeModel : public TreeModel {
+    public:
+      ElementTreeModel(QObject *parent = 0);
 
-    std::map<std::string, QModelIndex> idEleMap;
-};
+      void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
+      void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
+      void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
+      void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
+      void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
+      void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
-class ParameterListModel : public TreeModel {
-  public:
-    ParameterListModel(QObject *parent = 0);
+      std::map<std::string, QModelIndex> idEleMap;
+  };
 
-    void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
-};
+  class ParameterListModel : public TreeModel {
+    public:
+      ParameterListModel(QObject *parent = 0);
+
+      void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
+  };
+
+}
 
 #endif

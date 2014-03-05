@@ -90,45 +90,45 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       * \brief return the Cartesian position at a contour point
+       * \brief return the planar position and angle at a contour point
        * \param generalised coordinates
        * \param contour point
-       * \return Cartesian position
+       * \return planar position and angle
        */
       fmatvec::Vec LocateBeam(const fmatvec::Vec&q, const double &s);
 
       /**
-       * \brief return the Cartesian position and velocity at a contour point
+       * \brief return the planar state at a contour point
        * \param generalised positions
        * \param generalised velocities
        * \param contour point
-       * \return Cartesian position and velocity
+       * \return planar state
        */
       fmatvec::Vec StateBeam(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double &s);
 
       /**
-       * \brief return the JACOBIAN of Cartesian position with respect to generalised internal coordinates
+       * \brief return the JACOBIAN of translation and rotation with respect to generalised internal coordinates
        * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of Cartesian position with respect to generalised internal coordinates
+       * \return JACOBIAN of translation and rotation with respect to generalised internal coordinates
        */
       fmatvec::Mat JGeneralizedInternal(const fmatvec::Vec& qElement, const double& s);
 
       /**
-       * \brief return the JACOBIAN of Cartesian position with respect to generalised global coordinates
+       * \brief return the JACOBIAN of translation and rotation with respect to generalised global coordinates
        * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of Cartesian position with respect to generalised global coordinates
+       * \return JACOBIAN of translation and rotation with respect to generalised global coordinates
        */
       fmatvec::Mat JGeneralized (const fmatvec::Vec& qElement, const double& s);
 
       /**
-       * \brief return the derivative of the JACOBIAN of Cartesian position with respect to generalised global coordinates
+       * \brief return the derivative of the JACOBIAN of translation and rotation with respect to generalised global coordinates
        * \param generalised coordinates
        * \param generalised velocities
        * \param contour point
        * \param contour point derivative
-       * \return derivative of JACOBIAN of Cartesian position with respect to generalised global coordinates
+       * \return derivative of JACOBIAN of translation and rotation with respect to generalised global coordinates
        */
       fmatvec::Mat JpGeneralized(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double& s,const double& sp);
 

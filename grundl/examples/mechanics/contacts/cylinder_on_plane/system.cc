@@ -175,7 +175,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy->setScaleFactor(1.);
 //  dummy->setMinimalColorValue(0);
 //  dummy->setMaximalColorValue(1);
-//  dummy->setStaticColor(1);
+//  dummy->setDiffuseColor(0, 1, 1);
 //  body->setOpenMBVRigidBody(dummy);
   body->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
 
@@ -187,7 +187,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy2->setScaleFactor(1.);
 //  dummy2->setMinimalColorValue(0);
 //  dummy2->setMaximalColorValue(1);
-//  dummy2->setStaticColor(0.5);
+//  dummy2->setDiffuseColor(1/3.0, 1, 1);
 //  body2->setOpenMBVRigidBody(dummy2);
   body2->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
 
@@ -201,7 +201,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy3->setScaleFactor(1.);
 //  dummy3->setMinimalColorValue(0);
 //  dummy3->setMaximalColorValue(1);
-//  dummy3->setStaticColor(0.1);
+//  dummy3->setDiffuseColor(0.6, 1, 1);
 //  body3->setOpenMBVRigidBody(dummy3);
   body3->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
 

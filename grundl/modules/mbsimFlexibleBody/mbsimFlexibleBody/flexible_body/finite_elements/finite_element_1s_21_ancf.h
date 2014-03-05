@@ -34,6 +34,8 @@ namespace MBSimFlexibleBody {
    *
    * \date 2014-02-27 basic revision
    *
+   * \todo JGeneralized not checked up to now
+   *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
@@ -84,35 +86,55 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       * \brief return the Cartesian position at a contour point
+       * \brief calculate constant mass matrix
+       */
+      void initM();
+
+      /**
+       * \brief return the planar position and angle at a contour point
        * \param generalised coordinates
        * \param contour point
-       * \return Cartesian position
+       * \return planar position and angle
        */
       fmatvec::Vec LocateBalken(const fmatvec::Vec& qElement, const double& s); 
 
       /**
-       * \brief return the Cartesian position and velocity at a contour point
+       * \brief return the planar state at a contour point
        * \param generalised positions
        * \param generalised velocities
        * \param contour point
-       * \return Cartesian position and velocity
+       * \return planar state
        */
       fmatvec::Vec StateBalken(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double&s); 
 
       /**
-       * \brief return the JACOBIAN of Cartesian position with respect to generalised coordinates
+       * \brief return the JACOBIAN of translation and rotation with respect to generalised coordinates
        * \param generalised coordinates
        * \param contour point
-       * \return JACOBIAN of Cartesian position with respect to generalised coordinates
+       * \return JACOBIAN of translation and rotation with respect to generalised coordinates
        */
       fmatvec::Mat JGeneralized(const fmatvec::Vec& qElement, const double& s);
 
     private:
       /** 
-       * \brief length, line-density, longitudinal and bending stiffness
+       * \brief beam element length
        */
-      double l0, Arho, EA, EI;
+      double l0;
+
+      /** 
+       * \brief line-density
+       */
+      double Arho;
+
+      /**
+       * \brief longitudinal stiffness
+       */
+      double EA;
+
+      /**
+       * \brief bending stiffness
+       */
+      double EI;
 
       /**
        * \brief predefined bending curvature
@@ -145,16 +167,32 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat Damp;
 
       /**
-       * \brief derivative of right hand side with respect to positions and velocities
+       * \brief derivative of right hand side with respect to positions
        */
-      fmatvec::SqrMat Dhq, Dhqp;
-      
-      /*!
+      fmatvec::SqrMat Dhq;
+
+      /**
+       * \brief derivative of right hand side with respect to velocities
+       */
+      fmatvec::SqrMat Dhqp;
+
+      /**
        * \brief default constructor is declared private 
        */
       FiniteElement1s21ANCF();
+
+      /**
+       * \brief copy constructor is declared private
+       */
+      FiniteElement1s21ANCF(const FiniteElement1s21ANCF&);
+
+      /**
+       * \brief assignment operator is declared private
+       */
+      FiniteElement1s21ANCF& operator=(const FiniteElement1s21ANCF&);
   };
 
+  inline void  FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s21ANCF::computeM): Not implemented"); }
 }
 
 #endif /* _FINITE_ELEMENT_1S_21_ANCF_H_ */

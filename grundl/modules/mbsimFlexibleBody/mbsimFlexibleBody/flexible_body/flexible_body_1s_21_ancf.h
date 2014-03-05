@@ -21,7 +21,7 @@
 #define _FLEXIBLE_BODY_1S_21_ANCF_H_
 
 #include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
+#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -33,6 +33,14 @@ namespace MBSimFlexibleBody {
   /**
    * \brief Absolute Nodal Coordinate Formulation for flexible planar beams
    * \author Roland Zander
+   * \author Thorsten Schindler
+   *
+   * \date 2014-02-27 basic revision
+   *
+   * model based on
+   * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
+   * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
+   * SHABANE, A. A.: Dynamics of Multibody Systems. Cambridge University Press (2005)
    */
   class FlexibleBody1s21ANCF : public FlexibleBodyContinuum<double> {
 
@@ -50,6 +58,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody1s21ANCF() {}
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
+      virtual void updateM(double t, int k) {}
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
@@ -60,6 +69,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(MBSim::InitStage stage);
+      virtual void facLLM(int i = 0) {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -68,25 +78,30 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      /**
-       * \brief sets size of positions and velocities
-       */
       void setNumberElements(int n);
       void setLength(double L_) { L = L_; }
       void setEModul(double E_) { E = E_; }
       void setCrossSectionalArea(double A_) { A = A_; }
       void setMomentInertia(double I_) { I = I_; }
       void setDensity(double rho_) { rho = rho_; }
+      void setCurlRadius(double rc_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
+      int getNumberElements(){ return Elements; }
+      double getLength(){ return L; }
       /***************************************************/
 
       /**
-       * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
+       * \brief compute Cartesian position and velocity at Lagrangian coordinate
        * \param Lagrangian coordinate
        */
       fmatvec::Vec computeState(double x);
+
+      /**
+       * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
+       */
+      void initInfo();
 
       /**
        * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring
@@ -95,17 +110,6 @@ namespace MBSimFlexibleBody {
       void initRelaxed(double alpha);
 
     private:
-      static const int NodeDOFs;
-      static const int ElementalDOFs;
-
-      /**
-       * \brief detect current finite element
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      void BuildElement (const double& sGlobal, double& sLocal, int& currentElement); //geändert !!!!  Element entspricht currentElement in rcm ?!
-
       /**
        * \brief number of finite elements used for discretisation
        */
@@ -141,7 +145,10 @@ namespace MBSimFlexibleBody {
        */
       double rho;
 
-      fmatvec::VecInt plotElements;
+      /**
+       * \brief radius of undeformed shape
+       */
+      double rc;
 
       /**
        * \brief flag for open (cantilever beam) or closed (rings) structures
@@ -151,14 +158,43 @@ namespace MBSimFlexibleBody {
       /**
        * \brief flag for testing if beam is initialised
        */
-      bool initialized;
+      bool initialised;
 
       /**
-       * \brief contour of body
+       * \brief initialize mass matrix and calculate Cholesky decomposition
        */
-      Contour1sFlexible *contour1sFlexible;
+      void initM();
 
+      /**
+       * \brief detect current finite element
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
+
+      /**
+       * \brief default constructor is declared private 
+       */
+      FlexibleBody1s21ANCF();
+
+      /**
+       * \brief copy constructor is declared private
+       */
+      FlexibleBody1s21ANCF(const FlexibleBody1s21ANCF&);
+
+      /**
+       * \brief assignment operator is declared private
+       */
+      FlexibleBody1s21ANCF& operator=(const FlexibleBody1s21ANCF&);
   };
+
+  inline void FlexibleBody1s21ANCF::setCurlRadius(double rc_) {
+    rc = rc_;
+    if(initialised)
+      for(int i = 0; i < Elements; i++)
+        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
+  }
 
 }
 #endif /* _FLEXIBLE_BODY_1S_21_ANCF_H_ */

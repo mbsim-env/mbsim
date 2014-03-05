@@ -155,12 +155,12 @@ namespace MBSimFlexibleBody {
     protected:
 
       /*!
-       * \brief constant mass Matrix
+       * \brief constant mass matrix
        */
       fmatvec::SymMat MConst;
 
       /*!
-       * \brief constant decomposed Mass-Matrix
+       * \brief constant decomposed mass matrix
        */
       fmatvec::SymMat LLMConst;
 

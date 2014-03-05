@@ -20,6 +20,8 @@
 #ifndef _KINEMATICS_WIDGETS_H_
 #define _KINEMATICS_WIDGETS_H_
 
+namespace MBSimGUI {
+}
 
 #endif
 

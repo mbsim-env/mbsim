@@ -22,220 +22,222 @@
 
 #include "function_widget.h"
 
-class ExtPhysicalVarWidget;
-class ExtWidget;
-class ListWidget;
 class QVBoxLayout;
 class QComboBox;
-class ChoiceWidget;
-class ChoiceWidget2;
 class QListWidget;
 class QSpinBox;
 
-class ConstantFunctionWidget : public FunctionWidget {
+namespace MBSimGUI {
 
-  friend class ConstantFunctionProperty;
+  class ExtPhysicalVarWidget;
+  class ExtWidget;
+  class ListWidget;
+  class ChoiceWidget;
+  class ChoiceWidget2;
 
-  public:
+  class ConstantFunctionWidget : public FunctionWidget {
+
+    friend class ConstantFunctionProperty;
+
+    public:
     ConstantFunctionWidget(int m=1);
     void resize_(int m, int n);
-  protected:
+    protected:
     ExtWidget *a0;
-};
+  };
 
-class LinearFunctionWidget : public FunctionWidget {
+  class LinearFunctionWidget : public FunctionWidget {
 
-  friend class LinearFunctionProperty;
+    friend class LinearFunctionProperty;
 
-  public:
+    public:
     LinearFunctionWidget(int m=1);
     void resize_(int m, int n);
-  protected:
+    protected:
     ExtWidget *a0, *a1;
-};
+  };
 
-class QuadraticFunctionWidget : public FunctionWidget {
+  class QuadraticFunctionWidget : public FunctionWidget {
 
-  friend class QuadraticFunctionProperty;
+    friend class QuadraticFunctionProperty;
 
-  public:
+    public:
     QuadraticFunctionWidget(int m=1);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *a0, *a1, *a2;
-};
+  };
 
-class PolynomFunctionWidget : public FunctionWidget {
+  class PolynomFunctionWidget : public FunctionWidget {
 
-  friend class PolynomFunctionProperty;
+    friend class PolynomFunctionProperty;
 
-  public:
+    public:
     PolynomFunctionWidget(int m=1);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *a;
-};
+  };
 
-class SinusoidalFunctionWidget : public FunctionWidget {
+  class SinusoidalFunctionWidget : public FunctionWidget {
 
-  friend class SinusoidalFunctionProperty;
+    friend class SinusoidalFunctionProperty;
 
-  public:
+    public:
     SinusoidalFunctionWidget(int m=1);
 
-  protected:
+    protected:
     ExtWidget *a, *f, *p, *o;
-};
+  };
 
-//class StepFunctionWidget : public FunctionWidget {
-//}
+  //class StepFunctionWidget : public FunctionWidget {
+  //}
 
-//class PositiveFunctionWidget : public FunctionWidget {
-//}
+  //class PositiveFunctionWidget : public FunctionWidget {
+  //}
 
-class ScaledFunctionWidget : public FunctionWidget {
+  class ScaledFunctionWidget : public FunctionWidget {
 
-  friend class ScaledFunctionProperty;
+    friend class ScaledFunctionProperty;
 
-  public:
+    public:
     ScaledFunctionWidget(int m=0);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *function, *factor;
-};
+  };
 
-class SummationFunctionWidget : public FunctionWidget {
+  class SummationFunctionWidget : public FunctionWidget {
 
-  friend class SummationFunctionProperty;
+    friend class SummationFunctionProperty;
 
-  public:
+    public:
     SummationFunctionWidget(int m=0);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *functions;
-};
+  };
 
-class VectorValuedFunctionWidget : public FunctionWidget {
+  class VectorValuedFunctionWidget : public FunctionWidget {
 
-  friend class VectorValuedFunctionProperty;
+    friend class VectorValuedFunctionProperty;
 
-  public:
+    public:
     VectorValuedFunctionWidget(int m=0, bool fixedSize=false);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *functions;
-};
+  };
 
-class NestedFunctionWidget : public FunctionWidget {
-  Q_OBJECT
+  class NestedFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
-  friend class NestedFunctionProperty;
+    friend class NestedFunctionProperty;
 
-  public:
-//    NestedFunctionWidget(const QString &ext, const std::vector<QWidget*> &widget, const std::vector<QString> &name);
+    public:
+    //    NestedFunctionWidget(const QString &ext, const std::vector<QWidget*> &widget, const std::vector<QString> &name);
     NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
     int getArg1Size() const;
-  protected:
+    protected:
     QString ext;
     ExtWidget *fo, *fi;
-  public slots:
-    void resizeVariables();
-};
+    public slots:
+      void resizeVariables();
+  };
 
-class PiecewiseDefinedFunctionWidget : public FunctionWidget {
+  class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
-  friend class PiecewiseDefinedFunctionProperty;
+    friend class PiecewiseDefinedFunctionProperty;
 
-  public:
+    public:
     PiecewiseDefinedFunctionWidget(int n=0);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *functions;
     ExtWidget *contDiff;
-};
+  };
 
-class SymbolicFunctionWidget : public FunctionWidget {
-  Q_OBJECT
+  class SymbolicFunctionWidget : public FunctionWidget {
+    Q_OBJECT
 
-  friend class SymbolicFunctionProperty;
+    friend class SymbolicFunctionProperty;
 
-  public:
+    public:
     SymbolicFunctionWidget(const QStringList &var, int m, int max);
     int getArg1Size() const;
     int getArg2Size() const;
     void setArg1Size(int i);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
 
-  signals:
+    signals:
     void arg1SizeChanged(int i);
-};
+  };
 
-class TabularFunctionWidget : public FunctionWidget {
+  class TabularFunctionWidget : public FunctionWidget {
 
-  friend class TabularFunctionProperty;
+    friend class TabularFunctionProperty;
 
-  public:
+    public:
     TabularFunctionWidget(int n);
     void resize_(int m, int n);
 
-  protected:
+    protected:
     ChoiceWidget2* choice;
-};
+  };
 
-class LinearSpringDamperForceWidget : public FunctionWidget {
+  class LinearSpringDamperForceWidget : public FunctionWidget {
 
-  friend class LinearSpringDamperForceProperty;
+    friend class LinearSpringDamperForceProperty;
 
-  public:
+    public:
     LinearSpringDamperForceWidget();
-  protected:
+    protected:
     ExtWidget *c, *d, *l0;
-};
+  };
 
-class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
+  class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
 
-  friend class LinearRegularizedBilateralConstraintProperty;
+    friend class LinearRegularizedBilateralConstraintProperty;
 
-  public:
+    public:
     LinearRegularizedBilateralConstraintWidget(); 
 
-
-  private:
+    private:
     ExtWidget *c, *d;
-};
+  };
 
-class LinearRegularizedUnilateralConstraintWidget: public FunctionWidget {
+  class LinearRegularizedUnilateralConstraintWidget: public FunctionWidget {
 
-  friend class LinearRegularizedUnilateralConstraintProperty;
+    friend class LinearRegularizedUnilateralConstraintProperty;
 
-  public:
+    public:
     LinearRegularizedUnilateralConstraintWidget(); 
 
-
-  private:
+    private:
     ExtWidget *c, *d;
-};
+  };
 
-class LinearRegularizedCoulombFrictionWidget: public FunctionWidget {
+  class LinearRegularizedCoulombFrictionWidget: public FunctionWidget {
 
-  friend class LinearRegularizedCoulombFrictionProperty;
+    friend class LinearRegularizedCoulombFrictionProperty;
 
-  public:
+    public:
     LinearRegularizedCoulombFrictionWidget(); 
 
-
-  private:
+    private:
     ExtWidget *gd, *mu;
-};
+  };
+
+}
 
 #endif

@@ -26,59 +26,62 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forceDir(0,false), momentDir(0,false), frameOfReference(0,false), actuatorForceArrow(0,false), actuatorMomentArrow(0,false) {
+namespace MBSimGUI {
 
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"forceDirection"));
-  forceDir.setProperty(new ExtPhysicalVarProperty(input));
+  Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forceDir(0,false), momentDir(0,false), frameOfReference(0,false), actuatorForceArrow(0,false), actuatorMomentArrow(0,false) {
 
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"momentDirection"));
-  momentDir.setProperty(new ExtPhysicalVarProperty(input));
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"forceDirection"));
+    forceDir.setProperty(new ExtPhysicalVarProperty(input));
 
-  frameOfReference.setProperty(new IntegerProperty(1,MBSIMCONTROL%"referenceFrame")); 
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMCONTROL%"momentDirection"));
+    momentDir.setProperty(new ExtPhysicalVarProperty(input));
 
-  inputSignal.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
-  
-  connections.setProperty(new ConnectFramesProperty(2,this,MBSIMCONTROL%"connect"));
+    frameOfReference.setProperty(new IntegerProperty(1,MBSIMCONTROL%"referenceFrame")); 
 
-  actuatorForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  actuatorForceArrow.setXMLName(MBSIMCONTROL%"enableOpenMBVForce",false);
+    inputSignal.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"inputSignal"));
 
-  actuatorMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  actuatorMomentArrow.setXMLName(MBSIMCONTROL%"enableOpenMBVMoment",false);
+    connections.setProperty(new ConnectFramesProperty(2,this,MBSIMCONTROL%"connect"));
+
+    actuatorForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    actuatorForceArrow.setXMLName(MBSIMCONTROL%"enableOpenMBVForce",false);
+
+    actuatorMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    actuatorMomentArrow.setXMLName(MBSIMCONTROL%"enableOpenMBVMoment",false);
+  }
+
+
+  Actuator::~Actuator() {
+  }
+
+  void Actuator::initialize() {
+    Link::initialize();
+    inputSignal.initialize();
+    connections.initialize();
+  }
+
+  void Actuator::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    forceDir.initializeUsingXML(element);
+    momentDir.initializeUsingXML(element);
+    frameOfReference.initializeUsingXML(element);
+    inputSignal.initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    actuatorForceArrow.initializeUsingXML(element);
+    actuatorMomentArrow.initializeUsingXML(element);
+  }
+
+  DOMElement* Actuator::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    forceDir.writeXMLFile(ele0);
+    momentDir.writeXMLFile(ele0);
+    frameOfReference.writeXMLFile(ele0);
+    inputSignal.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
+    actuatorForceArrow.writeXMLFile(ele0);
+    actuatorMomentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }
-
-
-Actuator::~Actuator() {
-}
-
-void Actuator::initialize() {
-  Link::initialize();
-  inputSignal.initialize();
-  connections.initialize();
-}
-
-void Actuator::initializeUsingXML(DOMElement *element) {
-  Link::initializeUsingXML(element);
-  forceDir.initializeUsingXML(element);
-  momentDir.initializeUsingXML(element);
-  frameOfReference.initializeUsingXML(element);
-  inputSignal.initializeUsingXML(element);
-  connections.initializeUsingXML(element);
-  actuatorForceArrow.initializeUsingXML(element);
-  actuatorMomentArrow.initializeUsingXML(element);
-}
-
-DOMElement* Actuator::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  forceDir.writeXMLFile(ele0);
-  momentDir.writeXMLFile(ele0);
-  frameOfReference.writeXMLFile(ele0);
-  inputSignal.writeXMLFile(ele0);
-  connections.writeXMLFile(ele0);
-  actuatorForceArrow.writeXMLFile(ele0);
-  actuatorMomentArrow.writeXMLFile(ele0);
-  return ele0;
-}
-

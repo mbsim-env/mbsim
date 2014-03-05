@@ -23,9 +23,11 @@
 #include "body.h"
 #include "extended_properties.h"
 
-class RigidBody : public Body {
-  friend class RigidBodyPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class RigidBody : public Body {
+    friend class RigidBodyPropertyDialog;
+    public:
     RigidBody(const std::string &str, Element *parent);
     virtual Element* clone() const {return new RigidBody(*this);}
     std::string getType() const { return "RigidBody"; }
@@ -39,9 +41,11 @@ class RigidBody : public Body {
     void setConstrained(bool b) {constrained = b;}
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
-  protected:
+    protected:
     bool constrained;
     ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow;
-};
+  };
+
+}
 
 #endif

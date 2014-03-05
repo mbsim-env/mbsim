@@ -22,19 +22,23 @@
 
 #include "widget.h"
 
-class FunctionWidget : public Widget {
-  Q_OBJECT
-  public:
-    FunctionWidget() {}
-    virtual ~FunctionWidget() {}
-    virtual int getArg1Size() const {return 0;}
-    virtual int getArg2Size() const {return 0;}
-    virtual void setArg1Size(int i) {}
-  protected:
-  public slots:
-    virtual void resize_(int m, int n) {}
-  signals:
-    void arg1SizeChanged(int);
-};
+namespace MBSimGUI {
+
+  class FunctionWidget : public Widget {
+    Q_OBJECT
+    public:
+      FunctionWidget() {}
+      virtual ~FunctionWidget() {}
+      virtual int getArg1Size() const {return 0;}
+      virtual int getArg2Size() const {return 0;}
+      virtual void setArg1Size(int i) {}
+    protected:
+      public slots:
+        virtual void resize_(int m, int n) {}
+signals:
+      void arg1SizeChanged(int);
+  };
+
+}
 
 #endif

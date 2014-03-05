@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimPlugin name="mbsimHydraulics" xmlns="http://mbsim.berlios.de/MBSimPlugin">
+  <schemas>
+    <Schema namespace="http://mbsim.berlios.de/MBSimHydraulics"
+            schemaLocation="http___mbsim_berlios_de_MBSimHydraulics/mbsimhydraulics.xsd"/>
+  </schemas>
+  <libraries>
+    <Library basename="mbsimHydraulics"/>
+  </libraries>
+</MBSimPlugin>

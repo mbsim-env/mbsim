@@ -24,23 +24,25 @@
 #include "extended_properties.h"
 #include <string>
 
-class Environment : public QObject {
-  public:
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
-    static Environment *getInstance() { return instance?instance:(instance=new Environment); }
+namespace MBSimGUI {
 
-  protected:
-    Environment();
-    virtual ~Environment();
-    static Environment *instance;
-};
+  class Environment : public QObject {
+    public:
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
+      static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
-class Solver : public Group {
-  friend class SolverPropertyDialog;
-  protected:
+    protected:
+      Environment();
+      virtual ~Environment();
+      static Environment *instance;
+  };
+
+  class Solver : public Group {
+    friend class SolverPropertyDialog;
+    protected:
     ExtProperty environment, solverParameters, inverseKinetics;
-  public:
+    public:
     Solver(const std::string &str, Element *parent);
     virtual Element* clone() const {return new Solver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
@@ -52,6 +54,8 @@ class Solver : public Group {
 
     ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
     QMenu* createContextMenu() {return new SolverContextMenu(this);}
-};
+  };
+
+}
 
 #endif

@@ -23,33 +23,37 @@
 
 using namespace std;
 
-TreeItem::~TreeItem() {
-  qDeleteAll(childItems);
-}
+namespace MBSimGUI {
 
-int TreeItem::childNumber() const {
-  if (parentItem)
-    return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
+  TreeItem::~TreeItem() {
+    qDeleteAll(childItems);
+  }
 
-  return 0;
-}
+  int TreeItem::childNumber() const {
+    if (parentItem)
+      return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
 
-bool TreeItem::insertChildren(TreeItem *item, int count) {
+    return 0;
+  }
 
-  ID++;
+  bool TreeItem::insertChildren(TreeItem *item, int count) {
 
-  for (int row = 0; row < count; ++row)
-    childItems.insert(childItems.count(), item);
+    ID++;
 
-  return true;
-}
+    for (int row = 0; row < count; ++row)
+      childItems.insert(childItems.count(), item);
 
-bool TreeItem::removeChildren(int position, int count) {
-  if (position < 0 || position + count > childItems.size())
-    return false;
+    return true;
+  }
 
-  for (int row = 0; row < count; ++row)
-    delete childItems.takeAt(position);
+  bool TreeItem::removeChildren(int position, int count) {
+    if (position < 0 || position + count > childItems.size())
+      return false;
 
-  return true;
+    for (int row = 0; row < count; ++row)
+      delete childItems.takeAt(position);
+
+    return true;
+  }
+
 }

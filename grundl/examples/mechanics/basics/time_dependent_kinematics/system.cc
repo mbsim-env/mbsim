@@ -66,10 +66,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body1->getFrame("C"));
-  //arrow->setStaticColor(0.5);
+  //arrow->setDiffuseColor(1/3.0, 1, 1);
   o->enableOpenMBVVelocity();
 
-  //arrow->setStaticColor(0.4);
+  //arrow->setDiffuseColor(0.4, 1, 1);
   o->enableOpenMBVAngularVelocity();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

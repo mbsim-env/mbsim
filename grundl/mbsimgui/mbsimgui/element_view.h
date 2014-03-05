@@ -23,24 +23,28 @@
 #include <QTreeView>
 #include <QModelIndex>
 
-class Element;
-class ElementPropertyDialog;
+namespace MBSimGUI {
 
-class ElementView : public QTreeView {
-  Q_OBJECT
-  private:
-    QModelIndex index;
-    Element *element;
-    ElementPropertyDialog *editor;
-  public:
-    ElementView(QWidget *parent=0) : QTreeView(parent), element(0), editor(0) {}
-    void openEditor();
-  protected:
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-  protected slots:
-    void dialogFinished(int result);
-    void apply();
-};
+  class Element;
+  class ElementPropertyDialog;
+
+  class ElementView : public QTreeView {
+    Q_OBJECT
+    private:
+      QModelIndex index;
+      Element *element;
+      ElementPropertyDialog *editor;
+    public:
+      ElementView(QWidget *parent=0) : QTreeView(parent), element(0), editor(0) {}
+      void openEditor();
+    protected:
+      void mouseDoubleClickEvent(QMouseEvent *event);
+      void mousePressEvent(QMouseEvent *event);
+      protected slots:
+        void dialogFinished(int result);
+      void apply();
+  };
+
+}
 
 #endif

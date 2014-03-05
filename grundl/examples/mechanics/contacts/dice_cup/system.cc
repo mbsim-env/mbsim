@@ -109,7 +109,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cube* diceAMV = new OpenMBV::Cube;
   diceAMV->setLength(length);
-  diceAMV->setStaticColor(0.5);
+  diceAMV->setDiffuseColor(1/3.0, 1, 1);
   dice->setOpenMBVRigidBody(diceAMV);
 #endif
   // ************************************************************************

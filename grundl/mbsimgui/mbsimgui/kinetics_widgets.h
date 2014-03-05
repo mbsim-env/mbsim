@@ -24,256 +24,261 @@
 #include "basic_widgets.h"
 #include <QComboBox>
 
-class FunctionWidget;
 class QVBoxLayout;
-class ExtWidget;
-class ExtPhysicalVarWidget;
-class Function1ChoiceWidget;
-class Element;
 
-class GeneralizedForceLawWidget : public Widget {
+namespace MBSimGUI {
 
-  public:
-    GeneralizedForceLawWidget() : forceFunc(0) {}
-    virtual QString getType() const { return "GeneralizedForceLaw"; }
-   protected:
-    FunctionWidget *forceFunc;
-};
+  class FunctionWidget;
+  class ExtWidget;
+  class ExtPhysicalVarWidget;
+  class Function1ChoiceWidget;
+  class Element;
 
-class BilateralConstraintWidget : public GeneralizedForceLawWidget {
+  class GeneralizedForceLawWidget : public Widget {
 
-  public:
-    BilateralConstraintWidget() {}
-    virtual QString getType() const { return "BilateralConstraint"; }
-};
+    public:
+      GeneralizedForceLawWidget() : forceFunc(0) {}
+      virtual QString getType() const { return "GeneralizedForceLaw"; }
+    protected:
+      FunctionWidget *forceFunc;
+  };
 
-class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
-  Q_OBJECT
+  class BilateralConstraintWidget : public GeneralizedForceLawWidget {
 
-  friend class RegularizedBilateralConstraintProperty;
+    public:
+      BilateralConstraintWidget() {}
+      virtual QString getType() const { return "BilateralConstraint"; }
+  };
 
-  public:
+  class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
+    Q_OBJECT
+
+      friend class RegularizedBilateralConstraintProperty;
+
+    public:
     RegularizedBilateralConstraintWidget(); 
     virtual QString getType() const { return "RegularizedBilateralConstraint"; }
-  protected:
+    protected:
     QVBoxLayout *layout;
     QComboBox *funcList;
-  protected slots:
-    void defineFunction(int);
-};
+    protected slots:
+      void defineFunction(int);
+  };
 
-class UnilateralConstraintWidget : public GeneralizedForceLawWidget {
+  class UnilateralConstraintWidget : public GeneralizedForceLawWidget {
 
-  public:
-    UnilateralConstraintWidget() {}
-    virtual QString getType() const { return "UnilateralConstraint"; }
-};
+    public:
+      UnilateralConstraintWidget() {}
+      virtual QString getType() const { return "UnilateralConstraint"; }
+  };
 
-class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
-  Q_OBJECT
+  class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
+    Q_OBJECT
 
-  friend class RegularizedUnilateralConstraintProperty;
+      friend class RegularizedUnilateralConstraintProperty;
 
-  public:
+    public:
     RegularizedUnilateralConstraintWidget(); 
     virtual QString getType() const { return "RegularizedUnilateralConstraint"; }
-  protected:
+    protected:
     QVBoxLayout *layout;
     QComboBox *funcList;
-  protected slots:
-    void defineFunction(int);
-};
+    protected slots:
+      void defineFunction(int);
+  };
 
-class GeneralizedImpactLawWidget : public Widget {
+  class GeneralizedImpactLawWidget : public Widget {
 
-  public:
-    GeneralizedImpactLawWidget() {}
-    virtual QString getType() const { return "GeneralizedImpactLaw"; }
-};
+    public:
+      GeneralizedImpactLawWidget() {}
+      virtual QString getType() const { return "GeneralizedImpactLaw"; }
+  };
 
-class BilateralImpactWidget : public GeneralizedImpactLawWidget {
+  class BilateralImpactWidget : public GeneralizedImpactLawWidget {
 
-  public:
-    BilateralImpactWidget() {}
-    virtual QString getType() const { return "BilateralImpact"; }
-};
+    public:
+      BilateralImpactWidget() {}
+      virtual QString getType() const { return "BilateralImpact"; }
+  };
 
-class UnilateralNewtonImpactWidget : public GeneralizedImpactLawWidget {
+  class UnilateralNewtonImpactWidget : public GeneralizedImpactLawWidget {
 
-  friend class UnilateralNewtonImpactProperty;
+    friend class UnilateralNewtonImpactProperty;
 
-  public:
+    public:
     UnilateralNewtonImpactWidget();
     virtual QString getType() const { return "UnilateralNewtonImpact"; }
-  protected:
+    protected:
     ExtWidget* restitutionCoefficient;
-};
+  };
 
-class FrictionForceLawWidget : public Widget {
+  class FrictionForceLawWidget : public Widget {
 
-  public:
-    FrictionForceLawWidget() : frictionForceFunc(0) {}
-    virtual QString getType() const { return "FrictionForceLaw"; }
-   protected:
-    FunctionWidget *frictionForceFunc;
-};
+    public:
+      FrictionForceLawWidget() : frictionForceFunc(0) {}
+      virtual QString getType() const { return "FrictionForceLaw"; }
+    protected:
+      FunctionWidget *frictionForceFunc;
+  };
 
-class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
+  class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
 
-  friend class PlanarCoulombFrictionProperty;
+    friend class PlanarCoulombFrictionProperty;
 
-  public:
+    public:
     PlanarCoulombFrictionWidget();
     virtual QString getType() const { return "PlanarCoulombFriction"; }
-  protected:
+    protected:
     ExtWidget* frictionCoefficient;
-};
+  };
 
-class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
+  class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
 
-  friend class SpatialCoulombFrictionProperty;
+    friend class SpatialCoulombFrictionProperty;
 
-  public:
+    public:
     SpatialCoulombFrictionWidget();
     virtual QString getType() const { return "SpatialCoulombFriction"; }
-  protected:
+    protected:
     ExtWidget* frictionCoefficient;
-};
+  };
 
-class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
-  Q_OBJECT
+  class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
+    Q_OBJECT
 
-  friend class RegularizedPlanarFrictionProperty;
+      friend class RegularizedPlanarFrictionProperty;
 
-  public:
+    public:
     RegularizedPlanarFrictionWidget(); 
     virtual QString getType() const { return "RegularizedPlanarFriction"; }
-  protected:
+    protected:
     QVBoxLayout *layout;
     QComboBox *funcList;
-  protected slots:
-    void defineFunction(int);
-};
+    protected slots:
+      void defineFunction(int);
+  };
 
-class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
-  Q_OBJECT
+  class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
+    Q_OBJECT
 
-  friend class RegularizedSpatialFrictionProperty;
+      friend class RegularizedSpatialFrictionProperty;
 
-  public:
+    public:
     RegularizedSpatialFrictionWidget(); 
     virtual QString getType() const { return "RegularizedSpatialFriction"; }
-  protected:
+    protected:
     QVBoxLayout *layout;
     QComboBox *funcList;
-  protected slots:
-    void defineFunction(int);
-};
+    protected slots:
+      void defineFunction(int);
+  };
 
-class FrictionImpactLawWidget : public Widget {
+  class FrictionImpactLawWidget : public Widget {
 
-  public:
-    FrictionImpactLawWidget() {}
-    virtual QString getType() const { return "FrictionImpactLaw"; }
-};
+    public:
+      FrictionImpactLawWidget() {}
+      virtual QString getType() const { return "FrictionImpactLaw"; }
+  };
 
-class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
+  class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
 
-  friend class PlanarCoulombImpactProperty;
+    friend class PlanarCoulombImpactProperty;
 
-  public:
+    public:
     PlanarCoulombImpactWidget();
     virtual QString getType() const { return "PlanarCoulombImpact"; }
-  protected:
+    protected:
     ExtWidget* frictionCoefficient;
-};
+  };
 
-class SpatialCoulombImpactWidget : public FrictionImpactLawWidget {
+  class SpatialCoulombImpactWidget : public FrictionImpactLawWidget {
 
-  friend class SpatialCoulombImpactProperty;
+    friend class SpatialCoulombImpactProperty;
 
-  public:
+    public:
     SpatialCoulombImpactWidget();
     virtual QString getType() const { return "SpatialCoulombImpact"; }
-  protected:
+    protected:
     ExtWidget* frictionCoefficient;
-};
+  };
 
-class GeneralizedForceLawChoiceWidget : public Widget {
-  Q_OBJECT
+  class GeneralizedForceLawChoiceWidget : public Widget {
+    Q_OBJECT
 
-  friend class GeneralizedForceLawChoiceProperty;
+      friend class GeneralizedForceLawChoiceProperty;
 
-  public:
+    public:
     GeneralizedForceLawChoiceWidget();
 
     int getForceLaw() {return comboBox->currentIndex();}
 
-  protected slots:
-    void defineForceLaw(int);
+    protected slots:
+      void defineForceLaw(int);
 
-  protected:
+    protected:
     QComboBox *comboBox;
     QVBoxLayout *layout;
     GeneralizedForceLawWidget *generalizedForceLaw;
-};
+  };
 
-class GeneralizedImpactLawChoiceWidget : public Widget {
-  Q_OBJECT
+  class GeneralizedImpactLawChoiceWidget : public Widget {
+    Q_OBJECT
 
-  friend class GeneralizedImpactLawChoiceProperty;
+      friend class GeneralizedImpactLawChoiceProperty;
 
-  public:
+    public:
     GeneralizedImpactLawChoiceWidget();
 
     int getImpactLaw() {return comboBox->currentIndex();}
 
-  protected slots:
-    void defineImpactLaw(int);
+    protected slots:
+      void defineImpactLaw(int);
 
-  protected:
+    protected:
     QComboBox *comboBox;
     QVBoxLayout *layout;
     GeneralizedImpactLawWidget *generalizedImpactLaw;
-};
+  };
 
-class FrictionForceLawChoiceWidget : public Widget {
-  Q_OBJECT
+  class FrictionForceLawChoiceWidget : public Widget {
+    Q_OBJECT
 
-  friend class FrictionForceLawChoiceProperty;
+      friend class FrictionForceLawChoiceProperty;
 
-  public:
+    public:
     FrictionForceLawChoiceWidget();
 
     int getForceLaw() {return comboBox->currentIndex();}
 
-  protected slots:
-    void defineFrictionLaw(int);
+    protected slots:
+      void defineFrictionLaw(int);
 
-  protected:
+    protected:
     QComboBox *comboBox;
     QVBoxLayout *layout;
     FrictionForceLawWidget *frictionForceLaw;
-};
+  };
 
-class FrictionImpactLawChoiceWidget : public Widget {
-  Q_OBJECT
+  class FrictionImpactLawChoiceWidget : public Widget {
+    Q_OBJECT
 
-  friend class FrictionImpactLawChoiceProperty;
+      friend class FrictionImpactLawChoiceProperty;
 
-  public:
+    public:
     FrictionImpactLawChoiceWidget();
 
     int getImpactLaw() {return comboBox->currentIndex();}
 
-  protected slots:
-    void defineFrictionImpactLaw(int);
+    protected slots:
+      void defineFrictionImpactLaw(int);
 
-  protected:
+    protected:
     QComboBox *comboBox;
     QVBoxLayout *layout;
     FrictionImpactLawWidget *frictionImpactLaw;
-};
+  };
+
+}
 
 #endif
 

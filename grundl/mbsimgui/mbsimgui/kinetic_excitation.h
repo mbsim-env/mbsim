@@ -23,9 +23,11 @@
 #include "link.h"
 #include "extended_properties.h"
 
-class KineticExcitation : public Link {
-  friend class KineticExcitationPropertyDialog;
-  public:
+namespace MBSimGUI {
+
+  class KineticExcitation : public Link {
+    friend class KineticExcitationPropertyDialog;
+    public:
     KineticExcitation(const std::string &str, Element *parent);
     virtual Element* clone() const {return new KineticExcitation(*this);}
     std::string getType() const { return "KineticExcitation"; }
@@ -33,8 +35,10 @@ class KineticExcitation : public Link {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
-  protected:
+    protected:
     ExtProperty refFrameID, forceDirection, forceFunction, momentDirection, momentFunction, connections, forceArrow, momentArrow;
-};
+  };
+
+}
 
 #endif

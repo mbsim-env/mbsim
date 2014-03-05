@@ -28,63 +28,67 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
+namespace MBSimGUI {
 
-  connections.setProperty(new ConnectContoursProperty(2,this));
+  Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
-  contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"normalForceLaw"));
+    connections.setProperty(new ConnectContoursProperty(2,this));
 
-  contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(""));
-  contactImpactLaw.setXMLName(MBSIM%"normalImpactLaw");
+    contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"normalForceLaw"));
 
-  frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(""));
-  frictionForceLaw.setXMLName(MBSIM%"tangentialForceLaw",false);
+    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(""));
+    contactImpactLaw.setXMLName(MBSIM%"normalImpactLaw");
 
-  frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
-  frictionImpactLaw.setXMLName(MBSIM%"tangentialImpactLaw",false);
+    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(""));
+    frictionForceLaw.setXMLName(MBSIM%"tangentialForceLaw",false);
 
-//  vector<PhysicalVariableProperty> input;
-//  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIM%"enableOpenMBVContactPoints"));
-//  enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
-  enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
+    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
+    frictionImpactLaw.setXMLName(MBSIM%"tangentialImpactLaw",false);
 
-  normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  normalForceArrow.setXMLName(MBSIM%"enableOpenMBVNormalForce",false);
+    //  vector<PhysicalVariableProperty> input;
+    //  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIM%"enableOpenMBVContactPoints"));
+    //  enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
+    enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
-  frictionArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-  frictionArrow.setXMLName(MBSIM%"enableOpenMBVTangentialForce",false);
-}
+    normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    normalForceArrow.setXMLName(MBSIM%"enableOpenMBVNormalForce",false);
 
-Contact::~Contact() {
-}
+    frictionArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    frictionArrow.setXMLName(MBSIM%"enableOpenMBVTangentialForce",false);
+  }
 
-void Contact::initialize() {
-  Link::initialize();
-  connections.initialize();
-}
+  Contact::~Contact() {
+  }
 
-void Contact::initializeUsingXML(DOMElement *element) {
-  DOMElement *e;
-  Link::initializeUsingXML(element);
-  contactForceLaw.initializeUsingXML(element);
-  contactImpactLaw.initializeUsingXML(element);
-  frictionForceLaw.initializeUsingXML(element);
-  frictionImpactLaw.initializeUsingXML(element);
-  connections.initializeUsingXML(element);
-  enableOpenMBVContactPoints.initializeUsingXML(element);
-  normalForceArrow.initializeUsingXML(element);
-  frictionArrow.initializeUsingXML(element);
-}
+  void Contact::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
 
-DOMElement* Contact::writeXMLFile(DOMNode *parent) {
-  DOMElement *ele0 = Link::writeXMLFile(parent);
-  contactForceLaw.writeXMLFile(ele0);
-  contactImpactLaw.writeXMLFile(ele0);
-  frictionForceLaw.writeXMLFile(ele0);
-  frictionImpactLaw.writeXMLFile(ele0);
-  connections.writeXMLFile(ele0);
-  enableOpenMBVContactPoints.writeXMLFile(ele0);
-  normalForceArrow.writeXMLFile(ele0);
-  frictionArrow.writeXMLFile(ele0);
-  return ele0;
+  void Contact::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
+    Link::initializeUsingXML(element);
+    contactForceLaw.initializeUsingXML(element);
+    contactImpactLaw.initializeUsingXML(element);
+    frictionForceLaw.initializeUsingXML(element);
+    frictionImpactLaw.initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    enableOpenMBVContactPoints.initializeUsingXML(element);
+    normalForceArrow.initializeUsingXML(element);
+    frictionArrow.initializeUsingXML(element);
+  }
+
+  DOMElement* Contact::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    contactForceLaw.writeXMLFile(ele0);
+    contactImpactLaw.writeXMLFile(ele0);
+    frictionForceLaw.writeXMLFile(ele0);
+    frictionImpactLaw.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
+    enableOpenMBVContactPoints.writeXMLFile(ele0);
+    normalForceArrow.writeXMLFile(ele0);
+    frictionArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

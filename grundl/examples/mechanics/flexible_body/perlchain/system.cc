@@ -55,7 +55,7 @@ System::System(const string &projectName) :
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(elements * 4); // resolution of visualisation
-  cuboid->setDiffuseColor(0.8, 1., 1.); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setDiffuseColor(1/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
@@ -118,7 +118,7 @@ System::System(const string &projectName) :
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cuboid *cube = new OpenMBV::Cuboid;
     cube->setLength(d, b, b);
-    cube->setDiffuseColor(1., 1, 1);
+    cube->setDiffuseColor(0, 1, 1);
     balls[i]->setOpenMBVRigidBody(cube);
 #endif
   }

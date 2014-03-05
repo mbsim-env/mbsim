@@ -21,11 +21,14 @@
 #include "parameter_context_menu.h"
 #include "mainwindow.h"
 
-extern MainWindow *mw;
+namespace MBSimGUI {
 
-ParameterContextMenu::ParameterContextMenu(QWidget *parent) : QMenu(parent) {
-  QAction *action=new QAction("Remove", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
-  addAction(action);
+  extern MainWindow *mw;
+
+  ParameterContextMenu::ParameterContextMenu(QWidget *parent) : QMenu(parent) {
+    QAction *action=new QAction("Remove", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
+    addAction(action);
+  }
+
 }
-
