@@ -10,8 +10,7 @@
 
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
-#include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
+#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_translation.h"
@@ -40,6 +39,7 @@ namespace MBSimFlexibleBody {
    *    geometrically exact beams
    */
   class Contour1sNeutralCosserat;
+
   class FlexibleBody1sCosserat : public FlexibleBodyContinuum<double> {
     public:
 
@@ -74,7 +74,6 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int i = 0);
-      virtual void updateStateDependentVariables(double t);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt = 1)=0;
@@ -92,33 +91,22 @@ namespace MBSimFlexibleBody {
 
       virtual void setMomentsInertia(double I1_, double I2_, double I0_) {
       }
-      ;
       virtual void setMomentsInertia(double I1_) {
       }
-      ;
 
       virtual void setCurlRadius(double R1_, double R2_) {
       }
-      ;
       virtual void setCurlRadius(double R1_) {
       }
-      ;
       virtual void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
       }
-      ;
       virtual void setMaterialDamping(double cEps0D_, double cEps1D_) {
       }
-      ;
 
-      void setCylinder(double cylinderRadius_);
-      void setCuboid(double cuboidBreadth_, double cuboidHeight_);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body, Contour1sNeutralCosserat * openMBVneutralFibre_) {
-        openMBVBody = body;
-        openMBVNeturalFibre = openMBVneutralFibre_;
-      }
-#endif
+      /*!
+       * \brief automatically creates its neutral contour
+       */
+      virtual Contour1sNeutralCosserat* createNeutralPhase(const std::string & contourName = "Neutral");
 
       virtual int getNumberOfElementDOF() const {
         throw MBSim::MBSimError("ERROR(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");
@@ -251,17 +239,10 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec bound_ang_vel_start;
       fmatvec::Vec bound_ang_vel_end;
 
-      /**
-       * \brief contour data
-       */
-      double cuboidBreadth, cuboidHeight, cylinderRadius;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief contour for the spine extrusion
        */
-      Contour1sNeutralCosserat* openMBVNeturalFibre;
-#endif
+      Contour1sNeutralCosserat* ncc;
 
       FlexibleBody1sCosserat(); // standard constructor
       FlexibleBody1sCosserat(const FlexibleBody1sCosserat&); // copy constructor
@@ -299,14 +280,6 @@ namespace MBSimFlexibleBody {
   }
   inline void FlexibleBody1sCosserat::setCrossSectionalArea(double A_) {
     A = A_;
-  }
-
-  inline void FlexibleBody1sCosserat::setCylinder(double cylinderRadius_) {
-    cylinderRadius = cylinderRadius_;
-  }
-  inline void FlexibleBody1sCosserat::setCuboid(double cuboidBreadth_, double cuboidHeight_) {
-    cuboidBreadth = cuboidBreadth_;
-    cuboidHeight = cuboidHeight_;
   }
 }
 
