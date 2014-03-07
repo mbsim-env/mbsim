@@ -39,13 +39,6 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) :
       FlexibleBody1sCosserat(name, openStructure_), JTransInterp(false), I2(0.), I0(0.), R2(0.), cEps2D(0.) {
-//    addContour(cylinder);
-//    addContour(top);
-//    addContour(bottom);
-//    addContour(left);
-//    addContour(right);
-//    addContour(neutralFibre);
-//    addContour(curve);
   }
 
   FlexibleBody1s33Cosserat::~FlexibleBody1s33Cosserat() {
@@ -417,8 +410,8 @@ namespace MBSimFlexibleBody {
         vector<double> data;
         data.push_back(t);
         Vec X(6, INIT, 0.);
-        double uMin = openMBVNeturalFibre->getuMin();
-        double uMax = openMBVNeturalFibre->getuMax();
+        double uMin = ncc->getuMin();
+        double uMax = ncc->getuMax();
 
         double ds = openStructure ? (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 1) : (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 2);
         for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints(); i++) {
@@ -426,8 +419,8 @@ namespace MBSimFlexibleBody {
           // Get continous information from neutral fibre
           ContourPointData cp(uMin + ds * i);
 
-          openMBVNeturalFibre->updateKinematicsForFrame(cp, position);
-          openMBVNeturalFibre->updateKinematicsForFrame(cp, MBSim::angle);
+          ncc->updateKinematicsForFrame(cp, position);
+          ncc->updateKinematicsForFrame(cp, MBSim::angle);
           X(0, 2) = cp.getFrameOfReference().getPosition();
           X(3, 5) = cp.getFrameOfReference().getAnglesOfOrientation();
 
@@ -492,9 +485,9 @@ namespace MBSimFlexibleBody {
 //    temp(6, 8) = cp.getFrameOfReference().getVelocity();
 //    temp(9, 11) = cp.getFrameOfReference().getAngularVelocity();
 
-    openMBVNeturalFibre->updateKinematicsForFrame(cp, position);
-    openMBVNeturalFibre->updateKinematicsForFrame(cp, MBSim::angle);
-    openMBVNeturalFibre->updateKinematicsForFrame(cp, velocities);
+    ncc->updateKinematicsForFrame(cp, position);
+    ncc->updateKinematicsForFrame(cp, MBSim::angle);
+    ncc->updateKinematicsForFrame(cp, velocities);
     temp(0, 2) = cp.getFrameOfReference().getPosition();
     temp(3, 5) = cp.getFrameOfReference().getAnglesOfOrientation();
     temp(6, 8) = cp.getFrameOfReference().getVelocity();
@@ -577,30 +570,6 @@ namespace MBSimFlexibleBody {
       currentElementTranslation = Elements - 1;
       sLocal += l0;
     }
-  }
-
-  Contour1sNeutralCosserat* FlexibleBody1s33Cosserat::createNeutralPhase(const std::string & contourName) {
-    VecInt transNodes(Elements);
-    VecInt rotNodes(Elements);
-    for (int i = 0; i < Elements; i++) {
-      transNodes(i) = i;
-      rotNodes(i) = i;
-    }
-    double uMin = 0;  // uMin has to be 0, otherwise Nurbscurve:globalInterpClosed():inv() fails;
-    double uMax = 1;
-    double nodeOffset = 0.5 * (uMax - uMin) / Elements;
-    Contour1sNeutralCosserat* ncc = new Contour1sNeutralCosserat(contourName);
-    ncc->setTransNodes(transNodes);
-    ncc->setRotNodes(rotNodes);
-    ncc->setNodeOffest(nodeOffset);
-    ncc->setOpenStructure(openStructure);
-    ncc->setFrameOfReference(getFrameOfReference());
-    ncc->setAlphaStart(uMin);
-    ncc->setAlphaEnd(uMax);
-
-    addContour(ncc);
-
-    return ncc;
   }
 
   void FlexibleBody1s33Cosserat::initM() {

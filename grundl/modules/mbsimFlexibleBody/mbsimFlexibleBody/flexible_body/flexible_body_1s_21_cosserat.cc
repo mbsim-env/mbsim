@@ -142,7 +142,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  virtual void FlexibleBody1s21Cosserat::updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+  void FlexibleBody1s21Cosserat::updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
     int node = frame->getNodeNumber();
     /* 2D -> 3D mapping */
     Vec qTmpNODE(3, INIT, 0.);
@@ -158,21 +158,22 @@ namespace MBSimFlexibleBody {
       frame->setPosition(R->getPosition() + R->getOrientation() * qTmpNODE);
 
     if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(1, R->getOrientation() * angle->computet(qTmpANGLE)); // tangent
+      frame->getOrientation().set(1, R->getOrientation() * ANGLE->computet(qTmpANGLE)); // tangent
 
     if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(0, R->getOrientation() * angle->computen(qTmpANGLE)); // normal
+      frame->getOrientation().set(0, R->getOrientation() * ANGLE->computen(qTmpANGLE)); // normal
 
     if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
+      frame->getOrientation().set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1))); // binormal (cartesian system)
 
     if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
       frame->setVelocity(R->getOrientation() * uTmp);
 
     if (ff == angularVelocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(qTmpANGLE, uTmpANGLE));
+      frame->setAngularVelocity(R->getOrientation() * ANGLE->computeOmega(qTmpANGLE, uTmpANGLE));
   }
-  virtual void FlexibleBody1s21Cosserat::updateJacobiansAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+
+  void FlexibleBody1s21Cosserat::updateJacobiansAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
     int node = frame->getNodeNumber();
     /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
     Mat3xV Jacobian_trans(qFull.size(), INIT, 0.);
@@ -183,36 +184,36 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      double sLocalTranslation;
-      int currentElementTranslation;
-
-      BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
-
-      /* 2D -> 3D mapping */
-      Vec qTmpCONT(3, INIT, 0.);
-      qTmpCONT(2) = qFull(3 * currentElementTranslation + 2);
-
-      curve->setNormalRotationGrid(R->getOrientation() * angle->computen(qTmpCONT));  // normal
-      curve->updateKinematicsForFrame(cp, ff);
-
-      Vec3 phiTmp;
-      if (ff == firstTangent || ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0), qFull); // interpolate angles linearly
-
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(phiTmp)); // tangent
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * angle->computen(phiTmp)); // normal
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
-    }
-    else if (cp.getContourParameterType() == STAGGEREDNODE) {
-      //TODO
-      MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType 'STAGGEREDNODE' not implemented");
-    }
-    else
-      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE', 'STAGGEREDNODE' or 'CONTINUUM'");
+//    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+//      double sLocalTranslation;
+//      int currentElementTranslation;
+//
+//      BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
+//
+//      /* 2D -> 3D mapping */
+//      Vec qTmpCONT(3, INIT, 0.);
+//      qTmpCONT(2) = qFull(3 * currentElementTranslation + 2);
+//
+//      curve->setNormalRotationGrid(R->getOrientation() * ANGLE->computen(qTmpCONT));  // normal
+//      curve->updateKinematicsForFrame(cp, ff);
+//
+//      Vec3 phiTmp;
+//      if (ff == firstTangent || ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+//        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0), qFull); // interpolate angles linearly
+//
+//      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+//        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * ANGLE->computet(phiTmp)); // tangent
+//      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+//        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * ANGLE->computen(phiTmp)); // normal
+//      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+//        cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
+//    }
+//    else if (cp.getContourParameterType() == STAGGEREDNODE) {
+//      //TODO
+//      MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType 'STAGGEREDNODE' not implemented");
+//    }
+//    else
+    throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): shouldn't be called anymore --> use the neutral contour instead");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -227,7 +228,7 @@ namespace MBSimFlexibleBody {
 //      curve->updateJacobiansForFrame(cp);
 //    }
 //    else
-     if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
+    if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
       /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
       Mat3xV Jacobian_rot(qFull.size(), INIT, 0.);
@@ -466,9 +467,9 @@ namespace MBSimFlexibleBody {
           Vec X = computeState(ds * i);
           Vec pos = R->getPosition() + R->getOrientation() * X(0, 2);
           data.push_back(pos(0)); // global x-position
-          data.push_back(pos(1)); // global y-position
-          data.push_back(pos(2)); // global z-position
-          data.push_back(X(3)); // local twist
+          data.push_back(pos(1));// global y-position
+          data.push_back(pos(2));// global z-position
+          data.push_back(X(3));// local twist
         }
 
         ((OpenMBV::SpineExtrusion*) openMBVBody)->append(data);
