@@ -30,7 +30,7 @@ System::System(const string &projectName) :
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   double l0 = 1.5; // length
-  double b0 = 0.05; // width
+  double b0 = 0.1; // width
   double E = 5.e7; // E-Modul
   double mu = 0.3; // Poisson ratio
   double G = E / (2 * (1 + mu)); // shear modulus
@@ -62,7 +62,7 @@ System::System(const string &projectName) :
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
-  cuboid->setNumberOfSpinePoints(11); // resolution of visualisation
+  cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666, 0.3333, 0.6666); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
@@ -81,9 +81,7 @@ System::System(const string &projectName) :
 
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3, INIT, 0.);
-  WrOS0B(0) = l0 * 0.9;
-  WrOS0B(1) = b0 * 0.5 + r;
-  WrOS0B(2) = b0 * 0.3;
+  WrOS0B(0) = l0*0.75; WrOS0B(1) = b0*0.5+r; WrOS0B(2) = b0*0.3;
   this->addFrame(new FixedRelativeFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
@@ -94,8 +92,7 @@ System::System(const string &projectName) :
   Theta(2, 2) = 2. / 5. * mass * r * r;
   ball->setInertiaTensor(Theta);
   ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
-  Vec BR(3, INIT, 0.);
-  BR(1) = -r;
+  Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
   ball->addContour(new Point("Point", ball->getFrame("Point")));
   this->addObject(ball);
@@ -118,7 +115,6 @@ System::System(const string &projectName) :
   this->addLink(contact);
 
   ContourPointData cpdata;
-  cpdata.getLagrangeParameterPosition() = Vec2();
   cpdata.getContourParameterType() = CONTINUUM;
   rod->addFrame("RJ", cpdata);
   Joint *joint = new Joint("Clamping");
