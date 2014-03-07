@@ -23,6 +23,8 @@
 
 #include "contact_kinematics.h"
 
+#include "mbsim/functions_contact.h"
+
 namespace MBSim {
 
   class Point;
@@ -63,6 +65,16 @@ namespace MBSim {
        */
       Point *point;
       Contour1s *contour1s;
+
+      /*!
+       * \brief function for search
+       */
+      FuncPairContour1sPoint *func;
+
+      /*!
+       * \brief search object to identify lagrange parameter position
+       */
+      Contact1sSearch search;
   };
 
 }

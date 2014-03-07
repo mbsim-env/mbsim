@@ -55,7 +55,6 @@ namespace MBSim {
   class GearConstraint : public Constraint {
 
     public:
-      GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name="");
 
       void addTransmission(const Transmission &transmission);
@@ -102,7 +101,6 @@ namespace MBSim {
   class KinematicConstraint : public Constraint {
 
     public:
-      KinematicConstraint(const std::string &name, RigidBody* body);
       KinematicConstraint(const std::string &name="");
 
       void setDependentBody(RigidBody* body) {bd=body; }
@@ -139,7 +137,6 @@ namespace MBSim {
   class GeneralizedPositionConstraint : public KinematicConstraint {
 
     public:
-      GeneralizedPositionConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL) {}
       GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
 
       void init(InitStage stage);
@@ -162,7 +159,6 @@ namespace MBSim {
   class GeneralizedVelocityConstraint : public KinematicConstraint {
 
     public:
-      GeneralizedVelocityConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body), f(NULL) {}
       GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
 
       void init(InitStage stage);
@@ -200,7 +196,6 @@ namespace MBSim {
   class GeneralizedAccelerationConstraint : public KinematicConstraint {
 
     public:
-      GeneralizedAccelerationConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
       GeneralizedAccelerationConstraint(const std::string &name="") : KinematicConstraint(name) {}
 
       void init(InitStage stage);

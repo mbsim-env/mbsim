@@ -84,13 +84,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GearConstraint, MBSIMNS"GearConstraint")
 
-  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_DependentBody("") {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow = 0;
-    MArrow = 0;
-#endif
-  }
-
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow = 0;
@@ -180,13 +173,6 @@ namespace MBSim {
   }
 
   KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow = 0;
-    MArrow = 0;
-#endif
-  }
-
-  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_DependentBody("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow = 0;
     MArrow = 0;
