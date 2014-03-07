@@ -145,26 +145,30 @@ namespace MBSimPowertrain {
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
 
     if(planetIndependent) {
-      GearConstraint *constraint = new GearConstraint("C1",shaft4); 	 
+      GearConstraint *constraint = new GearConstraint("C1"); 	 
       addObject(constraint); 	 
+      constraint->setDependentBody(shaft4);
       constraint->addTransmission(Transmission(shaft2,1));
       constraint->addTransmission(Transmission(planet,data.radiusPlanet/data.radiusLeftOutputShaft));
 
-      constraint = new GearConstraint("C2",shaft5);
+      constraint = new GearConstraint("C2");
       addObject(constraint);
+      constraint->setDependentBody(shaft5);
       constraint->addTransmission(Transmission(shaft2,1));
       constraint->addTransmission(Transmission(planet,-data.radiusPlanet/data.radiusRightOutputShaft));
     }
     else {
       double c1 = data.radiusLeftOutputShaft + data.radiusRightOutputShaft;
       double c2 = data.radiusLeftOutputShaft*data.radiusRightOutputShaft;
-      GearConstraint *constraint = new GearConstraint("C1",shaft2);
+      GearConstraint *constraint = new GearConstraint("C1");
       addObject(constraint);
+      constraint->setDependentBody(shaft2);
       constraint->addTransmission(Transmission(shaft4,data.radiusLeftOutputShaft/c1));
       constraint->addTransmission(Transmission(shaft5,data.radiusRightOutputShaft/c1));
 
-      constraint = new GearConstraint("C2",planet);
+      constraint = new GearConstraint("C2");
       addObject(constraint);
+      constraint->setDependentBody(planet);
       constraint->addTransmission(Transmission(shaft4,c2/(data.radiusPlanet*c1)));
       constraint->addTransmission(Transmission(shaft5,-c2/(data.radiusPlanet*c1)));
     }

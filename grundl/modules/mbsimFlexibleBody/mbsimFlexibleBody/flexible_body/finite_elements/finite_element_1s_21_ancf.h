@@ -34,8 +34,6 @@ namespace MBSimFlexibleBody {
    *
    * \date 2014-02-27 basic revision
    *
-   * \todo JGeneralized not checked up to now
-   *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
@@ -52,7 +50,7 @@ namespace MBSimFlexibleBody {
        * \param bending stiffness
        * \param vector of gravitational acceleration
        */
-      FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, fmatvec::Vec sg);
+      explicit FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, fmatvec::Vec sg);
 
       /**
        * \destructor
@@ -72,10 +70,10 @@ namespace MBSimFlexibleBody {
       virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeKineticEnergy): not implemented!"); }
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!"); }
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeElasticEnergy): not implemented!"); }
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
+      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp);
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp);
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { return JGeneralized(qElement,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
 
@@ -114,6 +112,21 @@ namespace MBSimFlexibleBody {
        * \return JACOBIAN of translation and rotation with respect to generalised coordinates
        */
       fmatvec::Mat JGeneralized(const fmatvec::Vec& qElement, const double& s);
+
+      /**
+       * \brief return the matrix of global shape functions
+       * \param contour point
+       * \return matrix of global shape functions
+       */
+      fmatvec::Mat GlobalShapeFunctions(const double& s);
+
+      /**
+       * \brief returns the tangent
+       * \param generalised coordinates
+       * \param contour point
+       * \return tangent
+       * */
+      fmatvec::Vec tangent(const fmatvec::Vec& qElement, const double& s);
 
     private:
       /** 
@@ -175,11 +188,6 @@ namespace MBSimFlexibleBody {
        * \brief derivative of right hand side with respect to velocities
        */
       fmatvec::SqrMat Dhqp;
-
-      /**
-       * \brief default constructor is declared private 
-       */
-      FiniteElement1s21ANCF();
 
       /**
        * \brief copy constructor is declared private

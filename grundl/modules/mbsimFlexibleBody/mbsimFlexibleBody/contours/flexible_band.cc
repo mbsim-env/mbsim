@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().getOrientation().set(2, -WnLocal * Cn(1) + WbLocal * Cn(0));
     }
     if (ff == position || ff == position_cosy) {
-      Contour1sFlexible::updateKinematicsForFrame(cp, position_cosy);
+      Contour1sFlexible::updateKinematicsForFrame(cp, position);
       cp.getFrameOfReference().getPosition() += cp.getFrameOfReference().getOrientation().col(0) * nDist + cp.getFrameOfReference().getOrientation().col(2) * cp.getLagrangeParameterPosition()(1);
     }
     if (ff == angularVelocity || ff == velocities || ff == velocities_cosy) {
