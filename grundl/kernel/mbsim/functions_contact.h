@@ -53,6 +53,8 @@ namespace MBSim {
   template <typename Ret, typename Arg>
   class DistanceFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
     public:
+      virtual ~DistanceFunction() {
+      }
       /* INTERFACE FOR DERIVED CLASSES */
       /*!
        * \param contour parameter
