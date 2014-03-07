@@ -17,7 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
+#include "config.h"
 #include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/contour.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"

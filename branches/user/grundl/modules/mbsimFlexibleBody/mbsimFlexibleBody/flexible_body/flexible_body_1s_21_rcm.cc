@@ -250,6 +250,8 @@ namespace MBSimFlexibleBody {
       }
       else
         contour1sFlexible->setNodes(userContourNodes);
+        
+      FlexibleBodyContinuum<double>::init(stage);
     }
     else if (stage == unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
