@@ -79,7 +79,7 @@ namespace MBSimGUI {
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
-    widget->addWidget(new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input)));
+    widget->addWidget(new ExtWidget("Ratio",new ExtPhysicalVarWidget(input)));
     return widget;
   }
 
@@ -519,7 +519,7 @@ namespace MBSimGUI {
     //  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
     //  addToTab("General", independentBodies);
 
-    independentBodies = new ExtWidget("Independent bodies",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Body"));
+    independentBodies = new ExtWidget("Transmissions",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Transmission"));
     addToTab("General",independentBodies);
 
     gearForceArrow = new ExtWidget("OpenMBV gear force arrow",new OMBVArrowWidget("NOTSET"),true);

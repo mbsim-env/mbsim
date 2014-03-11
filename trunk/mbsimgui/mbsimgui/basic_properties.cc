@@ -756,7 +756,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PV%"Embed");
     if(href.isActive()) {
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(getFile())).toStdString();

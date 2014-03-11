@@ -23,6 +23,7 @@
 #include "ombv_properties.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
+#include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -50,9 +51,10 @@ namespace MBSimGUI {
   Frame* Frame::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
+    //Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
+    Frame *frame=Embed<Frame>::createAndInit(e,parent);
     if(frame) {
-      frame->initializeUsingXML(e);
+//      frame->initializeUsingXML(e);
       frame->initialize();
     }
     return frame;

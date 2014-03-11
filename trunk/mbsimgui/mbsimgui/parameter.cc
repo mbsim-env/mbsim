@@ -196,6 +196,26 @@ namespace MBSimGUI {
     }
   }
 
+  void Parameters::addParameters(const Parameters &list) {
+    for(int i=0; i<list.getNumberOfParameters(); i++)
+      addParameter(list.getParameter(i));
+  }
+
+  void Parameters::removeParameter(Parameter *param) {  
+    for (vector<Parameter*>::iterator it = parameter.begin(); it != parameter.end(); it++) {
+      if(*it == param) {
+        parameter.erase(it);
+        delete param;
+        return;
+      }
+    }
+  }
+
+  void Parameters::removeParameters() {
+    for(int i=0; i<parameter.size(); i++)
+      delete parameter[i];
+  }
+
   Parameters Parameters::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);

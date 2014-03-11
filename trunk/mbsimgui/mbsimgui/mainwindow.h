@@ -34,6 +34,7 @@ class QTextBrowser;
 class QProcess;
 class QUrl;
 class QModelIndex;
+class QTreeWidget;
 
 namespace OpenMBVGUI {
   class MainWindow;

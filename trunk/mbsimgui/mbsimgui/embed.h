@@ -54,14 +54,16 @@ namespace MBSimGUI {
               object=T::readXMLFile(MBXMLUtils::E(ele1)->getAttribute("href"),parent);
             else
               object=create(ele2,parent);
-            object->initializeUsingXMLEmbed(ele1);
-            if(ele2)
-              object->initializeUsingXML(ele2);
-            object->setParameters(param);
+            if(object) {
+              object->initializeUsingXMLEmbed(ele1);
+              if(ele2)
+                object->initializeUsingXML(ele2);
+              object->setParameters(param);
+            }
           }
           else {
             object=create(ele1,parent);
-            object->initializeUsingXML(ele1);
+            if(object) object->initializeUsingXML(ele1);
           }
           return object;
         }

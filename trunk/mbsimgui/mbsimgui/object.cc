@@ -21,6 +21,7 @@
 #include "object.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
+#include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -36,9 +37,10 @@ namespace MBSimGUI {
   Object* Object::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Object *object=ObjectFactory::getInstance()->createObject(e, parent);
+//    Object *object=ObjectFactory::getInstance()->createObject(e, parent);
+    Object *object=Embed<Object>::createAndInit(e,parent);
     if(object) {
-      object->initializeUsingXML(e);
+//      object->initializeUsingXML(e);
       object->initialize();
     }
     return object;

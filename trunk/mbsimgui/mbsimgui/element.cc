@@ -29,6 +29,7 @@
 #include "link.h"
 #include "observer.h"
 #include "mainwindow.h"
+#include "embed.h"
 #include <boost/bind.hpp>
 
 using namespace std;
@@ -64,6 +65,16 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
+  void Element::writeXMLFileEmbed(const string &name) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    Embed<Element>::writeXML(this,doc.get());
+    QFileInfo info(QString::fromStdString(name));
+    QDir dir;
+    if(!dir.exists(info.absolutePath()))
+      dir.mkpath(info.absolutePath());
+    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  }
+
   void Element::initializeUsingXML(DOMElement *element) {
     //  for(unsigned int i=0; i<plotFeature.size(); i++)
     //    plotFeature[i]->initializeUsingXML(element);
@@ -86,7 +97,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    //DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = embed.writeXMLFile(parent);
 
     if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
@@ -195,15 +207,26 @@ namespace MBSimGUI {
     }
   }
 
-  ParameterList Element::getParameterList(bool addCounter) const {
+  ParameterList Element::getParameterList(bool addCounter) {
     ParameterList list;
     const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
     if(parent)
       list.addParameterList(parent->getParameterList(false));
-    if(isEmbedded() && e->hasParameterFile())
-      list.readXMLFile(e->getParameterFile());
+    for(int i=0; i<getNumberOfParameters(); i++)
+      list.addParameter(getParameter(i)->getName(),getParameter(i)->getValue(),getParameter(i)->getType()); 
     if(addCounter && e->hasCounter())
       list.addParameter(e->getCounterName(),"1","scalarParameter"); 
+    return list;
+  }
+
+  Parameters Element::getGlobalParameters(bool addCounter) const {
+    Parameters list;
+    const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
+    if(parent)
+      list.addParameters(parent->getGlobalParameters(false));
+    list.addParameters(parameters);
+//    if(addCounter && e->hasCounter())
+//      list.addParameter(e->getCounterName(),"1","scalarParameter"); 
     return list;
   }
 

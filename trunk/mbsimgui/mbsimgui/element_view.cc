@@ -35,7 +35,7 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
       if(element) {
-        if(element->isEmbedded())
+        //if(element->isEmbedded())
           mw->updateOctaveParameters(element->getParameterList());
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
@@ -58,8 +58,8 @@ namespace MBSimGUI {
 
   void ElementView::dialogFinished(int result) {
     if(result != 0) {
-      if(element->isEmbedded())
-        mw->updateOctaveParameters(ParameterList());
+//      if(element->isEmbedded())
+//        mw->updateOctaveParameters(ParameterList());
       mw->mbsimxml(1);
     }
     editor = 0;
@@ -68,8 +68,8 @@ namespace MBSimGUI {
 
   void ElementView::apply() {
     update(index);
-    if(element->isEmbedded())
-      mw->updateOctaveParameters(element->getParameterList());
+//    if(element->isEmbedded())
+//      mw->updateOctaveParameters(element->getParameterList());
     mw->mbsimxml(1);
   }
 

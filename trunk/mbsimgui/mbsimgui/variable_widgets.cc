@@ -681,7 +681,14 @@ namespace MBSimGUI {
 
   void PhysicalVariableWidget::openEvalDialog() {
     //evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+    QString str;
+    try {
+      str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+    }
+    catch(...) {
+      QMessageBox::warning( this, "Validation", "Validation failed"); 
+      return;
+    }
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
     //  if(str=="" || (!inputWidget[0]->validate(A))) {
