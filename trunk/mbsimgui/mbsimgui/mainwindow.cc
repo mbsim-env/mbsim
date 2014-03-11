@@ -140,8 +140,6 @@ namespace MBSimGUI {
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
 
-    setWindowTitle("MBSim GUI");
-
     elementList = new ElementView;
     elementList->setModel(new ElementTreeModel);
     //elementList->setItemDelegate(new ElementDelegate);
@@ -183,20 +181,14 @@ namespace MBSimGUI {
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
-    fileMBS = new QLineEdit("");
-    fileMBS->setReadOnly(true);
     dockWidget1->setWidget(elementList);
 
     QDockWidget *dockWidget3 = new QDockWidget("Parameters");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
-    fileParameter = new QLineEdit("");
-    fileParameter->setReadOnly(true);
     dockWidget3->setWidget(parameterList);
 
     QDockWidget *dockWidget2 = new QDockWidget("Integrator");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
-    fileIntegrator = new QLineEdit("");
-    fileIntegrator->setReadOnly(true);
     dockWidget2->setWidget(integratorView);
 
 //    QDockWidget *dockWidget4 = new QDockWidget("Global parameters");
@@ -321,8 +313,10 @@ namespace MBSimGUI {
   void MainWindow::changeWorkingDir() {
     QString dir = QFileDialog::getExistingDirectory (0, "Working directory", ".");
     if(dir != "") {
+      QString absoluteMBSFilePath = QDir::current().absoluteFilePath(fileProject->text());
       QDir::setCurrent(dir);
-      fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
+      mbsDir = QFileInfo(absoluteMBSFilePath).absolutePath();
+      fileProject->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
       updateRecentProjectFileActions();
     }
   }
@@ -411,18 +405,21 @@ namespace MBSimGUI {
       actionSaveProject->setDisabled(true);
       fileProject->setText("");
     }
-    setWindowTitle("Project");
+    setWindowTitle("MBS.mbsimprj.xml");
   }
 
   void MainWindow::loadProject(const QString &file) {
     if(file!="") {
+      mbsDir = QFileInfo(file).absolutePath();
+      fileProject->setText(QDir::current().relativeFilePath(file));
       setCurrentProjectFile(file);
-      fileProject->setText(file);
+//      fileProject->setText(file);
       MBSimObjectFactory::initialize();
       shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
       DOMElement *e=doc->getDocumentElement();
       DOMElement *ele0=doc->getDocumentElement();
-      setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
+      //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
+      setWindowTitle(fileProject->text());
 
       DOMElement *ele1 = ele0->getFirstElementChild();
       Solver *solver=Embed<Solver>::createAndInit(ele1,0);
@@ -481,8 +478,10 @@ namespace MBSimGUI {
     QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(0, "XML project files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
     if(file!="") {
+      file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
+      fileProject->setText(QDir::current().relativeFilePath(file));
       setCurrentProjectFile(file);
-      fileProject->setText(file.right(13)==".mbsimprj.xml"?file:file+".mbsimprj.xml");
+      setWindowTitle(fileProject->text());
       actionSaveProject->setDisabled(false);
       saveProject();
     }
@@ -505,10 +504,7 @@ namespace MBSimGUI {
     else
       integrator->writeXMLFile(ele0);
 
-    QString file = fileProject->text();
-    string name = (file.right(13)==".mbsimprj.xml"?file:file+".mbsimprj.xml").toStdString();
-    //  DOMParser::serialize(doc.get(), (name.length()>13 && name.substr(name.length()-13,13)==".mbsimprj.xml")?name:name+".mbsimprj.xml");
-    DOMParser::serialize(doc.get(), fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
+    DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject->text().toStdString():fileName.toStdString());
     actionSaveProject->setDisabled(false);
   }
 
@@ -534,8 +530,7 @@ namespace MBSimGUI {
 
       //((Integrator*)integratorView->topLevelItem(0))->setSolver(0);
 
-      fileMBS->setText("");
-      absoluteMBSFilePath="";
+      fileProject->setText("");
 
       mbsimxml(1);
     }
@@ -549,37 +544,30 @@ namespace MBSimGUI {
 
   void MainWindow::selectDOPRI5Integrator() {
     integratorView->setIntegrator(0);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::selectRADAU5Integrator() {
     integratorView->setIntegrator(1);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::selectLSODEIntegrator() {
     integratorView->setIntegrator(2);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::selectLSODARIntegrator() {
     integratorView->setIntegrator(3);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::selectTimeSteppingIntegrator() {
     integratorView->setIntegrator(4);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::selectEulerExplicitIntegrator() {
     integratorView->setIntegrator(5);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::selectRKSuiteIntegrator() {
     integratorView->setIntegrator(6);
-    fileIntegrator->setText("");
   }
 
   void MainWindow::removeParameter() {

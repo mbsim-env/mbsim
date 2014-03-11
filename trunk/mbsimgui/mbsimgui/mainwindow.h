@@ -65,14 +65,13 @@ namespace MBSimGUI {
       ElementView *elementList;
       ParameterView *parameterList;
       IntegratorView *integratorView;
-      QLineEdit *fileProject, *fileMBS, *fileIntegrator, *fileParameter;
+      QLineEdit *fileProject; 
       Process *mbsim;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event);
       void dropEvent(QDropEvent *event);
       boost::filesystem::path uniqueTempDir;
-      QString absoluteMBSFilePath;
       QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
       std::string currentID;
       enum { maxRecentFiles = 5 };
