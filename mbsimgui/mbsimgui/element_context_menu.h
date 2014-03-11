@@ -51,7 +51,7 @@ namespace MBSimGUI {
       void addObject();
       void addLink();
       void addObserver();
-      void addElementFromFile();
+      void addModel();
   };
 
   class FrameContextContextMenu : public QMenu {

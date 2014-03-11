@@ -81,8 +81,8 @@ namespace MBSimGUI {
     addMenu(menu);
     menu = new ObserverContextContextMenu(element, "Add observer");
     addMenu(menu);
-    action = new QAction("Add element from File", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addElementFromFile()));
+    action = new QAction("Add model", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addModel()));
     addAction(action);
   } 
 
@@ -90,7 +90,7 @@ namespace MBSimGUI {
     mw->addFrame(new FixedRelativeFrame("P",element));
   }
 
-  void GroupContextMenu::addElementFromFile() {
+  void GroupContextMenu::addModel() {
     QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.xml)");
     if(file!="") {
       Frame *frame = Frame::readXMLFile(file.toStdString(),element);

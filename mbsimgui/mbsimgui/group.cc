@@ -279,9 +279,10 @@ namespace MBSimGUI {
   Group* Group::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
+//    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
+    Group *group=Embed<Group>::createAndInit(e,parent);
     if(group) {
-      group->initializeUsingXML(e);
+//      group->initializeUsingXML(e);
       group->initialize();
     }
     return group;

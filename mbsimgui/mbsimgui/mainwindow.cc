@@ -72,9 +72,7 @@ namespace MBSimGUI {
     bfs::create_directories(uniqueTempDir);
 
 
-#ifdef INLINE_OPENMBV
     initInlineOpenMBV();
-#endif
 
     MBSimObjectFactory::initialize();
     octEval=new MBXMLUtils::OctEval;
@@ -158,6 +156,11 @@ namespace MBSimGUI {
 
     integratorView = new IntegratorView;
 
+    //globalParam = new ParameterView;
+    //globalParam->setModel(new ParameterListModel);
+    //globalParam->setColumnWidth(0,75);
+    //globalParam->setColumnWidth(1,125);
+
     action = new QAction("Add scalar parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
     parameterList->insertAction(0,action);
@@ -196,7 +199,13 @@ namespace MBSimGUI {
     fileIntegrator->setReadOnly(true);
     dockWidget2->setWidget(integratorView);
 
-    //tabifyDockWidget(dockWidget1,dockWidget2);
+//    QDockWidget *dockWidget4 = new QDockWidget("Global parameters");
+//    addDockWidget(Qt::LeftDockWidgetArea,dockWidget4);
+//    fileParameter = new QLineEdit("");
+//    fileParameter->setReadOnly(true);
+//    dockWidget4->setWidget(globalParam);
+
+    //tabifyDockWidget(dockWidget3,dockWidget4);
     //tabifyDockWidget(dockWidget2,dockWidget3);
     //QList<QTabBar *> tabList = findChildren<QTabBar *>();
     //tabBar = tabList.at(0);
@@ -205,9 +214,7 @@ namespace MBSimGUI {
     setCentralWidget(centralWidget);
     QHBoxLayout *mainlayout = new QHBoxLayout;
     centralWidget->setLayout(mainlayout);
-#ifdef INLINE_OPENMBV
     mainlayout->addWidget(inlineOpenMBVMW);
-#endif
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
@@ -350,12 +357,25 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-#ifdef INLINE_OPENMBV
-    if(element)
+    ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+    QModelIndex pindex = pmodel->index(0,0); 		
+    pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
+
+    //ParameterListModel *pmodel2 = static_cast<ParameterListModel*>(globalParam->model());
+    //QModelIndex pindex2 = pmodel2->index(0,0); 		
+    //pmodel2->removeRows(pindex2.row(), pmodel2->rowCount(QModelIndex()), pindex2.parent());
+    if(element) {
+      Parameters plist = element->getGlobalParameters();
+
+     for(int i=0; i<plist.getNumberOfParameters(); i++)
+       pmodel->createParameterItem(plist.getParameter(i));
+ 
       highlightObject(element->getID());
+//      for(int i=0; i<element->getNumberOfParameters(); i++)
+//        pmodel->createParameterItem(element->getParameter(i));
+    }
     else
       highlightObject("");
-#endif
   }
 
   void MainWindow::elementListClicked() {
@@ -418,14 +438,14 @@ namespace MBSimGUI {
       model->removeRow(index.row(), index.parent());
       model->createGroupItem(solver);
 
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = pmodel->index(0,0); 		
-      for(int i=0; i<pmodel->rowCount(QModelIndex()); i++) 		
-        delete pmodel->getItem(pindex.sibling(i,0))->getItemData(); 		
-      pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
-      for(int i=0; i<solver->getNumberOfParameters(); i++)
-        pmodel->createParameterItem(solver->getParameter(i));
-      updateOctaveParameters();
+   //   ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+   //   QModelIndex pindex = pmodel->index(0,0); 		
+   //   for(int i=0; i<pmodel->rowCount(QModelIndex()); i++) 		
+   //     delete pmodel->getItem(pindex.sibling(i,0))->getItemData(); 		
+   //   pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
+   //   for(int i=0; i<solver->getNumberOfParameters(); i++)
+   //     pmodel->createParameterItem(solver->getParameter(i));
+   //   updateOctaveParameters();
 
       ele1 = ele1->getNextElementSibling();
 
@@ -449,9 +469,7 @@ namespace MBSimGUI {
 
       actionSaveProject->setDisabled(false);
 
-#ifdef INLINE_OPENMBV
       mbsimxml(1);
-#endif
     }
   }
 
@@ -522,9 +540,7 @@ namespace MBSimGUI {
       fileMBS->setText("");
       absoluteMBSFilePath="";
 
-#ifdef INLINE_OPENMBV
       mbsimxml(1);
-#endif
     }
   }
 
@@ -570,70 +586,72 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter() {
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = parameterList->selectionModel()->currentIndex();
-    delete model->getItem(index)->getItemData();
-    model->removeRow(index.row(), index.parent());
-    updateOctaveParameters();
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
+    ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+    QModelIndex pindex = parameterList->selectionModel()->currentIndex();
+    Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
+    element->removeParameter(parameter);
+    pmodel->removeRow(pindex.row(), pindex.parent());
+    //updateOctaveParameters();
   }
 
   void MainWindow::addStringParameter() {
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = QModelIndex();
-    StringParameter *parameter = new StringParameter("a"+toStr(model->getItem(index)->getID()));
-    model->createParameterItem(parameter,index);
-    updateOctaveParameters();
-
-    {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
-      solver->addParameter(parameter);
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element) {
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex pindex = QModelIndex();
+      StringParameter *parameter = new StringParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
+      pmodel->createParameterItem(parameter,pindex);
+      //updateOctaveParameters();
+      element->addParameter(parameter);
     }
   }
 
   void MainWindow::addScalarParameter() {
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = QModelIndex();
-    ScalarParameter *parameter = new ScalarParameter("a"+toStr(model->getItem(index)->getID()));
-    model->createParameterItem(parameter,index);
-    updateOctaveParameters();
-
-    {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
-      solver->addParameter(parameter);
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element) {
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex pindex = QModelIndex();
+      ScalarParameter *parameter = new ScalarParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
+      pmodel->createParameterItem(parameter,pindex);
+//      ParameterListModel *pmodel2 = static_cast<ParameterListModel*>(globalParam->model());
+//      pmodel2->createParameterItem(parameter,QModelIndex());
+      //updateOctaveParameters();
+      element->addParameter(parameter);
     }
   }
 
   void MainWindow::addVectorParameter() {
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = QModelIndex();
-    VectorParameter *parameter = new VectorParameter("a"+toStr(model->getItem(index)->getID()));
-    model->createParameterItem(parameter,index);
-    updateOctaveParameters();
-
-    {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
-      solver->addParameter(parameter);
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element) {
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex pindex = QModelIndex();
+      VectorParameter *parameter = new VectorParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
+      pmodel->createParameterItem(parameter,pindex);
+      //updateOctaveParameters();
+      element->addParameter(parameter);
     }
   }
 
   void MainWindow::addMatrixParameter() {
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = QModelIndex();
-    MatrixParameter *parameter = new MatrixParameter("a"+toStr(model->getItem(index)->getID()));
-    model->createParameterItem(parameter,index);
-    updateOctaveParameters();
-
-    {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
-      solver->addParameter(parameter);
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element) {
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex pindex = QModelIndex();
+      MatrixParameter *parameter = new MatrixParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
+      pmodel->createParameterItem(parameter,pindex);
+      //updateOctaveParameters();
+      element->addParameter(parameter);
     }
   }
 
@@ -647,10 +665,8 @@ namespace MBSimGUI {
       if(index.isValid()) {
         ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
         QModelIndex index = model->index(0,0);
-        for(int i=0; i<model->rowCount(QModelIndex()); i++)
-          delete model->getItem(index.sibling(i,0))->getItemData();
         model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
-        updateOctaveParameters();
+        //updateOctaveParameters();
       }
     }
   }
@@ -670,9 +686,11 @@ namespace MBSimGUI {
   // update model parameters including additional paramters from paramList
   void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
     // write model paramters to XML structure
-    DOMElement *ele0=NULL;
+    //DOMElement *ele0=NULL;
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-    ele0=writeParameterList(doc);
+    //ele0=writeParameterList(doc);
+    DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
+    doc->insertBefore(ele0, NULL);
     DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename", X()%"/tmp/test.xml");
     ele0->insertBefore(filenamePI, ele0->getFirstChild());
 
@@ -817,9 +835,7 @@ namespace MBSimGUI {
       elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
       //elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
     }
-#ifdef INLINE_OPENMBV
     highlightObject(ID);
-#endif
   }
 
   void MainWindow::help() {
@@ -964,9 +980,7 @@ namespace MBSimGUI {
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
     element->getParent()->removeElement(element);
     model->removeRow(index.row(), index.parent());
-#ifdef INLINE_OPENMBV
     mbsimxml(1);
-#endif
   }
 
   void MainWindow::saveElementAs() {
@@ -974,7 +988,7 @@ namespace MBSimGUI {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".xml", "XML files (*.xml)");
     if(file!="")
-      static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFile(file.toStdString());
+      static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFileEmbed(file.toStdString());
   }
 
   void MainWindow::addFrame(Frame *frame) {

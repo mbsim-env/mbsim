@@ -119,6 +119,8 @@ namespace MBSimGUI {
       int getSize() const {return name.size();}
       void addParameter(const std::string &name, const std::string &value, const std::string &type);
       void addParameterList(const ParameterList &list); 
+      const std::string& getName(int i) const { return name[i]; }
+      const std::string& getValue(int i) const { return value[i]; }
     private:
       std::vector<std::string> name, value, type;
   };
@@ -128,7 +130,10 @@ namespace MBSimGUI {
       std::vector<Parameter*> parameter;
     public:
       void addParameter(Parameter *param) { parameter.push_back(param); }
-      Parameter *getParameter(int i) { return parameter[i]; }
+      void addParameters(const Parameters &list); 
+      void removeParameter(Parameter *param);
+      void removeParameters();
+      Parameter *getParameter(int i) const { return parameter[i]; }
       int getNumberOfParameters() const { return parameter.size(); }
       void initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

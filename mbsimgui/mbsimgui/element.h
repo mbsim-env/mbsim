@@ -54,6 +54,7 @@ namespace MBSimGUI {
     Parameters parameters;
     public:
     Element(const std::string &name, Element *parent);
+    virtual ~Element() { parameters.removeParameters(); }
     virtual Element* clone() const {return 0;}
     virtual std::string getPath();
     std::string getXMLPath(Element *ref=0, bool rel=false);
@@ -63,6 +64,7 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
+    virtual void writeXMLFileEmbed(const std::string &name);
     virtual void initialize() {}
     virtual void deinitialize() {}
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
@@ -104,12 +106,14 @@ namespace MBSimGUI {
     virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
-    ParameterList getParameterList(bool addCounter=true) const;
+    ParameterList getParameterList(bool addCounter=true);
     int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }
     void addParameter(Parameter *param) { parameters.addParameter(param); embed.setActive(true); }
+    void removeParameter(Parameter *param) { parameters.removeParameter(param); }
     Parameter *getParameter(int i) { return parameters.getParameter(i); }
     void setParameters(const Parameters &param) { parameters = param; }
     const Parameters& getParameters() const { return parameters; }
+    Parameters getGlobalParameters(bool addCounter=true) const; 
   };
 
   template<class T>
