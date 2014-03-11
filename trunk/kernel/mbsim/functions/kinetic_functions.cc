@@ -44,9 +44,9 @@ namespace MBSim {
     Function<double(double,double)>::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"distanceForce");
-    gForceFun = ObjectFactory<FunctionBase>::createAndInit<Function<Vec(double)> >(e->FirstChildElement());
+    gForceFun = ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->FirstChildElement());
     e = element->FirstChildElement(MBSIMNS"velocityForce");
-    gdForceFun = ObjectFactory<FunctionBase>::createAndInit<Function<Vec(double)> >(e->FirstChildElement());
+    gdForceFun = ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->FirstChildElement());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearRegularizedUnilateralConstraint, MBSIMNS"LinearRegularizedUnilateralConstraint")
