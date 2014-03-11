@@ -66,9 +66,7 @@ namespace MBSimGUI {
 
     solverParameters.setProperty(new SolverParametersProperty); 
 
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIM%"inverseKinetics"));
-    inverseKinetics.setProperty(new ExtPhysicalVarProperty(input));
+    inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
   }
 
   void Solver::initializeUsingXML(DOMElement *element) {

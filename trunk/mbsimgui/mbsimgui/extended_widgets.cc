@@ -38,7 +38,7 @@ namespace MBSimGUI {
 
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-    evalDialog = new EvalDialog;
+    evalDialog = new EvalDialog(0);
 
     inputCombo = new QComboBox;
     stackedWidget = new QStackedWidget;
@@ -55,7 +55,7 @@ namespace MBSimGUI {
     inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     layout->addWidget(stackedWidget);
-    layout->addWidget(evalButton);
+//    layout->addWidget(evalButton);
     layout->addWidget(inputCombo);
   }
 
@@ -96,7 +96,7 @@ namespace MBSimGUI {
       QMessageBox::warning( this, "Validation", "Value not valid"); 
       return;
     }
-    evalDialog->setValue(A);
+    //evalDialog->setValue(A);
     evalDialog->exec();
     //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
   }

@@ -205,6 +205,16 @@ namespace MBSimGUI {
     ExtWidget *c, *d, *l0;
   };
 
+  class NonlinearSpringDamperForceWidget : public FunctionWidget {
+
+    friend class NonlinearSpringDamperForceProperty;
+
+    public:
+    NonlinearSpringDamperForceWidget();
+    protected:
+    ExtWidget *g, *gd;
+  };
+
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
 
     friend class LinearRegularizedBilateralConstraintProperty;

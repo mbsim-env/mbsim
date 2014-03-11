@@ -79,15 +79,6 @@ namespace MBSimGUI {
       QAction *recentProjectFileActs[maxRecentFiles];
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
-      QAction *recentMBSFileActs[maxRecentFiles];
-      void setCurrentMBSFile(const QString &fileName);
-      void updateRecentMBSFileActions();
-      QAction *recentParameterFileActs[maxRecentFiles];
-      void setCurrentParameterFile(const QString &fileName);
-      void updateRecentParameterFileActions();
-      QAction *recentIntegratorFileActs[maxRecentFiles];
-      void setCurrentIntegratorFile(const QString &fileName);
-      void updateRecentIntegratorFileActions();
 
     public:
       MainWindow(QStringList &arg);

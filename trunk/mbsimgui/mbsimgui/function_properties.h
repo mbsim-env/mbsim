@@ -217,6 +217,20 @@ namespace MBSimGUI {
       ExtProperty c, d, l0;
   };
 
+  class NonlinearSpringDamperForceProperty : public FunctionProperty {
+    public:
+      NonlinearSpringDamperForceProperty();
+      virtual Property* clone() const {return new NonlinearSpringDamperForceProperty(*this);}
+      inline std::string getType() const { return "NonlinearSpringDamperForce"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty g, gd;
+  };
+
   class LinearRegularizedBilateralConstraintProperty: public FunctionProperty {
     public:
       LinearRegularizedBilateralConstraintProperty();
