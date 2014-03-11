@@ -81,27 +81,29 @@ namespace MBSim {
        * \param distance depending force function
        * \param relative velocity depending force function
        */
-      NonlinearSpringDamperForce(Function<fmatvec::Vec(double)> * gForceFun_, Function<fmatvec::Vec(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
+      NonlinearSpringDamperForce(Function<double(double)> * gForceFun_, Function<double(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g)(0) + (*gdForceFun)(gd)(0); }
+      virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g) + (*gdForceFun)(gd); }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setParameters(Function<fmatvec::Vec(double)> * gForceFun_, Function<fmatvec::Vec(double)> * gdForceFun_) { gForceFun=gForceFun_; gdForceFun=gdForceFun_; }
+      void setDistanceFunction(Function<double(double)> * gForceFun_) { gForceFun=gForceFun_; }
+
+      void setVelocityFunction(Function<double(double)> * gdForceFun_) { gdForceFun=gdForceFun_; }
       /***************************************************/
 
     protected:
       /**
        * \brief distance depending force function
        */
-      Function<fmatvec::Vec(double)> * gForceFun;
+      Function<double(double)> * gForceFun;
 
       /**
        * \brief relative velocity depending force function
        */
-      Function<fmatvec::Vec(double)> * gdForceFun;
+      Function<double(double)> * gdForceFun;
   };
 
   /*! 
