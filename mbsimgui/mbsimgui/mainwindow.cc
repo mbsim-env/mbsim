@@ -1109,7 +1109,7 @@ namespace MBSimGUI {
 
     for (int i = 0; i < numRecentFiles; ++i) {
       QString text = QDir::current().relativeFilePath(files[i]);
-      //    QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
+      text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
       recentProjectFileActs[i]->setText(text);
       recentProjectFileActs[i]->setData(files[i]);
       recentProjectFileActs[i]->setVisible(true);
