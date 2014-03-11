@@ -324,9 +324,6 @@ namespace MBSimGUI {
       QDir::setCurrent(dir);
       fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
       updateRecentProjectFileActions();
-      updateRecentMBSFileActions();
-      updateRecentParameterFileActions();
-      updateRecentIntegratorFileActions();
     }
   }
 
@@ -1121,111 +1118,6 @@ namespace MBSimGUI {
       recentProjectFileActs[j]->setVisible(false);
 
     //separatorAct->setVisible(numRecentFiles > 0);
-  }
-
-  void MainWindow::setCurrentMBSFile(const QString &fileName) {
-
-    QSettings settings;
-    QStringList files = settings.value("recentMBSFileList").toStringList();
-    files.removeAll(fileName);
-    files.prepend(fileName);
-    while (files.size() > maxRecentFiles)
-      files.removeLast();
-
-    settings.setValue("recentMBSFileList", files);
-
-    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-      MainWindow *mainWin = qobject_cast<MainWindow *>(widget);
-      if (mainWin)
-        mainWin->updateRecentMBSFileActions();
-    }
-  }
-
-  void MainWindow::updateRecentMBSFileActions() {
-    QSettings settings;
-    QStringList files = settings.value("recentMBSFileList").toStringList();
-
-    int numRecentFiles = qMin(files.size(), (int)maxRecentFiles);
-
-    for (int i = 0; i < numRecentFiles; ++i) {
-      QString text = QDir::current().relativeFilePath(files[i]);
-      //    QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
-      recentMBSFileActs[i]->setText(text);
-      recentMBSFileActs[i]->setData(files[i]);
-      recentMBSFileActs[i]->setVisible(true);
-    }
-    for (int j = numRecentFiles; j < maxRecentFiles; ++j)
-      recentMBSFileActs[j]->setVisible(false);
-
-    //separatorAct->setVisible(numRecentFiles > 0);
-  }
-
-  void MainWindow::setCurrentParameterFile(const QString &fileName) {
-
-    QSettings settings;
-    QStringList files = settings.value("recentParameterFileList").toStringList();
-    files.removeAll(fileName);
-    files.prepend(fileName);
-    while (files.size() > maxRecentFiles)
-      files.removeLast();
-
-    settings.setValue("recentParameterFileList", files);
-
-    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-      MainWindow *mainWin = qobject_cast<MainWindow *>(widget);
-      if (mainWin)
-        mainWin->updateRecentParameterFileActions();
-    }
-  }
-
-  void MainWindow::updateRecentParameterFileActions() {
-    QSettings settings;
-    QStringList files = settings.value("recentParameterFileList").toStringList();
-
-    int numRecentFiles = qMin(files.size(), (int)maxRecentFiles);
-
-    for (int i = 0; i < numRecentFiles; ++i) {
-      QString text = QDir::current().relativeFilePath(files[i]);
-      recentParameterFileActs[i]->setText(text);
-      recentParameterFileActs[i]->setData(files[i]);
-      recentParameterFileActs[i]->setVisible(true);
-    }
-    for (int j = numRecentFiles; j < maxRecentFiles; ++j)
-      recentParameterFileActs[j]->setVisible(false);
-  }
-
-  void MainWindow::setCurrentIntegratorFile(const QString &fileName) {
-
-    QSettings settings;
-    QStringList files = settings.value("recentIntegratorFileList").toStringList();
-    files.removeAll(fileName);
-    files.prepend(fileName);
-    while (files.size() > maxRecentFiles)
-      files.removeLast();
-
-    settings.setValue("recentIntegratorFileList", files);
-
-    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-      MainWindow *mainWin = qobject_cast<MainWindow *>(widget);
-      if (mainWin)
-        mainWin->updateRecentIntegratorFileActions();
-    }
-  }
-
-  void MainWindow::updateRecentIntegratorFileActions() {
-    QSettings settings;
-    QStringList files = settings.value("recentIntegratorFileList").toStringList();
-
-    int numRecentFiles = qMin(files.size(), (int)maxRecentFiles);
-
-    for (int i = 0; i < numRecentFiles; ++i) {
-      QString text = QDir::current().relativeFilePath(files[i]);
-      recentIntegratorFileActs[i]->setText(text);
-      recentIntegratorFileActs[i]->setData(files[i]);
-      recentIntegratorFileActs[i]->setVisible(true);
-    }
-    for (int j = numRecentFiles; j < maxRecentFiles; ++j)
-      recentIntegratorFileActs[j]->setVisible(false);
   }
 
 }

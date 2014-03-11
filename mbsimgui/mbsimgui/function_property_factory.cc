@@ -298,13 +298,16 @@ namespace MBSimGUI {
 
   SpringDamperPropertyFactory::SpringDamperPropertyFactory() {
     name.push_back(MBSIM%"LinearSpringDamperForce");
+    name.push_back(MBSIM%"NonlinearSpringDamperForce");
     name.push_back(MBSIM%"SymbolicFunction");
   }
 
   Property* SpringDamperPropertyFactory::createProperty(int i) {
     if(i==0)
       return new LinearSpringDamperForceProperty;
-    if(i==1) {
+    if(i==1)
+      return new NonlinearSpringDamperForceProperty;
+    if(i==2) {
       vector<string> var;
       var.push_back("gd");
       var.push_back("g");

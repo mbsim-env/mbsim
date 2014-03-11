@@ -559,6 +559,36 @@ namespace MBSimGUI {
     l0.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->l0);
   }
 
+  NonlinearSpringDamperForceProperty::NonlinearSpringDamperForceProperty() {
+
+    g.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"distanceForce",0));
+
+    gd.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"velocityForce",0));
+  }
+
+  DOMElement* NonlinearSpringDamperForceProperty::initializeUsingXML(DOMElement *element) {
+    g.initializeUsingXML(element);
+    gd.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* NonlinearSpringDamperForceProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    g.writeXMLFile(ele0);
+    gd.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void NonlinearSpringDamperForceProperty::fromWidget(QWidget *widget) {
+    g.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
+    gd.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
+  }
+
+  void NonlinearSpringDamperForceProperty::toWidget(QWidget *widget) {
+    g.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
+    gd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
+  }
+
   LinearRegularizedBilateralConstraintProperty::LinearRegularizedBilateralConstraintProperty() {
 
     vector<PhysicalVariableProperty> input;

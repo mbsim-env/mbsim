@@ -402,6 +402,18 @@ namespace MBSimGUI {
     layout->addWidget(l0);
   }
 
+  NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    g = new ExtWidget("Distance function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(g);
+
+    gd = new ExtWidget("Velocity function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(gd);
+  }
+
   LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

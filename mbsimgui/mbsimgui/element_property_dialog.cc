@@ -143,10 +143,10 @@ namespace MBSimGUI {
   FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
     addTab("Kinematics",1);
 
-    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
+    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", position);
 
-    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
+    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", orientation);
 
     refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true);
@@ -321,15 +321,13 @@ namespace MBSimGUI {
 
     //  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
     //  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
-    environment = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits()))),true);
+    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits()))),true);
     addToTab("Environment", environment);
 
     solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
     addToTab("Solver parameters",solverParameters);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("1"),QStringList(),1));
-    inverseKinetics = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
+    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
     addToTab("Extra", inverseKinetics);
   }
 
@@ -395,10 +393,10 @@ namespace MBSimGUI {
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("Kinematics",K);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()))));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
-    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2))));
+    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
     addToTab("General",inertia);
 
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);

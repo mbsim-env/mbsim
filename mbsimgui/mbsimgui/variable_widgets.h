@@ -33,8 +33,6 @@ class QLabel;
 
 namespace MBSimGUI {
 
-  class EvalDialog;
-
   class OctaveHighlighter : public QSyntaxHighlighter {
 
     public:
@@ -53,6 +51,7 @@ namespace MBSimGUI {
       virtual void setValue(const QString &str) = 0;
       virtual QString getType() const = 0;
       virtual bool validate(const std::vector<std::vector<QString> > &A) const {return true;}
+      virtual QWidget* getValidatedWidget() const {return 0;}
   };
 
   class BoolWidget : public VariableWidget {
@@ -63,6 +62,7 @@ namespace MBSimGUI {
       void setValue(const QString &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
       virtual QString getType() const {return "Boolean";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
+      virtual QWidget* getValidatedWidget() const;
 
     protected:
       QCheckBox *value;
@@ -70,10 +70,11 @@ namespace MBSimGUI {
 
   class OctaveExpressionWidget : public VariableWidget {
     public:
-      OctaveExpressionWidget();
+      OctaveExpressionWidget(const QString &str="");
       QString getValue() const { return value->toPlainText(); }
       void setValue(const QString &str) { value->setPlainText(str); }
       virtual QString getType() const {return "Editor";}
+      virtual QWidget* getValidatedWidget() const;
 
     private:
       QPlainTextEdit *value;
@@ -89,12 +90,14 @@ namespace MBSimGUI {
       void setValue(const QString &str) {box->setText(str=="0"?"":str);}
       virtual QString getType() const {return "Scalar";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
+      virtual QWidget* getValidatedWidget() const;
   };
 
   class BasicVecWidget : public VariableWidget {
     public:
       virtual std::vector<QString> getVec() const = 0;
       virtual void setVec(const std::vector<QString> &x) = 0;
+      virtual QWidget* getValidatedWidget() const;
   };
 
   class VecWidget : public BasicVecWidget {
@@ -120,6 +123,7 @@ namespace MBSimGUI {
     public:
       virtual std::vector<std::vector<QString> > getMat() const = 0;
       virtual void setMat(const std::vector<std::vector<QString> > &A) = 0;
+      virtual QWidget* getValidatedWidget() const;
   };
 
   class MatWidget : public BasicMatWidget {
@@ -180,9 +184,9 @@ namespace MBSimGUI {
       virtual QString getType() const {return "Vector";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
 
-    public slots:
-      void currentIndexChanged(int);
-    signals:
+      public slots:
+        void currentIndexChanged(int);
+signals:
       void sizeChanged(int);
 
   };
@@ -209,9 +213,9 @@ namespace MBSimGUI {
       virtual QString getType() const {return "Matrix";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
 
-    public slots:
-      void currentIndexChanged(int);
-    signals:
+      public slots:
+        void currentIndexChanged(int);
+signals:
       void sizeChanged(int);
   };
 
@@ -237,9 +241,9 @@ namespace MBSimGUI {
       virtual QString getType() const {return "Matrix";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
 
-    public slots:
-      void currentIndexChanged(int);
-    signals:
+      public slots:
+        void currentIndexChanged(int);
+signals:
       void sizeChanged(int);
   };
 
@@ -264,10 +268,10 @@ namespace MBSimGUI {
       virtual QString getType() const {return "Matrix";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
 
-    public slots:
-      void currentRowIndexChanged(int);
+      public slots:
+        void currentRowIndexChanged(int);
       void currentColIndexChanged(int);
-    signals:
+signals:
       void rowSizeChanged(int);
       void colSizeChanged(int);
   };
@@ -290,6 +294,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString> > &A) const;
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+      virtual QWidget* getValidatedWidget() const;
   };
 
   class PhysicalVariableWidget : public VariableWidget {
@@ -301,7 +306,6 @@ namespace MBSimGUI {
       QComboBox* unit;
       QStringList units;
       int defaultUnit;
-      EvalDialog *evalDialog;
       protected slots:
         void openEvalDialog();
     public:
@@ -344,7 +348,7 @@ namespace MBSimGUI {
   class FromFileWidget : public VariableWidget {
     Q_OBJECT
 
-    friend class FromFileProperty;
+      friend class FromFileProperty;
 
     public:
     FromFileWidget();
@@ -361,6 +365,19 @@ namespace MBSimGUI {
     protected slots:
       void selectFile();
 
+  };
+
+  class BoolWidgetFactory : public WidgetFactory {
+    public:
+      BoolWidgetFactory(const QString &value);
+      QWidget* createWidget(int i=0);
+      QString getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      QString value;
+      std::vector<QString> name;
+      std::vector<QStringList> unit;
+      std::vector<int> defaultUnit;
   };
 
   class ScalarWidgetFactory : public WidgetFactory {
