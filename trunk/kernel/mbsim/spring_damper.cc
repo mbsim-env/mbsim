@@ -16,7 +16,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"

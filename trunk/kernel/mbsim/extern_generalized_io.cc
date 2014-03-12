@@ -16,7 +16,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/object.h"

@@ -17,7 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbxmlutilstinyxml/tinynamespace.h"

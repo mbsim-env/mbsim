@@ -16,7 +16,7 @@
  * Contact: rzander@users.berlios.de
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/rotational_spring_damper.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/utils/eps.h"
