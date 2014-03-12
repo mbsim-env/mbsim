@@ -65,7 +65,7 @@ namespace MBSimGUI {
       ElementView *elementList;
       ParameterView *parameterList;
       IntegratorView *integratorView;
-      QLineEdit *fileProject; 
+      QString fileProject; 
       Process *mbsim;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       void initInlineOpenMBV();
@@ -144,8 +144,8 @@ namespace MBSimGUI {
       void updateOctaveParameters(const ParameterList &list=ParameterList());
       void removeElement();
       void saveElementAs();
-      protected slots:
-        void selectElement(std::string);
+    protected slots:
+      void selectElement(std::string);
       void changeWorkingDir();
       void selectionChanged();
       void openPropertyDialog();
