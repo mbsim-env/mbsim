@@ -80,6 +80,20 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::initialize() {
+
+    std::string InitStageStrings[] = {
+      "Modelbuildup",
+      "ResolveXML-Path",
+      "PreInit",
+      "Resize",
+      "relativeFrameContourLocation",
+      "worldFrameContourLocation",
+      "plot",
+      "reorganizeHierarchy",
+      "unknownStage",
+      "calculateLocalInitialValues"
+    };
+
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
@@ -87,7 +101,7 @@ namespace MBSim {
 #endif
     for (int stage = 0; stage < MBSim::LASTINITSTAGE; stage++) {
       if (INFO)
-        cout << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
+        cout << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage);
       if (INFO)
         cout << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;

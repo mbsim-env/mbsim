@@ -508,6 +508,7 @@ namespace MBSim {
     for(unsigned int i=0; i<RBC.size(); i++)
       RBC[i]->updateStateDependentVariables(t);
 
+    //compute inertia in world frame
     WThetaS = JTMJ(SThetaS,C->getOrientation().T());
   }
 

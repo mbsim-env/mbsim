@@ -17,7 +17,7 @@
  * Contact: friedrich.at.gc@googlemail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/environment.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
