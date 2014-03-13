@@ -705,9 +705,15 @@ namespace MBSimGUI {
   }
 
   void PhysicalVariableWidget::openEvalDialog() {
-    EvalDialog evalDialog(widget->getValidatedWidget()); 
-    //  vector<vector<QString> > A = strToMat(widget->getValidatedValue());
-    //  evalDialog.setValue(A);
+    QWidget *w=0;
+    try {
+      w = widget->getValidatedWidget();
+    }
+    catch(MBXMLUtils::DOMEvalException e) {
+      int ret = QMessageBox::warning(0, "Octave evaluation", QString::fromStdString(e.getMessage()));
+      return;
+    }
+    EvalDialog evalDialog(w); 
     evalDialog.exec();
   }
 
