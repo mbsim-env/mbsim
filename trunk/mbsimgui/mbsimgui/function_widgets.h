@@ -98,6 +98,42 @@ namespace MBSimGUI {
   //class PositiveFunctionWidget : public FunctionWidget {
   //}
 
+  class AbsoluteValueFunctionWidget : public FunctionWidget {
+
+    friend class AbsoluteValueFunctionProperty;
+
+    public:
+    AbsoluteValueFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *function;
+  };
+
+  class PointSymmetricFunctionWidget : public FunctionWidget {
+
+    friend class PointSymmetricFunctionProperty;
+
+    public:
+    PointSymmetricFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *function;
+  };
+
+  class LineSymmetricFunctionWidget : public FunctionWidget {
+
+    friend class LineSymmetricFunctionProperty;
+
+    public:
+    LineSymmetricFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *function;
+  };
+
   class ScaledFunctionWidget : public FunctionWidget {
 
     friend class ScaledFunctionProperty;

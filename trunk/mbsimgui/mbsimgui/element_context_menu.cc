@@ -269,7 +269,7 @@ namespace MBSimGUI {
     action = new QAction("Add directional spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
     addAction(action);
-    action = new QAction("Add relative rotational spring damper", this);
+    action = new QAction("Add generalized spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
     addAction(action);
     action = new QAction("Add joint", this);

@@ -197,6 +197,45 @@ namespace MBSimGUI {
     layout->addWidget(o);
   }
 
+  AbsoluteValueFunctionWidget::AbsoluteValueFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(function);
+  }
+
+  void AbsoluteValueFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
+  PointSymmetricFunctionWidget::PointSymmetricFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(function);
+  }
+
+  void PointSymmetricFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
+  LineSymmetricFunctionWidget::LineSymmetricFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(function);
+  }
+
+  void LineSymmetricFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
   ScaledFunctionWidget::ScaledFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

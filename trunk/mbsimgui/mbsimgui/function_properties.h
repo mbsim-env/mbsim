@@ -99,6 +99,51 @@ namespace MBSimGUI {
   //class PositiveFunctionProperty : public FunctionProperty {
   //}
 
+  class AbsoluteValueFunctionProperty : public FunctionProperty {
+    public:
+      AbsoluteValueFunctionProperty();
+      virtual Property* clone() const {return new AbsoluteValueFunctionProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "AbsoluteValueFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty function;
+  };
+
+  class PointSymmetricFunctionProperty : public FunctionProperty {
+    public:
+      PointSymmetricFunctionProperty();
+      virtual Property* clone() const {return new PointSymmetricFunctionProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "PointSymmetricFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty function;
+  };
+  
+  class LineSymmetricFunctionProperty : public FunctionProperty {
+    public:
+      LineSymmetricFunctionProperty();
+      virtual Property* clone() const {return new LineSymmetricFunctionProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "LineSymmetricFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty function;
+  };
+  
   class ScaledFunctionProperty : public FunctionProperty {
     public:
       ScaledFunctionProperty();

@@ -395,7 +395,7 @@ namespace MBSimGUI {
     numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", MBSIM%"springRadius"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"springRadius"));
     springRadius.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
