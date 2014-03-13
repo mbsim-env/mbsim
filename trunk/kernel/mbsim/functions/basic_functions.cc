@@ -41,6 +41,15 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<double>, MBSIMNS"PositiveFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<VecV>, MBSIMNS"PositiveFunction")
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, AbsoluteValueFunction<double>, MBSIMNS"AbsoluteValueFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, AbsoluteValueFunction<VecV>, MBSIMNS"AbsoluteValueFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PointSymmetricFunction<double>, MBSIMNS"PointSymmetricFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PointSymmetricFunction<VecV>, MBSIMNS"PointSymmetricFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LineSymmetricFunction<double>, MBSIMNS"LineSymmetricFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LineSymmetricFunction<VecV>, MBSIMNS"LineSymmetricFunction")
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<double>, MBSIMNS"StepFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<VecV>, MBSIMNS"StepFunction")
 
@@ -64,6 +73,11 @@ namespace MBSim {
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(double))>, MBSIMNS"NestedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV  (double))>, MBSIMNS"NestedFunction")
+  // The following functions are created using ...create<Function<double(double)> >(...). Hence the "second"
+  // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
+  // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<double(double(double))>, MBSIMNS"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<double(VecV  (double))>, MBSIMNS"NestedFunction")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ScaledFunction<VecV>, MBSIMNS"ScaledFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ScaledFunction<Vec3>, MBSIMNS"ScaledFunction")

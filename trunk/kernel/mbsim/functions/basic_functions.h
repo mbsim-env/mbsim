@@ -212,6 +212,10 @@ namespace MBSim {
             y(i)=0;
         return y;
       }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
+      }
   };
 
   template<>
@@ -220,6 +224,67 @@ namespace MBSim {
       if(y<0) y=0;
       return y;
     }
+
+  template<class Ret>
+  class AbsoluteValueFunction : public fmatvec::Function<Ret(double)> {
+    private:
+      fmatvec::Function<Ret(double)> *f;
+    public:
+      AbsoluteValueFunction(fmatvec::Function<Ret(double)> *f_=0) : f(f_) { }
+      ~AbsoluteValueFunction() { delete f; }
+      void setFunction(fmatvec::Function<Ret(double)> *f_) { f = f_; }
+      Ret operator()(const double &x) {
+        Ret y=(*f)(x);
+        for (int i=0; i<y.size(); i++)
+          y(i)=fabs(y(i));
+        return y;
+      }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
+      }
+  };
+
+  template<>
+    inline double AbsoluteValueFunction<double>::operator()(const double &x) {  
+      return fabs((*f)(x));
+    }
+
+  template<class Ret>
+  class PointSymmetricFunction : public fmatvec::Function<Ret(double)> {
+    private:
+      fmatvec::Function<Ret(double)> *f;
+    public:
+      PointSymmetricFunction(fmatvec::Function<Ret(double)> *f_=0) : f(f_) { }
+      ~PointSymmetricFunction() { delete f; }
+      void setFunction(fmatvec::Function<Ret(double)> *f_) { f = f_; }
+      Ret operator()(const double &x) {
+        Ret y=sign(x)*(*f)(fabs(x));
+        return y;
+      }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
+      }
+  };
+
+  template<class Ret>
+  class LineSymmetricFunction : public fmatvec::Function<Ret(double)> {
+    private:
+      fmatvec::Function<Ret(double)> *f;
+    public:
+      LineSymmetricFunction(fmatvec::Function<Ret(double)> *f_=0) : f(f_) { }
+      ~LineSymmetricFunction() { delete f; }
+      void setFunction(fmatvec::Function<Ret(double)> *f_) { f = f_; }
+      Ret operator()(const double &x) {
+        Ret y=(*f)(fabs(x));
+        return y;
+      }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
+      }
+  };
 
   template<class Ret>
     class ScaledFunction : public fmatvec::Function<Ret(double)> {
