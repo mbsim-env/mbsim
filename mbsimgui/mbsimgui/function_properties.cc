@@ -265,6 +265,87 @@ namespace MBSimGUI {
     o.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
   }
 
+  AbsoluteValueFunctionProperty::AbsoluteValueFunctionProperty() {
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
+  }
+
+  int AbsoluteValueFunctionProperty::getArg1Size() const {
+    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+  }
+
+  DOMElement* AbsoluteValueFunctionProperty::initializeUsingXML(DOMElement *element) {
+    function.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* AbsoluteValueFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void AbsoluteValueFunctionProperty::fromWidget(QWidget *widget) {
+    function.fromWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
+  }
+
+  void AbsoluteValueFunctionProperty::toWidget(QWidget *widget) {
+    function.toWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
+  }
+
+  PointSymmetricFunctionProperty::PointSymmetricFunctionProperty() {
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
+  }
+
+  int PointSymmetricFunctionProperty::getArg1Size() const {
+    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+  }
+
+  DOMElement* PointSymmetricFunctionProperty::initializeUsingXML(DOMElement *element) {
+    function.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PointSymmetricFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void PointSymmetricFunctionProperty::fromWidget(QWidget *widget) {
+    function.fromWidget(static_cast<PointSymmetricFunctionWidget*>(widget)->function);
+  }
+
+  void PointSymmetricFunctionProperty::toWidget(QWidget *widget) {
+    function.toWidget(static_cast<PointSymmetricFunctionWidget*>(widget)->function);
+  }
+
+  LineSymmetricFunctionProperty::LineSymmetricFunctionProperty() {
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
+  }
+
+  int LineSymmetricFunctionProperty::getArg1Size() const {
+    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+  }
+
+  DOMElement* LineSymmetricFunctionProperty::initializeUsingXML(DOMElement *element) {
+    function.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LineSymmetricFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void LineSymmetricFunctionProperty::fromWidget(QWidget *widget) {
+    function.fromWidget(static_cast<LineSymmetricFunctionWidget*>(widget)->function);
+  }
+
+  void LineSymmetricFunctionProperty::toWidget(QWidget *widget) {
+    function.toWidget(static_cast<LineSymmetricFunctionWidget*>(widget)->function);
+  }
+
   ScaledFunctionProperty::ScaledFunctionProperty() : factor(0,false) {
     function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
 

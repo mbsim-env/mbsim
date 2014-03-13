@@ -201,7 +201,7 @@ namespace MBSimGUI {
     layout->addWidget(numberOfCoils);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"), lengthUnits(), 4));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
     springRadius= new ExtWidget("Spring radius",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(springRadius);
 
