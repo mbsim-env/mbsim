@@ -279,6 +279,7 @@ namespace MBSim {
     object->setScaleFactor(sf);
     object->setNumberOfCoils(n);
     object->setNominalLength(l);
+    object->setType(type);
   }
 
 }
