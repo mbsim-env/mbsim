@@ -27,6 +27,7 @@
 #include "link.h"
 #include "observer.h"
 #include "parameter.h"
+#include "constraint.h"
 #include <iostream>
 
 using namespace std;
@@ -230,18 +231,20 @@ namespace MBSimGUI {
 
     idEleMap.insert(make_pair(object->getID(), parent.child(i,0)));
 
-    QModelIndex index = parent.child(i,0);
-    i = rowCount(index);
-    beginInsertRows(index, i, i+1);
-    item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
-    item->insertChildren(new TreeItem(new ContourItemData(object),item),1);
-    endInsertRows();
-    i = rowCount(index);
+    if(not(dynamic_cast<Constraint*>(object))) {
+      QModelIndex index = parent.child(i,0);
+      i = rowCount(index);
+      beginInsertRows(index, i, i+1);
+      item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
+      item->insertChildren(new TreeItem(new ContourItemData(object),item),1);
+      endInsertRows();
+      i = rowCount(index);
 
-    for(int i=0; i<object->getNumberOfFrames(); i++)
-      createFrameItem(object->getFrame(i),index.child(0,0));
-    for(int i=0; i<object->getNumberOfContours(); i++)
-      createContourItem(object->getContour(i),index.child(1,0));
+      for(int i=0; i<object->getNumberOfFrames(); i++)
+        createFrameItem(object->getFrame(i),index.child(0,0));
+      for(int i=0; i<object->getNumberOfContours(); i++)
+        createContourItem(object->getContour(i),index.child(1,0));
+    }
   }
 
   void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
