@@ -37,9 +37,11 @@ namespace MBSimGUI {
     protected:
       void mouseDoubleClickEvent(QMouseEvent *event);
       void mousePressEvent(QMouseEvent *event);
-      protected slots:
-        void dialogFinished(int result);
+    protected slots:
+      void dialogFinished(int result);
       void apply();
+    public slots:
+      void openEditor();
   };
 
 }

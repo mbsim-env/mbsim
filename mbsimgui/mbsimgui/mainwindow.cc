@@ -71,6 +71,7 @@ namespace MBSimGUI {
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
     bfs::create_directories(uniqueTempDir);
 
+    elementList = new ElementView;
 
     initInlineOpenMBV();
 
@@ -140,8 +141,7 @@ namespace MBSimGUI {
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
 
-    elementList = new ElementView;
-    elementList->setModel(new ElementTreeModel);
+      elementList->setModel(new ElementTreeModel);
     //elementList->setItemDelegate(new ElementDelegate);
     elementList->setColumnWidth(0,250);
     elementList->setColumnWidth(1,200);
@@ -283,11 +283,6 @@ namespace MBSimGUI {
     statusBar()->showMessage(tr("Ready"));
   }
 
-  void MainWindow::openPropertyDialog() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    elementList->openEditor();
-  }
-
   void MainWindow::initInlineOpenMBV() {
     bfs::copy_file(MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"empty.ombv.xml",uniqueTempDir.generic_string()+"/out1.ombv.xml");
     bfs::copy_file(MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"empty.ombv.h5",uniqueTempDir.generic_string()+"/out1.ombv.h5");
@@ -299,7 +294,7 @@ namespace MBSimGUI {
     inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog()));
+    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementList, SLOT(openEditor()));
     connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(selectionChanged()));
   }
 
@@ -361,6 +356,7 @@ namespace MBSimGUI {
       highlightObject(element->getID());
 //      for(int i=0; i<element->getNumberOfParameters(); i++)
 //        pmodel->createParameterItem(element->getParameter(i));
+      updateOctaveParameters(element->getParameterList());
     }
     else
       highlightObject("");
@@ -528,7 +524,7 @@ namespace MBSimGUI {
       Solver *solver = new Solver("MBS",0);
       model->createGroupItem(solver,QModelIndex());
 
-      //((Integrator*)integratorView->topLevelItem(0))->setSolver(0);
+      elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
       mbsimxml(1);
     }
@@ -591,6 +587,8 @@ namespace MBSimGUI {
       pmodel->createParameterItem(parameter,pindex);
       //updateOctaveParameters();
       element->addParameter(parameter);
+      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
+      parameterList->openEditor();
     }
   }
 
@@ -605,8 +603,9 @@ namespace MBSimGUI {
       pmodel->createParameterItem(parameter,pindex);
 //      ParameterListModel *pmodel2 = static_cast<ParameterListModel*>(globalParam->model());
 //      pmodel2->createParameterItem(parameter,QModelIndex());
-      //updateOctaveParameters();
       element->addParameter(parameter);
+      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
+      parameterList->openEditor();
     }
   }
 
@@ -621,6 +620,8 @@ namespace MBSimGUI {
       pmodel->createParameterItem(parameter,pindex);
       //updateOctaveParameters();
       element->addParameter(parameter);
+      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
+      parameterList->openEditor();
     }
   }
 
@@ -635,6 +636,8 @@ namespace MBSimGUI {
       pmodel->createParameterItem(parameter,pindex);
       //updateOctaveParameters();
       element->addParameter(parameter);
+      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
+      parameterList->openEditor();
     }
   }
 

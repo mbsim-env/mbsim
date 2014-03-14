@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ParameterView::mouseDoubleClickEvent ( QMouseEvent * event ) {
+  void ParameterView::openEditor() {
     if(!editor) {
       index = selectionModel()->currentIndex();
       if(index.isValid()) {
@@ -43,6 +43,10 @@ namespace MBSimGUI {
         connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
       }
     }
+  }
+
+  void ParameterView::mouseDoubleClickEvent(QMouseEvent *event) {
+    openEditor();
   }
 
   void ParameterView::mousePressEvent ( QMouseEvent * event ) {

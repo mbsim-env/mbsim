@@ -148,7 +148,6 @@ namespace MBSimGUI {
       void selectElement(std::string);
       void changeWorkingDir();
       void selectionChanged();
-      void openPropertyDialog();
       void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void timeout();
       void timeout2();
