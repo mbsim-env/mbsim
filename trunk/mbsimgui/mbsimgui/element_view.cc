@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ElementView::openEditor () {
+  void ElementView::openEditor() {
     if(!editor) {
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
@@ -47,11 +47,11 @@ namespace MBSimGUI {
     }
   }
 
-  void ElementView::mouseDoubleClickEvent ( QMouseEvent * event ) {
+  void ElementView::mouseDoubleClickEvent(QMouseEvent *event) {
     openEditor();
   }
 
-  void ElementView::mousePressEvent ( QMouseEvent * event ) {
+  void ElementView::mousePressEvent (QMouseEvent *event) {
     if(!editor)
       QTreeView::mousePressEvent(event);
   }
