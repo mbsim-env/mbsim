@@ -225,6 +225,7 @@ def main():
     pj("fmatvec"):                               set(["fmatvec"]),
     pj("hdf5serie", "hdf5serie"):                set([pj("hdf5serie", "html")]),
     pj("openmbv", "openmbvcppinterface"):        set([pj("openmbvcppinterface", "html")]),
+    pj("openmbv", "mbxmlutils"):                 set([pj("mbxmlutils", "html")]),
     pj("mbsim", "kernel"):                       set(["mbsim"]),
     pj("mbsim", "modules", "mbsimFlexibleBody"): set(["mbsimflexiblebody"]),
     pj("mbsim", "modules", "mbsimControl"):      set(["mbsimcontrol"]),
