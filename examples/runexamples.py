@@ -1203,7 +1203,7 @@ def updateReference():
     try:
       for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
         downloadFileIfDifferent(pj(example[0], "reference", fileName))
-    except (myurllib.HTTPError, myurllib.URLError):
+    except (IOError):
       pass
 
 

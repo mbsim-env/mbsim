@@ -2,18 +2,18 @@ docdir = $(MBXMLUTILSDOCDIR)/http___mbsim_berlios_de_MBSimXML
 doc_DATA = mbsimxml.xhtml
 
 # none mbsim modules xsd files
-XSDFILES = http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd\
+XSDFILES = http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd\
   http___mbsim_berlios_de_MBSim/mbsim.xsd\
-  http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\
+  http___mbsim_berlios_de_MBSimIntegrator/mbsimintegrator.xsd\
   http___openmbv_berlios_de_OpenMBV/openmbv.xsd
 
 all: mbsimxml.xhtml
 
 # list of all xsd files: variables XSDFILES and all modules (plugins)
 .DELETE_ON_ERROR: xsdfiles.txt
-xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*
-	grep -hE ".*\.xsd$$" $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/* > xsdfiles.txt
-	echo $(XSDFILES) >> xsdfiles.txt
+xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml
+	echo "$(XSDFILES)" | tr ' ' '\n' > xsdfiles.txt
+	@XSLTPROC@ --novalid getPluginLocation.xsl $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml >> xsdfiles.txt
 
 # XML representation of all xsd files
 .DELETE_ON_ERROR: files.xml

@@ -34,7 +34,7 @@
   </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
 
   <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
     schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>

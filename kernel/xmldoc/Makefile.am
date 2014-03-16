@@ -7,7 +7,7 @@ mbsim/mbsim.tex: xml/index.xml ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd
 	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSim/mbsim.xsd xml figures:../doc MBSim MBSim::
 
 mbsimintegrator/mbsimintegrator.tex: xml/index.xml ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
-	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd xml figures:../doc MBSim-Integrator MBSim::
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimIntegrator/mbsimintegrator.xsd xml figures:../doc MBSim-Integrator MBSim::
 
 
 install:
