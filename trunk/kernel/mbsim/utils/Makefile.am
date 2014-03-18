@@ -3,7 +3,6 @@ libutils_la_SOURCES = colors.cc\
                       eps.cc\
                       nonlinear_algebra.cc\
                       nonsmooth_algebra.cc\
-                      ppolynom.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
@@ -20,7 +19,6 @@ utilsinclude_HEADERS = colors.h\
                        eps.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
-                       ppolynom.h\
                        contact_utils.h\
                        rotarymatrices.h\
                        utils.h\
