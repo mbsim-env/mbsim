@@ -127,7 +127,7 @@ namespace MBSimControl {
     saved_ref2=e->Attribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = element->FirstChildElement(MBSIMCONTROLNS"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
@@ -135,7 +135,7 @@ namespace MBSimControl {
       LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = element->FirstChildElement(MBSIMCONTROLNS"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
