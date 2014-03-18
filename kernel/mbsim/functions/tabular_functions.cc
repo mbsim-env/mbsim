@@ -36,4 +36,5 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<double(double,double)>, MBSIMNS"TwoDimensionalTabularFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<VecV(double,double)>, MBSIMNS"TwoDimensionalTabularFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<VecV(VecV,VecV)>, MBSIMNS"TwoDimensionalTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<Vec(Vec,Vec)>, MBSIMNS"TwoDimensionalTabularFunction")
 }

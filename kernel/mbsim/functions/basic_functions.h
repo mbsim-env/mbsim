@@ -213,6 +213,35 @@ namespace MBSim {
       }
   };
 
+  template<typename Sig> class AbsoluteValueFunction; 
+
+  template<typename Ret, typename Arg>
+  class AbsoluteValueFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    public:
+      Ret operator()(const Arg &x_) {
+        double x = ToDouble<Arg>::cast(x_);
+        return FromDouble<Ret>::cast(fabs(x));
+      }
+  };
+
+  template<typename Sig> class ModuloFunction;
+
+  template<typename Ret, typename Arg>
+    class ModuloFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+      private:
+        double denom;
+      public:
+        void setDenominator(double denom_) { denom = denom_; }
+        Ret operator()(const Arg &x) {
+          return FromDouble<Ret>::cast(fmod(ToDouble<Arg>::cast(x),denom));
+        }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e;
+          e=element->FirstChildElement(MBSIMNS"denominator");
+          denom=Element::getDouble(e);
+        }
+    };
+
   template<typename Sig> class PositiveFunction; 
 
   template<typename Ret, typename Arg>
@@ -241,33 +270,6 @@ namespace MBSim {
       double y=(*f)(x);
       if(y<0) y=0;
       return y;
-    }
-
-  template<typename Sig> class AbsoluteValueFunction; 
-
-  template<typename Ret, typename Arg>
-  class AbsoluteValueFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
-    private:
-      fmatvec::Function<Ret(Arg)> *f;
-    public:
-      AbsoluteValueFunction(fmatvec::Function<Ret(Arg)> *f_=0) : f(f_) { }
-      ~AbsoluteValueFunction() { delete f; }
-      void setFunction(fmatvec::Function<Ret(Arg)> *f_) { f = f_; }
-      Ret operator()(const Arg &x) {
-        Ret y=(*f)(x);
-        for (int i=0; i<y.size(); i++)
-          y(i)=fabs(y(i));
-        return y;
-      }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->FirstChildElement());
-      }
-  };
-
-  template<>
-    inline double AbsoluteValueFunction<double(double)>::operator()(const double &x) {  
-      return fabs((*f)(x));
     }
 
   template<typename Sig> class PointSymmetricFunction; 
