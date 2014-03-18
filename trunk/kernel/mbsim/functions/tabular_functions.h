@@ -27,8 +27,10 @@
 
 namespace MBSim {
 
-  template <class Ret>
-  class TabularFunction : public fmatvec::Function<Ret(double)> {
+  template<typename Sig> class TabularFunction; 
+
+  template<typename Ret, typename Arg>
+  class TabularFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
 
     public:
       TabularFunction() :
@@ -38,7 +40,8 @@ namespace MBSim {
           x(x_), y(y_), xIndexOld(0) {
         init();
       }
-      Ret operator()(const double& xVal) {
+      Ret operator()(const Arg& xVal_) {
+        double xVal = ToDouble<Arg>::cast(xVal_);
         int i = xIndexOld;
         if (xVal <= x(0)) {
           xIndexOld = 0;
@@ -90,8 +93,10 @@ namespace MBSim {
       }
   };
 
-  template <class Ret>
-  class PeriodicTabularFunction : public TabularFunction<Ret> {
+  template<typename Sig> class PeriodicTabularFunction; 
+
+  template<typename Ret, typename Arg>
+  class PeriodicTabularFunction<Ret(Arg)> : public TabularFunction<Ret(Arg)> {
     public:
       PeriodicTabularFunction() {
       }
@@ -99,29 +104,31 @@ namespace MBSim {
           TabularFunction<Ret>(x_, y_) {
         init();
       }
-      Ret operator()(const double& xVal) {
-        double xValTmp = xVal;
+      Ret operator()(const Arg& x) {
+        double xValTmp = ToDouble<Arg>::cast(x);
         while (xValTmp < xMin)
           xValTmp += xDelta;
         while (xValTmp > xMax)
           xValTmp -= xDelta;
-        return TabularFunction<Ret>::operator()(xValTmp);
+        return TabularFunction<Ret(Arg)>::operator()(xValTmp);
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        TabularFunction<Ret>::initializeUsingXML(element);
+        TabularFunction<Ret(Arg)>::initializeUsingXML(element);
         init();
       }
     private:
       double xMin, xMax, xDelta;
       void init() {
-        xMin = TabularFunction<Ret>::x(0);
-        xMax = this->x(TabularFunction<Ret>::x.size() - 1);
+        xMin = TabularFunction<Ret(Arg)>::x(0);
+        xMax = this->x(TabularFunction<Ret(Arg)>::x.size() - 1);
         xDelta = xMax - xMin;
       }
   };
 
-  template <class Ret>
-  class TwoDimensionalTabularFunction : public fmatvec::Function<Ret(double, double)> {
+  template<typename Sig> class TwoDimensionalTabularFunction; 
+
+  template<typename Ret, typename Arg1, typename Arg2>
+  class TwoDimensionalTabularFunction<Ret(Arg1,Arg2)> : public fmatvec::Function<Ret(Arg1, Arg2)> {
     public:
       TwoDimensionalTabularFunction() :
           xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(1, fmatvec::INIT, 0), xy(4, fmatvec::INIT, 1), XYval(4, fmatvec::INIT, 0), XYfac(4, 4, fmatvec::INIT, 0) {
@@ -138,7 +145,9 @@ namespace MBSim {
         fmatvec::Mat xy_ = Element::getMat(e, y_.size(), x_.size());
         setXYMat(xy_);
       }
-      virtual Ret operator()(const double& x, const double& y) {
+      virtual Ret operator()(const Arg1& x_, const Arg2& y_) {
+        double x = ToDouble<Arg1>::cast(x_);
+        double y = ToDouble<Arg2>::cast(y_);
         calcIndex(&x, xVec, &xSize, &x0Index, &x1Index);
         calcIndex(&y, yVec, &ySize, &y0Index, &y1Index);
 
