@@ -15,8 +15,8 @@ using namespace MBSim;
  * The second line are the y-values of the y-vector (dim m) in typical matlab-format: [y1;y2;y3;...;ym]
  * The third line are the z-values of the xy-values (dim nxm) in typical matlab-format: [z11, z12, z13, ... z1n; z21, z22, z23, ..., z2n; ...; zm1, zm2, zm3, ... zmn]
  */
-TwoDimensionalTabularFunction<double> read2DTabFun(string filename) {
-  TwoDimensionalTabularFunction<double> func;
+TwoDimensionalTabularFunction<double(double,double)> read2DTabFun(string filename) {
+  TwoDimensionalTabularFunction<double(double,double)> func;
 
   ifstream ifs(filename.c_str());
   string line;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
 //  StopWatch sw;
 
-  TwoDimensionalTabularFunction<double> func = read2DTabFun("func.dat");
+  TwoDimensionalTabularFunction<double(double,double)> func = read2DTabFun("func.dat");
 
   double xi, yj;
   int dimx = 21, dimy = 101;
