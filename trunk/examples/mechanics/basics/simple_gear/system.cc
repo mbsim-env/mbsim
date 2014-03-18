@@ -97,13 +97,13 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV>(1.1/100.));
+  ke->setMomentFunction(new ConstantFunction<VecV(double)>(1.1/100.));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(shaft3->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV>(-4.0/100.));
+  ke->setMomentFunction(new ConstantFunction<VecV(double)>(-4.0/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *c1=new OpenMBV::Frustum;
