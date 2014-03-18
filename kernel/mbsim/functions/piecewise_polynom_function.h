@@ -29,6 +29,8 @@
 
 namespace MBSim {
 
+  template<typename Sig> class PiecewisePolynomFunction; 
+
   /*! 
    * \brief class for piecewise-polynomials and cubic spline interpolation
    * \author Robert Huber
@@ -58,14 +60,14 @@ namespace MBSim {
    * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 1 yielding a globally weak differentiable curve
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
-template<class Ret>
-  class PiecewisePolynomFunction : public fmatvec::Function<Ret(double)> {
+  template<typename Ret, typename Arg>
+  class PiecewisePolynomFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
 
     public:
       PiecewisePolynomFunction() : f(this), fd(this), fdd(this) { }
 
-      Ret operator()(const double &x) { return f(x); }
-      typename fmatvec::Der<Ret, double>::type parDer(const double &x) { return fd(x); }
+      Ret operator()(const Arg &x) { return f(x); }
+      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return fd(x); }
       typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
 
       /*! 
@@ -182,15 +184,15 @@ template<class Ret>
        */
       class ZerothDerivative {
         public:
-          ZerothDerivative(PiecewisePolynomFunction<Ret> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          ZerothDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~ZerothDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          Ret operator()(const double &x);
+          Ret operator()(const Arg &x);
           /***************************************************/
 
         private:
-          PiecewisePolynomFunction<Ret> *parent;
+          PiecewisePolynomFunction<Ret(Arg)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -201,15 +203,15 @@ template<class Ret>
        */
       class FirstDerivative {
         public:
-          FirstDerivative(PiecewisePolynomFunction<Ret> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          FirstDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~FirstDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          Ret operator()(const double& x);
+          Ret operator()(const Arg& x);
           /***************************************************/
 
         private:
-          PiecewisePolynomFunction<Ret> *parent;
+          PiecewisePolynomFunction<Ret(Arg)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -220,15 +222,15 @@ template<class Ret>
        */
       class SecondDerivative {
         public:
-          SecondDerivative(PiecewisePolynomFunction<Ret> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          SecondDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~SecondDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          Ret operator()(const double& x);
+          Ret operator()(const Arg& x);
           /***************************************************/
 
         private:
-          PiecewisePolynomFunction<Ret> *parent;
+          PiecewisePolynomFunction<Ret(Arg)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -240,8 +242,8 @@ template<class Ret>
       SecondDerivative fdd;
   };
 
-  template<class Ret>
-  void PiecewisePolynomFunction<Ret>::calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     double hi, hii;
     int N = x.size();
     if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw MBSimError("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
@@ -300,8 +302,8 @@ template<class Ret>
     coefs.push_back(a);
   }
 
-  template<class Ret>
-  void PiecewisePolynomFunction<Ret>::calculateSplineNatural(const fmatvec::VecV &x, const fmatvec::MatV &f) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplineNatural(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     // first row
     int i=0;
     int N = x.size();
@@ -367,8 +369,8 @@ template<class Ret>
     coefs.push_back(a);
   }
 
-  template<class Ret>
-  void PiecewisePolynomFunction<Ret>::calculatePLinear(const fmatvec::VecV &x, const fmatvec::MatV &f) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::calculatePLinear(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     int N = x.size(); // number of supporting points
 
     breaks.resize(N);
@@ -384,8 +386,9 @@ template<class Ret>
     coefs.push_back(a);
   }
           
-  template<class Ret>
-  Ret PiecewisePolynomFunction<Ret>::ZerothDerivative::operator()(const double& x) {
+  template<typename Ret, typename Arg>
+  Ret PiecewisePolynomFunction<Ret(Arg)>::ZerothDerivative::operator()(const Arg& x_) {
+    double x = ToDouble<Arg>::cast(x_);
     if(x>(parent->breaks)(parent->nPoly)) 
       throw MBSimError("(PiecewisePolynomFunction::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) 
@@ -414,8 +417,9 @@ template<class Ret>
     }
   }
 
-  template<class Ret>
-  Ret PiecewisePolynomFunction<Ret>::FirstDerivative::operator()(const double& x) {
+  template<typename Ret, typename Arg>
+  Ret PiecewisePolynomFunction<Ret(Arg)>::FirstDerivative::operator()(const Arg& x_) {
+    double x = ToDouble<Arg>::cast(x_);
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -442,8 +446,9 @@ template<class Ret>
     }
   }
 
-  template<class Ret>
-  Ret PiecewisePolynomFunction<Ret>::SecondDerivative::operator()(const double& x) {
+  template<typename Ret, typename Arg>
+  Ret PiecewisePolynomFunction<Ret(Arg)>::SecondDerivative::operator()(const Arg& x_) {
+    double x = ToDouble<Arg>::cast(x_);
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("(PiecewisePolynomFunction::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -470,8 +475,8 @@ template<class Ret>
     }
   }
 
-  template<class Ret>
-  void PiecewisePolynomFunction<Ret>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     MBXMLUtils::TiXmlElement *e;
     fmatvec::VecV x;
     fmatvec::MatV y;
