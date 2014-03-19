@@ -61,7 +61,6 @@ namespace MBSimGUI {
   MBXMLUtils::NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
-    parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___mbsim_berlios_de_MBSimXML"/"mbsimproject.xsd");
 
     mw = this;
 
@@ -70,6 +69,13 @@ namespace MBSimGUI {
     else
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
     bfs::create_directories(uniqueTempDir);
+
+    QProcess process;
+    QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
+    QStringList arguments;
+    arguments << "--onlyGenerateSchema" << (uniqueTempDir/"mbsimxml.xsd").string().c_str();
+    int code=process.execute(program,arguments);
+    parser->loadGrammar(arguments[1].toStdString());
 
     elementList = new ElementView;
 
@@ -501,7 +507,6 @@ namespace MBSimGUI {
       integrator->writeXMLFile(ele0);
 
     DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
-    actionSaveProject->setDisabled(false);
   }
 
   void MainWindow::newMBS(bool ask) {
