@@ -57,29 +57,29 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   cv->setAlpha(.9);
   cv->setMinimalRelativeAlpha(.05);
   cv->setOffset(.05);
-  cv->setPARelativeAlphaFunction(new TabularFunction<double>(Vec("[0; .2; .45; 1]"), "[1; 1; 0; 0]"));
+  cv->setPARelativeAlphaFunction(new TabularFunction<double(double)>(Vec("[0; .2; .45; 1]"), "[1; 1; 0; 0]"));
   FunctionSensor * cvs = new FunctionSensor("Valve43Position");
   addLink(cvs);
-  cvs->setFunction(new TabularFunction<VecV>(Vec("[0; .3; .7; 1]"), "[0; 0; 1; 1]"));
+  cvs->setFunction(new TabularFunction<VecV(double)>(Vec("[0; .3; .7; 1]"), "[0; 0; 1; 1]"));
   cv->setRelativePositionSignal(cvs);
 
   ConstrainedNode * nP = new ConstrainedNode("n_source_P");
-  nP->setpFunction(new ConstantFunction<double>(5e5));
+  nP->setpFunction(new ConstantFunction<double(double)>(5e5));
   addLink(nP);
   nP->addOutFlow(lp);
 
   ConstrainedNode * nA = new ConstrainedNode("n_source_A");
-  nA->setpFunction(new ConstantFunction<double>(3e5));
+  nA->setpFunction(new ConstantFunction<double(double)>(3e5));
   addLink(nA);
   nA->addInFlow(la);
 
   ConstrainedNode * nB = new ConstrainedNode("n_source_B");
-  nB->setpFunction(new ConstantFunction<double>(2e5));
+  nB->setpFunction(new ConstantFunction<double(double)>(2e5));
   addLink(nB);
   nB->addInFlow(lb);
 
   ConstrainedNode * nT = new ConstrainedNode("n_source_T");
-  nT->setpFunction(new ConstantFunction<double>(1e5));
+  nT->setpFunction(new ConstantFunction<double(double)>(1e5));
   addLink(nT);
   nT->addInFlow(lt);
 
