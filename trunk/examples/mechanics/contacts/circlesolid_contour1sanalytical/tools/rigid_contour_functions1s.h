@@ -20,7 +20,7 @@
 #ifndef RIGID_CONTOUR_FUNCTION1S_H
 #define RIGID_CONTOUR_FUNCTION1S_H
 
-#include "mbsim/functions/piecewise_polynom_function.h"
+#include <mbsim/functions/piecewise_polynom_function.h>
 #include <mbsim/utils/contour_functions.h>
 
 namespace MBSim {
@@ -95,7 +95,7 @@ class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
   private:
     const fmatvec::Vec3 Cb;
-    MBSim::PiecewisePolynomFunction<fmatvec::VecV> * pp_r;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> * pp_r;
 
     double alphaSave, salphaSave, calphaSave, rSave, drdalphaSave, d2rdalpha2Save;
     
