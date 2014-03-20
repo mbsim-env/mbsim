@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimPowertrain"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimPowertrain"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:annotation>
+    <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    tbd
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
+    schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"
+    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
+
+  <xs:simpleType name="SignalReferenceType">
+    <xs:restriction base="pv:stringPartialOctEval">
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*(Link\[X\]|Link\[X\])" with
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*(Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="TorsionalStiffness" substitutionGroup="mbsim:LinkMechanics" type="TorsionalStiffnessType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TorsionalStiffnessType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="generalizedForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="rigidBodyFirstSide">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="rigidBodySecondSide">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVCoilSpringParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>
