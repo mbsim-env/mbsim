@@ -273,10 +273,10 @@ namespace MBSim {
       sethSize(uSize[1], 1);
       sethInd(0, 0);
       sethInd(0, 1);
-      setxInd(0);
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();
+      setxInd(0);
 
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
