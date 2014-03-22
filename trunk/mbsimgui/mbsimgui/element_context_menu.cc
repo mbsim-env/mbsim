@@ -33,6 +33,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
+#include "torsional_stiffness.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
@@ -286,6 +287,9 @@ namespace MBSimGUI {
     action = new QAction("Add linear transfer system", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
     addAction(action);
+    action = new QAction("Add torsional stiffness", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addTorsionalStiffness()));
+    addAction(action);
   }
 
   void LinkContextContextMenu::addKineticExcitation() {
@@ -323,6 +327,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addLinearTransferSystem() {
     mw->addLink(new LinearTransferSystem("LTS",element));
+  }
+
+  void LinkContextContextMenu::addTorsionalStiffness() {
+    mw->addLink(new TorsionalStiffness("TorsionalStiffness",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -434,6 +442,12 @@ namespace MBSimGUI {
     action = new QAction("Add absolute velocity sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteVelocitySensor()));
     addAction(action);
+    action = new QAction("Add absolute angular position sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteAngularPositionSensor()));
+    addAction(action);
+    action = new QAction("Add absolute angular velocity sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteAngularVelocitySensor()));
+    addAction(action);
     action = new QAction("Add function sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
     addAction(action);
@@ -456,6 +470,14 @@ namespace MBSimGUI {
 
   void SensorContextContextMenu::addAbsoluteVelocitySensor() {
     mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor",element));
+  }
+
+  void SensorContextContextMenu::addAbsoluteAngularPositionSensor() {
+    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor",element));
+  }
+
+  void SensorContextContextMenu::addAbsoluteAngularVelocitySensor() {
+    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor",element));
   }
 
   void SensorContextContextMenu::addFunctionSensor() {

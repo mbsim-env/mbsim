@@ -72,6 +72,8 @@ namespace MBSimGUI {
   class AbsoluteCoordinateSensor;
   class AbsolutePositionSensor;
   class AbsoluteVelocitySensor;
+  class AbsoluteAngularPositionSensor;
+  class AbsoluteAngularVelocitySensor;
   class FunctionSensor;
   class SignalProcessingSystemSensor;
   class SignalAddition;
@@ -524,6 +526,18 @@ namespace MBSimGUI {
       AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
+  class AbsoluteAngularPositionSensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+
+    public:
+      AbsoluteAngularPositionSensorPropertyDialog(AbsoluteAngularPositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+  };
+
+  class AbsoluteAngularVelocitySensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+
+    public:
+      AbsoluteAngularVelocitySensorPropertyDialog(AbsoluteAngularVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+  };
+
   class FunctionSensorPropertyDialog : public SensorPropertyDialog {
 
     public:
@@ -582,6 +596,16 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *s1Ref, *s2Ref, *f;
+  };
+
+  class TorsionalStiffnessPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      TorsionalStiffnessPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
   };
 
 }

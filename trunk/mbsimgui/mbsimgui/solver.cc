@@ -55,13 +55,10 @@ namespace MBSimGUI {
 
   Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
 
-    vector<PhysicalVariableProperty> input;
     vector<string> g(3);
     g[0] = "0";
     g[1] = "-9.81";
     g[2] = "0";
-    input.push_back(PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIM%"accelerationOfGravity"));
-    environment.setProperty(new ExtPhysicalVarProperty(input));
     environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIM%"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
 
     solverParameters.setProperty(new SolverParametersProperty); 

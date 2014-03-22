@@ -210,6 +210,17 @@ namespace MBSimGUI {
     function->resize_(m,n);
   }
 
+  ModuloFunctionWidget::ModuloFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+    denom = new ExtWidget("Denominator",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(denom);
+  }
+
   PointSymmetricFunctionWidget::PointSymmetricFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -418,6 +429,31 @@ namespace MBSimGUI {
       if(choice_->getIndex()==0)
         choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
     }
+  }
+
+  TwoDimensionalTabularFunctionWidget::TwoDimensionalTabularFunctionWidget(int n) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    x = new ExtWidget("X",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    layout->addWidget(x);
+    y = new ExtWidget("Y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    layout->addWidget(y);
+    xy = new ExtWidget("XY",new ChoiceWidget2(new MatWidgetFactory(getScalars<QString>(3,3,"0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+    layout->addWidget(xy);
+  }
+
+  void TwoDimensionalTabularFunctionWidget::resize_(int m, int n) {
+    //ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(x->getWidget());
+    //if(choice_->getIndex()==0)
+    //  x->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+    //choice_ = static_cast<ChoiceWidget2*>(y->getWidget());
+    //if(choice_->getIndex()==0)
+    //  y->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+    //choice_ = static_cast<ChoiceWidget2*>(xy->getWidget());
+    //if(choice_->getIndex()==0)
+    //  xy->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
   }
 
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {

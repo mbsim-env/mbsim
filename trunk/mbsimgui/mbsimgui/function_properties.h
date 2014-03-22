@@ -99,6 +99,20 @@ namespace MBSimGUI {
   //class PositiveFunctionProperty : public FunctionProperty {
   //}
 
+  class ModuloFunctionProperty : public FunctionProperty {
+    public:
+      ModuloFunctionProperty();
+      virtual Property* clone() const {return new ModuloFunctionProperty(*this);}
+      inline std::string getType() const { return "ModuloFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty denom;
+  };
+
   class AbsoluteValueFunctionProperty : public FunctionProperty {
     public:
       AbsoluteValueFunctionProperty();
@@ -246,6 +260,20 @@ namespace MBSimGUI {
 
     protected:
       ChoiceProperty2 choice;
+  };
+
+  class TwoDimensionalTabularFunctionProperty : public FunctionProperty {
+    public:
+      TwoDimensionalTabularFunctionProperty();
+      virtual Property* clone() const {return new TwoDimensionalTabularFunctionProperty(*this);}
+      inline std::string getType() const { return "TwoDimensionalTabularFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty x, y ,xy;
   };
 
   class LinearSpringDamperForceProperty : public FunctionProperty {

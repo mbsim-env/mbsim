@@ -70,7 +70,8 @@ mbsimgui_SOURCES = element.cc \
 		   property.cc \
 		   mainwindow.cc \
 		   main.cc \
-		   embed.cc
+		   embed.cc \
+		   torsional_stiffness.cc
 		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)

@@ -235,17 +235,13 @@ namespace MBSimGUI {
 
     transparency->setActive(true);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3,true), lengthUnits(), 4));
-    trans = new ExtWidget("Initial translation",new ExtPhysicalVarWidget(input));
+    trans = new ExtWidget("Initial translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft));
     layout->addWidget(trans);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new VecWidget(3,true), angleUnits(), 0));
-    rot = new ExtWidget("Initial rotation",new ExtPhysicalVarWidget(input));
+    rot = new ExtWidget("Initial rotation",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft));
     layout->addWidget(rot);
 
-    input.clear();
+    vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
     scale = new ExtWidget("Scale factor",new ExtPhysicalVarWidget(input));
     layout->addWidget(scale);
@@ -276,6 +272,9 @@ namespace MBSimGUI {
   }
 
   FrustumWidget::FrustumWidget(const QString &name) : OMBVBodyWidget(name) {
+    vector<QString> r(3);
+    r[2] = "0.5";
+    static_cast<VecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(trans->getWidget())->getWidget())->getWidget())->setVec(r);
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));

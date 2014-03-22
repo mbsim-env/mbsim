@@ -110,6 +110,17 @@ namespace MBSimGUI {
     ExtWidget *function;
   };
 
+  class ModuloFunctionWidget : public FunctionWidget {
+
+    friend class ModuloFunctionProperty;
+
+    public:
+    ModuloFunctionWidget(int m=0);
+
+    protected:
+    ExtWidget *denom;
+  };
+
   class PointSymmetricFunctionWidget : public FunctionWidget {
 
     friend class PointSymmetricFunctionProperty;
@@ -229,6 +240,18 @@ namespace MBSimGUI {
 
     protected:
     ChoiceWidget2* choice;
+  };
+
+  class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
+
+    friend class TwoDimensionalTabularFunctionProperty;
+
+    public:
+    TwoDimensionalTabularFunctionWidget(int n);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *x, *y, *xy;
   };
 
   class LinearSpringDamperForceWidget : public FunctionWidget {
