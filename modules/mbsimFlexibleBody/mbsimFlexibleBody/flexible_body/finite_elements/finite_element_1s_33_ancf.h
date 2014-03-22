@@ -17,8 +17,8 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#ifndef _FINITE_ELEMENT_1S_21_ANCF_H_
-#define _FINITE_ELEMENT_1S_21_ANCF_H_
+#ifndef _FINITE_ELEMENT_1S_33_ANCF_H_
+#define _FINITE_ELEMENT_1S_33_ANCF_H_
 
 #include "mbsim/discretization_interface.h"
 #include "mbsim/contour_pdata.h"
@@ -28,55 +28,52 @@
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief differentiates a vector defined by its norm with respect to the vector
-   * \param vector to be differentiated
-   * \return Jacobian matrix
-   */
-  fmatvec::SqrMat differentiate_normalized_vector_respective_vector(const fmatvec::Vec &vector);
-
-  /**
-   * \brief finite element for planar beam using Absolute Nodal Coordinate Formulation (ANCF)
-   * \author Roland Zander
+   * \brief finite element for spatial beam using Absolute Nodal Coordinate Formulation (ANCF)
+   *
+   * cable element with no explicit torsion, i.e. angular velocity and Jacobian of rotation depend only on two bending angles
+   *
    * \author Thorsten Schindler
    *
-   * \date 2014-02-27 basic revision
+   * \date 2014-03-20 initial commit
    *
    * model based on
-   * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
-   * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
-   * SHABANE, A. A.: Dynamics of Multibody Systems. Cambridge University Press (2005)
+   * DOMBROWSKI, S.: Analysis of Large Flexible Body Deformation in Multibody Systems Using Absolute Coordinates. Multibody System Dynamics (2002)
    */
-  class FiniteElement1s21ANCF : public MBSim::DiscretizationInterface
+  class FiniteElement1s33ANCF : public MBSim::DiscretizationInterface
   {
     public:
       /*!
        * \brief constructor 
        * \param undeformed lenght of element
-       * \param line-density of beam
-       * \param longitudinal stiffness
-       * \param bending stiffness
+       * \param cross-section area
+       * \param density of beam
+       * \param Young's modulus
+       * \param shear modulus
+       * \param polar moment of inertia
+       * \param area moment of inertia
+       * \param area moment of inertia
        * \param vector of gravitational acceleration
        */
-      explicit FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, fmatvec::Vec sg);
+      explicit FiniteElement1s33ANCF(double sl0, double srho, double sE, double sG, double sA, double sI0, double sI1, double sI2, fmatvec::Vec sg);
 
       /**
        * \destructor
        */
-      virtual ~FiniteElement1s21ANCF();
+      virtual ~FiniteElement1s33ANCF();
 
       /* INHERITED INTERFACE */
       virtual const fmatvec::SymMat& getM() const { return M; }
       virtual const fmatvec::Vec& geth() const { return h; }
       virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }
       virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
-      virtual int getqSize() const { return 8; }
-      virtual int getuSize() const { return 8; }
+      virtual int getqSize() const { return 12; }
+      virtual int getuSize() const { return 12; }
       virtual void computeM(const fmatvec::Vec& qElement);
       virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computedhdz): not implemented!"); }
-      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeKineticEnergy): not implemented!"); }
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!"); }
-      virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeElasticEnergy): not implemented!"); }
+      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s33ANCF::computedhdz): not implemented!"); }
+      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s33ANCF::computeKineticEnergy): not implemented!"); }
+      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s33ANCF::computeGravitationalEnergy): not implemented!"); }
+      virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s33ANCF::computeElasticEnergy): not implemented!"); }
       virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
       virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
       virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp);
@@ -85,7 +82,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setCurlRadius(double R);
+      void setCurlRadius(double R1, double R2);
       void setMaterialDamping(double depsilons);
       void setLehrDamping(double D);
       /***************************************************/
@@ -96,19 +93,19 @@ namespace MBSimFlexibleBody {
       void initM();
 
       /**
-       * \brief return the planar position and angle at a contour point
+       * \brief return the position and Cardan angles at a contour point
        * \param generalised coordinates
        * \param contour point
-       * \return planar position and angle
+       * \return position and Cardan angles
        */
       fmatvec::Vec LocateBalken(const fmatvec::Vec& qElement, const double& s); 
 
       /**
-       * \brief return the planar state at a contour point
+       * \brief return the state including Cardan angles at a contour point
        * \param generalised positions
        * \param generalised velocities
        * \param contour point
-       * \return planar state
+       * \return state including Cardan angles
        */
       fmatvec::Vec StateBalken(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double&s); 
 
@@ -135,31 +132,72 @@ namespace MBSimFlexibleBody {
        * */
       fmatvec::Vec tangent(const fmatvec::Vec& qElement, const double& s);
 
+      /**
+       * \brief returns the normal
+       * \param generalised coordinates
+       * \param contour point
+       * \return normal
+       * */
+      fmatvec::Vec normal(const fmatvec::Vec& qElement, const double& s);
+
+      /**
+       * \brief returns the binormal
+       * \param generalised coordinates
+       * \param contour point
+       * \return binormal
+       * */
+      fmatvec::Vec binormal(const fmatvec::Vec& qElement, const double& s);
+
     private:
       /** 
        * \brief beam element length
        */
       double l0;
 
+      /**
+       * \brief density
+       */
+      double rho;
+
+      /**
+       * \brief Young's modulus
+       */
+      double E;
+
+      /**
+       * \brief shear modulus
+       */
+      double G;
+
       /** 
-       * \brief line-density
+       * \brief cross-secion area
        */
-      double Arho;
+      double A;
 
       /**
-       * \brief longitudinal stiffness
+       * \brief polar moment of inertia
        */
-      double EA;
+      double I0;
 
       /**
-       * \brief bending stiffness
+       * \brief area moment of inertia
        */
-      double EI;
+      double I1;
+
+      /**
+       * \brief area moment of inertia
+       */
+      double I2;
 
       /**
        * \brief predefined bending curvature
        */
-      double wss0;
+      double wss01;
+
+      /**
+       * \brief predefined bending curvature
+       */
+      double wss02;
 
       /**
        * \brief longitudinal damping
@@ -199,15 +237,15 @@ namespace MBSimFlexibleBody {
       /**
        * \brief copy constructor is declared private
        */
-      FiniteElement1s21ANCF(const FiniteElement1s21ANCF&);
+      FiniteElement1s33ANCF(const FiniteElement1s33ANCF&);
 
       /**
        * \brief assignment operator is declared private
        */
-      FiniteElement1s21ANCF& operator=(const FiniteElement1s21ANCF&);
+      FiniteElement1s33ANCF& operator=(const FiniteElement1s33ANCF&);
   };
 
-  inline void  FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s21ANCF::computeM): Not implemented"); }
+  inline void  FiniteElement1s33ANCF::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s33ANCF::computeM): Not implemented"); }
 }
 
-#endif /* _FINITE_ELEMENT_1S_21_ANCF_H_ */
+#endif /* _FINITE_ELEMENT_1S_33_ANCF_H_ */

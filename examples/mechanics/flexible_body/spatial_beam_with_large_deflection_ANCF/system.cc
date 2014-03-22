@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_ancf.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_ancf.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
@@ -30,9 +30,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // data beam
   double l0 = 1.5; // length 
   double b0 = 0.1; // width
-  double E = 5e7; // E-Modul
+  double E = 2e8; // E-Modul
+  double mu = 0.3; // Poisson ratio
+  double G = E/(2*(1+mu)); // shear modulus
   double A = b0*b0; // cross-section area
   double I1 = 1./12.*b0*b0*b0*b0; // moment inertia
+  double I2 = 1./12.*b0*b0*b0*b0; // moment inertia
+  double I0 = 0.05*(I1 + I2);
   double rho = 9.2e2; // density  
   int elements = 4; // number of finite elements
 
@@ -41,19 +45,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double r = 1.e-2; // radius of ball
 
   // beam
-  FlexibleBody1s21ANCF *rod = new FlexibleBody1s21ANCF("Rod", true);
+  FlexibleBody1s33ANCF *rod = new FlexibleBody1s33ANCF("Rod", true);
   rod->setLength(l0);
   rod->setEModul(E);
+  rod->setShearModul(G);
   rod->setCrossSectionalArea(A);
-  rod->setMomentInertia(I1);
+  rod->setMomentInertia(I0,I1,I2);
   rod->setDensity(rho);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
-  rod->setCurlRadius(10.);
-  Vec q0 = Vec(4*elements+4,INIT,0.);
+  rod->setCurlRadius(-100.,10.);
+  Vec q0 = Vec(6*elements+6,INIT,0.);
   for(int i=0;i<=elements;i++) {
-    q0(4*i) = l0*i/elements;
-    q0(4*i+2) = 1;
+    q0(6*i) = l0*i/elements;
+    q0(6*i+3) = 1;
   }
   rod->setq0(q0);
   this->addObject(rod);
@@ -91,7 +96,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // point mass with point contour at a specific surface point
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
-  WrOS0B(0) = 0.5*l0; WrOS0B(1) = b0*0.5+0.35;
+  WrOS0B(0) = 0.5*l0; WrOS0B(1) = b0*0.5+0.35; WrOS0B(2) = b0*0.25;
   this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
@@ -101,20 +106,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 2./5.*mass*r*r;
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
-  Mat JacTrans(3,2,INIT,0.); JacTrans(0,0) = 1.; JacTrans(1,1) = 1.;
+  Mat JacTrans(3,3,INIT,0.); JacTrans(0,0) = 1.; JacTrans(1,1) = 1.; JacTrans(2,2) = 1.;
   ball->setTranslation(new LinearTranslation<VecV>(JacTrans));
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
   point->setFrameOfReference(ball->getFrame("Point"));
   ball->addContour(point);
-  ball->setInitialGeneralizedVelocity(Vec(2,INIT,0.));
+  ball->setInitialGeneralizedVelocity(Vec(3,INIT,0.));
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
   sphere->setRadius(r);
-  sphere->setDiffuseColor(1/3.0, 1, 1);
+  sphere->setDiffuseColor(1/3., 1, 1);
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
@@ -132,9 +137,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->addFrame("RJ",cpdata);
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
-  joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
+  joint->setForceDirection(Mat("[1,0,0;0,1,0;0,0,1]"));
   joint->setForceLaw(new BilateralConstraint);
-  joint->setMomentDirection("[0; 0; 1]");
+  joint->setMomentDirection("[0,0; 1,0; 0,1]");
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
 }
