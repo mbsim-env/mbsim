@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
       virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("ERROR (ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }   
       /***************************************************/
 
-    private:
+    protected:
       /** 
        * \brief contour index 
        */

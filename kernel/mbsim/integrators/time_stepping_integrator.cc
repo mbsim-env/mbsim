@@ -62,7 +62,9 @@ namespace MBSim {
     cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot =(int) (dtPlot/dt + 0.5);
-    assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
+    if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
+      cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
+    }
 
     s0 = clock();
   }
