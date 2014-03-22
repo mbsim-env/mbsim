@@ -207,12 +207,29 @@ namespace MBSimGUI {
   }
 
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
-    return new SymbolicFunctionWidget(var,1,1);
+    if(i==0)
+      return new SymbolicFunctionWidget(var,1,1);
+    if(i==1)
+      return new TwoDimensionalTabularFunctionWidget(1);
   }
 
   vector<QString> SymbolicFunctionWidgetFactory2::getNames() {
     vector<QString> name;
     name.push_back("Symbolic function");
+    name.push_back("Two dimensional tabular function");
+    return name;
+  }
+  QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
+    if(i==0)
+      return new SymbolicFunctionWidget(var,1,1);
+    if(i==1)
+      return new ModuloFunctionWidget;
+  }
+
+  vector<QString> SymbolicFunctionWidgetFactory3::getNames() {
+    vector<QString> name;
+    name.push_back("Symbolic function");
+    name.push_back("Modulo function");
     return name;
   }
 

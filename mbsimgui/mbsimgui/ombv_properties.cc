@@ -480,15 +480,11 @@ namespace MBSimGUI {
 
     transparency.setActive(true);
 
+    trans.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,OPENMBV%"initialTranslation"),"",4));
+
+    rot.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,OPENMBV%"initialRotation",vector<string>(3,"rad")),"",4));
+
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBV%"initialTranslation"));
-    trans.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new VecProperty(3), "rad", OPENMBV%"initialRotation"));
-    rot.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleFactor"));
     scale.setProperty(new ExtPhysicalVarProperty(input));
   }

@@ -218,12 +218,30 @@ namespace MBSimGUI {
   }
 
   Property* SymbolicFunctionPropertyFactory2::createProperty(int i) {
-    return new SymbolicFunctionProperty(ext,var,1);
+    if(i==0)
+      return new SymbolicFunctionProperty(ext,var,1);
+    if(i==1)
+      return new TwoDimensionalTabularFunctionProperty;
   }
 
   vector<FQN> SymbolicFunctionPropertyFactory2::getNames() {
     vector<FQN> name;
     name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"TwoDimensionalTabularFunction");
+    return name;
+  }
+
+  Property* SymbolicFunctionPropertyFactory3::createProperty(int i) {
+    if(i==0)
+      return new SymbolicFunctionProperty(ext,var,1);
+    if(i==1)
+      return new ModuloFunctionProperty;
+  }
+
+  vector<FQN> SymbolicFunctionPropertyFactory3::getNames() {
+    vector<FQN> name;
+    name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"ModuloFunction");
     return name;
   }
 

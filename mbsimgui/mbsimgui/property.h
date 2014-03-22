@@ -29,6 +29,7 @@ extern MBXMLUtils::NamespaceURI PARAM;
 extern MBXMLUtils::NamespaceURI OPENMBV;
 extern MBXMLUtils::NamespaceURI MBSIMINT;
 extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
+extern MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN;
 extern MBXMLUtils::NamespaceURI MBSIMXML;
 
 namespace XERCES_CPP_NAMESPACE {

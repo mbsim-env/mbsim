@@ -152,6 +152,7 @@ namespace MBSimGUI {
       void addActuator();
       void addSignal();
       void addLinearTransferSystem();
+      void addTorsionalStiffness();
 
     protected:
       Element *element;
@@ -228,6 +229,8 @@ namespace MBSimGUI {
       void addGeneralizedVelocitySensor();
       void addAbsolutePositionSensor();
       void addAbsoluteVelocitySensor();
+      void addAbsoluteAngularPositionSensor();
+      void addAbsoluteAngularVelocitySensor();
       void addFunctionSensor();
       void addSignalProcessingSystemSensor();
 

@@ -122,6 +122,19 @@ namespace MBSimGUI {
       std::vector<std::string> var;
   };
 
+  class SymbolicFunctionPropertyFactory3 : public PropertyFactory {
+    public:
+      SymbolicFunctionPropertyFactory3(const std::string &ext_, const std::vector<std::string> &var_) : name(SymbolicFunctionPropertyFactory3::getNames()), ext(ext_), var(var_) { }
+      Property* createProperty(int i=0);
+      static std::vector<MBXMLUtils::FQN> getNames();
+      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<MBXMLUtils::FQN> name;
+      std::string ext;
+      std::vector<std::string> var;
+  };
+
   class TranslationPropertyFactory4 : public PropertyFactory {
     public:
       TranslationPropertyFactory4();

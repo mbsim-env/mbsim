@@ -292,6 +292,31 @@ namespace MBSimGUI {
     function.toWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
   }
 
+  ModuloFunctionProperty::ModuloFunctionProperty() {
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"denominator"));
+    denom.setProperty(new ExtPhysicalVarProperty(input));
+  }
+
+  DOMElement* ModuloFunctionProperty::initializeUsingXML(DOMElement *element) {
+    denom.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ModuloFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    denom.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void ModuloFunctionProperty::fromWidget(QWidget *widget) {
+    denom.fromWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
+  }
+
+  void ModuloFunctionProperty::toWidget(QWidget *widget) {
+    denom.toWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
+  }
+
   PointSymmetricFunctionProperty::PointSymmetricFunctionProperty() {
     function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
   }
@@ -596,6 +621,39 @@ namespace MBSimGUI {
 
   void TabularFunctionProperty::toWidget(QWidget *widget) {
     choice.toWidget(static_cast<TabularFunctionWidget*>(widget)->choice);
+  }
+
+  TwoDimensionalTabularFunctionProperty::TwoDimensionalTabularFunctionProperty() {
+    x.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"xValues",vector<string>(3,"")),"",4));
+    y.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"yValues",vector<string>(3,"")),"",4));
+    xy.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,1,"0"),MBSIM%"xyValues",vector<string>(3,"")),"",4));
+  }
+
+  DOMElement* TwoDimensionalTabularFunctionProperty::initializeUsingXML(DOMElement *element) {
+    x.initializeUsingXML(element);
+    y.initializeUsingXML(element);
+    xy.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TwoDimensionalTabularFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    x.writeXMLFile(ele0);
+    y.writeXMLFile(ele0);
+    xy.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void TwoDimensionalTabularFunctionProperty::fromWidget(QWidget *widget) {
+    x.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
+    y.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
+    xy.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
+  }
+
+  void TwoDimensionalTabularFunctionProperty::toWidget(QWidget *widget) {
+    x.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
+    y.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
+    xy.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
   }
 
   LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {

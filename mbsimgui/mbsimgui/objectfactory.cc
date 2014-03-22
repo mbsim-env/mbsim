@@ -36,6 +36,7 @@
 #include "parameter.h"
 #include "observer.h"
 #include "integrator.h"
+#include "torsional_stiffness.h"
 #include <string>
 
 using namespace std;
@@ -174,6 +175,10 @@ namespace MBSimGUI {
       return new AbsolutePositionSensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteVelocitySensor")
       return new AbsoluteVelocitySensor(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularPositionSensor")
+      return new AbsoluteAngularPositionSensor(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
+      return new AbsoluteAngularVelocitySensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
       return new FunctionSensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
@@ -188,8 +193,8 @@ namespace MBSimGUI {
       return new BinarySignalOperation(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
       return new LinearTransferSystem(E(element)->getAttribute("name"),parent);
-    //if(E(element)->getTagName()==MBSIM%"ExternGeneralizedIO")
-    //  return new ExternGeneralizedIO(E(element)->getAttribute("name"));
+    if(E(element)->getTagName()==MBSIMPOWERTRAIN%"TorsionalStiffness")
+      return new TorsionalStiffness(E(element)->getAttribute("name"),parent);
     return 0;
   }  
 

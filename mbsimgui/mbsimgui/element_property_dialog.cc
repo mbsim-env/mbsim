@@ -45,6 +45,7 @@
 #include "integrator.h"
 #include "sensor.h"
 #include "function_widget_factory.h"
+#include "torsional_stiffness.h"
 #include <QPushButton>
 
 using namespace std;
@@ -285,10 +286,10 @@ namespace MBSimGUI {
     if(kinematics) {
       addTab("Kinematics",1);
 
-      position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
+      position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);
       addToTab("Kinematics", position);
 
-      orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
+      orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
       addToTab("Kinematics", orientation);
 
       frameOfReference = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(group,0),true);
@@ -319,9 +320,7 @@ namespace MBSimGUI {
     addTab("Solver parameters",2);
     addTab("Extra",3);
 
-    //  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
-    //  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
-    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits()))),true);
+    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft),true);
     addToTab("Environment", environment);
 
     solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
@@ -1371,6 +1370,12 @@ namespace MBSimGUI {
   AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
   }
 
+  AbsoluteAngularPositionSensorPropertyDialog::AbsoluteAngularPositionSensorPropertyDialog(AbsoluteAngularPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  }
+
+  AbsoluteAngularVelocitySensorPropertyDialog::AbsoluteAngularVelocitySensorPropertyDialog(AbsoluteAngularVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  }
+
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
     function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
     addToTab("General", function);
@@ -1460,7 +1465,7 @@ namespace MBSimGUI {
     sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
     addToTab("General", sRef);
 
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("x"))));
+    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x"))));
     addToTab("General", f);
   }
 
@@ -1501,6 +1506,49 @@ namespace MBSimGUI {
     static_cast<BinarySignalOperation*>(element)->s1Ref.fromWidget(s1Ref);
     static_cast<BinarySignalOperation*>(element)->s2Ref.fromWidget(s2Ref);
     static_cast<BinarySignalOperation*>(element)->f.fromWidget(f);
+  }
+
+  TorsionalStiffnessPropertyDialog::TorsionalStiffnessPropertyDialog(Link *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    function = new ExtWidget("GeneralizedForceFunction",new ChoiceWidget2(new SpringDamperWidgetFactory));
+    addToTab("Kinetics", function);
+
+    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0));
+    addToTab("General", body1);
+
+    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(springDamper,0));
+    addToTab("General", body2);
+
+    coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+    addToTab("Visualisation", coilSpring);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", momentArrow);
+  }
+
+  void TorsionalStiffnessPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<TorsionalStiffness*>(element)->function.toWidget(function);
+    static_cast<TorsionalStiffness*>(element)->body1.toWidget(body1);
+    static_cast<TorsionalStiffness*>(element)->body2.toWidget(body2);
+    static_cast<TorsionalStiffness*>(element)->coilSpring.toWidget(coilSpring);
+    static_cast<TorsionalStiffness*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<TorsionalStiffness*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void TorsionalStiffnessPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<TorsionalStiffness*>(element)->function.fromWidget(function);
+    static_cast<TorsionalStiffness*>(element)->body1.fromWidget(body1);
+    static_cast<TorsionalStiffness*>(element)->body2.fromWidget(body2);
+    static_cast<TorsionalStiffness*>(element)->coilSpring.fromWidget(coilSpring);
+    static_cast<TorsionalStiffness*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<TorsionalStiffness*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
 }
