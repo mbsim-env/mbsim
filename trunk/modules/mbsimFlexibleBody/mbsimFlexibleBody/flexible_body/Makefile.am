@@ -11,7 +11,8 @@ libflexiblebody_la_SOURCES =	flexible_body_1s_cosserat.cc\
 								flexible_body_2s_13_mfr_mindlin.cc\
  								flexible_body_linear_external.cc\
  								flexible_body_1s_23_bta.cc\
-								flexible_body_1s_21_ancf.cc
+								flexible_body_1s_21_ancf.cc\
+								flexible_body_1s_33_ancf.cc
 
 libflexiblebody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 libflexiblebody_la_LIBADD = finite_elements/libfe.la $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
@@ -28,4 +29,5 @@ flexiblebodyinclude_HEADERS =	flexible_body_1s_cosserat.h\
 								flexible_body_2s_13_mfr_mindlin.h\
  								flexible_body_linear_external.h\
  								flexible_body_1s_23_bta.h\
-								flexible_body_1s_21_ancf.h
+								flexible_body_1s_21_ancf.h\
+								flexible_body_1s_33_ancf.h
