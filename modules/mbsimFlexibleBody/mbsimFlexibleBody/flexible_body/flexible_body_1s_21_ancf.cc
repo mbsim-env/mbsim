@@ -34,7 +34,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
 
-  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), openStructure(openStructure_), initialised(false) {}
+  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), deps(0.), dkappa(0.), openStructure(openStructure_), initialised(false) {}
 
   void FlexibleBody1s21ANCF::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 4 * n;
@@ -206,6 +206,7 @@ namespace MBSimFlexibleBody {
         discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g));
         if(fabs(rc) > epsroot())
           static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
+        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setMaterialDamping(deps,dkappa);
       }
       initM();
     }

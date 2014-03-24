@@ -50,6 +50,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
   rod->setCurlRadius(10.);
+  rod->setMaterialDamping(100.,10.);
   Vec q0 = Vec(4*elements+4,INIT,0.);
   for(int i=0;i<=elements;i++) {
     q0(4*i) = l0*i/elements;

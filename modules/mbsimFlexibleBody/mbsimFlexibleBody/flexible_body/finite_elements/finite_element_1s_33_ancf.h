@@ -84,7 +84,6 @@ namespace MBSimFlexibleBody {
       /* GETTER / SETTER */
       void setCurlRadius(double R1, double R2);
       void setMaterialDamping(double depsilons);
-      void setLehrDamping(double D);
       /***************************************************/
 
       /**

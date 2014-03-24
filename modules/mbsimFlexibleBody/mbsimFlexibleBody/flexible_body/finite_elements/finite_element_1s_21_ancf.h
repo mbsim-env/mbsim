@@ -40,6 +40,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    *
    * \date 2014-02-27 basic revision
+   * \date 2014-03-23 damping added
    *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
@@ -86,8 +87,7 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setCurlRadius(double R);
-      void setMaterialDamping(double depsilons);
-      void setLehrDamping(double D);
+      void setMaterialDamping(double depsilon_, double dkappa_);
       /***************************************************/
 
       /**
@@ -167,6 +167,11 @@ namespace MBSimFlexibleBody {
       double depsilon;
 
       /**
+       * \brief curvature damping
+       */
+      double dkappa;
+
+      /**
        * \brief gravitation
        */
       fmatvec::Vec g;
@@ -180,11 +185,6 @@ namespace MBSimFlexibleBody {
        * \brief right hand side
        */
       fmatvec::Vec h;
-
-      /**
-       * \brief damping matrix
-       */
-      fmatvec::SqrMat Damp;
 
       /**
        * \brief derivative of right hand side with respect to positions
