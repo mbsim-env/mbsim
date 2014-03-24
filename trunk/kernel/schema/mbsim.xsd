@@ -3694,7 +3694,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="LimitedFunction"/>
+                <xs:element ref="LimitedFunction"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
