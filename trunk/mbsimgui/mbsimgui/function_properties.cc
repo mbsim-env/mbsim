@@ -51,7 +51,7 @@ namespace MBSimGUI {
     property->addProperty(new ExtProperty(new ChoiceProperty2(factory,xmlName,0),true,MBSIM%"function",false));
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"limit"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"limit"));
     property->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
     return property;
   }

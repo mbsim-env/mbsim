@@ -45,7 +45,7 @@ namespace MBSimGUI {
     widget->addWidget(new ExtWidget("Function",new ChoiceWidget2(factory)));
 
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),1));
     widget->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
     return widget;
   }
