@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
     return static_cast<SqrMat>((SqrMat(vector.size(),EYE) - vector*vector.T()/pow(norm,2.))/norm).copy();
   }
 
-  FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, Vec sg) :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.), depsilon(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Damp(8,INIT,0.), Dhq(8,INIT,0.), Dhqp(8,INIT,0.) {}
+  FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, Vec sg) :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.), depsilon(0.), dkappa(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8,INIT,0.), Dhqp(8,INIT,0.) {}
 
   FiniteElement1s21ANCF::~FiniteElement1s21ANCF() {
   }
@@ -42,21 +42,9 @@ namespace MBSimFlexibleBody {
     wss0 = 1/R;
   }
 
-  void FiniteElement1s21ANCF::setMaterialDamping(double depsilons) {
-    throw MBSim::MBSimError("Error(FiniteElement1s21ANCF::setMaterialDamping): Not implemented");
-    //  depsilon  += depsilons;
-    //  Damp(3,3) += -depsilon;
-  }
-
-  void FiniteElement1s21ANCF::setLehrDamping(double D) {
-    throw MBSim::MBSimError("Error(FiniteElement1s21ANCF::setLehrDamping): Not implemented");
-    //  // Longitudinaleifenfrequenz
-    //  double weps = sqrt(12.*EA/(Arho*l0h2));
-    //  // Biegeeigenfrequenz
-    //  double wbL  = sqrt(1260.*128.*EI/(197.*Arho*l0h4));
-
-    //  depsilon  = 1.0 * D * weps * (Arho*l0h3/12.);
-    //  Damp(3,3) = -depsilon;
+  void FiniteElement1s21ANCF::setMaterialDamping(double depsilon_, double dkappa_) {
+    depsilon = depsilon_;
+    dkappa = dkappa_;
   }
 
   void FiniteElement1s21ANCF::initM() {
@@ -84,10 +72,10 @@ namespace MBSimFlexibleBody {
 
   void FiniteElement1s21ANCF::computeh(const Vec& qElement, const Vec& qpElement) {
     // Coordinates
-    const double & x1 = qElement(0);    const double & y1 = qElement(1);
-    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
-    const double & x2 = qElement(4);    const double & y2 = qElement(5);
-    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
+    const double & x1 = qElement(0);    const double & y1 = qElement(1);    const double & x1p = qpElement(0);    const double & y1p = qpElement(1);
+    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);    const double &dx1p = qpElement(2);    const double &dy1p = qpElement(3);
+    const double & x2 = qElement(4);    const double & y2 = qElement(5);    const double & x2p = qpElement(4);    const double & y2p = qpElement(5);
+    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);    const double &dx2p = qpElement(6);    const double &dy2p = qpElement(7);
 
     // Gravitation
     double gx = g(0);
@@ -107,6 +95,7 @@ namespace MBSimFlexibleBody {
     // Local coordinate system
     Vec e1(2,NONINIT);
     e1(0) = x2-x1; e1(1) = y2-y1;
+    Vec e1_notNormalized = e1.copy();
     e1 /= nrm2(e1);
     const double &e1x = e1(0); const double &e1y = e1(1);
 
@@ -114,17 +103,31 @@ namespace MBSimFlexibleBody {
     dvec1dq(0,0) = -1.; dvec1dq(0,4) = 1.;
     dvec1dq(1,1) = -1.; dvec1dq(1,5) = 1.;
 
-    Mat de1dq = differentiate_normalized_vector_respective_vector(e1)*dvec1dq;
+    Mat de1dq = differentiate_normalized_vector_respective_vector(e1_notNormalized)*dvec1dq;
+    
+    Vec vec1p(2,NONINIT);
+    vec1p(0) = x2p-x1p; vec1p(1) = y2p-y1p;
+
+    Vec e1p = differentiate_normalized_vector_respective_vector(e1_notNormalized)*vec1p;
+    const double &e1xp = e1p(0); const double &e1yp = e1p(1);
 
     Vec e2(2,NONINIT);
     e2(0) = -e1(1); e2(1) = e1(0);
+    Vec e2_notNormalized(2,NONINIT);
+    e2_notNormalized(0) = -e1_notNormalized(1); e2_notNormalized(1) = e1_notNormalized(0);
     const double &e2x = e2(0); const double &e2y = e2(1);
 
     Mat dvec2dq(2,8,INIT,0.);
     dvec2dq(0,1) = 1.; dvec2dq(0,5) = -1.;
     dvec2dq(1,0) = -1.; dvec2dq(1,4) = 1.;
 
-    Mat de2dq = differentiate_normalized_vector_respective_vector(e2)*dvec2dq;
+    Mat de2dq = differentiate_normalized_vector_respective_vector(e2_notNormalized)*dvec2dq;
+
+    Vec vec2p(2,NONINIT);
+    vec2p(0) = y1p-y2p; vec2p(1) = x2p-x1p;
+
+    Vec e2p = differentiate_normalized_vector_respective_vector(e2_notNormalized)*vec2p;
+    const double &e2xp = e2p(0); const double &e2yp = e2p(1);
 
     // Strain
     Vec hst_q(8,NONINIT);
@@ -156,11 +159,26 @@ namespace MBSimFlexibleBody {
     hbe_e2(0) = -EI*1.0/(l0*l0*l0)*(x1*6.0-x2*6.0+dx1*l0*4.0+dx2*l0*2.0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0+wss0*(l0*l0)+dx1*e2x*l0*4.0+dx2*e2x*l0*2.0+dy1*e2y*l0*4.0+dy2*e2y*l0*2.0)+EI*1.0/(l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0*2.0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*3.0+EI*1.0/(l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0+dx2*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+wss0*(l0*l0)+dx1*e2x*l0*2.0+dy1*e2y*l0*2.0)*3.0;
     hbe_e2(1) = -EI*1.0/(l0*l0*l0)*(y1*6.0-y2*6.0+dy1*l0*4.0+dy2*l0*2.0)*(e2x*x1*6.0-e2x*x2*6.0+e2y*y1*6.0-e2y*y2*6.0+wss0*(l0*l0)+dx1*e2x*l0*4.0+dx2*e2x*l0*2.0+dy1*e2y*l0*4.0+dy2*e2y*l0*2.0)+EI*1.0/(l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0*2.0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+dx1*e2x*l0+dx2*e2x*l0+dy1*e2y*l0+dy2*e2y*l0)*3.0+EI*1.0/(l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0+dy2*l0)*(e2x*x1*2.0-e2x*x2*2.0+e2y*y1*2.0-e2y*y2*2.0+wss0*(l0*l0)+dx1*e2x*l0*2.0+dy1*e2y*l0*2.0)*3.0;
 
-    h = hgrav + hst_q + de1dq.T()*hst_e1 + hbe_q + de2dq.T()*hbe_e2; 
+    // Damping
+    Vec hd_q(8,NONINIT); 
+    hd_q(0) = 1.0/(l0*l0*l0)*(dkappa*(e2x*e2x)*x1p*1.2E2-dkappa*(e2x*e2x)*x2p*1.2E2+dkappa*e2x*e2xp*x1*1.2E2-dkappa*e2x*e2xp*x2*1.2E2+dkappa*e2x*e2yp*y1*1.2E2-dkappa*e2x*e2yp*y2*1.2E2+dkappa*e2x*e2y*y1p*1.2E2-dkappa*e2x*e2y*y2p*1.2E2+dkappa*dx1p*(e2x*e2x)*l0*6.0E1+dkappa*dx2p*(e2x*e2x)*l0*6.0E1+depsilon*dx1p*(e1x*e1x)*(l0*l0*l0)+depsilon*dx2p*(e1x*e1x)*(l0*l0*l0)+depsilon*(e1x*e1x)*(l0*l0)*x1p*1.2E1-depsilon*(e1x*e1x)*(l0*l0)*x2p*1.2E1+dkappa*dx1*e2x*e2xp*l0*6.0E1+dkappa*dx2*e2x*e2xp*l0*6.0E1+dkappa*dy1*e2x*e2yp*l0*6.0E1+dkappa*dy1p*e2x*e2y*l0*6.0E1+dkappa*dy2*e2x*e2yp*l0*6.0E1+dkappa*dy2p*e2x*e2y*l0*6.0E1+depsilon*dx1*e1x*e1xp*(l0*l0*l0)+depsilon*dx2*e1x*e1xp*(l0*l0*l0)+depsilon*dy1*e1x*e1yp*(l0*l0*l0)+depsilon*dy1p*e1x*e1y*(l0*l0*l0)+depsilon*dy2*e1x*e1yp*(l0*l0*l0)+depsilon*dy2p*e1x*e1y*(l0*l0*l0)+depsilon*e1x*e1xp*(l0*l0)*x1*1.2E1-depsilon*e1x*e1xp*(l0*l0)*x2*1.2E1+depsilon*e1x*e1yp*(l0*l0)*y1*1.2E1-depsilon*e1x*e1yp*(l0*l0)*y2*1.2E1+depsilon*e1x*e1y*(l0*l0)*y1p*1.2E1-depsilon*e1x*e1y*(l0*l0)*y2p*1.2E1)*(-1.0/1.0E1);
+    hd_q(1) = 1.0/(l0*l0*l0)*(dkappa*(e2y*e2y)*y1p*1.2E2-dkappa*(e2y*e2y)*y2p*1.2E2+dkappa*e2xp*e2y*x1*1.2E2-dkappa*e2xp*e2y*x2*1.2E2+dkappa*e2x*e2y*x1p*1.2E2-dkappa*e2x*e2y*x2p*1.2E2+dkappa*e2y*e2yp*y1*1.2E2-dkappa*e2y*e2yp*y2*1.2E2+dkappa*dy1p*(e2y*e2y)*l0*6.0E1+dkappa*dy2p*(e2y*e2y)*l0*6.0E1+depsilon*dy1p*(e1y*e1y)*(l0*l0*l0)+depsilon*dy2p*(e1y*e1y)*(l0*l0*l0)+depsilon*(e1y*e1y)*(l0*l0)*y1p*1.2E1-depsilon*(e1y*e1y)*(l0*l0)*y2p*1.2E1+dkappa*dx1*e2xp*e2y*l0*6.0E1+dkappa*dx1p*e2x*e2y*l0*6.0E1+dkappa*dx2*e2xp*e2y*l0*6.0E1+dkappa*dx2p*e2x*e2y*l0*6.0E1+dkappa*dy1*e2y*e2yp*l0*6.0E1+dkappa*dy2*e2y*e2yp*l0*6.0E1+depsilon*dx1*e1xp*e1y*(l0*l0*l0)+depsilon*dx1p*e1x*e1y*(l0*l0*l0)+depsilon*dx2*e1xp*e1y*(l0*l0*l0)+depsilon*dx2p*e1x*e1y*(l0*l0*l0)+depsilon*dy1*e1y*e1yp*(l0*l0*l0)+depsilon*dy2*e1y*e1yp*(l0*l0*l0)+depsilon*e1xp*e1y*(l0*l0)*x1*1.2E1-depsilon*e1xp*e1y*(l0*l0)*x2*1.2E1+depsilon*e1x*e1y*(l0*l0)*x1p*1.2E1-depsilon*e1x*e1y*(l0*l0)*x2p*1.2E1+depsilon*e1y*e1yp*(l0*l0)*y1*1.2E1-depsilon*e1y*e1yp*(l0*l0)*y2*1.2E1)*(-1.0/1.0E1);
+    hd_q(2) = 1.0/(l0*l0)*(dkappa*(e2x*e2x)*x1p*1.8E2-dkappa*(e2x*e2x)*x2p*1.8E2+dkappa*e2x*e2xp*x1*1.8E2-dkappa*e2x*e2xp*x2*1.8E2+dkappa*e2x*e2yp*y1*1.8E2-dkappa*e2x*e2yp*y2*1.8E2+dkappa*e2x*e2y*y1p*1.8E2-dkappa*e2x*e2y*y2p*1.8E2+dkappa*dx1p*(e2x*e2x)*l0*1.2E2+dkappa*dx2p*(e2x*e2x)*l0*6.0E1+depsilon*dx1p*(e1x*e1x)*(l0*l0*l0)*4.0-depsilon*dx2p*(e1x*e1x)*(l0*l0*l0)+depsilon*(e1x*e1x)*(l0*l0)*x1p*3.0-depsilon*(e1x*e1x)*(l0*l0)*x2p*3.0+dkappa*dx1*e2x*e2xp*l0*1.2E2+dkappa*dx2*e2x*e2xp*l0*6.0E1+dkappa*dy1*e2x*e2yp*l0*1.2E2+dkappa*dy1p*e2x*e2y*l0*1.2E2+dkappa*dy2*e2x*e2yp*l0*6.0E1+dkappa*dy2p*e2x*e2y*l0*6.0E1+depsilon*dx1*e1x*e1xp*(l0*l0*l0)*4.0-depsilon*dx2*e1x*e1xp*(l0*l0*l0)+depsilon*dy1*e1x*e1yp*(l0*l0*l0)*4.0+depsilon*dy1p*e1x*e1y*(l0*l0*l0)*4.0-depsilon*dy2*e1x*e1yp*(l0*l0*l0)-depsilon*dy2p*e1x*e1y*(l0*l0*l0)+depsilon*e1x*e1xp*(l0*l0)*x1*3.0-depsilon*e1x*e1xp*(l0*l0)*x2*3.0+depsilon*e1x*e1yp*(l0*l0)*y1*3.0-depsilon*e1x*e1yp*(l0*l0)*y2*3.0+depsilon*e1x*e1y*(l0*l0)*y1p*3.0-depsilon*e1x*e1y*(l0*l0)*y2p*3.0)*(-1.0/3.0E1);
+    hd_q(3) = 1.0/(l0*l0)*(dkappa*(e2y*e2y)*y1p*1.8E2-dkappa*(e2y*e2y)*y2p*1.8E2+dkappa*e2xp*e2y*x1*1.8E2-dkappa*e2xp*e2y*x2*1.8E2+dkappa*e2x*e2y*x1p*1.8E2-dkappa*e2x*e2y*x2p*1.8E2+dkappa*e2y*e2yp*y1*1.8E2-dkappa*e2y*e2yp*y2*1.8E2+dkappa*dy1p*(e2y*e2y)*l0*1.2E2+dkappa*dy2p*(e2y*e2y)*l0*6.0E1+depsilon*dy1p*(e1y*e1y)*(l0*l0*l0)*4.0-depsilon*dy2p*(e1y*e1y)*(l0*l0*l0)+depsilon*(e1y*e1y)*(l0*l0)*y1p*3.0-depsilon*(e1y*e1y)*(l0*l0)*y2p*3.0+dkappa*dx1*e2xp*e2y*l0*1.2E2+dkappa*dx1p*e2x*e2y*l0*1.2E2+dkappa*dx2*e2xp*e2y*l0*6.0E1+dkappa*dx2p*e2x*e2y*l0*6.0E1+dkappa*dy1*e2y*e2yp*l0*1.2E2+dkappa*dy2*e2y*e2yp*l0*6.0E1+depsilon*dx1*e1xp*e1y*(l0*l0*l0)*4.0+depsilon*dx1p*e1x*e1y*(l0*l0*l0)*4.0-depsilon*dx2*e1xp*e1y*(l0*l0*l0)-depsilon*dx2p*e1x*e1y*(l0*l0*l0)+depsilon*dy1*e1y*e1yp*(l0*l0*l0)*4.0-depsilon*dy2*e1y*e1yp*(l0*l0*l0)+depsilon*e1xp*e1y*(l0*l0)*x1*3.0-depsilon*e1xp*e1y*(l0*l0)*x2*3.0+depsilon*e1x*e1y*(l0*l0)*x1p*3.0-depsilon*e1x*e1y*(l0*l0)*x2p*3.0+depsilon*e1y*e1yp*(l0*l0)*y1*3.0-depsilon*e1y*e1yp*(l0*l0)*y2*3.0)*(-1.0/3.0E1);
+    hd_q(4) = 1.0/(l0*l0*l0)*(dkappa*(e2x*e2x)*x1p*1.2E2-dkappa*(e2x*e2x)*x2p*1.2E2+dkappa*e2x*e2xp*x1*1.2E2-dkappa*e2x*e2xp*x2*1.2E2+dkappa*e2x*e2yp*y1*1.2E2-dkappa*e2x*e2yp*y2*1.2E2+dkappa*e2x*e2y*y1p*1.2E2-dkappa*e2x*e2y*y2p*1.2E2+dkappa*dx1p*(e2x*e2x)*l0*6.0E1+dkappa*dx2p*(e2x*e2x)*l0*6.0E1+depsilon*dx1p*(e1x*e1x)*(l0*l0*l0)+depsilon*dx2p*(e1x*e1x)*(l0*l0*l0)+depsilon*(e1x*e1x)*(l0*l0)*x1p*1.2E1-depsilon*(e1x*e1x)*(l0*l0)*x2p*1.2E1+dkappa*dx1*e2x*e2xp*l0*6.0E1+dkappa*dx2*e2x*e2xp*l0*6.0E1+dkappa*dy1*e2x*e2yp*l0*6.0E1+dkappa*dy1p*e2x*e2y*l0*6.0E1+dkappa*dy2*e2x*e2yp*l0*6.0E1+dkappa*dy2p*e2x*e2y*l0*6.0E1+depsilon*dx1*e1x*e1xp*(l0*l0*l0)+depsilon*dx2*e1x*e1xp*(l0*l0*l0)+depsilon*dy1*e1x*e1yp*(l0*l0*l0)+depsilon*dy1p*e1x*e1y*(l0*l0*l0)+depsilon*dy2*e1x*e1yp*(l0*l0*l0)+depsilon*dy2p*e1x*e1y*(l0*l0*l0)+depsilon*e1x*e1xp*(l0*l0)*x1*1.2E1-depsilon*e1x*e1xp*(l0*l0)*x2*1.2E1+depsilon*e1x*e1yp*(l0*l0)*y1*1.2E1-depsilon*e1x*e1yp*(l0*l0)*y2*1.2E1+depsilon*e1x*e1y*(l0*l0)*y1p*1.2E1-depsilon*e1x*e1y*(l0*l0)*y2p*1.2E1)*(1.0/1.0E1);
+    hd_q(5) = 1.0/(l0*l0*l0)*(dkappa*(e2y*e2y)*y1p*1.2E2-dkappa*(e2y*e2y)*y2p*1.2E2+dkappa*e2xp*e2y*x1*1.2E2-dkappa*e2xp*e2y*x2*1.2E2+dkappa*e2x*e2y*x1p*1.2E2-dkappa*e2x*e2y*x2p*1.2E2+dkappa*e2y*e2yp*y1*1.2E2-dkappa*e2y*e2yp*y2*1.2E2+dkappa*dy1p*(e2y*e2y)*l0*6.0E1+dkappa*dy2p*(e2y*e2y)*l0*6.0E1+depsilon*dy1p*(e1y*e1y)*(l0*l0*l0)+depsilon*dy2p*(e1y*e1y)*(l0*l0*l0)+depsilon*(e1y*e1y)*(l0*l0)*y1p*1.2E1-depsilon*(e1y*e1y)*(l0*l0)*y2p*1.2E1+dkappa*dx1*e2xp*e2y*l0*6.0E1+dkappa*dx1p*e2x*e2y*l0*6.0E1+dkappa*dx2*e2xp*e2y*l0*6.0E1+dkappa*dx2p*e2x*e2y*l0*6.0E1+dkappa*dy1*e2y*e2yp*l0*6.0E1+dkappa*dy2*e2y*e2yp*l0*6.0E1+depsilon*dx1*e1xp*e1y*(l0*l0*l0)+depsilon*dx1p*e1x*e1y*(l0*l0*l0)+depsilon*dx2*e1xp*e1y*(l0*l0*l0)+depsilon*dx2p*e1x*e1y*(l0*l0*l0)+depsilon*dy1*e1y*e1yp*(l0*l0*l0)+depsilon*dy2*e1y*e1yp*(l0*l0*l0)+depsilon*e1xp*e1y*(l0*l0)*x1*1.2E1-depsilon*e1xp*e1y*(l0*l0)*x2*1.2E1+depsilon*e1x*e1y*(l0*l0)*x1p*1.2E1-depsilon*e1x*e1y*(l0*l0)*x2p*1.2E1+depsilon*e1y*e1yp*(l0*l0)*y1*1.2E1-depsilon*e1y*e1yp*(l0*l0)*y2*1.2E1)*(1.0/1.0E1);
+    hd_q(6) = 1.0/(l0*l0)*(dkappa*(e2x*e2x)*x1p*1.8E2-dkappa*(e2x*e2x)*x2p*1.8E2+dkappa*e2x*e2xp*x1*1.8E2-dkappa*e2x*e2xp*x2*1.8E2+dkappa*e2x*e2yp*y1*1.8E2-dkappa*e2x*e2yp*y2*1.8E2+dkappa*e2x*e2y*y1p*1.8E2-dkappa*e2x*e2y*y2p*1.8E2+dkappa*dx1p*(e2x*e2x)*l0*6.0E1+dkappa*dx2p*(e2x*e2x)*l0*1.2E2-depsilon*dx1p*(e1x*e1x)*(l0*l0*l0)+depsilon*dx2p*(e1x*e1x)*(l0*l0*l0)*4.0+depsilon*(e1x*e1x)*(l0*l0)*x1p*3.0-depsilon*(e1x*e1x)*(l0*l0)*x2p*3.0+dkappa*dx1*e2x*e2xp*l0*6.0E1+dkappa*dx2*e2x*e2xp*l0*1.2E2+dkappa*dy1*e2x*e2yp*l0*6.0E1+dkappa*dy1p*e2x*e2y*l0*6.0E1+dkappa*dy2*e2x*e2yp*l0*1.2E2+dkappa*dy2p*e2x*e2y*l0*1.2E2-depsilon*dx1*e1x*e1xp*(l0*l0*l0)+depsilon*dx2*e1x*e1xp*(l0*l0*l0)*4.0-depsilon*dy1*e1x*e1yp*(l0*l0*l0)-depsilon*dy1p*e1x*e1y*(l0*l0*l0)+depsilon*dy2*e1x*e1yp*(l0*l0*l0)*4.0+depsilon*dy2p*e1x*e1y*(l0*l0*l0)*4.0+depsilon*e1x*e1xp*(l0*l0)*x1*3.0-depsilon*e1x*e1xp*(l0*l0)*x2*3.0+depsilon*e1x*e1yp*(l0*l0)*y1*3.0-depsilon*e1x*e1yp*(l0*l0)*y2*3.0+depsilon*e1x*e1y*(l0*l0)*y1p*3.0-depsilon*e1x*e1y*(l0*l0)*y2p*3.0)*(-1.0/3.0E1);
+    hd_q(7) = 1.0/(l0*l0)*(dkappa*(e2y*e2y)*y1p*1.8E2-dkappa*(e2y*e2y)*y2p*1.8E2+dkappa*e2xp*e2y*x1*1.8E2-dkappa*e2xp*e2y*x2*1.8E2+dkappa*e2x*e2y*x1p*1.8E2-dkappa*e2x*e2y*x2p*1.8E2+dkappa*e2y*e2yp*y1*1.8E2-dkappa*e2y*e2yp*y2*1.8E2+dkappa*dy1p*(e2y*e2y)*l0*6.0E1+dkappa*dy2p*(e2y*e2y)*l0*1.2E2-depsilon*dy1p*(e1y*e1y)*(l0*l0*l0)+depsilon*dy2p*(e1y*e1y)*(l0*l0*l0)*4.0+depsilon*(e1y*e1y)*(l0*l0)*y1p*3.0-depsilon*(e1y*e1y)*(l0*l0)*y2p*3.0+dkappa*dx1*e2xp*e2y*l0*6.0E1+dkappa*dx1p*e2x*e2y*l0*6.0E1+dkappa*dx2*e2xp*e2y*l0*1.2E2+dkappa*dx2p*e2x*e2y*l0*1.2E2+dkappa*dy1*e2y*e2yp*l0*6.0E1+dkappa*dy2*e2y*e2yp*l0*1.2E2-depsilon*dx1*e1xp*e1y*(l0*l0*l0)-depsilon*dx1p*e1x*e1y*(l0*l0*l0)+depsilon*dx2*e1xp*e1y*(l0*l0*l0)*4.0+depsilon*dx2p*e1x*e1y*(l0*l0*l0)*4.0-depsilon*dy1*e1y*e1yp*(l0*l0*l0)+depsilon*dy2*e1y*e1yp*(l0*l0*l0)*4.0+depsilon*e1xp*e1y*(l0*l0)*x1*3.0-depsilon*e1xp*e1y*(l0*l0)*x2*3.0+depsilon*e1x*e1y*(l0*l0)*x1p*3.0-depsilon*e1x*e1y*(l0*l0)*x2p*3.0+depsilon*e1y*e1yp*(l0*l0)*y1*3.0-depsilon*e1y*e1yp*(l0*l0)*y2*3.0)*(-1.0/3.0E1);
+    
+    Vec hd_e1(2,NONINIT);
+    hd_e1(0) = (depsilon*(e1xp*(x1*x1)*3.6E1+e1xp*(x2*x2)*3.6E1+(dx1*dx1)*e1xp*(l0*l0)*4.0+(dx2*dx2)*e1xp*(l0*l0)*4.0-e1xp*x1*x2*7.2E1+e1x*x1*x1p*3.6E1-e1x*x1*x2p*3.6E1-e1x*x2*x1p*3.6E1+e1x*x2*x2p*3.6E1+e1yp*x1*y1*3.6E1-e1yp*x1*y2*3.6E1-e1yp*x2*y1*3.6E1+e1yp*x2*y2*3.6E1+e1y*x1*y1p*3.6E1-e1y*x1*y2p*3.6E1-e1y*x2*y1p*3.6E1+e1y*x2*y2p*3.6E1+dx1*e1xp*l0*x1*6.0+dx1p*e1x*l0*x1*3.0-dx1*e1xp*l0*x2*6.0+dx2*e1xp*l0*x1*6.0-dx1p*e1x*l0*x2*3.0+dx2p*e1x*l0*x1*3.0-dx2*e1xp*l0*x2*6.0-dx2p*e1x*l0*x2*3.0+dx1*e1x*l0*x1p*3.0-dx1*e1x*l0*x2p*3.0+dx2*e1x*l0*x1p*3.0-dx2*e1x*l0*x2p*3.0+dy1*e1yp*l0*x1*3.0+dy1p*e1y*l0*x1*3.0-dy1*e1yp*l0*x2*3.0+dy2*e1yp*l0*x1*3.0-dy1p*e1y*l0*x2*3.0+dy2p*e1y*l0*x1*3.0-dy2*e1yp*l0*x2*3.0-dy2p*e1y*l0*x2*3.0+dx1*e1yp*l0*y1*3.0-dx1*e1yp*l0*y2*3.0+dx2*e1yp*l0*y1*3.0-dx2*e1yp*l0*y2*3.0+dx1*e1y*l0*y1p*3.0-dx1*e1y*l0*y2p*3.0+dx2*e1y*l0*y1p*3.0-dx2*e1y*l0*y2p*3.0+dx1*dx1p*e1x*(l0*l0)*4.0-dx1*dx2*e1xp*(l0*l0)*2.0-dx1*dx2p*e1x*(l0*l0)-dx2*dx1p*e1x*(l0*l0)+dx2*dx2p*e1x*(l0*l0)*4.0+dx1*dy1*e1yp*(l0*l0)*4.0+dx1*dy1p*e1y*(l0*l0)*4.0-dx1*dy2*e1yp*(l0*l0)-dx1*dy2p*e1y*(l0*l0)-dx2*dy1*e1yp*(l0*l0)-dx2*dy1p*e1y*(l0*l0)+dx2*dy2*e1yp*(l0*l0)*4.0+dx2*dy2p*e1y*(l0*l0)*4.0)*(-1.0/3.0E1))/l0;
+    hd_e1(1) = (depsilon*(e1yp*(y1*y1)*3.6E1+e1yp*(y2*y2)*3.6E1+(dy1*dy1)*e1yp*(l0*l0)*4.0+(dy2*dy2)*e1yp*(l0*l0)*4.0+e1xp*x1*y1*3.6E1-e1xp*x1*y2*3.6E1-e1xp*x2*y1*3.6E1+e1xp*x2*y2*3.6E1+e1x*x1p*y1*3.6E1-e1x*x1p*y2*3.6E1-e1x*x2p*y1*3.6E1+e1x*x2p*y2*3.6E1-e1yp*y1*y2*7.2E1+e1y*y1*y1p*3.6E1-e1y*y1*y2p*3.6E1-e1y*y2*y1p*3.6E1+e1y*y2*y2p*3.6E1+dy1*e1xp*l0*x1*3.0-dy1*e1xp*l0*x2*3.0+dy2*e1xp*l0*x1*3.0-dy2*e1xp*l0*x2*3.0+dy1*e1x*l0*x1p*3.0-dy1*e1x*l0*x2p*3.0+dy2*e1x*l0*x1p*3.0-dy2*e1x*l0*x2p*3.0+dx1*e1xp*l0*y1*3.0+dx1p*e1x*l0*y1*3.0-dx1*e1xp*l0*y2*3.0+dx2*e1xp*l0*y1*3.0-dx1p*e1x*l0*y2*3.0+dx2p*e1x*l0*y1*3.0-dx2*e1xp*l0*y2*3.0-dx2p*e1x*l0*y2*3.0+dy1*e1yp*l0*y1*6.0+dy1p*e1y*l0*y1*3.0-dy1*e1yp*l0*y2*6.0+dy2*e1yp*l0*y1*6.0-dy1p*e1y*l0*y2*3.0+dy2p*e1y*l0*y1*3.0-dy2*e1yp*l0*y2*6.0-dy2p*e1y*l0*y2*3.0+dy1*e1y*l0*y1p*3.0-dy1*e1y*l0*y2p*3.0+dy2*e1y*l0*y1p*3.0-dy2*e1y*l0*y2p*3.0+dx1*dy1*e1xp*(l0*l0)*4.0+dx1p*dy1*e1x*(l0*l0)*4.0-dx1*dy2*e1xp*(l0*l0)-dx2*dy1*e1xp*(l0*l0)-dx1p*dy2*e1x*(l0*l0)-dx2p*dy1*e1x*(l0*l0)+dx2*dy2*e1xp*(l0*l0)*4.0+dx2p*dy2*e1x*(l0*l0)*4.0+dy1*dy1p*e1y*(l0*l0)*4.0-dy1*dy2*e1yp*(l0*l0)*2.0-dy1*dy2p*e1y*(l0*l0)-dy2*dy1p*e1y*(l0*l0)+dy2*dy2p*e1y*(l0*l0)*4.0)*(-1.0/3.0E1))/l0;
+    
+    Vec hd_e2(2,NONINIT);
+    hd_e2(0) = (l0*l0)*(dkappa*1.0/(l0*l0*l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0+dx2*l0)*(e2xp*x1*2.0-e2xp*x2*2.0+e2x*x1p*2.0-e2x*x2p*2.0+e2yp*y1*2.0-e2yp*y2*2.0+e2y*y1p*2.0-e2y*y2p*2.0+dx1*e2xp*l0+dx1p*e2x*l0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0+dy1p*e2y*l0+dy2*e2yp*l0+dy2p*e2y*l0)*-1.2E1+dkappa*1.0/(l0*l0*l0*l0*l0)*(x1*3.0-x2*3.0+dx1*l0*2.0+dx2*l0)*(e2xp*x1*2.0-e2xp*x2*2.0+e2x*x1p*2.0-e2x*x2p*2.0+e2yp*y1*2.0-e2yp*y2*2.0+e2y*y1p*2.0-e2y*y2p*2.0+dx1*e2xp*l0+dx1p*e2x*l0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0+dy1p*e2y*l0+dy2*e2yp*l0+dy2p*e2y*l0)*6.0+dkappa*1.0/(l0*l0*l0*l0*l0)*(x1*2.0-x2*2.0+dx1*l0+dx2*l0)*(e2xp*x1*3.0-e2xp*x2*3.0+e2x*x1p*3.0-e2x*x2p*3.0+e2yp*y1*3.0-e2yp*y2*3.0+e2y*y1p*3.0-e2y*y2p*3.0+dx1*e2xp*l0*2.0+dx1p*e2x*l0*2.0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0*2.0+dy1p*e2y*l0*2.0+dy2*e2yp*l0+dy2p*e2y*l0)*6.0)-dkappa*1.0/(l0*l0*l0)*(x1*3.0-x2*3.0+dx1*l0*2.0+dx2*l0)*(e2xp*x1*3.0-e2xp*x2*3.0+e2x*x1p*3.0-e2x*x2p*3.0+e2yp*y1*3.0-e2yp*y2*3.0+e2y*y1p*3.0-e2y*y2p*3.0+dx1*e2xp*l0*2.0+dx1p*e2x*l0*2.0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0*2.0+dy1p*e2y*l0*2.0+dy2*e2yp*l0+dy2p*e2y*l0)*4.0;
+    hd_e2(1) = (l0*l0)*(dkappa*1.0/(l0*l0*l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0+dy2*l0)*(e2xp*x1*2.0-e2xp*x2*2.0+e2x*x1p*2.0-e2x*x2p*2.0+e2yp*y1*2.0-e2yp*y2*2.0+e2y*y1p*2.0-e2y*y2p*2.0+dx1*e2xp*l0+dx1p*e2x*l0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0+dy1p*e2y*l0+dy2*e2yp*l0+dy2p*e2y*l0)*-1.2E1+dkappa*1.0/(l0*l0*l0*l0*l0)*(y1*3.0-y2*3.0+dy1*l0*2.0+dy2*l0)*(e2xp*x1*2.0-e2xp*x2*2.0+e2x*x1p*2.0-e2x*x2p*2.0+e2yp*y1*2.0-e2yp*y2*2.0+e2y*y1p*2.0-e2y*y2p*2.0+dx1*e2xp*l0+dx1p*e2x*l0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0+dy1p*e2y*l0+dy2*e2yp*l0+dy2p*e2y*l0)*6.0+dkappa*1.0/(l0*l0*l0*l0*l0)*(y1*2.0-y2*2.0+dy1*l0+dy2*l0)*(e2xp*x1*3.0-e2xp*x2*3.0+e2x*x1p*3.0-e2x*x2p*3.0+e2yp*y1*3.0-e2yp*y2*3.0+e2y*y1p*3.0-e2y*y2p*3.0+dx1*e2xp*l0*2.0+dx1p*e2x*l0*2.0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0*2.0+dy1p*e2y*l0*2.0+dy2*e2yp*l0+dy2p*e2y*l0)*6.0)-dkappa*1.0/(l0*l0*l0)*(y1*3.0-y2*3.0+dy1*l0*2.0+dy2*l0)*(e2xp*x1*3.0-e2xp*x2*3.0+e2x*x1p*3.0-e2x*x2p*3.0+e2yp*y1*3.0-e2yp*y2*3.0+e2y*y1p*3.0-e2y*y2p*3.0+dx1*e2xp*l0*2.0+dx1p*e2x*l0*2.0+dx2*e2xp*l0+dx2p*e2x*l0+dy1*e2yp*l0*2.0+dy1p*e2y*l0*2.0+dy2*e2yp*l0+dy2p*e2y*l0)*4.0;
 
-    // // Daempfung------------------------------------------------------------------
-    // //    hdLokal.init(0.0); beim Initialisieren
-    //     hdLokal(3) = - depsilon * epsp; // eps
+    h = hgrav + hst_q + de1dq.T()*(hst_e1+hd_e1) + hbe_q + de2dq.T()*(hbe_e2+hd_e2) + hd_q; 
 
     //     // Impliziten Integratoren
     //     if(implicit)
@@ -171,10 +189,6 @@ namespace MBSimFlexibleBody {
     // 	Dhqp  = static_cast<SqrMat>(Dhz(8,0,2*8-1,8-1));
     // 	Dhqp += trans(Jeg)*Damp*Jeg;
     //     }
-
-    //     cout << "qElement = " << trans(qElement);
-    //     cout << "h        = " << trans(h)        << endl;
-    //     throw 1;
   }
 
   Vec FiniteElement1s21ANCF::computePosition(const Vec& qElement, const ContourPointData& cp) {

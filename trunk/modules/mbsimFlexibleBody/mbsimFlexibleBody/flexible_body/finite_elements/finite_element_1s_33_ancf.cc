@@ -49,17 +49,6 @@ namespace MBSimFlexibleBody {
     //  Damp(3,3) += -depsilon;
   }
 
-  void FiniteElement1s33ANCF::setLehrDamping(double D) {
-    throw MBSim::MBSimError("Error(FiniteElement1s33ANCF::setLehrDamping): Not implemented");
-    //  // Longitudinaleifenfrequenz
-    //  double weps = sqrt(12.*EA/(Arho*l0h2));
-    //  // Biegeeigenfrequenz
-    //  double wbL  = sqrt(1260.*128.*EI/(197.*Arho*l0h4));
-
-    //  depsilon  = 1.0 * D * weps * (Arho*l0h3/12.);
-    //  Damp(3,3) = -depsilon;
-  }
-
   void FiniteElement1s33ANCF::initM() {
     M(0,0) = A*l0*rho*(1.3E1/3.5E1);
     M(0,3) = A*(l0*l0)*rho*(1.1E1/2.1E2);
@@ -123,6 +112,7 @@ namespace MBSimFlexibleBody {
     // Local coordinate system
     Vec e1(3,NONINIT);
     e1(0) = x2-x1; e1(1) = y2-y1; e1(2) = z2-z1;
+    Vec e1_notNormalized = e1.copy();
     e1 /= nrm2(e1);
     const double &e1x = e1(0); const double &e1y = e1(1); const double &e1z = e1(2);
 
@@ -131,10 +121,11 @@ namespace MBSimFlexibleBody {
     dvec1dq(1,1) = -1.; dvec1dq(1,7) = 1.;
     dvec1dq(2,2) = -1.; dvec1dq(2,8) = 1.;
 
-    Mat de1dq = differentiate_normalized_vector_respective_vector(e1)*dvec1dq;
+    Mat de1dq = differentiate_normalized_vector_respective_vector(e1_notNormalized)*dvec1dq;
 
     Vec e2(3,NONINIT);
     e2(0) = y1-y2; e2(1) = x2-x1; e2(2) = 0.;
+    Vec e2_notNormalized = e2.copy();
     e2 /= nrm2(e2);
     const double &e2x = e2(0); const double &e2y = e2(1); const double &e2z = e2(2);
 
@@ -142,7 +133,7 @@ namespace MBSimFlexibleBody {
     dvec2dq(0,1) = 1.; dvec2dq(0,7) = -1.;
     dvec2dq(1,0) = -1.; dvec2dq(1,6) = 1.;
 
-    Mat de2dq = differentiate_normalized_vector_respective_vector(e2)*dvec2dq;
+    Mat de2dq = differentiate_normalized_vector_respective_vector(e2_notNormalized)*dvec2dq;
 
     Vec e3 = crossProduct(e1,e2);
     const double &e3x = e3(0); const double &e3y = e3(1); const double &e3z = e3(2);
@@ -209,10 +200,6 @@ namespace MBSimFlexibleBody {
     // 	Dhqp  = static_cast<SqrMat>(Dhz(8,0,2*8-1,8-1));
     // 	Dhqp += trans(Jeg)*Damp*Jeg;
     //     }
-
-    //     cout << "qElement = " << trans(qElement);
-    //     cout << "h        = " << trans(h)        << endl;
-    //     throw 1;
   }
 
   Vec FiniteElement1s33ANCF::computePosition(const Vec& qElement, const ContourPointData& cp) {

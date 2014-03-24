@@ -36,6 +36,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    *
    * \date 2014-02-27 basic revision
+   * \date 2014-03-23 damping added
    *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
@@ -85,6 +86,7 @@ namespace MBSimFlexibleBody {
       void setMomentInertia(double I_) { I = I_; }
       void setDensity(double rho_) { rho = rho_; }
       void setCurlRadius(double rc_);
+      void setMaterialDamping(double deps_, double dkappa_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -151,6 +153,16 @@ namespace MBSimFlexibleBody {
       double rc;
 
       /**
+       * \brief coefficient of material longitudinal damping
+       */
+      double deps;
+
+      /**
+       * \brief coefficient of material longitudinal damping
+       */
+      double dkappa;
+
+      /**
        * \brief flag for open (cantilever beam) or closed (rings) structures
        */
       bool openStructure;
@@ -189,6 +201,14 @@ namespace MBSimFlexibleBody {
     if(initialised)
       for(int i = 0; i < Elements; i++)
         static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
+  }
+
+  inline void FlexibleBody1s21ANCF::setMaterialDamping(double deps_, double dkappa_) {
+    deps = deps_;
+    dkappa = dkappa_;
+    if(initialised)
+      for(int i = 0; i < Elements; i++) 
+        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setMaterialDamping(deps,dkappa);
   }
 
 }
