@@ -226,7 +226,8 @@ namespace MBSimGUI {
     static_cast<ExtWidget*>(widget)->setActive(active);
     static_cast<ExtWidget*>(widget)->setWidgetVisible(active);
     static_cast<ExtWidget*>(widget)->blockSignals(false);
-    property->toWidget(static_cast<ExtWidget*>(widget)->widget);
+    if(active)
+      property->toWidget(static_cast<ExtWidget*>(widget)->widget);
   }
 
   ContainerProperty::ContainerProperty(const ContainerProperty &p) : xmlName(p.xmlName) {

@@ -367,7 +367,7 @@ namespace MBSimGUI {
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 
-    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,0),true);
+    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
     addToTab("Kinematics",R);
   }
 
