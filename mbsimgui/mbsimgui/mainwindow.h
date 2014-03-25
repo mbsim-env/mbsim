@@ -137,6 +137,8 @@ namespace MBSimGUI {
       void addVectorParameter();
       void addMatrixParameter();
       void simulate();
+      void interrupt();
+      void refresh();
       void openmbv();
       void h5plotserie();
       void help();

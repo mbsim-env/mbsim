@@ -133,11 +133,19 @@ namespace MBSimGUI {
     menuBar()->addMenu(helpMenu);
 
     QToolBar *toolBar = addToolBar("Tasks");
-    actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"simulate.svg").string())),"Simulate");
+    actionSimulate = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
     //actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
     toolBar->addAction(actionSimulate);
+    QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
+//    actionInterrupt->setDisabled(true);
+    connect(actionInterrupt,SIGNAL(triggered()),this,SLOT(interrupt()));
+    toolBar->addAction(actionInterrupt);
+    QAction *actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
+//    actionRefresh->setDisabled(true);
+    connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
+    toolBar->addAction(actionRefresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
     actionOpenMBV->setDisabled(true);
     connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
@@ -350,9 +358,6 @@ namespace MBSimGUI {
     QModelIndex pindex = pmodel->index(0,0); 		
     pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
 
-    //ParameterListModel *pmodel2 = static_cast<ParameterListModel*>(globalParam->model());
-    //QModelIndex pindex2 = pmodel2->index(0,0); 		
-    //pmodel2->removeRows(pindex2.row(), pmodel2->rowCount(QModelIndex()), pindex2.parent());
     if(element) {
       Parameters plist = element->getGlobalParameters();
 
@@ -360,8 +365,6 @@ namespace MBSimGUI {
        pmodel->createParameterItem(plist.getParameter(i));
  
       highlightObject(element->getID());
-//      for(int i=0; i<element->getNumberOfParameters(); i++)
-//        pmodel->createParameterItem(element->getParameter(i));
       updateOctaveParameters(element->getParameterList());
     }
     else
@@ -787,6 +790,14 @@ namespace MBSimGUI {
     absolutePath = false;
   }
 
+  void MainWindow::refresh() {
+    mbsimxml(1);
+  }
+
+  void MainWindow::interrupt() {
+    mbsim->getProcess()->terminate();
+  }
+
   void MainWindow::simulate() {
     mbsimxml(0);
     actionSaveDataAs->setDisabled(false);
@@ -825,7 +836,18 @@ namespace MBSimGUI {
       //QModelIndex index = elementList->selectionModel()->currentIndex();
       elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
       //elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
+      QModelIndex index = elementList->selectionModel()->currentIndex();
+      Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex pindex = pmodel->index(0,0); 		
+      pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
+
+      Parameters plist = element->getGlobalParameters();
+
+      for(int i=0; i<plist.getNumberOfParameters(); i++)
+        pmodel->createParameterItem(plist.getParameter(i));
     }
+
     highlightObject(ID);
   }
 
