@@ -111,6 +111,11 @@ namespace MBSim {
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<double(double(double))>, MBSIMNS"NestedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<double(VecV  (double))>, MBSIMNS"NestedFunction")
+  // The following functions are created using ...create<Function<VecV(double)> >(...). Hence the "second"
+  // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
+  // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<VecV(double(double))>, MBSIMNS"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<VecV(VecV(double))>, MBSIMNS"NestedFunction")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<VecV(double)>, MBSIMNS"PiecewiseDefinedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<Vec3(double)>, MBSIMNS"PiecewiseDefinedFunction")
