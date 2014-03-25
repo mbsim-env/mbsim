@@ -446,9 +446,11 @@ namespace MBSim {
     }
     else if (stage == relativeFrameContourLocation) {
       for (unsigned int k = 1; k < frame.size(); k++) {
-        FixedRelativeFrame *P = (FixedRelativeFrame*) frame[k];
         if (!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
           ((FixedRelativeFrame*) frame[k])->setFrameOfReference(I);
+      }
+      for (unsigned int k = 1; k < frame.size(); k++) {
+        FixedRelativeFrame *P = (FixedRelativeFrame*) frame[k];
         const FixedRelativeFrame *R = P;
         do {
           R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());

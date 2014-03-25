@@ -171,9 +171,11 @@ namespace MBSim {
 
       //RBF.push_back(C);
       for(unsigned int k=1; k<frame.size(); k++) {
+        if(!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
+          ((FixedRelativeFrame*) frame[k])->setFrameOfReference(C);
+      }
+      for(unsigned int k=1; k<frame.size(); k++) {
         FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
-        if(!(P->getFrameOfReference()))
-          P->setFrameOfReference(C);
         const FixedRelativeFrame *R = P;
         do {
           R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
