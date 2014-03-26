@@ -49,6 +49,8 @@ using namespace xercesc;
 using namespace boost;
 namespace bfs=boost::filesystem;
 
+extern void preprocess(shared_ptr<DOMParser> parser, OctEval &octEval, vector<bfs::path> &dependencies, DOMElement *&e);
+
 namespace MBSimGUI {
 
   bool absolutePath = false;
@@ -491,9 +493,7 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::saveProject(const QString &fileName) {
-    
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+  DOMElement* MainWindow::writeProject(shared_ptr<DOMDocument> &doc) {
     DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
     doc->insertBefore(ele0, NULL);
     E(ele0)->setAttribute("name", "Project");
@@ -509,6 +509,12 @@ namespace MBSimGUI {
     else
       integrator->writeXMLFile(ele0);
 
+    return ele0;
+  }
+
+ void MainWindow::saveProject(const QString &fileName) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    DOMElement *ele0=writeProject(doc);
     DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
   }
 
@@ -778,7 +784,32 @@ namespace MBSimGUI {
     string saveName=slv->getName();
     slv->setName("out"+sTask.toStdString());
     QString projectFile=uniqueTempDir_+"/in"+sTask+".mbsimprj.xml";
-    saveProject(projectFile);
+//    saveProject(projectFile);
+
+    OctEval octEval;
+
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    writeProject(doc);
+    DOMElement *root = doc->getDocumentElement();
+
+    // GUI-XML-Baum mit OriginalFilename ergaenzen
+    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename") && !E(root)->hasAttribute(XML%"base")) {
+      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
+          X()%"MBS.mbsimprj.xml");
+      root->insertBefore(filenamePI, root->getFirstChild());
+      root->setAttributeNS(X()%XML.getNamespaceURI(), X()%"xml:base", X()%"MBS.mbsimprj.xml");
+    }
+
+    D(doc)->validate();
+
+    vector<bfs::path> dep;
+
+    // Praeprozessor starten
+    DOMElement *mainxmlele=doc->getDocumentElement();
+    preprocess(parser, octEval, dep, mainxmlele);
+
+    // Neuen GUI-XML-Baum serialisieren
+    DOMParser::serialize(doc.get(), projectFile.toStdString(), true);
     slv->setName(saveName);
 
     QStringList arg;
@@ -786,7 +817,7 @@ namespace MBSimGUI {
       arg.append("--stopafterfirststep");
     arg.append(projectFile);
     mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-    mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+    mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
     absolutePath = false;
   }
 
