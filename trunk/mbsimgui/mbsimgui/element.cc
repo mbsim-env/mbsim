@@ -101,7 +101,7 @@ namespace MBSimGUI {
     //DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = embed.writeXMLFile(parent);
 
-    if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
+    if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
       string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
       string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
@@ -110,7 +110,7 @@ namespace MBSimGUI {
     else
       parameters.writeXMLFile(ele);
 
-    if(static_cast<const EmbedProperty*>(embed.getProperty())->hasFile()) {
+    if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasFile()) {
       string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getFile();
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
       string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;

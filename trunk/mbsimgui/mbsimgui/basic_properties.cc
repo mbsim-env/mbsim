@@ -758,7 +758,7 @@ namespace MBSimGUI {
   DOMElement* EmbedProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PV%"Embed");
-    if(href.isActive()) {
+    if(not(absolutePath) and href.isActive()) {
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(getFile())).toStdString();
       E(ele0)->setAttribute("href", relFileName);
     }
@@ -766,7 +766,7 @@ namespace MBSimGUI {
       E(ele0)->setAttribute("count", boost::lexical_cast<string>(static_cast<IntegerProperty*>(count.getProperty())->getValue()));
     if(counterName.isActive())
       E(ele0)->setAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
-    if(parameterList.isActive()) {
+    if(not(absolutePath) and parameterList.isActive()) {
       //DOMElement *ele1=D(doc)->createElement(PV%"parameterHref");
       //    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
       //E(ele1)->setAttribute("parameterHref", filePath);

@@ -504,7 +504,7 @@ namespace MBSimGUI {
 
     Embed<Solver>::writeXML(solver,ele0);
     Integrator *integrator = integratorView->getIntegrator();
-    if(integrator->isEmbedded())
+    if(not(absolutePath) and integrator->isEmbedded())
       integrator->writeXMLFileEmbed(ele0);
     else
       integrator->writeXMLFile(ele0);
@@ -809,7 +809,7 @@ namespace MBSimGUI {
     preprocess(parser, octEval, dep, mainxmlele);
 
     // Neuen GUI-XML-Baum serialisieren
-    DOMParser::serialize(doc.get(), projectFile.toStdString(), true);
+    DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
     slv->setName(saveName);
 
     QStringList arg;
