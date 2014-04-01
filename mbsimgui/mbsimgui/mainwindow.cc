@@ -194,11 +194,25 @@ namespace MBSimGUI {
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
-    dockWidget1->setWidget(elementList);
+    QWidget *widget1=new QWidget(dockWidget1);
+    dockWidget1->setWidget(widget1);
+    QGridLayout *widgetLayout1=new QGridLayout(widget1);
+    widgetLayout1->setContentsMargins(0,0,0,0);
+    widget1->setLayout(widgetLayout1);
+    OpenMBVGUI::AbstractViewFilter *elementListFilter=new OpenMBVGUI::AbstractViewFilter(elementList, 0, 1);
+    widgetLayout1->addWidget(elementListFilter, 0, 0);
+    widgetLayout1->addWidget(elementList, 1, 0);
 
     QDockWidget *dockWidget3 = new QDockWidget("Parameters");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
-    dockWidget3->setWidget(parameterList);
+    QWidget *widget3=new QWidget(dockWidget3);
+    dockWidget3->setWidget(widget3);
+    QGridLayout *widgetLayout3=new QGridLayout(widget3);
+    widgetLayout3->setContentsMargins(0,0,0,0);
+    widget3->setLayout(widgetLayout3);
+    OpenMBVGUI::AbstractViewFilter *parameterListFilter=new OpenMBVGUI::AbstractViewFilter(parameterList, 0, -2);
+    widgetLayout3->addWidget(parameterListFilter, 0, 0);
+    widgetLayout3->addWidget(parameterList, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Integrator");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);

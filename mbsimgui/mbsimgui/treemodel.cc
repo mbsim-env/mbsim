@@ -47,20 +47,21 @@ namespace MBSimGUI {
       return item->getData(index.column());
     } 
     else if(role==Qt::ForegroundRole) {
-      if(getItem(index)->getData1()=="") {
-        QPalette palette;
-        QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
-        return brush;
-      }
+      TreeItem *item = getItem(index);
+      return item->getForeground();
     }
     return QVariant();
   }
 
   Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const {
     if(!index.isValid())
-      return 0;
+      return Qt::NoItemFlags;
 
-    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    TreeItem *item = getItem(index);
+    if(item->getData1()=="")
+      return Qt::ItemIsEditable | Qt::ItemIsSelectable;
+    else
+      return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
   }
 
   TreeItem *TreeModel::getItem(const QModelIndex &index) const {
@@ -120,12 +121,14 @@ namespace MBSimGUI {
   }
 
   bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(role != Qt::EditRole)
+    if(role != Qt::EditRole && role != Qt::ForegroundRole)
       return false;
 
     TreeItem *item = getItem(index);
-    if(index.column()==0)
+    if(role == Qt::EditRole && index.column()==0)
       item->setData0(value);
+    if(role == Qt::ForegroundRole && index.column()==0)
+      item->setForeground(value.value<QBrush>());
 
     emit dataChanged(index, index);
 
