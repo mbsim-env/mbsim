@@ -48,6 +48,8 @@ namespace MBSim {
       void updatedx(double t, double dt);
       void updatexd(double t);
 
+      bool isSingleValued() const { return true; }
+
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       std::string getType() const { return "ExternGeneralizedIO"; }
