@@ -688,6 +688,34 @@ namespace MBSimGUI {
     return new VecWidget(x);
   }
 
+  AboutZWidget::AboutZWidget() {
+
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+    mainlayout->setMargin(0);
+    setLayout(mainlayout);
+    QGridLayout *layout = new QGridLayout;
+    mainlayout->addLayout(layout);
+    box = new QLineEdit(this);
+    box->setPlaceholderText("0");
+    layout->addWidget(box);
+    unit = new QComboBox;
+    unit->addItems(angleUnits());
+    unit->setCurrentIndex(1);
+    mainlayout->addWidget(unit);
+  }
+
+  bool AboutZWidget::validate(const vector<vector<QString> > &A) const {
+    if(A.size()!=1)
+      return false;
+    if(A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  QWidget* AboutZWidget::getValidatedWidget() const {
+    return new ScalarWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+  }
+
   PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
     QHBoxLayout *layout = new QHBoxLayout;
     setLayout(layout);
@@ -903,13 +931,15 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
   }
 
-  RotMatWidgetFactory::RotMatWidgetFactory() : name(3), unit(3), defaultUnit(3,1) {
-    name[0] = "Matrix";
+  RotMatWidgetFactory::RotMatWidgetFactory() : name(4), unit(4), defaultUnit(4,1) {
+    name[0] = "AboutZ";
     name[1] = "Cardan";
     name[2] = "Editor";
+    name[3] = "Matrix";
     unit[0] = QStringList();
     unit[1] = QStringList();
     unit[2] = QStringList();
+    unit[3] = QStringList();
   }
 
   RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : name(name_), unit(unit_), defaultUnit(defaultUnit_) {
@@ -917,11 +947,13 @@ namespace MBSimGUI {
 
   QWidget* RotMatWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+      return new PhysicalVariableWidget(new AboutZWidget,unit[1],defaultUnit[1]);
     if(i==1)
       return new PhysicalVariableWidget(new CardanWidget,unit[1],defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
+    if(i==3)
+      return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
   }
 
   SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {

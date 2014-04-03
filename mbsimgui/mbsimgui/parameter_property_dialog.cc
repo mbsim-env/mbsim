@@ -43,8 +43,10 @@ namespace MBSimGUI {
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-    value = new ExtWidget("Value",new TextWidget("0"));
+    value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()))));
     addToTab("General", value);
+//    value = new ExtWidget("Value",new TextWidget("0"));
+//    addToTab("General", value);
   }
 
   void StringParameterPropertyDialog::toWidget(Parameter *parameter) {
@@ -53,9 +55,12 @@ namespace MBSimGUI {
   }
 
   void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    //ParameterPropertyDialog::fromWidget(parameter);
+    //static_cast<StringParameter*>(parameter)->value.fromWidget(value);
+    //parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
     ParameterPropertyDialog::fromWidget(parameter);
     static_cast<StringParameter*>(parameter)->value.fromWidget(value);
-    parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
+    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
   }
 
   ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {

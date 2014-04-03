@@ -24,6 +24,7 @@
 #include <vector>
 #include "utils.h"
 #include "property.h"
+#include <QFileInfo>
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -125,6 +126,23 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
   };
 
+  class AboutZProperty : public VariableProperty {
+
+    private:
+      std::string angle;
+      std::string unit; 
+    public:
+      AboutZProperty();
+      ~AboutZProperty();
+      virtual Property* clone() const {return new AboutZProperty(*this);}
+      std::string getValue() const {return angle;}
+      void setValue(const std::string &angle_) {angle = angle_;}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+  };
+
   class PhysicalVariableProperty : public Property {
     protected:
       VariableProperty* value;
@@ -176,9 +194,12 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
+      std::string getFile() const;
+      void setFile(const std::string &str);
 
     protected:
       std::string file;
+      QFileInfo fileInfo;
   };
 
   class ScalarPropertyFactory: public PropertyFactory {
