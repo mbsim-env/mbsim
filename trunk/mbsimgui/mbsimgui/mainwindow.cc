@@ -39,6 +39,7 @@
 #include <utime.h>
 #include <QtGui>
 #include <mbxmlutils/octeval.h>
+#include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
@@ -48,8 +49,6 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
 namespace bfs=boost::filesystem;
-
-extern void preprocess(shared_ptr<DOMParser> parser, OctEval &octEval, vector<bfs::path> &dependencies, DOMElement *&e);
 
 namespace MBSimGUI {
 
