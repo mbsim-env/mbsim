@@ -352,6 +352,15 @@ namespace MBSimGUI {
     static_cast<SignalOfReferenceWidget*>(widget)->updateWidget();
   }
 
+  void FileProperty::setFile(const std::string &str) {
+    file = str;
+    fileInfo = mbsDir.absoluteFilePath(QString::fromStdString(file));
+  }
+
+  std::string FileProperty::getFile() const {
+    return fileInfo.isFile()?fileInfo.canonicalFilePath().toStdString():file;
+  }
+
   DOMElement* FileProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
@@ -359,8 +368,9 @@ namespace MBSimGUI {
       if(text) {
         file = X()%text->getData();
         file = file.substr(1,file.length()-2);
-        QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(file)));
-        file = fileInfo.canonicalFilePath().toStdString();
+        setFile(file);
+//        QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(file)));
+//        file = fileInfo.canonicalFilePath().toStdString();
         return e;
       }
     }
@@ -370,7 +380,11 @@ namespace MBSimGUI {
   DOMElement* FileProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0 = D(doc)->createElement(xmlName);
-    string filePath = string("\"")+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"\"";
+    string filePath;
+    if(fileInfo.isFile())
+      filePath = string("\"")+(absolutePath?mbsDir.absoluteFilePath(fileInfo.absoluteFilePath()).toStdString():mbsDir.relativeFilePath(fileInfo.absoluteFilePath()).toStdString())+"\"";
+    else
+      filePath = file;
     DOMText *text = doc->createTextNode(X()%filePath);
     ele0->insertBefore(text, NULL);
     parent->insertBefore(ele0, NULL);
@@ -384,7 +398,7 @@ namespace MBSimGUI {
 
   void FileProperty::toWidget(QWidget *widget) {
     static_cast<FileWidget*>(widget)->blockSignals(true);
-    static_cast<FileWidget*>(widget)->setFile(QString::fromStdString(file));
+    static_cast<FileWidget*>(widget)->setFile(QString::fromStdString(getFile()));
     static_cast<FileWidget*>(widget)->blockSignals(false);
   }
 

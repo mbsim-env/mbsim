@@ -23,6 +23,8 @@
 #include "parameter_property_dialog.h"
 #include "treemodel.h"
 #include "treeitem.h"
+#include "element.h"
+#include "element_view.h"
 #include "mainwindow.h"
 #include <QEvent>
 
@@ -34,6 +36,10 @@ namespace MBSimGUI {
     if(!editor) {
       index = selectionModel()->currentIndex();
       if(index.isValid()) {
+        QModelIndex index_ = mw->getElementList()->selectionModel()->currentIndex();
+        ElementTreeModel *model_ = static_cast<ElementTreeModel*>(mw->getElementList()->model());
+        Element *element=static_cast<Element*>(model_->getItem(index_)->getItemData());
+        mw->updateOctaveParameters(element->getParameterList());
         Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(model())->getItem(index)->getItemData());
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
@@ -56,7 +62,7 @@ namespace MBSimGUI {
 
   void ParameterView::dialogFinished(int result) {
     if(result != 0) {
-      mw->updateOctaveParameters();
+//      mw->updateOctaveParameters();
       mw->mbsimxml(1);
     }
     editor = 0;
@@ -65,7 +71,7 @@ namespace MBSimGUI {
   void ParameterView::apply() {
     update(index);
     update(index.sibling(index.row(),1));
-    mw->updateOctaveParameters();
+//    mw->updateOctaveParameters();
     mw->mbsimxml(1);
   }
 

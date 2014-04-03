@@ -262,8 +262,8 @@ namespace MBSimGUI {
       return new VectorParameter(E(element)->getAttribute("name"));
     else if(E(element)->getTagName()==PARAM%"matrixParameter")
       return new MatrixParameter(E(element)->getAttribute("name"));
-    //  else if(E(element)->getTagName()==PARAM%"searchPath")
-    //    return new SearchPath(E(element)->getAttribute("name"));
+    else if(E(element)->getTagName()==PARAM%"searchPath")
+      return new SearchPath(E(element)->getAttribute("name"));
     return 0;
   }
 

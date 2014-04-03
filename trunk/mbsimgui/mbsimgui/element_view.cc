@@ -57,8 +57,6 @@ namespace MBSimGUI {
 
   void ElementView::dialogFinished(int result) {
     if(result != 0) {
-//      if(element->isEmbedded())
-//        mw->updateOctaveParameters(ParameterList());
       mw->mbsimxml(1);
     }
     editor = 0;
@@ -67,8 +65,6 @@ namespace MBSimGUI {
 
   void ElementView::apply() {
     update(index);
-//    if(element->isEmbedded())
-//      mw->updateOctaveParameters(element->getParameterList());
     mw->mbsimxml(1);
   }
 

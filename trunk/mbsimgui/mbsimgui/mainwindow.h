@@ -72,7 +72,7 @@ namespace MBSimGUI {
       void dragEnterEvent(QDragEnterEvent *event);
       void dropEvent(QDropEvent *event);
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
+      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh; //, *separatorAct;
       std::string currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
@@ -96,9 +96,7 @@ namespace MBSimGUI {
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
-      //    void loadMBS(const QString &file);
-      //    void loadIntegrator(const QString &file);
-      //    void loadParameterList(const QString &file);
+      ElementView* getElementList() { return elementList; }
       public slots:
         void elementListClicked();
       void parameterListClicked();

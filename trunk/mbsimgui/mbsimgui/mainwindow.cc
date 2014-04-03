@@ -58,8 +58,8 @@ namespace MBSimGUI {
   MainWindow *mw;
 
   shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(true);
-  MBXMLUtils::OctEval *MainWindow::octEval=NULL;
-  MBXMLUtils::NewParamLevel *MainWindow::octEvalParamLevel=NULL;
+  OctEval *MainWindow::octEval=NULL;
+  NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
 
@@ -143,7 +143,7 @@ namespace MBSimGUI {
 //    actionInterrupt->setDisabled(true);
     connect(actionInterrupt,SIGNAL(triggered()),this,SLOT(interrupt()));
     toolBar->addAction(actionInterrupt);
-    QAction *actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
+    actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
 //    actionRefresh->setDisabled(true);
     connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
     toolBar->addAction(actionRefresh);
@@ -309,6 +309,7 @@ namespace MBSimGUI {
     actionSimulate->setDisabled(false);
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
+    actionRefresh->setDisabled(false);
     statusBar()->showMessage(tr("Ready"));
   }
 
@@ -380,7 +381,6 @@ namespace MBSimGUI {
        pmodel->createParameterItem(plist.getParameter(i));
  
       highlightObject(element->getID());
-      updateOctaveParameters(element->getParameterList());
     }
     else
       highlightObject("");
@@ -448,15 +448,6 @@ namespace MBSimGUI {
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
       model->createGroupItem(solver);
-
-   //   ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-   //   QModelIndex pindex = pmodel->index(0,0); 		
-   //   for(int i=0; i<pmodel->rowCount(QModelIndex()); i++) 		
-   //     delete pmodel->getItem(pindex.sibling(i,0))->getItemData(); 		
-   //   pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
-   //   for(int i=0; i<solver->getNumberOfParameters(); i++)
-   //     pmodel->createParameterItem(solver->getParameter(i));
-   //   updateOctaveParameters();
 
       ele1 = ele1->getNextElementSibling();
 
@@ -600,7 +591,6 @@ namespace MBSimGUI {
     Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
     element->removeParameter(parameter);
     pmodel->removeRow(pindex.row(), pindex.parent());
-    //updateOctaveParameters();
   }
 
   void MainWindow::addStringParameter() {
@@ -612,7 +602,6 @@ namespace MBSimGUI {
       QModelIndex pindex = QModelIndex();
       StringParameter *parameter = new StringParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
       pmodel->createParameterItem(parameter,pindex);
-      //updateOctaveParameters();
       element->addParameter(parameter);
       parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
       parameterList->openEditor();
@@ -645,7 +634,6 @@ namespace MBSimGUI {
       QModelIndex pindex = QModelIndex();
       VectorParameter *parameter = new VectorParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
       pmodel->createParameterItem(parameter,pindex);
-      //updateOctaveParameters();
       element->addParameter(parameter);
       parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
       parameterList->openEditor();
@@ -661,7 +649,6 @@ namespace MBSimGUI {
       QModelIndex pindex = QModelIndex();
       MatrixParameter *parameter = new MatrixParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
       pmodel->createParameterItem(parameter,pindex);
-      //updateOctaveParameters();
       element->addParameter(parameter);
       parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
       parameterList->openEditor();
@@ -679,7 +666,6 @@ namespace MBSimGUI {
         ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
         QModelIndex index = model->index(0,0);
         model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
-        //updateOctaveParameters();
       }
     }
   }
@@ -708,8 +694,16 @@ namespace MBSimGUI {
     ele0->insertBefore(filenamePI, ele0->getFirstChild());
 
     paramList.writeXMLFile(ele0);
+    DOMParser::serialize(doc.get(), "test1.xml", true);
 
-    D(doc)->validate();
+    try {
+      D(doc)->validate();
+    }
+    catch(...) {
+      cout << "Error in validation" << endl;
+      return;
+    }
+    DOMParser::serialize(doc.get(), "test2.xml", true);
 
     try {
       // remove all parameters from octave using delete and new NewParamLevel
@@ -722,8 +716,8 @@ namespace MBSimGUI {
     catch(DOMEvalExceptionList error) {
       cout << "An exception occurred in updateOctaveParameters: " << error.what() << endl;
     }
-    catch(...) {
-      cout << "An unknown exception occurred in updateOctaveParameters." << endl;
+    catch(runtime_error error) {
+      cout << "An unknown exception occurred in updateOctaveParameters." << error.what() << endl;
     }
   }
 
@@ -799,10 +793,9 @@ namespace MBSimGUI {
     QString projectFile=uniqueTempDir_+"/in"+sTask+".mbsimprj.xml";
 //    saveProject(projectFile);
 
-    OctEval octEval;
-
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     writeProject(doc);
+
     DOMElement *root = doc->getDocumentElement();
 
     // GUI-XML-Baum mit OriginalFilename ergaenzen
@@ -816,10 +809,18 @@ namespace MBSimGUI {
     D(doc)->validate();
 
     vector<bfs::path> dep;
+    OctEval octEval(&dep);
 
     // Praeprozessor starten
     DOMElement *mainxmlele=doc->getDocumentElement();
-    preprocess(parser, octEval, dep, mainxmlele);
+    try {
+      preprocess(parser, octEval, dep, mainxmlele);
+    }
+    catch(...) {
+      cout << "error in preprocess" << endl;
+      slv->setName(saveName);
+      return;
+    }
 
     // Neuen GUI-XML-Baum serialisieren
     DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
@@ -850,6 +851,7 @@ namespace MBSimGUI {
     actionSimulate->setDisabled(true);
     actionOpenMBV->setDisabled(true);
     actionH5plotserie->setDisabled(true);
+    actionRefresh->setDisabled(true);
     statusBar()->showMessage(tr("Simulating"));
   }
 

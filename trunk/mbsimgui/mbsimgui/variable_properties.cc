@@ -263,6 +263,49 @@ namespace MBSimGUI {
     static_cast<CardanWidget*>(widget)->setUnit(QString::fromStdString(unit));
   }
 
+  AboutZProperty::AboutZProperty() : angle("0"), unit("degree") {
+  }
+
+  AboutZProperty::~AboutZProperty() {
+  }
+
+  DOMElement* AboutZProperty::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"aboutZ"))
+      return 0;
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return 0;
+    string str = X()%text->getData();
+    if(str.find("\n")!=string::npos)
+      return 0;
+    setValue(str);
+    if(E(element)->hasAttribute("unit"))
+      unit = E(element)->getAttribute("unit");
+    return element;
+  }
+
+  DOMElement* AboutZProperty::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"aboutZ");
+    DOMText *text = doc->createTextNode(X()%getValue());
+    ele->insertBefore(text, NULL);
+    if(unit!="")
+      E(ele)->setAttribute("unit", unit);
+    parent->insertBefore(ele, NULL);
+    return 0;
+  }
+
+  void AboutZProperty::fromWidget(QWidget *widget) {
+    VariableProperty::fromWidget(widget);
+    unit = static_cast<AboutZWidget*>(widget)->getUnit().toStdString();
+  }
+
+  void AboutZProperty::toWidget(QWidget *widget) {
+    VariableProperty::toWidget(widget);
+    static_cast<AboutZWidget*>(widget)->setUnit(QString::fromStdString(unit));
+  }
+
   DOMElement* PhysicalVariableProperty::initializeUsingXML(DOMElement *parent) {
     DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
     if(e) {
@@ -300,7 +343,17 @@ namespace MBSimGUI {
     static_cast<PhysicalVariableWidget*>(widget)->setUnit(QString::fromStdString(getUnit()));
   }
 
+  void FromFileProperty::setFile(const std::string &str) {
+    file = str;
+    fileInfo = mbsDir.absoluteFilePath(QString::fromStdString(file));
+  }
+
+  std::string FromFileProperty::getFile() const {
+    return fileInfo.isFile()?fileInfo.canonicalFilePath().toStdString():file;
+  }
+
   string FromFileProperty::getValue() const {
+    throw;
     return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("'" + file + "'"));
   }
 
@@ -313,8 +366,10 @@ namespace MBSimGUI {
     int pos1 = str.find_first_of('\''); 
     int pos2 = str.find_last_of('\''); 
     file = str.substr(pos1+1,pos2-pos1-1).c_str();
-    QFileInfo fileInfo(QString::fromStdString(file));
-    file = fileInfo.canonicalFilePath().toStdString();
+    setFile(file);
+
+    //QFileInfo fileInfo(QString::fromStdString(file));
+    //file = fileInfo.canonicalFilePath().toStdString();
     return element;
   }
 
@@ -334,8 +389,11 @@ namespace MBSimGUI {
   DOMElement* FromFileProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"fromFile");
-    string filePath = "'"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"'";
-    //string filePath = file;
+    string filePath;
+    if(fileInfo.isFile())
+      filePath = "'"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"'";
+    else
+      filePath = file;
     E(ele)->setAttribute("href",filePath);
     parent->insertBefore(ele, NULL);
     return 0;
@@ -347,7 +405,7 @@ namespace MBSimGUI {
 
   void FromFileProperty::toWidget(QWidget *widget) {
     static_cast<FromFileWidget*>(widget)->blockSignals(true);
-    static_cast<FromFileWidget*>(widget)->setFile(QString::fromStdString(file));
+    static_cast<FromFileWidget*>(widget)->setFile(QString::fromStdString(getFile()));
     static_cast<FromFileWidget*>(widget)->blockSignals(false);
   }
 
@@ -382,19 +440,21 @@ namespace MBSimGUI {
       return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[2], xmlName);
   }
 
-  RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_) : name(3), unit(3,""), xmlName(xmlName_) {
+  RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_) : name(4), unit(4,""), xmlName(xmlName_) {
   }
 
-  RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_, const vector<string> &unit_) : name(3), xmlName(xmlName_), unit(unit_) {
+  RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_, const vector<string> &unit_) : name(4), xmlName(xmlName_), unit(unit_) {
   }
 
   Property* RotMatPropertyFactory::createProperty(int i) {
     if(i==0)
-      return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
+      return new PhysicalVariableProperty(new AboutZProperty,unit[1],xmlName);
     if(i==1)
       return new PhysicalVariableProperty(new CardanProperty,unit[1],xmlName);
     if(i==2)
       return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+    if(i==3)
+      return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
   }
 
   MatPropertyFactory::MatPropertyFactory(const FQN &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {

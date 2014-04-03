@@ -283,7 +283,6 @@ signals:
       QComboBox* unit;
     public:
       CardanWidget();
-      void resize_(int size);
       std::vector<QString> getAngles() const;
       void setAngles(const std::vector<QString> &x);
       void setReadOnly(bool flag);
@@ -291,6 +290,22 @@ signals:
       void setValue(const QString &str) {setAngles(strToVec(str));}
       int size() const {return box.size();}
       virtual QString getType() const {return "Cardan";}
+      bool validate(const std::vector<std::vector<QString> > &A) const;
+      QString getUnit() const {return unit->currentText();}
+      void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+      virtual QWidget* getValidatedWidget() const;
+  };
+
+  class AboutZWidget : public VariableWidget {
+
+    private:
+      QLineEdit* box;
+      QComboBox* unit;
+    public:
+      AboutZWidget();
+      QString getValue() const {return box->text().isEmpty()?"0":box->text();}
+      void setValue(const QString &str) {box->setText(str=="0"?"":str);}
+      virtual QString getType() const {return "AboutZ";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}

@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "extended_properties.h"
 #include <boost/function.hpp>
+#include <QFileInfo>
 
 namespace MBSimGUI {
 
@@ -193,11 +194,12 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
-      const std::string& getFile() const {return file;}
-      void setFile(const std::string &str) {file=str;}
+      std::string getFile() const;
+      void setFile(const std::string &str);
 
     protected:
       std::string file;
+      QFileInfo fileInfo;
       MBXMLUtils::FQN xmlName;
   };
 
