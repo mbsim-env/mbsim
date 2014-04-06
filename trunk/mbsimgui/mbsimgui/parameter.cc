@@ -133,26 +133,25 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SearchPath::SearchPath(const string &name) : Parameter("searchPath") {
+  SearchPathParameter::SearchPathParameter(const string &name) : Parameter("searchPath") {
     value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0","",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
   }
   
-  void SearchPath::initializeUsingXML(DOMElement *element) {
+  void SearchPathParameter::initializeUsingXML(DOMElement *element) {
    // Parameter::initializeUsingXML(element);
    // value.initializeUsingXML(element);
    // setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
 
      string value = E(element)->getAttribute("href"); 
-     setValue(mbsDir.absoluteFilePath(QString::fromStdString(value)).toStdString());
-     setValue(mbsDir.relativeFilePath(QString::fromStdString(value)).toStdString());
+//     setValue(mbsDir.absoluteFilePath(QString::fromStdString(value)).toStdString());
+//     setValue(mbsDir.relativeFilePath(QString::fromStdString(value)).toStdString());
      setValue(value);
-     cout << getValue() << endl;
-     cout << MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("\'"+getValue()+"\'")) << endl;
-  
+//     cout << getValue() << endl;
+//     cout << MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("\'"+getValue()+"\'")) << endl;
   }
   
-  DOMElement* SearchPath::writeXMLFile(DOMNode *parent) {
+  DOMElement* SearchPathParameter::writeXMLFile(DOMNode *parent) {
     //DOMElement *ele0 = Parameter::writeXMLFile(parent);
     //value.writeXMLFile(ele0);
     //return ele0;
