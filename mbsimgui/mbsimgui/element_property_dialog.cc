@@ -780,6 +780,7 @@ namespace MBSimGUI {
   }
 
   void JointConstraintPropertyDialog::fromWidget(Element *element) {
+    ConstraintPropertyDialog::fromWidget(element);
     ListProperty *list1 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty());
     for(int i=0; i<list1->getSize(); i++) {
       RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();

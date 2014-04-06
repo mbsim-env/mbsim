@@ -101,15 +101,13 @@ namespace MBSimGUI {
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
   };
 
-  class SearchPath : public Parameter {
-    friend class SearchPathPropertyDialog;
+  class SearchPathParameter : public Parameter {
     public:
-      SearchPath(const std::string &name);
-      virtual ~SearchPath() {}
+      SearchPathParameter(const std::string &name);
+      virtual ~SearchPathParameter() {}
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       virtual std::string getType() const { return "searchPath"; }
-  //    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
   };
 
   class ParameterList {
