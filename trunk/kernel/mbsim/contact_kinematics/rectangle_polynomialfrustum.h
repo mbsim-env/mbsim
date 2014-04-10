@@ -160,6 +160,9 @@ namespace MBSim {
         throw MBSimError("ERROR (ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
       }
 
+      void setGridSizeY(int gridSizeY_);
+      void setGridSizeZ(int gridSizeZ_);
+
     protected:
       /*!
        * \brief set the values for the contact kinematics for the frustum due to the given x and phi
@@ -174,6 +177,12 @@ namespace MBSim {
        * If there is contact the position and the cpData information is setted right away
        */
       bool cpLocationInRectangle(fmatvec::Vec & g, ContourPointData * cpData);
+
+      /*!
+       * \brief if the unique contact point cannot be found a grid is walked through and a weighted sum results in the contact point
+       * \return true (if) or false (if there is no contact at one of the corner points)
+       */
+      bool gridContact(fmatvec::Vec & g, ContourPointData * cpData);
 
       /*!
        * \brief checks if there is a contact point at one of the corner points
@@ -218,6 +227,11 @@ namespace MBSim {
        */
       double distance2Rectangle(const fmatvec::Vec3 & point);
 
+      /*!
+       * \brief updates the grid for the discrete contact point approximation
+       */
+      void updateGrid();
+
       /**
        * \brief contour index of rectangle (in cpData)
        */
@@ -244,6 +258,16 @@ namespace MBSim {
       double signh;
 
       /*!
+       * \brief grid size in y-direction for the search with grid points
+       */
+      int gridSizeY;
+
+      /*!
+       * \brief grid size in z-direction for the search with grid points
+       */
+      int gridSizeZ;
+
+      /*!
        * \brief save last value to use it again as starting value for equation 1
        */
       double x1;
@@ -257,6 +281,11 @@ namespace MBSim {
        * \brief array of the four corner points of the rectangle in the frame of the frustum
        */
       fmatvec::Vec3 cornerPoints[4];
+
+      /*!
+       * \brief saves the points for the contact point computation
+       */
+      std::vector<std::vector<fmatvec::Vec3> > gridPoints;
 
       /*!
        * \brief function for intersection point

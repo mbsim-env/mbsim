@@ -39,21 +39,21 @@ namespace MBSim {
   }
 
   Vec3 ContourInterpolation::computeWrOC(const ContourPointData &cp) {
-    const VecV &s = cp.getLagrangeParameterPosition();
+    const Vec2 &s = cp.getLagrangeParameterPosition();
     Vec3 r;
     for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
     return r;
   }
 
   Vec3 ContourInterpolation::computeWvC(const ContourPointData &cp) {
-    const VecV &s = cp.getLagrangeParameterPosition();
+    const Vec2 &s = cp.getLagrangeParameterPosition();
     Vec3 v;
     for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
     return v;
   }
 
   Mat3xV ContourInterpolation::computeWt(const ContourPointData &cp) {
-    const VecV &s = cp.getLagrangeParameterPosition();
+    const Vec2 &s = cp.getLagrangeParameterPosition();
     Mat3xV t(contourParameters);
 
     for(int i=0; i<contourParameters; i++) {
@@ -64,8 +64,8 @@ namespace MBSim {
     return t;
   }
 
-  Vec3 ContourInterpolation::computeWrOC(const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWrOC(cp);}
-  Vec3 ContourInterpolation::computeWvC (const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
-  Mat3xV ContourInterpolation::computeWt  (const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
-  Vec3 ContourInterpolation::computeWn  (const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
+  Vec3 ContourInterpolation::computeWrOC(const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWrOC(cp);}
+  Vec3 ContourInterpolation::computeWvC (const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
+  Mat3xV ContourInterpolation::computeWt  (const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
+  Vec3 ContourInterpolation::computeWn  (const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
 }

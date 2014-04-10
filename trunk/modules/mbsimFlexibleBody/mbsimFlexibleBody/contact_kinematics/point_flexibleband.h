@@ -67,6 +67,11 @@ namespace MBSimFlexibleBody {
        */
       MBSim::Point *point;
       FlexibleBand *band;
+
+      /*!
+       * \brief flag to check if local search can be used
+       */
+      bool useLocal;
   };
 
 }

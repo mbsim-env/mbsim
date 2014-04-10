@@ -255,7 +255,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
-      Vec alpha = cp.getLagrangeParameterPosition();
+      Vec2 alpha = cp.getLagrangeParameterPosition();
 
       if(nrm2(alpha) < epsroot()) { // center of gravity
         Mat Jacext_trans(3,Dofs,INIT,0.), Jacext_rot(3,Dofs,INIT,0.);

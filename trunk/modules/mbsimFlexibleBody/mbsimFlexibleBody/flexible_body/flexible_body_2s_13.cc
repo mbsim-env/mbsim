@@ -165,7 +165,6 @@ namespace MBSimFlexibleBody {
         data.push_back(t); //time
 
         ContourPointData cp;
-        cp.getLagrangeParameterPosition() = Vec(2, NONINIT);
 
         //center of gravity
         cp.getLagrangeParameterPosition()(0) = 0.;

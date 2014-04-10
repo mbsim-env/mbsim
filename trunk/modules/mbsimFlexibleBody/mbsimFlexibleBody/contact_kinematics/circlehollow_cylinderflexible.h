@@ -43,7 +43,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      ContactKinematicsCircleHollowCylinderFlexible() {}
+      ContactKinematicsCircleHollowCylinderFlexible() : useLocal(false) {}
 
       /**
        * \brief destructor
@@ -72,6 +72,11 @@ namespace MBSimFlexibleBody {
        * \brief root function
        */
       MBSim::FuncPairContour1sCircleHollow *func;
+
+      /*!
+       * \brief flag to use local or global search
+       */
+      bool useLocal;
   };
 
 }

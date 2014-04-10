@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointCylinderFlexible() {}
+      ContactKinematicsPointCylinderFlexible() :useLocal(false) {}
 
       /**
        * \brief destructor
@@ -70,6 +70,11 @@ namespace MBSimFlexibleBody {
        * \brief root function
        */
       MBSim::FuncPairContour1sPoint *func;
+
+      /*!
+       * \brief flag to check if local search can be used
+       */
+      bool useLocal;
   };
 
 }
