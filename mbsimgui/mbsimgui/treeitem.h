@@ -119,7 +119,10 @@ namespace MBSimGUI {
       QVariant getData0() const {return QString::fromStdString(itemData->getName());}
       QVariant getData1() const {return QString::fromStdString(itemData->getValue());}
       void setData0(const QVariant &value) {itemData->setName(value.toString().toStdString());}
-      void setData1(const QVariant &value) {itemData->setValue(value.toString().toStdString());}
+      void setData1(const QVariant &value) {
+        itemData->setValue(value.toString().toStdString());
+        updateForeground();
+      }
       QVariant (TreeItem::*getData_[2])() const;
       void (TreeItem::*setData_[2])(const QVariant &value);
       QVariant getData(int column) const {return (this->*getData_[column])();}
@@ -127,6 +130,7 @@ namespace MBSimGUI {
       int getID() const {return ID;}
       QBrush getForeground() { return foreground; }
       void setForeground(const QBrush &brush) { foreground=brush; }
+      bool getEnabled() { return enabled; }
 
     protected:
       QList<TreeItem*> childItems;
@@ -134,12 +138,17 @@ namespace MBSimGUI {
       TreeItem *parentItem;
       int ID;
       QBrush foreground;
+      bool enabled;
       void updateForeground() {
         QPalette palette;
-        if(itemData->getValue()=="")
+        if(itemData->getValue()=="") {
           foreground=palette.brush(QPalette::Disabled, QPalette::Text);
-        else
+          enabled=false;
+        }
+        else {
           foreground=palette.brush(QPalette::Active, QPalette::Text);
+          enabled=true;
+        }
       }
   };
 

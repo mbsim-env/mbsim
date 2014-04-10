@@ -50,6 +50,10 @@ namespace MBSimGUI {
       TreeItem *item = getItem(index);
       return item->getForeground();
     }
+    else if(role==Qt::UserRole) {
+      TreeItem *item = getItem(index);
+      return item->getEnabled();
+    }
     return QVariant();
   }
 
@@ -57,11 +61,7 @@ namespace MBSimGUI {
     if(!index.isValid())
       return Qt::NoItemFlags;
 
-    TreeItem *item = getItem(index);
-    if(item->getData1()=="")
-      return Qt::ItemIsEditable | Qt::ItemIsSelectable;
-    else
-      return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
   }
 
   TreeItem *TreeModel::getItem(const QModelIndex &index) const {
