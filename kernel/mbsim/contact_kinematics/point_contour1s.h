@@ -63,6 +63,11 @@ namespace MBSim {
        */
       Point *point;
       Contour1s *contour1s;
+
+      /*!
+       * \brief use local law
+       */
+      bool useLocal;
   };
 
 }

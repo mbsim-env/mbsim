@@ -113,7 +113,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
 
   ContourPointData cpdata;
-  cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
   cpdata.getContourParameterType() = CONTINUUM;
   rod->addFrame("RJ",cpdata);
   Joint *joint = new Joint("Clamping");

@@ -34,9 +34,6 @@ namespace MBSim {
   }
 
   bool ContourQuad::testInsideBounds(const ContourPointData &cp) {
-    if( cp.getLagrangeParameterPosition().size()!=2 ) {
-      return false;
-    }
     if( 0 <= cp.getLagrangeParameterPosition()(0) && cp.getLagrangeParameterPosition()(0) <= 1 && 0 <= cp.getLagrangeParameterPosition()(1) && cp.getLagrangeParameterPosition()(1) <= 1) return true;
     else return false;
   }

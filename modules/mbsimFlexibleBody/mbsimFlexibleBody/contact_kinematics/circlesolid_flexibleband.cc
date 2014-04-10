@@ -63,8 +63,6 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsCircleSolidNode::updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index) { 
  // set lagrange parateter position of current node
-      if(cpData[inode].getLagrangeParameterPosition().size() != 2)
-        cpData[inode].getLagrangeParameterPosition().resize() << VecV(2);
 
       cpData[inode].getLagrangeParameterPosition()(0) = node;
       cpData[inode].getLagrangeParameterPosition()(1) = 0.0;
@@ -130,9 +128,6 @@ namespace MBSimFlexibleBody {
     search.setNodes(nodes); // defining search areas for contacts
     Mat result = search.slvAll();
     delete func;
-
-    if(cpData[inode].getLagrangeParameterPosition().size() != 2)
-      cpData[inode].getLagrangeParameterPosition().resize() << VecV(2);
 
     if(result.rows()) {
 

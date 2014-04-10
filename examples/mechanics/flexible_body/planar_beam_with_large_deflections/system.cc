@@ -13,6 +13,7 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
+#include <openmbvcppinterface/arrow.h>
 #endif
 
 using namespace MBSimFlexibleBody;
@@ -20,7 +21,8 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+System::System(const string &projectName) :
+    DynamicSystemSolver(projectName) {
 
 //  Vec grav(3);//"[0.0;-9.81;0.0]");
 //  grav(1) = -9.81;
@@ -29,8 +31,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double l0 = 1.5; // length
   double b0 = 0.1; // width
   double E = 5.e7; // E-Modul  
-  double A = b0*b0; // cross-section area
-  double I1 = 1./12.*b0*b0*b0*b0; // moment inertia
+  double A = b0 * b0; // cross-section area
+  double I1 = 1. / 12. * b0 * b0 * b0 * b0; // moment inertia
   double rho = 9.2e2; // density  
   int elements = 4; // number of finite elements
 
@@ -45,8 +47,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setDensity(rho);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
-  Vec q0 = Vec(5*elements+3,INIT,0.);
-  for(int i=1;i<=elements;i++) q0(5*i) = l0*i/elements;
+  Vec q0 = Vec(5 * elements + 3, INIT, 0.);
+  for (int i = 1; i <= elements; i++)
+    q0(5 * i) = l0 * i / elements;
   rod->setq0(q0);
   this->addObject(rod);
 
@@ -70,33 +73,37 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   FlexibleBand *top = new FlexibleBand("Top");
-  Vec nodes(elements+1);
-  for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
+  Vec nodes(elements + 1);
+  for (int i = 0; i <= elements; i++)
+    nodes(i) = i * l0 / elements;
   top->setNodes(nodes);
   top->setWidth(b0);
   top->setCn(Vec("[1.;0.]"));
   top->setAlphaStart(0.);
-  top->setAlphaEnd(l0);  
-  top->setNormalDistance(0.5*b0);
+  top->setAlphaEnd(l0);
+  top->setNormalDistance(0.5 * b0);
   rod->addContour(top);
 
   RigidBody *ball = new RigidBody("Ball");
-  Vec WrOS0B(3,INIT,0.);
-  WrOS0B(0) = l0*0.9; WrOS0B(1) = b0*0.5+0.05;
-  this->addFrame(new FixedRelativeFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I")));
+  Vec WrOS0B(3, INIT, 0.);
+  WrOS0B(0) = l0 * 0.9;
+  WrOS0B(1) = b0 * 0.5 + 0.05;
+  this->addFrame(new FixedRelativeFrame("B", WrOS0B, SqrMat(3, EYE), this->getFrame("I")));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
   SymMat Theta(3);
-  Theta(0,0) = 2./5.*mass*r*r;
-  Theta(1,1) = 2./5.*mass*r*r;
-  Theta(2,2) = 2./5.*mass*r*r;
+  Theta(0, 0) = 2. / 5. * mass * r * r;
+  Theta(1, 1) = 2. / 5. * mass * r * r;
+  Theta(2, 2) = 2. / 5. * mass * r * r;
   ball->setInertiaTensor(Theta);
-  Mat JacTrans(3,1,INIT,0.); JacTrans(1,0) = 1.;
+  Mat JacTrans(3, 1, INIT, 0.);
+  JacTrans(1, 0) = 1.;
   ball->setTranslation(new LinearTranslation<VecV>(JacTrans));
   Point *point = new Point("Point");
-  Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
+  Vec BR(3, INIT, 0.);
+  BR(1) = -r;
+  ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
   point->setFrameOfReference(ball->getFrame("Point"));
   ball->addContour(point);
   ball->setInitialGeneralizedVelocity(-0.5);
@@ -112,15 +119,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Contact *contact = new Contact("Contact");
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
-  contact->connect(ball->getContour("Point"),rod->getContour("Top"));
+  contact->connect(ball->getContour("Point"), rod->getContour("Top"));
+  contact->enableOpenMBVContactPoints(1e-2);
+  contact->enableOpenMBVNormalForce(1e-2);
+  contact->enableOpenMBVTangentialForce(1e-2);
   this->addLink(contact);
 
   ContourPointData cpdata;
-  cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
   cpdata.getContourParameterType() = CONTINUUM;
-  rod->addFrame("RJ",cpdata);
+  rod->addFrame("RJ", cpdata);
   Joint *joint = new Joint("Clamping");
-  joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
+  joint->connect(this->getFrame("I"), rod->getFrame("RJ"));
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint->setForceLaw(new BilateralConstraint);
   joint->setMomentDirection("[0; 0; 1]");

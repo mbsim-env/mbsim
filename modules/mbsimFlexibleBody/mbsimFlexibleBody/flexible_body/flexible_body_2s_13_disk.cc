@@ -162,7 +162,7 @@ namespace MBSimFlexibleBody {
     Mat Wext(Dofs,4);
 
     if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
-      Vec alpha = cp.getLagrangeParameterPosition();
+      Vec2 alpha = cp.getLagrangeParameterPosition();
 
       if(nrm2(alpha)<epsroot()) { // center of gravity
         Wext(0,0) = 1.;

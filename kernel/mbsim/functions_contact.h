@@ -52,6 +52,8 @@ namespace MBSim {
   template<typename Ret, typename Arg>
     class DistanceFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
       public:
+      virtual ~DistanceFunction() {
+      }
         /* INTERFACE FOR DERIVED CLASSES */
         /*!
          * \param contour parameter
@@ -87,7 +89,7 @@ namespace MBSim {
        * \param point contour or general rigid contour reduced to point of reference
        * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::VecV(1)) {}
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp() {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
@@ -475,14 +477,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
-        cp.getLagrangeParameterPosition() = fmatvec::VecV(1,fmatvec::INIT,alpha);
+        cp.getLagrangeParameterPosition()(0) = alpha;
         fmatvec::Vec3 Wd = computeWrD(alpha);
         fmatvec::Vec3 Wt = contour->computeTangent(cp);
         return Wt.T()*Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
-        cp.getLagrangeParameterPosition() = fmatvec::VecV(1,fmatvec::INIT,alpha);
+        cp.getLagrangeParameterPosition()(0) = alpha;
         contour->computeRootFunctionPosition(cp);
         contour->computeRootFunctionFirstTangent(cp);
         contour->computeRootFunctionNormal(cp);

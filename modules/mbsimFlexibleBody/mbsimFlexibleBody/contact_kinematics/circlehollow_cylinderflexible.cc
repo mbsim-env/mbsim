@@ -58,12 +58,12 @@ namespace MBSimFlexibleBody {
     Contact1sSearch search(func);
     search.setNodes(cylinder->getNodes());
 
-    if(cpData[icylinder].getLagrangeParameterPosition().size()==2 ) {
+    if(useLocal) {
       search.setInitialValue(cpData[icylinder].getLagrangeParameterPosition()(0));
     } 
     else {
       search.setSearchAll(true);
-      cpData[icylinder].getLagrangeParameterPosition() = Vec(2);
+      useLocal = true;
     }
 
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();

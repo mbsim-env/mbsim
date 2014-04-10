@@ -31,7 +31,7 @@ namespace MBSim {
   class PolyFurstumSphereContact : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       PolyFurstumSphereContact(const PolynomialFrustum * frustum) :
-        frustum(frustum) {
+        frustum(frustum), rS(0.) {
       }
 
       virtual ~PolyFurstumSphereContact() {
@@ -39,15 +39,21 @@ namespace MBSim {
 
       void setCenter(const fmatvec::Vec3 & sphereCenter_) {
         sphereCenter = sphereCenter_;
+        rS = sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2));
       }
 
       fmatvec::Vec operator()(const fmatvec::Vec &x);
 
     protected:
       /*!
-       * \brief center of the sphere
+       * \brief center of the sphere in coordinates of the frustum
        */
       fmatvec::Vec3 sphereCenter;
+
+      /*!
+       * \brief radial coordinate of the sphere center in the 2D description
+       */
+      double rS;
 
       /*!
        * \brief polynomial parameters of the frustum
@@ -58,7 +64,7 @@ namespace MBSim {
   class PolyFurstumSphereContactJacobian : public NewtonJacobianFunction {
     public:
       PolyFurstumSphereContactJacobian(const PolynomialFrustum * frustum) :
-        frustum(frustum) {
+        frustum(frustum), rS(0.) {
       }
 
       virtual ~PolyFurstumSphereContactJacobian() {
@@ -66,6 +72,7 @@ namespace MBSim {
 
       void setCenter(const fmatvec::Vec3 & sphereCenter_) {
         sphereCenter = sphereCenter_;
+        rS = sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2));
       }
 
       virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x);
@@ -75,6 +82,11 @@ namespace MBSim {
        * \brief center of the sphere
        */
       fmatvec::Vec3 sphereCenter;
+
+      /*!
+       * \brief radial coordinate of the sphere center in the 2D description
+       */
+      double rS;
 
       /*!
        * \brief polynomial parameters of the frustum

@@ -31,7 +31,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   ContactKinematicsPointFlexibleBand::ContactKinematicsPointFlexibleBand() :
-      ContactKinematics(), ipoint(0), icontour(0), point(0), band(0) {
+      ContactKinematics(), ipoint(0), icontour(0), point(0), band(0), useLocal(false) {
   }
   ContactKinematicsPointFlexibleBand::~ContactKinematicsPointFlexibleBand() {
   }
@@ -58,12 +58,12 @@ namespace MBSimFlexibleBody {
     Contact1sSearch search(func);
     search.setNodes(band->getNodes()); // defining search areas for contacts
 
-    if (cpData[icontour].getLagrangeParameterPosition().size() != 0) { // select start value from last search
+    if (useLocal) { // select start value from last search
       search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
-      cpData[icontour].getLagrangeParameterPosition() = Vec(2, NONINIT);
+      useLocal = true;
     }
 
     cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre

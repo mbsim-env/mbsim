@@ -325,12 +325,11 @@ namespace MBSim {
 
           Contact1sSearch searchRho(funcRho,jacRho);
 
-          if(cpData[ifrustum].getLagrangeParameterPosition().size()!=0 && LOCALSEARCH) { // select start value from last search if decided by user
+          if(LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(cpData[ifrustum].getLagrangeParameterPosition()(0));
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
-            cpData[ifrustum].getLagrangeParameterPosition() << Vec(1,NONINIT).copy();
           }
           searchRho.setEqualSpacing(SEC,rhoStartSpacing,drho);					
           cpData[ifrustum].getLagrangeParameterPosition()(0) = searchRho.slv();

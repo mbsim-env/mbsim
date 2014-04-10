@@ -919,8 +919,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
 
       if (influenceFunctions.count(contourPair)) { //If there is a function, there is a coupling between these contours
         InfluenceFunction *fct = influenceFunctions[contourPair];
-        Vec lagrangeParameter;
-        lagrangeParameter.resize() = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
+        Vec2 lagrangeParameter = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
         if (DEBUGLEVEL >= 3) {
           cout << "LagrangeParameter of contour \"" << contour->getShortName() << "\" is:" << lagrangeParameter << endl;
@@ -955,10 +954,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
 
         if (influenceFunctions.count(Pair)) { //If there is a function, there is a coupling between these contours
           InfluenceFunction *fct = influenceFunctions[Pair];
-          Vec firstLagrangeParameter = Vec(2, NONINIT);
-          Vec secondLagrangeParameter = Vec(2, NONINIT);
-          firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
-          secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
+          Vec2 firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
+          Vec2 secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
 
           if (DEBUGLEVEL >= 3) {
             cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;

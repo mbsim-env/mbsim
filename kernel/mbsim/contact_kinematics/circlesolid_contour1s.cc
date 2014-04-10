@@ -69,13 +69,13 @@ namespace MBSim {
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes());
 
-    if((cpData[icontour1s].getLagrangeParameterPosition().size() == 1) && (searchAllCP==false))
+    if(searchAllCP==false)
       search.setInitialValue(cpData[icontour1s].getLagrangeParameterPosition()(0));
     else { 
       search.setSearchAll(true);
-      cpData[icontour1s].getLagrangeParameterPosition() = Vec(1);
       searchAllCP=false;
     }
+
     cpData[icontour1s].getLagrangeParameterPosition()(0) = search.slv();
 
     cpData[icontour1s].getFrameOfReference().getPosition() = 

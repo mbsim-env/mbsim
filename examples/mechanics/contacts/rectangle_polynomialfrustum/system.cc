@@ -93,6 +93,8 @@ System::System(const string &projectName) :
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
+    contact->enableOpenMBVNormalForce();
+    contact->enableOpenMBVTangentialForce();
 
     //Set contact law
     contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
@@ -134,6 +136,8 @@ System::System(const string &projectName) :
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
+    contact->enableOpenMBVNormalForce();
+    contact->enableOpenMBVTangentialForce();
 
     //Set contact law
     //Set contact law
@@ -176,6 +180,8 @@ System::System(const string &projectName) :
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
+    contact->enableOpenMBVNormalForce();
+    contact->enableOpenMBVTangentialForce();
 
     //Set contact law
     //Set contact law

@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == NODE) { // frame on node
       cp.getContourParameterType() = CONTINUUM;
-      cp.getLagrangeParameterPosition() = Vec(1,INIT,cp.getNodeNumber()*L/Elements);
+      cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
     }
 
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
@@ -121,7 +121,7 @@ namespace MBSimFlexibleBody {
 
     if(cp.getContourParameterType() == NODE) { // force on node
       cp.getContourParameterType() = CONTINUUM;
-      cp.getLagrangeParameterPosition() = Vec(1,INIT,cp.getNodeNumber()*L/Elements);
+      cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
     }
 
     if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
