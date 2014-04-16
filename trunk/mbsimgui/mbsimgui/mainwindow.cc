@@ -104,11 +104,15 @@ namespace MBSimGUI {
       connect(recentProjectFileActs[i], SIGNAL(triggered()), this, SLOT(openRecentProjectFile()));
     }
     QMenu *menu=new QMenu("Project", menuBar());
-    menu->addAction("New", this, SLOT(newProject()));
-    menu->addAction("Load", this, SLOT(loadProject()));
-    menu->addAction("Save as", this, SLOT(saveProjectAs()));
+    action = menu->addAction("New", this, SLOT(newProject()));
+    action->setShortcuts(QKeySequence::New);
+    action = menu->addAction("Load", this, SLOT(loadProject()));
+    action->setShortcuts(QKeySequence::Open);
+    action = menu->addAction("Save as", this, SLOT(saveProjectAs()));
+    action->setShortcuts(QKeySequence::SaveAs);
     actionSaveProject = menu->addAction("Save", this, SLOT(saveProject()));
-    //ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
+    actionSaveProject->setShortcuts(QKeySequence::Save);
+   //ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
     actionSaveProject->setDisabled(true);
     menu->addSeparator();
     //separatorAct = menu->addSeparator();
