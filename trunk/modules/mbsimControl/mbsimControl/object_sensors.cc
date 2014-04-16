@@ -24,16 +24,17 @@
 #include "mbsim/dynamic_system.h"
 
 using namespace fmatvec;
-using namespace MBXMLUtils;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
+  void GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
-    objectString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"index");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"object");
+    objectString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"index");
     index=getInt(e);
   }
 
@@ -47,7 +48,7 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedPositionSensor, MBSIMCONTROLNS"GeneralizedPositionSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedPositionSensor, MBSIMCONTROL%"GeneralizedPositionSensor")
 
   Vec GeneralizedPositionSensor::getSignal() {
     if (object->getq().size()==0)
@@ -57,7 +58,7 @@ namespace MBSimControl {
       return ((object->getq()).copy())(fmatvec::Index(index, index));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocitySensor, MBSIMCONTROLNS"GeneralizedVelocitySensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocitySensor, MBSIMCONTROL%"GeneralizedVelocitySensor")
 
   Vec GeneralizedVelocitySensor::getSignal() {
     if (object->getu().size()==0)

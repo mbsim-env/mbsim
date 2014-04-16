@@ -22,6 +22,8 @@
 
 #include "mbsim/link.h"
 
+extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
+
 namespace MBSim {
   class DynamicSystem;
 }

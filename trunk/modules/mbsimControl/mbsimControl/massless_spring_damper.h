@@ -37,7 +37,7 @@ namespace MBSimControl {
     public:   
       MasslessSpringDamper(const std::string& name="");
       virtual std::string getType() const {return "MasslessSpringDamper"; }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
       
       void calcxSize() {xSize=1; }
       fmatvec::Vec calculateOutput() {return x.copy(); }

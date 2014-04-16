@@ -24,17 +24,18 @@
 #include "mbsim/link.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  void LinkSensor::initializeUsingXML(TiXmlElement * element) {
+  void LinkSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"link");
-    linkString=e->Attribute("ref");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"link");
+    linkString=E(e)->getAttribute("ref");
   }
 
   void LinkSensor::init(InitStage stage) {
@@ -47,13 +48,13 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinkDistanceSensor, MBSIMCONTROLNS"LinkDistanceSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinkDistanceSensor, MBSIMCONTROL%"LinkDistanceSensor")
 
   Vec LinkDistanceSensor::getSignal() {
     return link->getg().copy();
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinkVelocitySensor, MBSIMCONTROLNS"LinkVelocitySensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinkVelocitySensor, MBSIMCONTROL%"LinkVelocitySensor")
 
   Vec LinkVelocitySensor::getSignal() {
     return link->getgd().copy();
