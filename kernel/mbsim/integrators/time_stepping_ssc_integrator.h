@@ -241,7 +241,7 @@ namespace MBSim {
       double calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H);
       void plot();
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
 }

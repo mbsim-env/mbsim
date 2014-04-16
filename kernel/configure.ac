@@ -20,8 +20,8 @@ AC_FC_WRAPPERS
 
 AC_C_CONST
 
-requires="fmatvec hdf5serie"
-PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilstinyxml)
+requires="fmatvec hdf5serie xerces-c"
+PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie xerces-c)
 
 AC_SUBST([requires])
 

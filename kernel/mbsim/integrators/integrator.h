@@ -20,13 +20,12 @@
 #ifndef _INTEGRATOR_H_
 #define _INTEGRATOR_H_
 
-#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
-#define MBSIMINTNS "{"MBSIMINTNS_"}"
-
 #include<fmatvec/fmatvec.h>
-#include"mbxmlutilstinyxml/tinyxml.h"
+#include <mbxmlutilshelper/dom.h>
 #include<string>
 #include<iostream>
+
+extern MBXMLUtils::NamespaceURI MBSIMINT;
 
 namespace MBSim {
 
@@ -87,8 +86,8 @@ namespace MBSim {
        * \brief initialize integrator
        * \param XML description
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       static Integrator* readXMLFile(const std::string &filename);
       void writeXMLFile(const std::string &name);

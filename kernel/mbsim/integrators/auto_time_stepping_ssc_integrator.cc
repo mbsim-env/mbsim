@@ -39,6 +39,7 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -2377,86 +2378,86 @@ namespace MBSim {
     return false;
   }
 
-  void AutoTimeSteppingSSCIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void AutoTimeSteppingSSCIntegrator::initializeUsingXML(DOMElement *element) {
 
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
+    DOMElement *e;
 
-    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     if (e) setInitialStepSize(Element::getDouble(e));
 
-    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
     if (e) setStepSizeMax(Element::getDouble(e));
 
-    e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
     if (e) setStepSizeMin(Element::getDouble(e));
 
-    e=element->FirstChildElement(MBSIMINTNS"outputInterpolation");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"outputInterpolation");
     if (e) setOutputInterpolation(Element::getBool(e));
 
-    e=element->FirstChildElement(MBSIMINTNS"gapControl");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"gapControl");
     if (e) {
-      TiXmlElement *ee;
-      ee=e->FirstChildElement();
-      if (ee->ValueStr()==MBSIMINTNS"withoutGapControl") setGapControl(-1);
-      if (ee->ValueStr()==MBSIMINTNS"biggestRoot") setGapControl(1);
-      if (ee->ValueStr()==MBSIMINTNS"scooring") setGapControl(2);
-      if (ee->ValueStr()==MBSIMINTNS"gapTollerance") setGapControl(3);
-      if (ee->ValueStr()==MBSIMINTNS"smallestRoot") setGapControl(4);
+      DOMElement *ee;
+      ee=e->getFirstElementChild();
+      if (E(ee)->getTagName()==MBSIMINT%"withoutGapControl") setGapControl(-1);
+      if (E(ee)->getTagName()==MBSIMINT%"biggestRoot") setGapControl(1);
+      if (E(ee)->getTagName()==MBSIMINT%"scooring") setGapControl(2);
+      if (E(ee)->getTagName()==MBSIMINT%"gapTollerance") setGapControl(3);
+      if (E(ee)->getTagName()==MBSIMINT%"smallestRoot") setGapControl(4);
     }
 
-    e=element->FirstChildElement(MBSIMINTNS"maximalOrder");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalOrder");
     if (e) {
-      TiXmlElement *ee;
-      ee=e->FirstChildElement(MBSIMINTNS"order");
+      DOMElement *ee;
+      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"order");
       int orderXML=Element::getInt(ee);
       int methodXML=0; 
-      ee=e->FirstChildElement(MBSIMINTNS"method");
+      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"method");
       if(ee) {
-        TiXmlElement *eee;
-        eee=ee->FirstChildElement();
-        if (eee->ValueStr()==MBSIMINTNS"extrapolation") methodXML=0;
-        if (eee->ValueStr()==MBSIMINTNS"embedded") methodXML=1;
-        if (eee->ValueStr()==MBSIMINTNS"embeddedHigherOrder") methodXML=2;
+        DOMElement *eee;
+        eee=ee->getFirstElementChild();
+        if (E(eee)->getTagName()==MBSIMINT%"extrapolation") methodXML=0;
+        if (E(eee)->getTagName()==MBSIMINT%"embedded") methodXML=1;
+        if (E(eee)->getTagName()==MBSIMINT%"embeddedHigherOrder") methodXML=2;
       }
       setMaxOrder(orderXML,methodXML); 
     }
 
-    e=element->FirstChildElement(MBSIMINTNS"errorTest");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"errorTest");
     if (e) {
-      TiXmlElement *ee;
-      ee=e->FirstChildElement();
+      DOMElement *ee;
+      ee=e->getFirstElementChild();
       int FlagErrorTestXML=2;
       if(ee) {
-        if (ee->ValueStr()==MBSIMINTNS"scale") FlagErrorTestXML=2;
-        if (ee->ValueStr()==MBSIMINTNS"all") FlagErrorTestXML=0;
-        if (ee->ValueStr()==MBSIMINTNS"exclude") FlagErrorTestXML=3;
+        if (E(ee)->getTagName()==MBSIMINT%"scale") FlagErrorTestXML=2;
+        if (E(ee)->getTagName()==MBSIMINT%"all") FlagErrorTestXML=0;
+        if (E(ee)->getTagName()==MBSIMINT%"exclude") FlagErrorTestXML=3;
       }
       setFlagErrorTest(FlagErrorTestXML); 
     }
 
-    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(Element::getVec(e));
-    e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
     if(e) setRelativeTolerance(Element::getVec(e));
-    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(Element::getDouble(e));
 
-    e=element->FirstChildElement(MBSIMINTNS"advancedOptions");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"advancedOptions");
     if (e) {
-      TiXmlElement *ee;
-      ee=e->FirstChildElement(MBSIMINTNS"deactivateSSC");
+      DOMElement *ee;
+      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"deactivateSSC");
       if (ee) deactivateSSC(!(Element::getBool(ee)));
 
-      ee=e->FirstChildElement(MBSIMINTNS"gapTolerance");
+      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"gapTolerance");
       if (ee) setgapTolerance(Element::getDouble(ee));
 
-      ee=e->FirstChildElement(MBSIMINTNS"maximalSSCGain");
+      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"maximalSSCGain");
       if (ee) setmaxGainSSC(Element::getDouble(ee));
 
-      ee=e->FirstChildElement(MBSIMINTNS"safetyFactorSSC");
+      ee=E(e)->getFirstElementChildNamed(MBSIMINT%"safetyFactorSSC");
       if (ee) setSafetyFactorSSC(Element::getDouble(ee));
     }
 

@@ -26,21 +26,22 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Plane, MBSIMNS"Plane")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Plane, MBSIM%"Plane")
 
   Vec2 Plane::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
     return (R->getOrientation().T() *(WrPoint - R->getPosition()) )(Range<Fixed<1>,Fixed<2> >());
   }
 
- void Plane::initializeUsingXML(TiXmlElement *element) {
+ void Plane::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVPlane ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -48,16 +49,16 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody) {
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"enableOpenMBV");
-      addElementText(ele1,MBSIMNS"size",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXSize());
-      addElementText(ele1,MBSIMNS"numberOfLines",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXNumber());
-      ele0->LinkEndChild(ele1);
-    }
-#endif
+  DOMElement* Plane::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//    if(openMBVRigidBody) {
+//      DOMElement *ele1 = new DOMElement(MBSIM%"enableOpenMBV");
+//      addElementText(ele1,MBSIM%"size",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXSize());
+//      addElementText(ele1,MBSIM%"numberOfLines",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXNumber());
+//      ele0->LinkEndChild(ele1);
+//    }
+//#endif
     return ele0;
   }
 

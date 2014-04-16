@@ -24,6 +24,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -144,19 +145,19 @@ namespace MBSim {
     }
   }
 
-  void FrameObserver::initializeUsingXML(TiXmlElement *element) {
+  void FrameObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frame");
-    if(e) saved_frame=e->Attribute("ref");
-//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
+    if(e) saved_frame=E(e)->getAttribute("ref");
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
 //    if(e) openMBVPosition=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::fromPoint,1,1,e);
-//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
 //    if(e) openMBVVelocity=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::fromPoint,1,1,e);
-//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularVelocity");
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
 //    if(e) openMBVAngularVelocity=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1,e);
-//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
 //    if(e) openMBVAcceleration=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::fromPoint,1,1,e);
-//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularAcceleration");
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
 //    if(e) openMBVAngularAcceleration=enableOpenMBVArrow("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1,e);
   }
 

@@ -27,17 +27,18 @@
 
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Point, MBSIMNS"Point")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Point, MBSIM%"Point")
 
-  void Point::initializeUsingXML(TiXmlElement *element) {
+  void Point::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVSphere ombv(0.001,"[-1;1;1]",0,"size");
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -45,8 +46,8 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Point::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+  DOMElement* Point::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
     return ele0;
   }
 

@@ -68,10 +68,9 @@ namespace MBSim {
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}
 
-
       void integrate(DynamicSystemSolver& system);
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
 }

@@ -36,9 +36,10 @@
 #include <openmbvcppinterface/sphere.h>
 #endif
 
+using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
-using namespace std;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -135,20 +136,20 @@ namespace MBSim {
     }
   }
 
-  void Contour::initializeUsingXML(TiXmlElement *element) {
+  void Contour::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
-    TiXmlElement *ec=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(ec) setFrameOfReference(ec->Attribute("ref"));
+    DOMElement *ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
   }
 
-  TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Element::writeXMLFile(parent);
-     if(getFrameOfReference()) {
-        TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-        ele1->SetAttribute("ref", str);
-        ele0->LinkEndChild(ele1);
-      }
+  DOMElement* Contour::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Element::writeXMLFile(parent);
+  //   if(getFrameOfReference()) {
+  //      DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
+  //      string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
+  //      ele1->SetAttribute("ref", str);
+  //      ele0->LinkEndChild(ele1);
+  //    }
    return ele0;
   }
 

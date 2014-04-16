@@ -27,12 +27,13 @@
 #include <mbsim/rigid_body.h>
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Joint, MBSIMNS"Joint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Joint, MBSIM%"Joint")
 
   Joint::Joint(const string &name) :
       LinkMechanics(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
@@ -587,34 +588,34 @@ namespace MBSim {
     }
   }
 
-  void Joint::initializeUsingXML(TiXmlElement *element) {
+  void Joint::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e = element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if (e)
       refFrameID = getDouble(e);
-    e = element->FirstChildElement(MBSIMNS"forceDirection");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if (e)
       setForceDirection(getMat(e, 3, 0));
-    e = element->FirstChildElement(MBSIMNS"forceLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"forceLaw");
     if (e)
-      setForceLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));
-    e = element->FirstChildElement(MBSIMNS"momentDirection");
+      setForceLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if (e)
       setMomentDirection(getMat(e, 3, 0));
-    e = element->FirstChildElement(MBSIMNS"momentLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
     if (e)
-      setMomentLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement()));
-    e = element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1 = e->Attribute("ref1");
-    saved_ref2 = e->Attribute("ref2");
+      setMomentLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1 = E(e)->getAttribute("ref1");
+    saved_ref2 = E(e)->getAttribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
       setOpenMBVForce(ombv.createOpenMBV(e));
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toDoubleHead, OpenMBV::Arrow::toPoint, 1, 1);
       setOpenMBVMoment(ombv.createOpenMBV(e));
@@ -622,28 +623,28 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
-    if (forceDir.cols()) {
-      addElementText(ele0, MBSIMNS"forceDirection", forceDir);
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"forceLaw");
-      if (ffl)
-        ffl->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    if (momentDir.cols()) {
-      addElementText(ele0, MBSIMNS"momentDirection", momentDir);
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"momentLaw");
-      if (fml)
-        fml->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
-    //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
-    //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
-    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this, true)); // relative path
-    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this, true)); // relative path
-    ele0->LinkEndChild(ele1);
+  DOMElement* Joint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = LinkMechanics::writeXMLFile(parent);
+//    if (forceDir.cols()) {
+//      addElementText(ele0, MBSIM%"forceDirection", forceDir);
+//      DOMElement *ele1 = new DOMElement(MBSIM%"forceLaw");
+//      if (ffl)
+//        ffl->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    if (momentDir.cols()) {
+//      addElementText(ele0, MBSIM%"momentDirection", momentDir);
+//      DOMElement *ele1 = new DOMElement(MBSIM%"momentLaw");
+//      if (fml)
+//        fml->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    DOMElement *ele1 = new DOMElement(MBSIM%"connect");
+//    //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
+//    //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
+//    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this, true)); // relative path
+//    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this, true)); // relative path
+//    ele0->LinkEndChild(ele1);
     return ele0;
   }
 

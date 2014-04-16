@@ -61,8 +61,8 @@ namespace MBSim {
       void setalphaStart(double alphaStart_) { alphaStart = alphaStart_; }
       void setalphaEnd(double alphaEnd_) { alphaEnd = alphaEnd_; }
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) {return 0;}
+      virtual void initializeUsingXML(xercesc::DOMElement * element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) {return 0;}
 
     protected:
       double alphaStart, alphaEnd;

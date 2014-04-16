@@ -29,6 +29,7 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -118,10 +119,10 @@ namespace MBSim {
     postIntegrate(system);
   }
 
-  void TimeSteppingD1MinusLinearIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void TimeSteppingD1MinusLinearIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     setStepSize(Element::getDouble(e));
   }
 

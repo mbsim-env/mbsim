@@ -38,10 +38,10 @@
 #include <openmbvcppinterface/frame.h>
 #endif
 
-using namespace MBSim;
-using namespace MBXMLUtils;
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -82,7 +82,7 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GearConstraint, MBSIMNS"GearConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GearConstraint, MBSIM%"GearConstraint")
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -132,27 +132,27 @@ namespace MBSim {
     }
   }
 
-  void GearConstraint::initializeUsingXML(TiXmlElement* element) {
+  void GearConstraint::initializeUsingXML(DOMElement* element) {
     Constraint::initializeUsingXML(element);
-    TiXmlElement *e, *ee;
-    e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
-    saved_DependentBody=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"transmissions");
-    ee=e->FirstChildElement();
-    while(ee && ee->ValueStr()==MBSIMNS"Transmission") {
-      saved_IndependentBody.push_back(ee->FirstChildElement(MBSIMNS"rigidBody")->Attribute("ref"));
-      ratio.push_back(getDouble(ee->FirstChildElement(MBSIMNS"ratio")));
-      ee=ee->NextSiblingElement();
+    DOMElement *e, *ee;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
+    saved_DependentBody=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"transmissions");
+    ee=e->getFirstElementChild();
+    while(ee && E(ee)->getTagName()==MBSIM%"Transmission") {
+      saved_IndependentBody.push_back(E(E(ee)->getFirstElementChildNamed(MBSIM%"rigidBody"))->getAttribute("ref"));
+      ratio.push_back(getDouble(E(ee)->getFirstElementChildNamed(MBSIM%"ratio")));
+      ee=ee->getNextElementSibling();
     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
@@ -190,19 +190,19 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void KinematicConstraint::initializeUsingXML(TiXmlElement* element) {
+  void KinematicConstraint::initializeUsingXML(DOMElement* element) {
     Constraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
-    saved_DependentBody=e->Attribute("ref");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
+    saved_DependentBody=E(e)->getAttribute("ref");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
@@ -210,7 +210,7 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedPositionConstraint, MBSIMNS"GeneralizedPositionConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage)
@@ -228,11 +228,11 @@ namespace MBSim {
     bd->getjRel() = f->parDerParDer(t);
   }
 
-  void GeneralizedPositionConstraint::initializeUsingXML(TiXmlElement* element) {
+  void GeneralizedPositionConstraint::initializeUsingXML(DOMElement* element) {
     KinematicConstraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"constraintFunction");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"constraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement());
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setConstraintFunction(f);
     }
   }
@@ -248,7 +248,7 @@ namespace MBSim {
       ke->setOpenMBVMoment(MArrow);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocityConstraint, MBSIMNS"GeneralizedVelocityConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
 
   void GeneralizedVelocityConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage)
@@ -278,24 +278,24 @@ namespace MBSim {
       bd->getjRel() = f->parDer2(x,t);
   }
 
-  void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement* element) {
+  void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement* element) {
     KinematicConstraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialState");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if (e)
       x0 = getVec(e);
-    e=element->FirstChildElement(MBSIMNS"generalConstraintFunction");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->FirstChildElement());
+      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
       setGeneralConstraintFunction(f);
     }
-    e=element->FirstChildElement(MBSIMNS"timeDependentConstraintFunction");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement());
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setTimeDependentConstraintFunction(f);
     }
-    e=element->FirstChildElement(MBSIMNS"stateDependentConstraintFunction");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
     if(e) {
-      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->FirstChildElement());
+      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
       setStateDependentConstraintFunction(f);
     }
   }
@@ -311,7 +311,7 @@ namespace MBSim {
       ke->setOpenMBVMoment(MArrow);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedAccelerationConstraint, MBSIMNS"GeneralizedAccelerationConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
 
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage)
@@ -338,24 +338,24 @@ namespace MBSim {
     bd->getjRel() = (*f)(x,t);
   }
 
-  void GeneralizedAccelerationConstraint::initializeUsingXML(TiXmlElement* element) {
+  void GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement* element) {
     KinematicConstraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialState");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e)
       x0 = getVec(e);
-    e=element->FirstChildElement(MBSIMNS"generalConstraintFunction");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->FirstChildElement());
+      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
       setGeneralConstraintFunction(f);
     }
-    e=element->FirstChildElement(MBSIMNS"timeDependentConstraintFunction");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement());
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setTimeDependentConstraintFunction(f);
     }
-    e=element->FirstChildElement(MBSIMNS"stateDependentConstraintFunction");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
     if(e) {
-      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->FirstChildElement());
+      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
       setStateDependentConstraintFunction(f);
     }
   }
@@ -371,7 +371,7 @@ namespace MBSim {
       ke->setOpenMBVMoment(MArrow);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIMNS"JointConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIM%"JointConstraint")
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -577,45 +577,45 @@ namespace MBSim {
       joint->setOpenMBVMoment(MArrow);
   }
 
-  void JointConstraint::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e, *ee;
+  void JointConstraint::initializeUsingXML(DOMElement *element) {
+    DOMElement *e, *ee;
     Constraint::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"initialGuess");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) q0=getVec(e);
-    e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesFirstSide");
-    ee=e->FirstChildElement();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodiesFirstSide");
+    ee=e->getFirstElementChild();
     while(ee) {
-      saved_RigidBodyFirstSide.push_back(ee->Attribute("ref"));
-      ee=ee->NextSiblingElement();
+      saved_RigidBodyFirstSide.push_back(E(ee)->getAttribute("ref"));
+      ee=ee->getNextElementSibling();
     }
-    e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesSecondSide");
-    ee=e->FirstChildElement();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodiesSecondSide");
+    ee=e->getFirstElementChild();
     while(ee) {
-      saved_RigidBodySecondSide.push_back(ee->Attribute("ref"));
-      ee=ee->NextSiblingElement();
+      saved_RigidBodySecondSide.push_back(E(ee)->getAttribute("ref"));
+      ee=ee->getNextElementSibling();
     }
-    e=element->FirstChildElement(MBSIMNS"independentRigidBody");
-    saved_IndependentBody=e->Attribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
+    saved_IndependentBody=E(e)->getAttribute("ref");
 
-    e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if(e) refFrameID=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"forceDirection");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat3xV(e,0));
-    e=element->FirstChildElement(MBSIMNS"momentDirection");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(getMat3xV(e,3));
 
-    e=element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1=e->Attribute("ref1");
-    saved_ref2=e->Attribute("ref2");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1=E(e)->getAttribute("ref1");
+    saved_ref2=E(e)->getAttribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
@@ -623,50 +623,50 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
-    if(q0.size()) 
-      addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesFirstSide" );
-    for(unsigned int i=0; i<bd1.size(); i++) {
-      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
-      ele2->SetAttribute("ref", bd1[i]->getXMLPath(this,true)); // relative path
-      ele1->LinkEndChild(ele2);
-    }
-    ele0->LinkEndChild(ele1);
-    ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesSecondSide" );
-    for(unsigned int i=0; i<bd2.size(); i++) {
-      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
-      ele2->SetAttribute("ref", bd2[i]->getXMLPath(this,true)); // relative path
-      ele1->LinkEndChild(ele2);
-    }
-    ele0->LinkEndChild(ele1);
-
-    ele1 = new TiXmlElement( MBSIMNS"independentRigidBody" );
-    ele1->SetAttribute("ref", bi->getXMLPath(this,true)); // relative path
-    ele0->LinkEndChild(ele1);
-
-    if(dT.cols())
-      addElementText(ele0, MBSIMNS"forceDirection", dT);
-    if(dR.cols())
-      addElementText(ele0, MBSIMNS"momentDirection", dR);
-
-    ele1 = new TiXmlElement(MBSIMNS"connect");
-    ele1->SetAttribute("ref1", frame1->getXMLPath(this,true)); // relative path
-    ele1->SetAttribute("ref2", frame2->getXMLPath(this,true)); // relative path
-    ele0->LinkEndChild(ele1);
-
-    if(FArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVJointForceArrow" );
-      FArrow->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-
-    if(MArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVJointMomentArrow" );
-      MArrow->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
+  DOMElement* JointConstraint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Constraint::writeXMLFile(parent);
+//    if(q0.size()) 
+//      addElementText(ele0,MBSIM%"initialGeneralizedPosition",q0);
+//    DOMElement *ele1 = new DOMElement( MBSIM%"dependentRigidBodiesFirstSide" );
+//    for(unsigned int i=0; i<bd1.size(); i++) {
+//      DOMElement *ele2 = new DOMElement( MBSIM%"dependentRigidBody" );
+//      ele2->SetAttribute("ref", bd1[i]->getXMLPath(this,true)); // relative path
+//      ele1->LinkEndChild(ele2);
+//    }
+//    ele0->LinkEndChild(ele1);
+//    ele1 = new DOMElement( MBSIM%"dependentRigidBodiesSecondSide" );
+//    for(unsigned int i=0; i<bd2.size(); i++) {
+//      DOMElement *ele2 = new DOMElement( MBSIM%"dependentRigidBody" );
+//      ele2->SetAttribute("ref", bd2[i]->getXMLPath(this,true)); // relative path
+//      ele1->LinkEndChild(ele2);
+//    }
+//    ele0->LinkEndChild(ele1);
+//
+//    ele1 = new DOMElement( MBSIM%"independentRigidBody" );
+//    ele1->SetAttribute("ref", bi->getXMLPath(this,true)); // relative path
+//    ele0->LinkEndChild(ele1);
+//
+//    if(dT.cols())
+//      addElementText(ele0, MBSIM%"forceDirection", dT);
+//    if(dR.cols())
+//      addElementText(ele0, MBSIM%"momentDirection", dR);
+//
+//    ele1 = new DOMElement(MBSIM%"connect");
+//    ele1->SetAttribute("ref1", frame1->getXMLPath(this,true)); // relative path
+//    ele1->SetAttribute("ref2", frame2->getXMLPath(this,true)); // relative path
+//    ele0->LinkEndChild(ele1);
+//
+//    if(FArrow) {
+//      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
+//      FArrow->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//
+//    if(MArrow) {
+//      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
+//      MArrow->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
 
     return ele0;
   }

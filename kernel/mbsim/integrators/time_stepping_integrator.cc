@@ -29,10 +29,11 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, TimeSteppingIntegrator, MBSIMINTNS"TimeSteppingIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, TimeSteppingIntegrator, MBSIMINT%"TimeSteppingIntegrator")
 
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
@@ -123,10 +124,10 @@ namespace MBSim {
     postIntegrate(system);
   }
 
-  void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void TimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     setStepSize(Element::getDouble(e));
   }
 

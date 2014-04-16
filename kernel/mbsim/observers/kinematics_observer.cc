@@ -24,9 +24,9 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace xercesc;
 
 namespace MBSim {
-
 
   KinematicsObserver::KinematicsObserver(const std::string &name) : Observer(name), frame(0) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -170,40 +170,40 @@ namespace MBSim {
     }
   }
 
-  void KinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+  void KinematicsObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frame");
-    if(e) saved_frame=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
+    if(e) saved_frame=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
         OpenMBVArrow ombv;
         openMBVPosition=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
         OpenMBVArrow ombv;
         openMBVVelocity=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularVelocity");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
         openMBVAngularVelocity=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
         OpenMBVArrow ombv;
         openMBVAcceleration=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAngularAcceleration");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
         openMBVAngularAcceleration=ombv.createOpenMBV(e); 
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteKinematicsObserver, MBSIMNS"AbsoluteKinematicsObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteKinematicsObserver, MBSIM%"AbsoluteKinematicsObserver")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeKinematicsObserver, MBSIMNS"RelativeKinematicsObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeKinematicsObserver, MBSIM%"RelativeKinematicsObserver")
 
   RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : KinematicsObserver(name) {
     refFrame = 0;
@@ -527,10 +527,10 @@ namespace MBSim {
     }
   }
 
-  void RelativeKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+  void RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
     KinematicsObserver::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e) saved_frameOfReference=e->Attribute("ref");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) saved_frameOfReference=E(e)->getAttribute("ref");
   }
 
 }

@@ -23,26 +23,28 @@
 #include "mbsim/utils/utils.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
   MBSimEnvironment *MBSimEnvironment::instance=NULL;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, MBSimEnvironment, MBSIMNS"MBSimEnvironment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, MBSimEnvironment, MBSIM%"MBSimEnvironment")
 
-  void MBSimEnvironment::initializeUsingXML(TiXmlElement *element) {
+  void MBSimEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
     setAccelerationOfGravity(Element::getVec3(e));
   }
 
-  TiXmlElement* MBSimEnvironment::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement* ele0 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
-    addElementText(ele0,MBSIMNS"accelerationOfGravity",getAccelerationOfGravity());
-    parent->LinkEndChild(ele0);
+  DOMElement* MBSimEnvironment::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(MBSIM%"MBSimEnvironment");
+//    addElementText(ele0,MBSIM%"accelerationOfGravity",getAccelerationOfGravity());
+    parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
