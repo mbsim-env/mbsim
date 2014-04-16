@@ -25,23 +25,24 @@
 #include "mbsimHydraulics/defines.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FlowSensor, MBSIMHYDRAULICSNS"FlowSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FlowSensor, MBSIMHYDRAULICS%"FlowSensor")
 
   Vec FlowSensor::getSignal() {
     return line->getQIn(); 
   }
 
-  void FlowSensor::initializeUsingXML(TiXmlElement * element) {
+  void FlowSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"hline");
-    lineString=e->Attribute("ref");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"hline");
+    lineString=E(e)->getAttribute("ref");
   }
 
   void FlowSensor::init(MBSim::InitStage stage) {
@@ -54,17 +55,17 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PressureSensor, MBSIMHYDRAULICSNS"PressureSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PressureSensor, MBSIMHYDRAULICS%"PressureSensor")
 
   Vec PressureSensor::getSignal() {
     return node->getla(); 
   }
 
-  void PressureSensor::initializeUsingXML(TiXmlElement * element) {
+  void PressureSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"hnode");
-    nodeString=e->Attribute("ref");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"hnode");
+    nodeString=E(e)->getAttribute("ref");
   }
 
   void PressureSensor::init(MBSim::InitStage stage) {
@@ -77,7 +78,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TemperatureSensor, MBSIMHYDRAULICSNS"TemperatureSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TemperatureSensor, MBSIMHYDRAULICS%"TemperatureSensor")
   
   void TemperatureSensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::preInit) {
@@ -88,7 +89,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KinematicViscositySensor, MBSIMHYDRAULICSNS"KinematicViscositySensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KinematicViscositySensor, MBSIMHYDRAULICS%"KinematicViscositySensor")
   
   void KinematicViscositySensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::preInit) {
