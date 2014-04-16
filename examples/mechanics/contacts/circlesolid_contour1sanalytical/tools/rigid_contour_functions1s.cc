@@ -27,9 +27,10 @@
 #include "rigid_contour_functions1s.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 double calculateLocalAlpha(const double& alpha) {
   if ((alpha>0) && (alpha<2.*M_PI))
@@ -280,9 +281,9 @@ double FuncCrPC::computeCurvatureTabular(const double& alpha) {
     }
   }
 
-void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
+void FuncCrPC::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
-/* TiXmlElement * e;
+/* DOMElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
   Mat YZ=Element::getMat(e);
   int dis=1;
@@ -394,7 +395,7 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
   }
 }
 
-void FuncCrPC_PlanePolar::initializeUsingXML(TiXmlElement * element) {
+void FuncCrPC_PlanePolar::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
 }
 

@@ -44,7 +44,7 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     fmatvec::Vec3 computeN(const double& alpha) {return (this->*computeN_)(alpha); }
     double computeCurvature(const double& alpha) {return (this->*computeCurvature_)(alpha); }
 
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+    virtual void initializeUsingXML(xercesc::DOMElement * element);
   private:
     fmatvec::Vec3 Cb;
     MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> pp_y;

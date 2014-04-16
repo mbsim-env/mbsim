@@ -26,9 +26,10 @@
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u , int discretization) { 
   Mat ContourMat;
@@ -267,9 +268,9 @@ double FuncCrPC::computeCurvatureTabular(const double& alpha) {
     }
   }
 
-void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
+void FuncCrPC::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
-/* TiXmlElement * e;
+/* DOMElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
   Mat YZ=Element::getMat(e);
   int dis=1;
