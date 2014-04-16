@@ -10,7 +10,6 @@
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/xmlnamespacemapping.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
 #define BOOST_CHRONO_HEADER_ONLY
@@ -28,6 +27,8 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 namespace {
 
@@ -130,15 +131,6 @@ namespace MBSim {
 
 int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator) {
 
-  // print namespace-prefix mapping
-  if(argc==2 && strcmp(argv[1], "--printNamespacePrefixMapping")==0) {
-    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
-    for(map<string, string>::iterator it=nsprefix.begin(); it!=nsprefix.end(); it++)
-      cout<<it->first<<" "<<it->second<<endl;
-    return 1;
-  }
-
-
   // help
   if(argc<2 || argc>3) {
     cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
@@ -168,22 +160,15 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
   loadPlugins();
 
   // load MBSim project XML document
-  TiXmlDocument *doc=new TiXmlDocument;
-  if(doc->LoadFile(argv[startArg])==false)
-    throw MBSimError(string("ERROR! Unable to load file: ")+argv[startArg]);
-  TiXml_PostLoadFile(doc);
-  TiXmlElement *e=doc->FirstChildElement();
-  TiXml_setLineNrFromProcessingInstruction(e);
-  map<string,string> dummy;
-  incorporateNamespace(e, dummy);
+  shared_ptr<DOMParser> parser=DOMParser::create(false);
+  shared_ptr<DOMDocument> doc=parser->parse(argv[startArg]);
+  DOMElement *e=doc->getDocumentElement();
 
   // create object for DynamicSystemSolver and check correct type
-  dss=ObjectFactory<Element>::createAndInit<DynamicSystemSolver>(e->FirstChildElement());
+  dss=ObjectFactory<Element>::createAndInit<DynamicSystemSolver>(e->getFirstElementChild());
 
   // create object for Integrator and check correct type
-  integrator=ObjectFactory<Integrator>::createAndInit<Integrator>(e->FirstChildElement()->NextSiblingElement());
-
-  delete doc;
+  integrator=ObjectFactory<Integrator>::createAndInit<Integrator>(e->getFirstElementChild()->getNextElementSibling());
 
   return 0;
 }
