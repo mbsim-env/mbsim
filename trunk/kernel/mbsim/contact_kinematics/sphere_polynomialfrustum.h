@@ -30,8 +30,7 @@ namespace MBSim {
 
   class PolyFurstumSphereContact : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
-      PolyFurstumSphereContact(const PolynomialFrustum * frustum) :
-        frustum(frustum), rS(0.) {
+      PolyFurstumSphereContact(const PolynomialFrustum * frustum) : rS(0.), frustum(frustum) {
       }
 
       virtual ~PolyFurstumSphereContact() {
@@ -63,8 +62,7 @@ namespace MBSim {
 
   class PolyFurstumSphereContactJacobian : public NewtonJacobianFunction {
     public:
-      PolyFurstumSphereContactJacobian(const PolynomialFrustum * frustum) :
-        frustum(frustum), rS(0.) {
+      PolyFurstumSphereContactJacobian(const PolynomialFrustum * frustum) : rS(0.), frustum(frustum) {
       }
 
       virtual ~PolyFurstumSphereContactJacobian() {
