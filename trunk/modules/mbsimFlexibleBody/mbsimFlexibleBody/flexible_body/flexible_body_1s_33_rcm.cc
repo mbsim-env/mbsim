@@ -40,9 +40,10 @@ using namespace PLib;
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
@@ -379,57 +380,57 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33RCM::initializeUsingXML(TiXmlElement * element) {
+  void FlexibleBody1s33RCM::initializeUsingXML(DOMElement * element) {
     FlexibleBody::initializeUsingXML(element);
-    TiXmlElement * e;
+    DOMElement * e;
 
     // frames
-    e=element->FirstChildElement(MBSIMFLEXNS"frames")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMFLEXNS"frameOnFlexibleBody1s") {
-      TiXmlElement *ec=e->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
+    while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"frameOnFlexibleBody1s") {
+      DOMElement *ec=e->getFirstElementChild();
+      Frame *f=new Frame(MBXMLUtils::E(ec)->getAttribute("name"));
       f->initializeUsingXML(ec);
-      ec=ec->NextSiblingElement();
+      ec=ec->getNextElementSibling();
       addFrame(f, getDouble(ec));
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
     //other properties
 
-    e=element->FirstChildElement(MBSIMFLEXNS"numberOfElements");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfElements");
     setNumberElements(getInt(e));
-    e=element->FirstChildElement(MBSIMFLEXNS"length");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"length");
     setLength(getDouble(e));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"youngsModulus");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
     double E=getDouble(e);
-    e=element->FirstChildElement(MBSIMFLEXNS"shearModulus");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shearModulus");
     double G=getDouble(e);
     setEGModuls(E, G);
 
-    e=element->FirstChildElement(MBSIMFLEXNS"density");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");
     setDensity(getDouble(e));
-    e=element->FirstChildElement(MBSIMFLEXNS"crossSectionArea");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"crossSectionArea");
     setCrossSectionalArea(getDouble(e));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"momentOfInertia");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"momentOfInertia");
     Vec TempVec2=getVec(e);
     setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"radiusOfContourCylinder");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"radiusOfContourCylinder");
     setCylinder(getDouble(e));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"dampingOfMaterial");
-    double thetaEps=getDouble(e->FirstChildElement(MBSIMFLEXNS"prolongational"));
-    double thetaKappa0=getDouble(e->FirstChildElement(MBSIMFLEXNS"torsional"));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingOfMaterial");
+    double thetaEps=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"prolongational"));
+    double thetaKappa0=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"));
     setMaterialDamping(thetaEps, thetaKappa0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
-      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->FirstChildElement());
+      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
       setOpenMBVSpineExtrusion(rb);
-      rb->initializeUsingXML(e->FirstChildElement());
+      rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);
     }
 #endif
