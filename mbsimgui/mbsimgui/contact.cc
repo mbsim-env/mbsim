@@ -36,18 +36,12 @@ namespace MBSimGUI {
 
     contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"normalForceLaw"));
 
-    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(""));
-    contactImpactLaw.setXMLName(MBSIM%"normalImpactLaw");
+    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(MBSIM%"normalImpactLaw"));
 
-    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(""));
-    frictionForceLaw.setXMLName(MBSIM%"tangentialForceLaw",false);
+    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(MBSIM%"tangentialForceLaw"));
 
-    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
-    frictionImpactLaw.setXMLName(MBSIM%"tangentialImpactLaw",false);
+    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(MBSIM%"tangentialImpactLaw"));
 
-    //  vector<PhysicalVariableProperty> input;
-    //  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIM%"enableOpenMBVContactPoints"));
-    //  enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
     enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
     normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));

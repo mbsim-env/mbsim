@@ -320,7 +320,7 @@ namespace MBSimGUI {
     addTab("Solver parameters",2);
     addTab("Extra",3);
 
-    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft),true);
+    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft));
     addToTab("Environment", environment);
 
     solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
