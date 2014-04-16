@@ -29,39 +29,40 @@
 #include "mbsimControl/defines.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, MasslessSpringDamper, MBSIMCONTROLNS"MasslessSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, MasslessSpringDamper, MBSIMCONTROL%"MasslessSpringDamper")
 
   MasslessSpringDamper::MasslessSpringDamper(const string& name) : SignalProcessingSystem(name), c(0), F0(0), dPos(0), dNeg(0), FFricPos(0), FFricNeg(1./epsroot()), xMin(-1./epsroot()), xMax(1./epsroot()) {
   }
 
-  void MasslessSpringDamper::initializeUsingXML(TiXmlElement * element) {
+  void MasslessSpringDamper::initializeUsingXML(DOMElement * element) {
     SignalProcessingSystem::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"springStiffness");
+    DOMElement * e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"springStiffness");
     setSpringStiffness(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"basicSpringForce");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"basicSpringForce");
     setBasicSpringForce(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"dampingCoefficient");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"dampingCoefficient");
     setDampingCoefficient(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"negativeDampingCoefficient");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeDampingCoefficient");
     if (e)
       setNegativeDampingCoefficient(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"frictionForce");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frictionForce");
     if (e)
       setFrictionForce(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"negativeFrictionForce");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeFrictionForce");
     if (e)
       setNegativeFrictionForce(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"minimalPositionValue");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalPositionValue");
     if (e)
       setMinimumPositionValue(getDouble(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"maximalPositionValue");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalPositionValue");
     if (e)
       setMaximumPositionValue(getDouble(e));
   }

@@ -32,7 +32,7 @@ namespace MBSimControl {
   class SignalAddition : public Signal {
     public:
       SignalAddition(const std::string &name="") : Signal(name) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void addSignal(Signal * signal, double factor=1.);
       fmatvec::Vec getSignal();
@@ -50,7 +50,7 @@ namespace MBSimControl {
   class SignalOffset : public Signal {
     public:
       SignalOffset(const std::string &name="") : Signal(name), signal(0), offset(0, fmatvec::NONINIT), signalString("") {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * s) {signal=s; }
       void setOffset(fmatvec::Vec o) {offset=o; }
@@ -68,7 +68,7 @@ namespace MBSimControl {
   class SignalMultiplication : public Signal {
     public:
       SignalMultiplication(const std::string &name="") : Signal(name) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void addSignal(Signal * signal, double exp);
       fmatvec::Vec getSignal();
@@ -87,7 +87,7 @@ namespace MBSimControl {
   class SignalMux : public Signal {  
     public:
       SignalMux(const std::string &name="") : Signal(name) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void addSignal(Signal * signal) {signals.push_back(signal); }
       fmatvec::Vec getSignal();
@@ -104,7 +104,7 @@ namespace MBSimControl {
   class SignalDemux : public Signal {  
     public:
       SignalDemux(const std::string &name="") : Signal(name), totalSignalSize(0) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
       fmatvec::Vec getSignal();
@@ -124,7 +124,7 @@ namespace MBSimControl {
   class SignalLimitation : public Signal {  
     public:
       SignalLimitation(const std::string &name="") : Signal(name), s(NULL), minValue(), maxValue(), signalString("") {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
       void setMaximalValue(fmatvec::Vec maxValue_) {maxValue=maxValue_; }
@@ -144,7 +144,7 @@ namespace MBSimControl {
   class SignalTimeDiscretization : public Signal {  
     public:
       SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), y(), tOld(-99e99), signalString("") {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
@@ -164,7 +164,7 @@ namespace MBSimControl {
   class SignalOperation : public Signal {  
     public:
       SignalOperation(const std::string &name="") : Signal(name), s(NULL), s2(NULL), signalString(""), signal2String(""), op(0), s2values(0, fmatvec::NONINIT) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void setSecondSignal(Signal * signal_) {s2=signal_; }
@@ -188,7 +188,7 @@ namespace MBSimControl {
   class SpecialSignalOperation : public Signal {  
     public:
       SpecialSignalOperation(const std::string &name="") : Signal(name), s(NULL), s2(NULL), signalString(""), signal2String(""), op(0), s2values(0, fmatvec::NONINIT) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void setSecondSignal(Signal * signal_) {s2=signal_; }
@@ -212,7 +212,7 @@ namespace MBSimControl {
 
     public:   
       PIDController(const std::string& name="") : Signal(name), s(NULL), sd(NULL) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
       
       void calcxSize() {xSize=getSignalMethod==&PIDController::getSignalPD?0:1;}
       
@@ -245,7 +245,7 @@ namespace MBSimControl {
   class UnarySignalOperation : public Signal {  
     public:
       UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal *signal_) {s=signal_; }
       void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *f_) {f=f_; };
@@ -263,7 +263,7 @@ namespace MBSimControl {
   class BinarySignalOperation : public Signal {  
     public:
       BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) {}
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void setSignal1(Signal *signal_) {s1=signal_; }
       void setSignal2(Signal *signal_) {s2=signal_; }

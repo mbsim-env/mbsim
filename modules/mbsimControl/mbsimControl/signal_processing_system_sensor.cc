@@ -23,19 +23,20 @@
 #include "mbsimControl/defines.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalProcessingSystemSensor, MBSIMCONTROLNS"SignalProcessingSystemSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalProcessingSystemSensor, MBSIMCONTROL%"SignalProcessingSystemSensor")
 
-  void SignalProcessingSystemSensor::initializeUsingXML(TiXmlElement * element) {
+  void SignalProcessingSystemSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
-    TiXmlElement * e;
-    e = element->FirstChildElement(MBSIMCONTROLNS"signalProcessingSystem");
-    spsString=e->Attribute("ref");
+    DOMElement * e;
+    e = E(element)->getFirstElementChildNamed(MBSIMCONTROL%"signalProcessingSystem");
+    spsString=E(e)->getAttribute("ref");
   }
 
   void SignalProcessingSystemSensor::init(InitStage stage) {

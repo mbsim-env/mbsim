@@ -24,23 +24,24 @@
 #include <fmatvec/function.h>
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalAddition, MBSIMCONTROLNS"SignalAddition")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalAddition, MBSIMCONTROL%"SignalAddition")
 
-  void SignalAddition::initializeUsingXML(TiXmlElement *element) {
+  void SignalAddition::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
-      string path=e->Attribute("ref");
-      double f=getDouble(e->FirstChildElement(MBSIMCONTROLNS"factor"));
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
+      string path=E(e)->getAttribute("ref");
+      double f=getDouble(E(e)->getFirstElementChildNamed(MBSIMCONTROL%"factor"));
       signalString.push_back(path);
       factorsTmp.push_back(f);
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
   }
 
@@ -68,13 +69,13 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOffset, MBSIMCONTROLNS"SignalOffset")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOffset, MBSIMCONTROL%"SignalOffset")
   
-  void SignalOffset::initializeUsingXML(TiXmlElement *element) {
+  void SignalOffset::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString=e->Attribute("ref");
-    setOffset(getVec(element->FirstChildElement(MBSIMCONTROLNS"offset")));
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+    setOffset(getVec(E(element)->getFirstElementChildNamed(MBSIMCONTROL%"offset")));
   }
 
   void SignalOffset::init(InitStage stage) {
@@ -90,15 +91,15 @@ namespace MBSimControl {
     return signal->getSignal()+offset;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMultiplication, MBSIMCONTROLNS"SignalMultiplication")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMultiplication, MBSIMCONTROL%"SignalMultiplication")
   
-  void SignalMultiplication::initializeUsingXML(TiXmlElement *element) {
+  void SignalMultiplication::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
-      signalString.push_back(e->Attribute("ref"));
-      exponentsTmp.push_back(getDouble(e->FirstChildElement(MBSIMCONTROLNS"exponent")));
-      e=e->NextSiblingElement();
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
+      signalString.push_back(E(e)->getAttribute("ref"));
+      exponentsTmp.push_back(getDouble(E(e)->getFirstElementChildNamed(MBSIMCONTROL%"exponent")));
+      e=e->getNextElementSibling();
     }
   }
 
@@ -131,15 +132,15 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMux, MBSIMCONTROLNS"SignalMux")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMux, MBSIMCONTROL%"SignalMux")
 
-  void SignalMux::initializeUsingXML(TiXmlElement *element) {
+  void SignalMux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
-      string s=e->Attribute("ref");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
+      string s=E(e)->getAttribute("ref");
       signalString.push_back(s);
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
   }
 
@@ -166,16 +167,16 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalDemux, MBSIMCONTROLNS"SignalDemux")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalDemux, MBSIMCONTROL%"SignalDemux")
 
-  void SignalDemux::initializeUsingXML(TiXmlElement *element) {
+  void SignalDemux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
-      string s=e->Attribute("ref");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
+      string s=E(e)->getAttribute("ref");
       signalString.push_back(s);
-      indizesTmp.push_back(getVec(e->FirstChildElement(MBSIMCONTROLNS"index")));
-      e=e->NextSiblingElement();
+      indizesTmp.push_back(getVec(E(e)->getFirstElementChildNamed(MBSIMCONTROL%"index")));
+      e=e->getNextElementSibling();
     }
   }
 
@@ -213,17 +214,17 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalLimitation, MBSIMCONTROLNS"SignalLimitation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalLimitation, MBSIMCONTROL%"SignalLimitation")
 
-  void SignalLimitation::initializeUsingXML(TiXmlElement *element) {
+  void SignalLimitation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"minimalValue");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalValue");
     Vec min=Element::getVec(e);
     setMinimalValue(min);
-    e=element->FirstChildElement(MBSIMCONTROLNS"maximalValue");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalValue");
     Vec max=Element::getVec(e, min.size());
     setMaximalValue(max);
   }
@@ -248,13 +249,13 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalTimeDiscretization, MBSIMCONTROLNS"SignalTimeDiscretization")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
 
-  void SignalTimeDiscretization::initializeUsingXML(TiXmlElement *element) {
+  void SignalTimeDiscretization::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString=e->Attribute("ref");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
   }
 
   void SignalTimeDiscretization::init(InitStage stage) {
@@ -280,89 +281,89 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOperation, MBSIMCONTROLNS"SignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOperation, MBSIMCONTROL%"SignalOperation")
 
-  void SignalOperation::initializeUsingXML(TiXmlElement *element) {
+  void SignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString=e->Attribute("ref");
-    e=e->NextSiblingElement();
-    if (e->ValueStr()==MBSIMCONTROLNS"acos")
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+    e=e->getNextElementSibling();
+    if (E(e)->getTagName()==MBSIMCONTROL%"acos")
       setOperator(1);
-    else if (e->ValueStr()==MBSIMCONTROLNS"asin")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"asin")
       setOperator(2);
-    else if (e->ValueStr()==MBSIMCONTROLNS"atan")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"atan")
       setOperator(3);
-    else if (e->ValueStr()==MBSIMCONTROLNS"atan2") {
+    else if (E(e)->getTagName()==MBSIMCONTROL%"atan2") {
       setOperator(4);
-      TiXmlElement * ee=e->FirstChildElement();
-      if (ee->ValueStr()==MBSIMCONTROLNS"input2Signal")
-        signal2String=ee->Attribute("ref");
-      else if (ee->ValueStr()==MBSIMCONTROLNS"yValues")
+      DOMElement * ee=e->getFirstElementChild();
+      if (E(ee)->getTagName()==MBSIMCONTROL%"input2Signal")
+        signal2String=E(ee)->getAttribute("ref");
+      else if (E(ee)->getTagName()==MBSIMCONTROL%"yValues")
         setSecondSignalValues(Element::getVec(ee));
     }
-    else if (e->ValueStr()==MBSIMCONTROLNS"ceil")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"ceil")
       setOperator(5);
-    else if (e->ValueStr()==MBSIMCONTROLNS"cos")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"cos")
       setOperator(6);
-    else if (e->ValueStr()==MBSIMCONTROLNS"cosh")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"cosh")
       setOperator(7);
-    else if (e->ValueStr()==MBSIMCONTROLNS"cbrt")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"cbrt")
       setOperator(8);
-    else if (e->ValueStr()==MBSIMCONTROLNS"exp")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"exp")
       setOperator(9);
-    else if (e->ValueStr()==MBSIMCONTROLNS"exp2")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"exp2")
       setOperator(10);
-    else if (e->ValueStr()==MBSIMCONTROLNS"expm1")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"expm1")
       setOperator(11);
-    else if (e->ValueStr()==MBSIMCONTROLNS"fabs")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"fabs")
       setOperator(12);
-    else if (e->ValueStr()==MBSIMCONTROLNS"floor")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"floor")
       setOperator(13);
-    else if (e->ValueStr()==MBSIMCONTROLNS"fmod") {
+    else if (E(e)->getTagName()==MBSIMCONTROL%"fmod") {
       setOperator(14);
-      TiXmlElement * ee=e->FirstChildElement();
-      if (ee->ValueStr()==MBSIMCONTROLNS"input2Signal")
-        signal2String=ee->Attribute("ref");
-      else if (ee->ValueStr()==MBSIMCONTROLNS"yValues")
+      DOMElement * ee=e->getFirstElementChild();
+      if (E(ee)->getTagName()==MBSIMCONTROL%"input2Signal")
+        signal2String=E(ee)->getAttribute("ref");
+      else if (E(ee)->getTagName()==MBSIMCONTROL%"yValues")
         setSecondSignalValues(Element::getVec(ee));
     }
-    else if (e->ValueStr()==MBSIMCONTROLNS"hypot") {
+    else if (E(e)->getTagName()==MBSIMCONTROL%"hypot") {
       setOperator(15);
-      TiXmlElement * ee=e->FirstChildElement();
-      if (ee->ValueStr()==MBSIMCONTROLNS"input2Signal")
-        signal2String=ee->Attribute("ref");
-      else if (ee->ValueStr()==MBSIMCONTROLNS"yValues")
+      DOMElement * ee=e->getFirstElementChild();
+      if (E(ee)->getTagName()==MBSIMCONTROL%"input2Signal")
+        signal2String=E(ee)->getAttribute("ref");
+      else if (E(ee)->getTagName()==MBSIMCONTROL%"yValues")
         setSecondSignalValues(Element::getVec(ee));
     }
-    else if (e->ValueStr()==MBSIMCONTROLNS"log")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"log")
       setOperator(16);
-    else if (e->ValueStr()==MBSIMCONTROLNS"log2")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"log2")
       setOperator(17);
-    else if (e->ValueStr()==MBSIMCONTROLNS"logb")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"logb")
       setOperator(18);
-    else if (e->ValueStr()==MBSIMCONTROLNS"log10")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"log10")
       setOperator(19);
-    else if (e->ValueStr()==MBSIMCONTROLNS"log1p")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"log1p")
       setOperator(20);
-    else if (e->ValueStr()==MBSIMCONTROLNS"pow") {
+    else if (E(e)->getTagName()==MBSIMCONTROL%"pow") {
       setOperator(21);
-      TiXmlElement * ee=e->FirstChildElement();
-      if (ee->ValueStr()==MBSIMCONTROLNS"input2Signal")
-        signal2String=ee->Attribute("ref");
-      else if (ee->ValueStr()==MBSIMCONTROLNS"yValues")
+      DOMElement * ee=e->getFirstElementChild();
+      if (E(ee)->getTagName()==MBSIMCONTROL%"input2Signal")
+        signal2String=E(ee)->getAttribute("ref");
+      else if (E(ee)->getTagName()==MBSIMCONTROL%"yValues")
         setSecondSignalValues(Element::getVec(ee));
     }
-    else if (e->ValueStr()==MBSIMCONTROLNS"sin")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"sin")
       setOperator(22);
-    else if (e->ValueStr()==MBSIMCONTROLNS"sinh")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"sinh")
       setOperator(23);
-    else if (e->ValueStr()==MBSIMCONTROLNS"sqrt")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"sqrt")
       setOperator(24);
-    else if (e->ValueStr()==MBSIMCONTROLNS"tan")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"tan")
       setOperator(25);
-    else if (e->ValueStr()==MBSIMCONTROLNS"tanh")
+    else if (E(e)->getTagName()==MBSIMCONTROL%"tanh")
       setOperator(26);
   }
 
@@ -462,22 +463,22 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpecialSignalOperation, MBSIMCONTROLNS"SpecialSignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpecialSignalOperation, MBSIMCONTROL%"SpecialSignalOperation")
   
-  void SpecialSignalOperation::initializeUsingXML(TiXmlElement *element) {
+  void SpecialSignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString=e->Attribute("ref");
-    e=e->NextSiblingElement();
-    if (e->ValueStr()==MBSIMCONTROLNS"sign")
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+    e=e->getNextElementSibling();
+    if (E(e)->getTagName()==MBSIMCONTROL%"sign")
       setOperator(1);
-    else if (e->ValueStr()==MBSIMCONTROLNS"selection") {
+    else if (E(e)->getTagName()==MBSIMCONTROL%"selection") {
       setOperator(2);
-      TiXmlElement * ee=e->FirstChildElement();
-      if (ee->ValueStr()==MBSIMCONTROLNS"input2Signal")
-        signal2String=ee->Attribute("ref");
-      else if (ee->ValueStr()==MBSIMCONTROLNS"yValues")
+      DOMElement * ee=e->getFirstElementChild();
+      if (E(ee)->getTagName()==MBSIMCONTROL%"input2Signal")
+        signal2String=E(ee)->getAttribute("ref");
+      else if (E(ee)->getTagName()==MBSIMCONTROL%"yValues")
         setSecondSignalValues(Element::getVec(ee));
     }
   }
@@ -506,20 +507,20 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PIDController, MBSIMCONTROLNS"PIDController")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PIDController, MBSIMCONTROL%"PIDController")
 
-  void PIDController::initializeUsingXML(TiXmlElement * element) {
+  void PIDController::initializeUsingXML(DOMElement * element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    sString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"derivativeOfInputSignal");
-    sdString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"P");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    sString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"derivativeOfInputSignal");
+    sdString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"P");
     double p=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMCONTROLNS"I");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"I");
     double i=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMCONTROLNS"D");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"D");
     double d=Element::getDouble(e);
     setPID(p, i, d);
   }
@@ -578,16 +579,16 @@ namespace MBSimControl {
     Signal::plot(t,dt);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, UnarySignalOperation, MBSIMCONTROLNS"UnarySignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, UnarySignalOperation, MBSIMCONTROL%"UnarySignalOperation")
 
-  void UnarySignalOperation::initializeUsingXML(TiXmlElement *element) {
+  void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      fmatvec::Function<Vec(Vec)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Vec(Vec)> >(e->FirstChildElement());
+      fmatvec::Function<Vec(Vec)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Vec(Vec)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
@@ -606,18 +607,18 @@ namespace MBSimControl {
     return (*f)(s->getSignal()); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, BinarySignalOperation, MBSIMCONTROLNS"BinarySignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, BinarySignalOperation, MBSIMCONTROL%"BinarySignalOperation")
 
-  void BinarySignalOperation::initializeUsingXML(TiXmlElement *element) {
+  void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"input1Signal");
-    signal1String=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"input2Signal");
-    signal2String=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"input1Signal");
+    signal1String=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"input2Signal");
+    signal2String=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      fmatvec::Function<Vec(Vec,Vec)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Vec(Vec,Vec)> >(e->FirstChildElement());
+      fmatvec::Function<Vec(Vec,Vec)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Vec(Vec,Vec)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
