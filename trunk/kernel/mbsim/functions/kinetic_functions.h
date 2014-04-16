@@ -49,7 +49,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd) { return c*(g-l0) + d*gd; }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -85,7 +85,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g) + (*gdForceFun)(gd); }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -135,7 +135,7 @@ namespace MBSim {
         else
           return -c*g;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -173,8 +173,8 @@ namespace MBSim {
       virtual double operator()(const double& g, const double& gd) { 
         return -c*g - d*gd;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       virtual std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
       /***************************************************/
@@ -213,7 +213,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -251,7 +251,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -279,7 +279,7 @@ namespace MBSim {
       InfluenceFunction(){}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter)=0;
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
   };
 
@@ -301,7 +301,7 @@ namespace MBSim {
         else
           return 0;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
     protected:
@@ -323,7 +323,7 @@ namespace MBSim {
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter) {
         return couplingValue;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
     protected:

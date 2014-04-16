@@ -23,10 +23,11 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LineSegment, MBSIMNS"LineSegment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LineSegment, MBSIM%"LineSegment")
 
   LineSegment::LineSegment(const std::string& name, double l, double t, Frame *R) : RigidContour(name,R), length(l), thickness(t) {
   }
@@ -54,12 +55,12 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  void LineSegment::initializeUsingXML(TiXmlElement *element) {
+  void LineSegment::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"length");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
     setLength(getDouble(e));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVLine ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -67,9 +68,9 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* LineSegment::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"length",length);
+  DOMElement* LineSegment::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"length",length);
     return ele0;
   }
 

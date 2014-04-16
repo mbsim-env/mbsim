@@ -34,13 +34,14 @@
 #include "mbsim/utils/eps.h"
 #endif
 
+using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
-using namespace std;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contour1sAnalytical, MBSIMNS"Contour1sAnalytical")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contour1sAnalytical, MBSIM%"Contour1sAnalytical")
 
   Contour1sAnalytical::~Contour1sAnalytical() {
      if (funcCrPC) 
@@ -187,24 +188,24 @@ namespace MBSim {
     }
   }
 
-  void Contour1sAnalytical::initializeUsingXML(TiXmlElement * element) {
+  void Contour1sAnalytical::initializeUsingXML(DOMElement * element) {
     Contour::initializeUsingXML(element);
-    TiXmlElement * e;
+    DOMElement * e;
     //ContourContinuum
-    e=element->FirstChildElement(MBSIMNS"alphaStart");
-    as=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMNS"alphaEnd");
-    ae=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMNS"nodes");
-    nodes=Vec(e->GetText());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"alphaStart");
+    as=getDouble(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"alphaEnd");
+    ae=getDouble(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
+    nodes=getVec(e);
     //Contour1s
-    e=element->FirstChildElement(MBSIMNS"diameter");
-    diameter=atof(e->GetText());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"diameter");
+    diameter=getDouble(e);
     //Contour1sAnalytical
-    e=element->FirstChildElement(MBSIMNS"contourFunction");
-    funcCrPC=ObjectFactory<ContourFunction1s>::createAndInit<ContourFunction1s>(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
+    funcCrPC=ObjectFactory<ContourFunction1s>::createAndInit<ContourFunction1s>(e->getFirstElementChild());
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVExtrusion ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -212,15 +213,15 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Contour1sAnalytical::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"alphaStart",as);
-    addElementText(ele0,MBSIMNS"alphaEnd",ae);
-    addElementText(ele0,MBSIMNS"nodes",nodes);
-    addElementText(ele0,MBSIMNS"diameter",diameter);
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"contourFunction");
-    funcCrPC->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+  DOMElement* Contour1sAnalytical::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+//    addElementText(ele0,MBSIM%"alphaStart",as);
+//    addElementText(ele0,MBSIM%"alphaEnd",ae);
+//    addElementText(ele0,MBSIM%"nodes",nodes);
+//    addElementText(ele0,MBSIM%"diameter",diameter);
+//    DOMElement *ele1 = new DOMElement(MBSIM%"contourFunction");
+//    funcCrPC->writeXMLFile(ele1);
+//    ele0->LinkEndChild(ele1);
     return ele0;
   }
 

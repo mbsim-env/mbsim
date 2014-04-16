@@ -24,6 +24,7 @@
 #include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
+using namespace xercesc;
 
 namespace MBSim {
   
@@ -32,16 +33,6 @@ namespace MBSim {
 
   const char* MBSimError::what() const throw() {
     return mbsim_error_message.c_str();
-  }
-
-  MBSimErrorInXML::MBSimErrorInXML(const std::string &msg, const MBXMLUtils::TiXmlElement *e_) throw() : MBSimError("") {
-    string message;
-    vector<string> loc=TiXml_location_vec(const_cast<MBXMLUtils::TiXmlElement*>(e_), "", ": "+msg);
-    for(vector<string>::iterator it=loc.begin(); it!=loc.end(); it++) {
-      vector<string>::iterator it2=it; it2++;
-      message+=*it+(it2!=loc.end()?"\n":"");
-    }
-    setMessage(message);
   }
 
 }

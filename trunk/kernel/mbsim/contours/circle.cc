@@ -30,13 +30,14 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleHollow, MBSIMNS"CircleHollow")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleSolid, MBSIMNS"CircleSolid")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleHollow, MBSIM%"CircleHollow")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleSolid, MBSIM%"CircleSolid")
 
   Circle::Circle(const string& name, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(false) {}
  
@@ -78,14 +79,14 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  void Circle::initializeUsingXML(TiXmlElement *element) {
+  void Circle::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"radius");
+    DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
     setRadius(getDouble(e));
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCircle ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -93,13 +94,13 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Circle::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"radius",r);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody)
-      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
-#endif
+  DOMElement* Circle::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+//    addElementText(ele0,MBSIM%"radius",r);
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//    if(openMBVRigidBody)
+//      ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
+//#endif
     return ele0;
   }
 

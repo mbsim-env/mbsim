@@ -381,7 +381,7 @@ namespace MBSim {
       void plotPar();
       void doIntegPlot();
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element); // TODO
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       
       /**
        * \brief special update of dynamic system for theta time stepping integrator

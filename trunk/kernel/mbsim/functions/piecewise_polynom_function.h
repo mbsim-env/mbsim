@@ -128,7 +128,7 @@ namespace MBSim {
        * \brief initialize function with XML code
        * \param XML element
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
 
     protected:
       /** 
@@ -476,29 +476,29 @@ namespace MBSim {
   }
 
   template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-    MBXMLUtils::TiXmlElement *e;
+  void PiecewisePolynomFunction<Ret(Arg)>::initializeUsingXML(xercesc::DOMElement * element) {
+    xercesc::DOMElement *e;
     fmatvec::VecV x;
     fmatvec::MatV y;
-    e=element->FirstChildElement(MBSIMNS"x");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
     if (e) {
       x=Element::getVec(e);
-      e=element->FirstChildElement(MBSIMNS"y");
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
       y=Element::getMat(e, x.size(), 0);
     }
     else {
-      e=element->FirstChildElement(MBSIMNS"xy");
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
       fmatvec::MatV xy=Element::getMat(e);
       assert(xy.cols()>1);
       x=xy.col(0);
       y=xy(fmatvec::Index(0, xy.rows()-1), fmatvec::Index(1, xy.cols()-1));
     }
     std::string method;
-    if (element->FirstChildElement(MBSIMNS"cSplinePeriodic"))
+    if (MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"cSplinePeriodic"))
       method="csplinePer";
-    else if (element->FirstChildElement(MBSIMNS"cSplineNatural"))
+    else if (MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"cSplineNatural"))
       method="csplineNat";
-    else if (element->FirstChildElement(MBSIMNS"piecewiseLinear"))
+    else if (MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"piecewiseLinear"))
       method="plinear";
     setXF(x, y, method);
   }

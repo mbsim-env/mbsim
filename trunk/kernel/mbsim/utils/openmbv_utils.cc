@@ -20,29 +20,27 @@
 #include <config.h>
 #include "mbsim/element.h"
 #include "mbsim/utils/openmbv_utils.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace xercesc;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
 namespace MBSim {
 
-  void OpenMBVObject::initializeUsingXML(TiXmlElement *e) {
-    TiXmlElement *ee;
-    ee=e->FirstChildElement(MBSIMNS"diffuseColor");
+  void OpenMBVObject::initializeUsingXML(DOMElement *e) {
+    DOMElement *ee;
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
     if(ee) dc = Element::getVec(ee, 3);
-    ee=e->FirstChildElement(MBSIMNS"transparency");
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
     if(ee) tp = Element::getDouble(ee);
 
-    // pass a OPENMBV_ID processing instruction to the OpenMBV Frame object
-    for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
-      TiXmlUnknown *unknown=child->ToUnknown();
-      const size_t length=strlen("?OPENMBV_ID ");
-      if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
-        id = unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1);
-    }
+    DOMProcessingInstruction *ID = E(e)->getFirstProcessingInstructionChildNamed("OPENMBV_ID");
+    if(ID)
+      id = X()%ID->getData();
   }
 
   void OpenMBVObject::initializeObject(OpenMBV::DynamicColoredBody* object) {
@@ -51,22 +49,22 @@ namespace MBSim {
     object->setID(id);
   }
 
-  void OpenMBVArrow::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVArrow::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee = e->FirstChildElement(MBSIMNS"scaleLength");
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"scaleLength");
     if(ee) sL = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"scaleSize");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"scaleSize");
     if(ee) sS = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"referencePoint");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"referencePoint");
     if(ee) {
-      string rP=string(ee->GetText()).substr(1,string(ee->GetText()).length()-2);
+      string rP=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(rP=="toPoint")   refPoint=OpenMBV::Arrow::toPoint;
       if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
       if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
     }
   }
 
-  OpenMBV::Arrow* OpenMBVArrow::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Arrow* OpenMBVArrow::createOpenMBV(DOMElement *e) {
     OpenMBV::Arrow* object = new OpenMBV::Arrow;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -83,15 +81,15 @@ namespace MBSim {
     object->setScaleLength(sL);
   }
 
-  void OpenMBVFrame::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVFrame::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee = e->FirstChildElement(MBSIMNS"size");
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"size");
     if(ee) size = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"offset");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"offset");
     if(ee) offset = Element::getDouble(ee);
   }
 
-  OpenMBV::Frame* OpenMBVFrame::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Frame* OpenMBVFrame::createOpenMBV(DOMElement *e) {
     OpenMBV::Frame* object = new OpenMBV::Frame;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -104,14 +102,14 @@ namespace MBSim {
     object->setOffset(offset);
   }
 
-  void OpenMBVSphere::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVSphere::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee;
-    ee = e->FirstChildElement(MBSIMNS+xml);
+    DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%xml);
     if(ee) r = Element::getDouble(ee);
   }
 
-  OpenMBV::Sphere* OpenMBVSphere::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Sphere* OpenMBVSphere::createOpenMBV(DOMElement *e) {
     OpenMBV::Sphere* object = new OpenMBV::Sphere;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -123,14 +121,14 @@ namespace MBSim {
     object->setRadius(r);
   }
 
-  void OpenMBVLine::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVLine::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee;
-    ee = e->FirstChildElement(MBSIMNS"length");
+    DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"length");
     if(ee) l = Element::getDouble(ee);
   }
 
-  OpenMBV::Cuboid* OpenMBVLine::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Cuboid* OpenMBVLine::createOpenMBV(DOMElement *e) {
     OpenMBV::Cuboid* object = new OpenMBV::Cuboid;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -142,14 +140,14 @@ namespace MBSim {
     object->setLength(0,l,0);
   }
 
-  void OpenMBVPlane::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVPlane::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee;
-    ee = e->FirstChildElement(MBSIMNS"length");
+    DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"length");
     if(ee) l = Element::getVec(ee,2);
   }
 
-  OpenMBV::Cuboid* OpenMBVPlane::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Cuboid* OpenMBVPlane::createOpenMBV(DOMElement *e) {
     OpenMBV::Cuboid* object = new OpenMBV::Cuboid;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -161,14 +159,14 @@ namespace MBSim {
     object->setLength(0,l(0),l(1));
   }
 
-  void OpenMBVCuboid::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVCuboid::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee;
-    ee = e->FirstChildElement(MBSIMNS"length");
+    DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"length");
     if(ee) l = Element::getVec(ee,3);
   }
 
-  OpenMBV::Cuboid* OpenMBVCuboid::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Cuboid* OpenMBVCuboid::createOpenMBV(DOMElement *e) {
     OpenMBV::Cuboid* object = new OpenMBV::Cuboid;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -180,14 +178,14 @@ namespace MBSim {
     object->setLength(l(0),l(1),l(2));
   }
 
-  void OpenMBVCircle::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVCircle::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee;
-    ee = e->FirstChildElement(MBSIMNS"radius");
+    DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"radius");
     if(ee) r = Element::getDouble(ee);
   }
 
-  OpenMBV::Frustum* OpenMBVCircle::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Frustum* OpenMBVCircle::createOpenMBV(DOMElement *e) {
     OpenMBV::Frustum* object = new OpenMBV::Frustum;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -201,18 +199,18 @@ namespace MBSim {
     object->setHeight(0);
   }
 
-  void OpenMBVFrustum::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVFrustum::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee;
-    ee = e->FirstChildElement(MBSIMNS"topRadius");
+    DOMElement *ee;
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"topRadius");
     if(ee) t = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"baseRadius");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"baseRadius");
     if(ee) b = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"height");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"height");
     if(ee) h = Element::getDouble(ee);
   }
 
-  OpenMBV::Frustum* OpenMBVFrustum::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Frustum* OpenMBVFrustum::createOpenMBV(DOMElement *e) {
     OpenMBV::Frustum* object = new OpenMBV::Frustum;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -226,13 +224,13 @@ namespace MBSim {
     object->setHeight(h);
   }
 
-  void OpenMBVExtrusion::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVExtrusion::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee = e->FirstChildElement(MBSIMNS"height");
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"height");
     if(ee) h = Element::getDouble(ee);
   }
 
-  OpenMBV::Extrusion* OpenMBVExtrusion::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::Extrusion* OpenMBVExtrusion::createOpenMBV(DOMElement *e) {
     OpenMBV::Extrusion* object = new OpenMBV::Extrusion;
     if(e) initializeUsingXML(e);
     initializeObject(object);
@@ -244,28 +242,28 @@ namespace MBSim {
     object->setHeight(h);
   }
 
-  void OpenMBVCoilSpring::initializeUsingXML(TiXmlElement *e) {
+  void OpenMBVCoilSpring::initializeUsingXML(DOMElement *e) {
     OpenMBVObject::initializeUsingXML(e);
-    TiXmlElement *ee = e->FirstChildElement(MBSIMNS"numberOfCoils");
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"numberOfCoils");
     if(ee) n = Element::getInt(ee);
-    ee = e->FirstChildElement(MBSIMNS"springRadius");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"springRadius");
     if(ee) r = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"crossSectionRadius");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"crossSectionRadius");
     if(ee) cr = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"nominalLength");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"nominalLength");
     if(ee) l = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"scaleFactor");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"scaleFactor");
     if(ee) sf = Element::getDouble(ee);
-    ee = e->FirstChildElement(MBSIMNS"type");
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"type");
     if(ee) {
-      string typeStr=string(ee->GetText()).substr(1,string(ee->GetText()).length()-2);
+      string typeStr=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(typeStr=="tube") type=OpenMBV::CoilSpring::tube;
       if(typeStr=="scaledTube") type=OpenMBV::CoilSpring::scaledTube;
       if(typeStr=="polyline") type=OpenMBV::CoilSpring::polyline;
     }
   }
 
-  OpenMBV::CoilSpring* OpenMBVCoilSpring::createOpenMBV(TiXmlElement *e) {
+  OpenMBV::CoilSpring* OpenMBVCoilSpring::createOpenMBV(DOMElement *e) {
     OpenMBV::CoilSpring* object = new OpenMBV::CoilSpring;
     if(e) initializeUsingXML(e);
     initializeObject(object);

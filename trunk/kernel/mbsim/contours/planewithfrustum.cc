@@ -26,12 +26,13 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneWithFrustum, MBSIMNS"PlaneWithFrustum")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneWithFrustum, MBSIM%"PlaneWithFrustum")
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void PlaneWithFrustum::enableOpenMBV() {
@@ -52,35 +53,35 @@ namespace MBSim {
   }
 #endif
 
-  void PlaneWithFrustum::initializeUsingXML(TiXmlElement *element) {
+  void PlaneWithFrustum::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"baseRadius");
+    DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"baseRadius");
     rFrustumOnPlane=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"topRadius");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"topRadius");
     rFrustumOnTop=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"height");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"height");
     hFrustum=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"roundingRadius");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"roundingRadius");
     rho=getDouble(e);
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(element->FirstChildElement(MBSIMNS"enableOpenMBV"))
+    if(E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV"))
       enableOpenMBV();
 #endif
     checkInput();
   }
 
-  TiXmlElement* PlaneWithFrustum::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"baseRadius",rFrustumOnPlane);
-    addElementText(ele0,MBSIMNS"topRadius",rFrustumOnTop);
-    addElementText(ele0,MBSIMNS"height",hFrustum);
-    addElementText(ele0,MBSIMNS"roundingRadius",rho);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody)
-      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
-#endif
+  DOMElement* PlaneWithFrustum::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+//    addElementText(ele0,MBSIM%"baseRadius",rFrustumOnPlane);
+//    addElementText(ele0,MBSIM%"topRadius",rFrustumOnTop);
+//    addElementText(ele0,MBSIM%"height",hFrustum);
+//    addElementText(ele0,MBSIM%"roundingRadius",rho);
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//    if(openMBVRigidBody)
+//      ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
+//#endif
     return ele0;
   }
 

@@ -38,12 +38,13 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SingleContact, MBSIMNS"SingleContact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SingleContact, MBSIM%"SingleContact")
 
   SingleContact::SingleContact(const string &name) :
       LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
@@ -1378,56 +1379,56 @@ namespace MBSim {
       (*sizeInActive_)++;
   }
 
-  void SingleContact::initializeUsingXML(TiXmlElement *element) {
+  void SingleContact::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e;
+    DOMElement *e;
 
     //Set contact law
-    e = element->FirstChildElement(MBSIMNS"normalForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
+    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
     setNormalForceLaw(gfl);
 
     //Set impact law (if given)
-    e = element->FirstChildElement(MBSIMNS"normalImpactLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
     if (e) {
-      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
+      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
       setNormalImpactLaw(gifl);
     }
 
     //Set friction law (if given)
-    e = element->FirstChildElement(MBSIMNS"tangentialForceLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
     if (e) {
-      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
+      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
       setTangentialForceLaw(ffl);
     }
 
     //Set friction impact law (if given)
-    e = element->FirstChildElement(MBSIMNS"tangentialImpactLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
     if (e) {
-      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
+      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
 
     //Save contour names for initialization
-    e = element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1 = e->Attribute("ref1");
-    saved_ref2 = e->Attribute("ref2");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1 = E(e)->getAttribute("ref1");
+    saved_ref2 = E(e)->getAttribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Contact points
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")) {
+    if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {
       OpenMBVFrame ombv;
       openMBVContactFrame[0]=ombv.createOpenMBV(e); 
       openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVNormalForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       contactArrow=ombv.createOpenMBV(e); 
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVTangentialForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       frictionArrow=ombv.createOpenMBV(e); 

@@ -22,6 +22,8 @@
 
 #include "mbxmlutilstinyxml/tinyxml.h"
 #include "fmatvec/fmatvec.h"
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
 
 namespace MBSim {
 
@@ -37,8 +39,8 @@ namespace MBSim {
        * \brief initializes environment variables by XML element
        * \param XML element
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent)=0;
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent)=0;
       /***************************************************/
     
     protected:
@@ -61,8 +63,8 @@ namespace MBSim {
   class MBSimEnvironment : public Environment {
     public:
       /* INHERITED INTERFACE */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */

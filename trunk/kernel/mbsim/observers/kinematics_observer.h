@@ -43,7 +43,7 @@ namespace MBSim {
       void setFrame(Frame *frame_) { frame = frame_; } 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -93,7 +93,7 @@ namespace MBSim {
 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
 }  

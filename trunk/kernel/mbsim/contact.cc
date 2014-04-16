@@ -40,12 +40,13 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contact, MBSIMNS"Contact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contact, MBSIM%"Contact")
 
   Contact::Contact(const string &name) :
       LinkMechanics(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0)
@@ -780,52 +781,52 @@ namespace MBSim {
     }
   }
 
-  void Contact::initializeUsingXML(TiXmlElement *element) {
+  void Contact::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e;
+    DOMElement *e;
 
     //Set contact law
-    e = element->FirstChildElement(MBSIMNS"normalForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->FirstChildElement());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
+    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
     setNormalForceLaw(gfl);
 
     //Get Impact law
-    e = element->FirstChildElement(MBSIMNS"normalImpactLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
     if (e) {
-      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->FirstChildElement());
+      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
       setNormalImpactLaw(gifl);
     }
 
     //Get Friction Force Law
-    e = element->FirstChildElement(MBSIMNS"tangentialForceLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
     if (e) {
-      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->FirstChildElement());
+      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
       setTangentialForceLaw(ffl);
     }
 
     //Get Friction Impact Law
-    e = element->FirstChildElement(MBSIMNS"tangentialImpactLaw");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
     if (e) {
-      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->FirstChildElement());
+      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
 
     /*Read all contour pairings*/
     //Get all contours, that should be connected
-    e = element->FirstChildElement(MBSIMNS"connect"); //TODO: all connects must be in a row (is that okay?)
+    e = E(element)->getFirstElementChildNamed(MBSIM%"connect"); //TODO: all connects must be in a row (is that okay?)
     while (e) { //As long as there are siblings read them and save them
-      if (string(e->Value()) == string(MBSIMNS"connect")) {
+      if (E(e)->getTagName() == MBSIM%"connect") {
         saved_references ref;
-        ref.name1 = e->Attribute("ref1");
-        ref.name2 = e->Attribute("ref2");
-        if (e->Attribute("name"))
-          ref.contourPairingName = e->Attribute("name");
+        ref.name1 = E(e)->getAttribute("ref1");
+        ref.name2 = E(e)->getAttribute("ref2");
+        if (E(e)->hasAttribute("name"))
+          ref.contourPairingName = E(e)->getAttribute("name");
         else
           ref.contourPairingName = "";
         //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
 
         saved_ref.push_back(ref);
-        e = e->NextSiblingElement();
+        e = e->getNextElementSibling();
       }
       else {
         break;
@@ -834,18 +835,18 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")) {
+    if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {
       OpenMBVFrame ombv;
       openMBVFrame = ombv.createOpenMBV(e);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVNormalForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
       contactArrow = ombv.createOpenMBV(e);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVTangentialForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
       frictionArrow = ombv.createOpenMBV(e);
@@ -853,48 +854,48 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
-    TiXmlElement *ele1;
-    ele1 = new TiXmlElement(MBSIMNS"normalForceLaw");
-    if (fcl)
-      fcl->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
-    if (fnil) {
-      ele1 = new TiXmlElement(MBSIMNS"normalImpactLaw");
-      fnil->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    if (fdf) {
-      ele1 = new TiXmlElement(MBSIMNS"tangentialForceLaw");
-      fdf->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    if (ftil) {
-      ele1 = new TiXmlElement(MBSIMNS"tangentialImpactLaw");
-      ftil->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    ele1 = new TiXmlElement(MBSIMNS"connect");
-    //for(unsigned int i=0; i<saved_ref.size(); i++) {
-    ele1->SetAttribute("ref1", contour[0]->getXMLPath(this, true)); // relative path
-    ele1->SetAttribute("ref2", contour[1]->getXMLPath(this, true)); // relative path
-    //}
-    ele0->LinkEndChild(ele1);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(openMBVContactFrameSize>0)
-//      addElementText(ele0,MBSIMNS"enableOpenMBVContactPoints",openMBVContactFrameSize);
-    if (contactArrow) {
-      ele1 = new TiXmlElement(MBSIMNS"openMBVNormalForceArrow");
-      contactArrow->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    if (frictionArrow) {
-      ele1 = new TiXmlElement(MBSIMNS"openMBVTangentialForceArrow");
-      frictionArrow->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-#endif
+  DOMElement* Contact::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = LinkMechanics::writeXMLFile(parent);
+//    DOMElement *ele1;
+//    ele1 = new DOMElement(MBSIM%"normalForceLaw");
+//    if (fcl)
+//      fcl->writeXMLFile(ele1);
+//    ele0->LinkEndChild(ele1);
+//    if (fnil) {
+//      ele1 = new DOMElement(MBSIM%"normalImpactLaw");
+//      fnil->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    if (fdf) {
+//      ele1 = new DOMElement(MBSIM%"tangentialForceLaw");
+//      fdf->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    if (ftil) {
+//      ele1 = new DOMElement(MBSIM%"tangentialImpactLaw");
+//      ftil->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    ele1 = new DOMElement(MBSIM%"connect");
+//    //for(unsigned int i=0; i<saved_ref.size(); i++) {
+//    ele1->SetAttribute("ref1", contour[0]->getXMLPath(this, true)); // relative path
+//    ele1->SetAttribute("ref2", contour[1]->getXMLPath(this, true)); // relative path
+//    //}
+//    ele0->LinkEndChild(ele1);
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+////    if(openMBVContactFrameSize>0)
+////      addElementText(ele0,MBSIM%"enableOpenMBVContactPoints",openMBVContactFrameSize);
+//    if (contactArrow) {
+//      ele1 = new DOMElement(MBSIM%"openMBVNormalForceArrow");
+//      contactArrow->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    if (frictionArrow) {
+//      ele1 = new DOMElement(MBSIM%"openMBVTangentialForceArrow");
+//      frictionArrow->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//#endif
     return ele0;
   }
 

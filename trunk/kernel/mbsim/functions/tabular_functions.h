@@ -64,14 +64,14 @@ namespace MBSim {
         xIndexOld = i;
         return FromVecV<Ret>::cast(trans(y.row(i) + (xVal - x(i)) * (y.row(i + 1) - y.row(i)) / (x(i + 1) - x(i))));
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-        MBXMLUtils::TiXmlElement *e = element->FirstChildElement(MBSIMNS"x");
+      void initializeUsingXML(xercesc::DOMElement * element) {
+        xercesc::DOMElement *e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if (e) {
           x = Element::getVec(e);
-          e = element->FirstChildElement(MBSIMNS"y");
+          e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
           y = Element::getMat(e, x.size(), 0);
         }
-        e = element->FirstChildElement(MBSIMNS"xy");
+        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
         if (e) {
           fmatvec::MatV xy = Element::getMat(e);
           assert(xy.cols() > 1);
@@ -112,7 +112,7 @@ namespace MBSim {
           xValTmp -= xDelta;
         return TabularFunction<Ret(Arg)>::operator()(xValTmp);
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) {
         TabularFunction<Ret(Arg)>::initializeUsingXML(element);
         init();
       }
@@ -134,14 +134,14 @@ namespace MBSim {
           xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(1, fmatvec::INIT, 0), xy(4, fmatvec::INIT, 1), XYval(4, fmatvec::INIT, 0), XYfac(4, 4, fmatvec::INIT, 0) {
       }
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement * e = element->FirstChildElement(MBSIMNS"xValues");
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xValues");
         fmatvec::Vec x_ = Element::getVec(e);
         setXValues(x_);
-        e = element->FirstChildElement(MBSIMNS"yValues");
+        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"yValues");
         fmatvec::Vec y_ = Element::getVec(e);
         setYValues(y_);
-        e = element->FirstChildElement(MBSIMNS"xyValues");
+        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyValues");
         fmatvec::Mat xy_ = Element::getMat(e, y_.size(), x_.size());
         setXYMat(xy_);
       }

@@ -26,6 +26,8 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 
+extern MBXMLUtils::NamespaceURI MBSIM;
+
 namespace MBSim {
 
   template<typename Sig> class ConstantFunction; 
@@ -40,11 +42,11 @@ namespace MBSim {
         Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a0); }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return FromDouble<Ret>::cast(0); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
           a0=Element::getDouble(e);
         }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
     };
 
   template<typename Sig> class LinearFunction; 
@@ -60,13 +62,13 @@ namespace MBSim {
         Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a1*ToDouble<Arg>::cast(x)+a0); }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return FromDouble<Ret>::cast(a1); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
           if(e) a0=Element::getDouble(e);
-          e=element->FirstChildElement(MBSIMNS"a1");
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a1");
           a1=Element::getDouble(e);
         }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
         void seta0(double a0_) { a0 = a0_; }
         void seta1(double a1_) { a1 = a1_; }
     };
@@ -92,12 +94,12 @@ namespace MBSim {
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
           return FromDouble<Ret>::cast(2.*a2);
         }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
           if(e) a0=Element::getDouble(e);
-          e=element->FirstChildElement(MBSIMNS"a1");
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a1");
           if(e) a1=Element::getDouble(e);
-          e=element->FirstChildElement(MBSIMNS"a2");
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a2");
           a2=Element::getDouble(e);
         }
     };
@@ -141,11 +143,11 @@ namespace MBSim {
         a.push_back(c);
       }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"coefficients")->FirstChildElement();
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients")->getFirstElementChild();
         while (e) {
           addCoefficient(Element::getDouble(e));
-          e=e->NextSiblingElement();
+          e=e->getNextElementSibling();
         }
         init();
       }
@@ -173,22 +175,22 @@ namespace MBSim {
         double om = 2.*M_PI*f;
         return FromDouble<Ret>::cast(-A*om*om*sin(om*x+phi0));
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitude");
         A=Element::getDouble(e);
-        e=element->FirstChildElement(MBSIMNS"frequency");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");
         f=Element::getDouble(e);
-        e=element->FirstChildElement(MBSIMNS"phase");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"phase");
         if(e) phi0=Element::getDouble(e);
-        e=element->FirstChildElement(MBSIMNS"offset");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
         if(e) y0=Element::getDouble(e);
       }
-      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
-        MBXMLUtils::TiXmlElement *ele0 = fmatvec::Function<Ret(Arg)>::writeXMLFile(parent);
-        addElementText(ele0,MBSIMNS"amplitude",A);
-        addElementText(ele0,MBSIMNS"frequency",f);
-        addElementText(ele0,MBSIMNS"phase",phi0);
-        addElementText(ele0,MBSIMNS"offset",y0);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
+        xercesc::DOMElement *ele0 = fmatvec::Function<Ret(Arg)>::writeXMLFile(parent);
+        addElementText(ele0,MBSIM%"amplitude",A);
+        addElementText(ele0,MBSIM%"frequency",f);
+        addElementText(ele0,MBSIM%"phase",phi0);
+        addElementText(ele0,MBSIM%"offset",y0);
         return ele0;
       }
   };
@@ -205,10 +207,10 @@ namespace MBSim {
       Ret operator()(const Arg &x) {
         return FromDouble<Ret>::cast((ToDouble<Arg>::cast(x)>=stepTime)?stepSize:0);
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"time");
         stepTime=Element::getDouble(e);
-        e=element->FirstChildElement(MBSIMNS"size");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"size");
         stepSize=Element::getDouble(e);
       }
   };
@@ -235,9 +237,9 @@ namespace MBSim {
         Ret operator()(const Arg &x) {
           return FromDouble<Ret>::cast(fmod(ToDouble<Arg>::cast(x),denom));
         }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e;
-          e=element->FirstChildElement(MBSIMNS"denominator");
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e;
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"denominator");
           denom=Element::getDouble(e);
         }
     };
@@ -259,9 +261,9 @@ namespace MBSim {
             y(i)=0;
         return y;
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->FirstChildElement());
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
       }
   };
 
@@ -286,9 +288,9 @@ namespace MBSim {
         Ret y=sign(x)*(*f)(fabs(x));
         return y;
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->FirstChildElement());
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
       }
   };
 
@@ -306,9 +308,9 @@ namespace MBSim {
         Ret y=(*f)(fabs(x));
         return y;
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->FirstChildElement());
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
+        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
       }
   };
 
@@ -324,10 +326,10 @@ namespace MBSim {
         Ret operator()(const Arg &x) { return factor*(*function)(x); }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return factor*function->parDer(x); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) { return factor*function->parDerParDer(x); }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-          function=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->FirstChildElement());
-          e=element->FirstChildElement(MBSIMNS"scalingFactor");
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
+          function=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->getFirstElementChild());
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"scalingFactor");
           if(e) factor=Element::getDouble(e);
         }
       private:
@@ -364,11 +366,11 @@ namespace MBSim {
             y+=summand[i]->parDerParDer(x);
           return y;
         }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"summands")->FirstChildElement();
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"summands")->getFirstElementChild();
           while (e) {
             addSummand(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e));
-            e=e->NextSiblingElement();
+            e=e->getNextElementSibling();
           }
         }
       private:
@@ -406,11 +408,11 @@ namespace MBSim {
           return y;
         }
 
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"components")->FirstChildElement();
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
           while (e) {
             addComponent(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(Arg)> >(e));
-            e=e->NextSiblingElement();
+            e=e->getNextElementSibling();
           }
         }
       private:
@@ -431,13 +433,13 @@ namespace MBSim {
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
         void setOuterFunction(fmatvec::Function<Ret(Argo)> *fo_) { fo = fo_; }
         void setInnerFunction(fmatvec::Function<Argo(Argi)> *fi_) { fi = fi_; }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
-          fo=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
-          e=element->FirstChildElement(MBSIMNS"innerFunction");
-          fi=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Argo(Argi)> >(e->FirstChildElement());
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
+          fo=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Argo)> >(e->getFirstElementChild());
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
+          fi=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Argo(Argi)> >(e->getFirstElementChild());
         }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
       private:
         fmatvec::Function<Ret(Argo)> *fo;
         fmatvec::Function<Argo(Argi)> *fi;
@@ -503,15 +505,15 @@ namespace MBSim {
             return yssEnd;
         }
 
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"limitedFunctions");
-          MBXMLUtils::TiXmlElement *ee=e->FirstChildElement();
-          while(ee && ee->ValueStr()==MBSIMNS"LimitedFunction") {
-            function.push_back(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(ee->FirstChildElement(MBSIMNS"function")->FirstChildElement()));
-            a.push_back(Element::getDouble(ee->FirstChildElement(MBSIMNS"limit")));
-            ee=ee->NextSiblingElement();
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
+          xercesc::DOMElement *ee=e->getFirstElementChild();
+          while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
+            function.push_back(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()));
+            a.push_back(Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit")));
+            ee=ee->getNextElementSibling();
           }
-          e=element->FirstChildElement(MBSIMNS"continouslyDifferentiable");
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continouslyDifferentiable");
           if(e) contDiff=Element::getDouble(e);
           init();
         }
