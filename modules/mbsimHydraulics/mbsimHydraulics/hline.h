@@ -23,6 +23,8 @@
 #include "mbsim/object.h"
 #include <fmatvec/function.h>
 
+extern MBXMLUtils::NamespaceURI MBSIMHYDRAULICS;
+
 namespace MBSim {
   class Frame;
 }
@@ -70,7 +72,7 @@ namespace MBSimHydraulics {
       void updateM(double t, int j=0) {M[j]=Mlocal; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       
     protected:
       HNode * nFrom;
@@ -107,7 +109,7 @@ namespace MBSimHydraulics {
       void updateh(double t, int j=0);
       void updateM(double t, int j=0);
       
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void plot(double t, double dt);
       
@@ -137,7 +139,7 @@ namespace MBSimHydraulics {
       virtual void updateStateDependentVariables(double t);
       void updateh(double t, int j=0) {};
       
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       
     private:
@@ -162,7 +164,7 @@ namespace MBSimHydraulics {
       
       void updateh(double t, int j=0) {};
       
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       
     private:
@@ -193,7 +195,7 @@ namespace MBSimHydraulics {
       
       void updateh(double t, int j=0) {};
       
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::InitStage stage);
       void plot(double t, double dt);
       

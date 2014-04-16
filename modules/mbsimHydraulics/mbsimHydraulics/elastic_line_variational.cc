@@ -29,13 +29,14 @@
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ElasticLineVariational,  MBSIMHYDRAULICSNS"ElasticLineVariational")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ElasticLineVariational,  MBSIMHYDRAULICS%"ElasticLineVariational")
 
   ElasticLineVariational::ElasticLineVariational(const string &name) : HLine(name), p0(0), fracAir(0), r(0), l(0), relPlotPoints(0), window_function_type(BlackmanHarris), n(9), QIn(1), QOut(1), wO(0), wI(0), hq(0), hu(0), hp0(0), cu(0), y(0), Tlocal(0,0), relPlot(0,0), Mlocal(0) {
   }
@@ -244,38 +245,38 @@ namespace MBSimHydraulics {
     }
   }
 
-  void ElasticLineVariational::initializeUsingXML(TiXmlElement * element) {
+  void ElasticLineVariational::initializeUsingXML(DOMElement * element) {
     Object::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    DOMElement * e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
     setp0(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
     setFracAir(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
     setLength(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePlotPoints");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePlotPoints");
     if (e)
       setRelativePlotPoints(getVec(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"numberOfAnsatzFunctions");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"numberOfAnsatzFunctions");
     setNumberOfAnsatzFunctions((unsigned int)(getInt(e)));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"windowNone");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"windowNone");
     if (e)
       setWindowFunction(None);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"windowHann");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"windowHann");
     if (e)
       setWindowFunction(Hann);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"windowHamming");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"windowHamming");
     if (e)
       setWindowFunction(Hamming);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"windowRiemann");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"windowRiemann");
     if (e)
       setWindowFunction(Riemann);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"windowBlackmanHarris");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"windowBlackmanHarris");
     if (e)
       setWindowFunction(BlackmanHarris);
-    printLineStateSpace(element->FirstChildElement(MBSIMHYDRAULICSNS"printStateSpace"));
+    printLineStateSpace(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"printStateSpace"));
   }
 
   void ElasticLineVariational::doPrintStateSpace() {

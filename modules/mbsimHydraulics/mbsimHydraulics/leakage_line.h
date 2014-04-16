@@ -47,7 +47,7 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
     protected:
       LeakagePressureLoss * lpl;
     private:
@@ -69,7 +69,7 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
     private:
       double hGap, wGap;
   };
@@ -89,7 +89,7 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
     private:
       double rI, rO, hGap;
   };
