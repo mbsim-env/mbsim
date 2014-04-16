@@ -34,7 +34,6 @@ namespace MBSim {
 
 namespace MBSimPowertrain {
 
-
   class TorsionalStiffness : public MBSim::LinkMechanics {
     protected:
       fmatvec::Function<double(double,double)> *func;
@@ -76,7 +75,7 @@ namespace MBSimPowertrain {
       void setRigidBodySecondSide(MBSim::RigidBody* body_) { body[1] = body_; }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
 

@@ -31,13 +31,16 @@
 #endif
 
 using namespace std;
+using namespace fmatvec;
 using namespace MBSim;
 using namespace MBXMLUtils;
-using namespace fmatvec;
+using namespace xercesc;
+
+MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
 
 namespace MBSimPowertrain {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TorsionalStiffness, MBSIMPOWERTRAINNS"TorsionalStiffness")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TorsionalStiffness, MBSIMPOWERTRAIN%"TorsionalStiffness")
 
   TorsionalStiffness::TorsionalStiffness(const string &name) : LinkMechanics(name), func(NULL), body(2)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -141,28 +144,28 @@ namespace MBSimPowertrain {
     }
   }
 
-  void TorsionalStiffness::initializeUsingXML(TiXmlElement *element) {
+  void TorsionalStiffness::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMPOWERTRAINNS"generalizedForceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"generalizedForceFunction");
+    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
-    e=element->FirstChildElement(MBSIMPOWERTRAINNS"rigidBodyFirstSide");
-    saved_body1=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMPOWERTRAINNS"rigidBodySecondSide");
-    saved_body2=e->Attribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"rigidBodyFirstSide");
+    saved_body1=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"rigidBodySecondSide");
+    saved_body2=E(e)->getAttribute("ref");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMPOWERTRAINNS"enableOpenMBVCoilSpring");
+    e=E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e = element->FirstChildElement(MBSIMPOWERTRAINNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
       LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
-    e = element->FirstChildElement(MBSIMPOWERTRAINNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
