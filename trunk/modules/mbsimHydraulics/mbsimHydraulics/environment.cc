@@ -18,7 +18,6 @@
  */
 
 #include <config.h>
-#include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/element.h"
@@ -29,6 +28,8 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimHydraulics {
+
+  const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS("http://mbsim.berlios.de/MBSimHydraulics");
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, HydraulicEnvironment, MBSIMHYDRAULICS%"HydraulicEnvironment")
 

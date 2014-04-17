@@ -26,6 +26,7 @@
 #include "mbsim/utils/eps.h"
 #include <fstream>
 #include "mbsimHydraulics/defines.h"
+#include "mbsimHydraulics/environment.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
