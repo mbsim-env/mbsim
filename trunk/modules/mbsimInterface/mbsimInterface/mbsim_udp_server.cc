@@ -34,6 +34,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 
 const int max_length = 1048576;
 
@@ -71,8 +72,8 @@ namespace MBSimInterface {
 #endif
   }
 
-  void MBSimUdpServer::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-    port=MBSim::Element::getInt(element->FirstChildElement(MBSIMINTERFACENS"port"));
+  void MBSimUdpServer::initializeUsingXML(xercesc::DOMElement *element) {
+    port=MBSim::Element::getInt(E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"port"));
   }
 
 }
