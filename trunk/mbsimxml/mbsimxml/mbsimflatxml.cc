@@ -92,7 +92,7 @@ boost::filesystem::path relLibName(const string &base) {
 // If a module plugin (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 void loadPlugins() {
-  static NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
+  static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
   static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);

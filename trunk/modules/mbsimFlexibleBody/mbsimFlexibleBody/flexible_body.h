@@ -24,14 +24,14 @@
 #include "mbsim/body.h"
 #include "mbsim/frame.h"
 
-extern MBXMLUtils::NamespaceURI MBSIMFLEX;
-
 namespace MBSim {
   class DiscretizationInterface;
   class ContourPointData;
 }
 
 namespace MBSimFlexibleBody {
+
+  extern const MBXMLUtils::NamespaceURI MBSIMFLEX;
 
   /**
    * \brief upmost class for flexible body implementation

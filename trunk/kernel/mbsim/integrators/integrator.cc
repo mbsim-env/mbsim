@@ -30,9 +30,9 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
 
-MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
-
 namespace MBSim {
+
+  const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
 
   DynamicSystemSolver * Integrator::system = 0;
 

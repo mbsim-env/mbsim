@@ -23,8 +23,6 @@
 #include "mbsim/object.h"
 #include <fmatvec/function.h>
 
-extern MBXMLUtils::NamespaceURI MBSIMHYDRAULICS;
-
 namespace MBSim {
   class Frame;
 }
@@ -34,6 +32,8 @@ namespace MBSimControl {
 }
 
 namespace MBSimHydraulics {
+
+  extern const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS;
 
   class HNode;
   class HydlinePressureloss;

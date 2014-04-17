@@ -36,6 +36,8 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
+  const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS("http://mbsim.berlios.de/MBSimHydraulics");
+
   void HLine::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")

@@ -22,13 +22,13 @@
 
 #include "mbsim/link.h"
 
-extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
-
 namespace MBSim {
   class DynamicSystem;
 }
 
 namespace MBSimControl {
+
+  extern const MBXMLUtils::NamespaceURI MBSIMCONTROL;
 
   /*!
    * \brief Signal

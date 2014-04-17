@@ -25,9 +25,9 @@
 #include<string>
 #include<iostream>
 
-extern MBXMLUtils::NamespaceURI MBSIMINT;
-
 namespace MBSim {
+
+  extern const MBXMLUtils::NamespaceURI MBSIMINT;
 
   class DynamicSystemSolver;
 

@@ -35,9 +35,9 @@ using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
-
 namespace MBSim {
+
+  const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
 
   Element::Element(const string &name_) : parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
     for(int i=0; i<LASTPLOTFEATURE; i++) {

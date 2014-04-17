@@ -27,8 +27,6 @@
 #include <hdf5serie/vectorserie.h>
 #include <mbxmlutilshelper/dom.h>
 
-extern MBXMLUtils::NamespaceURI MBSIM;
-
 #include "mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -45,6 +43,8 @@ namespace H5 {
  * \brief namespace MBSim
  */
 namespace MBSim {
+
+  extern const MBXMLUtils::NamespaceURI MBSIM;
 
   class ObjectInterface;
 

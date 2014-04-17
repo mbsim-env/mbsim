@@ -26,9 +26,9 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 
-extern MBXMLUtils::NamespaceURI MBSIM;
-
 namespace MBSim {
+
+  extern const MBXMLUtils::NamespaceURI MBSIM;
 
   template<typename Sig> class ConstantFunction; 
 

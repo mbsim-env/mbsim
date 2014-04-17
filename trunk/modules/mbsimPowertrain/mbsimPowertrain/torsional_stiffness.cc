@@ -36,9 +36,9 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
-
 namespace MBSimPowertrain {
+
+  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TorsionalStiffness, MBSIMPOWERTRAIN%"TorsionalStiffness")
 
