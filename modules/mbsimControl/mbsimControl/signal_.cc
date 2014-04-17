@@ -29,9 +29,9 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 
-MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
-
 namespace MBSimControl {
+
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ExternSignalSource, MBSIMCONTROL%"ExternSignalSource")
 

@@ -89,7 +89,7 @@ void createOrTouch(const string &filename) {
 void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
-  static NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
+  static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
   static boost::shared_ptr<DOMParser> parser;
   if(!parser) {
     parser=DOMParser::create(true);

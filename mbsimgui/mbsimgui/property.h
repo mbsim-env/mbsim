@@ -24,14 +24,6 @@
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 
-extern MBXMLUtils::NamespaceURI MBSIM;
-extern MBXMLUtils::NamespaceURI PARAM;
-extern MBXMLUtils::NamespaceURI OPENMBV;
-extern MBXMLUtils::NamespaceURI MBSIMINT;
-extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
-extern MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN;
-extern MBXMLUtils::NamespaceURI MBSIMXML;
-
 namespace XERCES_CPP_NAMESPACE {
   class DOMNode;
   class DOMElement;
@@ -40,6 +32,14 @@ namespace XERCES_CPP_NAMESPACE {
 class QWidget;
 
 namespace MBSimGUI {
+
+  extern const MBXMLUtils::NamespaceURI MBSIM;
+  extern const MBXMLUtils::NamespaceURI PARAM;
+  extern const MBXMLUtils::NamespaceURI OPENMBV;
+  extern const MBXMLUtils::NamespaceURI MBSIMINT;
+  extern const MBXMLUtils::NamespaceURI MBSIMCONTROL;
+  extern const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN;
+  extern const MBXMLUtils::NamespaceURI MBSIMXML;
 
   class PropertyInterface {
     public:
