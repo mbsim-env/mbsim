@@ -610,14 +610,16 @@ def make(tool, mainFD):
   try:
     if not args.disableMake:
       # make
+      errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-        if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make clean failed")
+        if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"\n"+"make clean failed"
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if subprocess.call(["make", "-k", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make failed")
+      if subprocess.call(["make", "-k", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"\n"+"make failed"
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
-        if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make install failed")
+        if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"\n"+"make install failed"
+      if errStr!="": raise RuntimeError(errStr)
     else:
       print("make disabled", file=makeFD); makeFD.flush()
 
@@ -649,12 +651,14 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   try:
     if not disabled:
       # make doc
+      errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=docFD)!=0: raise RuntimeError("make clean failed")
+      if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"\n"+"make clean failed"
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
-      if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=docFD)!=0: raise RuntimeError("make failed")
+      if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"\n"+"make failed"
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=docFD)!=0: raise RuntimeError("make install failed")
+      if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errSTr+"\n"+"make install failed"
+      if errStr!="": raise RuntimeError(errStr)
 
       # copy doc
       if args.docOutDir!=None:
