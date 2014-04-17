@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimControl/defines.h"
 
 using namespace std;
 using namespace fmatvec;

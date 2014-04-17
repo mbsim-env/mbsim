@@ -16,7 +16,7 @@ libmbsimControl_la_SOURCES = \
   actuator.cc
 
 
-libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
+libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libmbsimControl_la_LIBADD = $(DEPS_LIBS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
@@ -33,5 +33,4 @@ mbsimControlinclude_HEADERS = \
   signal_processing_system_sensor.h\
   linear_transfer_system.h\
   massless_spring_damper.h\
-  defines.h\
   actuator.h

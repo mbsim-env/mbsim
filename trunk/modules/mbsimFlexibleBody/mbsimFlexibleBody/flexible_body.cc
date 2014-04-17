@@ -27,7 +27,6 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/discretization_interface.h>
-#include "mbsimFlexibleBody/defines.h"
 
 //#ifdef _OPENMP
 //#include <omp.h>

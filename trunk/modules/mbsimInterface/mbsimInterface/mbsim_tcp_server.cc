@@ -25,7 +25,6 @@
 #include <config.h>
 
 #include "mbsim_server.h"
-#include "defines.h"
 #include "interface_integrator.h"
 #include "mbsim/element.h"
 #include <sstream>

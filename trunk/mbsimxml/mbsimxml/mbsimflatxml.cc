@@ -1,8 +1,6 @@
 #include "config.h"
 #include <stdlib.h>
 #include <iostream>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/dom.h>

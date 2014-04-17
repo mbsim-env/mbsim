@@ -32,7 +32,7 @@ AC_ARG_WITH([boost-system-lib],
   [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
 AC_SUBST([BOOST_SYSTEM_LIB])
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl mbxmlutilstinyxml)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl)
 
 if test "_$host_os" = "_mingw32"; then
   EXTRA_LIBS="-lws2_32"

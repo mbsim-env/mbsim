@@ -22,7 +22,6 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/defines.h"
 
 using namespace std;
 using namespace fmatvec;

@@ -21,7 +21,6 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_23_bta.h"
-#include "mbsimFlexibleBody/defines.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -39,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s23BTA, MBSIMFLEXIBLEBODYNS"FlexibleBody1s23BTA")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s23BTA, MBSIMFLEX%"FlexibleBody1s23BTA")
 
   FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBodyContinuum<double>(name), L(0), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
     cylinderFlexible = new CylinderFlexible("CylinderFlexible");

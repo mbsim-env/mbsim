@@ -21,7 +21,6 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/element.h>
 #include <iostream>
-#include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
 using namespace xercesc;

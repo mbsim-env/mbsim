@@ -28,7 +28,6 @@
 #include <mbsim/observer.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
-#include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
 using namespace fmatvec;

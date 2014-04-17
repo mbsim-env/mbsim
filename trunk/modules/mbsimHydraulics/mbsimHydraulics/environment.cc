@@ -18,8 +18,8 @@
  */
 
 #include <config.h>
+#include <iostream>
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/element.h"
 
 using namespace std;

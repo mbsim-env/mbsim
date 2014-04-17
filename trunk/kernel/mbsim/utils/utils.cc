@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
 using namespace MBXMLUtils;

@@ -1,4 +1,0 @@
-#ifndef _MBSIMHYDRAULICS_DEFINES_H_
-#define _MBSIMHYDRAULICS_DEFINES_H_
-
-#endif

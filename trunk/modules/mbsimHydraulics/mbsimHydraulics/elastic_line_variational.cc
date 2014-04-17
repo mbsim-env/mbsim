@@ -22,7 +22,6 @@
 #include "environment.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
-#include "mbsimHydraulics/defines.h"
 
 #include "mbsimHydraulics/hnode.h"
 

@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/function_sensor.h"
-#include "mbsimControl/defines.h"
 #include "mbsim/objectfactory.h"
 
 using namespace fmatvec;

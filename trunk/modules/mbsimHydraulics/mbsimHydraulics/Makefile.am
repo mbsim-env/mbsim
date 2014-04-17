@@ -18,7 +18,7 @@ libmbsimHydraulics_la_SOURCES = \
   dimensionless_line.cc \
   hydraulic_sensor.cc
 
-libmbsimHydraulics_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
+libmbsimHydraulics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libmbsimHydraulics_la_LIBADD = $(DEPS_LIBS)
 
 mbsimHydraulicsincludedir = $(includedir)/mbsimHydraulics
@@ -36,6 +36,4 @@ mbsimHydraulicsinclude_HEADERS = \
   elastic_line_galerkin.h \
   elastic_line_variational.h \
   dimensionless_line.h \
-  hydraulic_sensor.h \
-  defines.h
-
+  hydraulic_sensor.h

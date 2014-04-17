@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/signal_manipulation.h"
-#include "mbsimControl/defines.h"
 #include "mbsim/utils/eps.h"
 #include <fmatvec/function.h>
 

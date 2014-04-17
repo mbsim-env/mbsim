@@ -1,4 +1,0 @@
-#ifndef _MBSIMCONTROL_DEFINES_H_
-#define _MBSIMCONTROL_DEFINES_H_
-
-#endif
