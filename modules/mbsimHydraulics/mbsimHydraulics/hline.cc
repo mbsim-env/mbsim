@@ -24,7 +24,6 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;

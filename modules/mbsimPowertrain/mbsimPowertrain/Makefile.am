@@ -14,7 +14,4 @@ mbsimPowertrainincludedir = $(includedir)/mbsimPowertrain
 mbsimPowertraininclude_HEADERS = planetary_gear.h\
 			     differential_gear.h\
 			     cardan_shaft.h\
-			     torsional_stiffness.h\
-			     defines.h
-
-
+			     torsional_stiffness.h

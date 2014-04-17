@@ -8,7 +8,7 @@ libobserver_la_SOURCES = kinematics_observer.cc \
 observerincludedir = $(includedir)/mbsim/observers
 
 libobserver_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
-libobserver_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libobserver_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 observerinclude_HEADERS = kinematics_observer.h \
 			  coordinates_observer.h \

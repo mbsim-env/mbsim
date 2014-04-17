@@ -20,6 +20,7 @@
 #ifndef _TABULAR_FUNCTIONS_H_
 #define _TABULAR_FUNCTIONS_H_
 
+#include <iostream>
 #include "fmatvec/function.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/element.h"

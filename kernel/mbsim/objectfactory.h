@@ -24,14 +24,13 @@
 #include <vector>
 #include <stdexcept>
 #include <typeinfo>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/utils.h"
 #ifdef HAVE_BOOST_TYPE_TRAITS_HPP
 # include <boost/static_assert.hpp>
 # include <boost/type_traits.hpp>
 #endif
 #include "mbsim/utils/utils.h"
 #include <mbsim/mbsim_event.h>
+#include <mbxmlutilshelper/utils.h>
 
 #define COMMA ,
 

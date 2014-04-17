@@ -25,9 +25,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
-#include "mbsimHydraulics/defines.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"

@@ -6,7 +6,7 @@ libfunctions_la_SOURCES = criteria_functions.cc\
 
 functionsincludedir = $(includedir)/mbsim/numerics/functions
 
-libfunctions_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(FMATVEC_CFLAGS)
+libfunctions_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(FMATVEC_CFLAGS)
 libfunctions_la_LIBADD = $(DEPS_LIBS) $(FMATVEC_LIBS)
 
 functionsinclude_HEADERS = criteria_functions.h\

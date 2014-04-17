@@ -26,9 +26,7 @@
 #include "interface_integrator.h"
 #include "interface_messages.h"
 #include "mbsim_server.h"
-#include "defines.h"
 #include <fstream>
-#include "mbsimControl/defines.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/extern_signal_source.h"
 
@@ -49,7 +47,7 @@ enum IPCmethods {
 
 namespace MBSimInterface {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Integrator, InterfaceIntegrator, MBSIMINTERFACENS"InterfaceIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Integrator, InterfaceIntegrator, MBSIMINTERFACE%"InterfaceIntegrator")
 
     InterfaceIntegrator::InterfaceIntegrator(): MBSim::Integrator(), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
     }

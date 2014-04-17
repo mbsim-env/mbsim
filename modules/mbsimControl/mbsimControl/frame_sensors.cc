@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/frame_sensors.h"
-#include "mbsimControl/defines.h"
 
 #include "mbsim/frame.h"
 

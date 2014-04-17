@@ -32,7 +32,6 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimControl/object_sensors.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/boost_parameters.h"

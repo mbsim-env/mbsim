@@ -20,7 +20,6 @@
 #ifndef _MBSIM_ENVIRONMENT_H_
 #define _MBSIM_ENVIRONMENT_H_
 
-#include "mbxmlutilstinyxml/tinyxml.h"
 #include "fmatvec/fmatvec.h"
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMNode.hpp>

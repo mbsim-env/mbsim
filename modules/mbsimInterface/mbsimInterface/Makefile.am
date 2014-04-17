@@ -8,7 +8,7 @@ libmbsimInterface_la_SOURCES = \
   mbsim_udp_server.cc
 
 
-libmbsimInterface_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
+libmbsimInterface_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libmbsimInterface_la_LIBADD = $(DEPS_LIBS) -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
 
 mbsimInterfaceincludedir = $(includedir)/mbsimInterface
@@ -16,5 +16,4 @@ mbsimInterfaceinclude_HEADERS = \
   interface_messages.h \
   interface_messages.m \
   interface_integrator.h \
-  mbsim_server.h \
-  defines.h
+  mbsim_server.h

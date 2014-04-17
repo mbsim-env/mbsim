@@ -21,7 +21,6 @@
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
-#include "mbsimControl/defines.h"
 
 using namespace std;
 using namespace fmatvec;

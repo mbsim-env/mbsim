@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsimControl/object_sensors.h"
-#include "mbsimControl/defines.h"
 #include "mbsim/object.h"
 #include "mbsim/dynamic_system.h"
 
