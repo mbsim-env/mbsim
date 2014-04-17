@@ -34,6 +34,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 
 const int max_length = 1048576;
 
@@ -76,11 +77,11 @@ namespace MBSimInterface {
 #endif
   }
 
-  void MBSimTcpServer::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-    MBXMLUtils::TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMINTERFACENS"port");
+  void MBSimTcpServer::initializeUsingXML(xercesc::DOMElement *element) {
+    xercesc::DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"port");
     setPort(MBSim::Element::getInt(e));
-    e=element->FirstChildElement(MBSIMINTERFACENS"outputPrecision");
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"outputPrecision");
     if (e)
       setOutputPrecision(MBSim::Element::getInt(e));
   }
