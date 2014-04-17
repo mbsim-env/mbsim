@@ -30,6 +30,7 @@
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
+#include "mbsimHydraulics/environment.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"

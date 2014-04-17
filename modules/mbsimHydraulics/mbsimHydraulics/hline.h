@@ -33,8 +33,6 @@ namespace MBSimControl {
 
 namespace MBSimHydraulics {
 
-  extern const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS;
-
   class HNode;
   class HydlinePressureloss;
   class PressureLoss;

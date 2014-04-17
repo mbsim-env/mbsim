@@ -21,9 +21,12 @@
 #define _MBSIMHYDRAULICS_ENVIRONMENT_H_
 
 #include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilshelper/dom.h"
 #include "mbsim/environment.h"
 
 namespace MBSimHydraulics {
+
+  extern const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS;
 
   /*! HydraulicEnvironment */
   class HydraulicEnvironment : public MBSim::Environment {
