@@ -80,6 +80,9 @@ namespace MBSim {
   DynamicSystemSolver::~DynamicSystemSolver() {
     closePlot();
     H5::FileSerie::deletePIDFiles();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVGrp->destroy();
+#endif
   }
 
   void DynamicSystemSolver::initialize() {
