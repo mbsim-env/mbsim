@@ -382,6 +382,7 @@
                             Fehlerschätzung mittels Extrapolationsverfahren (default)
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                       <xs:element name="embedded">
                         <xs:annotation>
@@ -389,6 +390,7 @@
                             Embedded Verfahren zur Fehlerschätzung: Fortsetzen der Integration mit niedrigerer Ordnung 
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                       <xs:element name="embeddedHigherOrder">
                         <xs:annotation>
@@ -396,6 +398,7 @@
                             Embedded Verfahren zur Fehlerschätzung: Fortsetzen der Integration mit höherer Ordnung 
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                     </xs:choice>
                   </xs:complexType>
