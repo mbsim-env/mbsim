@@ -53,15 +53,7 @@ AC_PATH_PROG([xsltproc],[xsltproc],[no],[$xsltprocpath:$prefix/bin:$PATH])
 test $xsltproc = "no" && AC_MSG_ERROR([xsltproc not found])
 AC_SUBST([XSLTPROC],[$xsltproc])
 
-dnl Check for xmllint
-AC_ARG_WITH([xmllintpath],
-  [  --with-xmllint-path=PATHTOXMLLINT  The path to the 'xmllint' program.],
-  [xmllintpath="$withval"],[xmllintpath=""])
-AC_PATH_PROG([xmllint],[xmllint],[no],[$xmllintpath:$prefix/bin:$PATH])
-test $xmllint = "no" && AC_MSG_ERROR([xmllint not found])
-AC_SUBST([XMLLINT],[$xmllint])
-
-
+AC_SUBST([MBXMLUTILSVALIDATE],[$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutilsvalidate])
 
 dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
