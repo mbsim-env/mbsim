@@ -57,7 +57,12 @@ namespace MBSim {
   }
 
   Contact::~Contact() {
-
+    for (size_t cK = 0; cK < contactKinematics.size(); cK++)
+      delete contactKinematics[cK];
+    delete fcl;
+    delete fdf;
+    delete fnil;
+    delete ftil;
   }
 
   void Contact::setDynamicSystemSolver(DynamicSystemSolver * sys) {
@@ -396,11 +401,11 @@ namespace MBSim {
           for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
               if (openMBVFrame)
-                jter->setOpenMBVContactPoints(new OpenMBV::Frame(*openMBVFrame));
+                jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:new OpenMBV::Frame(*openMBVFrame));
               if (contactArrow)
-                jter->setOpenMBVNormalForce(new OpenMBV::Arrow(*contactArrow));
+                jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:new OpenMBV::Arrow(*contactArrow));
               if (frictionArrow)
-                jter->setOpenMBVTangentialForce(new OpenMBV::Arrow(*frictionArrow));
+                jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:new OpenMBV::Arrow(*frictionArrow));
             }
           }
 #endif

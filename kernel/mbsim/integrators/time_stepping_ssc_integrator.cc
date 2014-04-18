@@ -178,9 +178,9 @@ namespace MBSim {
     SetValuedLinkListT2.clear();
     SetValuedLinkListT3.clear();
 
-    sysT1->buildListOfSetValuedLinks(SetValuedLinkListT1,true);
-    sysT2->buildListOfSetValuedLinks(SetValuedLinkListT2,true);
-    sysT3->buildListOfSetValuedLinks(SetValuedLinkListT3,true);
+    sysT1->buildListOfSetValuedLinks(SetValuedLinkListT1);
+    sysT2->buildListOfSetValuedLinks(SetValuedLinkListT2);
+    sysT3->buildListOfSetValuedLinks(SetValuedLinkListT3);
 
     maxIter = sysT1->getMaxIter();
     iter= 0;

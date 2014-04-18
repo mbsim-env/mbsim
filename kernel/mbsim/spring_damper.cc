@@ -44,6 +44,10 @@ namespace MBSim {
 #endif
   {}
 
+  SpringDamper::~SpringDamper() {
+    delete func;
+  }
+
   void SpringDamper::updateh(double t, int j) {
     la(0)=(*func)(g(0),gd(0));
     if(dist<=epsroot() && abs(la(0))>epsroot())
@@ -161,6 +165,10 @@ namespace MBSim {
     , coilspringOpenMBV(NULL)
 #endif
   {}
+
+  DirectionalSpringDamper::~DirectionalSpringDamper() {
+    delete func;
+  }
 
   void DirectionalSpringDamper::updateh(double t, int j) {
     Mat3x3 tWrP0P1 = tilde(WrP0P1);
@@ -301,6 +309,10 @@ namespace MBSim {
     WM.resize(2);
     h[0].resize(2);
     h[1].resize(2);
+  }
+
+  GeneralizedSpringDamper::~GeneralizedSpringDamper() {
+    delete func;
   }
 
   void GeneralizedSpringDamper::updatehRef(const Vec &hParent, int j) {

@@ -496,8 +496,8 @@ namespace MBSim {
     dT = refFrame->getOrientation()*forceDir;
     dR = refFrame->getOrientation()*momentDir;
 
-    Residuum* f = new Residuum(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
-    MultiDimNewtonMethod newton(f);
+    Residuum f(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
+    MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
     assert(newton.getInfo()==0);
 
