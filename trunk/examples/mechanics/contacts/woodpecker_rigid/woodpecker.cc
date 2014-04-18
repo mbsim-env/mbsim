@@ -80,13 +80,14 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   muffe->setInitialGeneralizedPosition(spiel*Vec("[0.2;0.0;0.0]"));
   muffe->setInitialGeneralizedVelocity(      Vec("[0.0;0.0;0.0]"));
 
-  UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
-  UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
   double mu = 0.2;
-  PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
-  PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
   for(int i=0;i<4;i++) {
+    UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
+    UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
+    PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
+    PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
+
     stringstream name;
     name << "PM" << i;
     Point* pMuffe = new Point(name.str());
@@ -157,6 +158,11 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   double cDF = 0.5;
   feder->setGeneralizedForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
   addLink(feder);
+
+  UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
+  UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
+  PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
+  PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
   Contact *contact = new Contact("SchnabelKontakt");
   contact->connect(schnabel,this->getContour("LineL"));
