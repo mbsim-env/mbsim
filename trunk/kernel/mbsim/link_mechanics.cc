@@ -235,18 +235,32 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void LinkMechanics::setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+    bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
-      if(which[i]==true)
-        openMBVArrowF.push_back(new OpenMBV::Arrow(*arrow));
+      if(which[i]==true) {
+        if(flag) {
+          openMBVArrowF.push_back(arrow);
+          flag = false;
+        }
+        else 
+          openMBVArrowF.push_back(new OpenMBV::Arrow(*arrow));
+      }
       else
         openMBVArrowF.push_back(NULL);
     }
   }
 
   void LinkMechanics::setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+    bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
-      if(which[i]==true)
-        openMBVArrowM.push_back(new OpenMBV::Arrow(*arrow));
+      if(which[i]==true) {
+        if(flag) {
+          openMBVArrowM.push_back(arrow);
+          flag = false;
+        }
+        else
+          openMBVArrowM.push_back(new OpenMBV::Arrow(*arrow));
+      }
       else
         openMBVArrowM.push_back(NULL);
     }

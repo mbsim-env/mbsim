@@ -34,7 +34,10 @@ namespace MBSim {
 
   KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
 
-  KineticExcitation::~KineticExcitation() {}
+  KineticExcitation::~KineticExcitation() {
+    delete F;
+    delete M;
+  }
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {

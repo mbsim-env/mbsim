@@ -962,69 +962,80 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
+  void DynamicSystem::clearElementLists() {
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->clearElementLists();
+    dynamicsystem.clear(); // delete old DynamicSystem list
+    object.clear(); // delete old object list
+    frame.clear(); // delete old frame list
+    contour.clear(); // delete old contour list
+    link.clear(); // delete old link list
+    inverseKineticsLink.clear(); // delete old link list
+    observer.clear(); // delete old link list
+  }
+
+  void DynamicSystem::buildListOfDynamicSystems(vector<DynamicSystem*> &sys) {
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      sys.push_back(dynamicsystem[i]);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfDynamicSystems(sys);
+  }
+
+  void DynamicSystem::buildListOfObjects(vector<Object*> &obj) {
     for (unsigned int i = 0; i < object.size(); i++)
       obj.push_back(object[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfObjects(obj, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfObjects(obj);
   }
 
-  void DynamicSystem::buildListOfLinks(vector<Link*> &lnk, bool recursive) {
+  void DynamicSystem::buildListOfLinks(vector<Link*> &lnk) {
     for (unsigned int i = 0; i < link.size(); i++)
       lnk.push_back(link[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfLinks(lnk, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfLinks(lnk);
   }
 
-  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk, bool recursive) {
+  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk) {
     for (unsigned int i = 0; i < link.size(); i++)
       if (link[i]->isSetValued())
         lnk.push_back(link[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfSetValuedLinks(lnk, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfSetValuedLinks(lnk);
   }
 
-  void DynamicSystem::buildListOfFrames(vector<Frame*> &frm, bool recursive) {
+  void DynamicSystem::buildListOfFrames(vector<Frame*> &frm) {
     for (unsigned int i = 0; i < frame.size(); i++)
       frm.push_back(frame[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfFrames(frm, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfFrames(frm);
   }
 
-  void DynamicSystem::buildListOfContours(vector<Contour*> &cnt, bool recursive) {
+  void DynamicSystem::buildListOfContours(vector<Contour*> &cnt) {
     for (unsigned int i = 0; i < contour.size(); i++)
       cnt.push_back(contour[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfContours(cnt, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfContours(cnt);
   }
 
-  void DynamicSystem::buildListOfModels(std::vector<ModellingInterface*> &modelList, bool recursive) {
+  void DynamicSystem::buildListOfModels(std::vector<ModellingInterface*> &modelList) {
     for (unsigned int i = 0; i < model.size(); i++)
       modelList.push_back(model[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfModels(modelList, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfModels(modelList);
   }
 
-  void DynamicSystem::buildListOfInverseKineticsLinks(vector<Link*> &iklnk, bool recursive) {
+  void DynamicSystem::buildListOfInverseKineticsLinks(vector<Link*> &iklnk) {
     for (unsigned int i = 0; i < inverseKineticsLink.size(); i++)
       iklnk.push_back(inverseKineticsLink[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfInverseKineticsLinks(iklnk, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfInverseKineticsLinks(iklnk);
   }
 
-  void DynamicSystem::buildListOfObservers(vector<Observer*> &obsrv, bool recursive) {
+  void DynamicSystem::buildListOfObservers(vector<Observer*> &obsrv) {
     for (unsigned int i = 0; i < observer.size(); i++)
       obsrv.push_back(observer[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfObservers(obsrv, recursive);
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfObservers(obsrv);
   }
 
   void DynamicSystem::setUpInverseKinetics() {

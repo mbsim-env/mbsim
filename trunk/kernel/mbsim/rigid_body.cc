@@ -64,6 +64,7 @@ namespace MBSim {
   RigidBody::~RigidBody() {
     if(fPrPK) { delete fPrPK; fPrPK=0; }
     if(fAPK) { delete fAPK; fAPK=0; }
+    if(fTR) { delete fTR; fTR=0; }
   }
 
   void RigidBody::setFrameForKinematics(Frame *frame) { 

@@ -120,19 +120,19 @@ namespace MBSim {
         cout << name << " (special group) stage==preInit:" << endl;
 
       vector<Object*> objList;
-      buildListOfObjects(objList, true);
+      buildListOfObjects(objList);
 
       vector<Frame*> frmList;
-      buildListOfFrames(frmList, true);
+      buildListOfFrames(frmList);
 
       vector<Contour*> cntList;
-      buildListOfContours(cntList, true);
+      buildListOfContours(cntList);
 
       vector<Link*> lnkList;
-      buildListOfLinks(lnkList, true);
+      buildListOfLinks(lnkList);
 
       vector<ModellingInterface*> modellList;
-      buildListOfModels(modellList, true);
+      buildListOfModels(modellList);
 
       if (modellList.size())
         do {
@@ -140,18 +140,15 @@ namespace MBSim {
         } while (modellList.size());
 
       vector<Link*> iKlnkList;
-      buildListOfInverseKineticsLinks(iKlnkList, true);
+      buildListOfInverseKineticsLinks(iKlnkList);
 
       vector<Observer*> obsrvList;
-      buildListOfObservers(obsrvList, true);
+      buildListOfObservers(obsrvList);
 
-      dynamicsystem.clear(); // delete old DynamicSystem list
-      object.clear(); // delete old object list
-      frame.clear(); // delete old frame list
-      contour.clear(); // delete old contour list
-      link.clear(); // delete old link list
-      inverseKineticsLink.clear(); // delete old link list
-      observer.clear(); // delete old link list
+      vector<DynamicSystem*> dsList;
+      buildListOfDynamicSystems(dsList);
+
+      clearElementLists();
 
       /* rename system structure */
       if (INFO)
@@ -212,6 +209,11 @@ namespace MBSim {
           cout << str.str() << endl;
         obsrvList[i]->setName(str.str());
         addObserver(obsrvList[i]);
+      }
+
+      for (unsigned int i = 0; i < dsList.size(); i++) {
+        cout << "delete "<< dsList[i]->getName() << endl;
+        delete dsList[i];
       }
 
       /* matrix of body dependencies */

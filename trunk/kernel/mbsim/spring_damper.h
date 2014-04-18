@@ -46,6 +46,7 @@ namespace MBSim {
 #endif
     public:
       SpringDamper(const std::string &name="");
+      ~SpringDamper();
       void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);
@@ -105,6 +106,7 @@ namespace MBSim {
 #endif
     public:
       DirectionalSpringDamper(const std::string &name="");
+      ~DirectionalSpringDamper();
       void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);
@@ -162,6 +164,7 @@ namespace MBSim {
 #endif
     public:
       GeneralizedSpringDamper(const std::string &name="");
+      ~GeneralizedSpringDamper();
       void updateh(double, int i=0);
       void updateJacobians(double t, int j=0);
       void updateg(double);
