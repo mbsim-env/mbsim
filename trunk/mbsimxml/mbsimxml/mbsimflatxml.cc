@@ -159,7 +159,7 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
 
   // load MBSim project XML document
   shared_ptr<DOMParser> parser=DOMParser::create(false);
-  shared_ptr<DOMDocument> doc=parser->parse(argv[startArg]);
+  shared_ptr<xercesc::DOMDocument> doc=parser->parse(argv[startArg]);
   DOMElement *e=doc->getDocumentElement();
 
   // create object for DynamicSystemSolver and check correct type
