@@ -803,11 +803,10 @@ namespace MBSimGUI {
     DOMElement *root = doc->getDocumentElement();
 
     // GUI-XML-Baum mit OriginalFilename ergaenzen
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename") && !E(root)->hasAttribute(XML%"base")) {
+    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
       DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
           X()%"MBS.mbsimprj.xml");
       root->insertBefore(filenamePI, root->getFirstChild());
-      root->setAttributeNS(X()%XML.getNamespaceURI(), X()%"xml:base", X()%"MBS.mbsimprj.xml");
     }
 
     D(doc)->validate();

@@ -33,7 +33,7 @@ else:
 # global variables
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
-xmllint=None
+mbxmlutilsvalidate=None
 ombvSchema =None
 mbsimXMLSchema=None
 timeID=None
@@ -284,11 +284,11 @@ def main():
     print("However at least one of these modules are not found. Hence comparing the results will be disabled.\n")
     global canCompare
     canCompare=False
-  # get xmllint program
-  global xmllint
-  xmllint=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "xmllint")
-  if not os.path.isfile(xmllint):
-    xmllint="xmllint"
+  # get mbxmlutilsvalidate program
+  global mbxmlutilsvalidate
+  mbxmlutilsvalidate=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "mbxmlutilsvalidate")
+  if not os.path.isfile(mbxmlutilsvalidate):
+    mbxmlutilsvalidate="mbxmlutilsvalidate"
   # set global dirs
   global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
@@ -1229,10 +1229,10 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
-        list(map(lambda x: print(x, end=" ", file=outputFD), [xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)]))
+        list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocessCall([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
+        if subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
           print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
@@ -1288,8 +1288,7 @@ def validateHTMLOutput():
   for root, _, filenames in os.walk(args.reportOutDir):
     for filename in filenames:
       if os.path.splitext(filename)[1]==".html":
-        subprocessCall([xmllint, "--xinclude", "--noout", "--schema",
-          schema, pj(root, filename)], sys.stdout)
+        subprocessCall([mbxmlutilsvalidate, schema, pj(root, filename)], sys.stdout)
 
 
 

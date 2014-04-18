@@ -306,7 +306,6 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
-    <xs:attribute ref="xml:base"/>
   </xs:complexType>
 
   <!-- For usage in Group an RigidBody -->
@@ -349,7 +348,6 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
-    <xs:attribute ref="xml:base"/>
   </xs:complexType>
 
   <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType">
@@ -530,7 +528,6 @@
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
-        <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -752,9 +749,7 @@
   </xs:element>
   <xs:complexType name="ObjectType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:attribute ref="xml:base"/>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>   
 
@@ -1499,9 +1494,7 @@
   </xs:element>
   <xs:complexType name="LinkType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:attribute ref="xml:base"/>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -2121,7 +2114,6 @@
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
-       <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
@@ -2191,7 +2183,6 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-       <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -4144,9 +4135,7 @@
   </xs:element>
   <xs:complexType name="ObserverType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:attribute ref="xml:base"/>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>
 
