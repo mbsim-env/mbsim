@@ -45,7 +45,6 @@
         </xs:documentation></xs:annotation>
       </xs:element>
     </xs:sequence>
-    <xs:attribute ref="xml:base"/>
   </xs:complexType> 
 
   <xs:element name="DOPRI5Integrator" substitutionGroup="Integrator" type="DOPRI5IntegratorType">
