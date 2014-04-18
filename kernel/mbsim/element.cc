@@ -46,6 +46,8 @@ namespace MBSim {
   }
 
   Element::~Element() {
+    delete plotGroup;
+    delete plotVectorSerie;
   }
 
   void Element::plot(double t, double dt) {

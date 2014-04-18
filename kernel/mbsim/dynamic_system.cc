@@ -77,6 +77,8 @@ namespace MBSim {
       delete *i;
     for (vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
       delete *i;
+    for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+      delete *i;
   }
 
   void DynamicSystem::updateT(double t) {
