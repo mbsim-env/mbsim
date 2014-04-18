@@ -538,14 +538,12 @@ namespace MBSim {
           }
           // arrows
           if (contactArrow) {
-            openMBVNormalForceArrow = new OpenMBV::Arrow(*contactArrow);
-            openMBVNormalForceArrow->setName("NormalForce_B");
-            openMBVContactGrp->addObject(openMBVNormalForceArrow);
+            contactArrow->setName("NormalForce_B");
+            openMBVContactGrp->addObject(contactArrow);
           }
           if (frictionArrow && getFrictionDirections() > 0) { // friction force
-            openMBVFrictionArrow = new OpenMBV::Arrow(*frictionArrow);
-            openMBVFrictionArrow->setName("FrictionForce_B");
-            openMBVContactGrp->addObject(openMBVFrictionArrow);
+            frictionArrow->setName("FrictionForce_B");
+            openMBVContactGrp->addObject(frictionArrow);
           }
         }
 #endif
@@ -668,7 +666,7 @@ namespace MBSim {
           data.push_back(F(1));
           data.push_back(F(2));
           data.push_back(nrm2(F));
-          openMBVNormalForceArrow->append(data);
+          contactArrow->append(data);
         }
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
           data.clear();
@@ -695,7 +693,7 @@ namespace MBSim {
           data.push_back(F(1));
           data.push_back(F(2));
           data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-          openMBVFrictionArrow->append(data);
+          frictionArrow->append(data);
         }
       }
 #endif
