@@ -9,7 +9,7 @@ int main (int argc, char* argv[]) {
   Woodpecker sys("MBS");
   sys.setConstraintSolver(GaussSeidel);
   sys.setImpactSolver(GaussSeidel);
-  sys.setFlushEvery(100);
+//  sys.setFlushEvery(100);
   sys.initialize();
 
   Integrator* integrator;
@@ -43,7 +43,7 @@ int main (int argc, char* argv[]) {
   integrator->setPlotStepSize(1.e-3);
   integrator->integrate(sys);
 
-  sys.closePlot();
+  delete integrator;
 
   return 0;
 }
