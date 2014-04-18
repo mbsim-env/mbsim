@@ -774,6 +774,7 @@
                   Der Eigangswert wird auf pm1 beschränkt.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="asin">
               <xs:annotation>
@@ -783,6 +784,7 @@
                   Der Eigangswert wird auf pm1 beschränkt.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="atan">
               <xs:annotation>
@@ -791,6 +793,7 @@
                   The atan functions calculate the arc tangent of x.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="atan2">
               <xs:annotation>
@@ -823,6 +826,7 @@
                   Returns the value of x rounded upward to the next integer (toward positive infinity.)
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="cos">
               <xs:annotation>
@@ -831,6 +835,7 @@
                   The cos functions calculate the cosine of x (measured in radians).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="cosh">
               <xs:annotation>
@@ -839,6 +844,7 @@
                   The cosh functions calculate the hyperbolic cosine of x. 
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="cbrt">
               <xs:annotation>
@@ -847,6 +853,7 @@
                   The cbrt functions calculate the cube root of x.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="exp">
               <xs:annotation>
@@ -855,6 +862,7 @@
                   The exp functions calculate the value of the natural logarithm base (e) raised to the power of x.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="exp2">
               <xs:annotation>
@@ -863,6 +871,7 @@
                   The exp2 functions calculate the value of 2 raised to the power of x. 
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="expm1">
               <xs:annotation>
@@ -871,6 +880,7 @@
                   Calculates the value of the natural logarithm base (e) raised to the power of x, minus 1. For very small x, expm1(x) is more accurate than exp(x) -1.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="fabs">
               <xs:annotation>
@@ -879,6 +889,7 @@
                   The fabs, fabsf, and fabsl functions calculate the absolute value of floating-point number x.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="floor">
               <xs:annotation>
@@ -887,6 +898,7 @@
                   Returns the value of x rounded down to the nearest integer.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="fmod">
               <xs:annotation>
@@ -944,6 +956,7 @@
                   Der Absolutwert des Eingangssignals wird verwendet!.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="log2">
               <xs:annotation>
@@ -953,6 +966,7 @@
                   Der Absolutwert des Eingangssignals wird verwendet!.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="logb">
               <xs:annotation>
@@ -961,6 +975,7 @@
                   Extracts the exponent of x as a signed integral value. If x is subnormal, it is treated as if it were normalized. For a positive, finite x:
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="log10">
               <xs:annotation>
@@ -970,6 +985,7 @@
                   Der Absolutwert des Eingangssignals wird verwendet!.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="log1p">
               <xs:annotation>
@@ -979,6 +995,7 @@
                   Das Eingangssignal wird auf x>-1 beschränkt.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="pow">
               <xs:annotation>
@@ -1011,6 +1028,7 @@
                   The sin functions calculate the sine of x (measured in radians).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="sinh">
               <xs:annotation>
@@ -1019,6 +1037,7 @@
                   The sinh functions calculate the hyperbolic sine of x.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="sqrt">
               <xs:annotation>
@@ -1028,6 +1047,7 @@
                   Der Absolutwert des Eingangssignals wird verwendet!.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="tan">
               <xs:annotation>
@@ -1036,6 +1056,7 @@
                   The tan functions calculate the tangent of x (measured in radians).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="tanh">
               <xs:annotation>
@@ -1044,6 +1065,7 @@
                   The tanh functions calculate the hyperbolic tangent of x. 
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
           </xs:choice>
         </xs:sequence>
@@ -1160,7 +1182,9 @@
               </xs:complexType>
             </xs:element>
           </xs:choice>
-          <xs:element name="showABCD" minOccurs="0"/>
+          <xs:element name="showABCD" minOccurs="0">
+            <xs:complexType/>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

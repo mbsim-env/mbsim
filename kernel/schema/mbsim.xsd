@@ -230,34 +230,32 @@
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ElementType">
-    <xs:sequence> <!-- a workaround for xmllint -->
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="plotFeature">  
-          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Plotfeatures für dieses Element.
-          </xs:documentation></xs:annotation>
-          <xs:complexType>
-            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-          </xs:complexType> 
-        </xs:element>  
-        <xs:element name="plotFeatureForChildren">
-          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Plotfeatures für alle Kindelement.
-          </xs:documentation></xs:annotation>
-          <xs:complexType>
-            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-          </xs:complexType> 
-        </xs:element>  
-        <xs:element name="plotFeatureRecursive">  
-          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Plotfeatures für diese Element und alle Kindelement.
-          </xs:documentation></xs:annotation>
-          <xs:complexType>
-            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-          </xs:complexType> 
-        </xs:element>  
-      </xs:choice> 
-    </xs:sequence> <!-- a workaround for xmllint -->
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="plotFeature">  
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Definiert die Plotfeatures für dieses Element.
+        </xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+      <xs:element name="plotFeatureForChildren">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Definiert die Plotfeatures für alle Kindelement.
+        </xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+      <xs:element name="plotFeatureRecursive">  
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Definiert die Plotfeatures für diese Element und alle Kindelement.
+        </xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+    </xs:choice> 
     <xs:attribute name="name" type="pv:stringPartialOctEval" use="required"/>
   </xs:complexType> 
 
@@ -627,6 +625,7 @@
                             Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                       <xs:element name="GaussSeidel">
                         <xs:annotation>
@@ -675,6 +674,7 @@
                             Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                       <xs:element name="GaussSeidel">
                         <xs:annotation>
@@ -733,7 +733,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="inverseKinetics" minOccurs="0">
+          <xs:element name="inverseKinetics" minOccurs="0" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert, ob Gelenkreaktionen berechnet werden sollen.
             </xs:documentation></xs:annotation>
@@ -984,12 +984,12 @@
               </xs:complexType>
             </xs:element>
           </xs:choice>
-          <xs:element name="translationDependentRotation" minOccurs="0">
+          <xs:element name="translationDependentRotation" minOccurs="0" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="coordinateTransformationForRotation" minOccurs="0">
+          <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               tbd
             </xs:documentation></xs:annotation>
@@ -3841,6 +3841,7 @@
                   Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="cSplineNatural">
               <xs:annotation>
@@ -3848,6 +3849,7 @@
                   Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="piecewiseLinear">
               <xs:annotation>
@@ -3855,6 +3857,7 @@
                   Interpolation mit stückweise linearem Spline.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
           </xs:choice>
         </xs:sequence> 
