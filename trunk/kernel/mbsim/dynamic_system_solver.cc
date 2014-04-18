@@ -211,10 +211,8 @@ namespace MBSim {
         addObserver(obsrvList[i]);
       }
 
-      for (unsigned int i = 0; i < dsList.size(); i++) {
-        cout << "delete "<< dsList[i]->getName() << endl;
+      for (unsigned int i = 0; i < dsList.size(); i++)
         delete dsList[i];
-      }
 
       /* matrix of body dependencies */
       SqrMat A(objList.size(), INIT, 0.);

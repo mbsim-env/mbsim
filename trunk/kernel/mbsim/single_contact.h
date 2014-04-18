@@ -316,16 +316,6 @@ namespace MBSim {
       std::vector<OpenMBV::Frame*> openMBVContactFrame;
 
       /**
-       * \brief container of normal forces to draw
-       */
-      OpenMBV::Arrow * openMBVNormalForceArrow;
-
-      /**
-       * \brief container of tangential forces to draw
-       */
-      OpenMBV::Arrow * openMBVFrictionArrow;
-
-      /**
        * \brief pointer to memory of normal and friction forces to draw
        */
       OpenMBV::Arrow *contactArrow, *frictionArrow;
