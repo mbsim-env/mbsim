@@ -44,7 +44,7 @@ namespace H5 {
  */
 namespace MBSim {
 
-  extern const MBXMLUtils::NamespaceURI MBSIM;
+  const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
 
   class ObjectInterface;
 

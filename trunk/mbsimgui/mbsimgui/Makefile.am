@@ -67,7 +67,6 @@ mbsimgui_SOURCES = element.cc \
 		   integrator_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
-		   property.cc \
 		   mainwindow.cc \
 		   main.cc \
 		   embed.cc \
