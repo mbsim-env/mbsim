@@ -46,12 +46,11 @@ int main() {
 ], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_WEXITSTATUS"], [AC_MSG_RESULT([no])])
 
 dnl Check for xslt
-AC_ARG_WITH([xsltprocpath],
-  [  --with-xsltproc-path=PATHTOXSLTPROC  The path to the 'xsltproc' program.],
-  [xsltprocpath="$withval"],[xsltprocpath=""])
-AC_PATH_PROG([xsltproc],[xsltproc],[no],[$xsltprocpath:$prefix/bin:$PATH])
-test $xsltproc = "no" && AC_MSG_ERROR([xsltproc not found])
-AC_SUBST([XSLTPROC],[$xsltproc])
+AC_ARG_WITH([xalan],
+  [  --with-xalan=XALAN  The Xalan program.],
+  [xalan="$withval"],[xalan="$(which Xalan)"])
+test -x $xalan || AC_MSG_ERROR([xalan not found])
+AC_SUBST([XALAN],[$xalan])
 
 AC_SUBST([MBXMLUTILSVALIDATE],[$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutilsvalidate$EXEEXT])
 
