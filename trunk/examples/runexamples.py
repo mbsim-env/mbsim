@@ -286,9 +286,9 @@ def main():
     canCompare=False
   # get mbxmlutilsvalidate program
   global mbxmlutilsvalidate
-  mbxmlutilsvalidate=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "mbxmlutilsvalidate")
+  mbxmlutilsvalidate=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "mbxmlutilsvalidate"+args.exeExt)
   if not os.path.isfile(mbxmlutilsvalidate):
-    mbxmlutilsvalidate="mbxmlutilsvalidate"
+    mbxmlutilsvalidate="mbxmlutilsvalidate"+args.exeExt
   # set global dirs
   global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
