@@ -657,7 +657,7 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
       if subprocess.call(["make", "-k"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "-k", "install"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errSTr+"make install failed; "
+      if subprocess.call(["make", "-k", "install"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
 
       # copy doc
