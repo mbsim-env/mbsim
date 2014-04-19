@@ -31,6 +31,7 @@ combindedSchema.xsd: genCombindedSchema.xsl files.xml
 .DELETE_ON_ERROR: mbsimxml.xhtml
 mbsimxml.xhtml: genContent.xsl combindedSchema.xsd
 	@XSLTPROC@ --novalid --output mbsimxml.xhtml --param DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" --param MBSIMXMLVERSION "'@VERSION@'" genContent.xsl combindedSchema.xsd
-	@MBXMLUTILSVALIDATE@ $(MBXMLUTILSSCHEMA)/http___www_w3_org/xhtml1-transitional.xsd mbsimxml.xhtml
+# note we convert abs path here to rel ones to avoid xalan/xerces to interprete a abs path as rel when using wine
+	@MBXMLUTILSVALIDATE@ $$(pwd | sed -re "s|/[^/]+|/..|g;s|^/||")$(MBXMLUTILSSCHEMA)/http___www_w3_org/xhtml1-transitional.xsd mbsimxml.xhtml
 
 CLEANFILES=mbsimxml.xhtml combindedSchema.xsd files.xml xsdfiles.txt
