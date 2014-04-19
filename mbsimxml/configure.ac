@@ -53,7 +53,7 @@ AC_PATH_PROG([xsltproc],[xsltproc],[no],[$xsltprocpath:$prefix/bin:$PATH])
 test $xsltproc = "no" && AC_MSG_ERROR([xsltproc not found])
 AC_SUBST([XSLTPROC],[$xsltproc])
 
-AC_SUBST([MBXMLUTILSVALIDATE],[$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutilsvalidate])
+AC_SUBST([MBXMLUTILSVALIDATE],[$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutilsvalidate$EXEEXT])
 
 dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
