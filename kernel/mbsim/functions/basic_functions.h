@@ -28,8 +28,6 @@
 
 namespace MBSim {
 
-  extern const MBXMLUtils::NamespaceURI MBSIM;
-
   template<typename Sig> class ConstantFunction; 
 
   template<typename Ret, typename Arg>

@@ -31,7 +31,7 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
-  extern const MBXMLUtils::NamespaceURI MBSIMFLEX;
+  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://mbsim.berlios.de/MBSimFlexibleBody");
 
   /**
    * \brief upmost class for flexible body implementation

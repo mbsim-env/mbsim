@@ -28,7 +28,7 @@ namespace MBSim {
 
 namespace MBSimControl {
 
-  extern const MBXMLUtils::NamespaceURI MBSIMCONTROL;
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
 
   /*!
    * \brief Signal

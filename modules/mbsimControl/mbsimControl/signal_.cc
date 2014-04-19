@@ -29,8 +29,6 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
-  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ExternSignalSource, MBSIMCONTROL%"ExternSignalSource")
 
   void Signal::init(InitStage stage) {

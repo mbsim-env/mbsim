@@ -33,13 +33,13 @@ class QWidget;
 
 namespace MBSimGUI {
 
-  extern const MBXMLUtils::NamespaceURI MBSIM;
-  extern const MBXMLUtils::NamespaceURI PARAM;
-  extern const MBXMLUtils::NamespaceURI OPENMBV;
-  extern const MBXMLUtils::NamespaceURI MBSIMINT;
-  extern const MBXMLUtils::NamespaceURI MBSIMCONTROL;
-  extern const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN;
-  extern const MBXMLUtils::NamespaceURI MBSIMXML;
+  const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
+  const MBXMLUtils::NamespaceURI PARAM("http://openmbv.berlios.de/MBXMLUtils/physicalvariable");
+  const MBXMLUtils::NamespaceURI OPENMBV("http://openmbv.berlios.de/OpenMBV");
+  const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
+  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
+  const MBXMLUtils::NamespaceURI MBSIMXML("http://mbsim.berlios.de/MBSimXML");
 
   class PropertyInterface {
     public:

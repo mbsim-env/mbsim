@@ -37,8 +37,6 @@ using namespace xercesc;
 
 namespace MBSimPowertrain {
 
-  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TorsionalStiffness, MBSIMPOWERTRAIN%"TorsionalStiffness")
 
   TorsionalStiffness::TorsionalStiffness(const string &name) : LinkMechanics(name), func(NULL), body(2)

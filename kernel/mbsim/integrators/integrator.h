@@ -27,7 +27,7 @@
 
 namespace MBSim {
 
-  extern const MBXMLUtils::NamespaceURI MBSIMINT;
+  const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
 
   class DynamicSystemSolver;
 

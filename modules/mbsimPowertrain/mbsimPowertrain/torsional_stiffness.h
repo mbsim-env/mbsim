@@ -34,6 +34,8 @@ namespace MBSim {
 
 namespace MBSimPowertrain {
 
+  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
+
   class TorsionalStiffness : public MBSim::LinkMechanics {
     protected:
       fmatvec::Function<double(double,double)> *func;

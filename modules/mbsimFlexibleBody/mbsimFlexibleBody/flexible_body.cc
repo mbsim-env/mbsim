@@ -40,8 +40,6 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://mbsim.berlios.de/MBSimFlexibleBody");
-
   FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {}
 
   FlexibleBody::~FlexibleBody() {
