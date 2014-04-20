@@ -598,7 +598,7 @@ namespace MBSim {
     saved_IndependentBody=E(e)->getAttribute("ref");
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if(e) refFrameID=getDouble(e);
+    if(e) refFrameID=getInt(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat3xV(e,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
