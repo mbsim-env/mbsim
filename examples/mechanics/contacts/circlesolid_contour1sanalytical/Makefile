@@ -13,7 +13,7 @@ libsources =
 objects = $(sources:.cc=.o) 
 
 OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags $(packages)` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -g3 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags $(packages)`
+CPPFLAGS= -g -O3 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags $(packages)`
 
 $(Target) : $(objects)
 	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs $(packages)` 
