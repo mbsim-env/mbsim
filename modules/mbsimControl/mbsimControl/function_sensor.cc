@@ -38,6 +38,7 @@ namespace MBSimControl {
     function=function_; 
     y=(*function)(0); 
   }
+
   void FunctionSensor::updateg(double t) {
     Sensor::updateg(t);
     y=(*function)(t); 

@@ -34,6 +34,7 @@ namespace MBSimHydraulics {
   class RigidLine : public RigidHLine {
     public:
       RigidLine(const std::string &name="") : RigidHLine(name), diameter(0), pL(NULL), ReynoldsFactor(0) {}
+      ~RigidLine();
       virtual std::string getType() const { return "RigidLine"; }
 
       void setDiameter(double diameter_) {diameter=diameter_; }
