@@ -592,7 +592,7 @@ namespace MBSim {
     LinkMechanics::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if (e)
-      refFrameID = getDouble(e);
+      refFrameID = getInt(e);
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if (e)
       setForceDirection(getMat(e, 3, 0));

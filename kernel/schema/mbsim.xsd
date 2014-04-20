@@ -1436,7 +1436,7 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="frameOfReferenceID" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
             </xs:documentation></xs:annotation>
@@ -1518,7 +1518,7 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
             </xs:documentation></xs:annotation>
@@ -1833,7 +1833,7 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
             </xs:documentation></xs:annotation>
@@ -3208,7 +3208,7 @@
   <xs:complexType name="SymbolicFunctionType" mixed="true">
     <xs:complexContent>
       <xs:extension base="FunctionType">
-        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:group ref="pv:symbolicFunctionXMLElement" minOccurs="0"/>
         <!-- A symbolic function has at least one parameter => arg1 is required.
              argXDim is optional since this is interpreted as "1" (scalar) if missing.
              arg2 (and higher) are optional to define with this XML element all symbolic functions at ones.

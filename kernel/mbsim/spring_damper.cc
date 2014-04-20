@@ -274,8 +274,7 @@ namespace MBSim {
 
   void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     setForceDirection(getVec(e,3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());

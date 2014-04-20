@@ -153,7 +153,7 @@ namespace MBSim {
   void KineticExcitation::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if(e) refFrameID=getDouble(e);
+    if(e) refFrameID=getInt(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
