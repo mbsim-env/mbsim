@@ -39,6 +39,10 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidLine,  MBSIMHYDRAULICS%"RigidLine")
 
+  RigidLine::~RigidLine() { 
+    delete pL; 
+  }
+
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
       if (pL)

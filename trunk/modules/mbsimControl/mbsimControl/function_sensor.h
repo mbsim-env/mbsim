@@ -33,6 +33,7 @@ namespace MBSimControl {
     public:
       FunctionSensor(const std::string &name="") : Sensor(name), function(NULL), y() {}
       FunctionSensor(const std::string &name, fmatvec::Function<fmatvec::VecV(double)>* function_);
+      ~FunctionSensor() { delete function; }
       std::string getType() const { return "FunctionSensor"; }
       void setFunction(fmatvec::Function<fmatvec::VecV(double)>* function_);
       fmatvec::Vec getSignal() {return y.copy(); }
