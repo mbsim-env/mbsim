@@ -72,7 +72,7 @@ vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, 
     int b=((i==0)||(i==nA))?1:0;
     vpp->push_back(new OpenMBV::PolygonPoint(x, y, b));
   }
-  vpp->push_back((*vpp)[0]);
+  vpp->push_back(new OpenMBV::PolygonPoint(*(*vpp)[0]));
 
   return vpp;
 }
@@ -139,7 +139,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuMitte->setDiffuseColor(0.5,0.5,0.5);
   traegerVisuMitte->setName("frustum2");
   traegerVisu->addRigidBody(traegerVisuMitte);
-  traeger->setOpenMBVRigidBody(traegerVisuMitte);
+  traeger->setOpenMBVRigidBody(traegerVisu);
 #endif
 
   Vec r(3, INIT, 0);
