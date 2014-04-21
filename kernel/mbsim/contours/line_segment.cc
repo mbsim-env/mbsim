@@ -23,6 +23,7 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace fmatvec;
 using namespace xercesc;
 
 namespace MBSim {
@@ -72,6 +73,28 @@ namespace MBSim {
     DOMElement *ele0 = Contour::writeXMLFile(parent);
     addElementText(ele0,MBSIM%"length",length);
     return ele0;
+  }
+
+  void LineSegment::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+    if (ff == velocity || ff == velocities) {
+      Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
+      cp.getFrameOfReference().setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrPC));
+    }
+    if (ff == angularVelocity || ff == velocities)
+      cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
+
+    if (ff == position) {
+      double s = cp.getLagrangeParameterPosition()(0);
+      cp.getFrameOfReference().getPosition() = R->getPosition() + R->getOrientation().col(1) * s;
+    }
+
+    if (ff == firstTangent) {
+      cp.getFrameOfReference().getOrientation().set(1, R->getOrientation().col(1));
+    }
+
+    if (ff!= position and ff != firstTangent and ff != velocity && ff != angularVelocity && ff != velocities)
+      throw MBSimError("ERROR (LineSegment::updateKinematicsForFrame): FrameFeature not implemented!");
+
   }
 
 }
