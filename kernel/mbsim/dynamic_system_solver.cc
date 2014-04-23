@@ -81,7 +81,8 @@ namespace MBSim {
     closePlot();
     H5::FileSerie::deletePIDFiles();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVGrp->destroy();
+    if(openMBVGrp)
+      openMBVGrp->destroy();
 #endif
   }
 
