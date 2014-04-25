@@ -787,6 +787,11 @@ namespace MBSim {
 
   }
 
+  MaxwellUnilateralConstraint::~MaxwellUnilateralConstraint() {
+    for (map<pair<Contour*, Contour*>,InfluenceFunction*>::iterator it=influenceFunctions.begin(); it!=influenceFunctions.end(); ++it)
+      delete it->second;
+  }
+
   void MaxwellUnilateralConstraint::initializeContourCouplings(Contact* parent) {
     for(size_t i = 0; i < referenceXML.size(); i++) {
       Contour* contour1 = parent->getByPath<Contour>(referenceXML[i].name1);
