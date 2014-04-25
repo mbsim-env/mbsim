@@ -747,7 +747,7 @@ namespace MBSim {
       /*!
        * \brief destructor
        */
-      virtual ~MaxwellUnilateralConstraint() {};
+      virtual ~MaxwellUnilateralConstraint();
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
