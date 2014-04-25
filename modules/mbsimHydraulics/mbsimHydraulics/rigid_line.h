@@ -59,6 +59,7 @@ namespace MBSimHydraulics {
   class ClosableRigidLine : public RigidLine {
     public:
       ClosableRigidLine(const std::string &name="") : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLBilateral(false), refSignalString("") {}
+      ~ClosableRigidLine();
       virtual std::string getType() const { return "ClosableRigidLine"; }
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_) {cpL=cpL_; }
