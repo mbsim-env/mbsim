@@ -85,6 +85,10 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ClosableRigidLine,  MBSIMHYDRAULICS%"ClosableRigidLine")
 
+  ClosableRigidLine::~ClosableRigidLine() {
+    delete cpL;
+  }
+
   bool ClosableRigidLine::isClosed() const {
    return (cpLSignal->getSignal()(0)<cpLMinValue);
   }
