@@ -57,8 +57,11 @@ namespace MBSim {
   }
 
   Contact::~Contact() {
-    for (size_t cK = 0; cK < contactKinematics.size(); cK++)
+    for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+      for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k)
+        delete contactKinematics[cK]->getContactKinematics(k);
       delete contactKinematics[cK];
+    }
     delete fcl;
     delete fdf;
     delete fnil;
@@ -398,16 +401,12 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
           //Set OpenMBV-Properties to single contacts
-          for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-            for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-              if (openMBVFrame)
-                jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:new OpenMBV::Frame(*openMBVFrame));
-              if (contactArrow)
-                jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:new OpenMBV::Arrow(*contactArrow));
-              if (frictionArrow)
-                jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:new OpenMBV::Arrow(*frictionArrow));
-            }
-          }
+          if (openMBVFrame)
+            jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:new OpenMBV::Frame(*openMBVFrame));
+          if (contactArrow)
+            jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:new OpenMBV::Arrow(*contactArrow));
+          if (frictionArrow)
+            jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:new OpenMBV::Arrow(*frictionArrow));
 #endif
           jter->init(stage);
         }
