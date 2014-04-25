@@ -37,6 +37,13 @@ namespace MBSim {
   {
   }
 
+  CompoundContour::~CompoundContour() {
+    for(unsigned int i=0; i<element.size(); i++)
+      delete element[i];
+    for(unsigned int i=0; i<frame.size(); i++)
+      delete frame[i];
+  }
+
   void CompoundContour::addContour(RigidContour* c) {
     element.push_back(c);
     c->setParent(this);
