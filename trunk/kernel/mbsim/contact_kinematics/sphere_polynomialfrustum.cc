@@ -48,6 +48,9 @@ namespace MBSim {
 
   ContactKinematicsSpherePolynomialFrustum::~ContactKinematicsSpherePolynomialFrustum() {
     delete func;
+    delete jacobian;
+    delete criteria;
+    delete damping;
   }
 
   void ContactKinematicsSpherePolynomialFrustum::assignContours(const vector<Contour*> &contour) {
