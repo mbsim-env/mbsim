@@ -233,6 +233,11 @@ namespace MBSimElectronics {
     branch = &tmpbranch;
   }
 
+  ElectronicComponent::~ElectronicComponent() { 
+    for(unsigned int i=0; i<terminal.size(); i++)
+      delete terminal[i];
+  }
+
   void ElectronicComponent::connect(Branch *branch_, double vz_) {
     vz = vz_;
     branch=branch_;

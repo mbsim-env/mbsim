@@ -47,6 +47,7 @@ namespace MBSimElectronics {
       double Q,I;
     public:
       ElectronicComponent();
+      ~ElectronicComponent();
       void addTerminal(Terminal *terminal);
       void addTerminal(const std::string &str);
       Terminal* getTerminal(const std::string &name, bool check=true);
