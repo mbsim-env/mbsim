@@ -541,7 +541,7 @@ namespace MBSim {
             contactArrow->setName("NormalForce_B");
             openMBVContactGrp->addObject(contactArrow);
           }
-          if (frictionArrow && getFrictionDirections() > 0) { // friction force
+          if (frictionArrow) { // friction force
             frictionArrow->setName("FrictionForce_B");
             openMBVContactGrp->addObject(frictionArrow);
           }
