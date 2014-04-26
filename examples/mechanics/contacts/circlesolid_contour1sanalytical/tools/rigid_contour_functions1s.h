@@ -30,6 +30,7 @@ namespace MBSim {
 class FuncCrPC : public MBSim::ContourFunction1s {
   public:
     FuncCrPC();
+    ~FuncCrPC();
     
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3, fmatvec::INIT, 0));
 
@@ -77,6 +78,7 @@ class FuncCrPC : public MBSim::ContourFunction1s {
 class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
   public:
     FuncCrPC_PlanePolar();
+    ~FuncCrPC_PlanePolar();
   
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3,fmatvec::INIT, 0));
 

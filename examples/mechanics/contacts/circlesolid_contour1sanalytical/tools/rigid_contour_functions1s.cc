@@ -128,13 +128,21 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   return erg;
 }
 
-FuncCrPC::FuncCrPC() : ContourFunction1s() {
+FuncCrPC::FuncCrPC() : ContourFunction1s(), tab_operator(0), tab_T(0), tab_B(0), tab_N(0), tab_curvature(0) {
   Cb(0)=1;
   operator_ = &FuncCrPC::operatorPPolynom;
   computeT_ = &FuncCrPC::computeTPPolynom;
   computeB_ = &FuncCrPC::computeBPPolynom;
   computeN_ = &FuncCrPC::computeNPPolynom;
   computeCurvature_ = &FuncCrPC::computeCurvaturePPolynom;
+}
+
+FuncCrPC::~FuncCrPC() {
+  delete tab_operator;
+  delete tab_T;
+  delete tab_B;
+  delete tab_N;
+  delete tab_curvature;
 }
 
 void FuncCrPC::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
@@ -301,6 +309,10 @@ void FuncCrPC::initializeUsingXML(DOMElement * element) {
 }
 
 FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : ContourFunction1s(), Cb(Vec("[1; 0; 0]")), pp_r(0), alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
+}
+
+FuncCrPC_PlanePolar::~FuncCrPC_PlanePolar() {
+  delete pp_r;
 }
 
 void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
