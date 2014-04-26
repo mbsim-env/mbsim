@@ -196,7 +196,6 @@ namespace MBSim {
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
-            cpData[ifrustum].getLagrangeParameterPosition() = Vec(1,NONINIT).copy();	
           }
           int SEC = 16; // partition for regula falsi
           double drho = 2.*M_PI/SEC * 1.01; // 10% intersection for improved convergence of solver
@@ -235,6 +234,7 @@ namespace MBSim {
             cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
           }
           delete funcRho;
+          delete jacRho;
         }
         /**************************************************************************/
 
