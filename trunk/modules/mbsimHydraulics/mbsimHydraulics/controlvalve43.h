@@ -22,6 +22,7 @@
 
 #include "mbsim/group.h"
 #include <fmatvec/function.h>
+#include <boost/shared_ptr.hpp>
 
 namespace MBSimControl {
   class Signal;
@@ -44,7 +45,7 @@ namespace MBSimHydraulics {
       void setLength(double l_);
       void setDiameter(double d_);
       void setAlpha(double alpha_, double alphaBack_=0);
-      void setPARelativeAlphaFunction(fmatvec::Function<double(double)> * relAlphaPA_) {relAlphaPA=relAlphaPA_; } 
+      void setPARelativeAlphaFunction(fmatvec::Function<double(double)> * relAlphaPA_) {relAlphaPA=boost::shared_ptr<fmatvec::Function<double(double)> >(relAlphaPA_); } 
       void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }
       void setRelativePositionSignal(MBSimControl::Signal * s) {position = s; }
@@ -59,7 +60,7 @@ namespace MBSimHydraulics {
       ClosableRigidLine * lPA, * lPB, * lAT, * lBT;
       RigidNode * nP, * nA, * nB, * nT;
       double offset;
-      fmatvec::Function<double(double)> * relAlphaPA;
+      boost::shared_ptr<fmatvec::Function<double(double)> > relAlphaPA;
       MBSimControl::Signal * position;
       MBSimControl::Signal * checkSizeSignalPA, * checkSizeSignalPB, * checkSizeSignalAT, * checkSizeSignalBT;
     
