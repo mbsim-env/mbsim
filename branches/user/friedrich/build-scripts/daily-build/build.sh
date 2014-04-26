@@ -8,8 +8,8 @@ $(dirname $0)/build-scripts/daily-build/build.py "$@" --rotate 30 -j 2 --forceBu
 
 # run examples with valgrind
 cd $(dirname $0)
-SCRDIR=$(pwd)
-export PKG_CONFIG_PATH=$SCRDIR/local/lib/pkgconfig
-cd $SCRDIR/mbsim/examples_valgrind
+SRCDIR=$(pwd)
+export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig
+cd $SRCDIR/mbsim/examples_valgrind
 svn update
-MBSIM_SET_MINIMAL_TEND=1 ./runexamples.py --rotate 30 -j 2 --reportOutDir /media/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --url http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --prefixSimulation "valgrind --error-exitcode=200 --trace-children=yes --num-callers=50" --disableCompare --disableValidate --buildType "Daily Build valgrind: "
+MBSIM_SET_MINIMAL_TEND=1 ./runexamples.py --rotate 30 -j 2 --reportOutDir /media/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --url http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --prefixSimulation "valgrind --error-exitcode=200 --trace-children=yes --num-callers=50 --gen-suppressions=all --suppressions=$SRCDIR/build-scripts/daily-build/valgrind-mbsim.supp --leak-check=full" --disableCompare --disableValidate --buildType "Daily Build valgrind: "
