@@ -217,6 +217,7 @@ def main():
     pj("mbsim", "modules", "mbsimControl"):      set(["http___mbsim_berlios_de_MBSimControl"]),
     pj("mbsim", "modules", "mbsimInterface"):    set(["http___mbsim_berlios_de_MBSimInterface"]),
     pj("mbsim", "modules", "mbsimHydraulics"):   set(["http___mbsim_berlios_de_MBSimHydraulics"]),
+    pj("mbsim", "modules", "mbsimPowertrain"):   set(["http___mbsim_berlios_de_MBSimPowertrain"]),
     pj("mbsim", "mbsimxml"):                     set(["http___mbsim_berlios_de_MBSimXML"]),
     pj("openmbv", "mbxmlutils"):                 set(["http___openmbv_berlios_de_MBXMLUtils_physicalvariable"]),
     pj("openmbv", "openmbv"):                    set(["http___openmbv_berlios_de_OpenMBV"])
