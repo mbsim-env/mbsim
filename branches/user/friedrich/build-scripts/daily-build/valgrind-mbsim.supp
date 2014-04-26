@@ -1,0 +1,39 @@
+{
+   boost chrono problem due to a valgrind bug fixed with version 2.9
+   Memcheck:Leak
+   ...
+   fun:_ZN5boost6chrono14duration_punctIcE6init_CEv
+   fun:_ZN5boost6chrono14duration_punctIcEC1Ei
+   fun:_ZN5boost6chronolsIcSt11char_traitsIcENS0_13process_timesIdEENS_5ratioILx1ELx1EEEEERSt13basic_ostreamIT_T0_ESC_RKNS0_8durationIT1_T2_EE
+}
+{
+   xerces reports tons of errors but only on Fedora not on e.g. Gentoo with same xerces/valgrind version
+   Memcheck:Leak
+   ...
+   fun:_ZN11xercesc_3_*
+}
+{
+   octave reports tons of errors but only on Fedora not on e.g. Gentoo
+   Memcheck:Leak
+   ...
+   obj:*/liboctinterp.so*
+}
+{
+   octave reports tons of errors but only on Fedora not on e.g. Gentoo
+   Memcheck:Leak
+   ...
+   obj:*/liboctave.so*
+}
+{
+   the casadi octave swig interface reports some errors but only on Fedora not on e.g. Gentoo
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNSs4_Rep9_S_createEjjRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_GLOBAL__sub_I_casadiOCTAVE_wrap.cxx
+   fun:call_init.part.0
+   fun:_dl_init
+   fun:dl_open_worker
+   ...
+}
