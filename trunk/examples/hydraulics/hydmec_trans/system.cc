@@ -189,13 +189,13 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n3->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[1; 0; 0]"), area);
   
   RigidNodeMec * n4 = new RigidNodeMec("n_"+getBodyName(3)+"_"+getBodyName(4));
-  //addLink(n4);
+  addLink(n4);
   n4->setInitialVolume(V0);
   n4->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[-1; 0; 0]"), area); 
   n4->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[1; 0; 0]"), area);
   n4->addInFlow(l04);
 
   EnvironmentNodeMec * n4Inf = new EnvironmentNodeMec("n4Inf");
-  //addLink(n4Inf);
+  addLink(n4Inf);
   n4Inf->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
 }
