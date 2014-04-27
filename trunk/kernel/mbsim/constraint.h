@@ -138,10 +138,11 @@ namespace MBSim {
 
     public:
       GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
+      ~GeneralizedPositionConstraint() { delete f; }
 
       void init(InitStage stage);
 
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_; }
 
       void setUpInverseKinetics();
 
@@ -160,6 +161,7 @@ namespace MBSim {
 
     public:
       GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
+      ~GeneralizedVelocityConstraint() { delete f; }
 
       void init(InitStage stage);
 
@@ -197,6 +199,7 @@ namespace MBSim {
 
     public:
       GeneralizedAccelerationConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      ~GeneralizedAccelerationConstraint() { delete f; }
 
       void init(InitStage stage);
 
