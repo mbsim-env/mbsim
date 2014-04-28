@@ -35,6 +35,10 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
+  LeakageLine::~LeakageLine() {
+    delete lpl;
+  }
+
   double LeakageLine::getGapLength() const {
     return ((glSignal)?glSignal->getSignal()(0):length);
   }
