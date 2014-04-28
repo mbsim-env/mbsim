@@ -38,6 +38,11 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SerialResistanceLinePressureLoss,  MBSIMHYDRAULICS%"SerialResistanceLinePressureLoss")
 
+  SerialResistanceLinePressureLoss::~SerialResistanceLinePressureLoss() {
+    for(unsigned int i=0; i<slp.size(); i++)
+      delete slp[i];
+  }
+
   double SerialResistanceLinePressureLoss::operator()(const double& Q) {
     double pl=0;
     for (unsigned int i=0; i<slp.size(); i++)
@@ -130,6 +135,10 @@ namespace MBSimHydraulics {
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TurbulentTubeFlowLinePressureLoss,  MBSIMHYDRAULICS%"TurbulentTubeFlowLinePressureLoss")
+
+  TurbulentTubeFlowLinePressureLoss::~TurbulentTubeFlowLinePressureLoss() {
+    delete lambdaTabular;
+  }
 
   void TurbulentTubeFlowLinePressureLoss::setHydraulicDiameter(double dHyd_, double dHydNeg_) {
     assert(dHyd_>=0);

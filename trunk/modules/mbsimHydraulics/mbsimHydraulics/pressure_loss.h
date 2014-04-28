@@ -57,8 +57,9 @@ namespace MBSimHydraulics {
   class SerialResistanceLinePressureLoss : public LinePressureLoss {
     public:
       SerialResistanceLinePressureLoss() : LinePressureLoss() {}
+      ~SerialResistanceLinePressureLoss();
       void setLine(const HLine *line_) { line = line_; for(unsigned int i=0; i<slp.size(); i++) slp[i]->setLine(line); }
-      void addLinePressureLoss(LinePressureLoss * l) {slp.push_back(l); }
+      void addLinePressureLoss(LinePressureLoss * l) { slp.push_back(l); }
       double operator()(const double& Q);
       void initializeUsingXML(xercesc::DOMElement * element);
     private:
@@ -119,6 +120,7 @@ namespace MBSimHydraulics {
   class TurbulentTubeFlowLinePressureLoss : public LinePressureLoss {
     public:
       TurbulentTubeFlowLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), dHydNeg(0), k(0), ReynoldsFactor(0), ReynoldsFactorNeg(0), lambdaTabular(NULL) {}
+      ~TurbulentTubeFlowLinePressureLoss();
       void setReferenceDiameter(double dRef_) {dRef=dRef_; }
       void setHydraulicDiameter(double dHyd_, double dHydNeg_=0);
       void setSurfaceRoughness(double k_) {k=k_; }
@@ -148,6 +150,7 @@ namespace MBSimHydraulics {
   class TabularLinePressureLoss : public LinePressureLoss {
     public:
       TabularLinePressureLoss() : LinePressureLoss(), zetaTabular(NULL) {};
+      ~TabularLinePressureLoss() { delete zetaTabular; }
       void setZetaTabular(fmatvec::Function<double(double)> * zetaTabular_) {zetaTabular=zetaTabular_; }
       double operator()(const double& Q);
       void initializeUsingXML(xercesc::DOMElement *element);
