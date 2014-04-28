@@ -71,6 +71,9 @@ namespace MBSimHydraulics {
     setLength(getDouble(e));
   }
 
+  Leakage0DOF::~Leakage0DOF() {
+    delete lpl;
+  }
 
   double Leakage0DOF::getGapLength() const {
     return ((glSignal)?glSignal->getSignal()(0):length);
