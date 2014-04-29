@@ -23,6 +23,7 @@
 #include "fmatvec/fmatvec.h"
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMNode.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace MBSim {
 
@@ -67,7 +68,7 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      static MBSimEnvironment *getInstance() { return instance?instance:(instance=new MBSimEnvironment); }
+      static MBSimEnvironment *getInstance() { return instance.get(); }
       void setAccelerationOfGravity(const fmatvec::Vec3 &grav_) { grav=grav_; }
       const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
       /***************************************************/
@@ -76,7 +77,7 @@ namespace MBSim {
       /**
        * class pointer to ensure singleton status
        */
-      static MBSimEnvironment *instance;
+      static boost::scoped_ptr<MBSimEnvironment> instance;
       
       /**
        * \brief constructor
