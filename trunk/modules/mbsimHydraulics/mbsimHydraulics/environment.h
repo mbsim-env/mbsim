@@ -46,11 +46,11 @@ namespace MBSimHydraulics {
     protected:
       double E0, kappa, rho, nu;
       double pinf;
-      static HydraulicEnvironment * instance;  
+      static boost::scoped_ptr<HydraulicEnvironment> instance;
       HydraulicEnvironment() : Environment(), rhoConstant(0), dVdT(0), rho0(0), T0(0), dRhodT(0), nuConstant(0), Tm(0), Wm(0), T2(0), m(0), T(0), E0(0), kappa(0), rho(0), nu(0), pinf(0) {}
 
     public:
-      static HydraulicEnvironment * getInstance() {return instance?instance:(instance=new HydraulicEnvironment); }
+      static HydraulicEnvironment * getInstance() {return instance.get(); }
       virtual void initializeUsingXML(xercesc::DOMElement *e);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0;}
       virtual void initializeFluidData();
