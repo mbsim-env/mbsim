@@ -1,39 +1,56 @@
+# BOOST
 {
-   boost chrono problem due to a valgrind bug fixed with version 2.9
+   boost chrono bug or valgrind bug?
    Memcheck:Leak
    ...
    fun:_ZN5boost6chrono14duration_punctIcE6init_CEv
-   fun:_ZN5boost6chrono14duration_punctIcEC1Ei
-   fun:_ZN5boost6chronolsIcSt11char_traitsIcENS0_13process_timesIdEENS_5ratioILx1ELx1EEEEERSt13basic_ostreamIT_T0_ESC_RKNS0_8durationIT1_T2_EE
 }
+
+# OCTAVE
 {
-   xerces reports tons of errors but only on Fedora not on e.g. Gentoo with same xerces/valgrind version
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
    Memcheck:Leak
    ...
-   fun:_ZN11xercesc_3_*
+   fun:octave_main
 }
 {
-   octave reports tons of errors but only on Fedora not on e.g. Gentoo
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
    Memcheck:Leak
    ...
-   obj:*/liboctinterp.so*
-}
-{
-   octave reports tons of errors but only on Fedora not on e.g. Gentoo
-   Memcheck:Leak
-   ...
-   obj:*/liboctave.so*
-}
-{
-   the casadi octave swig interface reports some errors but only on Fedora not on e.g. Gentoo
-   Memcheck:Leak
-   fun:_Znwj
-   fun:_ZNSs4_Rep9_S_createEjjRKSaIcE
-   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
-   fun:_ZNSsC1EPKcRKSaIcE
-   fun:_GLOBAL__sub_I_casadiOCTAVE_wrap.cxx
-   fun:call_init.part.0
+   obj:/usr/lib*/octave/*/liboctinterp.so*
+   fun:*
    fun:_dl_init
-   fun:dl_open_worker
+}
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
    ...
+   obj:/usr/lib*/octave/*/liboctave.so*
+   fun:*
+   fun:_dl_init
+}
+{
+   octave deinit bug?
+   Memcheck:Leak
+   ...
+   fun:_Z16do_octave_atexitv
+   fun:_Z17clean_up_and_exiti
+}
+{
+   feval bug in octave?
+   Memcheck:Leak
+   ...
+   fun:_Z5fevalP15octave_functionRK17octave_value_listi
+}
+{
+   feval bug in octave?
+   Memcheck:Leak
+   ...
+   fun:_Z5fevalRKSsRK17octave_value_listi
+}
+{
+   eval_string bug in octave?
+   Memcheck:Leak
+   ...
+   fun:_Z11eval_stringRKSsbRii
 }
