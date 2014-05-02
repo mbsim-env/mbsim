@@ -837,13 +837,11 @@ namespace MBSim {
       map<Index, double> tolerances;
       tolerances.insert(pair<Index, double>(Index(0, possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
       tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(), 2 * possibleContactPoints.size() - 1), 1e-3)); //tolerances for forces
-      LocalResidualCriteriaFunction* critfunc = new LocalResidualCriteriaFunction(tolerances);
-      LCP.setNewtonCriteriaFunction(critfunc);
+      LocalResidualCriteriaFunction critfunc(tolerances);
+      LCP.setNewtonCriteriaFunction(&critfunc);
       LCP.setDebugLevel(0);
 
       solution0.resize() = LCP.solve(solution0);
-
-      delete critfunc;
 
       Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1);
 

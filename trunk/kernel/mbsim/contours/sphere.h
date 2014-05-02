@@ -55,6 +55,10 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR */
+      fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      /**********************************/
+
       /* GETTER / SETTER */
       void setRadius(double r_) { r = r_; }
       double getRadius() const { return r; }
