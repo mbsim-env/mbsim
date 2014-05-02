@@ -51,6 +51,15 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
+  Vec2 Sphere::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
+    Vec3 SrPoint = R->getOrientation().T() * (WrPoint - R->getPosition());
+    Vec2 alpha;
+    double r = nrm2(SrPoint);
+    alpha(0) = acos(SrPoint(2) / r); // inclination
+    alpha(1) = atan2(SrPoint(1), SrPoint(0)); // azimuth
+    return alpha;
+  }
+
   void Sphere::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
