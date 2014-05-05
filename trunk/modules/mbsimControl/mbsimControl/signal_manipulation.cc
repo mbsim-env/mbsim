@@ -525,11 +525,11 @@ namespace MBSimControl {
   }
 
   void PIDController::updatedx(double t, double dt) {
-    xd=s->getSignal()*dt;
+    if(xSize) xd=s->getSignal()*dt;
   }
 
   void PIDController::updatexd(double t) {
-    xd=s->getSignal();
+    if(xSize) xd=s->getSignal();
   }
 
   void PIDController::init(MBSim::InitStage stage) {
