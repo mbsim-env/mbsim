@@ -82,7 +82,6 @@ namespace MBSimPowertrain {
   }
 
   void TorsionalStiffness::init(InitStage stage) {
-    assert(body->getRotation()!=NULL);
     if(stage==resolveXMLPath) {
       if(saved_body1!="")
         setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
@@ -90,6 +89,8 @@ namespace MBSimPowertrain {
         setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
       LinkMechanics::connect(body[0]->getFrameForKinematics());
       LinkMechanics::connect(body[1]->getFrameForKinematics());
+      if(body[0]->getRotation()==NULL or body[1]->getRotation()==NULL)
+        throw MBSim::MBSimError("Bodies connected to "+name+" must have a rotation");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
