@@ -87,10 +87,12 @@ namespace MBSimPowertrain {
         setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
       if(saved_body2!="")
         setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
+      if(body[0]==NULL or body[1]==NULL)
+        throw MBSim::MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::connect(body[0]->getFrameForKinematics());
       LinkMechanics::connect(body[1]->getFrameForKinematics());
       if(body[0]->getRotation()==NULL or body[1]->getRotation()==NULL)
-        throw MBSim::MBSimError("Bodies connected to "+name+" must have a rotation");
+        throw MBSim::MBSimError("ERROR in "+getName()+": bodies must have a rotation!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {

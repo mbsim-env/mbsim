@@ -64,6 +64,8 @@ namespace MBSimControl {
         setSignal(getByPath<Signal>(saved_inputSignal));
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if (stage==MBSim::resize) {
