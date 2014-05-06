@@ -82,6 +82,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -211,6 +213,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -363,10 +367,11 @@ namespace MBSim {
   }
 
   void GeneralizedSpringDamper::init(InitStage stage) {
-    assert(body->getRotation()!=NULL);
     if(stage==resolveXMLPath) {
       if(saved_body!="")
         setRigidBody(getByPath<RigidBody>(saved_body));
+      if(not(body))
+        throw MBSimError("ERROR in "+getName()+": no dependent body given!");
       LinkMechanics::connect(body->getFrameOfReference());
       LinkMechanics::connect(body->getFrameForKinematics());
       LinkMechanics::init(stage);

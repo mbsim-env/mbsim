@@ -450,6 +450,8 @@ namespace MBSim {
     if (stage == resolveXMLPath) {
       if (saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
+      if(not(contour.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if (stage == resize) {
