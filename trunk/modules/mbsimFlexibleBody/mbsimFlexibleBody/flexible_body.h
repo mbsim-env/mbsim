@@ -209,6 +209,10 @@ namespace MBSimFlexibleBody {
        * \brief vector of contour parameters each describing a frame
        */
       std::vector<MBSim::ContourPointData> S_Frame;
+
+      // Workaround to free memory of contourFrame in dtor.
+      // TODO: provide a consistent solution and remove the following line
+      MBSim::Frame *contourFrame;
   };
 
   /**
