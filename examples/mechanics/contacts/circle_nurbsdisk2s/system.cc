@@ -176,7 +176,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalImpactLaw(new UnilateralNewtonImpact);
   contact->setTangentialForceLaw(new SpatialCoulombFriction(0.2));
   contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.2));
-  contact->setContactKinematics(new ContactKinematicsCircleNurbsDisk2s());
   contact->enableOpenMBVContactPoints(); // shows the frames in openmbv
   this->addLink(contact);
 
