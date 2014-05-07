@@ -1,3 +1,4 @@
+#define FMATVEC_NO_BOUNDS_CHECK
 #include "system.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
