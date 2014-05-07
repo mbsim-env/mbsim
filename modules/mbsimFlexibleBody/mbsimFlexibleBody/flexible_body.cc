@@ -40,12 +40,16 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {}
+  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {
+    contourFrame = new Frame("ContourFrame");
+    //addFrame(contourFrame,0);
+  }
 
   FlexibleBody::~FlexibleBody() {
     for(unsigned int i=0; i<discretization.size(); i++) {
       if(discretization[i]) { delete discretization[i]; discretization[i] = NULL; }
     }
+    delete contourFrame;
   }
 
   void FlexibleBody::updateh(double t, int k) {
@@ -157,10 +161,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
-    stringstream frameName;
-    frameName << "ContourFrame" << contour.size();
-    Frame *contourFrame = new Frame(frameName.str());
-    addFrame(contourFrame,0);
     contour_->setFrameOfReference(contourFrame);
     Body::addContour(contour_);
   }
