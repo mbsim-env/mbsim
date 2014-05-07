@@ -19,7 +19,7 @@ int main (int argc, char* argv[]) {
   System *sys;
   ThetaTimeSteppingIntegrator *integrator;
 
-  double tEnd = 3e-2;
+  double tEnd = 3e-4;
   double dtFull = 1e-4;
   double dtRed = 1.e0*dtFull;
   double dtPlot = dtRed;
@@ -68,6 +68,9 @@ int main (int argc, char* argv[]) {
     double calctime = timer.elapsed();
 
     cout << "Finished reduced Simulation after calculation time [s] : " << calctime << endl;
+
+    delete sys;
+    delete integrator;
   }
 
 
