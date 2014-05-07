@@ -19,7 +19,7 @@ int main (int argc, char* argv[]) {
   System *sys;
   ThetaTimeSteppingIntegrator *integrator;
 
-  double tEnd = 3e-4;
+  double tEnd = 3e-2;
   double dtFull = 1e-4;
   double dtRed = 1.e0*dtFull;
   double dtPlot = dtRed;
