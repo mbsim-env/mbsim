@@ -52,11 +52,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor 
        * \param name of contour
        */
-      NurbsDisk2s(const std::string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
-#ifndef HAVE_NURBS
-        throw MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
-#endif
-      }
+      NurbsDisk2s(const std::string &name);
 
       /**
        * \brief destructor

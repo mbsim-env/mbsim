@@ -35,6 +35,19 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
+  NurbsDisk2s::NurbsDisk2s(const string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
+#ifndef HAVE_NURBS
+    throw MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
+#else
+    uvec=0;
+    uVec=0;
+    vvec=0;
+    vVec=0;
+    Surface = new PlNurbsSurfaced;
+    SurfaceVelocities = new PlNurbsSurfaced;
+#endif
+  }
+
   NurbsDisk2s::~NurbsDisk2s() {
 #ifdef HAVE_NURBS
     if(Surface) {delete Surface; Surface=0;}
@@ -146,8 +159,6 @@ namespace MBSimFlexibleBody {
       computeUVector(nj+degU);
       computeVVector(nr+1);
 
-      Surface = new PlNurbsSurfaced;
-      SurfaceVelocities = new PlNurbsSurfaced;
       for(int i=0; i<nr+1; i++) 
         for(int j=0; j<nj; j++) 
           jacobians.push_back(ContourPointData(i*nj+j));
@@ -210,7 +221,9 @@ namespace MBSimFlexibleBody {
 
 #ifdef HAVE_NURBS
   void NurbsDisk2s::computeUVector(const int NbPts) {
+    delete uvec;
     uvec = new PLib::Vector<double>(NbPts);
+    delete uVec;
     uVec = new PLib::Vector<double>(NbPts + degU + 1);
 
     const double stepU = 2 * M_PI / nj;
@@ -229,7 +242,9 @@ namespace MBSimFlexibleBody {
 
 #ifdef HAVE_NURBS
   void NurbsDisk2s::computeVVector(const int NbPts) {
+    delete vvec;
     vvec = new PLib::Vector<double>(NbPts);
+    delete vVec;
     vVec = new PLib::Vector<double>(NbPts + degV+1);
 
     const double stepV = (Ra - Ri) / nr;
