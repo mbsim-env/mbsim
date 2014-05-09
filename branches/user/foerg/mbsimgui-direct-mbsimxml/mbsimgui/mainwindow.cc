@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mainwindow.h"
+#include "process.h"
 #include "solver.h"
 #include "frame.h"
 #include "contour.h"
@@ -43,12 +44,18 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <mbsimxml/mbsimflatxml.h>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
 namespace bfs=boost::filesystem;
+
+streambuf *oldCoutStreamBuf, *oldCerrStreamBuf;
+ostringstream strCout, strCerr;
+QString currentDir;
+bool currentTask;
 
 namespace MBSimGUI {
 
@@ -61,7 +68,12 @@ namespace MBSimGUI {
   OctEval *MainWindow::octEval=NULL;
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), timer(this) {
+
+    oldCoutStreamBuf = cout.rdbuf();
+    cout.rdbuf( strCout.rdbuf() );
+    oldCerrStreamBuf = cerr.rdbuf();
+    cerr.rdbuf( strCerr.rdbuf() );
 
     mw = this;
 
@@ -152,11 +164,11 @@ namespace MBSimGUI {
     connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
     toolBar->addAction(actionRefresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
-    actionOpenMBV->setDisabled(true);
+//    actionOpenMBV->setDisabled(true);
     connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
     toolBar->addAction(actionOpenMBV);
     actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
-    actionH5plotserie->setDisabled(true);
+//    actionH5plotserie->setDisabled(true);
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
 
@@ -238,6 +250,11 @@ namespace MBSimGUI {
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
+    //mbsimThread = new WorkerThread(this);
+    mbsimThread = new WorkerThread;
+    connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(handleResults(int)));
+//    connect(mbsimThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
+
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsim=new Process(this);
@@ -287,22 +304,22 @@ namespace MBSimGUI {
 
     setAcceptDrops(true);
 
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
-    timer->start(1000);
-
+//    QTimer *timer = new QTimer(this);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+//    timer->setSingleShot(true);
     //  timer = new QTimer(this);
-    //  timer->setSingleShot(true);
     //  connect(timer, SIGNAL(timeout()), this, SLOT(timeout2()));
     //  timer->start(1300);
   }
 
   void MainWindow::timeout() {
-    //  QString str = uniqueTempDir+"/out1.ombv.xml";
-    //  utime(str.toStdString().c_str(),0);
-    //  str = uniqueTempDir+"/out1.ombv.h5";
-    //  utime(str.toStdString().c_str(),0);
+//    cout << "timeout" << endl;
+    QString str = QString::fromStdString(strCout.str());
+    mbsim->out->setHtml(Process::convertToHtml(str));
+    mbsim->out->moveCursor(QTextCursor::End);
+    str = QString::fromStdString(strCerr.str());
+    mbsim->err->setHtml(Process::convertToHtml(str));
+    mbsim->err->moveCursor(QTextCursor::End);
   }
   void MainWindow::timeout2() {
     //  cout << "view top" << endl;
@@ -323,16 +340,19 @@ namespace MBSimGUI {
     std::list<string> arg;
     arg.push_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
-    arg.push_back("--autoreload");
-    arg.push_back(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+    //arg.push_back("--autoreload");
+    //arg.push_back(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+    arg.push_back("/home/foerg/tmp/openmbv");
     inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
-
+    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementList, SLOT(openEditor()));
     connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(selectionChanged()));
   }
 
   MainWindow::~MainWindow() {
+    cout.rdbuf(oldCoutStreamBuf);
+    cerr.rdbuf(oldCerrStreamBuf);
     bfs::remove_all(uniqueTempDir);
   }
 
@@ -436,7 +456,15 @@ namespace MBSimGUI {
       fileProject=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       MBSimObjectFactory::initialize();
-      shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
+      shared_ptr<DOMDocument> doc;
+      try{
+      doc=MainWindow::parser->parse(file.toStdString());
+      }
+      catch(...) {
+        cout << "unknown error" << endl;
+        return;
+      }
+
       DOMElement *e=doc->getDocumentElement();
       DOMElement *ele0=doc->getDocumentElement();
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
@@ -533,8 +561,8 @@ namespace MBSimGUI {
       ret = QMessageBox::warning(this, "New MBS", "Current MBS will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
     if(ret == QMessageBox::Ok) {
       mbsDir = QDir::current();
-      actionOpenMBV->setDisabled(true);
-      actionH5plotserie->setDisabled(true);
+//      actionOpenMBV->setDisabled(true);
+//      actionH5plotserie->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
@@ -698,7 +726,7 @@ namespace MBSimGUI {
     ele0->insertBefore(filenamePI, ele0->getFirstChild());
 
     paramList.writeXMLFile(ele0);
-    DOMParser::serialize(doc.get(), "test1.xml", true);
+//    DOMParser::serialize(doc.get(), "test1.xml", true);
 
     try {
       D(doc)->validate();
@@ -707,7 +735,7 @@ namespace MBSimGUI {
       cout << "Error in validation" << endl;
       return;
     }
-    DOMParser::serialize(doc.get(), "test2.xml", true);
+//    DOMParser::serialize(doc.get(), "test2.xml", true);
 
     try {
       // remove all parameters from octave using delete and new NewParamLevel
@@ -795,47 +823,37 @@ namespace MBSimGUI {
     string saveName=slv->getName();
     slv->setName("out"+sTask.toStdString());
     QString projectFile=uniqueTempDir_+"/in"+sTask+".mbsimprj.xml";
-//    saveProject(projectFile);
+
+    currentTask = task;
+    currentDir = QDir::currentPath();
+    QDir::setCurrent(uniqueTempDir_);
 
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     writeProject(doc);
-
-    DOMElement *root = doc->getDocumentElement();
-
-    // GUI-XML-Baum mit OriginalFilename ergaenzen
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%"MBS.mbsimprj.xml");
-      root->insertBefore(filenamePI, root->getFirstChild());
-    }
-
-    D(doc)->validate();
-
-    vector<bfs::path> dep;
-    OctEval octEval(&dep);
-
-    // Praeprozessor starten
-    DOMElement *mainxmlele=doc->getDocumentElement();
-    try {
-      preprocess(parser, octEval, dep, mainxmlele);
-    }
-    catch(...) {
-      cout << "error in preprocess" << endl;
-      slv->setName(saveName);
-      return;
-    }
-
-    // Neuen GUI-XML-Baum serialisieren
-    DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
     slv->setName(saveName);
-
-    QStringList arg;
-    if(task==1)
-      arg.append("--stopafterfirststep");
-    arg.append(projectFile);
-    mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-    mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
     absolutePath = false;
+
+    mbsim->setCurrentIndex(0);
+
+    if(task==1 and OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
+    static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
+    timer.start(250);
+    mbsimThread->setDocument(doc);
+    mbsimThread->setParser(parser);
+    mbsimThread->setTask(task);
+    mbsimThread->start();
+  }
+
+  void MainWindow::handleResults(int result) {
+    mbsimThread->detach();
+    if(result==0 and currentTask==1)
+      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+    QDir::setCurrent(currentDir);
+    timer.stop();
+    timeout();
+    mbsim->setCurrentIndex(result);
+    strCerr.str("");
+    strCout.str("");
   }
 
   void MainWindow::refresh() {
@@ -843,19 +861,19 @@ namespace MBSimGUI {
   }
 
   void MainWindow::interrupt() {
-    mbsim->getProcess()->terminate();
+    mbsimThread->terminate();
   }
 
   void MainWindow::simulate() {
     mbsimxml(0);
-    actionSaveDataAs->setDisabled(false);
-    actionSaveMBSimH5DataAs->setDisabled(false);
-    actionSaveOpenMBVDataAs->setDisabled(false);
-    actionSimulate->setDisabled(true);
-    actionOpenMBV->setDisabled(true);
-    actionH5plotserie->setDisabled(true);
-    actionRefresh->setDisabled(true);
-    statusBar()->showMessage(tr("Simulating"));
+//    actionSaveDataAs->setDisabled(false);
+//    actionSaveMBSimH5DataAs->setDisabled(false);
+//    actionSaveOpenMBVDataAs->setDisabled(false);
+//    actionSimulate->setDisabled(true);
+//    actionOpenMBV->setDisabled(true);
+//    actionH5plotserie->setDisabled(true);
+//    actionRefresh->setDisabled(true);
+//    statusBar()->showMessage(tr("Simulating"));
   }
 
   void MainWindow::openmbv() {
@@ -927,113 +945,6 @@ namespace MBSimGUI {
         //"  <li>...</li>"
         "</ul>"
         );
-  }
-
-  Process::Process(QWidget *parent) : QTabWidget(parent) {
-    process=new QProcess(this);
-    out=new QTextBrowser(this);
-    err=new QTextBrowser(this);
-    out->setOpenLinks(false);
-    err->setOpenLinks(false);
-    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(outLinkClicked(const QUrl &)));
-    connect(err, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(errLinkClicked(const QUrl &)));
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(processFinished(int,QProcess::ExitStatus)));
-    addTab(out, "Out");
-    addTab(err, "Err");
-    setCurrentIndex(0);
-    setMinimumHeight(80);
-    setTabPosition(QTabWidget::West);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(updateOutputAndError()));
-  }
-
-  void Process::clearOutputAndStart(const QString &program, const QStringList &arguments) {
-    outText="";
-    errText="";
-    out->clear();
-    err->clear();
-    setCurrentIndex(0);
-    process->start(program, arguments);
-    timer.start(250);
-  }
-
-  void Process::updateOutputAndError() {
-    QByteArray outArray=process->readAllStandardOutput();
-    if(outArray.size()!=0) {
-      outText+=outArray.data();
-      out->setHtml(convertToHtml(outText));
-      out->moveCursor(QTextCursor::End);
-    }
-
-    QByteArray errArray=process->readAllStandardError();
-    if(errArray.size()!=0) {
-      errText+=errArray.data();
-      err->setHtml(convertToHtml(errText));
-      err->moveCursor(QTextCursor::Start);
-    }
-  }
-
-  QString Process::convertToHtml(QString &text) {
-    // the following operations modify the original text
-
-#ifdef WIN32
-    // convert windows line ending to linux line ending (they are later replaced to html line ending)
-    text.replace("\x0D\x0A", "\x0A");
-#endif
-    // from now on use linux line ending => do not use \n, \r in string literals but \x0A, \x0D
-
-    // remove all lines but the last ending with carriage return '\x0D'
-    static QRegExp carriageReturn("(^|\x0A)[^\x0A]*\x0D([^\x0A\x0D]*\x0D)");
-    text.replace(carriageReturn, "\\1\\2");
-
-    // replace <FILE ...> to html reference
-    static QRegExp fileRE("<FILE path=\"([^\"]+)\" line=\"([0-9]+)\">([^<]+)</FILE>");
-    text.replace(fileRE, "<a href=\"\\1?line=\\2\">\\3</a>");
-
-    // the following operations modify only the QString return value
-    QString ret=text;
-
-    // newlines '\x0A' to html
-    ret.replace("\x0A", "<br/>");
-
-    return ret;
-  }
-
-  QSize Process::sizeHint() const {
-    QSize size=QTabWidget::sizeHint();
-    size.setHeight(80);
-    return size;
-  }
-
-  QSize Process::minimumSizeHint() const {
-    QSize size=QTabWidget::minimumSizeHint();
-    size.setHeight(80);
-    return size;
-  }
-
-  void Process::linkClicked(const QUrl &link, QTextBrowser *std) {
-    static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
-    cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
-      "Where %1 is replaced by the filename and %2 by the line number. "<<
-      "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
-    QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
-    QProcess::startDetached(comm);
-  }
-
-  void Process::outLinkClicked(const QUrl &link) {
-    linkClicked(link, out);
-  }
-
-  void Process::errLinkClicked(const QUrl &link) {
-    linkClicked(link, err);
-  }
-
-  void Process::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    timer.stop();
-    updateOutputAndError();
-    if(exitStatus==QProcess::NormalExit && exitCode==0)
-      setCurrentIndex(0);
-    else
-      setCurrentIndex(1);
   }
 
   void MainWindow::removeElement() {
