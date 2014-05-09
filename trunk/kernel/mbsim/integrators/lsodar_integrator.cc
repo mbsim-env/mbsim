@@ -160,6 +160,7 @@ namespace MBSim {
           tPlot = tStop;
       }
       if(istate==3) {
+        boost::this_thread::interruption_point();
         system->shift(z, jsv, t);
         if(plotOnRoot) {
           system->plot(z, t);
