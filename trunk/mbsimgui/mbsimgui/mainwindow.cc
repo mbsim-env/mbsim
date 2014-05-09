@@ -52,6 +52,7 @@ namespace bfs=boost::filesystem;
 
 namespace MBSimGUI {
 
+  bool currentTask;
   bool absolutePath = false;
   QDir mbsDir;
 
@@ -310,6 +311,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+    if(currentTask==1)
+      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
     actionSimulate->setDisabled(false);
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
@@ -323,9 +326,12 @@ namespace MBSimGUI {
     std::list<string> arg;
     arg.push_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
-    arg.push_back("--autoreload");
-    arg.push_back(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+//    arg.push_back("--autoreload");
+//    arg.push_back(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+//    inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
+    arg.push_back("/home/foerg/tmp/openmbv");
     inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
+    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementList, SLOT(openEditor()));
@@ -795,7 +801,11 @@ namespace MBSimGUI {
     string saveName=slv->getName();
     slv->setName("out"+sTask.toStdString());
     QString projectFile=uniqueTempDir_+"/in"+sTask+".mbsimprj.xml";
-//    saveProject(projectFile);
+
+    currentTask = task;
+
+    if(task==1 and OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
+      static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
 
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     writeProject(doc);
