@@ -131,7 +131,7 @@ namespace MBSimGUI {
           DOMElement* ee=e;
           if(ee) {
             for(int i=0; i<factory->getSize(); i++) {
-              DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;;
+              DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
               if(eee) {
                 index = i;
                 property = factory->createProperty(i);
