@@ -135,7 +135,6 @@ namespace MBSimGUI {
       void addVectorParameter();
       void addMatrixParameter();
       void simulate();
-      void interrupt();
       void refresh();
       void openmbv();
       void h5plotserie();
@@ -175,11 +174,13 @@ namespace MBSimGUI {
       static QString convertToHtml(QString &text);
       void linkClicked(const QUrl &link, QTextBrowser *std);
       QTimer timer;
-      private slots:
-        void updateOutputAndError();
+    private slots:
+      void updateOutputAndError();
       void outLinkClicked(const QUrl &link);
       void errLinkClicked(const QUrl &link);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    public slots:
+      void interrupt();
   };
 
 }

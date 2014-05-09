@@ -72,6 +72,8 @@ namespace MBSimGUI {
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
     bfs::create_directories(uniqueTempDir);
 
+    mbsim=new Process(this);
+
     QProcess process;
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
@@ -146,7 +148,7 @@ namespace MBSimGUI {
     toolBar->addAction(actionSimulate);
     QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
 //    actionInterrupt->setDisabled(true);
-    connect(actionInterrupt,SIGNAL(triggered()),this,SLOT(interrupt()));
+    connect(actionInterrupt,SIGNAL(triggered()),mbsim,SLOT(interrupt()));
     toolBar->addAction(actionInterrupt);
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
 //    actionRefresh->setDisabled(true);
@@ -241,7 +243,6 @@ namespace MBSimGUI {
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
-    mbsim=new Process(this);
     QProcessEnvironment env=QProcessEnvironment::systemEnvironment();
     env.insert("MBXMLUTILS_XMLOUTPUT", "1");
     mbsim->getProcess()->setProcessEnvironment(env);
@@ -852,10 +853,6 @@ namespace MBSimGUI {
     mbsimxml(1);
   }
 
-  void MainWindow::interrupt() {
-    mbsim->getProcess()->terminate();
-  }
-
   void MainWindow::simulate() {
     mbsimxml(0);
     actionSaveDataAs->setDisabled(false);
@@ -968,18 +965,14 @@ namespace MBSimGUI {
 
   void Process::updateOutputAndError() {
     QByteArray outArray=process->readAllStandardOutput();
-    if(outArray.size()!=0) {
-      outText+=outArray.data();
-      out->setHtml(convertToHtml(outText));
-      out->moveCursor(QTextCursor::End);
-    }
+    outText+=outArray.data();
+    out->setHtml(convertToHtml(outText));
+    out->moveCursor(QTextCursor::End);
 
     QByteArray errArray=process->readAllStandardError();
-    if(errArray.size()!=0) {
-      errText+=errArray.data();
-      err->setHtml(convertToHtml(errText));
-      err->moveCursor(QTextCursor::Start);
-    }
+    errText+=errArray.data();
+    err->setHtml(convertToHtml(errText));
+    err->moveCursor(QTextCursor::Start);
   }
 
   QString Process::convertToHtml(QString &text) {
@@ -1044,6 +1037,11 @@ namespace MBSimGUI {
       setCurrentIndex(0);
     else
       setCurrentIndex(1);
+  }
+
+  void Process::interrupt() {
+    errText="Simulation interrupted";
+    process->terminate();
   }
 
   void MainWindow::removeElement() {
