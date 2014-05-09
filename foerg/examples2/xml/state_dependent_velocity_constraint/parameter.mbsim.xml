@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<param:parameter xmlns="http://mbsim.berlios.de/MBSim" xmlns:ctl="http://mbsim.berlios.de/MBSimControl" xmlns:flex="http://mbsim.berlios.de/MBSimFlexibleBody" xmlns:hyd="http://mbsim.berlios.de/MBSimHydraulics" xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator" xmlns:param="http://openmbv.berlios.de/MBXMLUtils/parameter" xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" xmlns:ns_1="http://openmbv.berlios.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
-    <param:scalarParameter name="g">9.81</param:scalarParameter>
-    <param:scalarParameter name="c">0.005</param:scalarParameter>
-    <param:scalarParameter name="l">100</param:scalarParameter>
-    <param:scalarParameter name="v0x">v0/sqrt(1+(c*l)^2)</param:scalarParameter>
-    <param:scalarParameter name="v0">30</param:scalarParameter>
-</param:parameter>
