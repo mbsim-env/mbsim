@@ -4,13 +4,10 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-INCLUDES = $(QT_CFLAGS) $(OPENMBV_CFLAGS)
+mbsimgui_CPPFLAGS = $(QT_CFLAGS) $(DEPS_CFLAGS)
 
-LDADD = $(QT_LIBS) $(OPENMBV_LIBS) 
-
-mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
-
-mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
+mbsimgui_LDFLAGS = -Wl,-rpath -Wl,\$$ORIGIN/../lib
+mbsimgui_LDADD = $(QT_LIBS) $(DEPS_LIBS)
 
 mbsimgui_SOURCES = element.cc \
 		   frame.cc \
@@ -70,7 +67,8 @@ mbsimgui_SOURCES = element.cc \
 		   mainwindow.cc \
 		   main.cc \
 		   embed.cc \
-		   torsional_stiffness.cc
+		   torsional_stiffness.cc \
+		   process.cc
 		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
@@ -94,7 +92,8 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
-		   mainwindow.moc.cc
+		   mainwindow.moc.cc \
+		   process.moc.cc
 
 mbsimgui_HEADERS = 
 		   
