@@ -446,7 +446,6 @@ namespace MBSimGUI {
   void FileWidget::setFile(const QString &str) {
     file = str;
     relativeFilePath->setText(mbsDir.relativeFilePath(file));
-    cout << "file path = "<< relativeFilePath->text().toStdString() << endl;
   }
 
   void FileWidget::selectFile() {
