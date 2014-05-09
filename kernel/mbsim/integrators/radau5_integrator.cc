@@ -26,6 +26,7 @@
 #include "radau5_integrator.h"
 #include <time.h>
 #include <fstream>
+#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -59,6 +60,7 @@ namespace MBSim {
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
 
     while(*t >= tPlot) {
+      boost::this_thread::interruption_point();
       for(int i=1; i<=*n; i++)
 	zInp(i-1) = CONTR5(&i,&tPlot,cont,lrc);
       system->plot(zInp, tPlot);

@@ -26,10 +26,9 @@
 // #include <mbsim/utils/eps.h>
 // #include "fortran_wrapper.h"
 // #include "daspk_integrator.h"
-// 
-// // TODO wieder entfernen
 // #include <fstream>
 // #include <time.h>
+// #include <boost/thread/thread.hpp>
 // 
 // #ifndef NO_ISO_14882
 // using namespace std;
@@ -107,6 +106,7 @@
 //       DDASPK (res, &zSize, &t, z(), zdot(), &tPlot, info(), &rTol, aTol(), 
 // 	  &idid, rWork(), &lrWork, iWork(), &liWork, rpar(),ipar(), 0, 0);
 //       if(fabs(t-tPlot)<epsroot()) {
+//        boost::this_thread::interruption_point();
 // 	system->plot(z, t);
 // 	if(output)
 // 	  cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;

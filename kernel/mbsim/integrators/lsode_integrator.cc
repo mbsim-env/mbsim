@@ -26,10 +26,9 @@
 #include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"
 #include "lsode_integrator.h"
-
-// TODO wieder entfernen
 #include <fstream>
 #include <time.h>
+#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -120,6 +119,7 @@ namespace MBSim {
         &one, &istate, &one, rWork(), &lrWork, iWork(), 
         &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
+        boost::this_thread::interruption_point();
         system->plot(z, t);
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;

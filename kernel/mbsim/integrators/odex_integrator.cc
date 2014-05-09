@@ -26,6 +26,7 @@
 #include "odex_integrator.h"
 #include <time.h>
 #include <fstream>
+#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -55,6 +56,7 @@ namespace MBSim {
   void ODEXIntegrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
 
     while(*t >= tPlot) {
+      boost::this_thread::interruption_point();
       for(int i=1; i<=*n; i++)
 	zInp(i-1) = CONTEX(&i,&tPlot,con,ncon,icomp,nd);
       system->plot(zInp, tPlot);

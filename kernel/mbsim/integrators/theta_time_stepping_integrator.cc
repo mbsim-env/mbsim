@@ -23,9 +23,9 @@
 #include "mbsim/integrators/theta_time_stepping_integrator.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/eps.h"
-
 #include <cmath>
 #include <time.h>
+#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -109,6 +109,7 @@ namespace MBSim {
     while (t <= tStop) { // time loop
       integrationSteps++;
       if ((step * stepPlot - integrationSteps) < 0) {
+        boost::this_thread::interruption_point();
         step++;
         if (driftCompensation)
           system.projectGeneralizedPositions(t, 0);
