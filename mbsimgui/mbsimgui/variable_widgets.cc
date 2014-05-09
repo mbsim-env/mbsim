@@ -934,8 +934,8 @@ namespace MBSimGUI {
   RotMatWidgetFactory::RotMatWidgetFactory() : name(4), unit(4), defaultUnit(4,1) {
     name[0] = "AboutZ";
     name[1] = "Cardan";
-    name[2] = "Editor";
-    name[3] = "Matrix";
+    name[2] = "Matrix";
+    name[3] = "Editor";
     unit[0] = QStringList();
     unit[1] = QStringList();
     unit[2] = QStringList();
@@ -951,9 +951,9 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new CardanWidget,unit[1],defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
-    if(i==3)
       return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+    if(i==3)
+      return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
   }
 
   SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
