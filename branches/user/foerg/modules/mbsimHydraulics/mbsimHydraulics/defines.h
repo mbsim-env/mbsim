@@ -1,7 +1,0 @@
-#ifndef _MBSIMHYDRAULICS_DEFINES_H_
-#define _MBSIMHYDRAULICS_DEFINES_H_
-
-#define MBSIMHYDRAULICSNS_ "http://mbsim.berlios.de/MBSimHydraulics"
-#define MBSIMHYDRAULICSNS "{"MBSIMHYDRAULICSNS_"}"
-
-#endif

@@ -1,5 +1,0 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
-  <scalarParameter name="freq1">pi</scalarParameter>
-  <scalarParameter name="freq2">pi/3</scalarParameter>
-  <scalarParameter name="v0y">1</scalarParameter>
-</parameter>
