@@ -57,10 +57,6 @@ namespace MBSimGUI {
       virtual Integrator* createIntegrator(xercesc::DOMElement *element) { return NULL; }
       virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
       virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
-      virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
-        static MM_PRINSPRE ret;
-        return ret;
-      }
   };
 
   class ObjectFactory : public ObjectFactoryBase {
@@ -84,7 +80,6 @@ namespace MBSimGUI {
       Integrator* createIntegrator(xercesc::DOMElement *element);
       Parameter* createParameter(xercesc::DOMElement *element);
       Environment *getEnvironment(xercesc::DOMElement *element);
-      M_NSPRE getNamespacePrefixMapping();
   };
 
 
