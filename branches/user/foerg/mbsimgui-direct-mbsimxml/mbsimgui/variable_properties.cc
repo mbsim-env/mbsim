@@ -452,9 +452,9 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableProperty(new CardanProperty,unit[1],xmlName);
     if(i==2)
-      return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
-    if(i==3)
       return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
+    if(i==3)
+      return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
   }
 
   MatPropertyFactory::MatPropertyFactory(const FQN &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {

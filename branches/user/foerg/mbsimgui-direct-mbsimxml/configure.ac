@@ -27,9 +27,7 @@ AC_SUBST([UIC])
 AC_SUBST([RCC])
 
 dnl OpenMBV
-PKG_CHECK_MODULES(OPENMBV, [openmbv])
-
-PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
+PKG_CHECK_MODULES(DEPS, mbsim mbsimControl mbsimPowertrain openmbv mbxmlutils)
 
 AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inlineombv="no"],[inlineombv="yes"]) if test "$inlineombv" = "yes"; then
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
