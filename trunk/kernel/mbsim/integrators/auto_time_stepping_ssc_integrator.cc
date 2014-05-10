@@ -25,7 +25,6 @@
 #include "auto_time_stepping_ssc_integrator.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/stopwatch.h"
-#include <boost/thread/thread.hpp>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -1586,7 +1585,6 @@ namespace MBSim {
         }
       }
       while (t>tPlot) {
-        boost::this_thread::interruption_point();
         double ratio = (tPlot -(t-dte))/dte;
         zT1 << zi + (ze-zi)*ratio;
         setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListT1);

@@ -25,7 +25,6 @@
 #include "lsodar_integrator.h"
 #include <fstream>
 #include <time.h>
-#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -147,7 +146,6 @@ namespace MBSim {
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, jsv());
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        boost::this_thread::interruption_point();
         system->plot(z, t);
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
@@ -160,7 +158,6 @@ namespace MBSim {
           tPlot = tStop;
       }
       if(istate==3) {
-        boost::this_thread::interruption_point();
         system->shift(z, jsv, t);
         if(plotOnRoot) {
           system->plot(z, t);

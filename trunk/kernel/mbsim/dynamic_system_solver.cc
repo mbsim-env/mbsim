@@ -40,6 +40,7 @@
 #include <hdf5serie/simpledataset.h>
 #include <unistd.h>
 #include <limits>
+#include <boost/thread/thread.hpp>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
@@ -1612,6 +1613,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
+    boost::this_thread::interruption_point();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
@@ -1808,6 +1810,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
+    boost::this_thread::interruption_point();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
@@ -1873,6 +1876,7 @@ namespace MBSim {
 
   // TODO: Momentan für TimeStepping benötigt
   void DynamicSystemSolver::plot2(const fmatvec::Vec& zParent, double t, double dt) {
+    boost::this_thread::interruption_point();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
