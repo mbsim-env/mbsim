@@ -23,7 +23,6 @@
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
 #include <time.h>
-#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -93,7 +92,6 @@ namespace MBSim {
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
 
       if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
-        boost::this_thread::interruption_point();
         system->plot(z, t);
 
         if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;

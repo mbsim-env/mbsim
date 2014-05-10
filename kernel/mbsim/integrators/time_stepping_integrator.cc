@@ -21,7 +21,6 @@
 #include<mbsim/dynamic_system_solver.h>
 #include "time_stepping_integrator.h"
 #include <time.h>
-#include <boost/thread/thread.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -74,7 +73,6 @@ namespace MBSim {
     while(t<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
-        boost::this_thread::interruption_point();
         step++;
         if(driftCompensation) system.projectGeneralizedPositions(t,0);
         system.plot2(z,t,dt);
