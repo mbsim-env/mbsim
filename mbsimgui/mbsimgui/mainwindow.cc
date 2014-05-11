@@ -35,6 +35,7 @@
 #include "parameter_view.h"
 #include "integrator_view.h"
 #include "embed.h"
+#include "process.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
@@ -72,13 +73,16 @@ namespace MBSimGUI {
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
     bfs::create_directories(uniqueTempDir);
 
-    mbsim=new Process(this);
+    mbsim = new Process(this);
 
-    QProcess process;
+    mbsimThread = new MBSimThread(this);
+    mbsimThread->setParser(parser);
+    connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
+
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
     arguments << "--onlyGenerateSchema" << (uniqueTempDir/"mbsimxml.xsd").string().c_str();
-    int code=process.execute(program,arguments);
+    int code=mbsim->getProcess()->execute(program,arguments);
     parser->loadGrammar(arguments[1].toStdString());
 
     elementList = new ElementView;
@@ -88,6 +92,8 @@ namespace MBSimGUI {
     MBSimObjectFactory::initialize();
     octEval=new MBXMLUtils::OctEval;
     octEvalParamLevel=new NewParamLevel(*octEval);
+
+    mbsimThread->setOctEval(octEval);
 
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
@@ -163,14 +169,12 @@ namespace MBSimGUI {
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
 
-      elementList->setModel(new ElementTreeModel);
-    //elementList->setItemDelegate(new ElementDelegate);
+    elementList->setModel(new ElementTreeModel);
     elementList->setColumnWidth(0,250);
     elementList->setColumnWidth(1,200);
 
     parameterList = new ParameterView;
     parameterList->setModel(new ParameterListModel);
-    //parameterList->setItemDelegate(new ParameterDelegate);
     parameterList->setColumnWidth(0,75);
     parameterList->setColumnWidth(1,125);
 
@@ -223,12 +227,6 @@ namespace MBSimGUI {
     QDockWidget *dockWidget2 = new QDockWidget("Integrator");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
     dockWidget2->setWidget(integratorView);
-
-//    QDockWidget *dockWidget4 = new QDockWidget("Global parameters");
-//    addDockWidget(Qt::LeftDockWidgetArea,dockWidget4);
-//    fileParameter = new QLineEdit("");
-//    fileParameter->setReadOnly(true);
-//    dockWidget4->setWidget(globalParam);
 
     //tabifyDockWidget(dockWidget3,dockWidget4);
     //tabifyDockWidget(dockWidget2,dockWidget3);
@@ -312,7 +310,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    if(currentTask==1)
+   if(currentTask==1)
       inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
     actionSimulate->setDisabled(false);
     actionOpenMBV->setDisabled(false);
@@ -340,6 +338,8 @@ namespace MBSimGUI {
   }
 
   MainWindow::~MainWindow() {
+    delete mbsim;
+    delete mbsimThread;
     bfs::remove_all(uniqueTempDir);
   }
 
@@ -453,8 +453,12 @@ namespace MBSimGUI {
       Solver *solver=Embed<Solver>::createAndInit(ele1,0);
       solver->initialize();
 
+      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex index = pmodel->index(0,0);
+      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+
       ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
+      index = model->index(0,0);
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
@@ -792,16 +796,14 @@ namespace MBSimGUI {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
     Solver *slv=dynamic_cast<Solver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-    //Integrator *integ=(Integrator*)integratorView->topLevelItem(0);
     Integrator *integ=integratorView->getIntegrator();
     if(!slv || !integ)
       return;
 
     QString sTask = QString::number(task); 
-    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     string saveName=slv->getName();
     slv->setName("out"+sTask.toStdString());
-    QString projectFile=uniqueTempDir_+"/in"+sTask+".mbsimprj.xml";
+    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.xml";
 
     currentTask = task;
 
@@ -810,43 +812,27 @@ namespace MBSimGUI {
 
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     writeProject(doc);
-
-    DOMElement *root = doc->getDocumentElement();
-
-    // GUI-XML-Baum mit OriginalFilename ergaenzen
-    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
-      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
-          X()%"MBS.mbsimprj.xml");
-      root->insertBefore(filenamePI, root->getFirstChild());
-    }
-
-    D(doc)->validate();
-
-    vector<bfs::path> dep;
-    OctEval octEval(&dep);
-
-    // Praeprozessor starten
-    DOMElement *mainxmlele=doc->getDocumentElement();
-    try {
-      preprocess(parser, octEval, dep, mainxmlele);
-    }
-    catch(...) {
-      cout << "error in preprocess" << endl;
-      slv->setName(saveName);
-      return;
-    }
-
-    // Neuen GUI-XML-Baum serialisieren
-    DOMParser::serialize(doc.get(), projectFile.toStdString(), false);
     slv->setName(saveName);
-
-    QStringList arg;
-    if(task==1)
-      arg.append("--stopafterfirststep");
-    arg.append(projectFile);
-    mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
-    mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
     absolutePath = false;
+
+    mbsimThread->setDocument(doc);
+    mbsimThread->setProjectFile(projectFile);
+    mbsimThread->start();
+  }
+
+  void MainWindow::preprocessFinished(int result) {
+    if(result==0) {
+      QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
+      QStringList arg;
+      if(currentTask==1)
+        arg.append("--stopafterfirststep");
+      arg.append(projectFile);
+      mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+      mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
+    }
+    else
+      mbsim->preprocessFailed(mbsimThread->getErrorText());
   }
 
   void MainWindow::refresh() {
@@ -885,13 +871,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectElement(string ID) {
-    //map<string, Element*>::iterator it=Element::idEleMap.find(ID);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
     if(it!=model->idEleMap.end()) {
-      //QModelIndex index = elementList->selectionModel()->currentIndex();
       elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
-      //elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
       QModelIndex index = elementList->selectionModel()->currentIndex();
       Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
       ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
@@ -934,114 +917,6 @@ namespace MBSimGUI {
         //"  <li>...</li>"
         "</ul>"
         );
-  }
-
-  Process::Process(QWidget *parent) : QTabWidget(parent) {
-    process=new QProcess(this);
-    out=new QTextBrowser(this);
-    err=new QTextBrowser(this);
-    out->setOpenLinks(false);
-    err->setOpenLinks(false);
-    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(outLinkClicked(const QUrl &)));
-    connect(err, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(errLinkClicked(const QUrl &)));
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(processFinished(int,QProcess::ExitStatus)));
-    addTab(out, "Out");
-    addTab(err, "Err");
-    setCurrentIndex(0);
-    setMinimumHeight(80);
-    setTabPosition(QTabWidget::West);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(updateOutputAndError()));
-  }
-
-  void Process::clearOutputAndStart(const QString &program, const QStringList &arguments) {
-    outText="";
-    errText="";
-    out->clear();
-    err->clear();
-    setCurrentIndex(0);
-    process->start(program, arguments);
-    timer.start(250);
-  }
-
-  void Process::updateOutputAndError() {
-    QByteArray outArray=process->readAllStandardOutput();
-    outText+=outArray.data();
-    out->setHtml(convertToHtml(outText));
-    out->moveCursor(QTextCursor::End);
-
-    QByteArray errArray=process->readAllStandardError();
-    errText+=errArray.data();
-    err->setHtml(convertToHtml(errText));
-    err->moveCursor(QTextCursor::Start);
-  }
-
-  QString Process::convertToHtml(QString &text) {
-    // the following operations modify the original text
-
-#ifdef WIN32
-    // convert windows line ending to linux line ending (they are later replaced to html line ending)
-    text.replace("\x0D\x0A", "\x0A");
-#endif
-    // from now on use linux line ending => do not use \n, \r in string literals but \x0A, \x0D
-
-    // remove all lines but the last ending with carriage return '\x0D'
-    static QRegExp carriageReturn("(^|\x0A)[^\x0A]*\x0D([^\x0A\x0D]*\x0D)");
-    text.replace(carriageReturn, "\\1\\2");
-
-    // replace <FILE ...> to html reference
-    static QRegExp fileRE("<FILE path=\"([^\"]+)\" line=\"([0-9]+)\">([^<]+)</FILE>");
-    text.replace(fileRE, "<a href=\"\\1?line=\\2\">\\3</a>");
-
-    // the following operations modify only the QString return value
-    QString ret=text;
-
-    // newlines '\x0A' to html
-    ret.replace("\x0A", "<br/>");
-
-    return ret;
-  }
-
-  QSize Process::sizeHint() const {
-    QSize size=QTabWidget::sizeHint();
-    size.setHeight(80);
-    return size;
-  }
-
-  QSize Process::minimumSizeHint() const {
-    QSize size=QTabWidget::minimumSizeHint();
-    size.setHeight(80);
-    return size;
-  }
-
-  void Process::linkClicked(const QUrl &link, QTextBrowser *std) {
-    static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
-    cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
-      "Where %1 is replaced by the filename and %2 by the line number. "<<
-      "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
-    QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
-    QProcess::startDetached(comm);
-  }
-
-  void Process::outLinkClicked(const QUrl &link) {
-    linkClicked(link, out);
-  }
-
-  void Process::errLinkClicked(const QUrl &link) {
-    linkClicked(link, err);
-  }
-
-  void Process::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    timer.stop();
-    updateOutputAndError();
-    if(exitStatus==QProcess::NormalExit && exitCode==0)
-      setCurrentIndex(0);
-    else
-      setCurrentIndex(1);
-  }
-
-  void Process::interrupt() {
-    errText="Simulation interrupted";
-    process->terminate();
   }
 
   void MainWindow::removeElement() {

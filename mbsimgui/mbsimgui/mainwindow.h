@@ -56,6 +56,7 @@ namespace MBSimGUI {
   class Object;
   class Link;
   class Observer;
+  class MBSimThread;
 
   class MainWindow : public QMainWindow {
 
@@ -67,6 +68,7 @@ namespace MBSimGUI {
       IntegratorView *integratorView;
       QString fileProject; 
       Process *mbsim;
+      MBSimThread *mbsimThread;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event);
@@ -151,36 +153,13 @@ namespace MBSimGUI {
       void timeout();
       void timeout2();
       void openRecentProjectFile();
+      void preprocessFinished(int result);
     protected:
       void closeEvent ( QCloseEvent * event );
 
       // write parameter list to XML. The returned DOMNodes are owned by doc.
       xercesc::DOMElement* writeProject(boost::shared_ptr<xercesc::DOMDocument> &doc);
       xercesc::DOMElement* writeParameterList(boost::shared_ptr<xercesc::DOMDocument> &doc);
-  };
-
-  class Process : public QTabWidget {
-    Q_OBJECT
-    public:
-      Process(QWidget *parent);
-      QProcess *getProcess() { return process; }
-      void clearOutputAndStart(const QString &program, const QStringList &arguments);
-      QSize sizeHint() const;
-      QSize minimumSizeHint() const;
-    private:
-      QProcess *process;
-      QTextBrowser *out, *err;
-      QString outText, errText;
-      static QString convertToHtml(QString &text);
-      void linkClicked(const QUrl &link, QTextBrowser *std);
-      QTimer timer;
-    private slots:
-      void updateOutputAndError();
-      void outLinkClicked(const QUrl &link);
-      void errLinkClicked(const QUrl &link);
-      void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    public slots:
-      void interrupt();
   };
 
 }

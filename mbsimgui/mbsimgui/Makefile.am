@@ -67,6 +67,7 @@ mbsimgui_SOURCES = element.cc \
 		   integrator_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
+		   process.cc \
 		   mainwindow.cc \
 		   main.cc \
 		   embed.cc \
@@ -94,6 +95,7 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
+		   process.moc.cc \
 		   mainwindow.moc.cc
 
 mbsimgui_HEADERS = 
