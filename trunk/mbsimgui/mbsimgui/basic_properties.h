@@ -330,7 +330,8 @@ namespace MBSimGUI {
       bool hasFile() const {return (href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFile()!="");}
       std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFile();}
       bool hasCounter() const {return counterName.isActive();}
-      std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
+      std::string getCounterName() const {return counterName.isActive()?static_cast<const TextProperty*>(counterName.getProperty())->getText():"";}
+      int getCount() const {return static_cast<const IntegerProperty*>(count.getProperty())->getValue();}
       bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFile()!="");}
       std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getFile();}
 

@@ -87,7 +87,7 @@ namespace MBSimGUI {
   class ElementPropertyDialog : public PropertyDialog {
 
     public:
-      ElementPropertyDialog(Element *element, QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=true);
+      ElementPropertyDialog(Element *element, QWidget * parent = 0, Qt::WindowFlags f = 0);
       virtual void toWidget(Element *element);
       virtual void fromWidget(Element *element);
       void toWidget() {toWidget(element);}
@@ -95,13 +95,13 @@ namespace MBSimGUI {
       Element* getElement() {return element;}
     protected:
       Element *element;
-      ExtWidget *name, *embed;
+      ExtWidget *name;
   };
 
   class FramePropertyDialog : public ElementPropertyDialog {
 
     public:
-      FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=false);
+      FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:

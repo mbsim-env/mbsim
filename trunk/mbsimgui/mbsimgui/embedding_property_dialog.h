@@ -17,31 +17,27 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _EMBEDDING_VIEW__H_
-#define _EMBEDDING_VIEW__H_
+#ifndef _EMBEDDING_PROPERTY_DIALOG_H_
+#define _EMBEDDING_PROPERTY_DIALOG_H_
 
-#include <QTreeView>
-#include <QModelIndex>
+#include "property_dialog.h"
 
 namespace MBSimGUI {
 
-  class PropertyDialog;
+  class Element;
+  class ExtWidget;
 
-  class EmbeddingView : public QTreeView {
-    Q_OBJECT
-    private:
-      QModelIndex index;
-      PropertyDialog *editor;
+  class EmbeddingPropertyDialog : public PropertyDialog {
+
     public:
-      EmbeddingView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
+      EmbeddingPropertyDialog(Element *element, bool embedding=true, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Element *element);
+      virtual void fromWidget(Element *element);
+      void toWidget() {toWidget(element);}
+      void fromWidget() {fromWidget(element);}
     protected:
-      void mouseDoubleClickEvent(QMouseEvent *event);
-      void mousePressEvent(QMouseEvent *event);
-    protected slots:
-      void dialogFinished(int result);
-      void apply();
-    public slots:
-      void openEditor();
+      Element *element;
+      ExtWidget *name, *embed;
   };
 
 }

@@ -100,31 +100,22 @@ namespace MBSimGUI {
     return widget;
   }
 
-  ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), embed(0) {
+  ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget);
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
-    if(embedding) {
-      addTab("Embedding");
-      embed = new ExtWidget("Embed", new EmbedWidget, true);
-      addToTab("Embedding",embed);
-    }
   }
 
   void ElementPropertyDialog::toWidget(Element *element) {
     element->name.toWidget(name);
-    if(embed)
-      element->embed.toWidget(embed);
   }
 
   void ElementPropertyDialog::fromWidget(Element *element) {
     element->name.fromWidget(name);
-    if(embed)
-      element->embed.fromWidget(embed);
   }
 
-  FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(frame,parent,f,embedding) {
+  FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
     visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
     visu->setToolTip("Set the visualisation parameters for the frame");
@@ -141,7 +132,7 @@ namespace MBSimGUI {
     static_cast<Frame*>(element)->visu.fromWidget(visu);
   }
 
-  FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
+  FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
     addTab("Kinematics",1);
 
     position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);

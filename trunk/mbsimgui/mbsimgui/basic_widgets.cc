@@ -638,7 +638,7 @@ namespace MBSimGUI {
     layout->addWidget(href);
     count = new ExtWidget("Count", new SpinBoxWidget(1,1), true);
     layout->addWidget(count);
-    counterName = new ExtWidget("Counter name", new TextWidget, true);
+    counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
     layout->addWidget(counterName);
     parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.xml)", 1), true);
     layout->addWidget(parameterList);

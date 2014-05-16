@@ -43,6 +43,7 @@ namespace MBSimGUI {
     void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
     virtual Element * getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
+    EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
     QMenu* createContextMenu() {return new FrameContextMenu(this);}
     protected:
     ExtProperty visu;
@@ -59,6 +60,7 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
+    EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
     protected:
     ExtProperty refFrame, position, orientation;

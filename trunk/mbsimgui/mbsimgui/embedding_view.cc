@@ -22,6 +22,7 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "parameter.h"
+#include "element.h"
 #include "mainwindow.h"
 
 namespace MBSimGUI {
@@ -34,6 +35,16 @@ namespace MBSimGUI {
       Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
         editor = parameter->createPropertyDialog();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->toWidget();
+        editor->show();
+        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+        return;
+      }
+      Element *element = dynamic_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
+      if(element) {
+        editor = element->createEmbeddingPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
         editor->show();
