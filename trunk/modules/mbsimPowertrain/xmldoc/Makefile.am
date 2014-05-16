@@ -1,9 +1,9 @@
-all: mbsimpowertrain/mbsimpowertrain.tex
+all: .mbsimpowertrain.done
 
 xml/index.xml: ../schema/mbsimpowertrain.xsd ../mbsimPowertrain/*.h
 	doxygen
 
-mbsimpowertrain/mbsimpowertrain.tex: xml/index.xml ../schema/mbsimpowertrain.xsd ../mbsimPowertrain/*.h 
+.mbsimpowertrain.done: xml/index.xml ../schema/mbsimpowertrain.xsd ../mbsimPowertrain/*.h 
 	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimPowertrain/mbsimpowertrain.xsd xml figures:../doc MBSimPowertrain MBSim::
 
 
@@ -12,4 +12,4 @@ install:
 
 
 
-CLEANFILES=xml/index.xml mbsimpowertrain/mbsimpowertrain.tex
+CLEANFILES=xml/index.xml .mbsimpowertrain.done
