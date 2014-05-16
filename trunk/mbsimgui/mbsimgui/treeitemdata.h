@@ -30,9 +30,11 @@ namespace MBSimGUI {
     public:
       virtual ~TreeItemData() {}
       virtual const std::string& getName() const = 0;
-      virtual std::string getValue() const = 0;
-      virtual void setName(const std::string &data) = 0;
+      virtual std::string getValue() const {return "";}
+      virtual std::string getType() const {return "";}
+      virtual void setName(const std::string &data) {}
       virtual void setValue(const std::string &data) {}
+      virtual void setType(const std::string &data) {}
       virtual QMenu* createContextMenu() = 0;
   };
 

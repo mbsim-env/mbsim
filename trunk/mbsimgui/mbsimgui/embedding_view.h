@@ -17,23 +17,24 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _PARAMETER_VIEW__H_
-#define _PARAMETER_VIEW__H_
+#ifndef _EMBEDDING_VIEW__H_
+#define _EMBEDDING_VIEW__H_
 
 #include <QTreeView>
 #include <QModelIndex>
 
 namespace MBSimGUI {
 
+  class EmbeddedPropertyDialog;
   class ParameterPropertyDialog;
 
-  class ParameterView : public QTreeView {
+  class EmbeddingView : public QTreeView {
     Q_OBJECT
     private:
       QModelIndex index;
       ParameterPropertyDialog *editor;
     public:
-      ParameterView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
+      EmbeddingView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
     protected:
       void mouseDoubleClickEvent(QMouseEvent *event);
       void mousePressEvent(QMouseEvent *event);

@@ -40,6 +40,37 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  EmbeddingContextMenu::EmbeddingContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+    QAction *action = new QAction("Add scalar parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+    addAction(action);
+    action = new QAction("Add vector parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+    addAction(action);
+    action = new QAction("Add matrix parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
+    addAction(action);
+    action = new QAction("Add string parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
+    addAction(action);
+  }
+
+  void EmbeddingContextMenu::addScalarParameter() {
+    mw->addParameter(new ScalarParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addVectorParameter() {
+    mw->addParameter(new VectorParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addMatrixParameter() {
+    mw->addParameter(new MatrixParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addStringParameter() {
+    mw->addParameter(new StringParameter("a"));
+  }
+
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {
     if(removable) {
       QAction *action=new QAction("Save as", this);
@@ -51,11 +82,6 @@ namespace MBSimGUI {
       addAction(action);
       addSeparator();
     }
-  }
-
-  void ElementContextMenu::addContour() {
-    ContourContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
   }
 
   FrameContextMenu::FrameContextMenu(Element *frame, QWidget * parent, bool removable) : ElementContextMenu(frame,parent,removable) {

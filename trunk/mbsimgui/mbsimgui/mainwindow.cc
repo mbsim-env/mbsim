@@ -32,7 +32,7 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "element_view.h"
-#include "parameter_view.h"
+#include "embedding_view.h"
 #include "integrator_view.h"
 #include "embed.h"
 #include "process.h"
@@ -172,35 +172,18 @@ namespace MBSimGUI {
     elementList->setModel(new ElementTreeModel);
     elementList->setColumnWidth(0,250);
     elementList->setColumnWidth(1,200);
+    elementList->hideColumn(1);
 
-    parameterList = new ParameterView;
-    parameterList->setModel(new ParameterListModel);
-    parameterList->setColumnWidth(0,75);
-    parameterList->setColumnWidth(1,125);
+    embeddingList = new EmbeddingView;
+    embeddingList->setModel(new EmbeddingTreeModel);
+    embeddingList->setColumnWidth(0,150);
+    embeddingList->setColumnWidth(1,200);
 
     integratorView = new IntegratorView;
 
-    //globalParam = new ParameterView;
-    //globalParam->setModel(new ParameterListModel);
-    //globalParam->setColumnWidth(0,75);
-    //globalParam->setColumnWidth(1,125);
-
-    action = new QAction("Add scalar parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
-    parameterList->insertAction(0,action);
-    action = new QAction("Add vector parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
-    parameterList->insertAction(0,action);
-    action = new QAction("Add matrix parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
-    parameterList->insertAction(0,action);
-    action = new QAction("Add string parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
-    parameterList->insertAction(0,action);
-    parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
-
     connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
-    connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
+    connect(embeddingList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
+    connect(elementList->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&,const QModelIndex&)));
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
@@ -213,16 +196,16 @@ namespace MBSimGUI {
     widgetLayout1->addWidget(elementListFilter, 0, 0);
     widgetLayout1->addWidget(elementList, 1, 0);
 
-    QDockWidget *dockWidget3 = new QDockWidget("Parameters");
+    QDockWidget *dockWidget3 = new QDockWidget("Embeddings");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3=new QWidget(dockWidget3);
     dockWidget3->setWidget(widget3);
     QGridLayout *widgetLayout3=new QGridLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    OpenMBVGUI::AbstractViewFilter *parameterListFilter=new OpenMBVGUI::AbstractViewFilter(parameterList, 0, -2);
+    OpenMBVGUI::AbstractViewFilter *parameterListFilter=new OpenMBVGUI::AbstractViewFilter(embeddingList, 0, -2);
     widgetLayout3->addWidget(parameterListFilter, 0, 0);
-    widgetLayout3->addWidget(parameterList, 1, 0);
+    widgetLayout3->addWidget(embeddingList, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Integrator");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
@@ -287,31 +270,17 @@ namespace MBSimGUI {
 
     setAcceptDrops(true);
 
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
-    timer->start(1000);
-
-    //  timer = new QTimer(this);
-    //  timer->setSingleShot(true);
-    //  connect(timer, SIGNAL(timeout()), this, SLOT(timeout2()));
-    //  timer->start(1300);
-  }
-
-  void MainWindow::timeout() {
-    //  QString str = uniqueTempDir+"/out1.ombv.xml";
-    //  utime(str.toStdString().c_str(),0);
-    //  str = uniqueTempDir+"/out1.ombv.h5";
-    //  utime(str.toStdString().c_str(),0);
-  }
-  void MainWindow::timeout2() {
-    //  cout << "view top" << endl;
-    //  inlineOpenMBVMW->viewTopSlot();
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-   if(currentTask==1)
+    if(currentTask==1) {
       inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+      QModelIndex index = elementList->selectionModel()->currentIndex();
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+      if(element)
+        highlightObject(element->getID());
+    }
     actionSimulate->setDisabled(false);
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
@@ -325,16 +294,12 @@ namespace MBSimGUI {
     std::list<string> arg;
     arg.push_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
-//    arg.push_back("--autoreload");
-//    arg.push_back(uniqueTempDir.generic_string()+"/out1.ombv.xml");
-//    inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
     arg.push_back("/home/foerg/tmp/openmbv");
     inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementList, SLOT(openEditor()));
-    connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(selectionChanged()));
   }
 
   MainWindow::~MainWindow() {
@@ -377,20 +342,27 @@ namespace MBSimGUI {
     inlineOpenMBVMW->highlightObject(ID);
   }
 
-  void MainWindow::selectionChanged() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
+  void MainWindow::selectionChanged(const QModelIndex &current, const QModelIndex &previous) {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-    ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex pindex = pmodel->index(0,0); 		
-    pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
+    Element *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
 
     if(element) {
-      Parameters plist = element->getGlobalParameters();
 
-     for(int i=0; i<plist.getNumberOfParameters(); i++)
-       pmodel->createParameterItem(plist.getParameter(i));
- 
+      EmbeddingTreeModel *emodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+      vector<Element*> parents = element->getParents();
+      QModelIndex index = emodel->index(0,0);
+      emodel->removeRow(index.row(), index.parent());
+      if(parents.size()) {
+        index = emodel->createEmbeddingItem(parents[0]);
+        for(int i=0; i<parents.size()-1; i++)
+          index = emodel->createEmbeddingItem(parents[i+1],index);
+        emodel->createEmbeddingItem(element,index);
+      }
+      else
+        index = emodel->createEmbeddingItem(element);
+      embeddingList->expandAll();
+      embeddingList->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+
       highlightObject(element->getID());
     }
     else
@@ -398,7 +370,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::elementListClicked() {
-    selectionChanged();
     if(QApplication::mouseButtons()==Qt::RightButton) {
       QModelIndex index = elementList->selectionModel()->currentIndex();
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData();
@@ -412,12 +383,21 @@ namespace MBSimGUI {
 
   void MainWindow::parameterListClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
-      QModelIndex index = parameterList->selectionModel()->currentIndex();
+      QModelIndex index = embeddingList->selectionModel()->currentIndex();
       if(index.column()==0) {
-        Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(parameterList->model())->getItem(index)->getItemData());
-        QMenu *menu = parameter->createContextMenu();
-        menu->exec(QCursor::pos());
-        delete menu;
+        Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingList->model())->getItem(index)->getItemData());
+        if(parameter) {
+          QMenu *menu = parameter->createContextMenu();
+          menu->exec(QCursor::pos());
+          delete menu;
+          return;
+        }
+        Element *element = dynamic_cast<Element*>(static_cast<EmbeddingTreeModel*>(embeddingList->model())->getItem(index)->getItemData());
+        if(element) {
+          QMenu *menu = element->createEmbeddingMenu();
+          menu->exec(QCursor::pos());
+          delete menu;
+        }
       } 
     }
   }
@@ -427,8 +407,7 @@ namespace MBSimGUI {
     if(ask) 
       ret = QMessageBox::warning(this, "New Project", "Current project will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
     if(ret == QMessageBox::Ok) {
-      newMBS(false);
-      newParameterList(false);
+      newMBS();
       selectDOPRI5Integrator();
       actionSaveProject->setDisabled(true);
       fileProject="";
@@ -453,16 +432,18 @@ namespace MBSimGUI {
       Solver *solver=Embed<Solver>::createAndInit(ele1,0);
       solver->initialize();
 
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
+      EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = pmodel->index(0,0);
       pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-
+        
       ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
       index = model->index(0,0);
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
       model->createGroupItem(solver);
+
+      elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
       ele1 = ele1->getNextElementSibling();
 
@@ -537,31 +518,30 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
   }
 
-  void MainWindow::newMBS(bool ask) {
-    //tabBar->setCurrentIndex(0);
-    QMessageBox::StandardButton ret = QMessageBox::Ok;
-    if(ask) 
-      ret = QMessageBox::warning(this, "New MBS", "Current MBS will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
-    if(ret == QMessageBox::Ok) {
-      mbsDir = QDir::current();
-      actionOpenMBV->setDisabled(true);
-      actionH5plotserie->setDisabled(true);
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QModelIndex index = model->index(0,0);
-      if(model->rowCount(index))
-        delete model->getItem(index)->getItemData();
-      model->removeRow(index.row(), index.parent());
-      Solver *solver = new Solver("MBS",0);
-      model->createGroupItem(solver,QModelIndex());
+ void MainWindow::newMBS() {
+   mbsDir = QDir::current();
+   actionOpenMBV->setDisabled(true);
+   actionH5plotserie->setDisabled(true);
+   actionSaveDataAs->setDisabled(true);
+   actionSaveMBSimH5DataAs->setDisabled(true);
+   actionSaveOpenMBVDataAs->setDisabled(true);
 
-      elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+   EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+   QModelIndex index = pmodel->index(0,0);
+   pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 
-      mbsimxml(1);
-    }
-  }
+   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+   index = model->index(0,0);
+   if(model->rowCount(index))
+     delete model->getItem(index)->getItemData();
+   model->removeRow(index.row(), index.parent());
+   Solver *solver = new Solver("MBS",0);
+   model->createGroupItem(solver,QModelIndex());
+
+   elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+
+   mbsimxml(1);
+ }
 
   void MainWindow::selectIntegrator() {
     QMenu *menu = integratorView->createContextMenu();
@@ -597,112 +577,11 @@ namespace MBSimGUI {
     integratorView->setIntegrator(6);
   }
 
-  void MainWindow::removeParameter() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
-    ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex pindex = parameterList->selectionModel()->currentIndex();
-    Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
-    element->removeParameter(parameter);
-    pmodel->removeRow(pindex.row(), pindex.parent());
-  }
-
-  void MainWindow::addStringParameter() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-    if(element) {
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = QModelIndex();
-      StringParameter *parameter = new StringParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
-      pmodel->createParameterItem(parameter,pindex);
-      element->addParameter(parameter);
-      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
-      parameterList->openEditor();
-    }
-  }
-
-  void MainWindow::addScalarParameter() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-    if(element) {
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = QModelIndex();
-      ScalarParameter *parameter = new ScalarParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
-      pmodel->createParameterItem(parameter,pindex);
-//      ParameterListModel *pmodel2 = static_cast<ParameterListModel*>(globalParam->model());
-//      pmodel2->createParameterItem(parameter,QModelIndex());
-      element->addParameter(parameter);
-      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
-      parameterList->openEditor();
-    }
-  }
-
-  void MainWindow::addVectorParameter() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-    if(element) {
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = QModelIndex();
-      VectorParameter *parameter = new VectorParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
-      pmodel->createParameterItem(parameter,pindex);
-      element->addParameter(parameter);
-      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
-      parameterList->openEditor();
-    }
-  }
-
-  void MainWindow::addMatrixParameter() {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-    if(element) {
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = QModelIndex();
-      MatrixParameter *parameter = new MatrixParameter("a"+toStr(pmodel->getItem(pindex)->getID()));
-      pmodel->createParameterItem(parameter,pindex);
-      element->addParameter(parameter);
-      parameterList->selectionModel()->setCurrentIndex(pmodel->index(pmodel->rowCount()-1,0), QItemSelectionModel::ClearAndSelect);
-      parameterList->openEditor();
-    }
-  }
-
-  void MainWindow::newParameterList(bool ask) {
-    QMessageBox::StandardButton ret = QMessageBox::Ok;
-    if(ask) 
-      ret = QMessageBox::warning(this, "New parameter list", "Current parameters will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
-    if(ret == QMessageBox::Ok) {
-      ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex index = model->index(0,0);
-      if(index.isValid()) {
-        ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-        QModelIndex index = model->index(0,0);
-        model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
-      }
-    }
-  }
-
-  // write model paramters to XML structure
-  // The resource owner of the returned DOMElement is the caller!
-  DOMElement* MainWindow::writeParameterList(shared_ptr<DOMDocument> &doc) {
-    DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
-    doc->insertBefore(ele0, NULL);
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = model->index(0,0);
-    for(int i=0; i<model->rowCount(QModelIndex()); i++)
-      static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData())->writeXMLFile(ele0);
-    return ele0;
-  }
-
   // update model parameters including additional paramters from paramList
   void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
     // write model paramters to XML structure
     //DOMElement *ele0=NULL;
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-    //ele0=writeParameterList(doc);
     DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
     doc->insertBefore(ele0, NULL);
     DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename", X()%"/tmp/test.xml");
@@ -873,21 +752,8 @@ namespace MBSimGUI {
   void MainWindow::selectElement(string ID) {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
-    if(it!=model->idEleMap.end()) {
+    if(it!=model->idEleMap.end())
       elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
-      QModelIndex index = elementList->selectionModel()->currentIndex();
-      Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-      ParameterListModel *pmodel = static_cast<ParameterListModel*>(parameterList->model());
-      QModelIndex pindex = pmodel->index(0,0); 		
-      pmodel->removeRows(pindex.row(), pmodel->rowCount(QModelIndex()), pindex.parent());
-
-      Parameters plist = element->getGlobalParameters();
-
-      for(int i=0; i<plist.getNumberOfParameters(); i++)
-        pmodel->createParameterItem(plist.getParameter(i));
-    }
-
-    highlightObject(ID);
   }
 
   void MainWindow::help() {
@@ -1006,6 +872,28 @@ namespace MBSimGUI {
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
+  }
+
+  void MainWindow::addParameter(Parameter *parameter) {
+    QModelIndex index = embeddingList->selectionModel()->currentIndex();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+    parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
+    QModelIndex newIndex = model->createParameterItem(parameter,index);
+    element->addParameter(parameter);
+    embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    embeddingList->openEditor();
+  }
+
+  void MainWindow::removeParameter() {
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
+    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+    QModelIndex pindex = embeddingList->selectionModel()->currentIndex();
+    Parameter *parameter=static_cast<Parameter*>(pmodel->getItem(pindex)->getItemData());
+    element->removeParameter(parameter);
+    pmodel->removeRow(pindex.row(), pindex.parent());
   }
 
   void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
