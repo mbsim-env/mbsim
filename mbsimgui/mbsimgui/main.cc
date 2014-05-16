@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include <iostream>
 #include <QApplication>
 #include "mainwindow.h"
 #include <H5Cpp.h>

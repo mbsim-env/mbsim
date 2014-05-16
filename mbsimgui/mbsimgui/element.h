@@ -71,7 +71,6 @@ namespace MBSimGUI {
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual std::string getType() const { return "Element"; }
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
-    std::string getValue() const { return getType(); }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
     template<class T> T* getByPath(std::string path);
@@ -100,10 +99,12 @@ namespace MBSimGUI {
     virtual void addObserver(Observer *observer) {}
     virtual void removeElement(Element *element) {}
     const std::string& getID() const { return ID; }
-    virtual Element* getParent() {return parent;}
+    Element* getParent() {return parent;}
+    std::vector<Element*> getParents();
     virtual void setParent(Element* parent_) {parent = parent_;}
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
     virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
+    virtual QMenu* createEmbeddingMenu() {return new EmbeddingContextMenu(this);}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true);

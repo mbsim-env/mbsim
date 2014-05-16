@@ -230,4 +230,13 @@ namespace MBSimGUI {
     return list;
   }
 
+  vector<Element*> Element::getParents() {
+    vector<Element*> parents;
+    if(getParent()) {
+      parents = getParent()->getParents();
+      parents.push_back(getParent());
+    }
+    return parents;
+  }
+
 }
