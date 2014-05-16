@@ -24,6 +24,7 @@
 #include "basic_properties.h"
 #include "extended_properties.h"
 #include "element_property_dialog.h"
+#include "embedding_property_dialog.h"
 #include "element_context_menu.h"
 #include "parameter.h"
 
@@ -46,6 +47,7 @@ namespace MBSimGUI {
 
   class Element : public TreeItemData {
     friend class ElementPropertyDialog;
+    friend class EmbeddingPropertyDialog;
     protected:
     Element *parent;
     static int IDcounter;
@@ -70,6 +72,7 @@ namespace MBSimGUI {
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual std::string getType() const { return "Element"; }
+    virtual std::string getValue() const;
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
@@ -103,8 +106,9 @@ namespace MBSimGUI {
     std::vector<Element*> getParents();
     virtual void setParent(Element* parent_) {parent = parent_;}
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
+    virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
     virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
-    virtual QMenu* createEmbeddingMenu() {return new EmbeddingContextMenu(this);}
+    virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true);

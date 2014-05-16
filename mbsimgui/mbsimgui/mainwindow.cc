@@ -394,7 +394,7 @@ namespace MBSimGUI {
         }
         Element *element = dynamic_cast<Element*>(static_cast<EmbeddingTreeModel*>(embeddingList->model())->getItem(index)->getItemData());
         if(element) {
-          QMenu *menu = element->createEmbeddingMenu();
+          QMenu *menu = element->createEmbeddingContextMenu();
           menu->exec(QCursor::pos());
           delete menu;
         }

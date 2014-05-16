@@ -55,6 +55,10 @@ namespace MBSimGUI {
     return parent?(parent->getPath()+"."+getName()):getName();
   }
 
+  std::string Element::getValue() const {
+    return isEmbedded()?("counterName="+static_cast<const EmbedProperty*>(embed.getProperty())->getCounterName()+"; count="+toStr(static_cast<const EmbedProperty*>(embed.getProperty())->getCount())):"";
+  }
+
   void Element::writeXMLFile(const string &name) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
     writeXMLFile(doc.get());
