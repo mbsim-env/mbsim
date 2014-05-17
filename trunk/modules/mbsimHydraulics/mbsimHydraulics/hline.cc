@@ -201,7 +201,7 @@ namespace MBSimHydraulics {
     setLength(getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
 
   void ConstrainedLine::updateStateDependentVariables(double t) {
     Q(0)=(*QFun)(t);
@@ -210,7 +210,7 @@ namespace MBSimHydraulics {
   void ConstrainedLine::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
-    fmatvec::Function<double(double)> * qf=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
+    fmatvec::Function<double(double)> * qf=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
     setQFunction(qf);
   }
 
@@ -226,7 +226,7 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FluidPump,  MBSIMHYDRAULICS%"FluidPump")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")
 
   Vec FluidPump::getQIn() {return QSignal->getSignal(); }
   Vec FluidPump::getQOut() {return -1.*QSignal->getSignal(); }
@@ -254,7 +254,7 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, StatelessOrifice,  MBSIMHYDRAULICS%"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StatelessOrifice,  MBSIMHYDRAULICS%"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
 
   Vec StatelessOrifice::getQIn() {return this->calculateQ(); }
   Vec StatelessOrifice::getQOut() {return -1.*(this->calculateQ()); }

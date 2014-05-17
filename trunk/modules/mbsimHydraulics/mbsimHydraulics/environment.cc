@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, HydraulicEnvironment, MBSIMHYDRAULICS%"HydraulicEnvironment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(HydraulicEnvironment, MBSIMHYDRAULICS%"HydraulicEnvironment")
 
   boost::scoped_ptr<HydraulicEnvironment> HydraulicEnvironment::instance(new HydraulicEnvironment);
 

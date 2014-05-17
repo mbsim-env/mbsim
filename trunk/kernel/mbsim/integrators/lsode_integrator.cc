@@ -39,7 +39,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, LSODEIntegrator, MBSIMINT%"LSODEIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LSODEIntegrator, MBSIMINT%"LSODEIntegrator")
 
   LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
   }

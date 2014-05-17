@@ -171,7 +171,7 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CartesianCoordinatesObserver, MBSIM%"CartesianCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CartesianCoordinatesObserver, MBSIM%"CartesianCoordinatesObserver")
 
   CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : CoordinatesObserver(name), A(EYE) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -379,7 +379,7 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CylinderCoordinatesObserver, MBSIM%"CylinderCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CylinderCoordinatesObserver, MBSIM%"CylinderCoordinatesObserver")
 
   CylinderCoordinatesObserver::CylinderCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -587,7 +587,7 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, NaturalCoordinatesObserver, MBSIM%"NaturalCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NaturalCoordinatesObserver, MBSIM%"NaturalCoordinatesObserver")
 
   NaturalCoordinatesObserver::NaturalCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

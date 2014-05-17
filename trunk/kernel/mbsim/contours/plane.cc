@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Plane, MBSIM%"Plane")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Plane, MBSIM%"Plane")
 
   Vec2 Plane::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
     return (R->getOrientation().T() *(WrPoint - R->getPosition()) )(Range<Fixed<1>,Fixed<2> >());

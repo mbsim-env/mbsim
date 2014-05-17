@@ -25,16 +25,16 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<double(double)>, MBSIM%"TabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<VecV(double)>, MBSIM%"TabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<VecV(VecV)>, MBSIM%"TabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TabularFunction<double(double)>, MBSIM%"TabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TabularFunction<VecV(double)>, MBSIM%"TabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TabularFunction<VecV(VecV)>, MBSIM%"TabularFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<double(double)>, MBSIM%"PeriodicTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<VecV(double)>, MBSIM%"PeriodicTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<VecV(VecV)>, MBSIM%"PeriodicTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PeriodicTabularFunction<double(double)>, MBSIM%"PeriodicTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PeriodicTabularFunction<VecV(double)>, MBSIM%"PeriodicTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PeriodicTabularFunction<VecV(VecV)>, MBSIM%"PeriodicTabularFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<double(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<VecV(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<VecV(VecV,VecV)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TwoDimensionalTabularFunction<Vec(Vec,Vec)>, MBSIM%"TwoDimensionalTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TwoDimensionalTabularFunction<double(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TwoDimensionalTabularFunction<VecV(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TwoDimensionalTabularFunction<VecV(VecV,VecV)>, MBSIM%"TwoDimensionalTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TwoDimensionalTabularFunction<Vec(Vec,Vec)>, MBSIM%"TwoDimensionalTabularFunction")
 }

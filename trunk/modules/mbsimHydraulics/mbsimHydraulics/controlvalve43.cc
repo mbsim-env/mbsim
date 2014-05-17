@@ -56,7 +56,7 @@ namespace MBSimHydraulics {
       Vec signal;
   };
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")
 
   Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString(""), pRACC(false) {
     addObject(lPA);
@@ -212,7 +212,7 @@ namespace MBSimHydraulics {
       aT=getDouble(e);
     setAlpha(a, aT);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativeAlphaPA");
-    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->getFirstElementChild()); 
+    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()); 
     setPARelativeAlphaFunction(relAlphaPA_);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalRelativeAlpha");
     setMinimalRelativeAlpha(getDouble(e));

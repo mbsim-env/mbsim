@@ -36,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Element::Element(const string &name_) : parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
+  Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
     for(int i=0; i<LASTPLOTFEATURE; i++) {
       plotFeature[(PlotFeature)i]=unset;
       plotFeatureForChildren[(PlotFeature)i]=unset;

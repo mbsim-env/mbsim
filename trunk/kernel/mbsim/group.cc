@@ -44,7 +44,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Group, MBSIM%"Group")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Group, MBSIM%"Group")
 
   Group::Group(const string &name) : DynamicSystem(name) {}
 
@@ -144,7 +144,7 @@ namespace MBSim {
     // contours
     E=e->getFirstElementChild();
     while(E) {
-      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(E);
+      Contour *c=ObjectFactory::createAndInit<Contour>(E);
       addContour(c);
       E=E->getNextElementSibling();
     }
@@ -154,7 +154,7 @@ namespace MBSim {
     E=e->getFirstElementChild();
     Group *g;
     while(E) {
-      g=ObjectFactory<Element>::createAndInit<Group>(E);
+      g=ObjectFactory::createAndInit<Group>(E);
       addGroup(g);
       E=E->getNextElementSibling();
     }
@@ -164,7 +164,7 @@ namespace MBSim {
     E=e->getFirstElementChild();
     Object *o;
     while(E) {
-      o=ObjectFactory<Element>::createAndInit<Object>(E);
+      o=ObjectFactory::createAndInit<Object>(E);
       addObject(o);
       E=E->getNextElementSibling();
     }
@@ -174,7 +174,7 @@ namespace MBSim {
     E=e->getFirstElementChild();
     Link *l;
     while(E) {
-      l=ObjectFactory<Element>::createAndInit<Link>(E);
+      l=ObjectFactory::createAndInit<Link>(E);
       addLink(l);
       E=E->getNextElementSibling();
     }
@@ -185,7 +185,7 @@ namespace MBSim {
       E=e->getFirstElementChild();
       Observer *obsrv;
       while(E) {
-        obsrv=ObjectFactory<Element>::createAndInit<Observer>(E);
+        obsrv=ObjectFactory::createAndInit<Observer>(E);
         addObserver(obsrv);
         E=E->getNextElementSibling();
       }

@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Joint, MBSIM%"Joint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
   Joint::Joint(const string &name) :
       LinkMechanics(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
@@ -600,13 +600,13 @@ namespace MBSim {
       setForceDirection(getMat(e, 3, 0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceLaw");
     if (e)
-      setForceLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+      setForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if (e)
       setMomentDirection(getMat(e, 3, 0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
     if (e)
-      setMomentLaw(ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+      setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1 = E(e)->getAttribute("ref1");
     saved_ref2 = E(e)->getAttribute("ref2");

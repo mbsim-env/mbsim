@@ -44,7 +44,7 @@ namespace MBSim {
 
   Range<Var,Var> i02(0,2);
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidBody, MBSIM%"RigidBody")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
 
@@ -712,7 +712,7 @@ namespace MBSim {
     // contours
     e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     while(e) {
-      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(e);
+      Contour *c=ObjectFactory::createAndInit<Contour>(e);
       addContour(c);
       e=e->getNextElementSibling();
     }
@@ -727,32 +727,32 @@ namespace MBSim {
     if(e) setFrameForInertiaTensor(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
     if(e && e->getFirstElementChild()) {
-      Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
+      Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
     if(e && e->getFirstElementChild()) {
-      Function<Vec3(double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
+      Function<Vec3(double)> *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
       setTimeDependentTranslation(trans);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
     if(e && e->getFirstElementChild()) {
-      Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
+      Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
       setStateDependentTranslation(trans);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalRotation");
     if(e && e->getFirstElementChild()) {
-      Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
+      Function<RotMat3(VecV,double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
     if(e && e->getFirstElementChild()) {
-      Function<RotMat3(double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
+      Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
       setTimeDependentRotation(rot);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
     if(e && e->getFirstElementChild()) {
-      Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
+      Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
       setStateDependentRotation(rot);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"translationDependentRotation");

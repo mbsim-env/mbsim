@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LineSegment, MBSIM%"LineSegment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSegment, MBSIM%"LineSegment")
 
   LineSegment::LineSegment(const std::string& name, double l, double t, Frame *R) : RigidContour(name,R), length(l), thickness(t) {
   }

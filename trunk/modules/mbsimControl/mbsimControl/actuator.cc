@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Actuator, MBSIMCONTROL%"Actuator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Actuator, MBSIMCONTROL%"Actuator")
 
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1), refFrame(0) {
   }

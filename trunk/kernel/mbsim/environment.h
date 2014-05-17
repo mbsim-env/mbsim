@@ -21,6 +21,7 @@
 #define _MBSIM_ENVIRONMENT_H_
 
 #include "fmatvec/fmatvec.h"
+#include "fmatvec/atom.h"
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMNode.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -32,7 +33,7 @@ namespace MBSim {
    * \author Markus Friedrich
    * \date 2009-07-28 some comments (Thorsten Schindler)
    */
-  class Environment {
+  class Environment : public fmatvec::Atom {
     public:
       /* INTERFACE FOR DERIVED CLASSES */
       /**
@@ -47,7 +48,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      Environment() {};
+      Environment() : Atom() {};
 
       /**
        * \brief destructor

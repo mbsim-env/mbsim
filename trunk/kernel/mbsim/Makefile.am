@@ -75,7 +75,6 @@ mbsim_event.h\
 modelling_interface.h\
 object.h\
 objectfactory.h\
-objectfactory_instance.h\
 rigid_body.h\
 graph.h\
 constraint.h \

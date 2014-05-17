@@ -261,7 +261,7 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+        f=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
       }
   };
 
@@ -288,7 +288,7 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+        f=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
       }
   };
 
@@ -308,7 +308,7 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
-        f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+        f=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
       }
   };
 
@@ -326,7 +326,7 @@ namespace MBSim {
         typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) { return factor*function->parDerParDer(x); }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
-          function=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(double)> >(e->getFirstElementChild());
+          function=ObjectFactory::createAndInit<fmatvec::Function<Ret(double)> >(e->getFirstElementChild());
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"scalingFactor");
           if(e) factor=Element::getDouble(e);
         }
@@ -367,7 +367,7 @@ namespace MBSim {
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"summands")->getFirstElementChild();
           while (e) {
-            addSummand(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(e));
+            addSummand(ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e));
             e=e->getNextElementSibling();
           }
         }
@@ -409,7 +409,7 @@ namespace MBSim {
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
           while (e) {
-            addComponent(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(Arg)> >(e));
+            addComponent(ObjectFactory::createAndInit<fmatvec::Function<double(Arg)> >(e));
             e=e->getNextElementSibling();
           }
         }
@@ -433,9 +433,9 @@ namespace MBSim {
         void setInnerFunction(fmatvec::Function<Argo(Argi)> *fi_) { fi = fi_; }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-          fo=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Argo)> >(e->getFirstElementChild());
+          fo=ObjectFactory::createAndInit<fmatvec::Function<Ret(Argo)> >(e->getFirstElementChild());
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-          fi=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Argo(Argi)> >(e->getFirstElementChild());
+          fi=ObjectFactory::createAndInit<fmatvec::Function<Argo(Argi)> >(e->getFirstElementChild());
         }
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
       private:
@@ -507,7 +507,7 @@ namespace MBSim {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
           xercesc::DOMElement *ee=e->getFirstElementChild();
           while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-            function.push_back(ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()));
+            function.push_back(ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()));
             a.push_back(Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit")));
             ee=ee->getNextElementSibling();
           }

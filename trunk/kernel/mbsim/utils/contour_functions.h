@@ -23,6 +23,7 @@
 #define CONTOUR_FUNCTION_1S_H
 
 #include "fmatvec/fmatvec.h"
+#include "fmatvec/atom.h"
 #include "mbsim/contour_pdata.h"
 
 namespace MBSim {
@@ -30,9 +31,9 @@ namespace MBSim {
   //================================================================================================================================
   /** userFunction for Contours: Contourpoint and trihedral (T,N,B) *
    * Parent class */
-  class  ContourFunction1s {
+  class  ContourFunction1s : public fmatvec::Atom {
     public:
-      ContourFunction1s() {};
+      ContourFunction1s() : Atom() {};
       virtual ~ContourFunction1s() {};
       virtual void init(const double& alpha) {};
       virtual void init(const ContourPointData &cp) { init(cp.getLagrangeParameterPosition()(0)); }

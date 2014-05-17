@@ -119,7 +119,7 @@ namespace MBSimHydraulics {
       glPath=E(e)->getAttribute("ref");
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneLeakage0DOF,  MBSIMHYDRAULICS%"PlaneLeakage0DOF")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneLeakage0DOF,  MBSIMHYDRAULICS%"PlaneLeakage0DOF")
 
   void PlaneLeakage0DOF::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
     lpl=plpl;
@@ -133,11 +133,11 @@ namespace MBSimHydraulics {
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"height");
     setGapHeight(getDouble(e));
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<PlaneLeakagePressureLoss>(e->getFirstElementChild());
+    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory::createAndInit<PlaneLeakagePressureLoss>(e->getFirstElementChild());
     setPlaneLeakagePressureLoss(p);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircularLeakage0DOF,  MBSIMHYDRAULICS%"CircularLeakage0DOF")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircularLeakage0DOF,  MBSIMHYDRAULICS%"CircularLeakage0DOF")
 
   void CircularLeakage0DOF::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;
@@ -160,7 +160,7 @@ namespace MBSimHydraulics {
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"height");
     setGapHeight(getDouble(e));
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<CircularLeakagePressureLoss>(e->getFirstElementChild());
+    CircularLeakagePressureLoss *p=MBSim::ObjectFactory::createAndInit<CircularLeakagePressureLoss>(e->getFirstElementChild());
     setCircularLeakagePressureLoss(p);
   }
 

@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s23BTA, MBSIMFLEX%"FlexibleBody1s23BTA")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s23BTA, MBSIMFLEX%"FlexibleBody1s23BTA")
 
   FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBodyContinuum<double>(name), L(0), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
     cylinderFlexible = new CylinderFlexible("CylinderFlexible");

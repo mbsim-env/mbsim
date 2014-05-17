@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ExternGeneralizedIO, MBSIM%"ExternGeneralizedIO")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternGeneralizedIO, MBSIM%"ExternGeneralizedIO")
 
   ExternGeneralizedIO::ExternGeneralizedIO(const string &name) : Link(name),
     connectedObject(NULL), qInd(0), uInd(0), m(0), a(0), t0(0), saved_connectedObject("") {

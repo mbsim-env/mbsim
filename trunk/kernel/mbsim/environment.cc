@@ -31,7 +31,7 @@ namespace MBSim {
 
   boost::scoped_ptr<MBSimEnvironment> MBSimEnvironment::instance(new MBSimEnvironment);
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, MBSimEnvironment, MBSIM%"MBSimEnvironment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(MBSimEnvironment, MBSIM%"MBSimEnvironment")
 
   void MBSimEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);

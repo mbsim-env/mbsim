@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalAddition, MBSIMCONTROL%"SignalAddition")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalAddition, MBSIMCONTROL%"SignalAddition")
 
   void SignalAddition::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -68,7 +68,7 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOffset, MBSIMCONTROL%"SignalOffset")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalOffset, MBSIMCONTROL%"SignalOffset")
   
   void SignalOffset::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -90,7 +90,7 @@ namespace MBSimControl {
     return signal->getSignal()+offset;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMultiplication, MBSIMCONTROL%"SignalMultiplication")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMultiplication, MBSIMCONTROL%"SignalMultiplication")
   
   void SignalMultiplication::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -131,7 +131,7 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMux, MBSIMCONTROL%"SignalMux")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMux, MBSIMCONTROL%"SignalMux")
 
   void SignalMux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -166,7 +166,7 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalDemux, MBSIMCONTROL%"SignalDemux")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalDemux, MBSIMCONTROL%"SignalDemux")
 
   void SignalDemux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -213,7 +213,7 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalLimitation, MBSIMCONTROL%"SignalLimitation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalLimitation, MBSIMCONTROL%"SignalLimitation")
 
   void SignalLimitation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -248,7 +248,7 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
 
   void SignalTimeDiscretization::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -280,7 +280,7 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOperation, MBSIMCONTROL%"SignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalOperation, MBSIMCONTROL%"SignalOperation")
 
   void SignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -462,7 +462,7 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpecialSignalOperation, MBSIMCONTROL%"SpecialSignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpecialSignalOperation, MBSIMCONTROL%"SpecialSignalOperation")
   
   void SpecialSignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -506,7 +506,7 @@ namespace MBSimControl {
     return y; 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PIDController, MBSIMCONTROL%"PIDController")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PIDController, MBSIMCONTROL%"PIDController")
 
   void PIDController::initializeUsingXML(DOMElement * element) {
     Signal::initializeUsingXML(element);
@@ -578,7 +578,7 @@ namespace MBSimControl {
     Signal::plot(t,dt);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, UnarySignalOperation, MBSIMCONTROL%"UnarySignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnarySignalOperation, MBSIMCONTROL%"UnarySignalOperation")
 
   void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -587,7 +587,7 @@ namespace MBSimControl {
     signalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      fmatvec::Function<Vec(Vec)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Vec(Vec)> >(e->getFirstElementChild());
+      fmatvec::Function<Vec(Vec)> *f=ObjectFactory::createAndInit<fmatvec::Function<Vec(Vec)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
@@ -606,7 +606,7 @@ namespace MBSimControl {
     return (*f)(s->getSignal()); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, BinarySignalOperation, MBSIMCONTROL%"BinarySignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BinarySignalOperation, MBSIMCONTROL%"BinarySignalOperation")
 
   void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -617,7 +617,7 @@ namespace MBSimControl {
     signal2String=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      fmatvec::Function<Vec(Vec,Vec)> *f=ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<Vec(Vec,Vec)> >(e->getFirstElementChild());
+      fmatvec::Function<Vec(Vec,Vec)> *f=ObjectFactory::createAndInit<fmatvec::Function<Vec(Vec,Vec)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
