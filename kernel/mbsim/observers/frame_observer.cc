@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/observers/frame_observer.h"
 #include "mbsim/frame.h"
+#include <openmbvcppinterface/group.h>
 
 using namespace std;
 using namespace MBXMLUtils;
