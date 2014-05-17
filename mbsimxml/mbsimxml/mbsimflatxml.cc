@@ -163,10 +163,10 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
   DOMElement *e=doc->getDocumentElement();
 
   // create object for DynamicSystemSolver and check correct type
-  dss=ObjectFactory<Element>::createAndInit<DynamicSystemSolver>(e->getFirstElementChild());
+  dss=ObjectFactory::createAndInit<DynamicSystemSolver>(e->getFirstElementChild());
 
   // create object for Integrator and check correct type
-  integrator=ObjectFactory<Integrator>::createAndInit<Integrator>(e->getFirstElementChild()->getNextElementSibling());
+  integrator=ObjectFactory::createAndInit<Integrator>(e->getFirstElementChild()->getNextElementSibling());
 
   return 0;
 }

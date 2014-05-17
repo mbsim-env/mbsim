@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, DOPRI5Integrator, MBSIMINT%"DOPRI5Integrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DOPRI5Integrator, MBSIMINT%"DOPRI5Integrator")
 
   DOPRI5Integrator::DOPRI5Integrator() : dt0(0), maxSteps(2000000000), dtMax(0) {
   }

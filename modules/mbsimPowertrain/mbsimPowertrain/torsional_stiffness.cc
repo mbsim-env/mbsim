@@ -37,7 +37,7 @@ using namespace xercesc;
 
 namespace MBSimPowertrain {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TorsionalStiffness, MBSIMPOWERTRAIN%"TorsionalStiffness")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TorsionalStiffness, MBSIMPOWERTRAIN%"TorsionalStiffness")
 
   TorsionalStiffness::TorsionalStiffness(const string &name) : LinkMechanics(name), func(NULL), body(2)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -147,7 +147,7 @@ namespace MBSimPowertrain {
   void TorsionalStiffness::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"generalizedForceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIMPOWERTRAIN%"rigidBodyFirstSide");
     saved_body1=E(e)->getAttribute("ref");

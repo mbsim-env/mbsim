@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneWithFrustum, MBSIM%"PlaneWithFrustum")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneWithFrustum, MBSIM%"PlaneWithFrustum")
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void PlaneWithFrustum::enableOpenMBV() {

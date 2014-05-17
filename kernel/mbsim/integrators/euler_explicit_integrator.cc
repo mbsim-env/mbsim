@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, EulerExplicitIntegrator, MBSIMINT%"EulerExplicitIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EulerExplicitIntegrator, MBSIMINT%"EulerExplicitIntegrator")
 
   EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
   }

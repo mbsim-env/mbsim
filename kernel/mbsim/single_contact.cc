@@ -44,7 +44,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SingleContact, MBSIM%"SingleContact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
   SingleContact::SingleContact(const string &name) :
       LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
@@ -1385,27 +1385,27 @@ namespace MBSim {
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
+    GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
     setNormalForceLaw(gfl);
 
     //Set impact law (if given)
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
     if (e) {
-      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
+      GeneralizedImpactLaw *gifl = ObjectFactory::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
       setNormalImpactLaw(gifl);
     }
 
     //Set friction law (if given)
     e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
     if (e) {
-      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
+      FrictionForceLaw *ffl = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
       setTangentialForceLaw(ffl);
     }
 
     //Set friction impact law (if given)
     e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
     if (e) {
-      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
+      FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
 

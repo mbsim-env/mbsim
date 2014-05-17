@@ -36,8 +36,8 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleHollow, MBSIM%"CircleHollow")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleSolid, MBSIM%"CircleSolid")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircleHollow, MBSIM%"CircleHollow")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircleSolid, MBSIM%"CircleSolid")
 
   Circle::Circle(const string& name, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(false) {}
  

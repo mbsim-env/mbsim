@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Point, MBSIM%"Point")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Point, MBSIM%"Point")
 
   void Point::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);

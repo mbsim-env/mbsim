@@ -202,9 +202,9 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteKinematicsObserver, MBSIM%"AbsoluteKinematicsObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteKinematicsObserver, MBSIM%"AbsoluteKinematicsObserver")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeKinematicsObserver, MBSIM%"RelativeKinematicsObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeKinematicsObserver, MBSIM%"RelativeKinematicsObserver")
 
   RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : KinematicsObserver(name) {
     refFrame = 0;

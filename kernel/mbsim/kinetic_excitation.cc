@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KineticExcitation, MBSIM%"KineticExcitation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
   KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
 
@@ -159,11 +159,11 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    if(e) setForceFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    if(e) setForceFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
-    if(e) setMomentFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     if(E(e)->hasAttribute("ref"))
       saved_ref=E(e)->getAttribute("ref");

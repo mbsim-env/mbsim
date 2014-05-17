@@ -47,13 +47,13 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinkDistanceSensor, MBSIMCONTROL%"LinkDistanceSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkDistanceSensor, MBSIMCONTROL%"LinkDistanceSensor")
 
   Vec LinkDistanceSensor::getSignal() {
     return link->getg().copy();
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinkVelocitySensor, MBSIMCONTROL%"LinkVelocitySensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkVelocitySensor, MBSIMCONTROL%"LinkVelocitySensor")
 
   Vec LinkVelocitySensor::getSignal() {
     return link->getgd().copy();

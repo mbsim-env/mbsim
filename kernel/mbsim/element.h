@@ -22,6 +22,7 @@
 #define _ELEMENT_H_
 
 #include "fmatvec/fmatvec.h"
+#include "fmatvec/atom.h"
 #include "mbsim/objectfactory.h"
 #include <string>
 #include <hdf5serie/vectorserie.h>
@@ -107,7 +108,7 @@ namespace MBSim {
    * \date 2009-03-24 plot feature energy (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
-  class Element {
+  class Element : public fmatvec::Atom {
     public:
       /**
        * \brief constructor

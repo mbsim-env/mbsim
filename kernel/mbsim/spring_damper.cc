@@ -36,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpringDamper, MBSIM%"SpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
   SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -140,7 +140,7 @@ namespace MBSim {
   void SpringDamper::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1=E(e)->getAttribute("ref1");
@@ -160,7 +160,7 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
   DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -281,7 +281,7 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     setForceDirection(getVec(e,3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1=E(e)->getAttribute("ref1");
@@ -301,7 +301,7 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
 
   GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : LinkMechanics(name), func(NULL), body(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -428,7 +428,7 @@ namespace MBSim {
   void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBody");
     saved_body=E(e)->getAttribute("ref");

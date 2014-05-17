@@ -26,7 +26,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearSpringDamperForce, MBSIM%"LinearSpringDamperForce")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearSpringDamperForce, MBSIM%"LinearSpringDamperForce")
 
   void LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
@@ -39,18 +39,18 @@ namespace MBSim {
     l0 = Element::getDouble(e);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NonlinearSpringDamperForce, MBSIM%"NonlinearSpringDamperForce")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NonlinearSpringDamperForce, MBSIM%"NonlinearSpringDamperForce")
 
   void NonlinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"distanceForce");
-    gForceFun = ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    gForceFun = ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
     e = E(element)->getFirstElementChildNamed(MBSIM%"velocityForce");
-    gdForceFun = ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    gdForceFun = ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearRegularizedUnilateralConstraint, MBSIM%"LinearRegularizedUnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedUnilateralConstraint, MBSIM%"LinearRegularizedUnilateralConstraint")
 
   void LinearRegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
@@ -61,7 +61,7 @@ namespace MBSim {
     d = Element::getDouble(e);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearRegularizedBilateralConstraint, MBSIM%"LinearRegularizedBilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedBilateralConstraint, MBSIM%"LinearRegularizedBilateralConstraint")
 
   void LinearRegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
@@ -79,7 +79,7 @@ namespace MBSim {
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearRegularizedCoulombFriction, MBSIM%"LinearRegularizedCoulombFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedCoulombFriction, MBSIM%"LinearRegularizedCoulombFriction")
 
   Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN) {
     int nFric = gd.size();
@@ -102,7 +102,7 @@ namespace MBSim {
     mu = Element::getDouble(e);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearRegularizedStribeckFriction, MBSIM%"LinearRegularizedStribeckFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedStribeckFriction, MBSIM%"LinearRegularizedStribeckFriction")
 
   Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN) {
     int nFric = gd.size();
@@ -126,7 +126,7 @@ namespace MBSim {
     if (e)
       gdLim = Element::getDouble(e);
     e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
-    Function<double(double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    Function<double(double)> *f = ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
     setFrictionFunction(f);
   }
 
@@ -134,14 +134,14 @@ namespace MBSim {
     Function<double(Vec2,Vec2)>::initializeUsingXML(element);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")
 
   void FlexibilityInfluenceFunction::initializeUsingXML(DOMElement *element) {
     InfluenceFunction::initializeUsingXML(element);
     flexibility = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"Flexibility"));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantInfluenceFunction, MBSIM%"ConstantInfluenceFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantInfluenceFunction, MBSIM%"ConstantInfluenceFunction")
 
   void ConstantInfluenceFunction::initializeUsingXML(DOMElement *element) {
     InfluenceFunction::initializeUsingXML(element);

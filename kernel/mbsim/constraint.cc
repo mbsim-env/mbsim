@@ -82,7 +82,7 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GearConstraint, MBSIM%"GearConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -210,7 +210,7 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage)
@@ -232,7 +232,7 @@ namespace MBSim {
     KinematicConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"constraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setConstraintFunction(f);
     }
   }
@@ -248,7 +248,7 @@ namespace MBSim {
       ke->setOpenMBVMoment(MArrow);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
 
   void GeneralizedVelocityConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage)
@@ -285,17 +285,17 @@ namespace MBSim {
       x0 = getVec(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
+      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
       setGeneralConstraintFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setTimeDependentConstraintFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
     if(e) {
-      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
+      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
       setStateDependentConstraintFunction(f);
     }
   }
@@ -311,7 +311,7 @@ namespace MBSim {
       ke->setOpenMBVMoment(MArrow);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
 
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage)
@@ -345,17 +345,17 @@ namespace MBSim {
       x0 = getVec(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
-      Function<VecV(VecV,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
+      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
       setGeneralConstraintFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
       setTimeDependentConstraintFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
     if(e) {
-      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
+      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
       setStateDependentConstraintFunction(f);
     }
   }
@@ -371,7 +371,7 @@ namespace MBSim {
       ke->setOpenMBVMoment(MArrow);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIM%"JointConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE

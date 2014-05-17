@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FunctionSensor, MBSIMCONTROL%"FunctionSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionSensor, MBSIMCONTROL%"FunctionSensor")
       
   FunctionSensor::FunctionSensor(const std::string &name, fmatvec::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
     y=(*function)(0);
@@ -47,18 +47,18 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    function=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<VecV(double)> >(e->getFirstElementChild()); 
+    function=MBSim::ObjectFactory::createAndInit<fmatvec::Function<VecV(double)> >(e->getFirstElementChild()); 
     y=(*function)(0);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function_SSEvaluation, MBSIMCONTROL%"Function_SSEvaluation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_SSEvaluation, MBSIMCONTROL%"Function_SSEvaluation")
 
   void Function_SSEvaluation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     signalString = E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    fun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
+    fun=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
   }
 
   void Function_SSEvaluation::init(InitStage stage) {
@@ -78,7 +78,7 @@ namespace MBSimControl {
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function_SSSEvaluation, MBSIMCONTROL%"Function_SSSEvaluation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_SSSEvaluation, MBSIMCONTROL%"Function_SSSEvaluation")
 
   void Function_SSSEvaluation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -88,7 +88,7 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondInputSignal");
     signal2String = E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    fun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double,double)> >(e->getFirstElementChild()); 
+    fun=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double,double)> >(e->getFirstElementChild()); 
   }
 
   void Function_SSSEvaluation::init(InitStage stage) {

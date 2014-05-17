@@ -26,6 +26,7 @@
 #include <mbsim/contour.h>
 #include <mbsim/contact.h>
 #include <fmatvec/function.h>
+#include <fmatvec/atom.h>
 
 namespace MBSim {
 
@@ -37,14 +38,14 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedForceLaw {
+  class GeneralizedForceLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      GeneralizedForceLaw() : forceFunc(NULL) {};
+      GeneralizedForceLaw() : Atom(), forceFunc(NULL) {};
 
-      GeneralizedForceLaw(fmatvec::Function<double(double,double)> *forceFunc_) : forceFunc(forceFunc_) {};
+      GeneralizedForceLaw(fmatvec::Function<double(double,double)> *forceFunc_) : Atom(), forceFunc(forceFunc_) {};
 
       /**
        * \brief destructor
@@ -189,12 +190,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedImpactLaw {
+  class GeneralizedImpactLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      GeneralizedImpactLaw() {};
+      GeneralizedImpactLaw() : fmatvec::Atom() {};
 
       /**
        * \brief destructor
@@ -289,12 +290,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionForceLaw {
+  class FrictionForceLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      FrictionForceLaw() : frictionForceFunc(NULL) {};
+      FrictionForceLaw() : Atom(), frictionForceFunc(NULL) {};
 
       FrictionForceLaw(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : frictionForceFunc(frictionForceFunc_) {};
 
@@ -510,12 +511,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionImpactLaw {
+  class FrictionImpactLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      FrictionImpactLaw() {};
+      FrictionImpactLaw() : fmatvec::Atom() {};
 
       /**
        * \brief destructor

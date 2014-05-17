@@ -20,10 +20,11 @@
 #ifndef _INTEGRATOR_H_
 #define _INTEGRATOR_H_
 
-#include<fmatvec/fmatvec.h>
+#include <fmatvec/fmatvec.h>
+#include <fmatvec/atom.h>
 #include <mbxmlutilshelper/dom.h>
-#include<string>
-#include<iostream>
+#include <string>
+#include <iostream>
 
 namespace MBSim {
 
@@ -36,7 +37,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-13 some comments (Thorsten Schindler) 
    */
-  class Integrator {
+  class Integrator : public fmatvec::Atom {
     public:
       /**
        * \brief constructor 

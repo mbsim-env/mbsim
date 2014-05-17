@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Line, MBSIM%"Line")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Line, MBSIM%"Line")
 
   void Line::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);

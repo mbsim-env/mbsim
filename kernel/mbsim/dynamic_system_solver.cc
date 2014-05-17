@@ -65,7 +65,7 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest = false;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
   DynamicSystemSolver::DynamicSystemSolver() :
       Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), INFO(true), READZ0(false), truncateSimulationFiles(true) {
@@ -1461,7 +1461,7 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
 
     while (e) {
-      ObjectFactory<Environment>::createAndInit<Environment>(e);
+      ObjectFactory::createAndInit<Environment>(e);
       e = e->getNextElementSibling();
     }
 
@@ -1588,7 +1588,7 @@ namespace MBSim {
     shared_ptr<DOMParser> parser=DOMParser::create(false);
     shared_ptr<DOMDocument> doc=parser->parse(filename);
     DOMElement *e = doc->getDocumentElement();
-    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::createAndInit<Group>(e));
+    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createAndInit<Group>(e));
     return dss;
   }
 

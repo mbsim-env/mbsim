@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalProcessingSystemSensor, MBSIMCONTROL%"SignalProcessingSystemSensor")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalProcessingSystemSensor, MBSIMCONTROL%"SignalProcessingSystemSensor")
 
   void SignalProcessingSystemSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);

@@ -46,7 +46,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contact, MBSIM%"Contact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Contact, MBSIM%"Contact")
 
   Contact::Contact(const string &name) :
       LinkMechanics(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0)
@@ -793,27 +793,27 @@ namespace MBSim {
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory<GeneralizedForceLaw>::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
+    GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
     setNormalForceLaw(gfl);
 
     //Get Impact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");
     if (e) {
-      GeneralizedImpactLaw *gifl = ObjectFactory<GeneralizedImpactLaw>::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
+      GeneralizedImpactLaw *gifl = ObjectFactory::createAndInit<GeneralizedImpactLaw>(e->getFirstElementChild());
       setNormalImpactLaw(gifl);
     }
 
     //Get Friction Force Law
     e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialForceLaw");
     if (e) {
-      FrictionForceLaw *ffl = ObjectFactory<FrictionForceLaw>::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
+      FrictionForceLaw *ffl = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
       setTangentialForceLaw(ffl);
     }
 
     //Get Friction Impact Law
     e = E(element)->getFirstElementChildNamed(MBSIM%"tangentialImpactLaw");
     if (e) {
-      FrictionImpactLaw *fil = ObjectFactory<FrictionImpactLaw>::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
+      FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
 

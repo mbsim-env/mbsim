@@ -36,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, LSODARIntegrator, MBSIMINT%"LSODARIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LSODARIntegrator, MBSIMINT%"LSODARIntegrator")
 
   LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true) {
   }

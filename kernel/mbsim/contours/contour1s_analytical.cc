@@ -41,7 +41,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contour1sAnalytical, MBSIM%"Contour1sAnalytical")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Contour1sAnalytical, MBSIM%"Contour1sAnalytical")
 
   Contour1sAnalytical::~Contour1sAnalytical() {
      if (funcCrPC) 
@@ -203,7 +203,7 @@ namespace MBSim {
     diameter=getDouble(e);
     //Contour1sAnalytical
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
-    funcCrPC=ObjectFactory<ContourFunction1s>::createAndInit<ContourFunction1s>(e->getFirstElementChild());
+    funcCrPC=ObjectFactory::createAndInit<ContourFunction1s>(e->getFirstElementChild());
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
