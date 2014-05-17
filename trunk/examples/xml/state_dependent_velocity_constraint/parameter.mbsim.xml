@@ -3,6 +3,6 @@
     <pv:scalarParameter name="g">9.81</pv:scalarParameter>
     <pv:scalarParameter name="c">0.005</pv:scalarParameter>
     <pv:scalarParameter name="l">100</pv:scalarParameter>
-    <pv:scalarParameter name="v0x">v0/sqrt(1+(c*l)^2)</pv:scalarParameter>
     <pv:scalarParameter name="v0">30</pv:scalarParameter>
+    <pv:scalarParameter name="v0x">v0/sqrt(1+(c*l)^2)</pv:scalarParameter>
 </pv:Parameter>
