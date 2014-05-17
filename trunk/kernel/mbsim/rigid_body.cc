@@ -32,6 +32,7 @@
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
+#include <openmbvcppinterface/group.h>
 #endif
 
 using namespace std;

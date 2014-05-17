@@ -22,6 +22,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constraint.h"
+#include <openmbvcppinterface/group.h>
 
 using namespace std;
 using namespace fmatvec;
