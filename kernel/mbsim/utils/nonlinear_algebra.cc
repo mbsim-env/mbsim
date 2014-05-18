@@ -23,6 +23,8 @@
 #include <mbsim/utils/utils.h>
 
 #include <cmath>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 
 using namespace fmatvec;
 using namespace std;
@@ -167,9 +169,23 @@ namespace MBSim {
     return 0;
   }
 
-  MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec(Vec)> *fct_, Function<SqrMat(Vec)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), info(1), norms(0), tol(1e-10) {}
+  inline Vec fslvLU(const SqrMat &a, const Vec&  b) {
+    return slvLU(a,b);
+  }
+
+  inline Vec fslvLS(const SqrMat &a, const Vec&  b) {
+    return slvLS(a,b);
+  }
+
+  MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec(Vec)> *fct_, Function<SqrMat(Vec)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), info(1), norms(0), tol(1e-10), linAlg(0) {}
 
   Vec MultiDimNewtonMethod::solve(const Vec &x0) {
+    boost::function<Vec(const SqrMat&,const Vec&)> slv;
+
+    if(linAlg==0)
+      slv = boost::bind(fslvLU, _1, _2);
+    else if(linAlg==1)
+      slv = boost::bind(fslvLS, _1, _2);
 
     iter=0;
     Vec x, xold;
@@ -208,7 +224,7 @@ namespace MBSim {
         }
       }
 
-      Vec dx = slvLU(J,f);
+      Vec dx = slv(J,f);
 
       double nrmf = 1;
       double alpha = 1;
