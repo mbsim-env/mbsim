@@ -21,6 +21,7 @@
 #define _EIGENANALYSIS_H_
 
 #include "fmatvec/fmatvec.h"
+#include "fmatvec/function.h"
 
 namespace MBSim {
 
@@ -32,11 +33,20 @@ namespace MBSim {
    */
   class Eigenanalysis {
 
+    class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
+      public:
+        Residuum(DynamicSystemSolver *sys_, double t_);
+        fmatvec::Vec operator()(const fmatvec::Vec &z);
+      private:
+        DynamicSystemSolver *sys;
+        double t;
+    };
+
     public:
       /**
        * \brief Standard constructor 
        */
-      Eigenanalysis() : t0(0) {}
+      Eigenanalysis() : tStart(0), tEnd(1), dtPlot(1e-2) {}
       
       /**
        * \brief Destructor
@@ -50,23 +60,41 @@ namespace MBSim {
       void analyse(DynamicSystemSolver& system);
 
       /**
-       * \brief Set the time of the dynamic system
-       * \param t_ The time
+       * \brief Set the initial guess for the computation of the equilibrium position
+       * \param z0_ The initial guess
        */
-      void setTime(double t) { t0=t; }
+      void setInitialGuess(const fmatvec::Vec &z0_) { z0 = z0_; }
 
       /**
-       * \brief Set the state of the dynamic system
-       * \param z0_ The state
+       * \brief Set the initial deviation of the equilibrium position
+       * \param deltaz_ The deviation
        */
-      void setInitialState(const fmatvec::Vec &z) { z0 = z; }
+      void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0 = deltaz0_; }
+
+      /**
+       * \brief Set the start time for the analysis
+       * \param tStart_ The start time
+       */
+      void setStartTime(double tStart_) { tStart=tStart_; }
+
+      /**
+       * \brief Set the end time for the analysis
+       * \param tEnd_ The end time
+       */
+      void setEndTime(double tEnd_) { tEnd = tEnd_; }
+
+      /**
+       * \brief Set the plot step size for the analysis
+       * \param dtPlot_ The plot step size
+       */
+      void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
 
     protected:
 
       static DynamicSystemSolver* system;
 
-      double t0;
-      fmatvec::Vec z0;
+      fmatvec::Vec z0, deltaz0;
+      double tStart, tEnd, dtPlot;
  };
 
 }
