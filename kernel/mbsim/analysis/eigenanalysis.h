@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief Standard constructor 
        */
-      Eigenanalysis() {}
+      Eigenanalysis() : t0(0) {}
       
       /**
        * \brief Destructor
@@ -50,15 +50,22 @@ namespace MBSim {
       void analyse(DynamicSystemSolver& system);
 
       /**
-       * \brief Set the initial state of the dynamic system
-       * \param z0_ The initial state
+       * \brief Set the time of the dynamic system
+       * \param t_ The time
        */
-      void setInitialState(const fmatvec::Vec &z0_) { z0 = z0_; }
+      void setTime(double t) { t0=t; }
+
+      /**
+       * \brief Set the state of the dynamic system
+       * \param z0_ The state
+       */
+      void setInitialState(const fmatvec::Vec &z) { z0 = z; }
 
     protected:
 
       static DynamicSystemSolver* system;
 
+      double t0;
       fmatvec::Vec z0;
  };
 

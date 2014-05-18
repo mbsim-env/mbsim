@@ -33,14 +33,13 @@ namespace MBSim {
   void Eigenanalysis::analyse(DynamicSystemSolver& system_) {
     system = &system_;
 
-    double t=0;
+    double t=t0;
     int zSize=system->getzSize();
     Vec z(zSize);
     if(z0.size())
       z = z0;
     else
       system->initz(z);          
-    Vec zOld = z.copy();
     double delta = epsroot();
     SqrMat A(z.size());
     Vec zd, zdOld;
@@ -52,27 +51,26 @@ namespace MBSim {
       A.col(i) = (zd - zdOld) / delta;
       z(i) = ztmp;
     }
-    SqrMat B;
+    SquareMatrix<Ref, complex<double> > B;
     Vector<Ref, complex<double> > w;
     eigvec(A,B,w);
     ofstream os("Eigenanalysis.mat");
-    os << "# name: V" << endl;
-    os << "# type: matrix" << endl;
-    os << "# rows: " << B.rows() << endl;
-    os << "# columns: " << B.cols() << endl;
-    for (int i=0; i < B.rows(); ++i) {
-      for (int j=0; j < B.cols(); ++j) 
-        os << setw(14) << B.e(i,j);
-
-      os << endl;
-    }
-    os << endl;
     os << "# name: lambda" << endl;
     os << "# type: complex matrix" << endl;
     os << "# rows: " << w.size() << endl;
     os << "# columns: " << 1 << endl;
     for (int i=0; i < w.size(); ++i)
-      os << setw(14) << w.e(i) << endl;
+      os << setw(26) << w.e(i) << endl;
+    os << endl;
+    os << "# name: V" << endl;
+    os << "# type: complex matrix" << endl;
+    os << "# rows: " << B.rows() << endl;
+    os << "# columns: " << B.cols() << endl;
+    for (int i=0; i < B.rows(); ++i) {
+      for (int j=0; j < B.cols(); ++j) 
+        os << setw(26) << B.e(i,j);
+      os << endl;
+    }
     os.close();
   }
 
