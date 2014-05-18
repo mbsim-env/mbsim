@@ -1,8 +1,6 @@
 #ifndef _MBSIMFLATXML_H_
 #define _MBSIMFLATXML_H_
 
-using namespace std;
-
 namespace MBSim {
 
   class DynamicSystemSolver;
