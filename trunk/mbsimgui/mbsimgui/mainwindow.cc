@@ -588,7 +588,6 @@ namespace MBSimGUI {
     ele0->insertBefore(filenamePI, ele0->getFirstChild());
 
     paramList.writeXMLFile(ele0);
-    DOMParser::serialize(doc.get(), "test1.xml", true);
 
     try {
       D(doc)->validate();
@@ -597,7 +596,6 @@ namespace MBSimGUI {
       cout << "Error in validation" << endl;
       return;
     }
-    DOMParser::serialize(doc.get(), "test2.xml", true);
 
     try {
       // remove all parameters from octave using delete and new NewParamLevel
