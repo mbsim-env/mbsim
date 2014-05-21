@@ -66,12 +66,14 @@ namespace MBSim {
     else
       system->initz(z);          
 
-    Residuum f(system,t);
-    MultiDimNewtonMethod newton(&f);
-    newton.setLinearAlgebra(1);
-    Vec zEq = newton.solve(z);
-    if(newton.getInfo() != 0)
-      throw MBSimError("ERROR in Eigenanalysis: computation of equilibrium position failed!");
+    if(not(zEq.size())) {
+      Residuum f(system,t);
+      MultiDimNewtonMethod newton(&f);
+      newton.setLinearAlgebra(1);
+      zEq = newton.solve(z);
+      if(newton.getInfo() != 0)
+        throw MBSimError("ERROR in Eigenanalysis: computation of equilibrium position failed!");
+    }
 
     double delta = epsroot();
     SqrMat A(zEq.size());
@@ -84,27 +86,28 @@ namespace MBSim {
       A.col(i) = (zd - zdOld) / delta;
       zEq(i) = ztmp;
     }
-    SquareMatrix<Ref, complex<double> > V;
-    Vector<Ref, complex<double> > w;
     eigvec(A,V,w);
-    ofstream os("Eigenanalysis.mat");
-    os << "# name: lambda" << endl;
-    os << "# type: complex matrix" << endl;
-    os << "# rows: " << w.size() << endl;
-    os << "# columns: " << 1 << endl;
-    for (int i=0; i < w.size(); ++i)
-      os << setw(26) << w.e(i) << endl;
-    os << endl;
-    os << "# name: V" << endl;
-    os << "# type: complex matrix" << endl;
-    os << "# rows: " << V.rows() << endl;
-    os << "# columns: " << V.cols() << endl;
-    for (int i=0; i < V.rows(); ++i) {
-      for (int j=0; j < V.cols(); ++j) 
-        os << setw(26) << V.e(i,j);
+    string name = fileName.empty()?system->getName()+".eigenanalysis.mat":fileName;
+    ofstream os(fileName.c_str());
+    if(os.is_open()) {
+      os << "# name: lambda" << endl;
+      os << "# type: complex matrix" << endl;
+      os << "# rows: " << w.size() << endl;
+      os << "# columns: " << 1 << endl;
+      for (int i=0; i < w.size(); ++i)
+        os << setw(26) << w.e(i) << endl;
       os << endl;
+      os << "# name: V" << endl;
+      os << "# type: complex matrix" << endl;
+      os << "# rows: " << V.rows() << endl;
+      os << "# columns: " << V.cols() << endl;
+      for (int i=0; i < V.rows(); ++i) {
+        for (int j=0; j < V.cols(); ++j) 
+          os << setw(26) << V.e(i,j);
+        os << endl;
+      }
+      os.close();
     }
-    os.close();
 
     if(deltaz0.size()==0)
       deltaz0.resize(zEq.size());
