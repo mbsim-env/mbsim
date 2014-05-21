@@ -89,12 +89,41 @@ namespace MBSim {
        */
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
 
+      /**
+       * \brief Set the plot step size for the analysis
+       * \param dtPlot_ The plot step size
+       */
+      void setEquilibriumState(const fmatvec::Vec &zEq_) { zEq = zEq_; }
+
+      /**
+       * \brief Get the eigenvalues
+       * \return A vector containing the eigenvalues of the system
+       */
+      const fmatvec::Vector<fmatvec::Ref, std::complex<double> >& getEigenvalues() const { return w; }
+
+      /**
+       * \brief Get the eigenvectors
+       * \return A matrix containing the eigenvectors of the system
+       */
+      const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> >& getEigenvectors() const { return V; }
+
+      /**
+       * \brief Set the name of the output file
+       * \param fileName_ The output file name
+       */
+      void setOutputFileName(const std::string &fileName_) { fileName = fileName_; }
+
     protected:
 
       static DynamicSystemSolver* system;
 
-      fmatvec::Vec z0, deltaz0;
+      fmatvec::Vec z0, deltaz0, zEq;
       double tStart, tEnd, dtPlot;
+
+      fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
+      fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
+
+      std::string fileName;
  };
 
 }
