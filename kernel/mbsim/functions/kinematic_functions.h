@@ -352,7 +352,6 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           double a = q.e(0);
           double ad = qd.e(0);
-          double bd = qd.e(1);
           Jd.e(1,1) = -sin(a)*ad;
           Jd.e(2,1) = cos(a)*ad;
           return Jd;
@@ -394,7 +393,6 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           double beta = q.e(0);
           double betad = qd.e(0);
-          double gammad = qd.e(1);
           Jd.e(0,1) = cos(beta)*betad;
           Jd.e(2,1) = -sin(beta)*betad;
           return Jd;
@@ -437,7 +435,6 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           double a = q.e(0);
           double ad = qd.e(0);
-          double bd = qd.e(1);
           Jd.e(1,1) = -cos(a)*ad;
           Jd.e(2,1) = -sin(a)*ad;
           return Jd;
