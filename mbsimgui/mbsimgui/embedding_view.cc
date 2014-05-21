@@ -34,6 +34,8 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
+        Element *element = static_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
+        mw->updateOctaveParameters(element->getParameterList());
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
