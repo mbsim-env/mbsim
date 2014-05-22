@@ -199,10 +199,10 @@ namespace MBSim {
       fmatvec::Vec3& getReferenceGyroscopicAccelerationOfTranslation() { return R->getGyroscopicAccelerationOfTranslation(); }
       fmatvec::Vec3& getReferenceGyroscopicAccelerationOfRotation() { return R->getGyroscopicAccelerationOfRotation(); }
 
-      int gethSize(int i=0) const { return hSize[i]; }
-      int gethInd(int i=0) const { return hInd[i]; }
-      void sethSize(int size, int i=0) { hSize[i] = size; }
-      void sethInd(int ind, int i=0) { hInd[i] = ind; }
+      virtual int gethSize(int i=0) const { return hSize[i]; }
+      virtual int gethInd(int i=0) const { return hInd[i]; }
+      virtual void sethSize(int size, int i=0) { hSize[i] = size; }
+      virtual void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
       //virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { Element::setPlotFeature(pf,value); R->setPlotFeature(pf,value);}
 //      ObjectInterface* getParent() { return parent; }

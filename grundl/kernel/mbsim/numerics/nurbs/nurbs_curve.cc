@@ -428,28 +428,28 @@ namespace MBSim {
       U(j) = 1.0;
   }
 
-  double NurbsCurve::chordLengthParam(const MatVx3& Q, Vec& ub){
-  int i ;
-  double d = 0;
+  double NurbsCurve::chordLengthParam(const MatVx3& Q, Vec& ub) {
+    int i;
+    double d = 0;
 
-  ub.resize(Q.rows()) ;
-  ub(0) = 0 ;
-  for(i=1;i<ub.rows();i++){
-    d += nrm2(Q.row(i)-Q.row(i-1)) ;
-  }
-  if(d>0){
-    for(i=1;i<ub.rows()-1;++i){
-      ub(i) = ub(i-1) + nrm2(Q.row(i)-Q.row(i-1))/d ;
+    ub.resize(Q.rows());
+    ub(0) = 0;
+    for (i = 1; i < ub.rows(); i++) {
+      d += nrm2(Q.row(i) - Q.row(i - 1));
     }
-    ub(ub.rows()-1) = 1.0 ; // In case there is some addition round-off
+    if (d > 0) {
+      for (i = 1; i < ub.rows() - 1; ++i) {
+        ub(i) = ub(i - 1) + nrm2(Q.row(i) - Q.row(i - 1)) / d;
+      }
+      ub(ub.rows() - 1) = 1.0; // In case there is some addition round-off
+    }
+    else {
+      for (i = 1; i < ub.rows() - 1; ++i)
+        ub(i) = double(i) / double(ub.rows() - 1);
+      ub(ub.rows() - 1) = 1.0;
+    }
+    return d;
   }
-  else{
-    for(i=1;i<ub.rows()-1;++i)
-      ub(i) = double(i)/double(ub.rows()-1) ;
-    ub(ub.rows()-1) = 1.0 ;
-  }
-  return d ;
-}
 
   void NurbsCurve::updateUVecs(double uMin, double uMax) {
     const double stepU = (uMax - uMin) / (u.rows() - 1);
@@ -627,6 +627,8 @@ namespace MBSim {
     double* right = &left[deg + 1];
 
     double temp, saved;
+
+    funs.resize(deg + 1);
 
     funs(0) = 1.0;
     for (int j = 1; j <= deg; j++) {
