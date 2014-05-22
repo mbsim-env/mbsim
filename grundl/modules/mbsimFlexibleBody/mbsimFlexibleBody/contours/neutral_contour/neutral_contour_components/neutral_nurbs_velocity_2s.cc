@@ -8,6 +8,8 @@
 #include "neutral_nurbs_velocity_2s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 
+using namespace MBSim;
+
 namespace MBSimFlexibleBody {
 
   NeutralNurbsVelocity2s::NeutralNurbsVelocity2s(Element* parent_, const MatVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_) :

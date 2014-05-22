@@ -40,14 +40,15 @@ using namespace PLib;
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s33RCM, MBSIMFLEXIBLEBODYNS"FlexibleBody1s33RCMCantilever")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s33RCM, MBSIMFLEXIBLEBODYNS"FlexibleBody1s33RCMRing")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s33RCM, MBSIMFLEX%"FlexibleBody1s33RCMCantilever")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s33RCM, MBSIMFLEX%"FlexibleBody1s33RCMRing")
 
   FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name, bool openStructure_) :
       FlexibleBodyContinuum<double>(name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), neutralFibre(new Contour1sFlexible("NeutralFibre")), angle(new RevCardan()), Elements(0), L(0.), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), epstD(0.), k0D(0.), epstL(0.), k0L(0.), openStructure(openStructure_), initialised(false), nGauss(3), cylinderRadius(0.), cuboidBreadth(0.), cuboidHeight(0.) {
@@ -405,58 +406,58 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33RCM::initializeUsingXML(TiXmlElement * element) {
+  void FlexibleBody1s33RCM::initializeUsingXML(DOMElement * element) {
     FlexibleBody::initializeUsingXML(element);
-    TiXmlElement * e;
+    DOMElement * e;
 
     // frames
-    e = element->FirstChildElement(MBSIMFLEXNS"frames")->FirstChildElement();
-    while (e && e->ValueStr() == MBSIMFLEXNS"frameOnFlexibleBody1s") {
-      TiXmlElement *ec = e->FirstChildElement();
-      Frame *f = new Frame(ec->Attribute("name"));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
+    while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"frameOnFlexibleBody1s") {
+      DOMElement *ec=e->getFirstElementChild();
+      Frame *f=new Frame(MBXMLUtils::E(ec)->getAttribute("name"));
       f->initializeUsingXML(ec);
-      ec = ec->NextSiblingElement();
+      ec=ec->getNextElementSibling();
       addFrame(f, getDouble(ec));
-      e = e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
     //other properties
 
-    e = element->FirstChildElement(MBSIMFLEXNS"numberOfElements");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfElements");
     setNumberElements(getInt(e));
-    e = element->FirstChildElement(MBSIMFLEXNS"length");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"length");
     setLength(getDouble(e));
 
-    e = element->FirstChildElement(MBSIMFLEXNS"youngsModulus");
-    double E = getDouble(e);
-    e = element->FirstChildElement(MBSIMFLEXNS"shearModulus");
-    double G = getDouble(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
+    double E=getDouble(e);
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shearModulus");
+    double G=getDouble(e);
     setEGModuls(E, G);
 
-    e = element->FirstChildElement(MBSIMFLEXNS"density");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");
     setDensity(getDouble(e));
-    e = element->FirstChildElement(MBSIMFLEXNS"crossSectionArea");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"crossSectionArea");
     setCrossSectionalArea(getDouble(e));
 
-    e = element->FirstChildElement(MBSIMFLEXNS"momentOfInertia");
-    Vec TempVec2 = getVec(e);
-    setMomentsInertia(TempVec2(0), TempVec2(1), TempVec2(2));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"momentOfInertia");
+    Vec TempVec2=getVec(e);
+    setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
 
-    e = element->FirstChildElement(MBSIMFLEXNS"radiusOfContourCylinder");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"radiusOfContourCylinder");
     setCylinder(getDouble(e));
 
-    e = element->FirstChildElement(MBSIMFLEXNS"dampingOfMaterial");
-    double thetaEps = getDouble(e->FirstChildElement(MBSIMFLEXNS"prolongational"));
-    double thetaKappa0 = getDouble(e->FirstChildElement(MBSIMFLEXNS"torsional"));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingOfMaterial");
+    double thetaEps=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"prolongational"));
+    double thetaKappa0=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"));
     setMaterialDamping(thetaEps, thetaKappa0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
-    if (e) {
-      OpenMBV::SpineExtrusion *rb = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->FirstChildElement());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
+    if(e) {
+      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
       setOpenMBVSpineExtrusion(rb);
-      rb->initializeUsingXML(e->FirstChildElement());
-      rb->setNumberOfSpinePoints(4 * Elements + 1);
+      rb->initializeUsingXML(e->getFirstElementChild());
+      rb->setNumberOfSpinePoints(4*Elements+1);
     }
 #endif
   }

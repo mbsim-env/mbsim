@@ -109,7 +109,7 @@ namespace MBSimControl {
        */
       void setMomentDirection(const fmatvec::Mat& md);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
     protected:
       /**

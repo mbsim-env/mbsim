@@ -27,17 +27,17 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/discretization_interface.h>
-#include "mbsimFlexibleBody/defines.h"
-#include "mbsim/xmlnamespacemapping.h"
+
 
 //#ifdef _OPENMP
 //#include <omp.h>
 //#endif
 
-using namespace fmatvec;
-using namespace MBXMLUtils;
 using namespace std;
+using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
@@ -195,18 +195,13 @@ namespace MBSimFlexibleBody {
     Body::addContour(contour_);
   }
 
-  void FlexibleBody::initializeUsingXML(TiXmlElement *element) {
+  void FlexibleBody::initializeUsingXML(DOMElement *element) {
     Body::initializeUsingXML(element);
-
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMFLEXNS"massProportionalDamping");
+    
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
     setMassProportionalDamping(getDouble(e));
   }
 
 }
 
-// register namspace mapping (must just be done in any *.cc file)
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(50, MBSIMFLEXIBLEBODYNS_, "")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(40, MBSIMFLEXIBLEBODYNS_, "flex")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(30, MBSIMFLEXIBLEBODYNS_, "flexbody")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(20, MBSIMFLEXIBLEBODYNS_, "mbsimflexbody")

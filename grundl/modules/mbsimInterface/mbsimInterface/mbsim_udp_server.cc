@@ -71,7 +71,7 @@ namespace MBSimInterface {
 #endif
   }
 
-  void MBSimUdpServer::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+  void MBSimUdpServer::initializeUsingXML(xercesc::DOMElement *element) {
     port=MBSim::Element::getInt(element->FirstChildElement(MBSIMINTERFACENS"port"));
   }
 

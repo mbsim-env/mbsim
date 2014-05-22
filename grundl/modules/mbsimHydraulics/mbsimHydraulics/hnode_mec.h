@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
       void calcxSize() {xSize=1; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
       virtual void updateVRef(const fmatvec::Mat& Vref, int i=0);
@@ -117,7 +117,7 @@ namespace MBSimHydraulics {
       void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       void updateg(double t);
 
@@ -153,7 +153,7 @@ namespace MBSimHydraulics {
       void calcxSize() {xSize=2; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
 

@@ -8,6 +8,9 @@
 #include "neutral_nurbs_local_position_2s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 
+using namespace MBSim;
+
+
 namespace MBSimFlexibleBody {
 
   NeutralNurbsLocalPosition2s::NeutralNurbsLocalPosition2s(Element* parent_, const MatVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_):

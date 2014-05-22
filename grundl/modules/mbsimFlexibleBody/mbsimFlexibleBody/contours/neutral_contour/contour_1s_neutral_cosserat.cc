@@ -10,6 +10,9 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
+using namespace MBSim;
+
+
 namespace MBSimFlexibleBody {
   
   Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_) :

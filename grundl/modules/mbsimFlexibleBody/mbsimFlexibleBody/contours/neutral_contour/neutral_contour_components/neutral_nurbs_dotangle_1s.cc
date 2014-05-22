@@ -8,6 +8,8 @@
 #include "neutral_nurbs_dotangle_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 
+using namespace MBSim;
+
 namespace MBSimFlexibleBody {
 //  class FlexibleBodyContinuum<double>;
 
