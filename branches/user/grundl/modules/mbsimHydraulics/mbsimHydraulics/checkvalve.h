@@ -76,7 +76,7 @@ namespace MBSimHydraulics {
       
       void init(MBSim::InitStage stage);
       
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
     private:
       ClosableRigidLine * line;

@@ -15,13 +15,13 @@ namespace MBSimFlexibleBody {
   
   class NeutralNurbsAngle1s : public MBSimFlexibleBody::NeutralNurbs1s {
     public:
-      NeutralNurbsAngle1s(Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
+      NeutralNurbsAngle1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsAngle1s();
       Vec3 calculateStaggeredAngle(double oringnalPosition);
-      virtual void update(ContourPointData &cp) ;
-      virtual void updateAngleNormal(ContourPointData &cp) ;
-      virtual void updateAngleFirstTangent(ContourPointData &cp) ;
-      virtual void updateAngleSecondTangent(ContourPointData &cp) ;
+      virtual void update(MBSim::ContourPointData &cp) ;
+      virtual void updateAngleNormal(MBSim::ContourPointData &cp) ;
+      virtual void updateAngleFirstTangent(MBSim::ContourPointData &cp) ;
+      virtual void updateAngleSecondTangent(MBSim::ContourPointData &cp) ;
       virtual void computeCurve(bool update);
 
     protected:

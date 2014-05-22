@@ -80,7 +80,7 @@ namespace MBSimHydraulics {
       void plot(double t, double dt);
       void plotParameters();
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
     protected:
       double p0, fracAir, r, l;

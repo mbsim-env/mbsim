@@ -1,8 +1,11 @@
 #include <config.h>
 #include "node_frame.h"
 
+#include <mbsimFlexibleBody/flexible_body.h>
+
 using namespace MBSim;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
@@ -10,17 +13,17 @@ namespace MBSimFlexibleBody {
     Frame::init(stage);
   }
 
-  void NodeFrame::initializeUsingXML(TiXmlElement *element) {
+  void NodeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
-    TiXmlElement *ec = element->FirstChildElement();
-    ec = element->FirstChildElement(MBSIMNS"NodeNumber");
-    if (ec)
-      setNodeNumber(getInt(ec));
+
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"NodeNumber");
+    setNodeNumber(getInt(e));
   }
 
-  TiXmlElement* NodeFrame::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Frame::writeXMLFile(parent);
-    addElementText(ele0, MBSIMNS"NodeNumber", float(getNodeNumber()));
+  DOMElement* NodeFrame::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Frame::writeXMLFile(parent);
+    addElementText(ele0, MBSIMFLEX%"NodeNumber", float(getNodeNumber()));
     return ele0;
   }
 

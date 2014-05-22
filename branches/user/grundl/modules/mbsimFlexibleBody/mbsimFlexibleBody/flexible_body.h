@@ -21,8 +21,6 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#define MBSIMFLEXNS "{http://mbsim.berlios.de/MBSimFlexibleBody}"
-
 #include <mbsimFlexibleBody/node_frame.h>
 
 #include "mbsim/body.h"
@@ -34,6 +32,8 @@ namespace MBSim {
 }
 
 namespace MBSimFlexibleBody {
+
+  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://mbsim.berlios.de/MBSimFlexibleBody");
 
   /**
    * \brief upmost class for flexible body implementation
@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody"; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */

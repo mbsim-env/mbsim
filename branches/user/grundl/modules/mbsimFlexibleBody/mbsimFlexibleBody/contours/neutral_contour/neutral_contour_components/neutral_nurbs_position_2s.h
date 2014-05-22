@@ -14,12 +14,12 @@ namespace MBSimFlexibleBody {
   
   class NeutralNurbsPosition2s : public MBSimFlexibleBody::NeutralNurbs2s {
     public:
-      NeutralNurbsPosition2s(Element* parent_, const fmatvec::MatVI & nodes, double nodeOffset, int degU_, int degV_, bool openStructure_);
+      NeutralNurbsPosition2s(MBSim::Element* parent_, const fmatvec::MatVI & nodes, double nodeOffset, int degU_, int degV_, bool openStructure_);
       virtual ~NeutralNurbsPosition2s();
-      virtual void update(ContourPointData &cp);
-      virtual void updatePositionNormal(ContourPointData &cp);
-      virtual void updatePositionFirstTangent(ContourPointData &cp);
-      virtual void updatePositionSecondTangent(ContourPointData &cp);
+      virtual void update(MBSim::ContourPointData &cp);
+      virtual void updatePositionNormal(MBSim::ContourPointData &cp);
+      virtual void updatePositionFirstTangent(MBSim::ContourPointData &cp);
+      virtual void updatePositionSecondTangent(MBSim::ContourPointData &cp);
     protected:
       virtual void buildNodelist();
   };

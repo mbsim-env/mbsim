@@ -39,7 +39,7 @@ namespace MBSimControl {
     public:
       SignalProcessingSystem(const std::string &name);
       virtual std::string getType() const {return "SignalProcessingSystem"; }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       void init(MBSim::InitStage stage);
 

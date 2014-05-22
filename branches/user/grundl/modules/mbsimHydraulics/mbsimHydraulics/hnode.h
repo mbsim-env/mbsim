@@ -98,7 +98,7 @@ namespace MBSimHydraulics {
 
       void plot(double t, double dt);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
     protected:
       std::vector<connectedLinesStruct> connectedLines;
@@ -125,7 +125,7 @@ namespace MBSimHydraulics {
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       virtual bool isSingleValued() const {return true;}
 
     private:
@@ -159,7 +159,7 @@ namespace MBSimHydraulics {
       void calcxSize() {xSize=1; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
 
@@ -235,7 +235,7 @@ namespace MBSimHydraulics {
       void calcsvSize() {svSize=1; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       void plot(double t, double dt);
 
       void checkActive(int j);
@@ -281,7 +281,7 @@ namespace MBSimHydraulics {
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
     private:
       MBSimControl::Signal * pSignal;

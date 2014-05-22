@@ -9,6 +9,9 @@
 
 #include "neutral_nurbs_1s.h"
 
+using namespace MBSim;
+
+
 namespace MBSimFlexibleBody {
 
 

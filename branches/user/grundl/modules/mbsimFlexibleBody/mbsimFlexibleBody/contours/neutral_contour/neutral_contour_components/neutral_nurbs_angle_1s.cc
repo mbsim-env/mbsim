@@ -9,6 +9,9 @@
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 
+using namespace MBSim;
+
+
 namespace MBSimFlexibleBody {
 
   NeutralNurbsAngle1s::NeutralNurbsAngle1s(Element* parent_, const VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):

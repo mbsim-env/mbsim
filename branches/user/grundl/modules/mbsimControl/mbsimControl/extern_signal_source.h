@@ -35,7 +35,7 @@ namespace MBSimControl {
       std::string getType() const { return "ExternSignalSource"; }
       fmatvec::Vec getSignal() { return source; }
       void setSignal(fmatvec::Vec s) { assert(s.size()==source.size()); source=s; }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+      void initializeUsingXML(xercesc::DOMElement *element) {
         Signal::initializeUsingXML(element);
         setSourceSize(getInt(element->FirstChildElement(MBSIMCONTROLNS"sourceSize")));
       }

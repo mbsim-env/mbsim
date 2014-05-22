@@ -31,14 +31,15 @@
 #endif
 
 
-using namespace fmatvec;
-using namespace MBXMLUtils;
 using namespace std;
+using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s23BTA, MBSIMFLEXIBLEBODYNS"FlexibleBody1s23BTA")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s23BTA, MBSIMFLEX%"FlexibleBody1s23BTA")
 
   FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBodyContinuum<double>(name), L(0), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
     cylinderFlexible = new CylinderFlexible("CylinderFlexible");
@@ -71,7 +72,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == NODE) { // frame on node
       cp.getContourParameterType() = CONTINUUM;
-      cp.getLagrangeParameterPosition() = Vec(1,INIT,cp.getNodeNumber()*L/Elements);
+      cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
     }
 
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
@@ -121,7 +122,7 @@ namespace MBSimFlexibleBody {
 
     if(cp.getContourParameterType() == NODE) { // force on node
       cp.getContourParameterType() = CONTINUUM;
-      cp.getLagrangeParameterPosition() = Vec(1,INIT,cp.getNodeNumber()*L/Elements);
+      cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
     }
 
     if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
@@ -227,58 +228,58 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s23BTA::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
+void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
     FlexibleBody::initializeUsingXML(element);
 
     // frames
-    e=element->FirstChildElement(MBSIMFLEXNS"frames")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMFLEXNS"frameOnFlexibleBody1s") {
-      TiXmlElement *ec=e->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
+    while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"frameOnFlexibleBody1s") {
+      DOMElement *ec=e->getFirstElementChild();
+      Frame *f=new Frame(MBXMLUtils::E(ec)->getAttribute("name"));
       f->initializeUsingXML(ec);
-      ec=ec->NextSiblingElement();
+      ec=ec->getNextElementSibling();
       double pos=getDouble(ec);
 
       addFrame(f, pos);
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
     //other properties 
 
-    e=element->FirstChildElement(MBSIMFLEXNS"numberOfElements");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfElements");
     setNumberElements(getInt(e));
-    e=element->FirstChildElement(MBSIMFLEXNS"length");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"length");
     setLength(getDouble(e));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"youngsModulus");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
     double E=getDouble(e);
-    e=element->FirstChildElement(MBSIMFLEXNS"shearModulus");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shearModulus");
     double G=getDouble(e);
     setElastModuls(E, G);
 
-    e=element->FirstChildElement(MBSIMFLEXNS"density");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");
     setDensity(getDouble(e));
-    e=element->FirstChildElement(MBSIMFLEXNS"crossSectionArea");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"crossSectionArea");
     setCrossSectionalArea(getDouble(e));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"momentOfInertia");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"momentOfInertia");
     Vec TempVec2=getVec(e);
     setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
 
-    e=element->FirstChildElement(MBSIMFLEXNS"radiusOfContour");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"radiusOfContour");
     setContourRadius(getDouble(e));
-    e=element->FirstChildElement(MBSIMFLEXNS"torsionalDamping");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"torsionalDamping");
     setTorsionalDamping(getDouble(e));
-    e=element->FirstChildElement(MBSIMFLEXNS"massProportionalDamping");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
     setMassProportionalDamping(getDouble(e));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
-      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->FirstChildElement());
+      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
       setOpenMBVSpineExtrusion(rb);
-      rb->initializeUsingXML(e->FirstChildElement());
+      rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);
     }
 #endif
@@ -286,4 +287,5 @@ namespace MBSimFlexibleBody {
   }
 
 }
+
 

@@ -10,6 +10,8 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
 #include "mbsim/utils/rotarymatrices.h"
 
+using namespace MBSim;
+
 namespace MBSimFlexibleBody {
   
   Contour1sNeutralLinearExternalFFR::Contour1sNeutralLinearExternalFFR(const std::string &name_) :
