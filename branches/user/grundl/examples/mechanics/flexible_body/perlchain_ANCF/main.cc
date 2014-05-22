@@ -1,25 +1,29 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
+#include "mbsim/utils/stopwatch.h"
 
 using namespace MBSim;
 using namespace std;
 
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 
   System *sys = new System("MBS");
 
-  sys->setImpactSolver(RootFinding);
+  StopWatch Timer;
+
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(1.);
+  integrator.setEndTime(0.05);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
+
+  Timer.start();
   integrator.integrate(*sys);
 
-  sys->closePlot();
+  cout << "CPU-Time = " << Timer.stop() << endl;
 
   cout << "finished"<<endl;
 

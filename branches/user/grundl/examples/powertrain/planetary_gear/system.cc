@@ -15,7 +15,7 @@ using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimPowertrain;
 
-Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;
