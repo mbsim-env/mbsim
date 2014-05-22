@@ -44,7 +44,7 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     fmatvec::Vec3 computeN(const double& alpha) {return (this->*computeN_)(alpha); }
     double computeCurvature(const double& alpha) {return (this->*computeCurvature_)(alpha); }
 
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+    virtual void initializeUsingXML(xercesc::DOMElement * element);
   private:
     fmatvec::Vec3 Cb;
     MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_y;
@@ -92,7 +92,7 @@ class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
     double computedRdAlpha(const double &alpha);
     double computed2RdAlpha2(const double &alpha);
   
-    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+    virtual void initializeUsingXML(xercesc::DOMElement * element);
   private:
     const fmatvec::Vec3 Cb;
     MBSim::PiecewisePolynomFunction<fmatvec::VecV> * pp_r;

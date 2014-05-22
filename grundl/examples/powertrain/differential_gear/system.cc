@@ -18,7 +18,7 @@ using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimPowertrain;
 
-Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double R1 = 0.02;
   double m1 = 1;
   double J = 0.5*m1*R1*R1; 
@@ -59,8 +59,9 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addGroup(differentialGear);
   double R2 = differentialGear->getRadiusInputShaft();
 
-  GearConstraint *constraint = new GearConstraint("C1",shaft1);
+  GearConstraint *constraint = new GearConstraint("C1");
   addObject(constraint);
+  constraint->setDependentBody(shaft1);
   constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1));
 
   KineticExcitation* ke;

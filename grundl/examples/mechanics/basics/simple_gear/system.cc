@@ -82,12 +82,14 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft3->getFrame("C")->enableOpenMBV(0.2);
 #endif
 
-  GearConstraint *constraint = new GearConstraint("C1",shaft2);
+  GearConstraint *constraint = new GearConstraint("C1");
   addObject(constraint);
+  constraint->setDependentBody(shaft2);
   constraint->addTransmission(Transmission(shaft1,-R1/R2a));
 
-  constraint = new GearConstraint("C2",shaft3);
+  constraint = new GearConstraint("C2");
   addObject(constraint);
+  constraint->setDependentBody(shaft3);
   constraint->addTransmission(Transmission(shaft2,-R2b/R3));
 
   KineticExcitation* ke;
