@@ -10,9 +10,6 @@ namespace fmatvec {
   typedef Matrix<General, Var, Fixed<4>, double> MatVx4;
 }
 
-using namespace std;
-using namespace fmatvec;
-
 namespace MBSim {
 
 //  enum Direction { u_direction=1, v_direction=2, both_direction=3} ;

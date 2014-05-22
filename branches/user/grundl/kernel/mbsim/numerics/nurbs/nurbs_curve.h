@@ -35,6 +35,8 @@ namespace MBSim {
 
   /*!
    * \brief class that copies the nurbs++-library using the fmatvec as a basis-math-library
+   *
+   * \todo: could/should be derived by fmatvec::function<Vec3(double)>
    */
   class NurbsCurve {
     public:
@@ -73,8 +75,7 @@ namespace MBSim {
         return U(i);
       }
 
-      const fmatvec::Vec getuVec() const
-      {
+      const fmatvec::Vec getuVec() const {
         return u;
       }
 
@@ -221,9 +222,9 @@ namespace MBSim {
 //
 //        // Modifies the NURBS curve
 //        void transform(const MatrixRT<T>& A);
-//        void modCP(int i, const fmatvec::HPoint<3> & a) {
-//          P[i] = a;
-//        } // To manipulate the value of the control point $P[i]$
+      void modCP(int i, const fmatvec::HPoint<3> & a) {
+        P.set(i, a.T());
+      } // To manipulate the value of the control point $P[i]$
 //        void modCPby(int i, const fmatvec::HPoint<3> & a) {
 //          P[i] += a;
 //        } // To manipulate the value of the control point $P[i]$
@@ -277,6 +278,8 @@ namespace MBSim {
 //
 //        BasicList<fmatvec::Point<3>  > tesselate(T tolerance, BasicList<T> *uk) const;
 
+      int findSpan(double u) const;
+
     protected:
       fmatvec::MatVx4 P; // the vector of control points
       fmatvec::SqrMat inverse; //Inverse of Ansatz-functions in case of only update later (different points, same knot-Vecs and same degree)
@@ -293,13 +296,11 @@ namespace MBSim {
       void knotAveragingClosed(const std::vector<double>& uk, int deg);
       void updateUVecsClosed(double uMin, double uMax);
 
-      int findSpan(double u) const;
-
 //      Matrix<T> Inverse; //changed
 //      int Inverse_setted; //changed
   };
 
-   //TODO: put those functions into mother nurbs class (maybe) to make them "func(...) const"
+  //TODO: put those functions into mother nurbs class (maybe) to make them "func(...) const"
   void knotAveraging(const Vec& uk, int deg, Vec& U);
   void knotAveragingClosed(const Vec& uk, int deg, Vec& U);
   void basisFuns(double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Vec& funs);
