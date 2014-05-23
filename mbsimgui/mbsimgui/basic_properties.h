@@ -367,6 +367,20 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
   };
 
+  class PlotFeatureStatusProperty : public Property {
+    protected:
+      std::vector<std::vector<int> > status;
+      std::vector<std::string> name;
+      std::vector<std::string> xmlName;
+    public:
+      PlotFeatureStatusProperty();
+      virtual Property* clone() const {return new PlotFeatureStatusProperty(*this);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+  };
+
 }
 
 #endif

@@ -105,14 +105,19 @@ namespace MBSimGUI {
     name = new ExtWidget("Name",new TextWidget);
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
+    addTab("Plot");
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget);
+    addToTab("Plot", plotFeature);
   }
 
   void ElementPropertyDialog::toWidget(Element *element) {
     element->name.toWidget(name);
+    element->plotFeature.toWidget(plotFeature);
   }
 
   void ElementPropertyDialog::fromWidget(Element *element) {
     element->name.fromWidget(name);
+    element->plotFeature.fromWidget(plotFeature);
   }
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
@@ -309,7 +314,7 @@ namespace MBSimGUI {
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
     addTab("Environment",1);
     addTab("Solver parameters",2);
-    addTab("Extra",3);
+    addTab("Extra");
 
     environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft));
     addToTab("Environment", environment);
@@ -347,8 +352,8 @@ namespace MBSimGUI {
   }
 
   BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-    addTab("Kinematics");
-    addTab("Initial conditions");
+    addTab("Kinematics",1);
+    addTab("Initial conditions",2);
 
     q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", q0);
@@ -377,7 +382,7 @@ namespace MBSimGUI {
   }
 
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
-    addTab("Visualisation");
+    addTab("Visualisation",3);
     addTab("Extra");
 
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
@@ -498,7 +503,7 @@ namespace MBSimGUI {
   }
 
   GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Visualisation");
+    addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", dependentBody);
@@ -542,7 +547,7 @@ namespace MBSimGUI {
   }
 
   KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Visualisation");
+    addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", dependentBody);
@@ -602,7 +607,7 @@ namespace MBSimGUI {
   }
 
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Initial conditions");
+    addTab("Initial conditions",1);
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
     addToTab("General", constraintFunction);
@@ -641,7 +646,7 @@ namespace MBSimGUI {
   }
 
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Initial conditions");
+    addTab("Initial conditions",1);
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
     addToTab("General", constraintFunction);
@@ -685,8 +690,8 @@ namespace MBSimGUI {
   JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
 
     addTab("Kinetics",1);
-    addTab("Visualisation");
-    addTab("Initial conditions");
+    addTab("Visualisation",2);
+    addTab("Initial conditions",2);
 
     independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", independentBody);

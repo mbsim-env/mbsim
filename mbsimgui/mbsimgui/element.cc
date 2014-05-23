@@ -48,6 +48,7 @@ namespace MBSimGUI {
   Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(boost::bind(&Element::getName, this)));
+    plotFeature.setProperty(new PlotFeatureStatusProperty);
     ID=toStr(IDcounter++);
   }
 
@@ -80,17 +81,14 @@ namespace MBSimGUI {
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
-    //  for(unsigned int i=0; i<plotFeature.size(); i++)
-    //    plotFeature[i]->initializeUsingXML(element);
+    plotFeature.initializeUsingXML(element);
   }
 
   DOMElement* Element::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType());
-    //name->writeXMLFile(ele0);
     E(ele0)->setAttribute("name", getName());
-    //  for(unsigned int i=0; i<plotFeature.size(); i++)
-    //    plotFeature[i]->writeXMLFile(ele0);
+    plotFeature.writeXMLFile(ele0);
     parent->insertBefore(ele0, NULL);
     return ele0;
   }
