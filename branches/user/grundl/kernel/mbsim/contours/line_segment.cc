@@ -23,10 +23,12 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace fmatvec;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LineSegment, MBSIMNS"LineSegment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSegment, MBSIM%"LineSegment")
 
   LineSegment::LineSegment(const std::string& name, double l, double t, Frame *R) : RigidContour(name,R), length(l), thickness(t) {
   }
@@ -54,12 +56,12 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  void LineSegment::initializeUsingXML(TiXmlElement *element) {
+  void LineSegment::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"length");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
     setLength(getDouble(e));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVLine ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -67,10 +69,32 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* LineSegment::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"length",length);
+  DOMElement* LineSegment::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"length",length);
     return ele0;
+  }
+
+  void LineSegment::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+    if (ff == velocity || ff == velocities) {
+      Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
+      cp.getFrameOfReference().setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrPC));
+    }
+    if (ff == angularVelocity || ff == velocities)
+      cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
+
+    if (ff == position) {
+      double s = cp.getLagrangeParameterPosition()(0);
+      cp.getFrameOfReference().getPosition() = R->getPosition() + R->getOrientation().col(1) * s;
+    }
+
+    if (ff == firstTangent) {
+      cp.getFrameOfReference().getOrientation().set(1, R->getOrientation().col(1));
+    }
+
+    if (ff!= position and ff != firstTangent and ff != velocity && ff != angularVelocity && ff != velocities)
+      throw MBSimError("ERROR (LineSegment::updateKinematicsForFrame): FrameFeature not implemented!");
+
   }
 
 }

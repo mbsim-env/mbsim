@@ -26,6 +26,7 @@
 #include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/group.h>
 #endif
 
 using namespace std;

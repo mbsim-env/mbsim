@@ -34,7 +34,7 @@
   </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
 
   <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
     schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
@@ -230,34 +230,32 @@
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ElementType">
-    <xs:sequence> <!-- a workaround for xmllint -->
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="plotFeature">  
-          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Plotfeatures für dieses Element.
-          </xs:documentation></xs:annotation>
-          <xs:complexType>
-            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-          </xs:complexType> 
-        </xs:element>  
-        <xs:element name="plotFeatureForChildren">
-          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Plotfeatures für alle Kindelement.
-          </xs:documentation></xs:annotation>
-          <xs:complexType>
-            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-          </xs:complexType> 
-        </xs:element>  
-        <xs:element name="plotFeatureRecursive">  
-          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Plotfeatures für diese Element und alle Kindelement.
-          </xs:documentation></xs:annotation>
-          <xs:complexType>
-            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-          </xs:complexType> 
-        </xs:element>  
-      </xs:choice> 
-    </xs:sequence> <!-- a workaround for xmllint -->
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="plotFeature">  
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Definiert die Plotfeatures für dieses Element.
+        </xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+      <xs:element name="plotFeatureForChildren">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Definiert die Plotfeatures für alle Kindelement.
+        </xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+      <xs:element name="plotFeatureRecursive">  
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Definiert die Plotfeatures für diese Element und alle Kindelement.
+        </xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+    </xs:choice> 
     <xs:attribute name="name" type="pv:stringPartialOctEval" use="required"/>
   </xs:complexType> 
 
@@ -308,7 +306,6 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
-    <xs:attribute ref="xml:base"/>
   </xs:complexType>
 
   <!-- For usage in Group an RigidBody -->
@@ -351,7 +348,6 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
-    <xs:attribute ref="xml:base"/>
   </xs:complexType>
 
   <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType">
@@ -532,7 +528,6 @@
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
-        <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -627,6 +622,7 @@
                             Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                       <xs:element name="GaussSeidel">
                         <xs:annotation>
@@ -675,6 +671,7 @@
                             Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType/>
                       </xs:element>
                       <xs:element name="GaussSeidel">
                         <xs:annotation>
@@ -733,7 +730,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="inverseKinetics" minOccurs="0">
+          <xs:element name="inverseKinetics" minOccurs="0" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert, ob Gelenkreaktionen berechnet werden sollen.
             </xs:documentation></xs:annotation>
@@ -752,9 +749,7 @@
   </xs:element>
   <xs:complexType name="ObjectType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:attribute ref="xml:base"/>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>   
 
@@ -984,12 +979,12 @@
               </xs:complexType>
             </xs:element>
           </xs:choice>
-          <xs:element name="translationDependentRotation" minOccurs="0">
+          <xs:element name="translationDependentRotation" minOccurs="0" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="coordinateTransformationForRotation" minOccurs="0">
+          <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               tbd
             </xs:documentation></xs:annotation>
@@ -1441,7 +1436,7 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="frameOfReferenceID" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
             </xs:documentation></xs:annotation>
@@ -1499,9 +1494,7 @@
   </xs:element>
   <xs:complexType name="LinkType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:attribute ref="xml:base"/>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -1525,7 +1518,7 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
             </xs:documentation></xs:annotation>
@@ -1840,7 +1833,7 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
             </xs:documentation></xs:annotation>
@@ -2121,7 +2114,6 @@
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
-       <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
@@ -2191,7 +2183,6 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-       <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3217,7 +3208,7 @@
   <xs:complexType name="SymbolicFunctionType" mixed="true">
     <xs:complexContent>
       <xs:extension base="FunctionType">
-        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:group ref="pv:symbolicFunctionXMLElement" minOccurs="0"/>
         <!-- A symbolic function has at least one parameter => arg1 is required.
              argXDim is optional since this is interpreted as "1" (scalar) if missing.
              arg2 (and higher) are optional to define with this XML element all symbolic functions at ones.
@@ -3424,6 +3415,42 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="AbsoluteValueFunction" substitutionGroup="Function" type="AbsoluteValueFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteValueFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="ModuloFunction" substitutionGroup="Function" type="ModuloFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ModuloFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="denominator" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Vektor der zugehörigen Funktionswerte <object class="inlineeqn">\boldsymbol{c}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="PositiveFunction" substitutionGroup="Function" type="PositiveFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3432,6 +3459,52 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="PositiveFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="PointSymmetricFunction" substitutionGroup="Function" type="PointSymmetricFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PointSymmetricFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+ <xs:element name="LineSymmetricFunction" substitutionGroup="Function" type="LineSymmetricFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LineSymmetricFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
@@ -3612,7 +3685,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="LimitedFunction"/>
+                <xs:element ref="LimitedFunction"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3759,6 +3832,7 @@
                   Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="cSplineNatural">
               <xs:annotation>
@@ -3766,6 +3840,7 @@
                   Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="piecewiseLinear">
               <xs:annotation>
@@ -3773,6 +3848,7 @@
                   Interpolation mit stückweise linearem Spline.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
           </xs:choice>
         </xs:sequence> 
@@ -4059,9 +4135,7 @@
   </xs:element>
   <xs:complexType name="ObserverType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:attribute ref="xml:base"/>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>
 

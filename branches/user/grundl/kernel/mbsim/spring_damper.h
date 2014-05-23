@@ -46,6 +46,7 @@ namespace MBSim {
 #endif
     public:
       SpringDamper(const std::string &name="");
+      ~SpringDamper();
       void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);
@@ -69,7 +70,7 @@ namespace MBSim {
       void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
@@ -105,6 +106,7 @@ namespace MBSim {
 #endif
     public:
       DirectionalSpringDamper(const std::string &name="");
+      ~DirectionalSpringDamper();
       void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);
@@ -133,7 +135,7 @@ namespace MBSim {
       void setForceDirection(const fmatvec::Vec3 &dir) { forceDir=dir/nrm2(dir); }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -162,6 +164,7 @@ namespace MBSim {
 #endif
     public:
       GeneralizedSpringDamper(const std::string &name="");
+      ~GeneralizedSpringDamper();
       void updateh(double, int i=0);
       void updateJacobians(double t, int j=0);
       void updateg(double);
@@ -193,7 +196,7 @@ namespace MBSim {
       void setRigidBody(RigidBody* body_) { body = body_; }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
 

@@ -22,65 +22,66 @@
  */ 
 
 #include <config.h>
+#include <iostream>
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
-#include "mbsimControl/defines.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinearTransferSystem, MBSIMCONTROLNS"LinearTransferSystem")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearTransferSystem, MBSIMCONTROL%"LinearTransferSystem")
 
   LinearTransferSystem::LinearTransferSystem(const string& name) : SignalProcessingSystem(name), R1(.002), R2(1.), c(1.) {
   }
 
-  void LinearTransferSystem::initializeUsingXML(TiXmlElement * element) {
+  void LinearTransferSystem::initializeUsingXML(DOMElement * element) {
     SignalProcessingSystem::initializeUsingXML(element);
-    TiXmlElement * e;
-    TiXmlElement * ee;
-    e=element->FirstChildElement(MBSIMCONTROLNS"pidType");
+    DOMElement * e;
+    DOMElement * ee;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"pidType");
     if (e) {
-      ee=e->FirstChildElement(MBSIMCONTROLNS"P");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"P");
       double p=Element::getDouble(ee);
-      ee=e->FirstChildElement(MBSIMCONTROLNS"I");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"I");
       double i=Element::getDouble(ee);
-      ee=e->FirstChildElement(MBSIMCONTROLNS"D");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"D");
       double d=Element::getDouble(ee);
       setPID(p, i, d);
     }
-    e=element->FirstChildElement(MBSIMCONTROLNS"abcdType");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"abcdType");
     if (e) {
-      ee=e->FirstChildElement(MBSIMCONTROLNS"A");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"A");
       Mat AA=Element::getMat(ee);
-      ee=e->FirstChildElement(MBSIMCONTROLNS"B");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"B");
       Mat BB=Element::getMat(ee, A.rows(), 0);
-      ee=e->FirstChildElement(MBSIMCONTROLNS"C");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"C");
       Mat CC=Element::getMat(ee, 0, A.cols());
-      ee=e->FirstChildElement(MBSIMCONTROLNS"D");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"D");
       Mat DD=Element::getMat(ee, C.rows(), B.cols());
       setABCD(AA, BB, CC, DD);
     }
-    e=element->FirstChildElement(MBSIMCONTROLNS"integratorType");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"integratorType");
     if (e) {
-      ee=e->FirstChildElement(MBSIMCONTROLNS"gain");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"gain");
       double g=Element::getDouble(ee);
       setIntegrator(g);
     }
-    e=element->FirstChildElement(MBSIMCONTROLNS"pt1Type");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"pt1Type");
     if (e) {
-      ee=e->FirstChildElement(MBSIMCONTROLNS"P");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"P");
       double PP=Element::getDouble(ee);
-      ee=e->FirstChildElement(MBSIMCONTROLNS"T");
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"T");
       double TT=Element::getDouble(ee);
       setPT1(PP, TT);
     }
-    e=element->FirstChildElement(MBSIMCONTROLNS"showABCD");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"showABCD");
     if (e)
       showABCD();
   }

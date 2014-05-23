@@ -121,8 +121,8 @@ namespace MBSim {
       }
 #endif
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual std::string getType() const { return "KineticExcitation"; }
 

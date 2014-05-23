@@ -32,10 +32,11 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, LSODARIntegrator, MBSIMINTNS"LSODARIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LSODARIntegrator, MBSIMINT%"LSODARIntegrator")
 
   LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true) {
   }
@@ -52,38 +53,38 @@ namespace MBSim {
     system->getsv(z, sv, *t);
   }
 
-  void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void LSODARIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(Element::getVec(e));
-    e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     setInitialStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"minimalStepSize");
     setMinimalStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
     setMaximalStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     setPlotOnRoot(Element::getBool(e));
   }
 
-  TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
-    if(aTol.size()==0)
-      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",1e-6);
-    else if(aTol.size()==1)
-      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",aTol(0));
-    else
-      addElementText(ele0,MBSIMINTNS"absoluteTolerance",aTol);
-    addElementText(ele0,MBSIMINTNS"relativeToleranceScalar",rTol);
-    addElementText(ele0,MBSIMINTNS"initialStepSize",dt0);
-    addElementText(ele0,MBSIMINTNS"minimalStepSize",dtMin);
-    addElementText(ele0,MBSIMINTNS"maximalStepSize",dtMax);
-    addElementText(ele0,MBSIMINTNS"plotOnRoot",plotOnRoot);
+  DOMElement* LSODARIntegrator::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::writeXMLFile(parent);
+//    if(aTol.size()==0)
+//      addElementText(ele0,MBSIMINT%"absoluteToleranceScalar",1e-6);
+//    else if(aTol.size()==1)
+//      addElementText(ele0,MBSIMINT%"absoluteToleranceScalar",aTol(0));
+//    else
+//      addElementText(ele0,MBSIMINT%"absoluteTolerance",aTol);
+//    addElementText(ele0,MBSIMINT%"relativeToleranceScalar",rTol);
+//    addElementText(ele0,MBSIMINT%"initialStepSize",dt0);
+//    addElementText(ele0,MBSIMINT%"minimalStepSize",dtMin);
+//    addElementText(ele0,MBSIMINT%"maximalStepSize",dtMax);
+//    addElementText(ele0,MBSIMINT%"plotOnRoot",plotOnRoot);
     return ele0;
   }
 

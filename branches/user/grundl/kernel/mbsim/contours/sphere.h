@@ -55,6 +55,10 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR */
+      fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      /**********************************/
+
       /* GETTER / SETTER */
       void setRadius(double r_) { r = r_; }
       double getRadius() const { return r; }
@@ -67,8 +71,8 @@ namespace MBSim {
       }
 #endif
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       /** 

@@ -21,16 +21,16 @@
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
-#include "mbsimControl/defines.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Actuator, MBSIMCONTROLNS"Actuator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Actuator, MBSIMCONTROL%"Actuator")
 
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1), refFrame(0) {
   }
@@ -64,6 +64,8 @@ namespace MBSimControl {
         setSignal(getByPath<Signal>(saved_inputSignal));
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if (stage==MBSim::resize) {
@@ -111,23 +113,23 @@ namespace MBSimControl {
       momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
   }
   
-  void Actuator::initializeUsingXML(TiXmlElement *element) {
+  void Actuator::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"forceDirection");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
-    e=element->FirstChildElement(MBSIMCONTROLNS"momentDirection");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"momentDirection");
     if(e) setMomentDirection(getMat(e,3,0));
-    e=element->FirstChildElement(MBSIMCONTROLNS"referenceFrame");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"referenceFrame");
     if(e) setKOSY(getInt(e));
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    saved_inputSignal=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"connect");
-    saved_ref1=e->Attribute("ref1");
-    saved_ref2=e->Attribute("ref2");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    saved_inputSignal=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"connect");
+    saved_ref1=E(e)->getAttribute("ref1");
+    saved_ref2=E(e)->getAttribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
@@ -135,7 +137,7 @@ namespace MBSimControl {
       LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);

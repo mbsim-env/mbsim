@@ -20,7 +20,6 @@
 #include <config.h>
 #include <boost/swap.hpp>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_ancf.h"
-#include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
@@ -34,7 +33,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
 
-  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), openStructure(openStructure_), initialised(false) {}
+  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), deps(0.), dkappa(0.), openStructure(openStructure_), initialised(false), v0(0.), Euler(false) {}
 
   void FlexibleBody1s21ANCF::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 4 * n;
@@ -132,12 +131,35 @@ namespace MBSimFlexibleBody {
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = u(4*node+0); tmp(1) = u(4*node+1); tmp(2) = 0.;
+
+        if(Euler) {
+          tmp(0) += v0*q(4*node+2);
+          tmp(1) += v0*q(4*node+3);
+        }
         cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); // velocity
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = (-q(4*node+3)*u(4*node+2)+q(4*node+2)*u(4*node+3))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); // angular velocity
+        if(Euler) {
+          double der2_1; // curvature first component
+          double der2_2; // curvature second component
+          
+          if(4*(node+1)+1 < qSize) {
+            der2_1 = 6./(l0*l0)*(q(4*(node+1))-q(4*(node)))-2./l0*(q(4*(node+1)+2)+2.*q(4*(node)+2));
+            der2_2 = 6./(l0*l0)*(q(4*(node+1)+1)-q(4*(node)+1))-2./l0*(q(4*(node+1)+3)+2.*q(4*(node)+3));
+          }
+          else {
+            der2_1 = 6./(l0*l0)*(q(4*(node-1))-q(4*(node)))+2./l0*(q(4*(node-1)+2)+2.*q(4*(node)+2));
+            der2_2 = 6./(l0*l0)*(q(4*(node-1)+1)-q(4*(node)+1))+2./l0*(q(4*(node-1)+3)+2.*q(4*(node)+3));
+          }
+
+          tmp(0) = 0.; tmp(1) = 0.; tmp(2) = (-q(4*node+3)*(u(4*node+2) + v0*der2_1)+q(4*node+2)*(u(4*node+3) + v0*der2_2))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+          cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp); // angular velocity
+        }
+        else {
+          tmp(0) = 0.; tmp(1) = 0.; tmp(2) = (-q(4*node+3)*u(4*node+2)+q(4*node+2)*u(4*node+3))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+          cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp); // angular velocity
+        }
       }
     }
     else throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -203,13 +225,18 @@ namespace MBSimFlexibleBody {
       for(int i=0;i<Elements;i++) {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));
-        discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g));
+        discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g, Euler, v0));
         if(fabs(rc) > epsroot())
           static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
+        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setMaterialDamping(deps,dkappa);
       }
       initM();
     }
     else if(stage==MBSim::plot) {
+		  for(int i=0;i<q.size()/4;i++) {
+		    plotColumns.push_back("vel_abs node ("+numtostr(i)+")");
+		  }
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
@@ -226,8 +253,16 @@ namespace MBSimFlexibleBody {
         vector<double> data;
         data.push_back(t);
         double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-2);
+
         for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
-          Vec X = computeState(ds*i);
+          Vec  X(6,NONINIT);
+
+          if(Euler) {
+            X = computeState(ds*i+v0*t); // expects Euler coordinate
+          }
+          else {  
+            X = computeState(ds*i); // expects Lagrange coordinate
+          }
 
           Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
           Vec pos = R->getPosition() + R->getOrientation() * tmp;
@@ -236,10 +271,23 @@ namespace MBSimFlexibleBody {
           data.push_back(pos(2)); // global z-position
           data.push_back(0.); // local twist
         }
+
         ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
       }
 #endif
     }
+
+    if(Euler) {
+		  for(int i=0;i<q.size()/4;i++) {
+		  	plotVector.push_back(sqrt(pow(u(4*i+0) + v0*q(4*i+2),2.)+pow(u(4*i+1) + v0*q(4*i+3),2.)));
+		  }
+    }
+    else {
+		  for(int i=0;i<q.size()/4;i++) {
+		  	plotVector.push_back(sqrt(pow(u(4*i+0),2.)+pow(u(4*i+1),2.)));
+		  }      
+    }
+
     FlexibleBodyContinuum<double>::plot(t,dt);
   }
 
@@ -259,7 +307,7 @@ namespace MBSimFlexibleBody {
   Vec FlexibleBody1s21ANCF::computeState(double sGlobal) {
     double sLocal;
     int currentElement;
-    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange/Euler parameter of affected FE
     return static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->StateBalken(qElement[currentElement],uElement[currentElement],sLocal);
   }
 
@@ -286,7 +334,7 @@ namespace MBSimFlexibleBody {
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
     currentElement = int(remainder/l0);
-    sLocal = remainder - (currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
+    sLocal = remainder - (currentElement) * l0; // Lagrange/Euler parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
     // contact solver computes too large sGlobal at the end of the entire beam is not considered only for open structure
     // for closed structure even sGlobal < L (but sGlobal ~ L) values could lead - due to numerical problems - to a wrong currentElement computation
@@ -314,7 +362,7 @@ namespace MBSimFlexibleBody {
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {
-      discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g));
+      discretization.push_back(new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g, Euler, v0));
       qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
       uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
     }

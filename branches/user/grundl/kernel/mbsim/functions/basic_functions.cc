@@ -17,6 +17,8 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+
+#include <config.h>
 #include "mbsim/functions/basic_functions.h"
 
 using namespace std;
@@ -26,61 +28,98 @@ using namespace fmatvec;
 namespace MBSim {
 
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<double>, MBSIMNS"ConstantFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<VecV>, MBSIMNS"ConstantFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantFunction<double(double)>, MBSIM%"ConstantFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantFunction<VecV(double)>, MBSIM%"ConstantFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantFunction<Vec3(double)>, MBSIM%"ConstantFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantFunction<VecV(VecV)>, MBSIM%"ConstantFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<double>, MBSIMNS"LinearFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<VecV>, MBSIMNS"LinearFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearFunction<double(double)>, MBSIM%"LinearFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearFunction<VecV(double)>, MBSIM%"LinearFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearFunction<Vec3(double)>, MBSIM%"LinearFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearFunction<VecV(VecV)>, MBSIM%"LinearFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<double>, MBSIMNS"QuadraticFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<VecV>, MBSIMNS"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuadraticFunction<double(double)>, MBSIM%"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuadraticFunction<VecV(double)>, MBSIM%"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuadraticFunction<Vec3(double)>, MBSIM%"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuadraticFunction<VecV(VecV)>, MBSIM%"QuadraticFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusoidalFunction<double>, MBSIMNS"SinusoidalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusoidalFunction<VecV>, MBSIMNS"SinusoidalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PolynomFunction<double(double)>, MBSIM%"PolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PolynomFunction<VecV(double)>, MBSIM%"PolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PolynomFunction<Vec3(double)>, MBSIM%"PolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PolynomFunction<VecV(VecV)>, MBSIM%"PolynomFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<double>, MBSIMNS"PositiveFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveFunction<VecV>, MBSIMNS"PositiveFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SinusoidalFunction<double(double)>, MBSIM%"SinusoidalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SinusoidalFunction<VecV(double)>, MBSIM%"SinusoidalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SinusoidalFunction<Vec3(double)>, MBSIM%"SinusoidalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SinusoidalFunction<VecV(VecV)>, MBSIM%"SinusoidalFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<double>, MBSIMNS"StepFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<VecV>, MBSIMNS"StepFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StepFunction<double(double)>, MBSIM%"StepFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StepFunction<VecV(double)>, MBSIM%"StepFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StepFunction<VecV(VecV)>, MBSIM%"StepFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteValueFunction<double(double)>, MBSIM%"AbsoluteValueFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteValueFunction<VecV(double)>, MBSIM%"AbsoluteValueFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteValueFunction<VecV(VecV)>, MBSIM%"AbsoluteValueFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ModuloFunction<double(double)>, MBSIM%"ModuloFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ModuloFunction<VecV(double)>, MBSIM%"ModuloFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ModuloFunction<VecV(VecV)>, MBSIM%"ModuloFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ModuloFunction<Vec(Vec)>, MBSIM%"ModuloFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<double(double)>, MBSIM%"PositiveFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<VecV(double)>, MBSIM%"PositiveFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<VecV(VecV)>, MBSIM%"PositiveFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PointSymmetricFunction<double(double)>, MBSIM%"PointSymmetricFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PointSymmetricFunction<VecV(double)>, MBSIM%"PointSymmetricFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSymmetricFunction<double(double)>, MBSIM%"LineSymmetricFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSymmetricFunction<VecV(double)>, MBSIM%"LineSymmetricFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ScaledFunction<VecV(double)>, MBSIM%"ScaledFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ScaledFunction<Vec3(double)>, MBSIM%"ScaledFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ScaledFunction<double(double)>, MBSIM%"ScaledFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<VecV(double)>, MBSIM%"SummationFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<Vec3(double)>, MBSIM%"SummationFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<double(double)>, MBSIM%"SummationFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(VectorValuedFunction<VecV(double)>, MBSIM%"VectorValuedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(VectorValuedFunction<Vec3(double)>, MBSIM%"VectorValuedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(VectorValuedFunction<VecV(VecV)>, MBSIM%"VectorValuedFunction")
 
   // The following functions are created using ...create<Function<Vec3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3   (double(VecV  ))>, MBSIMNS"NestedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3   (VecV  (VecV  ))>, MBSIMNS"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<Vec3   (double(VecV  ))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<Vec3   (VecV  (VecV  ))>, MBSIM%"NestedFunction")
   // The following functions are created using ...create<Function<Vec3(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3   (double(double))>, MBSIMNS"NestedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3   (VecV  (double))>, MBSIMNS"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<Vec3   (double(double))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<Vec3   (VecV  (double))>, MBSIM%"NestedFunction")
   // The following functions are created using ...create<Function<RotMat3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(VecV  ))>, MBSIMNS"NestedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV  (VecV  ))>, MBSIMNS"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<RotMat3(double(VecV  ))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<RotMat3(VecV  (VecV  ))>, MBSIM%"NestedFunction")
   // The following functions are created using ...create<Function<RotMat3(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(double))>, MBSIMNS"NestedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV  (double))>, MBSIMNS"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<RotMat3(double(double))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<RotMat3(VecV  (double))>, MBSIM%"NestedFunction")
+  // The following functions are created using ...create<Function<double(double)> >(...). Hence the "second"
+  // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
+  // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<double(double(double))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<double(VecV  (double))>, MBSIM%"NestedFunction")
+  // The following functions are created using ...create<Function<VecV(double)> >(...). Hence the "second"
+  // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
+  // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<VecV(double(double))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NestedFunction<VecV(VecV(double))>, MBSIM%"NestedFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ScaledFunction<VecV>, MBSIMNS"ScaledFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ScaledFunction<Vec3>, MBSIMNS"ScaledFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ScaledFunction<double>, MBSIMNS"ScaledFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV>, MBSIMNS"SummationFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3>, MBSIMNS"SummationFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<double>, MBSIMNS"SummationFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, VectorValuedFunction<VecV>, MBSIMNS"VectorValuedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, VectorValuedFunction<Vec3>, MBSIMNS"VectorValuedFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<VecV>, MBSIMNS"PiecewiseDefinedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<Vec3>, MBSIMNS"PiecewiseDefinedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewiseDefinedFunction<double>, MBSIMNS"PiecewiseDefinedFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<VecV>, MBSIMNS"PolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<Vec3>, MBSIMNS"PolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PolynomFunction<double>, MBSIMNS"PolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewiseDefinedFunction<VecV(double)>, MBSIM%"PiecewiseDefinedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewiseDefinedFunction<Vec3(double)>, MBSIM%"PiecewiseDefinedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewiseDefinedFunction<double(double)>, MBSIM%"PiecewiseDefinedFunction")
 }

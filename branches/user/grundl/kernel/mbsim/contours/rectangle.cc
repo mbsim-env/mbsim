@@ -39,7 +39,7 @@ namespace MBSim {
   }
 
   void Rectangle::init(InitStage stage) {
-    if (stage == calculateLocalInitialValues) {
+    if (stage == preInit) {
       setVertices();
       Plane::init(stage);
     }

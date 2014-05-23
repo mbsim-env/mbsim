@@ -162,11 +162,11 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(1); }
         typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDerParDer(const double &arg) { throw MBSimError("parDerParDer is not available for given template parameters."); }
         bool constParDer() const { return true; }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfTranslation");
-          a=FromMatStr<fmatvec::Vec3>::cast(e->GetText());
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfTranslation");
+          a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
         }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
     };
 
   template<>
@@ -188,13 +188,13 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(A.rows(),A.cols()); }
         typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDerParDer(const double &arg) { throw MBSimError("parDerParDer is not available for given template parameters."); }
         bool constParDer() const { return true; }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationVectors");
-          A=FromMatStr<typename fmatvec::Der<fmatvec::Vec3, Arg>::type>::cast(e->GetText());
-          e=element->FirstChildElement(MBSIMNS"offset");
-          b=e?FromMatStr<fmatvec::Vec3>::cast(e->GetText()):zeros(A);
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
+          A=FromMatStr<typename fmatvec::Der<fmatvec::Vec3, Arg>::type>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
+          b=e?FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()):zeros(A);
         }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
         void setSlope(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) { A = A_; }
         void setIntercept(const fmatvec::Vec3 &b_) { b = b_; }
     };
@@ -307,11 +307,11 @@ namespace MBSim {
         bool constParDer() const { return true; }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfRotation");
-          a=FromMatStr<fmatvec::Vec3>::cast(e->GetText());
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfRotation");
+          a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
         }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
     };
 
   template<>
@@ -352,9 +352,8 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           double a = q.e(0);
           double ad = qd.e(0);
-          double bd = qd.e(1);
-          Jd.e(1,1) = -sin(a)*ad*bd;
-          Jd.e(2,1) = cos(a)*ad*bd;
+          Jd.e(1,1) = -sin(a)*ad;
+          Jd.e(2,1) = cos(a)*ad;
           return Jd;
         }
     };
@@ -394,9 +393,8 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           double beta = q.e(0);
           double betad = qd.e(0);
-          double gammad = qd.e(1);
-          Jd.e(0,1) = cos(beta)*betad*gammad;
-          Jd.e(2,1) = -sin(beta)*betad*gammad;
+          Jd.e(0,1) = cos(beta)*betad;
+          Jd.e(2,1) = -sin(beta)*betad;
           return Jd;
         }
     };
@@ -437,9 +435,8 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           double a = q.e(0);
           double ad = qd.e(0);
-          double bd = qd.e(1);
-          Jd.e(1,1) = -cos(a)*ad*bd;
-          Jd.e(2,1) = -sin(a)*ad*bd;
+          Jd.e(1,1) = -cos(a)*ad;
+          Jd.e(2,1) = -sin(a)*ad;
           return Jd;
         }
     };

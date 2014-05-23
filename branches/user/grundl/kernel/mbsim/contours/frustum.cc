@@ -30,12 +30,13 @@
 
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Frustum, MBSIMNS"Frustum")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Frustum, MBSIM%"Frustum")
 
   void Frustum::init(InitStage stage) {
     if(stage==MBSim::plot) {
@@ -76,21 +77,21 @@ namespace MBSim {
     return p;
   }
 
-  void Frustum::initializeUsingXML(TiXmlElement *element) {
+  void Frustum::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"baseRadius");
+    DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"baseRadius");
     r(0)=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"topRadius");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"topRadius");
     r(1)=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"height");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"height");
     h=getDouble(e);
-    if (element->FirstChildElement(MBSIMNS"solid"))
+    if (E(element)->getFirstElementChildNamed(MBSIM%"solid"))
       outCont=true;
     else
       outCont=false;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVFrustum ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -98,14 +99,14 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Frustum::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"baseRadius",r(0));
-    addElementText(ele0,MBSIMNS"topRadius",r(1));
-    addElementText(ele0,MBSIMNS"height",h);
-    addElementText(ele0,MBSIMNS"solid",outCont);
-    if(openMBVRigidBody)
-      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
+  DOMElement* Frustum::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+ //   addElementText(ele0,MBSIM%"baseRadius",r(0));
+ //   addElementText(ele0,MBSIM%"topRadius",r(1));
+ //   addElementText(ele0,MBSIM%"height",h);
+ //   addElementText(ele0,MBSIM%"solid",outCont);
+ //   if(openMBVRigidBody)
+ //     ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
     return ele0;
   }
 

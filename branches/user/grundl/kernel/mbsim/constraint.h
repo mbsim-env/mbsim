@@ -67,7 +67,7 @@ namespace MBSim {
       void updateJacobians(double t, int j=0);
       void setUpInverseKinetics();
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
       virtual std::string getType() const { return "GearConstraint"; }
     
@@ -108,7 +108,7 @@ namespace MBSim {
 
       void init(InitStage stage);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
@@ -138,17 +138,18 @@ namespace MBSim {
 
     public:
       GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
+      ~GeneralizedPositionConstraint() { delete f; }
 
       void init(InitStage stage);
 
-      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_; }
 
       void setUpInverseKinetics();
 
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
       virtual std::string getType() const { return "GeneralizedPositionConstraint"; }
 
@@ -160,6 +161,7 @@ namespace MBSim {
 
     public:
       GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
+      ~GeneralizedVelocityConstraint() { delete f; }
 
       void init(InitStage stage);
 
@@ -185,7 +187,7 @@ namespace MBSim {
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
       virtual std::string getType() const { return "GeneralizedVelocityConstraint"; }
 
@@ -197,6 +199,7 @@ namespace MBSim {
 
     public:
       GeneralizedAccelerationConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      ~GeneralizedAccelerationConstraint() { delete f; }
 
       void init(InitStage stage);
 
@@ -222,7 +225,7 @@ namespace MBSim {
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element);
 
       virtual std::string getType() const { return "GeneralizedAccelerationConstraint"; }
 
@@ -259,8 +262,8 @@ namespace MBSim {
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
       void updateJacobians(double t, int j=0); 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual std::string getType() const { return "JointConstraint"; }
 

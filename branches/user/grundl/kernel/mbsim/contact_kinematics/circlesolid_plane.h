@@ -40,7 +40,7 @@ namespace MBSim {
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("ERROR (ContactKinematicsCircleSolidPlane::updatewb): Not implemented!"); };
       /***************************************************/
 
-    private:
+    protected:
       /**
        * \brief contour index
        */

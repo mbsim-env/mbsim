@@ -25,7 +25,6 @@
 #include <config.h>
 
 #include "mbsim_server.h"
-#include "defines.h"
 #include "interface_integrator.h"
 #include "mbsim/element.h"
 #include <sstream>
@@ -34,6 +33,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 
 const int max_length = 1048576;
 
@@ -78,9 +78,9 @@ namespace MBSimInterface {
 
   void MBSimTcpServer::initializeUsingXML(xercesc::DOMElement *element) {
     xercesc::DOMElement* e;
-    e=element->FirstChildElement(MBSIMINTERFACENS"port");
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"port");
     setPort(MBSim::Element::getInt(e));
-    e=element->FirstChildElement(MBSIMINTERFACENS"outputPrecision");
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"outputPrecision");
     if (e)
       setOutputPrecision(MBSim::Element::getInt(e));
   }

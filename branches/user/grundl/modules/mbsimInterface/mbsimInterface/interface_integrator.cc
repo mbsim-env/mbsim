@@ -26,9 +26,7 @@
 #include "interface_integrator.h"
 #include "interface_messages.h"
 #include "mbsim_server.h"
-#include "defines.h"
 #include <fstream>
-#include "mbsimControl/defines.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/extern_signal_source.h"
 
@@ -49,41 +47,41 @@ enum IPCmethods {
 
 namespace MBSimInterface {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Integrator, InterfaceIntegrator, MBSIMINTERFACENS"InterfaceIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(InterfaceIntegrator, MBSIMINTERFACE%"InterfaceIntegrator")
 
     InterfaceIntegrator::InterfaceIntegrator(): MBSim::Integrator(), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
     }
 
-  void InterfaceIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void InterfaceIntegrator::initializeUsingXML(xercesc::DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e, *ee;
-    e=element->FirstChildElement(MBSIMINTERFACENS"outputSignals");
-    ee=e->FirstChildElement(MBSIMINTERFACENS"signal");
+    xercesc::DOMElement *e, *ee;
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"outputSignals");
+    ee=E(e)->getFirstElementChildNamed(MBSIMINTERFACE%"signal");
     if(ee) {
       while (ee) {
-        outputSignalRef.push_back(ee->Attribute("ref"));
-        ee=ee->NextSiblingElement();
+        outputSignalRef.push_back(E(ee)->getAttribute("ref"));
+        ee=ee->getNextElementSibling();
       }
     }
-    e=element->FirstChildElement(MBSIMINTERFACENS"inputSignals");
-    ee=e->FirstChildElement(MBSIMINTERFACENS"signal");
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"inputSignals");
+    ee=E(e)->getFirstElementChildNamed(MBSIMINTERFACE%"signal");
     if(ee) {
       while (ee) {
-        inputSignalRef.push_back(ee->Attribute("ref"));
-        ee=ee->NextSiblingElement();
+        inputSignalRef.push_back(E(ee)->getAttribute("ref"));
+        ee=ee->getNextElementSibling();
       }
     }
-    e=element->FirstChildElement(MBSIMINTERFACENS"methodForIPC");
-    ee=e->FirstChildElement();
-    if (ee->ValueStr()==MBSIMINTERFACENS"MBSimTcpServer")
+    e=E(element)->getFirstElementChildNamed(MBSIMINTERFACE%"methodForIPC");
+    ee=e->getFirstElementChild();
+    if (E(ee)->getTagName()==MBSIMINTERFACE%"MBSimTcpServer")
       setMBSimServer(new MBSimTcpServer(this));
-    else if (ee->ValueStr()==MBSIMINTERFACENS"MBSimUdpServer")
+    else if (E(ee)->getTagName()==MBSIMINTERFACE%"MBSimUdpServer")
       setMBSimServer(new MBSimUdpServer(this));
     mbsimServer->initializeUsingXML(ee);
   }
 
-  TiXmlElement* InterfaceIntegrator::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+  xercesc::DOMElement* InterfaceIntegrator::writeXMLFile(xercesc::DOMNode *parent) {
+    xercesc::DOMElement *ele0 = Integrator::writeXMLFile(parent);
     /* TODO
        addElementText(ele0,MBSIMINTERFACENS"IP",IP);
        addElementText(ele0,MBSIMINTERFACENS"port",port);

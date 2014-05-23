@@ -111,7 +111,7 @@ namespace MBSimHydraulics {
   class ConstrainedNodeMec : public HNodeMec {
     public:
       ConstrainedNodeMec(const std::string &name="") : HNodeMec(name), pFun(NULL) {}
-      ~ConstrainedNodeMec() {};
+      ~ConstrainedNodeMec() { delete pFun; }
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
       void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }

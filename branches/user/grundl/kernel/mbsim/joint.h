@@ -44,13 +44,13 @@ namespace MBSim {
    * \date 2009-08-21 one force direction (Thorsten Schindler)
    * \todo hSize Frame C
    */
-  class Joint: public LinkMechanics {
-    public: 
+  class Joint : public LinkMechanics {
+    public:
       /**
        * \brief constructor
        * \param name
        */
-      Joint(const std::string &name="");
+      Joint(const std::string &name = "");
 
       /**
        * \brief destructor
@@ -58,12 +58,12 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t, int i=0);
-      virtual void updateW(double t, int i=0);
-      virtual void updateh(double t, int i=0);
+      virtual void updatewb(double t, int i = 0);
+      virtual void updateW(double t, int i = 0);
+      virtual void updateh(double t, int i = 0);
       virtual void updateg(double t);
       virtual void updategd(double t);
-      virtual void updateJacobians(double t, int j=0);
+      virtual void updateJacobians(double t, int j = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -80,8 +80,12 @@ namespace MBSim {
       virtual void calcrFactorSize(int j);
       virtual bool isSetValued() const;
       virtual bool isSingleValued() const;
-      virtual bool isActive() const { return true; }
-      virtual bool gActiveChanged() { return false; }
+      virtual bool isActive() const {
+        return true;
+      }
+      virtual bool gActiveChanged() {
+        return false;
+      }
       virtual void solveImpactsFixpointSingle(double dt);
       virtual void solveConstraintsFixpointSingle();
       virtual void solveImpactsGaussSeidel(double dt);
@@ -108,8 +112,12 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setForceLaw(GeneralizedForceLaw * rc) { ffl = rc; }
-      void setMomentLaw(GeneralizedForceLaw * rc) { fml = rc; }
+      void setForceLaw(GeneralizedForceLaw * rc) {
+        ffl = rc;
+      }
+      void setMomentLaw(GeneralizedForceLaw * rc) {
+        fml = rc;
+      }
       /***************************************************/
 
       /**
@@ -125,16 +133,20 @@ namespace MBSim {
       /** \brief The frame of reference ID for the force/moment direction vectors.
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
-      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
+      void setFrameOfReferenceID(int ID) {
+        refFrameID = ID;
+      }
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual std::string getType() const { return "Joint"; }
+      virtual std::string getType() const {
+        return "Joint";
+      }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVForce(ombv.createOpenMBV());
       }
@@ -145,7 +157,7 @@ namespace MBSim {
       }
 
       /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVMoment(ombv.createOpenMBV());
       }
@@ -189,10 +201,24 @@ namespace MBSim {
       fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
 
       /**
-       * constitutive laws on acceleration and velocity level for forces and torques
+       * constitutive law on acceleration level for forces and torques (f?-force-law)
        */
-      GeneralizedForceLaw *ffl, *fml;
-      GeneralizedImpactLaw *fifl, *fiml;
+      GeneralizedForceLaw *ffl;
+
+      /**
+       * constitutive law on acceleration level for moments/torques (f?-moment-law)
+       */
+      GeneralizedForceLaw * fml;
+
+      /**
+       * constitutive law on velocity level for forces and torques (f?-impact-force-law)
+       */
+      GeneralizedImpactLaw *fifl;
+
+      /**
+       * constitutive law on velocity level for moments/torques (f?-impact-moment-law)
+       */
+      GeneralizedImpactLaw * fiml;
 
       /**
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
@@ -208,14 +234,18 @@ namespace MBSim {
       std::string saved_ref1, saved_ref2;
   };
 
-  class InverseKineticsJoint: public Joint {
-    public: 
+  class InverseKineticsJoint : public Joint {
+    public:
       InverseKineticsJoint(const std::string &name);
       virtual void updateb(double t);
       void calcbSize();
-      void setBody(RigidBody* body_)    { body = body_; }
+      void setBody(RigidBody* body_) {
+        body = body_;
+      }
       virtual void init(InitStage stage);
-      virtual bool isSetValued() const {return true;}
+      virtual bool isSetValued() const {
+        return true;
+      }
 
     protected:
       RigidBody* body;

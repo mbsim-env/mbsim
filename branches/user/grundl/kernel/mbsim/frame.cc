@@ -31,8 +31,9 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -142,11 +143,11 @@ namespace MBSim {
       Element::init(stage);
   }
 
-  void Frame::initializeUsingXML(TiXmlElement *element) {
+  void Frame::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    TiXmlElement *ee=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    DOMElement *ee=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ee) {
       OpenMBVFrame ombv;
       openMBVFrame=ombv.createOpenMBV(ee); 
@@ -154,18 +155,18 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
+  DOMElement* Frame::writeXMLFile(DOMNode *parent) {
 
-    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+    DOMElement *ele0 = Element::writeXMLFile(parent);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVFrame) {
-      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"enableOpenMBV" );
-      addElementText(ele1,MBSIMNS"size",openMBVFrame->getSize());
-      addElementText(ele1,MBSIMNS"offset",openMBVFrame->getOffset());
-      ele0->LinkEndChild(ele1);
-    }
-#endif
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//    if(openMBVFrame) {
+//      DOMElement *ele1 = new DOMElement( MBSIM%"enableOpenMBV" );
+//      addElementText(ele1,MBSIM%"size",openMBVFrame->getSize());
+//      addElementText(ele1,MBSIM%"offset",openMBVFrame->getOffset());
+//      ele0->LinkEndChild(ele1);
+//    }
+//#endif
     return ele0;
   }
 
@@ -192,27 +193,27 @@ namespace MBSim {
       Frame::init(stage);
   }
 
-  void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
+  void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
-    TiXmlElement *ec=element->FirstChildElement();
-    ec=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(ec) setFrameOfReference(ec->Attribute("ref"));
-    ec=element->FirstChildElement(MBSIMNS"relativePosition");
+    DOMElement *ec=element->getFirstElementChild();
+    ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
+    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
     if(ec) setRelativePosition(getVec3(ec));
-    ec=element->FirstChildElement(MBSIMNS"relativeOrientation");
+    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
     if(ec) setRelativeOrientation(getSqrMat3(ec));
   }
 
-  TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Frame::writeXMLFile(parent);
-     if(getFrameOfReference()) {
-        TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-        ele1->SetAttribute("ref", str);
-        ele0->LinkEndChild(ele1);
-      }
-     addElementText(ele0,MBSIMNS"relativePosition",getRelativePosition());
-     addElementText(ele0,MBSIMNS"relativeOrientation",getRelativeOrientation());
+  DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Frame::writeXMLFile(parent);
+//     if(getFrameOfReference()) {
+//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
+//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
+//        ele1->SetAttribute("ref", str);
+//        ele0->LinkEndChild(ele1);
+//      }
+//     addElementText(ele0,MBSIM%"relativePosition",getRelativePosition());
+//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
    return ele0;
   }
 

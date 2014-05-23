@@ -20,19 +20,19 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include "euler_explicit_integrator.h"
-
 #include <time.h>
 
 #ifndef NO_ISO_14882
 using namespace std;
-using namespace MBXMLUtils;
 #endif
 
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, EulerExplicitIntegrator, MBSIMINTNS"EulerExplicitIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EulerExplicitIntegrator, MBSIMINT%"EulerExplicitIntegrator")
 
   EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
   }
@@ -114,10 +114,10 @@ namespace MBSim {
     postIntegrate(system);
   }
 
-  void EulerExplicitIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void EulerExplicitIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     setStepSize(Element::getDouble(e));
   }
 

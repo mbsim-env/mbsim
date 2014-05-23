@@ -26,6 +26,7 @@
 #include <mbsim/contour.h>
 #include <mbsim/contact.h>
 #include <fmatvec/function.h>
+#include <fmatvec/atom.h>
 
 namespace MBSim {
 
@@ -37,14 +38,14 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedForceLaw {
+  class GeneralizedForceLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      GeneralizedForceLaw() : forceFunc(NULL) {};
+      GeneralizedForceLaw() : Atom(), forceFunc(NULL) {};
 
-      GeneralizedForceLaw(fmatvec::Function<double(double,double)> *forceFunc_) : forceFunc(forceFunc_) {};
+      GeneralizedForceLaw(fmatvec::Function<double(double,double)> *forceFunc_) : Atom(), forceFunc(forceFunc_) {};
 
       /**
        * \brief destructor
@@ -81,8 +82,8 @@ namespace MBSim {
        * \brief initialize the force law using XML
        * \param XML element
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       /**
        * \return std::string representation
@@ -189,12 +190,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedImpactLaw {
+  class GeneralizedImpactLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      GeneralizedImpactLaw() {};
+      GeneralizedImpactLaw() : fmatvec::Atom() {};
 
       /**
        * \brief destructor
@@ -206,8 +207,8 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       /**
        * \return std::string representation
@@ -249,8 +250,8 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "UnilateralNewtonImpact"; }
       /***************************************************/
 
@@ -289,12 +290,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionForceLaw {
+  class FrictionForceLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      FrictionForceLaw() : frictionForceFunc(NULL) {};
+      FrictionForceLaw() : Atom(), frictionForceFunc(NULL) {};
 
       FrictionForceLaw(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : frictionForceFunc(frictionForceFunc_) {};
 
@@ -313,8 +314,8 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       /**
        * \return std::string representation
@@ -367,8 +368,8 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "PlanarCoulombFriction"; }
       /***************************************************/
 
@@ -410,8 +411,8 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "SpatialCoulombFriction"; }
       /***************************************************/
 
@@ -510,12 +511,12 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionImpactLaw {
+  class FrictionImpactLaw : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
        */
-      FrictionImpactLaw() {};
+      FrictionImpactLaw() : fmatvec::Atom() {};
 
       /**
        * \brief destructor
@@ -529,8 +530,8 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol) = 0;
       virtual int getFrictionDirections() = 0;
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       /**
        * \return std::string representation
@@ -568,8 +569,8 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 1; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "PlanarCoulombImpact"; }
       /***************************************************/
 
@@ -609,8 +610,8 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 2; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "SpatialCoulombImpact"; }
       /***************************************************/
 
@@ -729,7 +730,7 @@ namespace MBSim {
       virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
       /***************************************************/
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
   /*!
@@ -747,7 +748,7 @@ namespace MBSim {
       /*!
        * \brief destructor
        */
-      virtual ~MaxwellUnilateralConstraint() {};
+      virtual ~MaxwellUnilateralConstraint();
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
@@ -756,7 +757,7 @@ namespace MBSim {
       virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
       /***************************************************/
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       /*!
        * \brief initialize all saved contour couplings in the map
@@ -923,7 +924,7 @@ namespace MBSim {
       virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contact);
       /***************************************************/
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       virtual std::string getType() const { return "RegularizedBilateralConstraint"; }
   };
@@ -936,7 +937,7 @@ namespace MBSim {
       int getFrictionDirections() { return 1; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       bool isSetValued() const { return false; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
   class RegularizedSpatialFriction : public FrictionForceLaw {
@@ -947,7 +948,7 @@ namespace MBSim {
       int getFrictionDirections() { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       bool isSetValued() const { return false; }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
 }

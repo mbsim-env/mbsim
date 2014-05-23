@@ -21,7 +21,6 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_23_bta.h"
-#include "mbsimFlexibleBody/defines.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"

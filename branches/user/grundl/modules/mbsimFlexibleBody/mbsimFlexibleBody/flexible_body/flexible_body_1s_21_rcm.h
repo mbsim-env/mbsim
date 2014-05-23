@@ -182,7 +182,7 @@ namespace MBSimFlexibleBody {
       double dl;
 
       /**
-       * \brief coefficient of Lehr-damping
+       * \brief variables to plot in addition to state
        */
       fmatvec::VecInt plotElements;
 

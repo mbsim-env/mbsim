@@ -42,7 +42,7 @@ fi
 dnl check for optional module nurbs
 PKG_CHECK_MODULES([NURBS], [nurbs++ >= 3.0.13], 
                   [requires="$requires nurbs++"; nurbs_compilerflag="-DHAVE_NURBS"; AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])], 
-                  [nurbsPKGCONF = "No"; AC_MSG_RESULT([No Nurbs-library found. Some flexible contours not possible.])])
+                  [nurbsPKGCONF="No"; AC_MSG_RESULT([No Nurbs-library found. Some flexible contours not possible.])])
 AM_CONDITIONAL([COND_NURBS], [test _$nurbs_compilerflag = _-DHAVE_NURBS])
 AC_SUBST([nurbs_compilerflag])
 

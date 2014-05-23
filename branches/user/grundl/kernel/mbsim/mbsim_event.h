@@ -22,7 +22,7 @@
 
 #include<string>
 #include<exception>
-#include "mbxmlutilstinyxml/tinyxml.h"
+#include <xercesc/dom/DOMElement.hpp>
 
 namespace MBSim {
 
@@ -53,12 +53,6 @@ namespace MBSim {
        */
       std::string mbsim_error_message;
 
-  };
-
-  class MBSimErrorInXML : public MBSimError {
-    public:
-      MBSimErrorInXML(const std::string &mbsim_error_message_, const MBXMLUtils::TiXmlElement *e_) throw(); 
-      virtual ~MBSimErrorInXML() throw() {}
   };
 }
 

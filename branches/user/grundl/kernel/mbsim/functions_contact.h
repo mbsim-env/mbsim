@@ -66,10 +66,7 @@ namespace MBSim {
        * \param contour parameter
        * \return possible contact-distance at contour parameter
        */
-      virtual double operator[](const Arg& x) {
-        return nrm2(computeWrD(x));
-      }
-      ;
+        virtual double operator[](const Arg& x) { return nrm2(computeWrD(x)); }
 
       /*!
        * \param contour parameter
@@ -93,9 +90,7 @@ namespace MBSim {
        * \param point contour or general rigid contour reduced to point of reference
        * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) :
-          contour(contour_), point(point_), cp() {
-      }
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp() {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
@@ -190,9 +185,7 @@ namespace MBSim {
        * \param circle hollow contour
        * \param contour with one contour parameter
        */
-      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) :
-          contour(contour_), circle(circle_) {
-      }
+      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
@@ -234,9 +227,7 @@ namespace MBSim {
        * \param point contour
        * \param contour based on interpolation
        */
-      FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) :
-          contour(contour_), point(point_) {
-      }
+      FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       fmatvec::VecV operator()(const fmatvec::VecV &alpha) {
@@ -274,9 +265,7 @@ namespace MBSim {
        * \param length of second semi-axis
        * \default conesection in circle 
        */
-      FuncPairConeSectionCircle(double R_, double a_, double b_) :
-          R(R_), a(a_), b(b_), sec_IN_ci(true) {
-      }
+      FuncPairConeSectionCircle(double R_,double a_,double b_) : R(R_), a(a_), b(b_), sec_IN_ci(true) {}
 
       /*! 
        * \brief constructor

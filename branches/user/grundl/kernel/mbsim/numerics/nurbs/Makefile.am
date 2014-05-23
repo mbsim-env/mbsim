@@ -8,7 +8,7 @@ nurbsincludedir = $(includedir)/mbsim/numerics/nurbs
 INCLUDES = $(FMATVEC_CFLAGS)
 LDADD = $(FMATVEC_LIBS)
 
-libnurbs_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
+libnurbs_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libnurbs_la_LIBADD = $(DEPS_LIBS)
 
 nurbsinclude_HEADERS = nurbs_curve.h\

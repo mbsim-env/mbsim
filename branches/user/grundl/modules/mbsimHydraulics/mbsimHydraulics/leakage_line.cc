@@ -24,16 +24,20 @@
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/dynamic_system.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
+
+  LeakageLine::~LeakageLine() {
+    delete lpl;
+  }
 
   double LeakageLine::getGapLength() const {
     return ((glSignal)?glSignal->getSignal()(0):length);
@@ -65,20 +69,20 @@ namespace MBSimHydraulics {
       RigidHLine::init(stage);
   }
 
-  void LeakageLine::initializeUsingXML(TiXmlElement * element) {
+  void LeakageLine::initializeUsingXML(DOMElement * element) {
     RigidHLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"firstSurfaceVelocity");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"firstSurfaceVelocity");
     if (e)
-      s1vPath=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"secondSurfaceVelocity");
+      s1vPath=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"secondSurfaceVelocity");
     if (e)
-      s2vPath=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"gapLength");
+      s2vPath=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"gapLength");
     if (e)
-      glPath=e->Attribute("ref");
+      glPath=E(e)->getAttribute("ref");
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneLeakageLine,  MBSIMHYDRAULICSNS"PlaneLeakageLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneLeakageLine,  MBSIMHYDRAULICS%"PlaneLeakageLine")
 
   void PlaneLeakageLine::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
     lpl=plpl;
@@ -94,18 +98,18 @@ namespace MBSimHydraulics {
       LeakageLine::init(stage);
   }
 
-  void PlaneLeakageLine::initializeUsingXML(TiXmlElement * element) {
+  void PlaneLeakageLine::initializeUsingXML(DOMElement * element) {
     LeakageLine::initializeUsingXML(element);
-    TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"width");
+    DOMElement * e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"width");
     setGapWidth(getDouble(e));
-    e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
+    e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"height");
     setGapHeight(getDouble(e));
-    e = element->FirstChildElement(MBSIMHYDRAULICSNS"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<PlaneLeakagePressureLoss>(e->FirstChildElement());
+    e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"planeLeakagePressureLoss");
+    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory::createAndInit<PlaneLeakagePressureLoss>(e->getFirstElementChild());
     setPlaneLeakagePressureLoss(p);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircularLeakageLine,  MBSIMHYDRAULICSNS"CircularLeakageLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircularLeakageLine,  MBSIMHYDRAULICS%"CircularLeakageLine")
 
   void CircularLeakageLine::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;
@@ -122,14 +126,14 @@ namespace MBSimHydraulics {
       LeakageLine::init(stage);
   }
 
-  void CircularLeakageLine::initializeUsingXML(TiXmlElement * element) {
+  void CircularLeakageLine::initializeUsingXML(DOMElement * element) {
     LeakageLine::initializeUsingXML(element);
-    TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"innerRadius");
+    DOMElement * e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"innerRadius");
     setInnerRadius(getDouble(e));
-    e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
+    e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"height");
     setGapHeight(getDouble(e));
-    e = element->FirstChildElement(MBSIMHYDRAULICSNS"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::createAndInit<CircularLeakagePressureLoss>(e->FirstChildElement());
+    e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"circularLeakagePressureLoss");
+    CircularLeakagePressureLoss *p=MBSim::ObjectFactory::createAndInit<CircularLeakagePressureLoss>(e->getFirstElementChild());
     setCircularLeakagePressureLoss(p);
   }
 

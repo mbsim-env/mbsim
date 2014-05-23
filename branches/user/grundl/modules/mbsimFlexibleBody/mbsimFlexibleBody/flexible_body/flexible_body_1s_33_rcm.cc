@@ -20,7 +20,6 @@
 #include<config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsimFlexibleBody/utils/revcardan.h"
-#include "mbsimFlexibleBody/defines.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"

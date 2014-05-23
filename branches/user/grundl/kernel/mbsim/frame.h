@@ -120,8 +120,8 @@ namespace MBSim {
       void setDotAnglesOfOrientation(const fmatvec::Vec3 &dotAngles_ ) { dotAngles = dotAngles_; }
       const fmatvec::Vec3& getDotAnglesOfOrientation() const { return dotAngles; }
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       /***************************************************/
 
       virtual Element * getByPathSearch(std::string path);
@@ -228,8 +228,8 @@ namespace MBSim {
         setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
       }
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       const Frame *R;

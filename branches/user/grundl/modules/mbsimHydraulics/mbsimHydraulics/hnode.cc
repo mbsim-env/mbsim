@@ -25,10 +25,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
-#include "mbsimHydraulics/defines.h"
-#include "mbsim/xmlnamespacemapping.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -36,9 +33,10 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
@@ -60,32 +58,32 @@ namespace MBSimHydraulics {
 #endif
 
 
-  void HNode::initializeUsingXML(TiXmlElement *element) {
+  void HNode::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflow");
-    while (e) {
-      refInflowString.push_back(e->Attribute("ref"));
-      e=e->NextSiblingElement(MBSIMHYDRAULICSNS"inflow");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflow");
+    while (e && E(e)->getTagName()==MBSIMHYDRAULICS%"inflow") {
+      refInflowString.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
     }
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflow");
-    while (e) {
-      refOutflowString.push_back(e->Attribute("ref"));
-      e=e->NextSiblingElement(MBSIMHYDRAULICSNS"outflow");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflow");
+    while (e && E(e)->getTagName()==MBSIMHYDRAULICS%"outflow") {
+      refOutflowString.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVSphere");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVSphere");
     if (e) {
-      TiXmlElement * ee;
+      DOMElement * ee;
       double size=1, pMin=0e5, pMax=10e5;
       Vec3 localWrON;
-      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"size");
+      ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"size");
       if(ee) size=Element::getDouble(ee);
-      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressure");
+      ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalPressure");
       if(ee) pMin=Element::getDouble(ee);
-      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"maximalPressure");
+      ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"maximalPressure");
       if(ee) pMax=Element::getDouble(ee);
-      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"position");
+      ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"position");
       if (ee) localWrON=Element::getVec(ee, 3);
       enableOpenMBVSphere(size, pMin, pMax, localWrON);
     }
@@ -280,7 +278,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ConstrainedNode, MBSIMHYDRAULICSNS"ConstrainedNode")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNode, MBSIMHYDRAULICS%"ConstrainedNode")
 
   void ConstrainedNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -296,13 +294,13 @@ namespace MBSimHydraulics {
     la(0)=(*pFun)(t);
   }
 
-  void ConstrainedNode::initializeUsingXML(TiXmlElement *element) {
+  void ConstrainedNode::initializeUsingXML(DOMElement *element) {
     HNode::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
+    pFun=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, EnvironmentNode, MBSIMHYDRAULICSNS"EnvironmentNode")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNode, MBSIMHYDRAULICS%"EnvironmentNode")
 
   void EnvironmentNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -313,7 +311,7 @@ namespace MBSimHydraulics {
       HNode::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ElasticNode, MBSIMHYDRAULICSNS"ElasticNode")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticNode, MBSIMHYDRAULICS%"ElasticNode")
 
   ElasticNode::~ElasticNode() {
     delete bulkModulus;
@@ -347,14 +345,14 @@ namespace MBSimHydraulics {
       HNode::init(stage);
   }
 
-  void ElasticNode::initializeUsingXML(TiXmlElement * element) {
+  void ElasticNode::initializeUsingXML(DOMElement * element) {
     HNode::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"volume");
+    DOMElement * e;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"volume");
     V=getDouble(e);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
     p0=getDouble(e);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
     fracAir=getDouble(e);
   }
 
@@ -380,7 +378,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidNode, MBSIMHYDRAULICSNS"RigidNode")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNode, MBSIMHYDRAULICS%"RigidNode")
 
   RigidNode::RigidNode(const string &name) : HNode(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
   }
@@ -572,7 +570,7 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidCavitationNode, MBSIMHYDRAULICSNS"RigidCavitationNode")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidCavitationNode, MBSIMHYDRAULICS%"RigidCavitationNode")
 
   RigidCavitationNode::RigidCavitationNode(const string &name) : HNode(name), pCav(0), active(false), active0(false), gdn(0), gdd(0), gfl(new UnilateralConstraint), gil(new UnilateralNewtonImpact) {
   }
@@ -614,10 +612,10 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidCavitationNode::initializeUsingXML(TiXmlElement * element) {
+  void RigidCavitationNode::initializeUsingXML(DOMElement * element) {
     HNode::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"cavitationPressure");
+    DOMElement * e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"cavitationPressure");
     setCavitationPressure(getDouble(e));
   }
 
@@ -854,12 +852,12 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PressurePump, MBSIMHYDRAULICSNS"PressurePump")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PressurePump, MBSIMHYDRAULICS%"PressurePump")
 
-  void PressurePump::initializeUsingXML(TiXmlElement * element) {
+  void PressurePump::initializeUsingXML(DOMElement * element) {
     HNode::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureSignal");
-    pSignalString=e->Attribute("ref");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"pressureSignal");
+    pSignalString=E(e)->getAttribute("ref");
   }
 
   void PressurePump::init(InitStage stage) {
@@ -878,9 +876,3 @@ namespace MBSimHydraulics {
   }
 
 }
-
-// register namspace mapping (must just be done in any *.cc file)
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(50, MBSIMHYDRAULICSNS_, "")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(40, MBSIMHYDRAULICSNS_, "hyd")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(30, MBSIMHYDRAULICSNS_, "hydraulic")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(20, MBSIMHYDRAULICSNS_, "mbsimhydraulic")

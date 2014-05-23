@@ -16,10 +16,10 @@
   </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSimIntegrator"
-    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd"/>
+    schemaLocation="../http___mbsim_berlios_de_MBSimIntegrator/mbsimintegrator.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSimControl"
     schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>

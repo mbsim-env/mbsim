@@ -23,65 +23,58 @@
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/objectfactory.h"
-#include <mbsim/xmlnamespacemapping.h>
-#include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
   DynamicSystemSolver * Integrator::system = 0;
 
-  Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
+  Integrator::Integrator() : fmatvec::Atom(), tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
 
-  void Integrator::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"startTime");
+  void Integrator::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"startTime");
     setStartTime(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"endTime");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"endTime");
     setEndTime(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"plotStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotStepSize");
     setPlotStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"initialState");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialState");
     if(e) setInitialState(Element::getVec(e));
   }
 
-  TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType());
-    parent->LinkEndChild(ele0);
+  DOMElement* Integrator::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(MBSIMINT%getType());
+    parent->insertBefore(ele0, NULL);
 
-    addElementText(ele0,MBSIMINTNS"startTime",getStartTime());
-    addElementText(ele0,MBSIMINTNS"endTime",getEndTime());
-    addElementText(ele0,MBSIMINTNS"plotStepSize",getPlotStepSize());
+    addElementText(ele0,MBSIMINT%"startTime",getStartTime());
+    addElementText(ele0,MBSIMINT%"endTime",getEndTime());
+    addElementText(ele0,MBSIMINT%"plotStepSize",getPlotStepSize());
     if(getInitialState().size())
-      addElementText(ele0,MBSIMINTNS"initialState",getInitialState());
+      addElementText(ele0,MBSIMINT%"initialState",getInitialState());
 
     return ele0;
   }
 
   Integrator* Integrator::readXMLFile(const string &filename) {
-    TiXmlDocument doc;
-    bool ret=doc.LoadFile(filename);
-    assert(ret==true);
-    (void) ret;
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    TiXml_setLineNrFromProcessingInstruction(e);
-    map<string,string> dummy;
-    incorporateNamespace(e, dummy);
-    Integrator *integrator=ObjectFactory<Integrator>::createAndInit<Integrator>(e);
+    shared_ptr<DOMParser> parser=DOMParser::create(false);
+    shared_ptr<DOMDocument> doc=parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    Integrator *integrator=ObjectFactory::createAndInit<Integrator>(e);
     return integrator;
   }
 
   void Integrator::writeXMLFile(const string &name) {
-    TiXmlDocument doc;
-    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-    doc.LinkEndChild( decl );
-    writeXMLFile(&doc);
-    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
-    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-    doc.SaveFile((name.length()>13 && name.substr(name.length()-13,13)==".mbsimint.xml")?name:name+".mbsimint.xml");
+//    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+//    writeXMLFile(&doc);
+//    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
+//    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+//    doc.SaveFile((name.length()>13 && name.substr(name.length()-13,13)==".mbsimint.xml")?name:name+".mbsimint.xml");
   }
 
   // This function is called first by each implementation of Integrator::integrate.

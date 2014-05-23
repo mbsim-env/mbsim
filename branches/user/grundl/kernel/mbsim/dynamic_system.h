@@ -472,61 +472,61 @@ namespace MBSim {
        */
       void updaterFactorRef(const fmatvec::Vec &ref);
 
+      void clearElementLists();
+
+      /**
+       * \brief build flat list of dynamic systems
+       * \param list of dynamic systems
+       */
+      void buildListOfDynamicSystems(std::vector<DynamicSystem*> &sys);
+
       /**
        * \brief build flat list of objects
        * \param list of objects
-       * \param flag for recursive
        */
-      virtual void buildListOfObjects(std::vector<Object*> &obj, bool recursive=false);
+      void buildListOfObjects(std::vector<Object*> &obj);
 
       /**
        * \brief build flat list of links
        * \param list of links
-       * \param flag for recursive
        */
-      virtual void buildListOfLinks(std::vector<Link*> &lnk, bool recursive=false);
+      void buildListOfLinks(std::vector<Link*> &lnk);
 
       /**
        * \brief build flat list of all setvalued links
        * \param list of links
-       * \param flag for recursive
        */
-      virtual void buildListOfSetValuedLinks(std::vector<Link*> &lnk, bool recursive=false);
+      void buildListOfSetValuedLinks(std::vector<Link*> &lnk);
 
       /**
        * \brief build flat list of frames
        * \param list of frames
-       * \param flag for recursive
        */
-      virtual void buildListOfFrames(std::vector<Frame*> &frm, bool recursive);
+      void buildListOfFrames(std::vector<Frame*> &frm);
 
       /**
        * \brief build flat list of contours
        * \param list of contours
-       * \param flag for recursive
        */
-      virtual void buildListOfContours(std::vector<Contour*> &cnt, bool recursive);
+      void buildListOfContours(std::vector<Contour*> &cnt);
 
       /**
        * \brief build flat list of models
        * \param list of models
-       * \param flag for recursive
        */
-      void buildListOfModels(std::vector<ModellingInterface*> &model, bool recursive = true);
+      void buildListOfModels(std::vector<ModellingInterface*> &model);
 
       /**
        * \brief build flat list of inverse kinetics links
        * \param list of inverse kinetics links
-       * \param flag for recursive
        */
-      virtual void buildListOfInverseKineticsLinks(std::vector<Link*> &lnk, bool recursive=false);
+      void buildListOfInverseKineticsLinks(std::vector<Link*> &lnk);
 
       /**
        * \brief build flat list of observers
        * \param list of observers
-       * \param flag for recursive
        */
-      virtual void buildListOfObservers(std::vector<Observer*> &obsrv, bool recursive=false);
+      void buildListOfObservers(std::vector<Observer*> &obsrv);
 
       /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics

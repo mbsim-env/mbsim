@@ -24,9 +24,11 @@
 #include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/group.h>
 #endif
 
 using namespace std;
+using namespace xercesc;
 using namespace MBXMLUtils;
 using namespace fmatvec;
 
@@ -143,33 +145,33 @@ namespace MBSim {
     }
   }
 
-  void CoordinatesObserver::initializeUsingXML(TiXmlElement *element) {
+  void CoordinatesObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frame");
-    if(e) saved_frame=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
+    if(e) saved_frame=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
         OpenMBVArrow ombv;
         openMBVPosition=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVVelocity");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
         OpenMBVArrow ombv;
         openMBVVelocity=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVAcceleration");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
         OpenMBVArrow ombv;
         openMBVAcceleration=ombv.createOpenMBV(e); 
     }
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrame");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrame");
     if(e) {
         OpenMBVFrame ombv;
         openMBVFrame=ombv.createOpenMBV(e); 
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CartesianCoordinatesObserver, MBSIMNS"CartesianCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CartesianCoordinatesObserver, MBSIM%"CartesianCoordinatesObserver")
 
   CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : CoordinatesObserver(name), A(EYE) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -377,7 +379,7 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CylinderCoordinatesObserver, MBSIMNS"CylinderCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CylinderCoordinatesObserver, MBSIM%"CylinderCoordinatesObserver")
 
   CylinderCoordinatesObserver::CylinderCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -585,7 +587,7 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, NaturalCoordinatesObserver, MBSIMNS"NaturalCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NaturalCoordinatesObserver, MBSIM%"NaturalCoordinatesObserver")
 
   NaturalCoordinatesObserver::NaturalCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

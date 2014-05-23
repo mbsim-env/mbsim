@@ -20,7 +20,6 @@
 #include<config.h>
 #include<mbsim/dynamic_system_solver.h>
 #include "time_stepping_integrator.h"
-
 #include <time.h>
 
 #ifndef NO_ISO_14882
@@ -29,10 +28,11 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, TimeSteppingIntegrator, MBSIMINTNS"TimeSteppingIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TimeSteppingIntegrator, MBSIMINT%"TimeSteppingIntegrator")
 
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
@@ -62,7 +62,9 @@ namespace MBSim {
     cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot =(int) (dtPlot/dt + 0.5);
-    assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
+    if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
+      cout << "WARNING: Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
+    }
 
     s0 = clock();
   }
@@ -121,10 +123,10 @@ namespace MBSim {
     postIntegrate(system);
   }
 
-  void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void TimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     setStepSize(Element::getDouble(e));
   }
 

@@ -33,7 +33,6 @@
 #include "dirent.h"
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
-#include <mbsim/xmlnamespacemapping.h>
 
 #include <H5Cpp.h>
 #include <hdf5serie/fileserie.h>
@@ -55,14 +54,18 @@
 //#endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
   double tP = 20.0;
   bool gflag = false;
 
   bool DynamicSystemSolver::exitRequest = false;
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
   DynamicSystemSolver::DynamicSystemSolver() :
       Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), INFO(true), READZ0(false), truncateSimulationFiles(true) {
@@ -77,9 +80,27 @@ namespace MBSim {
   DynamicSystemSolver::~DynamicSystemSolver() {
     closePlot();
     H5::FileSerie::deletePIDFiles();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVGrp)
+      openMBVGrp->destroy();
+#endif
   }
 
   void DynamicSystemSolver::initialize() {
+
+    std::string InitStageStrings[] = {
+      "Modelbuildup",
+      "ResolveXML-Path",
+      "PreInit",
+      "Resize",
+      "relativeFrameContourLocation",
+      "worldFrameContourLocation",
+      "plot",
+      "reorganizeHierarchy",
+      "unknownStage",
+      "calculateLocalInitialValues"
+    };
+
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
@@ -87,7 +108,7 @@ namespace MBSim {
 #endif
     for (int stage = 0; stage < MBSim::LASTINITSTAGE; stage++) {
       if (INFO)
-        cout << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
+        cout << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage);
       if (INFO)
         cout << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
@@ -100,19 +121,19 @@ namespace MBSim {
         cout << name << " (special group) stage==preInit:" << endl;
 
       vector<Object*> objList;
-      buildListOfObjects(objList, true);
+      buildListOfObjects(objList);
 
       vector<Frame*> frmList;
-      buildListOfFrames(frmList, true);
+      buildListOfFrames(frmList);
 
       vector<Contour*> cntList;
-      buildListOfContours(cntList, true);
+      buildListOfContours(cntList);
 
       vector<Link*> lnkList;
-      buildListOfLinks(lnkList, true);
+      buildListOfLinks(lnkList);
 
       vector<ModellingInterface*> modellList;
-      buildListOfModels(modellList, true);
+      buildListOfModels(modellList);
 
       if (modellList.size())
         do {
@@ -120,18 +141,15 @@ namespace MBSim {
         } while (modellList.size());
 
       vector<Link*> iKlnkList;
-      buildListOfInverseKineticsLinks(iKlnkList, true);
+      buildListOfInverseKineticsLinks(iKlnkList);
 
       vector<Observer*> obsrvList;
-      buildListOfObservers(obsrvList, true);
+      buildListOfObservers(obsrvList);
 
-      dynamicsystem.clear(); // delete old DynamicSystem list
-      object.clear(); // delete old object list
-      frame.clear(); // delete old frame list
-      contour.clear(); // delete old contour list
-      link.clear(); // delete old link list
-      inverseKineticsLink.clear(); // delete old link list
-      observer.clear(); // delete old link list
+      vector<DynamicSystem*> dsList;
+      buildListOfDynamicSystems(dsList);
+
+      clearElementLists();
 
       /* rename system structure */
       if (INFO)
@@ -193,6 +211,9 @@ namespace MBSim {
         obsrvList[i]->setName(str.str());
         addObserver(obsrvList[i]);
       }
+
+      for (unsigned int i = 0; i < dsList.size(); i++)
+        delete dsList[i];
 
       /* matrix of body dependencies */
       SqrMat A(objList.size(), INIT, 0.);
@@ -259,10 +280,10 @@ namespace MBSim {
       sethSize(uSize[1], 1);
       sethInd(0, 0);
       sethInd(0, 1);
-      setxInd(0);
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();
+      setxInd(0);
 
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
@@ -1425,7 +1446,7 @@ namespace MBSim {
     setPlotFeatureRecursive(openMBV, enabled);
   }
 
-  void DynamicSystemSolver::initializeUsingXML(TiXmlElement *element) {
+  void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
     // If enviornment variable MBSIMREORGANIZEHIERARCHY=false then do NOT reorganize.
     // In this case it is not possible to simulate a relativ kinematics (tree structures).
     char *reorg=getenv("MBSIMREORGANIZEHIERARCHY");
@@ -1435,156 +1456,150 @@ namespace MBSim {
       setReorganizeHierarchy(true);
 
     Group::initializeUsingXML(element);
-    TiXmlElement *e;
+    DOMElement *e;
     // search first Environment element
-    e = element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
+    e = E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
 
     while (e) {
-      ObjectFactory<Environment>::createAndInit<Environment>(e);
-      e = e->NextSiblingElement();
+      ObjectFactory::createAndInit<Environment>(e);
+      e = e->getNextElementSibling();
     }
 
-    e = element->FirstChildElement(MBSIMNS"solverParameters");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"solverParameters");
     if (e) {
-      TiXmlElement * ee;
-      ee = e->FirstChildElement(MBSIMNS"constraintSolver");
+      DOMElement * ee;
+      ee = E(e)->getFirstElementChildNamed(MBSIM%"constraintSolver");
       if (ee) {
-        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+        if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointTotal"))
           setConstraintSolver(FixedPointTotal);
-        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointSingle"))
           setConstraintSolver(FixedPointSingle);
-        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"GaussSeidel"))
           setConstraintSolver(GaussSeidel);
-        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"LinearEquations"))
           setConstraintSolver(LinearEquations);
-        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"RootFinding"))
           setConstraintSolver(RootFinding);
       }
-      ee = e->FirstChildElement(MBSIMNS"impactSolver");
+      ee = E(e)->getFirstElementChildNamed(MBSIM%"impactSolver");
       if (ee) {
-        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+        if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointTotal"))
           setImpactSolver(FixedPointTotal);
-        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointSingle"))
           setImpactSolver(FixedPointSingle);
-        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"GaussSeidel"))
           setImpactSolver(GaussSeidel);
-        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"LinearEquations"))
           setImpactSolver(LinearEquations);
-        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+        else if (E(ee)->getFirstElementChildNamed(MBSIM%"RootFinding"))
           setImpactSolver(RootFinding);
       }
-      ee = e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
+      ee = E(e)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
       if (ee)
-        setMaxIter(atoi(ee->GetText()));
-      ee = e->FirstChildElement(MBSIMNS"tolerances");
+        setMaxIter(getInt(ee));
+      ee = E(e)->getFirstElementChildNamed(MBSIM%"tolerances");
       if (ee) {
-        TiXmlElement * eee;
-        eee = ee->FirstChildElement(MBSIMNS"projection");
+        DOMElement * eee;
+        eee = E(ee)->getFirstElementChildNamed(MBSIM%"projection");
         if (eee)
           setProjectionTolerance(getDouble(eee));
-        eee = ee->FirstChildElement(MBSIMNS"g");
+        eee = E(ee)->getFirstElementChildNamed(MBSIM%"g");
         if (eee)
           setgTol(getDouble(eee));
-        eee = ee->FirstChildElement(MBSIMNS"gd");
+        eee = E(ee)->getFirstElementChildNamed(MBSIM%"gd");
         if (eee)
           setgdTol(getDouble(eee));
-        eee = ee->FirstChildElement(MBSIMNS"gdd");
+        eee = E(ee)->getFirstElementChildNamed(MBSIM%"gdd");
         if (eee)
           setgddTol(getDouble(eee));
-        eee = ee->FirstChildElement(MBSIMNS"la");
+        eee = E(ee)->getFirstElementChildNamed(MBSIM%"la");
         if (eee)
           setlaTol(getDouble(eee));
-        eee = ee->FirstChildElement(MBSIMNS"La");
+        eee = E(ee)->getFirstElementChildNamed(MBSIM%"La");
         if (eee)
           setLaTol(getDouble(eee));
       }
     }
-    e = element->FirstChildElement(MBSIMNS"inverseKinetics");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"inverseKinetics");
     if (e)
       setInverseKinetics(Element::getBool(e));
   }
 
-  TiXmlElement* DynamicSystemSolver::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Group::writeXMLFile(parent);
+  DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Group::writeXMLFile(parent);
 
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"environments");
-    MBSimEnvironment::getInstance()->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
-
-    ele1 = new TiXmlElement(MBSIMNS"solverParameters");
-    if (contactSolver != FixedPointSingle) {
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"constraintSolver");
-      if (contactSolver == FixedPointTotal)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"FixedPointTotal"));
-      else if (contactSolver == FixedPointSingle)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"FixedPointSingle"));
-      else if (contactSolver == GaussSeidel)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"GaussSeidel"));
-      else if (contactSolver == LinearEquations)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"LinearEquations"));
-      else if (contactSolver == RootFinding)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"RootFinding"));
-      ele1->LinkEndChild(ele2);
-    }
-    if (impactSolver != FixedPointSingle) {
-      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"impactSolver");
-      if (impactSolver == FixedPointTotal)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"FixedPointTotal"));
-      else if (impactSolver == FixedPointSingle)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"FixedPointSingle"));
-      else if (impactSolver == GaussSeidel)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"GaussSeidel"));
-      else if (impactSolver == LinearEquations)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"LinearEquations"));
-      else if (impactSolver == RootFinding)
-        ele2->LinkEndChild(new TiXmlElement(MBSIMNS"RootFinding"));
-      ele1->LinkEndChild(ele2);
-    }
-    if (maxIter != 10000)
-      addElementText(ele1, MBSIMNS"numberOfMaximalIterations", maxIter);
-    TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"tolerances");
-    if (tolProj > 1e-15)
-      addElementText(ele2, MBSIMNS"projection", tolProj);
-    if (gTol > 1e-8)
-      addElementText(ele2, MBSIMNS"g", gTol);
-    if (gdTol > 1e-10)
-      addElementText(ele2, MBSIMNS"gd", gdTol);
-    if (gddTol > 1e-12)
-      addElementText(ele2, MBSIMNS"gdd", gddTol);
-    if (laTol > 1e-12)
-      addElementText(ele2, MBSIMNS"la", laTol);
-    if (LaTol > 1e-10)
-      addElementText(ele2, MBSIMNS"La", LaTol);
-    ele1->LinkEndChild(ele2);
-    ele0->LinkEndChild(ele1);
-    if (inverseKinetics)
-      addElementText(ele0, MBSIMNS"inverseKinetics", inverseKinetics);
-
+//    DOMElement *ele1 = new DOMElement(MBSIM%"environments");
+//    MBSimEnvironment::getInstance()->writeXMLFile(ele1);
+//    ele0->LinkEndChild(ele1);
+//
+//    ele1 = new DOMElement(MBSIM%"solverParameters");
+//    if (contactSolver != FixedPointSingle) {
+//      DOMElement *ele2 = new DOMElement(MBSIM%"constraintSolver");
+//      if (contactSolver == FixedPointTotal)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointTotal"));
+//      else if (contactSolver == FixedPointSingle)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointSingle"));
+//      else if (contactSolver == GaussSeidel)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"GaussSeidel"));
+//      else if (contactSolver == LinearEquations)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"LinearEquations"));
+//      else if (contactSolver == RootFinding)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"RootFinding"));
+//      ele1->LinkEndChild(ele2);
+//    }
+//    if (impactSolver != FixedPointSingle) {
+//      DOMElement *ele2 = new DOMElement(MBSIM%"impactSolver");
+//      if (impactSolver == FixedPointTotal)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointTotal"));
+//      else if (impactSolver == FixedPointSingle)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointSingle"));
+//      else if (impactSolver == GaussSeidel)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"GaussSeidel"));
+//      else if (impactSolver == LinearEquations)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"LinearEquations"));
+//      else if (impactSolver == RootFinding)
+//        ele2->LinkEndChild(new DOMElement(MBSIM%"RootFinding"));
+//      ele1->LinkEndChild(ele2);
+//    }
+//    if (maxIter != 10000)
+//      addElementText(ele1, MBSIM%"numberOfMaximalIterations", maxIter);
+//    DOMElement *ele2 = new DOMElement(MBSIM%"tolerances");
+//    if (tolProj > 1e-15)
+//      addElementText(ele2, MBSIM%"projection", tolProj);
+//    if (gTol > 1e-8)
+//      addElementText(ele2, MBSIM%"g", gTol);
+//    if (gdTol > 1e-10)
+//      addElementText(ele2, MBSIM%"gd", gdTol);
+//    if (gddTol > 1e-12)
+//      addElementText(ele2, MBSIM%"gdd", gddTol);
+//    if (laTol > 1e-12)
+//      addElementText(ele2, MBSIM%"la", laTol);
+//    if (LaTol > 1e-10)
+//      addElementText(ele2, MBSIM%"La", LaTol);
+//    ele1->LinkEndChild(ele2);
+//    ele0->LinkEndChild(ele1);
+//    if (inverseKinetics)
+//      addElementText(ele0, MBSIM%"inverseKinetics", inverseKinetics);
+//
     return ele0;
   }
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
-    TiXmlDocument doc;
-    bool ret = doc.LoadFile(filename);
-    assert(ret == true);
-    (void) ret;
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e = doc.FirstChildElement();
-    TiXml_setLineNrFromProcessingInstruction(e);
-    map<string, string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::createAndInit<Group>(e));
+    shared_ptr<DOMParser> parser=DOMParser::create(false);
+    shared_ptr<DOMDocument> doc=parser->parse(filename);
+    DOMElement *e = doc->getDocumentElement();
+    DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createAndInit<Group>(e));
     return dss;
   }
 
   void DynamicSystemSolver::writeXMLFile(const string &name) {
-    TiXmlDocument doc;
-    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0", "UTF-8", "");
-    doc.LinkEndChild(decl);
-    writeXMLFile(&doc);
-    map<string, string> nsprefix = XMLNamespaceMapping::getNamespacePrefixMapping();
-    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);
-    doc.SaveFile((name.length() > 10 && name.substr(name.length() - 10, 10) == ".mbsim.xml") ? name : name + ".mbsim.xml");
+//    TiXmlDocument doc;
+//    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+//    doc.LinkEndChild(decl);
+//    writeXMLFile(&doc);
+//    map<string, string> nsprefix = XMLNamespaceMapping::getNamespacePrefixMapping();
+//    unIncorporateNamespace(doc.getFirstElementChild(), nsprefix);
+//    doc.SaveFile((name.length() > 10 && name.substr(name.length() - 10, 10) == ".mbsim.xml") ? name : name + ".mbsim.xml");
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {

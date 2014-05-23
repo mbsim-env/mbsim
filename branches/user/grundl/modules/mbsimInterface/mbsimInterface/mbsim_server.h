@@ -23,11 +23,11 @@
 #ifndef _MBSIMSERVER_H_
 #define _MBSIMSERVER_H_
 
-namespace MBXMLUtils {
-  class TiXmlElement;
-}
+#include <mbxmlutilshelper/dom.h>
 
 namespace MBSimInterface {
+
+  const MBXMLUtils::NamespaceURI MBSIMINTERFACE("http://mbsim.berlios.de/MBSimInterface");
 
   class InterfaceIntegrator;
 
