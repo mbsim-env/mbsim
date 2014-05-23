@@ -866,4 +866,72 @@ namespace MBSimGUI {
     static_cast<ColorWidget*>(widget)->updateWidget();
   }
 
+  PlotFeatureStatusProperty::PlotFeatureStatusProperty() {
+    name.push_back("plotRecursive");
+    name.push_back("separateFilePerGroup");
+    name.push_back("state");
+    name.push_back("stateDerivative");
+    name.push_back("notMinimalState");
+    name.push_back("rightHandSide");
+    name.push_back("globalPosition");
+    name.push_back("globalVelocity");
+    name.push_back("globalAcceleration");
+    name.push_back("energy");
+    name.push_back("openMBV");
+    name.push_back("generalizedLinkForce");
+    name.push_back("linkKinematics");
+    name.push_back("stopVector");
+    name.push_back("debug");
+    xmlName.push_back("plotFeature");
+    xmlName.push_back("plotFeatureForChildren");
+    xmlName.push_back("plotFeatureRecursive");
+    status.resize(xmlName.size());
+    for(int i=0; i<xmlName.size(); i++)
+      status[i].resize(name.size());
+  }
+
+  DOMElement* PlotFeatureStatusProperty::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e=parent->getFirstElementChild();
+    while(e && (E(e)->getTagName()==MBSIM%xmlName[0] ||
+                E(e)->getTagName()==MBSIM%xmlName[1] ||
+                E(e)->getTagName()==MBSIM%xmlName[1])) {
+      string feature = E(e)->getAttribute("feature");
+      for(int i=0; i<name.size(); i++) {
+        if(name[i] == feature.substr(1)) {
+          if(E(e)->getTagName()==MBSIM%"plotFeature") status[0][i] = 1+(feature[0]=='-');
+          else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") status[1][i] = 1+(feature[0]=='-');
+          else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") status[2][i] = 1+(feature[0]=='-');
+        }
+      }
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* PlotFeatureStatusProperty::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(int j=0; j<status.size(); j++) {
+      for(int i=0; i<status[j].size(); i++) {
+        if(status[j][i]) {
+          DOMElement *ele = D(doc)->createElement(MBSIM%xmlName[j]);
+          E(ele)->setAttribute("feature",(status[j][i]==1)?"+"+name[i]:"-"+name[i]);
+          parent->insertBefore(ele, NULL);
+        }
+      }
+    }
+    return 0;
+  }
+
+  void PlotFeatureStatusProperty::fromWidget(QWidget *widget) {
+    for(int j=0; j<status.size(); j++)
+      for(int i=0; i<status[j].size(); i++)
+        status[j][i] = static_cast<PlotFeatureStatusWidget*>(widget)->status[j][i];
+  }
+
+  void PlotFeatureStatusProperty::toWidget(QWidget *widget) {
+    for(int j=0; j<status.size(); j++)
+      for(int i=0; i<status[j].size(); i++)
+        static_cast<PlotFeatureStatusWidget*>(widget)->status[j][i] = status[j][i];
+  }
+
 }

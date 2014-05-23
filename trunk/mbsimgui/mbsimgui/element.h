@@ -52,7 +52,7 @@ namespace MBSimGUI {
     Element *parent;
     static int IDcounter;
     std::string ID;
-    ExtProperty name, embed;
+    ExtProperty name, embed, plotFeature;
     Parameters parameters;
     public:
     Element(const std::string &name, Element *parent);

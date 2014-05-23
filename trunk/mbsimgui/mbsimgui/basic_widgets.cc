@@ -696,5 +696,104 @@ namespace MBSimGUI {
       updateWidget();
     }
   }
+ 
+  PlotFeatureStatusWidget::PlotFeatureStatusWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
 
+    QStringList stringList;
+    stringList << "Plot recursive";
+    stringList << "Separate file per group";
+    stringList << "State";
+    stringList << "State derivative";
+    stringList << "Not minimal state";
+    stringList << "Right hand side";
+    stringList << "Global position";
+    stringList << "Global velocity";
+    stringList << "Global acceleration";
+    stringList << "Energy";
+    stringList << "OpenMBV";
+    stringList << "Generalized link force";
+    stringList << "Link kinematics";
+    stringList << "Stop vector";
+    stringList << "Debug";
+
+    QStringList option;
+    option << "Unset";
+    option << "Enabled";
+    option << "Disabled";
+
+    QGroupBox *box = new QGroupBox("Plot feature");
+    layout->addWidget(box);
+    QHBoxLayout *sublayout = new QHBoxLayout;
+    sublayout->setMargin(0);
+    box->setLayout(sublayout);
+
+    list1 = new QListWidget;
+    list1->addItems(stringList);
+    sublayout->addWidget(list1);
+    combo1 = new QComboBox;
+    combo1->addItems(option);
+    sublayout->addWidget(combo1);
+
+    box = new QGroupBox("Plot feature for children");
+    layout->addWidget(box);
+    sublayout = new QHBoxLayout;
+    sublayout->setMargin(0);
+    box->setLayout(sublayout);
+
+    list2 = new QListWidget;
+    list2->addItems(stringList);
+    sublayout->addWidget(list2);
+    combo2 = new QComboBox;
+    combo2->addItems(option);
+    sublayout->addWidget(combo2);
+
+    box = new QGroupBox("Plot feature recursive");
+    layout->addWidget(box);
+    sublayout = new QHBoxLayout;
+    sublayout->setMargin(0);
+    box->setLayout(sublayout);
+
+    list3 = new QListWidget;
+    list3->addItems(stringList);
+    sublayout->addWidget(list3);
+    combo3 = new QComboBox;
+    combo3->addItems(option);
+    sublayout->addWidget(combo3);
+
+    status.resize(3);
+    for(int i=0; i<3; i++)
+      status[i].resize(stringList.size());
+    connect(list1,SIGNAL(currentRowChanged(int)),this,SLOT(updateComboBox1(int)));
+    connect(list2,SIGNAL(currentRowChanged(int)),this,SLOT(updateComboBox2(int)));
+    connect(list3,SIGNAL(currentRowChanged(int)),this,SLOT(updateComboBox3(int)));
+    connect(combo1,SIGNAL(currentIndexChanged(int)),this,SLOT(updateStatus1(int)));
+    connect(combo2,SIGNAL(currentIndexChanged(int)),this,SLOT(updateStatus2(int)));
+    connect(combo3,SIGNAL(currentIndexChanged(int)),this,SLOT(updateStatus3(int)));
+    list1->setCurrentRow(0);
+    list2->setCurrentRow(0);
+    list3->setCurrentRow(0);
+  }
+
+  void PlotFeatureStatusWidget::updateComboBox1(int row) {
+    combo1->setCurrentIndex(status[0][row]);
+  }
+  void PlotFeatureStatusWidget::updateComboBox2(int row) {
+    combo2->setCurrentIndex(status[1][row]);
+  }
+  void PlotFeatureStatusWidget::updateComboBox3(int row) {
+    combo3->setCurrentIndex(status[2][row]);
+  }
+
+  void PlotFeatureStatusWidget::updateStatus1(int i) {
+    status[0][list1->currentRow()] = i;
+  }
+  void PlotFeatureStatusWidget::updateStatus2(int i) {
+    status[1][list2->currentRow()] = i;
+  }
+  void PlotFeatureStatusWidget::updateStatus3(int i) {
+    status[2][list3->currentRow()] = i;
+  }
 }

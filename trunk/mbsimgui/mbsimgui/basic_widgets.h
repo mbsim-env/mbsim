@@ -448,6 +448,27 @@ namespace MBSimGUI {
       void setColor(); 
   };
 
+  class PlotFeatureStatusWidget : public Widget {
+    Q_OBJECT
+
+    friend class PlotFeatureStatusProperty;
+
+    protected:
+      QComboBox *combo1, *combo2, *combo3;
+      QListWidget *list1, *list2, *list3;
+      std::vector<std::vector<int> > status;
+
+    public:
+      PlotFeatureStatusWidget();
+
+    protected slots:
+      void updateComboBox1(int row);
+      void updateComboBox2(int row);
+      void updateComboBox3(int row);
+      void updateStatus1(int i);
+      void updateStatus2(int i);
+      void updateStatus3(int i);
+  };
 }
 
 #endif

@@ -95,7 +95,7 @@ namespace MBSimGUI {
       Element* getElement() {return element;}
     protected:
       Element *element;
-      ExtWidget *name;
+      ExtWidget *name, *plotFeature;
   };
 
   class FramePropertyDialog : public ElementPropertyDialog {
