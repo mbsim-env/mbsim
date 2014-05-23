@@ -29,8 +29,9 @@
 #include <map>
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -75,18 +76,19 @@ namespace MBSim {
   //    
   //  }
 
-  TiXmlElement* GeneralizedForceLaw::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-    if(forceFunc) {
-      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"forceFunction" );
-      forceFunc->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    parent->LinkEndChild(ele0);
+  DOMElement* GeneralizedForceLaw::writeXMLFile(DOMNode *parent) { 
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
+//    if(forceFunc) {
+//      DOMElement *ele1 = new DOMElement( MBSIM%"forceFunction" );
+//      forceFunc->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+    parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, UnilateralConstraint, MBSIMNS"UnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnilateralConstraint, MBSIM%"UnilateralConstraint")
 
   double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return proxCN(la - r * gdn, laMin);
@@ -135,7 +137,7 @@ namespace MBSim {
   //  return (fabs(gdn(0)) <= gdTol);
   //}
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, BilateralConstraint, MBSIMNS"BilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BilateralConstraint, MBSIM%"BilateralConstraint")
 
   double BilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return la - r * gdn;
@@ -156,13 +158,14 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
-  TiXmlElement* GeneralizedImpactLaw::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-    parent->LinkEndChild(ele0);
+  DOMElement* GeneralizedImpactLaw::writeXMLFile(DOMNode *parent) { 
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
+    parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedImpactLaw, UnilateralNewtonImpact, MBSIMNS"UnilateralNewtonImpact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnilateralNewtonImpact, MBSIM%"UnilateralNewtonImpact")
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
     if (gda <= -gd_limit) {       // 2 Aenderungen :
@@ -223,20 +226,20 @@ namespace MBSim {
       return false;
   }
 
-  void UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
+  void UnilateralNewtonImpact::initializeUsingXML(DOMElement *element) {
     GeneralizedImpactLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"restitutionCoefficient");
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"restitutionCoefficient");
     epsilon = Element::getDouble(e);
   }
 
-  TiXmlElement* UnilateralNewtonImpact::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0 = GeneralizedImpactLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"restitutionCoefficient",epsilon);
+  DOMElement* UnilateralNewtonImpact::writeXMLFile(DOMNode *parent) { 
+    DOMElement *ele0 = GeneralizedImpactLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"restitutionCoefficient",epsilon);
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedImpactLaw, BilateralImpact, MBSIMNS"BilateralImpact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BilateralImpact, MBSIM%"BilateralImpact")
 
   double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
     return la - r * gdn;
@@ -257,18 +260,19 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
-  TiXmlElement* FrictionForceLaw::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-    if(frictionForceFunc) {
-      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frictionForceFunction" );
-      frictionForceFunc->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    parent->LinkEndChild(ele0);
+  DOMElement* FrictionForceLaw::writeXMLFile(DOMNode *parent) { 
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
+    //if(frictionForceFunc) {
+    //  DOMElement *ele1 = new DOMElement( MBSIM%"frictionForceFunction" );
+    //  frictionForceFunc->writeXMLFile(ele1);
+    //  ele0->LinkEndChild(ele1);
+    //}
+    parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, PlanarCoulombFriction, MBSIMNS"PlanarCoulombFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarCoulombFriction, MBSIM%"PlanarCoulombFriction")
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
@@ -313,16 +317,16 @@ namespace MBSim {
     return Vec(1, INIT, -mu * sign(gd(0)));
   }
 
-  void PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+  void PlanarCoulombFriction::initializeUsingXML(DOMElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
-  TiXmlElement* PlanarCoulombFriction::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+  DOMElement* PlanarCoulombFriction::writeXMLFile(DOMNode *parent) { 
+    DOMElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"frictionCoefficient",mu);
     return ele0;
   }
   
@@ -409,7 +413,7 @@ namespace MBSim {
   //    return false;
   //  }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, SpatialCoulombFriction, MBSIMNS"SpatialCoulombFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialCoulombFriction, MBSIM%"SpatialCoulombFriction")
 
   Vec SpatialCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la - r * gdn, mu * fabs(laN));
@@ -451,16 +455,16 @@ namespace MBSim {
     return -mu * gd / nrm2(gd);
   }
 
-  void SpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+  void SpatialCoulombFriction::initializeUsingXML(DOMElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
-  TiXmlElement* SpatialCoulombFriction::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+  DOMElement* SpatialCoulombFriction::writeXMLFile(DOMNode *parent) { 
+    DOMElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"frictionCoefficient",mu);
     return ele0;
   }
 
@@ -545,13 +549,14 @@ namespace MBSim {
     return -(*fmu)(nrm2(gd)) * gd / nrm2(gd);
   }
 
-  TiXmlElement* FrictionImpactLaw::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-    parent->LinkEndChild(ele0);
+  DOMElement* FrictionImpactLaw::writeXMLFile(DOMNode *parent) { 
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
+    parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionImpactLaw, PlanarCoulombImpact, MBSIMNS"PlanarCoulombImpact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarCoulombImpact, MBSIM%"PlanarCoulombImpact")
 
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
@@ -599,20 +604,20 @@ namespace MBSim {
       return 0;
   }
 
-  void PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+  void PlanarCoulombImpact::initializeUsingXML(DOMElement *element) {
     FrictionImpactLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
-  TiXmlElement* PlanarCoulombImpact::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+  DOMElement* PlanarCoulombImpact::writeXMLFile(DOMNode *parent) { 
+    DOMElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"frictionCoefficient",mu);
     return ele0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionImpactLaw, SpatialCoulombImpact, MBSIMNS"SpatialCoulombImpact")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialCoulombImpact, MBSIM%"SpatialCoulombImpact")
 
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la - r * gdn, mu * fabs(laN));
@@ -657,16 +662,16 @@ namespace MBSim {
       return 0;
   }
 
-  void SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+  void SpatialCoulombImpact::initializeUsingXML(DOMElement *element) {
     FrictionImpactLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
-  TiXmlElement* SpatialCoulombImpact::writeXMLFile(TiXmlNode *parent) { 
-    TiXmlElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+  DOMElement* SpatialCoulombImpact::writeXMLFile(DOMNode *parent) { 
+    DOMElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"frictionCoefficient",mu);
     return ele0;
   }
 
@@ -757,13 +762,13 @@ namespace MBSim {
       return 0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, RegularizedUnilateralConstraint, MBSIMNS"RegularizedUnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedUnilateralConstraint, MBSIM%"RegularizedUnilateralConstraint")
 
-  void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+  void RegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
     GeneralizedForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function<double(double,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+    Function<double(double,double)> *f = ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
   }
 
@@ -775,11 +780,16 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, MaxwellUnilateralConstraint, MBSIMNS"MaxwellUnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MaxwellUnilateralConstraint, MBSIM%"MaxwellUnilateralConstraint")
 
   MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
       LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
+  }
+
+  MaxwellUnilateralConstraint::~MaxwellUnilateralConstraint() {
+    for (map<pair<Contour*, Contour*>,InfluenceFunction*>::iterator it=influenceFunctions.begin(); it!=influenceFunctions.end(); ++it)
+      delete it->second;
   }
 
   void MaxwellUnilateralConstraint::initializeContourCouplings(Contact* parent) {
@@ -827,13 +837,11 @@ namespace MBSim {
       map<Index, double> tolerances;
       tolerances.insert(pair<Index, double>(Index(0, possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
       tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(), 2 * possibleContactPoints.size() - 1), 1e-3)); //tolerances for forces
-      LocalResidualCriteriaFunction* critfunc = new LocalResidualCriteriaFunction(tolerances);
-      LCP.setNewtonCriteriaFunction(critfunc);
+      LocalResidualCriteriaFunction critfunc(tolerances);
+      LCP.setNewtonCriteriaFunction(&critfunc);
       LCP.setDebugLevel(0);
 
       solution0.resize() = LCP.solve(solution0);
-
-      delete critfunc;
 
       Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1);
 
@@ -847,18 +855,18 @@ namespace MBSim {
     }
   }
 
-  void MaxwellUnilateralConstraint::initializeUsingXML(TiXmlElement* element) {
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"InfluenceFunction");
+  void MaxwellUnilateralConstraint::initializeUsingXML(DOMElement* element) {
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"InfluenceFunction");
     while(e) {
       xmlInfo info;
-      info.function = ObjectFactory<FunctionBase>::createAndInit<InfluenceFunction>(e->FirstChildElement());
-      info.name1 = e->FirstChildElement()->Attribute("contourName1");
-      info.name2 = e->FirstChildElement()->Attribute("contourName2");
+      info.function = ObjectFactory::createAndInit<InfluenceFunction>(e->getFirstElementChild());
+      info.name1 = E(e->getFirstElementChild())->getAttribute("contourName1");
+      info.name2 = E(e->getFirstElementChild())->getAttribute("contourName2");
 
       referenceXML.push_back(info);
 
-      e = e->NextSiblingElement();
+      e = e->getNextElementSibling();
     }
 
   }
@@ -919,8 +927,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
 
       if (influenceFunctions.count(contourPair)) { //If there is a function, there is a coupling between these contours
         InfluenceFunction *fct = influenceFunctions[contourPair];
-        Vec lagrangeParameter;
-        lagrangeParameter.resize() = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
+        Vec2 lagrangeParameter = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
         if (DEBUGLEVEL >= 3) {
           cout << "LagrangeParameter of contour \"" << contour->getShortName() << "\" is:" << lagrangeParameter << endl;
@@ -955,10 +962,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
 
         if (influenceFunctions.count(Pair)) { //If there is a function, there is a coupling between these contours
           InfluenceFunction *fct = influenceFunctions[Pair];
-          Vec firstLagrangeParameter = Vec(2, NONINIT);
-          Vec secondLagrangeParameter = Vec(2, NONINIT);
-          firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
-          secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
+          Vec2 firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
+          Vec2 secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
 
           if (DEBUGLEVEL >= 3) {
             cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
@@ -986,13 +991,13 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, RegularizedBilateralConstraint, MBSIMNS"RegularizedBilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedBilateralConstraint, MBSIM%"RegularizedBilateralConstraint")
 
-  void RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+  void RegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     GeneralizedForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function<double(double,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+    Function<double(double,double)> *f = ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
   }
 
@@ -1004,23 +1009,23 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, RegularizedPlanarFriction, MBSIMNS"RegularizedPlanarFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedPlanarFriction, MBSIM%"RegularizedPlanarFriction")
 
-  void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
+  void RegularizedPlanarFriction::initializeUsingXML(DOMElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function<Vec(Vec,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<Vec(Vec,double)> >(e->FirstChildElement());
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
+    Function<Vec(Vec,double)> *f = ObjectFactory::createAndInit<Function<Vec(Vec,double)> >(e->getFirstElementChild());
     setFrictionForceFunction(f);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, RegularizedSpatialFriction, MBSIMNS"RegularizedSpatialFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedSpatialFriction, MBSIM%"RegularizedSpatialFriction")
 
-  void RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
+  void RegularizedSpatialFriction::initializeUsingXML(DOMElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function<Vec(Vec,double)> *f = ObjectFactory<FunctionBase>::createAndInit<Function<Vec(Vec,double)> >(e->FirstChildElement());
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
+    Function<Vec(Vec,double)> *f = ObjectFactory::createAndInit<Function<Vec(Vec,double)> >(e->getFirstElementChild());
     setFrictionForceFunction(f);
   }
 

@@ -48,6 +48,8 @@ namespace MBSim {
       void updatedx(double t, double dt);
       void updatexd(double t);
 
+      bool isSingleValued() const { return true; }
+
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       std::string getType() const { return "ExternGeneralizedIO"; }
@@ -60,7 +62,7 @@ namespace MBSim {
       double getGeneralizedVelocity() { return gd(0); }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       Type getType() { return type; }
 
       virtual void updateWRef(const fmatvec::Mat&, int) {}

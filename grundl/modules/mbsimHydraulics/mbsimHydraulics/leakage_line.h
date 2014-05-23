@@ -36,6 +36,7 @@ namespace MBSimHydraulics {
   class LeakageLine : public RigidHLine {
     public:
       LeakageLine(const std::string &name) : RigidHLine(name), lpl(NULL), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
+      ~LeakageLine();
       virtual std::string getType() const { return "LeakageLine"; }
 
       void setGapLengthSignal(MBSimControl::Signal * s) {glSignal=s; }

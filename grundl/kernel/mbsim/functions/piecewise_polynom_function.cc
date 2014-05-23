@@ -19,7 +19,7 @@
 
 #include <config.h>
 
-#include "mbsim/utils/ppolynom.h"
+#include "mbsim/functions/piecewise_polynom_function.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/mbsim_event.h"
@@ -29,9 +29,10 @@ using namespace std;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewisePolynomFunction<VecV>, MBSIMNS"PiecewisePolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewisePolynomFunction<Vec3>, MBSIMNS"PiecewisePolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PiecewisePolynomFunction<double>, MBSIMNS"PiecewisePolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewisePolynomFunction<VecV(double)>, MBSIM%"PiecewisePolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewisePolynomFunction<Vec3(double)>, MBSIM%"PiecewisePolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewisePolynomFunction<double(double)>, MBSIM%"PiecewisePolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PiecewisePolynomFunction<VecV(VecV)>, MBSIM%"PiecewisePolynomFunction")
       
 }
 

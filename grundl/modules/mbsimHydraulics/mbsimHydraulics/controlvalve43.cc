@@ -25,21 +25,23 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/eps.h"
 #include <fstream>
-#include "mbsimHydraulics/defines.h"
+#include "mbsimHydraulics/environment.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
   class ControlvalveAreaSignal : public Signal {
     public:
-      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, Function<double(double)> * relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
+      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, boost::shared_ptr<Function<double(double)> > relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
       }
+
       Vec getSignal() {
         double x=factor*position->getSignal()(0)+offset;
         x=(x>1.)?1.:x;
@@ -50,13 +52,13 @@ namespace MBSimHydraulics {
     private:
       double factor, offset;
       Signal * position;
-      Function<double(double)> * relAlphaPA;
+      boost::shared_ptr<Function<double(double)> > relAlphaPA;
       Vec signal;
   };
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Controlvalve43, MBSIMHYDRAULICSNS"Controlvalve43")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), relAlphaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString(""), pRACC(false) {
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString(""), pRACC(false) {
     addObject(lPA);
     lPA->setDirection(Vec(3, INIT, 0));
     lPA->setFrameOfReference(getFrame("I"));
@@ -193,43 +195,43 @@ namespace MBSimHydraulics {
       Group::init(stage);
   }
 
-  void Controlvalve43::initializeUsingXML(TiXmlElement * element) {
+  void Controlvalve43::initializeUsingXML(DOMElement * element) {
     // Controlvalve43 is a pseudo group not not call Group::initializeUsingXML but Element::initializeUsingXML
     Element::initializeUsingXML(element);
 
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    DOMElement * e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
     setLength(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
     double a=getDouble(e);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alphaBackflow");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alphaBackflow");
     double aT=0;
     if (e)
       aT=getDouble(e);
     setAlpha(a, aT);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAlphaPA");
-    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory<FunctionBase>::createAndInit<Function<double(double)> >(e->FirstChildElement()); 
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativeAlphaPA");
+    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()); 
     setPARelativeAlphaFunction(relAlphaPA_);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeAlpha");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalRelativeAlpha");
     setMinimalRelativeAlpha(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"bilateralConstrained");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bilateralConstrained");
     if (e)
       setSetValued(true);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"offset");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"offset");
     setOffset(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePosition");
-    positionString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflowP");
-    nPInflowString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowA");
-    nAOutflowString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowB");
-    nBOutflowString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowT");
-    nTOutflowString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"printRelativeAlphaCharacteristikCurve");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePosition");
+    positionString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowP");
+    nPInflowString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowA");
+    nAOutflowString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowB");
+    nBOutflowString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowT");
+    nTOutflowString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"printRelativeAlphaCharacteristikCurve");
     if (e)
       printRelativeAlphaCharacteristikCurve(true);
   }

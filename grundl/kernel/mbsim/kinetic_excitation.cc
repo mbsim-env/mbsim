@@ -24,16 +24,20 @@
 #include <mbsim/dynamic_system_solver.h>
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KineticExcitation, MBSIMNS"KineticExcitation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
   KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
 
-  KineticExcitation::~KineticExcitation() {}
+  KineticExcitation::~KineticExcitation() {
+    delete F;
+    delete M;
+  }
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
@@ -41,6 +45,8 @@ namespace MBSim {
         connect(getByPath<Frame>(saved_ref));
       else if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       if(frame.size()==1) {
         Frame *buf = frame[0];
         connect(buf);
@@ -146,27 +152,27 @@ namespace MBSim {
     M=func;
   }
 
-  void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
+  void KineticExcitation::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
-    if(e) refFrameID=getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"forceDirection");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
+    if(e) refFrameID=getInt(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
-    e=element->FirstChildElement(MBSIMNS"forceFunction");
-    if(e) setForceFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement()));
-    e=element->FirstChildElement(MBSIMNS"momentDirection");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+    if(e) setForceFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(getMat(e,3,0));
-    e=element->FirstChildElement(MBSIMNS"momentFunction");
-    if(e) setMomentFunction(ObjectFactory<FunctionBase>::createAndInit<Function<VecV(double)> >(e->FirstChildElement()));
-    e=element->FirstChildElement(MBSIMNS"connect");
-    if(e->Attribute("ref"))
-      saved_ref=e->Attribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
+    if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    if(E(e)->hasAttribute("ref"))
+      saved_ref=E(e)->getAttribute("ref");
     else {
-      saved_ref1=e->Attribute("ref1");
-      saved_ref2=e->Attribute("ref2");
+      saved_ref1=E(e)->getAttribute("ref1");
+      saved_ref2=E(e)->getAttribute("ref2");
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
@@ -174,7 +180,7 @@ namespace MBSim {
       LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
@@ -184,29 +190,29 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
-    if(refFrame) {
-      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
-      ele0->LinkEndChild(ele1);
-    }
-    if(forceDir.cols()) {
-      addElementText(ele0,MBSIMNS"forceDirection",forceDir);
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"forceFunction");
-      F->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    if(momentDir.cols()) {
-      addElementText(ele0,MBSIMNS"momentDirection",momentDir);
-      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"momentFunction");
-      M->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
-    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
-    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
-    ele0->LinkEndChild(ele1);
+  DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = LinkMechanics::writeXMLFile(parent);
+//    if(refFrame) {
+//      DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
+//      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
+//      ele0->LinkEndChild(ele1);
+//    }
+//    if(forceDir.cols()) {
+//      addElementText(ele0,MBSIM%"forceDirection",forceDir);
+//      DOMElement *ele1 = new DOMElement(MBSIM%"forceFunction");
+//      F->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    if(momentDir.cols()) {
+//      addElementText(ele0,MBSIM%"momentDirection",momentDir);
+//      DOMElement *ele1 = new DOMElement(MBSIM%"momentFunction");
+//      M->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//    DOMElement *ele1 = new DOMElement(MBSIM%"connect");
+//    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
+//    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
+//    ele0->LinkEndChild(ele1);
     return ele0;
   }
 

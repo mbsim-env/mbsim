@@ -26,8 +26,9 @@
 #include <hdf5serie/simpledataset.h>
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -300,11 +301,11 @@ namespace MBSim {
     hInd[j] = hInd_;
   }
 
-  void Object::initializeUsingXML(TiXmlElement *element) {
+  void Object::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
   }
 
-  TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
+  DOMElement* Object::writeXMLFile(DOMNode *parent) {
     return Element::writeXMLFile(parent);
   }
 

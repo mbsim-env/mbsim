@@ -28,6 +28,8 @@ namespace MBSim {
 
 namespace MBSimControl {
 
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
+
   /*!
    * \brief Signal
    * \author Markus Schneider

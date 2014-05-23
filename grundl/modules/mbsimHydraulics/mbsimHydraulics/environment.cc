@@ -18,56 +18,57 @@
  */
 
 #include <config.h>
+#include <iostream>
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/element.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, HydraulicEnvironment, MBSIMHYDRAULICSNS"HydraulicEnvironment")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(HydraulicEnvironment, MBSIMHYDRAULICS%"HydraulicEnvironment")
 
-  HydraulicEnvironment *HydraulicEnvironment::instance=NULL;
-      
-  void HydraulicEnvironment::initializeUsingXML(TiXmlElement *element) {
+  boost::scoped_ptr<HydraulicEnvironment> HydraulicEnvironment::instance(new HydraulicEnvironment);
+
+  void HydraulicEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"environmentPressure");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"environmentPressure");
     setEnvironmentPressure(MBSim::Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"specificMass");
-    if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"constantSpecificMass")
-      setConstantSpecificMass(MBSim::Element::getDouble(e->FirstChildElement()));
-    else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"volumeDependingOnTemperature")
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"specificMass");
+    if (E(e->getFirstElementChild())->getTagName()==MBSIMHYDRAULICS%"constantSpecificMass")
+      setConstantSpecificMass(MBSim::Element::getDouble(e->getFirstElementChild()));
+    else if (E(e->getFirstElementChild())->getTagName()==MBSIMHYDRAULICS%"volumeDependingOnTemperature")
       setVolumeDependingOnTemperature(
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dVdT")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature"))
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"dVdT")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"basicSpecificMass")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"basicTemperature"))
           );
-    else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"specificMassDependingOnTemperature")
+    else if (E(e->getFirstElementChild())->getTagName()==MBSIMHYDRAULICS%"specificMassDependingOnTemperature")
       setSpecificMassDependingOnTemperature(
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dRhodT")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature"))
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"dRhodT")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"basicSpecificMass")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"basicTemperature"))
           );
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity");
-    if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"constantKinematicViscosity")
-      setConstantKinematicViscosity(MBSim::Element::getDouble(e->FirstChildElement()));
-    else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"walterUbbeohdeKinematicViscosity") {
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"kinematicViscosity");
+    if (E(e->getFirstElementChild())->getTagName()==MBSIMHYDRAULICS%"constantKinematicViscosity")
+      setConstantKinematicViscosity(MBSim::Element::getDouble(e->getFirstElementChild()));
+    else if (E(e->getFirstElementChild())->getTagName()==MBSIMHYDRAULICS%"walterUbbeohdeKinematicViscosity") {
       setWalterUbbelohdeKinematicViscosity(
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature1")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity1")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature2")), 
-          MBSim::Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity2"))
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"temperature1")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"kinematicViscosity1")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"temperature2")), 
+          MBSim::Element::getDouble(E(e->getFirstElementChild())->getFirstElementChildNamed(MBSIMHYDRAULICS%"kinematicViscosity2"))
           );
     }
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"basicBulkModulus");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"basicBulkModulus");
     setBasicBulkModulus(MBSim::Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"kappa");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"kappa");
     setKappa(MBSim::Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fluidTemperature");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fluidTemperature");
     setTemperature(MBSim::Element::getDouble(e));
     initializeFluidData();
   }

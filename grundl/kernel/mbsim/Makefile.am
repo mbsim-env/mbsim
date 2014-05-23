@@ -1,20 +1,20 @@
-SUBDIRS =  numerics utils integrators contact_kinematics contours functions observers .
+SUBDIRS =  numerics utils integrators analysis contact_kinematics contours functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = \
+element.cc\
 body.cc\
 constitutive_laws.cc\
 contact.cc\
 single_contact.cc\
 contour.cc\
-dynamic_system.cc\
-dynamic_system_solver.cc\
-element.cc\
 environment.cc\
 frame.cc\
 functions_contact.cc\
+dynamic_system.cc\
 group.cc\
+dynamic_system_solver.cc\
 isotropic_rotational_spring_damper.cc\
 joint.cc\
 gear.cc\
@@ -28,13 +28,13 @@ kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
-xmlnamespacemapping.cc\
 rigid_body.cc\
 graph.cc\
 constraint.cc \
 observer.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la
+libmbsim_la_LIBADD += analysis/libanalysis.la 
 libmbsim_la_LIBADD += utils/libutils.la 
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
 libmbsim_la_LIBADD += contours/libcontour.la 
@@ -44,7 +44,7 @@ libmbsim_la_LIBADD += observers/libobserver.la
 libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libmbsim_la_LIBADD += -l@BOOST_SYSTEM_LIB@
 
-libmbsim_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libmbsim_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
@@ -76,8 +76,6 @@ mbsim_event.h\
 modelling_interface.h\
 object.h\
 objectfactory.h\
-objectfactory_instance.h\
-xmlnamespacemapping.h\
 rigid_body.h\
 graph.h\
 constraint.h \

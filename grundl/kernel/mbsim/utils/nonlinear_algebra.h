@@ -222,6 +222,7 @@ namespace MBSim {
       void setMaximumNumberOfIterations(int itmax_) { itmax = itmax_; }
       void setMaximumDampingSteps(int kmax_) { kmax = kmax_; }
       void setTolerance(double tol_) { tol = tol_; }
+      void setLinearAlgebra(int linAlg_) { linAlg = linAlg_; }
       /***************************************************/
 
       /**
@@ -255,6 +256,8 @@ namespace MBSim {
        * \brief tolerance
        */
       double tol;
+
+      int linAlg;
   };
   
 }

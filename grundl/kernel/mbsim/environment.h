@@ -20,8 +20,11 @@
 #ifndef _MBSIM_ENVIRONMENT_H_
 #define _MBSIM_ENVIRONMENT_H_
 
-#include "mbxmlutilstinyxml/tinyxml.h"
 #include "fmatvec/fmatvec.h"
+#include "fmatvec/atom.h"
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace MBSim {
 
@@ -30,22 +33,22 @@ namespace MBSim {
    * \author Markus Friedrich
    * \date 2009-07-28 some comments (Thorsten Schindler)
    */
-  class Environment {
+  class Environment : public fmatvec::Atom {
     public:
       /* INTERFACE FOR DERIVED CLASSES */
       /**
        * \brief initializes environment variables by XML element
        * \param XML element
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent)=0;
+      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent)=0;
       /***************************************************/
     
     protected:
       /**
        * \brief constructor
        */
-      Environment() {};
+      Environment() : Atom() {};
 
       /**
        * \brief destructor
@@ -61,12 +64,12 @@ namespace MBSim {
   class MBSimEnvironment : public Environment {
     public:
       /* INHERITED INTERFACE */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */
-      static MBSimEnvironment *getInstance() { return instance?instance:(instance=new MBSimEnvironment); }
+      static MBSimEnvironment *getInstance() { return instance.get(); }
       void setAccelerationOfGravity(const fmatvec::Vec3 &grav_) { grav=grav_; }
       const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
       /***************************************************/
@@ -75,7 +78,7 @@ namespace MBSim {
       /**
        * class pointer to ensure singleton status
        */
-      static MBSimEnvironment *instance;
+      static boost::scoped_ptr<MBSimEnvironment> instance;
       
       /**
        * \brief constructor

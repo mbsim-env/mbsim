@@ -30,6 +30,7 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -200,26 +201,26 @@ namespace MBSim {
     return -1;
   }
 
-  void Body::initializeUsingXML(TiXmlElement *element) {
+  void Body::initializeUsingXML(DOMElement *element) {
     Object::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialGeneralizedPosition");
     if (e)
       setInitialGeneralizedPosition(getVec(e));
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialGeneralizedVelocity");
     if (e)
       setInitialGeneralizedVelocity(getVec(e));
-    e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e) saved_frameOfReference=e->Attribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) saved_frameOfReference=E(e)->getAttribute("ref");
   }
 
-  TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Object::writeXMLFile(parent);
-    if(q0.size()) addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
-    if(u0.size()) addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-    // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
-    ele1->SetAttribute("ref", R->getXMLPath(this,true)); // relative path
-    ele0->LinkEndChild(ele1);
+  DOMElement* Body::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Object::writeXMLFile(parent);
+//    if(q0.size()) addElementText(ele0,MBSIM%"initialGeneralizedPosition",q0);
+//    if(u0.size()) addElementText(ele0,MBSIM%"initialGeneralizedVelocity",u0);
+//    DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
+//    // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
+//    ele1->SetAttribute("ref", R->getXMLPath(this,true)); // relative path
+//    ele0->LinkEndChild(ele1);
     return ele0;
   }
 

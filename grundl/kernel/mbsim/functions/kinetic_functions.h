@@ -49,7 +49,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd) { return c*(g-l0) + d*gd; }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -81,27 +81,29 @@ namespace MBSim {
        * \param distance depending force function
        * \param relative velocity depending force function
        */
-      NonlinearSpringDamperForce(Function<fmatvec::Vec(double)> * gForceFun_, Function<fmatvec::Vec(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
+      NonlinearSpringDamperForce(Function<double(double)> * gForceFun_, Function<double(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g)(0) + (*gdForceFun)(gd)(0); }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g) + (*gdForceFun)(gd); }
+      void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setParameters(Function<fmatvec::Vec(double)> * gForceFun_, Function<fmatvec::Vec(double)> * gdForceFun_) { gForceFun=gForceFun_; gdForceFun=gdForceFun_; }
+      void setDistanceFunction(Function<double(double)> * gForceFun_) { gForceFun=gForceFun_; }
+
+      void setVelocityFunction(Function<double(double)> * gdForceFun_) { gdForceFun=gdForceFun_; }
       /***************************************************/
 
     protected:
       /**
        * \brief distance depending force function
        */
-      Function<fmatvec::Vec(double)> * gForceFun;
+      Function<double(double)> * gForceFun;
 
       /**
        * \brief relative velocity depending force function
        */
-      Function<fmatvec::Vec(double)> * gdForceFun;
+      Function<double(double)> * gdForceFun;
   };
 
   /*! 
@@ -133,7 +135,7 @@ namespace MBSim {
         else
           return -c*g;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -171,8 +173,8 @@ namespace MBSim {
       virtual double operator()(const double& g, const double& gd) { 
         return -c*g - d*gd;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       virtual std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
       /***************************************************/
@@ -211,7 +213,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -249,7 +251,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -277,7 +279,7 @@ namespace MBSim {
       InfluenceFunction(){}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter)=0;
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
   };
 
@@ -299,7 +301,7 @@ namespace MBSim {
         else
           return 0;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
     protected:
@@ -321,7 +323,7 @@ namespace MBSim {
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter) {
         return couplingValue;
       }
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
     protected:

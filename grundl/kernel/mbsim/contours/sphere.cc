@@ -28,10 +28,11 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Sphere, MBSIMNS"Sphere")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Sphere, MBSIM%"Sphere")
 
   void Sphere::init(InitStage stage) {
     if(stage==MBSim::plot) {
@@ -50,14 +51,23 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  void Sphere::initializeUsingXML(TiXmlElement *element) {
+  Vec2 Sphere::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
+    Vec3 SrPoint = R->getOrientation().T() * (WrPoint - R->getPosition());
+    Vec2 alpha;
+    double r = nrm2(SrPoint);
+    alpha(0) = acos(SrPoint(2) / r); // inclination
+    alpha(1) = atan2(SrPoint(1), SrPoint(0)); // azimuth
+    return alpha;
+  }
+
+  void Sphere::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"radius");
+    DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
     setRadius(getDouble(e));
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVSphere ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -65,13 +75,13 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"radius",r);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody)
-      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
-#endif
+  DOMElement* Sphere::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
+//    addElementText(ele0,MBSIM%"radius",r);
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//    if(openMBVRigidBody)
+//      ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
+//#endif
     return ele0;
   }
 

@@ -30,13 +30,13 @@ using namespace std;
 namespace MBSim {
 
   Vec PolyFurstumSphereContact::operator()(const Vec &x) {
-    double res = x(0) - sphereCenter(0) + frustum->getValueD1(x(0)) * frustum->getValue(x(0)) - frustum->getValueD1(x(0)) *sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2));
+    double res = x(0) - sphereCenter(0) + frustum->getValueD1(x(0)) * (frustum->getValue(x(0)) - rS);
 
     return Vec(1, INIT, res);;
   }
 
   SqrMat PolyFurstumSphereContactJacobian::operator()(const Vec &x) {
-    double res = 1 + frustum->getValueD1(x(0)) * frustum->getValueD1(x(0)) + frustum->getValueD2(x(0)) * (frustum->getValue(x(0)) - sqrt(sphereCenter(1) * sphereCenter(1) + sphereCenter(2) * sphereCenter(2)));
+    double res = 1 + frustum->getValueD2(x(0)) * (frustum->getValue(x(0)) - rS) + frustum->getValueD1(x(0)) * frustum->getValueD1(x(0));
 
     return SqrMat(1, INIT, res);;
   }
@@ -48,6 +48,9 @@ namespace MBSim {
 
   ContactKinematicsSpherePolynomialFrustum::~ContactKinematicsSpherePolynomialFrustum() {
     delete func;
+    delete jacobian;
+    delete criteria;
+    delete damping;
   }
 
   void ContactKinematicsSpherePolynomialFrustum::assignContours(const vector<Contour*> &contour) {
@@ -84,6 +87,8 @@ namespace MBSim {
     Vec3 rF = frustum->getFrameOfReference()->getPosition();
     Vec3 rS = sphere->getFrame()->getPosition();
     SqrMat3 AWF = frustum->getFrameOfReference()->getOrientation();
+
+    // CoG of Sphere in coordinates of frustum
     Vec3 COG_S = AWF.T() * (rS - rF);
 
     /*construct the sphere enclosing the frustum*/

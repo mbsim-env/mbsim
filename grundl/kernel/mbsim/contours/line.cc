@@ -22,17 +22,18 @@
 #include <fmatvec/fmatvec.h>
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Line, MBSIMNS"Line")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Line, MBSIM%"Line")
 
-  void Line::initializeUsingXML(TiXmlElement *element) {
+  void Line::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVLine ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
@@ -40,8 +41,8 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Line::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+  DOMElement* Line::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Contour::writeXMLFile(parent);
     return ele0;
   }
 

@@ -22,7 +22,6 @@
 #include "rksuite_integrator.h"
 #include <mbsim/utils/eps.h>
 #include "fortran/fortran_wrapper.h"
-
 #include <time.h>
 
 #ifndef NO_ISO_14882
@@ -31,10 +30,11 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, RKSuiteIntegrator, MBSIMINTNS"RKSuiteIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RKSuiteIntegrator, MBSIMINT%"RKSuiteIntegrator")
 
   RKSuiteIntegrator::RKSuiteIntegrator() : method(2), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0) {
   }
@@ -133,23 +133,23 @@ namespace MBSim {
     postIntegrate(system);
   }
 
-  void RKSuiteIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"method23");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method23");
     if (e)
       setMethod(1);
-    e=element->FirstChildElement(MBSIMINTNS"method45");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method45");
     if (e)
       setMethod(2);
-    e=element->FirstChildElement(MBSIMINTNS"method78");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method78");
     if (e)
       setMethod(3);
-    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     setrTol(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"thresholdScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"thresholdScalar");
     setThreshold(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"initialStepsize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepsize");
     if (e)
       setInitialStepSize(Element::getDouble(e));
   }

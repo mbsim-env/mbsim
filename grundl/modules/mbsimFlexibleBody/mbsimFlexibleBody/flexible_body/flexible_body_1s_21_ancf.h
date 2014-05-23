@@ -22,6 +22,7 @@
 
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
+#include "mbsim/mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -36,6 +37,8 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    *
    * \date 2014-02-27 basic revision
+   * \date 2014-03-23 damping added
+   * \date 2014-05-09 Euler perspective added as an option
    *
    * model based on
    * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
@@ -85,6 +88,8 @@ namespace MBSimFlexibleBody {
       void setMomentInertia(double I_) { I = I_; }
       void setDensity(double rho_) { rho = rho_; }
       void setCurlRadius(double rc_);
+      void setMaterialDamping(double deps_, double dkappa_);
+      void setEulerPerspective(bool Euler_, double v0_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -151,6 +156,16 @@ namespace MBSimFlexibleBody {
       double rc;
 
       /**
+       * \brief coefficient of material longitudinal damping
+       */
+      double deps;
+
+      /**
+       * \brief coefficient of material longitudinal damping
+       */
+      double dkappa;
+
+      /**
        * \brief flag for open (cantilever beam) or closed (rings) structures
        */
       bool openStructure;
@@ -159,6 +174,16 @@ namespace MBSimFlexibleBody {
        * \brief flag for testing if beam is initialised
        */
       bool initialised;
+
+      /**
+       * \brief Euler perspective: constant longitudinal velocity
+       */
+      double v0;
+
+      /**
+       * \brief Euler perspective: true if set
+       */
+      bool Euler;
 
       /**
        * \brief initialize mass matrix and calculate Cholesky decomposition
@@ -172,16 +197,6 @@ namespace MBSimFlexibleBody {
        * \param finite element number
        */
       void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
-
-      /**
-       * \brief copy constructor is declared private
-       */
-      FlexibleBody1s21ANCF(const FlexibleBody1s21ANCF&);
-
-      /**
-       * \brief assignment operator is declared private
-       */
-      FlexibleBody1s21ANCF& operator=(const FlexibleBody1s21ANCF&);
   };
 
   inline void FlexibleBody1s21ANCF::setCurlRadius(double rc_) {
@@ -191,6 +206,23 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
   }
 
+  inline void FlexibleBody1s21ANCF::setMaterialDamping(double deps_, double dkappa_) {
+    deps = deps_;
+    dkappa = dkappa_;
+    if(initialised)
+      for(int i = 0; i < Elements; i++) 
+        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setMaterialDamping(deps,dkappa);
+  }
+
+  inline void FlexibleBody1s21ANCF::setEulerPerspective(bool Euler_, double v0_) { 
+    if(openStructure) {
+      throw(new MBSim::MBSimError("ERROR (FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!"));
+    }
+    else {
+      Euler = Euler_; 
+      v0 = v0_;
+    }
+  }
 }
 #endif /* _FLEXIBLE_BODY_1S_21_ANCF_H_ */
 

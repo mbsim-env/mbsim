@@ -16,7 +16,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
@@ -30,18 +30,23 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpringDamper, MBSIMNS"SpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
   SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
   {}
+
+  SpringDamper::~SpringDamper() {
+    delete func;
+  }
 
   void SpringDamper::updateh(double t, int j) {
     la(0)=(*func)(g(0),gd(0));
@@ -77,6 +82,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -130,21 +137,21 @@ namespace MBSim {
     }
   }
 
-  void SpringDamper::initializeUsingXML(TiXmlElement *element) {
+  void SpringDamper::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
-    e=element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1=e->Attribute("ref1");
-    saved_ref2=e->Attribute("ref2");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1=E(e)->getAttribute("ref1");
+    saved_ref2=E(e)->getAttribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVCoilSpring");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
@@ -153,13 +160,17 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, DirectionalSpringDamper, MBSIMNS"DirectionalSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
   DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
   {}
+
+  DirectionalSpringDamper::~DirectionalSpringDamper() {
+    delete func;
+  }
 
   void DirectionalSpringDamper::updateh(double t, int j) {
     Mat3x3 tWrP0P1 = tilde(WrP0P1);
@@ -202,6 +213,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+      if(not(frame.size()))
+        throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -263,24 +276,23 @@ namespace MBSim {
     }
   }
 
-  void DirectionalSpringDamper::initializeUsingXML(TiXmlElement *element) {
+  void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReferenceID");
-    e=element->FirstChildElement(MBSIMNS"forceDirection");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     setForceDirection(getVec(e,3));
-    e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
-    e=element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1=e->Attribute("ref1");
-    saved_ref2=e->Attribute("ref2");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1=E(e)->getAttribute("ref1");
+    saved_ref2=E(e)->getAttribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVCoilSpring");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
@@ -289,7 +301,7 @@ namespace MBSim {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedSpringDamper, MBSIMNS"GeneralizedSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
 
   GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : LinkMechanics(name), func(NULL), body(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -300,6 +312,10 @@ namespace MBSim {
     WM.resize(2);
     h[0].resize(2);
     h[1].resize(2);
+  }
+
+  GeneralizedSpringDamper::~GeneralizedSpringDamper() {
+    delete func;
   }
 
   void GeneralizedSpringDamper::updatehRef(const Vec &hParent, int j) {
@@ -351,10 +367,11 @@ namespace MBSim {
   }
 
   void GeneralizedSpringDamper::init(InitStage stage) {
-    assert(body->getRotation()!=NULL);
     if(stage==resolveXMLPath) {
       if(saved_body!="")
         setRigidBody(getByPath<RigidBody>(saved_body));
+      if(not(body))
+        throw MBSimError("ERROR in "+getName()+": no dependent body given!");
       LinkMechanics::connect(body->getFrameOfReference());
       LinkMechanics::connect(body->getFrameForKinematics());
       LinkMechanics::init(stage);
@@ -408,26 +425,26 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedSpringDamper::initializeUsingXML(TiXmlElement *element) {
+  void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"generalizedForceFunction");
-    Function<double(double,double)> *f=ObjectFactory<FunctionBase>::createAndInit<Function<double(double,double)> >(e->FirstChildElement());
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
-    e=element->FirstChildElement(MBSIMNS"rigidBody");
-    saved_body=e->Attribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBody");
+    saved_body=E(e)->getAttribute("ref");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVCoilSpring");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
       LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
-    e = element->FirstChildElement(MBSIMNS"enableOpenMBVMoment");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);

@@ -1,4 +1,5 @@
 #include <config.h>
+#include <iostream>
 #include "modelling_classes.h"
 #include "simulation_classes.h"
 
@@ -230,6 +231,11 @@ namespace MBSimElectronics {
 
   ElectronicComponent::ElectronicComponent() : branch(0), vz(0), Q(0), I(0) {
     branch = &tmpbranch;
+  }
+
+  ElectronicComponent::~ElectronicComponent() { 
+    for(unsigned int i=0; i<terminal.size(); i++)
+      delete terminal[i];
   }
 
   void ElectronicComponent::connect(Branch *branch_, double vz_) {

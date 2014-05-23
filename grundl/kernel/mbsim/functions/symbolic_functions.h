@@ -22,8 +22,8 @@
 
 #include <fmatvec/function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
-#include "casadi/symbolic/matrix/matrix_tools.hpp"
-#include "mbxmlutilstinyxml/casadiXML.h"
+#include <casadi/symbolic/matrix/matrix_tools.hpp>
+#include <mbxmlutilshelper/casadiXML.h>
 #include "mbsim/mbsim_event.h"
 #include <boost/static_assert.hpp>
 
@@ -202,8 +202,8 @@ template<typename Ret, typename Arg>
       return FromCasadi<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type>::cast(pdpd.output());
     }
 
-    void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-      f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
+    void initializeUsingXML(xercesc::DOMElement *element) {
+      f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
       init();
     }
   };
@@ -344,8 +344,8 @@ template<typename Ret, typename Arg1, typename Arg2>
       return FromCasadi<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg2>::type, Arg2>::type>::cast(pd2pd2.output());
     }
 
-    void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-      f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
+    void initializeUsingXML(xercesc::DOMElement *element) {
+      f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
       init();
     }
   };

@@ -31,7 +31,7 @@ libintegrators_la_SOURCES = integrator.cc\
 #fortran/mexax.f
 #mexax_integrator.cc 
 
-libintegrators_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libintegrators_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 integratorsincludedir = $(includedir)/mbsim/integrators

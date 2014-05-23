@@ -1,11 +1,12 @@
-#include "mbxmlutilstinyxml/casadiXML.h"
-#include <mbxmlutilstinyxml/tinynamespace.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include <casadi/symbolic/sx/sx_tools.hpp>
+#include <mbxmlutilshelper/casadiXML.h>
 
 using namespace std;
-using namespace MBXMLUtils;
+using namespace boost;
 using namespace CasADi;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 int main() {
 //  // test SXFunction you want to export as XML
@@ -37,22 +38,19 @@ int main() {
   SX fexp=5*sin(freq2*t);
   SXFunction f(t,fexp);
 
+  shared_ptr<DOMParser> parser=DOMParser::create(false);
+  shared_ptr<DOMDocument> xmlFile=parser->createDocument();
 
+  DOMElement *ele=convertCasADiToXML(f,xmlFile.get());
+  xmlFile->insertBefore(ele, NULL);
 
+  cout << E(ele)->getTagName().second << endl;
 
-  
-  TiXmlDocument xmlFile;
-  xmlFile.LinkEndChild(new TiXmlDeclaration("1.0","UTF-8",""));
-  xmlFile.LinkEndChild(convertCasADiToXMLT(f));
   cout<<"XML representation"<<endl<<endl;
-  map<string, string> nsprefix;
-  nsprefix[MBXMLUTILSCASADINS_]="";
-  unIncorporateNamespace(xmlFile.FirstChildElement(), nsprefix);
-  xmlFile.SaveFile(stdout);
-  incorporateNamespace(xmlFile.FirstChildElement(), nsprefix);
+  DOMParser::serialize(xmlFile.get(), "out.xml");
 
   cout<<endl<<"Reread XML and print original and reread as CasADi stream"<<endl<<endl;
-  CasADi::SXFunction fReread=createCasADiSXFunctionFromXML(xmlFile.FirstChildElement());
+  CasADi::SXFunction fReread=createCasADiSXFunctionFromXML(xmlFile->getDocumentElement());
   fReread.init();
   fReread.evaluate();
   for(int i=0; i<f.inputExpr().size(); i++) {

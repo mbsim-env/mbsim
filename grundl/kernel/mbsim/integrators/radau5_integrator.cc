@@ -33,10 +33,11 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, RADAU5Integrator, MBSIMINTNS"RADAU5Integrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RADAU5Integrator, MBSIMINT%"RADAU5Integrator")
 
   RADAU5Integrator::RADAU5Integrator() : dt0(0), maxSteps(0), dtMax(0) {
   }
@@ -173,24 +174,23 @@ namespace MBSim {
     cout << endl;
   }
 
-  void RADAU5Integrator::initializeUsingXML(TiXmlElement *element) {
+  void RADAU5Integrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteTolerance");
     if(e) setAbsoluteTolerance(Element::getVec(e));
-    e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"absoluteToleranceScalar");
     if(e) setAbsoluteTolerance(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeTolerance");
     if(e) setRelativeTolerance(Element::getVec(e));
-    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     if(e) setRelativeTolerance(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"initialStepSize");
     setInitialStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalStepSize");
     setMaximalStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"maximalNumberOfSteps");
-    if (e)
-      setMaxStepNumber(atoi(e->GetText()));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"maximalNumberOfSteps");
+    if (e) setMaxStepNumber(Element::getInt(e));
   }
 
 }

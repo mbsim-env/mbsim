@@ -38,12 +38,13 @@
 //#endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Group, MBSIMNS"Group")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Group, MBSIM%"Group")
 
   Group::Group(const string &name) : DynamicSystem(name) {}
 
@@ -103,95 +104,95 @@ namespace MBSim {
       (*i)->updatexd(t);
   }
 
-  void Group::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
+  void Group::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
     Element::initializeUsingXML(element);
-    e=element->FirstChildElement();
+    e=element->getFirstElementChild();
 
     // search first element known by Group
-    while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
-        e->ValueStr()!=MBSIMNS"position" &&
-        e->ValueStr()!=MBSIMNS"orientation" &&
-        e->ValueStr()!=MBSIMNS"frames")
-      e=e->NextSiblingElement();
+    while(e && E(e)->getTagName()!=MBSIM%"frameOfReference" &&
+        E(e)->getTagName()!=MBSIM%"position" &&
+        E(e)->getTagName()!=MBSIM%"orientation" &&
+        E(e)->getTagName()!=MBSIM%"frames")
+      e=e->getNextElementSibling();
 
-    if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
-      saved_frameOfReference=e->Attribute("ref");
-      e=e->NextSiblingElement();
+    if(e && E(e)->getTagName()==MBSIM%"frameOfReference") {
+      saved_frameOfReference=E(e)->getAttribute("ref");
+      e=e->getNextElementSibling();
     }
 
-    if(e && e->ValueStr()==MBSIMNS"position") {
+    if(e && E(e)->getTagName()==MBSIM%"position") {
       setPosition(getVec3(e));
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
-    if(e && e->ValueStr()==MBSIMNS"orientation") {
+    if(e && E(e)->getTagName()==MBSIM%"orientation") {
       setOrientation(getSqrMat3(e));
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
     // frames
-    TiXmlElement *E=e->FirstChildElement();
+    DOMElement *E=e->getFirstElementChild();
     while(E) {
-      FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"));
+      FixedRelativeFrame *f=new FixedRelativeFrame(MBXMLUtils::E(E)->getAttribute("name"));
       addFrame(f);
       f->initializeUsingXML(E);
-      E=E->NextSiblingElement();
+      E=E->getNextElementSibling();
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 
     // contours
-    E=e->FirstChildElement();
+    E=e->getFirstElementChild();
     while(E) {
-      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(E);
+      Contour *c=ObjectFactory::createAndInit<Contour>(E);
       addContour(c);
-      E=E->NextSiblingElement();
+      E=E->getNextElementSibling();
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 
     // groups
-    E=e->FirstChildElement();
+    E=e->getFirstElementChild();
     Group *g;
     while(E) {
-      g=ObjectFactory<Element>::createAndInit<Group>(E);
+      g=ObjectFactory::createAndInit<Group>(E);
       addGroup(g);
-      E=E->NextSiblingElement();
+      E=E->getNextElementSibling();
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 
     // objects
-    E=e->FirstChildElement();
+    E=e->getFirstElementChild();
     Object *o;
     while(E) {
-      o=ObjectFactory<Element>::createAndInit<Object>(E);
+      o=ObjectFactory::createAndInit<Object>(E);
       addObject(o);
-      E=E->NextSiblingElement();
+      E=E->getNextElementSibling();
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 
     // links
-    E=e->FirstChildElement();
+    E=e->getFirstElementChild();
     Link *l;
     while(E) {
-      l=ObjectFactory<Element>::createAndInit<Link>(E);
+      l=ObjectFactory::createAndInit<Link>(E);
       addLink(l);
-      E=E->NextSiblingElement();
+      E=E->getNextElementSibling();
     }
-    e=e->NextSiblingElement();
+    e=e->getNextElementSibling();
 
     // observers
-    if (e && e->ValueStr()==MBSIMNS"observers") {
-      E=e->FirstChildElement();
+    if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"observers") {
+      E=e->getFirstElementChild();
       Observer *obsrv;
       while(E) {
-        obsrv=ObjectFactory<Element>::createAndInit<Observer>(E);
+        obsrv=ObjectFactory::createAndInit<Observer>(E);
         addObserver(obsrv);
-        E=E->NextSiblingElement();
+        E=E->getNextElementSibling();
       }
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(e) {
       OpenMBVFrame ombv;
       I->setOpenMBVFrame(ombv.createOpenMBV(e));
@@ -199,52 +200,52 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = DynamicSystem::writeXMLFile(parent);
+  DOMElement* Group::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = DynamicSystem::writeXMLFile(parent);
 
-    TiXmlElement *ele1;
-
-    if(getFrameOfReference()) {
-      ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-      ele1->SetAttribute("ref", R->getXMLPath(this,true));
-      ele0->LinkEndChild(ele1);
-    }
-
-    addElementText(ele0,MBSIMNS"position",getPosition());
-    addElementText(ele0,MBSIMNS"orientation", getOrientation());
-
-    ele1 = new TiXmlElement( MBSIMNS"frames" );
-    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"contours" );
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"groups" );
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"objects" );
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"links" );
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    if(I->getOpenMBVFrame()) {
-      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
-      addElementText(ele1,MBSIMNS"size",I->getOpenMBVFrame()->getSize());
-      addElementText(ele1,MBSIMNS"offset",I->getOpenMBVFrame()->getOffset());
-      ele0->LinkEndChild(ele1);
-    }
-
+//    DOMElement *ele1;
+//
+//    if(getFrameOfReference()) {
+//      ele1 = new DOMElement( MBSIM%"frameOfReference" );
+//      ele1->SetAttribute("ref", R->getXMLPath(this,true));
+//      ele0->LinkEndChild(ele1);
+//    }
+//
+//    addElementText(ele0,MBSIM%"position",getPosition());
+//    addElementText(ele0,MBSIM%"orientation", getOrientation());
+//
+//    ele1 = new DOMElement( MBSIM%"frames" );
+//    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//    ele1 = new DOMElement( MBSIM%"contours" );
+//    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//    ele1 = new DOMElement( MBSIM%"groups" );
+//    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//    ele1 = new DOMElement( MBSIM%"objects" );
+//    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//    ele1 = new DOMElement( MBSIM%"links" );
+//    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//    if(I->getOpenMBVFrame()) {
+//      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameI" );
+//      addElementText(ele1,MBSIM%"size",I->getOpenMBVFrame()->getSize());
+//      addElementText(ele1,MBSIM%"offset",I->getOpenMBVFrame()->getOffset());
+//      ele0->LinkEndChild(ele1);
+//    }
+//
     return ele0;
   }
 

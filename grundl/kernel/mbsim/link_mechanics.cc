@@ -163,14 +163,14 @@ namespace MBSim {
       Link::init(stage);
 
       for(unsigned int i=0; i<frame.size(); i++) {
-        W[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
-        V[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
-        h[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
-        W[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
-        V[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
-        h[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
-        r[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
-        r[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
+        W[0].push_back(Mat(0,0,NONINIT));
+        V[0].push_back(Mat(0,0,NONINIT));
+        h[0].push_back(Vec(0,NONINIT));
+        W[1].push_back(Mat(0,0,NONINIT));
+        V[1].push_back(Mat(0,0,NONINIT));
+        h[1].push_back(Vec(0,NONINIT));
+        r[0].push_back(Vec(0,NONINIT));
+        r[1].push_back(Vec(0,NONINIT));
         WF.push_back(Vec3());
         WM.push_back(Vec3());
         fF.push_back(Mat3xV(laSize));
@@ -182,14 +182,14 @@ namespace MBSim {
 #endif
 
       for(unsigned int i=0; i<contour.size(); i++) {
-        W[0].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(0).cols(),laSize));
-        V[0].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(0).cols(),laSize));
-        h[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
-        W[1].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(1).cols(),laSize));
-        V[1].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(1).cols(),laSize));
-        h[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
-        r[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
-        r[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
+        W[0].push_back(Mat(0,0,NONINIT));
+        V[0].push_back(Mat(0,0,NONINIT));
+        h[0].push_back(Vec(0,NONINIT));
+        W[1].push_back(Mat(0,0,NONINIT));
+        V[1].push_back(Mat(0,0,NONINIT));
+        h[1].push_back(Vec(0,NONINIT));
+        r[0].push_back(Vec(0,NONINIT));
+        r[1].push_back(Vec(0,NONINIT));
         WF.push_back(Vec3());
         WM.push_back(Vec3());
         fF.push_back(Mat3xV(laSize));
@@ -235,18 +235,32 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void LinkMechanics::setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+    bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
-      if(which[i]==true)
-        openMBVArrowF.push_back(new OpenMBV::Arrow(*arrow));
+      if(which[i]==true) {
+        if(flag) {
+          openMBVArrowF.push_back(arrow);
+          flag = false;
+        }
+        else 
+          openMBVArrowF.push_back(new OpenMBV::Arrow(*arrow));
+      }
       else
         openMBVArrowF.push_back(NULL);
     }
   }
 
   void LinkMechanics::setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+    bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
-      if(which[i]==true)
-        openMBVArrowM.push_back(new OpenMBV::Arrow(*arrow));
+      if(which[i]==true) {
+        if(flag) {
+          openMBVArrowM.push_back(arrow);
+          flag = false;
+        }
+        else
+          openMBVArrowM.push_back(new OpenMBV::Arrow(*arrow));
+      }
       else
         openMBVArrowM.push_back(NULL);
     }

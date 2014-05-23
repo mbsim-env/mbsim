@@ -23,6 +23,10 @@
 
 #include <mbsim/utils/rotarymatrices.h>
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/group.h>
+#endif
+
 using namespace std;
 using namespace fmatvec;
 

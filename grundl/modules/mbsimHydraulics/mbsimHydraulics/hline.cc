@@ -24,14 +24,14 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
@@ -58,12 +58,12 @@ namespace MBSimHydraulics {
     frameOfReference = frame; 
   }
 
-  void HLine::initializeUsingXML(TiXmlElement * element) {
+  void HLine::initializeUsingXML(DOMElement * element) {
     Object::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfReference");
     if (e) {
-      saved_frameOfReference=e->Attribute("ref");
-      e=element->FirstChildElement(MBSIMHYDRAULICSNS"direction");
+      saved_frameOfReference=E(e)->getAttribute("ref");
+      e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"direction");
       setDirection(getVec(e,3));
     }
   }
@@ -179,38 +179,38 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidHLine::initializeUsingXML(TiXmlElement * element) {
+  void RigidHLine::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflowDependencyOnInflow");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowDependencyOnInflow");
     if (!e)
-      e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflowDependencyOnOutflow");
+      e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowDependencyOnOutflow");
     else {
-      if (e->PreviousSibling()) {
-        if (e->PreviousSibling()->ValueStr()==MBSIMHYDRAULICSNS"inflowDependencyOnOutflow")
-          e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflowDependencyOnOutflow");
+      if (e->getPreviousElementSibling()) {
+        if (E(e->getPreviousElementSibling())->getTagName()==MBSIMHYDRAULICS%"inflowDependencyOnOutflow")
+          e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowDependencyOnOutflow");
       }
     }
-    while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"inflowDependencyOnInflow" || e->ValueStr()==MBSIMHYDRAULICSNS"inflowDependencyOnOutflow")) {
-      if (e->ValueStr()==MBSIMHYDRAULICSNS"inflowDependencyOnInflow")
-        refDependencyOnInflowString.push_back(e->Attribute("ref"));
+    while (e && (E(e)->getTagName()==MBSIMHYDRAULICS%"inflowDependencyOnInflow" || E(e)->getTagName()==MBSIMHYDRAULICS%"inflowDependencyOnOutflow")) {
+      if (E(e)->getTagName()==MBSIMHYDRAULICS%"inflowDependencyOnInflow")
+        refDependencyOnInflowString.push_back(E(e)->getAttribute("ref"));
       else
-        refDependencyOnOutflowString.push_back(e->Attribute("ref"));
-      e=e->NextSiblingElement();
+        refDependencyOnOutflowString.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
     }
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
     setLength(getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ConstrainedLine,  MBSIMHYDRAULICSNS"ConstrainedLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
 
   void ConstrainedLine::updateStateDependentVariables(double t) {
     Q(0)=(*QFun)(t);
   }
 
-  void ConstrainedLine::initializeUsingXML(TiXmlElement * element) {
+  void ConstrainedLine::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    fmatvec::Function<double(double)> * qf=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
+    fmatvec::Function<double(double)> * qf=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
     setQFunction(qf);
   }
 
@@ -226,15 +226,15 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FluidPump,  MBSIMHYDRAULICSNS"FluidPump")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")
 
   Vec FluidPump::getQIn() {return QSignal->getSignal(); }
   Vec FluidPump::getQOut() {return -1.*QSignal->getSignal(); }
 
-  void FluidPump::initializeUsingXML(TiXmlElement * element) {
+  void FluidPump::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"volumeflowSignal");
-    QSignalString=e->Attribute("ref");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"volumeflowSignal");
+    QSignalString=E(e)->getAttribute("ref");
   }
 
   void FluidPump::init(InitStage stage) {
@@ -254,24 +254,24 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, StatelessOrifice,  MBSIMHYDRAULICSNS"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StatelessOrifice,  MBSIMHYDRAULICS%"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
 
   Vec StatelessOrifice::getQIn() {return this->calculateQ(); }
   Vec StatelessOrifice::getQOut() {return -1.*(this->calculateQ()); }
 
-  void StatelessOrifice::initializeUsingXML(TiXmlElement * element) {
+  void StatelessOrifice::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflowPressureSignal");
-    inflowSignalString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowPressureSignal");
-    outflowSignalString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"openingSignal");
-    openingSignalString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowPressureSignal");
+    inflowSignalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowPressureSignal");
+    outflowSignalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"openingSignal");
+    openingSignalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
     setAlpha(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"areaModus");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"areaModus");
     setCalcAreaModus(getInt(e));
   }
 

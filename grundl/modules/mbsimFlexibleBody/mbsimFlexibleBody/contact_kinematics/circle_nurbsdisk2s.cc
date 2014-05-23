@@ -54,12 +54,11 @@ namespace MBSimFlexibleBody {
     FuncPairCircleNurbsDisk2s *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
     Contact1sSearch search(func);
 
-    if(cpData[icircle].getLagrangeParameterPosition().size()!=0  && LOCALSEARCH) { // select start value from last search (local search)
+    if(LOCALSEARCH) { // select start value from last search (local search)
       search.setInitialValue(cpData[icircle].getLagrangeParameterPosition()(0));
     }
     else { // define start search with regula falsi (global search)
       search.setSearchAll(true);
-      cpData[icircle].getLagrangeParameterPosition() = Vec(1,NONINIT);
     }
 
     int SEC = 16; // partition for regula falsi

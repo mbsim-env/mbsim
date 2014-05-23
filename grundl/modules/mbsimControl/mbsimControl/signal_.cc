@@ -18,13 +18,10 @@
  */
 
 #include <config.h>
-#include "mbsimControl/defines.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/extern_signal_source.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
-#include "mbsimControl/defines.h"
-#include "mbsim/xmlnamespacemapping.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -32,7 +29,7 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ExternSignalSource, MBSIMCONTROLNS"ExternSignalSource")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternSignalSource, MBSIMCONTROL%"ExternSignalSource")
 
   void Signal::init(InitStage stage) {
     if (stage==MBSim::plot) {
@@ -63,9 +60,3 @@ namespace MBSimControl {
   }
 
 }
-
-// register namspace mapping (must just be done in any *.cc file)
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(50, MBSIMCONTROLNS_, "")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(40, MBSIMCONTROLNS_, "ctl")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(30, MBSIMCONTROLNS_, "control")
-MBSIM_REGISTER_XMLNAMESPACEMAPPING(20, MBSIMCONTROLNS_, "mbsimcontrol")

@@ -20,12 +20,12 @@
 #include <config.h>
 #include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimControl/defines.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
@@ -34,11 +34,11 @@ namespace MBSimControl {
     setPlotFeature(state, enabled);
   }
 
-  void SignalProcessingSystem::initializeUsingXML(TiXmlElement * element) {
+  void SignalProcessingSystem::initializeUsingXML(DOMElement * element) {
     Link::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    inputSignalString=e->Attribute("ref");
+    DOMElement * e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    inputSignalString=E(e)->getAttribute("ref");
   }
 
   void SignalProcessingSystem::init(InitStage stage) {

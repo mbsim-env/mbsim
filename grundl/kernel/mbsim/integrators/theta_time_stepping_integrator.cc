@@ -23,7 +23,6 @@
 #include "mbsim/integrators/theta_time_stepping_integrator.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/eps.h"
-
 #include <cmath>
 #include <time.h>
 
@@ -33,10 +32,11 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, ThetaTimeSteppingIntegrator, MBSIMINTNS"ThetaTimeSteppingIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ThetaTimeSteppingIntegrator, MBSIMINT%"ThetaTimeSteppingIntegrator")
 
   ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
@@ -175,17 +175,17 @@ namespace MBSim {
     postIntegrate(system);
   }
 
-  void ThetaTimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void ThetaTimeSteppingIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    TiXmlElement *e;
-    e = element->FirstChildElement(MBSIMINTNS"stepSize");
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     setStepSize(Element::getDouble(e));
-    e = element->FirstChildElement(MBSIMINTNS"theta");
+    e = E(element)->getFirstElementChildNamed(MBSIMINT%"theta");
     const double theta = Element::getDouble(e);
     assert(theta >= 0);
     assert(theta <= 1);
     setTheta(theta);
-    e = element->FirstChildElement(MBSIMINTNS"driftCompensation");
+    e = E(element)->getFirstElementChildNamed(MBSIMINT%"driftCompensation");
     setDriftCompensation(Element::getBool(e));
   }
 

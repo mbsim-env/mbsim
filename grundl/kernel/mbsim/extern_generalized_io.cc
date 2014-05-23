@@ -16,18 +16,19 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/object.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ExternGeneralizedIO, MBSIMNS"ExternGeneralizedIO")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternGeneralizedIO, MBSIM%"ExternGeneralizedIO")
 
   ExternGeneralizedIO::ExternGeneralizedIO(const string &name) : Link(name),
     connectedObject(NULL), qInd(0), uInd(0), m(0), a(0), t0(0), saved_connectedObject("") {
@@ -119,25 +120,25 @@ namespace MBSim {
     }
   }
 
-  void ExternGeneralizedIO::initializeUsingXML(TiXmlElement *element) {
+  void ExternGeneralizedIO::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"type");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"type");
     if(e) {
-      string str=e->GetText();
+      string str=X()%E(e)->getFirstTextChild()->getData();
       if(str=="\"constant\"") type=CONSTANT;
       else if(str=="\"linear\"") type=LINEAR;
     }
     else
       type=CONSTANT;
-    saved_connectedObject=element->FirstChildElement(MBSIMNS"connectedObject")->Attribute("ref");
-    qInd=getInt(element->FirstChildElement(MBSIMNS"qIndex"));
-    uInd=getInt(element->FirstChildElement(MBSIMNS"uIndex"));
-    for(e=element->FirstChildElement(MBSIMNS"applyForceAlsoTo"); e!=0; e=e->NextSiblingElement(MBSIMNS"applyForceAlsoTo")) {
+    saved_connectedObject=E(E(element)->getFirstElementChildNamed(MBSIM%"connectedObject"))->getAttribute("ref");
+    qInd=getInt(E(element)->getFirstElementChildNamed(MBSIM%"qIndex"));
+    uInd=getInt(E(element)->getFirstElementChildNamed(MBSIM%"uIndex"));
+    for(e=E(element)->getFirstElementChildNamed(MBSIM%"applyForceAlsoTo"); e!=0; e=e->getNextElementSibling()) {
       ApplyForceAlsoTo alsoTo;
-      alsoTo.saved_ref=e->Attribute(("ref"));
+      alsoTo.saved_ref=E(e)->getAttribute(("ref"));
       alsoTo.ref=0;
-      alsoTo.factor=getDouble(e->FirstChildElement());
-      alsoTo.index=getInt(e->FirstChildElement()->NextSiblingElement());
+      alsoTo.factor=getDouble(e->getFirstElementChild());
+      alsoTo.index=getInt(e->getFirstElementChild()->getNextElementSibling());
       applyForceAlsoTo.push_back(alsoTo);
     }
   }

@@ -32,17 +32,19 @@
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
+#include <openmbvcppinterface/group.h>
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
   Range<Var,Var> i02(0,2);
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidBody, MBSIMNS"RigidBody")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
 
@@ -63,6 +65,7 @@ namespace MBSim {
   RigidBody::~RigidBody() {
     if(fPrPK) { delete fPrPK; fPrPK=0; }
     if(fAPK) { delete fAPK; fAPK=0; }
+    if(fTR) { delete fTR; fTR=0; }
   }
 
   void RigidBody::setFrameForKinematics(Frame *frame) { 
@@ -171,9 +174,11 @@ namespace MBSim {
 
       //RBF.push_back(C);
       for(unsigned int k=1; k<frame.size(); k++) {
+        if(!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
+          ((FixedRelativeFrame*) frame[k])->setFrameOfReference(C);
+      }
+      for(unsigned int k=1; k<frame.size(); k++) {
         FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
-        if(!(P->getFrameOfReference()))
-          P->setFrameOfReference(C);
         const FixedRelativeFrame *R = P;
         do {
           R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
@@ -508,6 +513,7 @@ namespace MBSim {
     for(unsigned int i=0; i<RBC.size(); i++)
       RBC[i]->updateStateDependentVariables(t);
 
+    //compute inertia in world frame
     WThetaS = JTMJ(SThetaS,C->getOrientation().T());
   }
 
@@ -690,102 +696,102 @@ namespace MBSim {
       WJTrel0 -= tilde(((FixedRelativeFrame*)P)->getWrRP())*WJRrel0;
   }
 
-  void RigidBody::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
+  void RigidBody::initializeUsingXML(DOMElement *element) {
+    DOMElement *e;
     Body::initializeUsingXML(element);
 
     // frames
-    e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
     while(e) {
-      FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"));
+      FixedRelativeFrame *f=new FixedRelativeFrame(E(e)->getAttribute("name"));
       addFrame(f);
       f->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
     // contours
-    e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     while(e) {
-      Contour *c=ObjectFactory<Element>::createAndInit<Contour>(e);
+      Contour *c=ObjectFactory::createAndInit<Contour>(e);
       addContour(c);
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 
-    e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    if(e) setFrameForKinematics(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
-    e=element->FirstChildElement(MBSIMNS"mass");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameForKinematics");
+    if(e) setFrameForKinematics(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
+    e=E(element)->getFirstElementChildNamed(MBSIM%"mass");
     setMass(getDouble(e));
-    e=element->FirstChildElement(MBSIMNS"inertiaTensor");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
-    e=element->FirstChildElement(MBSIMNS"frameForInertiaTensor");
-    if(e) setFrameForInertiaTensor(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
-    e=element->FirstChildElement(MBSIMNS"generalTranslation");
-    if(e && e->FirstChildElement()) {
-      Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV,double)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameForInertiaTensor");
+    if(e) setFrameForInertiaTensor(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
+    if(e && e->getFirstElementChild()) {
+      Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
-    e=element->FirstChildElement(MBSIMNS"timeDependentTranslation");
-    if(e && e->FirstChildElement()) {
-      Function<Vec3(double)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(double)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
+    if(e && e->getFirstElementChild()) {
+      Function<Vec3(double)> *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
       setTimeDependentTranslation(trans);
     }
-    e=element->FirstChildElement(MBSIMNS"stateDependentTranslation");
-    if(e && e->FirstChildElement()) {
-      Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::createAndInit<Function<Vec3(VecV)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
+    if(e && e->getFirstElementChild()) {
+      Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
       setStateDependentTranslation(trans);
     }
-    e=element->FirstChildElement(MBSIMNS"generalRotation");
-    if(e && e->FirstChildElement()) {
-      Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV,double)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalRotation");
+    if(e && e->getFirstElementChild()) {
+      Function<RotMat3(VecV,double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
-    e=element->FirstChildElement(MBSIMNS"timeDependentRotation");
-    if(e && e->FirstChildElement()) {
-      Function<RotMat3(double)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(double)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
+    if(e && e->getFirstElementChild()) {
+      Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
       setTimeDependentRotation(rot);
     }
-    e=element->FirstChildElement(MBSIMNS"stateDependentRotation");
-    if(e && e->FirstChildElement()) {
-      Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::createAndInit<Function<RotMat3(VecV)> >(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
+    if(e && e->getFirstElementChild()) {
+      Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
       setStateDependentRotation(rot);
     }
-    e=element->FirstChildElement(MBSIMNS"translationDependentRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"translationDependentRotation");
     if(e) translationDependentRotation = getBool(e);
-    e=element->FirstChildElement(MBSIMNS"coordinateTransformationForRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"coordinateTransformationForRotation");
     if(e) coordinateTransformation = getBool(e);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {
-      OpenMBV::RigidBody *rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->FirstChildElement());
+      OpenMBV::RigidBody *rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
       setOpenMBVRigidBody(rb);
-      rb->initializeUsingXML(e->FirstChildElement());
+      rb->initializeUsingXML(e->getFirstElementChild());
     }
-    e=element->FirstChildElement(MBSIMNS"openMBVFrameOfReference");
-    if(e) setOpenMBVFrameOfReference(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVFrameOfReference");
+    if(e) setOpenMBVFrameOfReference(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
 
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       OpenMBVFrame ombv;
       C->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVWeight");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FWeight=ombv.createOpenMBV(e);
     }
 
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVJointForce");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
     if (e) {
       if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVJointMoment");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
     if (e) {
       if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
@@ -794,78 +800,78 @@ namespace MBSim {
 #endif
   }
 
-  TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Body::writeXMLFile(parent);
+  DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Body::writeXMLFile(parent);
 
-    TiXmlElement * ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
-    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
-    ele1->SetAttribute("ref", str);
-    ele0->LinkEndChild(ele1);
-
-    addElementText(ele0,MBSIMNS"mass",getMass());
-    if(frameForInertiaTensor)
-      throw MBSimError("Inertia tensor with respect to frame " + frameForInertiaTensor->getName() + " not supported in XML. Provide inertia tensor with respect to frame C.");
-    addElementText(ele0,MBSIMNS"inertiaTensor",getInertiaTensor());
-
-    ele1 = new TiXmlElement( MBSIMNS"translation" );
-    if(getTranslation()) 
-      getTranslation()->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
-
-    ele1 = new TiXmlElement( MBSIMNS"rotation" );
-    if(getRotation()) 
-      getRotation()->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
-
-    ele1 = new TiXmlElement( MBSIMNS"frames" );
-    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"contours" );
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(getOpenMBVBody()) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
-      getOpenMBVBody()->writeXMLFile(ele1);
-
-      if(getOpenMBVFrameOfReference()) {
-        TiXmlElement * ele2 = new TiXmlElement( MBSIMNS"frameOfReference" );
-        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
-        ele2->SetAttribute("ref", str);
-        ele1->LinkEndChild(ele2);
-      }
-      ele0->LinkEndChild(ele1);
-    }
-
-    if(C->getOpenMBVFrame()) {
-      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
-      addElementText(ele1,MBSIMNS"size",C->getOpenMBVFrame()->getSize());
-      addElementText(ele1,MBSIMNS"offset",C->getOpenMBVFrame()->getOffset());
-      ele0->LinkEndChild(ele1);
-    }
-
-    if(FWeight) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVWeightArrow" );
-      FWeight->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-
-    if(FArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVJointForceArrow" );
-      FArrow->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-
-    if(MArrow) {
-      ele1 = new TiXmlElement( MBSIMNS"openMBVJointMomentArrow" );
-      MArrow->writeXMLFile(ele1);
-      ele0->LinkEndChild(ele1);
-    }
-#endif
+//    DOMElement * ele1 = new DOMElement( MBSIM%"frameForKinematics" );
+//    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
+//    ele1->SetAttribute("ref", str);
+//    ele0->LinkEndChild(ele1);
+//
+//    addElementText(ele0,MBSIM%"mass",getMass());
+//    if(frameForInertiaTensor)
+//      throw MBSimError("Inertia tensor with respect to frame " + frameForInertiaTensor->getName() + " not supported in XML. Provide inertia tensor with respect to frame C.");
+//    addElementText(ele0,MBSIM%"inertiaTensor",getInertiaTensor());
+//
+//    ele1 = new DOMElement( MBSIM%"translation" );
+//    if(getTranslation()) 
+//      getTranslation()->writeXMLFile(ele1);
+//    ele0->LinkEndChild(ele1);
+//
+//    ele1 = new DOMElement( MBSIM%"rotation" );
+//    if(getRotation()) 
+//      getRotation()->writeXMLFile(ele1);
+//    ele0->LinkEndChild(ele1);
+//
+//    ele1 = new DOMElement( MBSIM%"frames" );
+//    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//    ele1 = new DOMElement( MBSIM%"contours" );
+//    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+//      (*i)->writeXMLFile(ele1);
+//    ele0->LinkEndChild( ele1 );
+//
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//    if(getOpenMBVBody()) {
+//      ele1 = new DOMElement( MBSIM%"openMBVRigidBody" );
+//      getOpenMBVBody()->writeXMLFile(ele1);
+//
+//      if(getOpenMBVFrameOfReference()) {
+//        DOMElement * ele2 = new DOMElement( MBSIM%"frameOfReference" );
+//        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
+//        ele2->SetAttribute("ref", str);
+//        ele1->LinkEndChild(ele2);
+//      }
+//      ele0->LinkEndChild(ele1);
+//    }
+//
+//    if(C->getOpenMBVFrame()) {
+//      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameC" );
+//      addElementText(ele1,MBSIM%"size",C->getOpenMBVFrame()->getSize());
+//      addElementText(ele1,MBSIM%"offset",C->getOpenMBVFrame()->getOffset());
+//      ele0->LinkEndChild(ele1);
+//    }
+//
+//    if(FWeight) {
+//      ele1 = new DOMElement( MBSIM%"openMBVWeightArrow" );
+//      FWeight->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//
+//    if(FArrow) {
+//      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
+//      FArrow->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//
+//    if(MArrow) {
+//      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
+//      MArrow->writeXMLFile(ele1);
+//      ele0->LinkEndChild(ele1);
+//    }
+//#endif
 
     return ele0;
   }

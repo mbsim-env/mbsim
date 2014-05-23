@@ -55,6 +55,7 @@ namespace MBSimHydraulics {
   class Leakage0DOF : public DimensionlessLine {
     public:
       Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(NULL), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
+      ~Leakage0DOF();
       virtual std::string getType() const { return "Leakage0DOF"; }
 
       void setGapLengthSignal(MBSimControl::Signal * s) {glSignal=s; }

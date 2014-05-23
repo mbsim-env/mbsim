@@ -27,17 +27,21 @@
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidLine,  MBSIMHYDRAULICSNS"RigidLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidLine,  MBSIMHYDRAULICS%"RigidLine")
+
+  RigidLine::~RigidLine() { 
+    delete pL; 
+  }
 
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
@@ -70,16 +74,20 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidLine::initializeUsingXML(TiXmlElement * element) {
+  void RigidLine::initializeUsingXML(DOMElement * element) {
     RigidHLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    LinePressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<LinePressureLoss>(e->FirstChildElement());
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"linePressureLoss");
+    LinePressureLoss *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e->getFirstElementChild());
     setLinePressureLoss(p);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ClosableRigidLine,  MBSIMHYDRAULICSNS"ClosableRigidLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ClosableRigidLine,  MBSIMHYDRAULICS%"ClosableRigidLine")
+
+  ClosableRigidLine::~ClosableRigidLine() {
+    delete cpL;
+  }
 
   bool ClosableRigidLine::isClosed() const {
    return (cpLSignal->getSignal()(0)<cpLMinValue);
@@ -107,22 +115,22 @@ namespace MBSimHydraulics {
       RigidLine::init(stage);
   }
 
-  void ClosableRigidLine::initializeUsingXML(TiXmlElement * element) {
+  void ClosableRigidLine::initializeUsingXML(DOMElement * element) {
     RigidLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"closablePressureLoss");
-    TiXmlElement * ee=e->FirstChildElement();
-    ClosablePressureLoss *p=MBSim::ObjectFactory< fmatvec::FunctionBase>::createAndInit<ClosablePressureLoss>(ee);
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"closablePressureLoss");
+    DOMElement * ee=e->getFirstElementChild();
+    ClosablePressureLoss *p=MBSim::ObjectFactory::createAndInit<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
-    refSignalString=ee->Attribute("ref");
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalChecksizeValue");
+    ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checksizeSignal");
+    refSignalString=E(ee)->getAttribute("ref");
+    ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalChecksizeValue");
     setMinimalValue(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"setValued");
+    ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"setValued");
     if (ee)
       setBilateral(true);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, UnidirectionalRigidLine,  MBSIMHYDRAULICSNS"UnidirectionalRigidLine")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnidirectionalRigidLine,  MBSIMHYDRAULICS%"UnidirectionalRigidLine")
 
   void UnidirectionalRigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
@@ -136,15 +144,15 @@ namespace MBSimHydraulics {
       RigidLine::init(stage);
   }
 
-  void UnidirectionalRigidLine::initializeUsingXML(TiXmlElement * element) {
+  void UnidirectionalRigidLine::initializeUsingXML(DOMElement * element) {
     RigidLine::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"unidirectionalPressureLoss");
-    TiXmlElement * ee=e->FirstChildElement();
-    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<UnidirectionalPressureLoss>(ee);
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"unidirectionalPressureLoss");
+    DOMElement * ee=e->getFirstElementChild();
+    UnidirectionalPressureLoss *p=MBSim::ObjectFactory::createAndInit<UnidirectionalPressureLoss>(ee);
     if (p) {
       setUnidirectionalPressureLoss(p);
     }
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressureDrop");
+    ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalPressureDrop");
     setMinimalPressureDrop(getDouble(ee));
   }
 

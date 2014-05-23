@@ -64,8 +64,10 @@ namespace MBSim {
       }
 #endif
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+
+      void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_; }

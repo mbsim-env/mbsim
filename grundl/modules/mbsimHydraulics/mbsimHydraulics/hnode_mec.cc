@@ -25,7 +25,6 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/constitutive_laws.h"
 
@@ -35,9 +34,10 @@
 #endif
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
@@ -107,33 +107,35 @@ namespace MBSimHydraulics {
       HNode::init(stage);
       nTrans=connectedTransFrames.size();
       for (unsigned int i=0; i<nTrans; i++) {
-        int j=connectedTransFrames[i].frame->getJacobianOfTranslation().cols();
-        W[0].push_back(Mat(j, laSize));
-        V[0].push_back(Mat(j, laSize));
-        h[0].push_back(Vec(j));
-        W[1].push_back(Mat(j, laSize));
-        V[1].push_back(Mat(j, laSize));
-        h[1].push_back(Vec(j));
-        dhdq.push_back(Mat(j, 0));
-        dhdu.push_back(SqrMat(j));
-        dhdt.push_back(Vec(j));
-        r[0].push_back(Vec(j));
-        r[1].push_back(Vec(j));
+        int j0=connectedTransFrames[i].frame->getJacobianOfTranslation(0).cols();
+        int j1=connectedTransFrames[i].frame->getJacobianOfTranslation(1).cols();
+        W[0].push_back(Mat(j0, laSize));
+        V[0].push_back(Mat(j0, laSize));
+        h[0].push_back(Vec(j0));
+        W[1].push_back(Mat(j1, laSize));
+        V[1].push_back(Mat(j1, laSize));
+        h[1].push_back(Vec(j1));
+        dhdq.push_back(Mat(j0, 0));
+        dhdu.push_back(SqrMat(j0));
+        dhdt.push_back(Vec(j0));
+        r[0].push_back(Vec(j0));
+        r[1].push_back(Vec(j1));
       }
       nRot=connectedRotFrames.size();
       for (unsigned int i=0; i<nRot; i++) {
-        int j=connectedRotFrames[i].frame->getJacobianOfRotation().cols();
-        W[0].push_back(Mat(j, laSize));
-        V[0].push_back(Mat(j, laSize));
-        h[0].push_back(Vec(j));
-        W[1].push_back(Mat(j, laSize));
-        V[1].push_back(Mat(j, laSize));
-        h[1].push_back(Vec(j));
-        dhdq.push_back(Mat(j, 0));
-        dhdu.push_back(SqrMat(j));
-        dhdt.push_back(Vec(j));
-        r[0].push_back(Vec(j));
-        r[1].push_back(Vec(j));
+        int j0=connectedRotFrames[i].frame->getJacobianOfRotation(0).cols();
+        int j1=connectedRotFrames[i].frame->getJacobianOfRotation(1).cols();
+        W[0].push_back(Mat(j0, laSize));
+        V[0].push_back(Mat(j0, laSize));
+        h[0].push_back(Vec(j0));
+        W[1].push_back(Mat(j1, laSize));
+        V[1].push_back(Mat(j1, laSize));
+        h[1].push_back(Vec(j1));
+        dhdq.push_back(Mat(j0, 0));
+        dhdu.push_back(SqrMat(j0));
+        dhdt.push_back(Vec(j0));
+        r[0].push_back(Vec(j0));
+        r[1].push_back(Vec(j1));
       }
       x.resize(xSize);
     }
@@ -196,14 +198,14 @@ namespace MBSimHydraulics {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedTransFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols() -1;
+      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation(j).cols() -1;
       W[j][nLines+i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedRotFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols() -1;
+      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation(j).cols() -1;
       W[j][nTrans+nLines+i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
@@ -214,14 +216,14 @@ namespace MBSimHydraulics {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedTransFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols() -1;
+      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation(j).cols() -1;
       V[j][nLines+i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedRotFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols() -1;
+      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation(j).cols() -1;
       V[j][nTrans+nLines+i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
@@ -230,13 +232,13 @@ namespace MBSimHydraulics {
     HNode::updatehRef(hParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
       const int hI = connectedTransFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation(j).cols()-1;
       cout << "j=" << j << ", nLines+i=" << nLines+i << ", h[j, nLines+i]=" << h[j][nLines+i] << " hI=" << hI << ", hJ=" << hJ << ", hParent=" << hParent(Index(hI, hJ)) << endl;
       h[j][nLines+i].resize() >> hParent(Index(hI, hJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int hI = connectedRotFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
+      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation(j).cols()-1;
       h[j][nTrans+nLines+i].resize() >> hParent(Index(hI, hJ));
     }
   }
@@ -269,12 +271,12 @@ namespace MBSimHydraulics {
     HNode::updaterRef(rParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
       const int rI = connectedTransFrames[i].frame->gethInd(j);
-      const int rJ = rI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int rJ = rI + connectedTransFrames[i].frame->getJacobianOfTranslation(j).cols()-1;
       r[j][nLines+i] >> rParent(Index(rI, rJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int rI = connectedRotFrames[i].frame->gethInd(j);
-      const int rJ = rI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
+      const int rJ = rI + connectedRotFrames[i].frame->getJacobianOfRotation(j).cols()-1;
       r[j][nTrans+nLines+i] >> rParent(Index(rI, rJ));
     }
   }
@@ -322,7 +324,7 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nTrans; i++) {
       h[j][nLines+i] +=
         connectedTransFrames[i].area * 
-        trans(connectedTransFrames[i].frame->getJacobianOfTranslation()) * 
+        trans(connectedTransFrames[i].frame->getJacobianOfTranslation(j)) * 
         (
          connectedTransFrames[i].frame->getOrientation() * 
          connectedTransFrames[i].normal
@@ -331,7 +333,7 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nRot; i++) {
       h[j][nTrans+nLines+i] += 
         connectedRotFrames[i].area * 
-        trans(connectedRotFrames[i].frame->getJacobianOfTranslation()) * 
+        trans(connectedRotFrames[i].frame->getJacobianOfTranslation(j)) * 
         (
          connectedRotFrames[i].frame->getOrientation() * 
          connectedRotFrames[i].normal
@@ -418,42 +420,42 @@ namespace MBSimHydraulics {
     }
   }
 
-  void HNodeMec::initializeUsingXML(TiXmlElement *element) {
+  void HNodeMec::initializeUsingXML(DOMElement *element) {
     HNode::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialVolume");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialVolume");
     V0=getDouble(e);
-    e=e->NextSiblingElement();
-    while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface" || e->ValueStr()==MBSIMHYDRAULICSNS"rotatorialBoundarySourface")) {
-      if (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface") {
-        TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-        saved_translatorial_frameOfReference.push_back(ee->Attribute("ref"));
-        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
+    e=e->getNextElementSibling();
+    while (e && (E(e)->getTagName()==MBSIMHYDRAULICS%"translatorialBoundarySourface" || E(e)->getTagName()==MBSIMHYDRAULICS%"rotatorialBoundarySourface")) {
+      if (E(e)->getTagName()==MBSIMHYDRAULICS%"translatorialBoundarySourface") {
+        DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfReference");
+        saved_translatorial_frameOfReference.push_back(E(ee)->getAttribute("ref"));
+        ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"normal");
         saved_translatorial_normal.push_back(getVec(ee));
-        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
+        ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"area");
         saved_translatorial_area.push_back(getDouble(ee));
-        saved_translatorial_noVolumeChange.push_back(e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange"));
+        saved_translatorial_noVolumeChange.push_back(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"noVolumeChange"));
       }
       else {
-        TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-        saved_rotatorial_frameOfReference.push_back(ee->Attribute("ref"));
-        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
+        DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfReference");
+        saved_rotatorial_frameOfReference.push_back(E(ee)->getAttribute("ref"));
+        ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"normal");
         saved_rotatorial_normal.push_back(getVec(ee));
-        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
+        ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"area");
         saved_rotatorial_area.push_back(getDouble(ee));
-        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfRotationCenter");
-        saved_rotatorial_frameOfRotationCenter.push_back(ee->Attribute("ref"));
-        saved_rotatorial_noVolumeChange.push_back(e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange"));
+        ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"frameOfRotationCenter");
+        saved_rotatorial_frameOfRotationCenter.push_back(E(ee)->getAttribute("ref"));
+        saved_rotatorial_noVolumeChange.push_back(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"noVolumeChange"));
       }
-      e=e->NextSiblingElement();
+      e=e->getNextElementSibling();
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows");
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVArrows");
     if (e)
-      enableOpenMBVArrows(getDouble(e->FirstChildElement(MBSIMHYDRAULICSNS"size")));
+      enableOpenMBVArrows(getDouble(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"size")));
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ConstrainedNodeMec, MBSIMHYDRAULICSNS"ConstrainedNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNodeMec, MBSIMHYDRAULICS%"ConstrainedNodeMec")
 
   void ConstrainedNodeMec::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -470,13 +472,13 @@ namespace MBSimHydraulics {
     la(0)=(*pFun)(t);
   }
 
-  void ConstrainedNodeMec::initializeUsingXML(TiXmlElement *element) {
+  void ConstrainedNodeMec::initializeUsingXML(DOMElement *element) {
     HNodeMec::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory<fmatvec::FunctionBase>::createAndInit<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
+    pFun=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, EnvironmentNodeMec, MBSIMHYDRAULICSNS"EnvironmentNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNodeMec, MBSIMHYDRAULICS%"EnvironmentNodeMec")
 
   void EnvironmentNodeMec::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -487,7 +489,7 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ElasticNodeMec, MBSIMHYDRAULICSNS"ElasticNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticNodeMec, MBSIMHYDRAULICS%"ElasticNodeMec")
 
   ElasticNodeMec::~ElasticNodeMec() {
     delete bulkModulus;
@@ -549,16 +551,16 @@ namespace MBSimHydraulics {
     }
   }
 
-  void ElasticNodeMec::initializeUsingXML(TiXmlElement * element) {
+  void ElasticNodeMec::initializeUsingXML(DOMElement * element) {
     HNodeMec::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    DOMElement * e;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
     p0=getDouble(e);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
     fracAir=getDouble(e);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidNodeMec, MBSIMHYDRAULICSNS"RigidNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNodeMec, MBSIMHYDRAULICS%"RigidNodeMec")
 
   RigidNodeMec::RigidNodeMec(const string &name) : HNodeMec(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
   }
@@ -637,20 +639,20 @@ namespace MBSimHydraulics {
       W[j][i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;      
     }
     for (unsigned int i=0; i<nTrans; i++) {
-      const int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation(j).cols()-1;
       W[j][nLines+i](Index(0,hJ), Index(0, 0)) +=
         connectedTransFrames[i].area * 
-        trans(connectedTransFrames[i].frame->getJacobianOfTranslation()) * 
+        trans(connectedTransFrames[i].frame->getJacobianOfTranslation(j)) * 
         (
          connectedTransFrames[i].frame->getOrientation() * 
          connectedTransFrames[i].normal
         );
     }
     for (unsigned int i=0; i<nRot; i++) {
-      const int hJ=connectedRotFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int hJ=connectedRotFrames[i].frame->getJacobianOfTranslation(j).cols()-1;
       W[j][nTrans+nLines+i](Index(0,hJ), Index(0, 0)) += 
         connectedRotFrames[i].area * 
-        trans(connectedRotFrames[i].frame->getJacobianOfTranslation()) * 
+        trans(connectedRotFrames[i].frame->getJacobianOfTranslation(j)) * 
         (
          connectedRotFrames[i].frame->getOrientation() * 
          connectedRotFrames[i].normal

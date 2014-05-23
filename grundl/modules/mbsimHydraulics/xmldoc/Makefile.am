@@ -1,9 +1,9 @@
-all: mbsimhydraulics/mbsimhydraulics.tex
+all: .mbsimhydraulics.done
 
 xml/index.xml: ../schema/mbsimhydraulics.xsd ../mbsimHydraulics/*.h
 	doxygen
 
-mbsimhydraulics/mbsimhydraulics.tex: xml/index.xml ../schema/mbsimhydraulics.xsd ../mbsimHydraulics/*.h
+.mbsimhydraulics.done: xml/index.xml ../schema/mbsimhydraulics.xsd ../mbsimHydraulics/*.h
 	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimHydraulics/mbsimhydraulics.xsd xml figures:../doc MBSimHydraulics MBSim::
 
 
@@ -12,4 +12,4 @@ install:
 
 
 
-CLEANFILES=xml/index.xml mbsimhydraulics/mbsimhydraulics.tex
+CLEANFILES=xml/index.xml .mbsimhydraulics.done

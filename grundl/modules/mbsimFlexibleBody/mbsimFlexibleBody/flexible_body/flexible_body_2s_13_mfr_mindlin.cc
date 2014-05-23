@@ -259,7 +259,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
     if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
-      Vec alpha = cp.getLagrangeParameterPosition();
+      Vec2 alpha = cp.getLagrangeParameterPosition();
 
       if (nrm2(alpha) < epsroot()) { // center of gravity
         Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
@@ -645,6 +645,7 @@ namespace MBSimFlexibleBody {
     }
 
     /* N_compl */
+    delete N_compl;
     N_compl = new Mat(3, Dofs - RefDofs, INIT, 0.);
     for (int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
@@ -661,6 +662,7 @@ namespace MBSimFlexibleBody {
     /* N_ij */
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
+        delete N_ij[i][j];
         N_ij[i][j] = new SqrMat(Dofs - RefDofs, INIT, 0.);
         for (int element = 0; element < Elements; element++) {
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_ij(i, j);
@@ -688,6 +690,7 @@ namespace MBSimFlexibleBody {
     /* NR_ij */
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
+        delete NR_ij[i][j];
         NR_ij[i][j] = new RowVec(Dofs - RefDofs, INIT, 0.);
         for (int element = 0; element < Elements; element++) {
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i, j);
@@ -703,6 +706,7 @@ namespace MBSimFlexibleBody {
     }
 
     /* R_compl */
+    delete R_compl;
     R_compl = new Vec(3, INIT, 0.);
     for (int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeR_compl();
@@ -711,6 +715,7 @@ namespace MBSimFlexibleBody {
     }
 
     /* R_ij */
+    delete R_ij;
     R_ij = new SymMat(3, INIT, 0.);
     for (int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeR_ij();

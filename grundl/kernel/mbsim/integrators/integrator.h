@@ -20,15 +20,15 @@
 #ifndef _INTEGRATOR_H_
 #define _INTEGRATOR_H_
 
-#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
-#define MBSIMINTNS "{"MBSIMINTNS_"}"
-
-#include<fmatvec/fmatvec.h>
-#include"mbxmlutilstinyxml/tinyxml.h"
-#include<string>
-#include<iostream>
+#include <fmatvec/fmatvec.h>
+#include <fmatvec/atom.h>
+#include <mbxmlutilshelper/dom.h>
+#include <string>
+#include <iostream>
 
 namespace MBSim {
+
+  const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
 
   class DynamicSystemSolver;
 
@@ -37,7 +37,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-13 some comments (Thorsten Schindler) 
    */
-  class Integrator {
+  class Integrator : public fmatvec::Atom {
     public:
       /**
        * \brief constructor 
@@ -87,8 +87,8 @@ namespace MBSim {
        * \brief initialize integrator
        * \param XML description
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       static Integrator* readXMLFile(const std::string &filename);
       void writeXMLFile(const std::string &name);

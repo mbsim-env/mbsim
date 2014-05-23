@@ -23,18 +23,18 @@
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/frame.h"
-#include "mbsimHydraulics/defines.h"
 
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ElasticLineGalerkin,  MBSIMHYDRAULICSNS"ElasticLineGalerkin")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticLineGalerkin,  MBSIMHYDRAULICS%"ElasticLineGalerkin")
 
   ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), QIn(1), QOut(1), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
   }
@@ -203,35 +203,35 @@ namespace MBSimHydraulics {
     cout << "plotVecWS=" << plotVecWS << endl;
   }
 
-  void ElasticLineGalerkin::initializeUsingXML(TiXmlElement * element) {
+  void ElasticLineGalerkin::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    DOMElement * e;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"initialPressure");
     setp0(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"fracAir");
     setFracAir(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"heightDifference");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"heightDifference");
     setdh(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"dLehr");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"dLehr");
     setDLehr(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"length");
     setLength(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"AnsatzFunction");
-    TiXmlElement * ee = e->FirstChildElement();
-    if (ee->ValueStr()==MBSIMHYDRAULICSNS"BSplineOrder3")
-      setAnsatzFunction(BSplineOrd3, getInt(ee->NextSiblingElement()));
-    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"BSplineOrder4")
-      setAnsatzFunction(BSplineOrd4, getInt(ee->NextSiblingElement()));
-    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"Polynom")
-      setAnsatzFunction(Polynom, getInt(ee->NextSiblingElement()));
-    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"Harmonic")
-      setAnsatzFunction(Harmonic, getInt(ee->NextSiblingElement()));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"flow2d");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"AnsatzFunction");
+    DOMElement * ee = e->getFirstElementChild();
+    if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"BSplineOrder3")
+      setAnsatzFunction(BSplineOrd3, getInt(ee->getNextElementSibling()));
+    else if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"BSplineOrder4")
+      setAnsatzFunction(BSplineOrd4, getInt(ee->getNextElementSibling()));
+    else if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"Polynom")
+      setAnsatzFunction(Polynom, getInt(ee->getNextElementSibling()));
+    else if (MBXMLUtils::E(ee)->getTagName()==MBSIMHYDRAULICS%"Harmonic")
+      setAnsatzFunction(Harmonic, getInt(ee->getNextElementSibling()));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"flow2d");
     if (e)
       setFlow2D(true);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePlotPoints");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePlotPoints");
     setRelativePlotPoints(getVec(e));
   }
 

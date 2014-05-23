@@ -25,7 +25,8 @@
 
 #include <string>
 #include "fmatvec/fmatvec.h"
-#include "mbxmlutilstinyxml/tinyxml.h"
+#include <mbxmlutilshelper/dom.h>
+#include <xercesc/dom/DOMDocument.hpp>
 #include <limits>
 #include <vector>
 #include <set>
@@ -69,58 +70,59 @@ namespace MBSim {
       return s.str();
     }
 
-  inline MBXMLUtils::TiXmlNode* toXML(const std::string &str) {
-    return new MBXMLUtils::TiXmlText(str);
+  inline xercesc::DOMNode* toXML(const std::string &str, xercesc::DOMNode* parent) {
+    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%str);
   }
 
-  inline MBXMLUtils::TiXmlNode* toXML(int i) {
-    return new MBXMLUtils::TiXmlText(toStr(i));
+  inline xercesc::DOMNode* toXML(int i, xercesc::DOMNode* parent) {
+    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%toStr(i));
   }
 
-  inline MBXMLUtils::TiXmlNode* toXML(unsigned int i) {
-    return new MBXMLUtils::TiXmlText(toStr(i));
+  inline xercesc::DOMNode* toXML(unsigned int i, xercesc::DOMNode* parent) {
+    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%toStr(i));
   }
 
-  inline MBXMLUtils::TiXmlNode* toXML(double d) {
-    return new MBXMLUtils::TiXmlText(toStr(d));
+  inline xercesc::DOMNode* toXML(double d, xercesc::DOMNode* parent) {
+    return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%toStr(d));
   }
 
   template <class T>
-    inline MBXMLUtils::TiXmlNode* toXML(const std::vector<T> &x) {
-      MBXMLUtils::TiXmlElement *ele = new MBXMLUtils::TiXmlElement(PVNS"xmlVector");
+    inline xercesc::DOMNode* toXML(const std::vector<T> &x, xercesc::DOMNode* parent) {
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"xmlVector");
       for(unsigned int i=0; i<x.size(); i++) {
-        MBXMLUtils::TiXmlElement *elei = new MBXMLUtils::TiXmlElement(PVNS"ele");
-        MBXMLUtils::TiXmlText *text = new MBXMLUtils::TiXmlText(toStr(x[i]));
-        elei->LinkEndChild(text);
-        ele->LinkEndChild(elei);
+        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"ele");
+        xercesc::DOMText *text = new xercesc::DOMText(toStr(x[i]));
+        elei->insertBefore(text, NULL);
+        ele->insertBefore(elei, NULL);
       }
       return ele;
     }
 
   template <class Row>
-    inline MBXMLUtils::TiXmlNode* toXML(const fmatvec::Vector<Row,double> &x) {
-      MBXMLUtils::TiXmlElement *ele = new MBXMLUtils::TiXmlElement(PVNS"xmlVector");
+    inline xercesc::DOMNode* toXML(const fmatvec::Vector<Row,double> &x, xercesc::DOMNode* parent) {
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"xmlVector");
       for(int i=0; i<x.size(); i++) {
-        MBXMLUtils::TiXmlElement *elei = new MBXMLUtils::TiXmlElement(PVNS"ele");
-        MBXMLUtils::TiXmlText *text = new MBXMLUtils::TiXmlText(toStr(x.e(i)));
-        elei->LinkEndChild(text);
-        ele->LinkEndChild(elei);
+        xercesc::DOMDocument *doc=parent->getOwnerDocument();
+        xercesc::DOMElement *elei = MBXMLUtils::D(doc)->createElement(PVNS"ele");
+        xercesc::DOMText *text = doc->createTextNode(MBXMLUtils::X()%toStr(x.e(i)));
+        elei->insertBefore(text, NULL);
+        ele->insertBefore(elei, NULL);
       }
       return ele;
     }
 
   template <class Type, class Row, class Col>
-    inline MBXMLUtils::TiXmlNode* toXML(const fmatvec::Matrix<Type,Row,Col,double> &A) {
-      MBXMLUtils::TiXmlElement *ele = new MBXMLUtils::TiXmlElement(PVNS"xmlMatrix");
+    inline xercesc::DOMNode* toXML(const fmatvec::Matrix<Type,Row,Col,double> &A, xercesc::DOMNode* parent) {
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"xmlMatrix");
       for(int i=0; i<A.rows(); i++) {
-        MBXMLUtils::TiXmlElement *elei = new MBXMLUtils::TiXmlElement(PVNS"row");
+        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"row");
         for(int j=0; j<A.cols(); j++) {
-          MBXMLUtils::TiXmlElement *elej = new MBXMLUtils::TiXmlElement(PVNS"ele");
-          MBXMLUtils::TiXmlText *text = new MBXMLUtils::TiXmlText(toStr(A.e(i,j)));
-          elej->LinkEndChild(text);
-          elei->LinkEndChild(elej);
+          xercesc::DOMElement *elej = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"ele");
+          xercesc::DOMText *text = new xercesc::DOMText(toStr(A.e(i,j)));
+          elej->insertBefore(text, NULL);
+          elei->insertBefore(elej, NULL);
         }
-        ele->LinkEndChild(elei);
+        ele->insertBefore(elei, NULL);
       }
       return ele;
     }
@@ -136,8 +138,10 @@ namespace MBSim {
     }
 
   template <class T>
-    void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, const T &value) {
-      parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(toXML(value));
+    void addElementText(xercesc::DOMElement *parent, const MBXMLUtils::FQN &name, const T &value) {
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(name);
+      ele->insertBefore(toXML(value,parent), NULL);
+      parent->insertBefore(ele, NULL);
     }
 
   template <class Arg>
