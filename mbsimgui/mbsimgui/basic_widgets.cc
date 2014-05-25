@@ -740,7 +740,9 @@ namespace MBSimGUI {
     type_ << "plotFeatureRecursive";
 
     tree = new QTreeWidget;
-    tree->setColumnCount(2);
+    QStringList labels;
+    labels << "Type" << "Value";
+    tree->setHeaderLabels(labels);
     layout->addWidget(tree,0,0,2,1);
 
     type = new QComboBox;
@@ -762,6 +764,7 @@ namespace MBSimGUI {
 
     connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
+    connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   }
 
   void PlotFeatureStatusWidget::addFeature() {
@@ -780,6 +783,15 @@ namespace MBSimGUI {
     if(item) {
       item->setText(0, type->currentText());
       item->setText(1, value->currentText());
+    }
+  }
+
+  void PlotFeatureStatusWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
+    if(item) {
+      type->blockSignals(true);
+      type->setCurrentIndex(type->findText(item->text(0)));
+      type->blockSignals(false);
+      value->setEditText(item->text(1));
     }
   }
 
