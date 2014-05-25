@@ -698,102 +698,89 @@ namespace MBSimGUI {
   }
  
   PlotFeatureStatusWidget::PlotFeatureStatusWidget() {
-    QVBoxLayout *layout = new QVBoxLayout;
+    QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    QStringList stringList;
-    stringList << "Plot recursive";
-    stringList << "Separate file per group";
-    stringList << "State";
-    stringList << "State derivative";
-    stringList << "Not minimal state";
-    stringList << "Right hand side";
-    stringList << "Global position";
-    stringList << "Global velocity";
-    stringList << "Global acceleration";
-    stringList << "Energy";
-    stringList << "OpenMBV";
-    stringList << "Generalized link force";
-    stringList << "Link kinematics";
-    stringList << "Stop vector";
-    stringList << "Debug";
+    QStringList value_;
+    value_.push_back("+plotRecursive");
+    value_.push_back("+separateFilePerGroup");
+    value_.push_back("+state");
+    value_.push_back("+stateDerivative");
+    value_.push_back("+notMinimalState");
+    value_.push_back("+rightHandSide");
+    value_.push_back("+globalPosition");
+    value_.push_back("+globalVelocity");
+    value_.push_back("+globalAcceleration");
+    value_.push_back("+energy");
+    value_.push_back("+openMBV");
+    value_.push_back("+generalizedLinkForce");
+    value_.push_back("+linkKinematics");
+    value_.push_back("+stopVector");
+    value_.push_back("+debug");
+    value_.push_back("-plotRecursive");
+    value_.push_back("-separateFilePerGroup");
+    value_.push_back("-state");
+    value_.push_back("-stateDerivative");
+    value_.push_back("-notMinimalState");
+    value_.push_back("-rightHandSide");
+    value_.push_back("-globalPosition");
+    value_.push_back("-globalVelocity");
+    value_.push_back("-globalAcceleration");
+    value_.push_back("-energy");
+    value_.push_back("-openMBV");
+    value_.push_back("-generalizedLinkForce");
+    value_.push_back("-linkKinematics");
+    value_.push_back("-stopVector");
+    value_.push_back("-debug");
 
-    QStringList option;
-    option << "Unset";
-    option << "Enabled";
-    option << "Disabled";
+    QStringList type_;
+    type_ << "plotFeature";
+    type_ << "plotFeatureForChildren";
+    type_ << "plotFeatureRecursive";
 
-    QGroupBox *box = new QGroupBox("Plot feature");
-    layout->addWidget(box);
-    QHBoxLayout *sublayout = new QHBoxLayout;
-    sublayout->setMargin(0);
-    box->setLayout(sublayout);
+    tree = new QTreeWidget;
+    tree->setColumnCount(2);
+    layout->addWidget(tree,0,0,2,1);
 
-    list1 = new QListWidget;
-    list1->addItems(stringList);
-    sublayout->addWidget(list1);
-    combo1 = new QComboBox;
-    combo1->addItems(option);
-    sublayout->addWidget(combo1);
+    type = new QComboBox;
+    type->addItems(type_);
+    layout->addWidget(type,0,1);
 
-    box = new QGroupBox("Plot feature for children");
-    layout->addWidget(box);
-    sublayout = new QHBoxLayout;
-    sublayout->setMargin(0);
-    box->setLayout(sublayout);
+    value = new QComboBox;
+    value->setEditable(true);
+    value->addItems(value_);
+    layout->addWidget(value,1,1);
 
-    list2 = new QListWidget;
-    list2->addItems(stringList);
-    sublayout->addWidget(list2);
-    combo2 = new QComboBox;
-    combo2->addItems(option);
-    sublayout->addWidget(combo2);
+    QPushButton *add = new QPushButton("Add");
+    connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
+    layout->addWidget(add,2,0);
 
-    box = new QGroupBox("Plot feature recursive");
-    layout->addWidget(box);
-    sublayout = new QHBoxLayout;
-    sublayout->setMargin(0);
-    box->setLayout(sublayout);
+    QPushButton *remove = new QPushButton("Remove");
+    connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
+    layout->addWidget(remove,2,1);
 
-    list3 = new QListWidget;
-    list3->addItems(stringList);
-    sublayout->addWidget(list3);
-    combo3 = new QComboBox;
-    combo3->addItems(option);
-    sublayout->addWidget(combo3);
-
-    status.resize(3);
-    for(int i=0; i<3; i++)
-      status[i].resize(stringList.size());
-    connect(list1,SIGNAL(currentRowChanged(int)),this,SLOT(updateComboBox1(int)));
-    connect(list2,SIGNAL(currentRowChanged(int)),this,SLOT(updateComboBox2(int)));
-    connect(list3,SIGNAL(currentRowChanged(int)),this,SLOT(updateComboBox3(int)));
-    connect(combo1,SIGNAL(currentIndexChanged(int)),this,SLOT(updateStatus1(int)));
-    connect(combo2,SIGNAL(currentIndexChanged(int)),this,SLOT(updateStatus2(int)));
-    connect(combo3,SIGNAL(currentIndexChanged(int)),this,SLOT(updateStatus3(int)));
-    list1->setCurrentRow(0);
-    list2->setCurrentRow(0);
-    list3->setCurrentRow(0);
+    connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
+    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
   }
 
-  void PlotFeatureStatusWidget::updateComboBox1(int row) {
-    combo1->setCurrentIndex(status[0][row]);
-  }
-  void PlotFeatureStatusWidget::updateComboBox2(int row) {
-    combo2->setCurrentIndex(status[1][row]);
-  }
-  void PlotFeatureStatusWidget::updateComboBox3(int row) {
-    combo3->setCurrentIndex(status[2][row]);
+  void PlotFeatureStatusWidget::addFeature() {
+    QTreeWidgetItem *item = new QTreeWidgetItem;
+    item->setText(0, type->currentText());
+    item->setText(1, value->currentText());
+    tree->addTopLevelItem(item);
   }
 
-  void PlotFeatureStatusWidget::updateStatus1(int i) {
-    status[0][list1->currentRow()] = i;
+  void PlotFeatureStatusWidget::removeFeature() {
+    tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
   }
-  void PlotFeatureStatusWidget::updateStatus2(int i) {
-    status[1][list2->currentRow()] = i;
+
+  void PlotFeatureStatusWidget::updateFeature() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, type->currentText());
+      item->setText(1, value->currentText());
+    }
   }
-  void PlotFeatureStatusWidget::updateStatus3(int i) {
-    status[2][list3->currentRow()] = i;
-  }
+
 }

@@ -369,9 +369,7 @@ namespace MBSimGUI {
 
   class PlotFeatureStatusProperty : public Property {
     protected:
-      std::vector<std::vector<int> > status;
-      std::vector<std::string> name;
-      std::vector<std::string> xmlName;
+      std::vector<std::string> type, value;
     public:
       PlotFeatureStatusProperty();
       virtual Property* clone() const {return new PlotFeatureStatusProperty(*this);}

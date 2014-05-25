@@ -30,6 +30,7 @@
 #include <xercesc/dom/DOMText.hpp>
 #include <boost/lexical_cast.hpp>
 #include <QDir>
+#include <QTreeWidget>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -867,42 +868,16 @@ namespace MBSimGUI {
   }
 
   PlotFeatureStatusProperty::PlotFeatureStatusProperty() {
-    name.push_back("plotRecursive");
-    name.push_back("separateFilePerGroup");
-    name.push_back("state");
-    name.push_back("stateDerivative");
-    name.push_back("notMinimalState");
-    name.push_back("rightHandSide");
-    name.push_back("globalPosition");
-    name.push_back("globalVelocity");
-    name.push_back("globalAcceleration");
-    name.push_back("energy");
-    name.push_back("openMBV");
-    name.push_back("generalizedLinkForce");
-    name.push_back("linkKinematics");
-    name.push_back("stopVector");
-    name.push_back("debug");
-    xmlName.push_back("plotFeature");
-    xmlName.push_back("plotFeatureForChildren");
-    xmlName.push_back("plotFeatureRecursive");
-    status.resize(xmlName.size());
-    for(int i=0; i<xmlName.size(); i++)
-      status[i].resize(name.size());
   }
 
   DOMElement* PlotFeatureStatusProperty::initializeUsingXML(DOMElement *parent) {
     DOMElement *e=parent->getFirstElementChild();
-    while(e && (E(e)->getTagName()==MBSIM%xmlName[0] ||
-                E(e)->getTagName()==MBSIM%xmlName[1] ||
-                E(e)->getTagName()==MBSIM%xmlName[1])) {
+    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       string feature = E(e)->getAttribute("feature");
-      for(int i=0; i<name.size(); i++) {
-        if(name[i] == feature.substr(1)) {
-          if(E(e)->getTagName()==MBSIM%"plotFeature") status[0][i] = 1+(feature[0]=='-');
-          else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") status[1][i] = 1+(feature[0]=='-');
-          else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") status[2][i] = 1+(feature[0]=='-');
-        }
-      }
+      type.push_back(E(e)->getTagName().second);
+      value.push_back(feature);
       e=e->getNextElementSibling();
     }
     return e;
@@ -910,28 +885,33 @@ namespace MBSimGUI {
 
   DOMElement* PlotFeatureStatusProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    for(int j=0; j<status.size(); j++) {
-      for(int i=0; i<status[j].size(); i++) {
-        if(status[j][i]) {
-          DOMElement *ele = D(doc)->createElement(MBSIM%xmlName[j]);
-          E(ele)->setAttribute("feature",(status[j][i]==1)?"+"+name[i]:"-"+name[i]);
-          parent->insertBefore(ele, NULL);
-        }
-      }
+    for(int i=0; i<type.size(); i++) {
+      DOMElement *ele = D(doc)->createElement(MBSIM%type[i]);
+      E(ele)->setAttribute("feature",value[i]);
+      parent->insertBefore(ele, NULL);
     }
     return 0;
   }
 
   void PlotFeatureStatusProperty::fromWidget(QWidget *widget) {
-    for(int j=0; j<status.size(); j++)
-      for(int i=0; i<status[j].size(); i++)
-        status[j][i] = static_cast<PlotFeatureStatusWidget*>(widget)->status[j][i];
+    QTreeWidget *tree = static_cast<PlotFeatureStatusWidget*>(widget)->tree;
+    type.clear();
+    value.clear();
+    for(int i=0; i<tree->topLevelItemCount(); i++) {
+      type.push_back(tree->topLevelItem(i)->text(0).toStdString());
+      value.push_back(tree->topLevelItem(i)->text(1).toStdString());
+    }
   }
 
   void PlotFeatureStatusProperty::toWidget(QWidget *widget) {
-    for(int j=0; j<status.size(); j++)
-      for(int i=0; i<status[j].size(); i++)
-        static_cast<PlotFeatureStatusWidget*>(widget)->status[j][i] = status[j][i];
+    QTreeWidget *tree = static_cast<PlotFeatureStatusWidget*>(widget)->tree;
+    tree->clear();
+    for(int i=0; i<type.size(); i++) {
+      QTreeWidgetItem *item = new QTreeWidgetItem;
+      item->setText(0, QString::fromStdString(type[i]));
+      item->setText(1, QString::fromStdString(value[i]));
+      tree->addTopLevelItem(item);
+    }
   }
 
 }
