@@ -30,6 +30,7 @@ class QCheckBox;
 class QStackedWidget;
 class QListWidget;
 class QTreeWidget;
+class QTreeWidgetItem;
  
 namespace MBSimGUI {
 
@@ -465,6 +466,7 @@ namespace MBSimGUI {
       void addFeature();
       void removeFeature();
       void updateFeature();
+      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
   };
 
 }
