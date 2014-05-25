@@ -422,7 +422,7 @@ namespace MBSimGUI {
       fileProject=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       MBSimObjectFactory::initialize();
-      shared_ptr<DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
+      shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
       DOMElement *e=doc->getDocumentElement();
       DOMElement *ele0=doc->getDocumentElement();
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
@@ -493,7 +493,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* MainWindow::writeProject(shared_ptr<DOMDocument> &doc) {
+  DOMElement* MainWindow::writeProject(shared_ptr<xercesc::DOMDocument> &doc) {
     DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
     doc->insertBefore(ele0, NULL);
     E(ele0)->setAttribute("name", "Project");
@@ -513,7 +513,7 @@ namespace MBSimGUI {
   }
 
  void MainWindow::saveProject(const QString &fileName) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
     DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
   }
@@ -581,7 +581,7 @@ namespace MBSimGUI {
   void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
     // write model paramters to XML structure
     //DOMElement *ele0=NULL;
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
     doc->insertBefore(ele0, NULL);
     DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename", X()%"/tmp/test.xml");
@@ -687,7 +687,7 @@ namespace MBSimGUI {
     if(task==1 and OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
       static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
 
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     writeProject(doc);
     slv->setName(saveName);
     absolutePath = false;
