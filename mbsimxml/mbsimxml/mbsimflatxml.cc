@@ -15,6 +15,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/algorithm/string.hpp>
 
 #ifndef _WIN32
 #  include <dlfcn.h>
@@ -126,6 +127,24 @@ void loadPlugins() {
 
 namespace MBSim {
 
+int PrefixedStringBuf::sync() {
+  // split current buffer into lines
+  vector<string> line;
+  string full=str();
+  boost::split(line, full, boost::is_from_range('\n', '\n'));
+  // clear the current buffer
+  str("");
+  // print each line prefixed with prefix to outstr
+  for(vector<string>::iterator it=line.begin(); it!=line.end(); ++it)
+    if(it!=--line.end())
+      outstr<<prefix<<*it<<"\n";
+    else
+      if(*it!="")
+        outstr<<prefix<<*it;
+  outstr<<flush;
+  return 0;
+}
+
 int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator) {
 
   // help
@@ -153,6 +172,12 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
   int startArg=1;
   if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
+
+  // setup message streams
+  static PrefixedStringBuf infoBuf("Info:    ", cout);
+  static PrefixedStringBuf warnBuf("Warning: ", cerr);
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<ostream>(&infoBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&warnBuf));
 
   loadPlugins();
 
