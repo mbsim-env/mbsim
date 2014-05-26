@@ -345,10 +345,13 @@ namespace MBSimGUI {
   }
 
   int NestedFunctionWidget::getArg1Size() const {
+    cout << "NestedFunctionWidget::getArg1Size() not yet implemented" << endl;
+    return 0;
     // return ext[2]=='V'?static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fi->getWidget())->getWidget())->getArg1Size():0;
   }
 
   void NestedFunctionWidget::resizeVariables() {
+    cout << "NestedFunctionWidget::resizeVariables() not yet implemented" << endl;
     // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
   }
@@ -469,6 +472,7 @@ namespace MBSimGUI {
     type->addItem("cSplinePeriodic");
     type->addItem("cSplineNatural");
     type->addItem("piecewiseLinear");
+    type->setCurrentIndex(1);
     layout->addWidget(type);
   }
 
