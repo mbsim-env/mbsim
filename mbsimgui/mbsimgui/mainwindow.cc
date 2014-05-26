@@ -61,6 +61,7 @@ namespace MBSimGUI {
 
   shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(true);
   OctEval *MainWindow::octEval=NULL;
+  vector<boost::filesystem::path> dependencies;
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
@@ -90,10 +91,11 @@ namespace MBSimGUI {
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
-    octEval=new MBXMLUtils::OctEval;
+    octEval=new MBXMLUtils::OctEval(&dependencies);
     octEvalParamLevel=new NewParamLevel(*octEval);
 
     mbsimThread->setOctEval(octEval);
+    mbsimThread->setDependencies(dependencies);
 
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
