@@ -79,9 +79,9 @@ namespace MBSimGUI {
 //    return ele0;
   }
 
-  ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
+  ScalarParameter::ScalarParameter(const string &name, const string &value_) : Parameter(name) {
 
-    value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0","",vector<string>(2,"")),"",5));
+    value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory(value_,"",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
   }
 
@@ -166,49 +166,6 @@ namespace MBSimGUI {
   //  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   //  val->writeXMLFile(ele0);
     return ele0;
-  }
-
-  void ParameterList::addParameter(const string &name_, const string &value_, const string &type_) {
-    name.push_back(name_); 
-    value.push_back(value_);
-    type.push_back(type_);
-  }
-
-  void ParameterList::addParameterList(const ParameterList &list) {
-    for(int i=0; i<list.getSize(); i++)
-      addParameter(list.name[i],list.value[i],list.type[i]);
-  }
-
-  bool ParameterList::readXMLFile(const string &filename) {
-    MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
-    DOMElement *e=doc->getDocumentElement();
-    DOMElement *E=e->getFirstElementChild();
-    vector<QString> refFrame;
-    while(E) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-      parameter->initializeUsingXML(E);
-      addParameter(parameter->getName(),parameter->getValue(),parameter->getType());
-      delete parameter;
-      E=E->getNextElementSibling();
-    }
-    return true;
-  }
-
-  DOMElement* ParameterList::writeXMLFile(DOMNode *parent) const {
-    DOMDocument *doc=parent->getOwnerDocument();
-    for(int i=0; i<getSize(); i++) {
-      DOMElement *p=D(doc)->createElement(PARAM%type[i]);
-      parent->insertBefore(p, NULL);
-      if(type[i]=="searchPath") {
-        E(p)->setAttribute("href", value[i]);
-      }
-      else {
-      E(p)->setAttribute("name", name[i]);
-      DOMText *t=doc->createTextNode(X()%value[i]);
-      p->insertBefore(t, NULL);
-      }
-    }
   }
 
   void Parameters::addParameters(const Parameters &list) {

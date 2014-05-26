@@ -578,16 +578,28 @@ namespace MBSimGUI {
   }
 
   // update model parameters including additional paramters from paramList
-  void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
-    // write model paramters to XML structure
-    //DOMElement *ele0=NULL;
+  void MainWindow::updateOctaveParameters(Element *element) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    DOMElement *ele0=D(doc)->createElement(PARAM%string("Parameter"));
-    doc->insertBefore(ele0, NULL);
-    DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename", X()%"/tmp/test.xml");
-    ele0->insertBefore(filenamePI, ele0->getFirstChild());
+    vector<Element*> parents = element->getParents();
+    Parameters param;
+    for(int i=0; i<parents.size(); i++)
+      param.addParameters(parents[i]->getParameters());
+    param.addParameters(element->getParameters());
+    string counterName = element->getCounterName();
+    ScalarParameter *counter = NULL;
+    if(not(counterName.empty())) {
+      counter = new ScalarParameter(counterName,"1");
+      param.addParameter(counter);
+    }
+    param.writeXMLFile(doc.get());
+    if(counter) delete counter;
 
-    paramList.writeXMLFile(ele0);
+    DOMElement *root = doc->getDocumentElement();
+    if(!E(root)->getFirstProcessingInstructionChildNamed("OriginalFilename")) {
+      DOMProcessingInstruction *filenamePI=doc->createProcessingInstruction(X()%"OriginalFilename",
+          X()%"MBS.mbsimparam.xml");
+      root->insertBefore(filenamePI, root->getFirstChild());
+    }
 
     try {
       D(doc)->validate();

@@ -209,27 +209,11 @@ namespace MBSimGUI {
     }
   }
 
-  ParameterList Element::getParameterList(bool addCounter) {
-    ParameterList list;
+  string Element::getCounterName() const {
     const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
-    if(parent)
-      list.addParameterList(parent->getParameterList(false));
-    for(int i=0; i<getNumberOfParameters(); i++)
-      list.addParameter(getParameter(i)->getName(),getParameter(i)->getValue(),getParameter(i)->getType()); 
-    if(addCounter && e->hasCounter())
-      list.addParameter(e->getCounterName(),"1","scalarParameter"); 
-    return list;
-  }
-
-  Parameters Element::getGlobalParameters(bool addCounter) const {
-    Parameters list;
-    const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
-    if(parent)
-      list.addParameters(parent->getGlobalParameters(false));
-    list.addParameters(parameters);
-//    if(addCounter && e->hasCounter())
-//      list.addParameter(e->getCounterName(),"1","scalarParameter"); 
-    return list;
+    if(e->hasCounter())
+      return e->getCounterName();
+    return "";
   }
 
   vector<Element*> Element::getParents() {

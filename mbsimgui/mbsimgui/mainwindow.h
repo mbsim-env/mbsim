@@ -50,6 +50,7 @@ namespace MBSimGUI {
   class ElementView;
   class EmbeddingView;
   class IntegratorView;
+  class Element;
   class Frame;
   class Contour;
   class Group;
@@ -130,7 +131,7 @@ namespace MBSimGUI {
       void h5plotserie();
       void help();
       void about();
-      void updateOctaveParameters(const ParameterList &list);
+      void updateOctaveParameters(Element *element);
       void removeElement();
       void saveElementAs();
     protected slots:
