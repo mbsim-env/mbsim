@@ -773,6 +773,10 @@ namespace MBSimGUI {
     return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
   }
 
+  QWidget* FromFileWidget::getValidatedWidget() const {
+    return new MatWidget(strToMat(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())))));
+  }
+
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,4) {
     name[0] = "Boolean";
     name[1] = "Editor";

@@ -372,6 +372,7 @@ signals:
     QString getFile() const {return relativeFilePath->text();}
     void setFile(const QString &str);
     virtual QString getType() const {return "File";}
+    virtual QWidget* getValidatedWidget() const;
 
     protected:
     QLineEdit *relativeFilePath;
