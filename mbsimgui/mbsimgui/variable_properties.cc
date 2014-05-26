@@ -400,7 +400,7 @@ namespace MBSimGUI {
   }
 
   void FromFileProperty::fromWidget(QWidget *widget) {
-    file = static_cast<FromFileWidget*>(widget)->getFile().toStdString();
+    setFile(static_cast<FromFileWidget*>(widget)->getFile().toStdString());
   }
 
   void FromFileProperty::toWidget(QWidget *widget) {
