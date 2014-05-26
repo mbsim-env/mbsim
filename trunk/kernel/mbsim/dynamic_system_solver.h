@@ -491,12 +491,6 @@ namespace MBSim {
        */
       void setLaTol(double tol) {LaTol = tol; Group::setLaTol(tol);}
 
-
-      /**
-       * \param decide, whether information should be printed on standard output.
-       */
-      void setInformationOutput(bool INFO_) { INFO = INFO_; }
-
       /**
        * \brief references to external state
        * \param external state
@@ -805,11 +799,6 @@ namespace MBSim {
        * \brief boolean signal evaluation for end integration set by user
        */
       static bool exitRequest;
-
-      /**
-       * \brief information on standard output
-       */
-      bool INFO;
 
       /**
        * \brief is a state read from a file

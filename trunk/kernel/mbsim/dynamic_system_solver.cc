@@ -68,12 +68,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
   DynamicSystemSolver::DynamicSystemSolver() :
-      Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), INFO(true), READZ0(false), truncateSimulationFiles(true) {
+      Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
   DynamicSystemSolver::DynamicSystemSolver(const string &projectName) :
-      Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), INFO(true), READZ0(false), truncateSimulationFiles(true) {
+      Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
@@ -107,18 +107,15 @@ namespace MBSim {
     signal(SIGABRT, sigAbortHandler);
 #endif
     for (int stage = 0; stage < MBSim::LASTINITSTAGE; stage++) {
-      if (INFO)
-        cout << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
+      msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage);
-      if (INFO)
-        cout << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
+      msg(Info) << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
     }
   }
 
   void DynamicSystemSolver::init(InitStage stage) {
     if (stage == MBSim::reorganizeHierarchy && reorganizeHierarchy) {
-      if (INFO)
-        cout << name << " (special group) stage==preInit:" << endl;
+      msg(Info) << name << " (special group) stage==preInit:" << endl;
 
       vector<Object*> objList;
       buildListOfObjects(objList);
@@ -152,62 +149,50 @@ namespace MBSim {
       clearElementLists();
 
       /* rename system structure */
-      if (INFO)
-        cout << "object List:" << endl;
+      msg(Info) << "object List:" << endl;
       for (unsigned int i = 0; i < objList.size(); i++) {
         stringstream str;
         str << objList[i]->getPath('/');
-        if (INFO)
-          cout << str.str() << endl;
+        msg(Info) << str.str() << endl;
         objList[i]->setName(str.str());
       }
-      if (INFO)
-        cout << "frame List:" << endl;
+      msg(Info) << "frame List:" << endl;
       for (unsigned int i = 0; i < frmList.size(); i++) {
         stringstream str;
         str << frmList[i]->getParent()->getPath('/') << "/" << frmList[i]->getName();
-        if (INFO)
-          cout << str.str() << endl;
+        msg(Info) << str.str() << endl;
         frmList[i]->setName(str.str());
         addFrame((FixedRelativeFrame*) frmList[i]);
       }
-      if (INFO)
-        cout << "contour List:" << endl;
+      msg(Info) << "contour List:" << endl;
       for (unsigned int i = 0; i < cntList.size(); i++) {
         stringstream str;
         str << cntList[i]->getParent()->getPath('/') << "/" << cntList[i]->getName();
-        if (INFO)
-          cout << str.str() << endl;
+        msg(Info) << str.str() << endl;
         cntList[i]->setName(str.str());
         addContour(cntList[i]);
       }
-      if (INFO)
-        cout << "link List:" << endl;
+      msg(Info) << "link List:" << endl;
       for (unsigned int i = 0; i < lnkList.size(); i++) {
         stringstream str;
         str << lnkList[i]->getParent()->getPath('/') << "/" << lnkList[i]->getName();
-        if (INFO)
-          cout << str.str() << endl;
+        msg(Info) << str.str() << endl;
         lnkList[i]->setName(str.str());
         addLink(lnkList[i]);
       }
-      if (INFO)
-        cout << "inverse kinetics link List:" << endl;
+      msg(Info) << "inverse kinetics link List:" << endl;
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
         stringstream str;
         str << iKlnkList[i]->getParent()->getPath('/') << "/" << iKlnkList[i]->getName();
-        if (INFO)
-          cout << str.str() << endl;
+        msg(Info) << str.str() << endl;
         iKlnkList[i]->setName(str.str());
         addInverseKineticsLink(iKlnkList[i]);
       }
-      if (INFO)
-        cout << "observer List:" << endl;
+      msg(Info) << "observer List:" << endl;
       for (unsigned int i = 0; i < obsrvList.size(); i++) {
         stringstream str;
         str << obsrvList[i]->getParent()->getPath('/') << "/" << obsrvList[i]->getName();
-        if (INFO)
-          cout << str.str() << endl;
+        msg(Info) << str.str() << endl;
         obsrvList[i]->setName(str.str());
         addObserver(obsrvList[i]);
       }
@@ -237,7 +222,7 @@ namespace MBSim {
           }
         }
       }
-      // if(INFO) cout << "A = " << A << endl;
+      // msg(Info) << "A = " << A << endl;
 
       vector<Graph*> bufGraph;
       int nt = 0;
@@ -254,14 +239,13 @@ namespace MBSim {
         else if (fabs(a) < epsroot()) // absolut kinematics
           addObject(objList[i]);
       }
-      // if(INFO) cout << "A = " << A << endl;
+      // msg(Info) << "A = " << A << endl;
 
       for (unsigned int i = 0; i < bufGraph.size(); i++) {
         addGroup(bufGraph[i]);
       }
 
-      if (INFO)
-        cout << "End of special group stage==preInit" << endl;
+      msg(Info) << "End of special group stage==preInit" << endl;
 
       // after reorganizing a resize is required
       init(resize);
@@ -297,31 +281,19 @@ namespace MBSim {
       calcLinkStatusSize();
       calcLinkStatusRegSize();
 
-      if (INFO)
-        cout << "qSize = " << qSize << endl;
-      if (INFO)
-        cout << "uSize[0] = " << uSize[0] << endl;
-      if (INFO)
-        cout << "xSize = " << xSize << endl;
-      if (INFO)
-        cout << "gSize = " << gSize << endl;
-      if (INFO)
-        cout << "gdSize = " << gdSize << endl;
-      if (INFO)
-        cout << "laSize = " << laSize << endl;
-      if (INFO)
-        cout << "svSize = " << svSize << endl;
-      if (INFO)
-        cout << "LinkStatusSize = " << LinkStatusSize << endl;
-      if (INFO)
-        cout << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
-      if (INFO)
-        cout << "hSize[0] = " << hSize[0] << endl;
+      msg(Info) << "qSize = " << qSize << endl;
+      msg(Info) << "uSize[0] = " << uSize[0] << endl;
+      msg(Info) << "xSize = " << xSize << endl;
+      msg(Info) << "gSize = " << gSize << endl;
+      msg(Info) << "gdSize = " << gdSize << endl;
+      msg(Info) << "laSize = " << laSize << endl;
+      msg(Info) << "svSize = " << svSize << endl;
+      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
+      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
+      msg(Info) << "hSize[0] = " << hSize[0] << endl;
 
-      if (INFO)
-        cout << "uSize[1] = " << uSize[1] << endl;
-      if (INFO)
-        cout << "hSize[1] = " << hSize[1] << endl;
+      msg(Info) << "uSize[1] = " << uSize[1] << endl;
+      msg(Info) << "hSize[1] = " << hSize[1] << endl;
 
       Group::init(stage);
     }
@@ -404,64 +376,58 @@ namespace MBSim {
       updaterFactorRef(rFactorParent);
 
       // contact solver specific settings
-      if (INFO)
-        cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
+      msg(Info) << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
       if (contactSolver == GaussSeidel)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel;
       else if (contactSolver == LinearEquations) {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
-        cerr << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+        msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if (contactSolver == FixedPointSingle)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
       else if (contactSolver == RootFinding) {
-        cerr << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl;
+        msg(Warn) << "RootFinding solver is BUGGY at least if there is friction!" << endl;
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
       }
       else
         throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
-      if (INFO)
-        cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
+      msg(Info) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
       if (impactSolver == GaussSeidel)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel;
       else if (impactSolver == LinearEquations) {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
-        cerr << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+        msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if (impactSolver == FixedPointSingle)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
       else if (impactSolver == RootFinding) {
-        cerr << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl;
+        msg(Warn) << "RootFinding solver is BUGGY at least if there is friction!" << endl;
         solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
       }
       else
         throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
     }
     else if (stage == MBSim::modelBuildup) {
-      if (INFO)
-        cout << "  initialising modelBuildup ..." << endl;
+      msg(Info) << "  initialising modelBuildup ..." << endl;
       Group::init(stage);
       setDynamicSystemSolver(this);
     }
     else if (stage == MBSim::preInit) {
-      if (INFO)
-        cout << "  initialising preInit ..." << endl;
+      msg(Info) << "  initialising preInit ..." << endl;
       Group::init(stage);
       if (inverseKinetics)
         setUpInverseKinetics();
     }
     else if (stage == MBSim::plot) {
-      if (INFO)
-        cout << "  initialising plot-files ..." << endl;
+      msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (getPlotFeature(plotRecursive) == enabled)
         openMBVGrp->write(true, truncateSimulationFiles);
 #endif
-      if (INFO)
-        cout << "...... done initialising." << endl << endl;
+      msg(Info) << "...... done initialising." << endl << endl;
     }
     else if (stage == MBSim::calculateLocalInitialValues) {
       Group::initz();
@@ -488,9 +454,9 @@ namespace MBSim {
       if (level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
         if (warnLevel >= 2)
-          cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+          msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -520,9 +486,9 @@ namespace MBSim {
       if (level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
         if (warnLevel >= 2)
-          cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+          msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle(dt);
@@ -829,7 +795,7 @@ namespace MBSim {
     updateh(t);
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
-      //cout << "bin bei i=" << i << endl;
+      //msg(Info) << "bin bei i=" << i << endl;
       double utmp = u(i);
       u(i) += delta;
       updateStateDependentVariables(t);
@@ -866,13 +832,13 @@ namespace MBSim {
     Group::updateStateDependentVariables(t);
 
     if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
-      cout << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
+      msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
       H5::FileSerie::deletePIDFiles();
       _exit(1);
     }
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
-      cout << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
+      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
       H5::FileSerie::flushAllFiles();
       integratorExitRequest = true;
     }
@@ -920,22 +886,19 @@ namespace MBSim {
     laOld << la;
     iter = (this->*solveConstraints_)(); // solver election
     if (iter >= maxIter) {
-      if (INFO) {
-        cerr << endl;
-        cerr << "Iterations: " << iter << endl;
-        cerr << "\nError: no convergence." << endl;
-      }
+      msg(Warn) << "\n";
+      msg(Warn) << "Iterations: " << iter << "\n";
+      msg(Warn) << "\nError: no convergence." << endl;
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
         throw MBSimError("Maximal Number of Iterations reached");
       }
-      if (INFO)
-        cerr << "Anyway, continuing integration..." << endl;
+      msg(Warn) << "Anyway, continuing integration..." << endl;
     }
 
     if (warnLevel >= 1 && iter > highIter)
-      cerr << endl << "Warning: high number of iterations: " << iter << endl;
+      msg(Warn) << endl << "high number of iterations: " << iter << endl;
 
     if (useOldla)
       savela();
@@ -960,22 +923,19 @@ namespace MBSim {
     laOld << la;
     iter = (this->*solveImpacts_)(dt); // solver election
     if (iter >= maxIter) {
-      if (INFO) {
-        cerr << endl;
-        cerr << "Iterations: " << iter << endl;
-        cerr << "\nError: no convergence." << endl;
-      }
+      msg(Warn) << "\n";
+      msg(Warn) << "Iterations: " << iter << "\n";
+      msg(Warn) << "\nError: no convergence." << endl;
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
         throw MBSimError("Maximal Number of Iterations reached");
       }
-      if (INFO)
-        cerr << "Anyway, continuing integration..." << endl;
+      msg(Warn) << "Anyway, continuing integration..." << endl;
     }
 
     if (warnLevel >= 1 && iter > highIter)
-      cerr << endl << "Warning: high number of iterations: " << iter << endl;
+      msg(Warn) << "high number of iterations: " << iter << endl;
 
     if (useOldla)
       savela(H);
@@ -1069,7 +1029,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::update(const Vec &zParent, double t, int options) {
-    //cout << "update at t = " << t << endl;
+    //msg(Info) << "update at t = " << t << endl;
     if (q() != zParent())
       updatezRef(zParent);
 
@@ -1166,7 +1126,7 @@ namespace MBSim {
     int iter = 0;
     while (nrmInf(g - corr) >= tolProj) {
       if (++iter > 500 && min(g) > 0) {
-        cout << "---------------------- breche ab ------------------" << endl;
+        msg(Info) << "---------------------- breche ab ------------------" << endl;
         break;
       }
       Vec mu = slvLS(Gv, -g + W[0].T() * nu + corr);
@@ -1328,7 +1288,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::dropContactMatrices() {
-    cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
+    msg(Info) << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");
 
     contactDrop << "constraint functions g" << endl << g << endl << endl;
@@ -1347,12 +1307,12 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
-    cout << "MBSim: Received user interrupt or terminate signal!" << endl;
+    msgStatic(Info) << "MBSim: Received user interrupt or terminate signal!" << endl;
     exitRequest = true;
   }
 
   void DynamicSystemSolver::sigAbortHandler(int) {
-    cout << "MBSim: Received abort signal! Flushing HDF5 files and abort!" << endl;
+    msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files and abort!" << endl;
     H5::FileSerie::flushAllFiles();
   }
 
@@ -1621,7 +1581,7 @@ namespace MBSim {
     int maxj = getRootID();
     if (maxj == 3) { // impact (velocity jump)
       checkActive(6); // decide which contacts have closed
-      //cout << "stoss" << endl;
+      //msg(Info) << "stoss" << endl;
 
       calcgdSize(1); // IG
       updategdRef(gdParent(0, gdSize - 1));
@@ -1690,7 +1650,7 @@ namespace MBSim {
       }
     }
     else if (maxj == 2) { // transition from slip to stick (acceleration jump)
-      //cout << "haften" << endl;
+      //msg(Info) << "haften" << endl;
       checkActive(7); // decide which contacts may stick
 
       calclaSize(3); // IH
