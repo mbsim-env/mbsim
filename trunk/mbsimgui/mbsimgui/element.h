@@ -111,14 +111,13 @@ namespace MBSimGUI {
     virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
-    ParameterList getParameterList(bool addCounter=true);
     int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }
     void addParameter(Parameter *param) { parameters.addParameter(param); embed.setActive(true); }
     void removeParameter(Parameter *param) { parameters.removeParameter(param); }
     Parameter *getParameter(int i) { return parameters.getParameter(i); }
     void setParameters(const Parameters &param) { parameters = param; }
     const Parameters& getParameters() const { return parameters; }
-    Parameters getGlobalParameters(bool addCounter=true) const; 
+    std::string getCounterName() const;
   };
 
   template<class T>

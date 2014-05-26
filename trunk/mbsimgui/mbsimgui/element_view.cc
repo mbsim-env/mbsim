@@ -35,7 +35,7 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
       if(element) {
-        mw->updateOctaveParameters(element->getParameterList());
+        mw->updateOctaveParameters(element);
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();

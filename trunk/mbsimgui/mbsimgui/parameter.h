@@ -71,7 +71,7 @@ namespace MBSimGUI {
   class ScalarParameter : public Parameter {
     friend class ScalarParameterPropertyDialog;
     public:
-    ScalarParameter(const std::string &name);
+    ScalarParameter(const std::string &name, const std::string &value="0");
     virtual ~ScalarParameter() {}
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -108,19 +108,6 @@ namespace MBSimGUI {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       virtual std::string getType() const { return "searchPath"; }
-  };
-
-  class ParameterList {
-    public:
-      bool readXMLFile(const std::string &filename);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) const;
-      int getSize() const {return name.size();}
-      void addParameter(const std::string &name, const std::string &value, const std::string &type);
-      void addParameterList(const ParameterList &list); 
-      const std::string& getName(int i) const { return name[i]; }
-      const std::string& getValue(int i) const { return value[i]; }
-    private:
-      std::vector<std::string> name, value, type;
   };
 
   class Parameters {
