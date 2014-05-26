@@ -72,6 +72,8 @@ namespace MBSimGUI {
       return new SymbolicFunctionProperty("VS",vector<string>(1,"t"),1);
     if(i==14)
       return new TabularFunctionProperty;
+    if(i==15)
+      return new PiecewisePolynomFunctionProperty;
   }
 
   vector<FQN> FunctionPropertyFactory2::getNames() {
@@ -91,6 +93,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"NestedFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
     return name;
   }
 
@@ -150,6 +153,8 @@ namespace MBSimGUI {
       return new SummationFunctionProperty;
     if(i==6)
       return new PiecewiseDefinedFunctionProperty;
+    if(i==7)
+      return new PiecewisePolynomFunctionProperty;
   }
 
   vector<FQN> TranslationPropertyFactory3::getNames() {
@@ -161,6 +166,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"ScaledFunction");
     name.push_back(MBSIM%"SummationFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
     return name;
   }
 

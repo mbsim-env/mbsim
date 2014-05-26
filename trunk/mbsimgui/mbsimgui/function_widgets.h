@@ -254,6 +254,19 @@ namespace MBSimGUI {
     ExtWidget *x, *y, *xy;
   };
 
+  class PiecewisePolynomFunctionWidget : public FunctionWidget {
+
+    friend class PiecewisePolynomFunctionProperty;
+
+    public:
+    PiecewisePolynomFunctionWidget(int n);
+    void resize_(int m, int n);
+
+    protected:
+    ChoiceWidget2* choice;
+    QComboBox *type;
+  };
+
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
     friend class LinearSpringDamperForceProperty;
