@@ -26,7 +26,6 @@
 #include <mbxmlutils/octeval.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutils/preprocess.h>
-#include <boost/scoped_ptr.hpp>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/integrators/integrator.h"
@@ -168,11 +167,9 @@ namespace MBSimGUI {
 
       D(doc)->validate();
 
-      vector<boost::filesystem::path> dep;
-
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();
-      preprocess(parser, *octEval, dep, mainxmlele);
+      preprocess(parser, *octEval, dependencies, mainxmlele);
     }
     catch(...) {
       errText = "error in preprocess";
