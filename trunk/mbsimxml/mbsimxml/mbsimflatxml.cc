@@ -10,8 +10,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
-#define BOOST_CHRONO_HEADER_ONLY
-#include <boost/chrono.hpp>
+#include <boost/timer/timer.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -190,15 +189,13 @@ void MBSimXML::plotInitialState(Integrator*& integrator, DynamicSystemSolver*& d
 }
 
 void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
-  using namespace boost::chrono;
-
-  process_cpu_clock::time_point cpuStart=process_cpu_clock::now();
+  boost::timer::cpu_timer t;
+  t.start();
 
   integrator->integrate(*dss);
 
-  process_cpu_clock::time_point cpuEnd=process_cpu_clock::now();
-
-  cout<<"Integration CPU times {real,user,system} = "<<duration_cast<duration<process_times<double> > >(cpuEnd-cpuStart)<<endl;
+  t.stop();
+  cout<<"Integration CPU times: "<<t.format()<<endl;
 }
 
 void MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {

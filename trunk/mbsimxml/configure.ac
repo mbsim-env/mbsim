@@ -34,6 +34,10 @@ AC_ARG_WITH([boost-system-lib],
   [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
   [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
 AC_SUBST([BOOST_SYSTEM_LIB])
+AC_ARG_WITH([boost-timer-lib],
+  [  --with-boost-timer-lib=LIBNAME  The library name of boost timer excluding prefix/suffix (Default: boost_timer).],
+  [BOOST_TIMER_LIB="$withval"], [BOOST_TIMER_LIB="boost_timer"])
+AC_SUBST([BOOST_TIMER_LIB])
 
 AC_MSG_CHECKING([for WEXITSTATUS])
 AC_COMPILE_IFELSE([
