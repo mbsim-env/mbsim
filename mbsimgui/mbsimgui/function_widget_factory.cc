@@ -61,6 +61,8 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList("t"),1,1);
     if(i==14)
       return new TabularFunctionWidget(1);
+    if(i==15)
+      return new PiecewisePolynomFunctionWidget(1);
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -80,6 +82,7 @@ namespace MBSimGUI {
     name.push_back("Nested function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
+    name.push_back("Piecewise polynom function");
     return name;
   }
 
@@ -139,6 +142,8 @@ namespace MBSimGUI {
       return new SummationFunctionWidget;
     if(i==6)
       return new PiecewiseDefinedFunctionWidget;
+    if(i==7)
+      return new PiecewisePolynomFunctionWidget(1);
   }
 
   vector<QString> TranslationWidgetFactory3::getNames() {
@@ -150,6 +155,7 @@ namespace MBSimGUI {
     name.push_back("Scaled function");
     name.push_back("Summation function");
     name.push_back("Piecewise defined function");
+    name.push_back("Piecewise polynom function");
     return name;
   }
 

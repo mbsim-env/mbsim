@@ -276,6 +276,21 @@ namespace MBSimGUI {
       ExtProperty x, y ,xy;
   };
 
+  class PiecewisePolynomFunctionProperty : public FunctionProperty {
+    public:
+      PiecewisePolynomFunctionProperty();
+      virtual Property* clone() const {return new PiecewisePolynomFunctionProperty(*this);}
+      inline std::string getType() const { return "PiecewisePolynomFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ChoiceProperty2 choice;
+      std::string type;
+  };
+
   class LinearSpringDamperForceProperty : public FunctionProperty {
     public:
       LinearSpringDamperForceProperty();
