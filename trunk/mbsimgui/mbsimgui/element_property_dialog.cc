@@ -889,7 +889,6 @@ namespace MBSimGUI {
 
   void KineticExcitationPropertyDialog::resizeVariables() {
     int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
-    cout << size << endl;
     static_cast<ChoiceWidget2*>(forceFunction->getWidget())->resize_(size,1);
   }
 
