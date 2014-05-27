@@ -83,7 +83,7 @@ namespace MBSimGUI {
   QString Process::convertToHtml(QString &text) {
     // the following operations modify the original text
 
-#ifdef WIN32
+#ifdef _WIN32
     // convert windows line ending to linux line ending (they are later replaced to html line ending)
     text.replace("\x0D\x0A", "\x0A");
 #endif
@@ -146,7 +146,11 @@ namespace MBSimGUI {
 
   void Process::interrupt() {
     errText="Simulation interrupted";
+#ifdef _WIN32
+    process->kill();
+#else
     process->terminate();
+#endif
   }
   
   void Process::preprocessFailed(const QString& errText_) {
