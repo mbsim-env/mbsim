@@ -187,14 +187,14 @@ namespace MBSimGUI {
     friend class NestedFunctionProperty;
 
     public:
-    //    NestedFunctionWidget(const QString &ext, const std::vector<QWidget*> &widget, const std::vector<QString> &name);
     NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
     int getArg1Size() const;
+    void resize_(int m, int n);
     protected:
     QString ext;
     ExtWidget *fo, *fi;
     public slots:
-      void resizeVariables();
+    void resizeVariables();
   };
 
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
