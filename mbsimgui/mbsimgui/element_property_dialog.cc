@@ -448,7 +448,6 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
     static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
     static_cast<RigidBody*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
-    //resizeVariables();
   }
 
   void RigidBodyPropertyDialog::fromWidget(Element *element) {
@@ -472,12 +471,18 @@ namespace MBSimGUI {
     if(translation->isActive()) {
       ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
       ChoiceWidget2 *trans = static_cast<ChoiceWidget2*>(extWidget->getWidget());
-      nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()==1)
+        nqT = 0;
+      else
+        nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
     }
     if(rotation->isActive()) {
       ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget());
       ChoiceWidget2 *rot = static_cast<ChoiceWidget2*>(extWidget->getWidget());
-      nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()==1)
+        nqR = 0;
+      else
+        nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
     }
     int nq = nqT + nqR;
     return nq;
@@ -489,14 +494,14 @@ namespace MBSimGUI {
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  body->isConstrained() ? 0 : getqRelSize();
-    ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(q0->getWidget());
-    choice->resize_(size,1);
-  }
+    q0->resize_(size,1);
+    translation->resize_(3,1);
+    rotation->resize_(3,1);
+    }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  body->isConstrained() ? 0 : getuRelSize();
-    ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(u0->getWidget());
-    choice->resize_(size,1);
+    u0->resize_(size,1);
   }
 
   ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {
@@ -593,7 +598,7 @@ namespace MBSimGUI {
   void GeneralizedPositionConstraintPropertyDialog::resizeVariables() {
     RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
     int size = refBody?refBody->getqRelSize():0;
-    static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
+    constraintFunction->resize_(size,1);
   }
 
   void GeneralizedPositionConstraintPropertyDialog::toWidget(Element *element) {
@@ -625,12 +630,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
-    //RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
-    //int size = refBody?refBody->getqRelSize():0;
-    //((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
-    //if(x0_ && x0_->size() != size)
-    //  x0_->resize_(size);
-    //static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+    cout << "GeneralizedVelocityConstraintPropertyDialog::resizeVariables() not yet implemented" << endl;
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::toWidget(Element *element) {
@@ -889,7 +889,7 @@ namespace MBSimGUI {
 
   void KineticExcitationPropertyDialog::resizeVariables() {
     int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
-    static_cast<ChoiceWidget2*>(forceFunction->getWidget())->resize_(size,1);
+    forceFunction->resize_(size,1);
   }
 
   void KineticExcitationPropertyDialog::toWidget(Element *element) {
