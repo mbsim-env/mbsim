@@ -345,15 +345,18 @@ namespace MBSimGUI {
   }
 
   int NestedFunctionWidget::getArg1Size() const {
-    cout << "NestedFunctionWidget::getArg1Size() not yet implemented" << endl;
-    return 0;
-    // return ext[2]=='V'?static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fi->getWidget())->getWidget())->getArg1Size():0;
+    return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi->getWidget())->getWidget())->getArg1Size();
   }
 
   void NestedFunctionWidget::resizeVariables() {
     cout << "NestedFunctionWidget::resizeVariables() not yet implemented" << endl;
     // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
+  }
+
+  void NestedFunctionWidget::resize_(int m, int n) {
+    static_cast<ChoiceWidget2*>(fo->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
   PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(int n) {

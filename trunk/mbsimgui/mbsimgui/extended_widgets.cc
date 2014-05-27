@@ -114,26 +114,6 @@ namespace MBSimGUI {
     connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
   }
 
-  void ChoiceWidget2::resize_(int m, int n) {
-    dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
-  }
-
-  void ChoiceWidget2::updateWidget() {
-    dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
-  }
-
-  QWidget* ChoiceWidget2::getWidget() const {
-    return widget;
-  }
-
-  QString ChoiceWidget2::getName() const {
-    return comboBox->currentText();
-  }
-
-  int ChoiceWidget2::getIndex() const {
-    return comboBox->currentIndex();
-  }
-
   void ChoiceWidget2::defineWidget(int index) {
     layout->removeWidget(widget);
     delete widget;
