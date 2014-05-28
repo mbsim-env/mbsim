@@ -288,7 +288,7 @@ namespace MBSimGUI {
 
     protected:
       ChoiceProperty2 choice;
-      std::string type;
+      ExtProperty method;
   };
 
   class LinearSpringDamperForceProperty : public FunctionProperty {

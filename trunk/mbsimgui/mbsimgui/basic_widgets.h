@@ -329,9 +329,14 @@ namespace MBSimGUI {
   class TextChoiceWidget : public BasicTextWidget {
 
     public:
-      TextChoiceWidget(const std::vector<QString> &list, int num);
+      TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false);
       QString getText() const {return text->currentText();}
-      void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
+      void setText(const QString &str) {
+        if(text->isEditable())
+          text->setEditText(str);
+        else
+          text->setCurrentIndex(text->findText(str));
+      }
 
     protected:
       QComboBox *text;

@@ -264,7 +264,7 @@ namespace MBSimGUI {
 
     protected:
     ChoiceWidget2* choice;
-    QComboBox *type;
+    ExtWidget *method;
   };
 
   class LinearSpringDamperForceWidget : public FunctionWidget {
