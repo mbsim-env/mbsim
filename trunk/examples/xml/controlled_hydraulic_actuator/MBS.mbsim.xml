@@ -56,12 +56,8 @@
     </HydraulicEnvironment>
   </environments>
   <solverParameters>
-    <constraintSolver>
-      <FixedPointSingle/>
-    </constraintSolver>
-    <impactSolver>
-      <FixedPointSingle/>
-    </impactSolver>
+    <constraintSolver>"FixedPointSingle"</constraintSolver>
+    <impactSolver>"FixedPointSingle"</impactSolver>
     <numberOfMaximalIterations>100000</numberOfMaximalIterations>
   </solverParameters>
 </DynamicSystemSolver>
