@@ -1430,29 +1430,25 @@ namespace MBSim {
       DOMElement * ee;
       ee = E(e)->getFirstElementChildNamed(MBSIM%"constraintSolver");
       if (ee) {
-        if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointTotal"))
-          setConstraintSolver(FixedPointTotal);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointSingle"))
-          setConstraintSolver(FixedPointSingle);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"GaussSeidel"))
-          setConstraintSolver(GaussSeidel);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"LinearEquations"))
-          setConstraintSolver(LinearEquations);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"RootFinding"))
-          setConstraintSolver(RootFinding);
+        Solver solver=FixedPointSingle;
+        std::string str=MBXMLUtils::X()%MBXMLUtils::E(ee)->getFirstTextChild()->getData();
+        if(str=="\"FixedPointTotal\"") solver=FixedPointTotal;
+        else if(str=="\"FixedPointSingle\"") solver=FixedPointSingle;
+        else if(str=="\"GaussSeidel\"") solver=GaussSeidel;
+        else if(str=="\"LinearEquations\"") solver=LinearEquations;
+        else if(str=="\"RootFinding\"") solver=RootFinding;
+        setConstraintSolver(solver);
       }
       ee = E(e)->getFirstElementChildNamed(MBSIM%"impactSolver");
       if (ee) {
-        if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointTotal"))
-          setImpactSolver(FixedPointTotal);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"FixedPointSingle"))
-          setImpactSolver(FixedPointSingle);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"GaussSeidel"))
-          setImpactSolver(GaussSeidel);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"LinearEquations"))
-          setImpactSolver(LinearEquations);
-        else if (E(ee)->getFirstElementChildNamed(MBSIM%"RootFinding"))
-          setImpactSolver(RootFinding);
+        Solver solver=FixedPointSingle;
+        std::string str=MBXMLUtils::X()%MBXMLUtils::E(ee)->getFirstTextChild()->getData();
+        if(str=="\"FixedPointTotal\"") solver=FixedPointTotal;
+        else if(str=="\"FixedPointSingle\"") solver=FixedPointSingle;
+        else if(str=="\"GaussSeidel\"") solver=GaussSeidel;
+        else if(str=="\"LinearEquations\"") solver=LinearEquations;
+        else if(str=="\"RootFinding\"") solver=RootFinding;
+        setImpactSolver(solver);
       }
       ee = E(e)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
       if (ee)
