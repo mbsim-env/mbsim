@@ -494,8 +494,9 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num) { 
+  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) { 
     text = new QComboBox;
+    text->setEditable(editable);
     for(unsigned int i=0; i<list.size(); i++)
       text->addItem(list[i]);
     text->setCurrentIndex(num);

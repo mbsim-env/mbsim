@@ -470,13 +470,12 @@ namespace MBSimGUI {
     choice = new ChoiceWidget2(new TabularFunctionWidgetFactory);
     layout->addWidget(choice);
 
-    type = new QComboBox;
-    type->setEditable(true);
-    type->addItem("cSplinePeriodic");
-    type->addItem("cSplineNatural");
-    type->addItem("piecewiseLinear");
-    type->setCurrentIndex(1);
-    layout->addWidget(type);
+    vector<QString> list;
+    list.push_back("\"cSplinePeriodic\"");
+    list.push_back("\"cSplineNatural\"");
+    list.push_back("\"piecewiseLinear\"");
+    method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true);
+    layout->addWidget(method);
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {

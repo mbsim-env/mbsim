@@ -656,33 +656,33 @@ namespace MBSimGUI {
     xy.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
   }
 
-  PiecewisePolynomFunctionProperty::PiecewisePolynomFunctionProperty() : choice(new TabularFunctionPropertyFactory,"",3), type("cSplineNatural") {
+  PiecewisePolynomFunctionProperty::PiecewisePolynomFunctionProperty() : choice(new TabularFunctionPropertyFactory,"",3), method(0,false) {
+    
+    method.setProperty(new TextProperty("\"cSplineNatural\"", MBSIM%"interpolationMethod"));
+
   }
 
   DOMElement* PiecewisePolynomFunctionProperty::initializeUsingXML(DOMElement *element) {
     choice.initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%type);
-    if(e) type = E(e)->getTagName().second;
+    method.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* PiecewisePolynomFunctionProperty::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
     choice.writeXMLFile(ele0);
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele1 = D(doc)->createElement(MBSIM%type);
-    ele0->insertBefore(ele1, NULL);
+    method.writeXMLFile(ele0);
     return ele0;
   } 
 
   void PiecewisePolynomFunctionProperty::fromWidget(QWidget *widget) {
     choice.fromWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->choice);
-    type = static_cast<PiecewisePolynomFunctionWidget*>(widget)->type->currentText().toStdString();
+    method.fromWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
   void PiecewisePolynomFunctionProperty::toWidget(QWidget *widget) {
     choice.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->choice);
-    static_cast<PiecewisePolynomFunctionWidget*>(widget)->type->setEditText(QString::fromStdString(type));
+    method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
   LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
