@@ -690,8 +690,8 @@ namespace MBSimGUI {
   }
 
   SolverParametersProperty::SolverParametersProperty() : constraintSolver(0,false), impactSolver(0,false), numberOfMaximalIterations(0,false), tolerances(0,false) {
-    constraintSolver.setProperty(new SolverChoiceProperty(MBSIM%"constraintSolver"));
-    impactSolver.setProperty(new SolverChoiceProperty(MBSIM%"impactSolver"));
+    constraintSolver.setProperty(new TextProperty("\"FixedPointSingle\"", MBSIM%"constraintSolver"));
+    impactSolver.setProperty(new TextProperty("\"FixedPointSingle\"", MBSIM%"impactSolver"));
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("10000"), "", MBSIM%"numberOfMaximalIterations"));
