@@ -606,10 +606,15 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    constraintSolver = new ExtWidget("Constraint solver",new SolverChoiceWidget,true);
+    vector<QString> list;
+    list.push_back("\"FixedPointSingle\"");
+    list.push_back("\"GaussSeidel\"");
+    list.push_back("\"LinearEquations\"");
+    list.push_back("\"RootFinding\"");
+    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,1,true),true);
     layout->addWidget(constraintSolver);
 
-    impactSolver = new ExtWidget("Impact solver",new SolverChoiceWidget,true);
+    impactSolver = new ExtWidget("Imapct solver",new TextChoiceWidget(list,1,true),true);
     layout->addWidget(impactSolver);
 
     vector<PhysicalVariableWidget*> input;
