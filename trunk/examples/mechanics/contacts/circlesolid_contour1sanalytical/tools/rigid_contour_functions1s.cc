@@ -147,8 +147,8 @@ FuncCrPC::~FuncCrPC() {
 
 void FuncCrPC::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   Mat angleYZ=ContourXY2angleXY(YZ, 1., rYZ , discretization); 
-  pp_y.setXF(angleYZ.col(0), angleYZ.col(1), "csplinePer");
-  pp_z.setXF(angleYZ.col(0), angleYZ.col(2), "csplinePer");
+  pp_y.setXF(angleYZ.col(0), angleYZ.col(1), PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
+  pp_z.setXF(angleYZ.col(0), angleYZ.col(2), PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
 }   
 
 //void FuncCrPC::init(const double& alpha) {
@@ -321,7 +321,7 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   for (int i=0; i<r.size(); i++)
     r(i)=nrm2(angleYZ(Index(i,i), Index(1,2)));
   pp_r=new PiecewisePolynomFunction<VecV(double)>;
-  pp_r->setXF(angleYZ.col(0), r, "csplinePer");
+  pp_r->setXF(angleYZ.col(0), r, PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
   updateData(1.);
 }   
 
