@@ -599,103 +599,31 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="constraintSolver" minOccurs="0">
+                <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullOctEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Nebenbedingungsgleichungen auf Beschleunigungsebene.
+                      <p>Nebenbedingungsgleichungen auf Beschleunigungsebene.</p>
+                      <dl>
+                        <dt>"FixedPointSingle"</dt> <dd>Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                        <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                        <dt>"LinearEquations"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
+                        <dt>"RootFinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                      </dl>
                     </xs:documentation>
                   </xs:annotation>
-                  <xs:complexType>
-                    <xs:choice>
-                      <!--
-                      <xs:element name="FixedPointTotal">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Jacobi-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: schlechte Konvergenz).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      -->
-                      <xs:element name="FixedPointSingle">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).
-                          </xs:documentation>
-                        </xs:annotation>
-                        <xs:complexType/>
-                      </xs:element>
-                      <xs:element name="GaussSeidel">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="LinearEquations">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="RootFinding">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                    </xs:choice>
-                  </xs:complexType>
                 </xs:element>
-                <xs:element name="impactSolver" minOccurs="0">
+                <xs:element name="impactSolver" minOccurs="0" type="pv:stringFullOctEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Nebenbedingungsgleichungen auf Geschwindigkeitssebene.
+                      <p>Nebenbedingungsgleichungen auf Geschwindigkeitssebene.</p>
+                      <dl>
+                        <dt>"FixedPointSingle"</dt> <dd>Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                        <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                        <dt>"LinearEquations"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
+                        <dt>"RootFinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                      </dl>
                     </xs:documentation>
                   </xs:annotation>
-                  <xs:complexType>
-                    <xs:choice>
-                      <!--
-                      <xs:element name="FixedPointTotal">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Jacobi-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: schlechte Konvergenz).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      -->
-                      <xs:element name="FixedPointSingle">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Gauss-Seidel-Verfahren mit Fixpunktsuche und Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).
-                          </xs:documentation>
-                        </xs:annotation>
-                        <xs:complexType/>
-                      </xs:element>
-                      <xs:element name="GaussSeidel">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="LinearEquations">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="RootFinding">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                            Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                    </xs:choice>
-                  </xs:complexType>
                 </xs:element>
                 <xs:element name="numberOfMaximalIterations" type="pv:integerFullOctEval" minOccurs="0">
                   <xs:annotation>
