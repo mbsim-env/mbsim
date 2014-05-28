@@ -3825,32 +3825,17 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:choice>
-            <xs:element name="cSplinePeriodic">
+          <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullOctEval">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).
+                  <dl>
+                    <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
+                    <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
+                    <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
+                  </dl>
                 </xs:documentation>
               </xs:annotation>
-              <xs:complexType/>
-            </xs:element>
-            <xs:element name="cSplineNatural">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).
-                </xs:documentation>
-              </xs:annotation>
-              <xs:complexType/>
-            </xs:element>
-            <xs:element name="piecewiseLinear">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                  Interpolation mit stückweise linearem Spline.
-                </xs:documentation>
-              </xs:annotation>
-              <xs:complexType/>
-            </xs:element>
-          </xs:choice>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
