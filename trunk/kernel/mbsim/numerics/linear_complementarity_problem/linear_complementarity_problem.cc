@@ -45,28 +45,28 @@ namespace fmatvec {
 
 namespace MBSim {
 
-  std::ostream& operator <<(std::ostream & o, const LCPSolvingStrategy &strategy) {
+  std::ostream& operator <<(std::ostream & o, const LinearComplementarityProblem::LCPSolvingStrategy &strategy) {
     switch (strategy) {
-      case Standard:
+      case LinearComplementarityProblem::Standard:
         return o << "Standard";
-      case ReformulatedStandard:
+      case LinearComplementarityProblem::ReformulatedStandard:
         return o << "ReformulatedStandard";
-      case ReformulatedFixpointOnly:
+      case LinearComplementarityProblem::ReformulatedFixpointOnly:
         return o << "ReformulatedFixpointOnly";
-      case ReformulatedNewtonOnly:
+      case LinearComplementarityProblem::ReformulatedNewtonOnly:
         return o << "ReformulatedNewtonOnly";
-      case LemkeOnly:
+      case LinearComplementarityProblem::LemkeOnly:
         return o << "LemkeOnly";
       default:
         return o << "ERROR: Unknown LCP solving strategy";
     }
   }
 
-  std::ostream& operator <<(std::ostream & o, const JacobianType &jacobianType) {
+  std::ostream& operator <<(std::ostream & o, const LinearComplementarityProblem::JacobianType &jacobianType) {
     switch (jacobianType) {
-      case Numerical:
+      case LinearComplementarityProblem::Numerical:
         return o << "Numerical";
-      case LCPSpecial:
+      case LinearComplementarityProblem::LCPSpecial:
         return o << "LCPSpecial";
       default:
         return o << "ERROR: Unknown jacobian type";
