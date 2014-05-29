@@ -424,7 +424,31 @@ namespace MBSimGUI {
       fileProject=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       MBSimObjectFactory::initialize();
-      shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->parse(file.toStdString());
+      shared_ptr<xercesc::DOMDocument> doc;
+      std::string message;
+      try { 
+        doc=MainWindow::parser->parse(file.toStdString());
+      }
+      catch(const std::exception &ex) {
+        message = ex.what();
+      }
+      catch(const DOMException &ex) {
+        message = "DOM exception: " + X()%ex.getMessage();
+      }
+      catch(...) {
+        message = "Unknown exception.";
+      }
+      if(not(message.empty())) {
+        QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"), QString("Model file not valid: ")+QString::fromStdString(message), QMessageBox::Ignore | QMessageBox::Cancel);
+        if(ret == QMessageBox::Ignore) {
+          shared_ptr<DOMParser> parser=DOMParser::create(false);
+          doc=parser->parse(file.toStdString());
+        }
+        else {
+          newProject(false); 
+          return;
+        }
+      }
       DOMElement *e=doc->getDocumentElement();
       DOMElement *ele0=doc->getDocumentElement();
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
@@ -893,7 +917,8 @@ namespace MBSimGUI {
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
+    if(parameter->getName()!="searchPath")
+      parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     element->addParameter(parameter);
     embeddingList->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
