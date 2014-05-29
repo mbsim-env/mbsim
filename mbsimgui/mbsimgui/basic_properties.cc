@@ -577,47 +577,6 @@ namespace MBSimGUI {
     static_cast<ConnectContoursWidget*>(widget)->update();
   }
 
-  DOMElement* SolverChoiceProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-    if (e) {
-      if (E(e)->getFirstElementChildNamed(MBSIM%"FixedPointSingle"))
-        choice = "FixedPointSingle";
-      else if (E(e)->getFirstElementChildNamed(MBSIM%"GaussSeidel"))
-        choice = "GaussSeidel";
-      else if (E(e)->getFirstElementChildNamed(MBSIM%"LinearEquations"))
-        choice = "LinearEquations";
-      else if (E(e)->getFirstElementChildNamed(MBSIM%"RootFinding"))
-        choice = "RootFinding";
-      return e;
-    }
-    return 0;
-  }
-
-  DOMElement* SolverChoiceProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *e=D(doc)->createElement(xmlName);
-    parent->insertBefore(e, NULL);
-    if(choice=="FixedPointTotal")
-      e->insertBefore(D(doc)->createElement( MBSIM%"FixedPointTotal" ), NULL);
-    else if(choice=="FixedPointSingle")
-      e->insertBefore(D(doc)->createElement( MBSIM%"FixedPointSingle" ), NULL);
-    else if(choice=="GaussSeidel")
-      e->insertBefore(D(doc)->createElement( MBSIM%"GaussSeidel" ), NULL);
-    else if(choice=="LinearEquations")
-      e->insertBefore(D(doc)->createElement( MBSIM%"LinearEquations" ), NULL);
-    else if(choice=="RootFinding")
-      e->insertBefore(D(doc)->createElement( MBSIM%"RootFinding" ), NULL);
-    return e;
-  }
-
-  void SolverChoiceProperty::fromWidget(QWidget *widget) {
-    choice = static_cast<SolverChoiceWidget*>(widget)->getSolver().toStdString();
-  }
-
-  void SolverChoiceProperty::toWidget(QWidget *widget) {
-    static_cast<SolverChoiceWidget*>(widget)->setSolver(QString::fromStdString(choice));
-  }
-
   SolverTolerancesProperty::SolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
     vector<PhysicalVariableProperty> input;

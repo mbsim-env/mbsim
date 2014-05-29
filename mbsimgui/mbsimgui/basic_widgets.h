@@ -370,18 +370,6 @@ namespace MBSimGUI {
     Element* element;
   };
 
-  class SolverChoiceWidget : public Widget {
-    friend class SolverChoiceProperty;
-
-    public:
-    SolverChoiceWidget();
-    QString getSolver() const {return choice->currentText();}
-    void setSolver(const QString &str) {choice->setCurrentIndex(choice->findText(str));}
-
-    protected:
-    QComboBox *choice;
-  };
-
   class SolverTolerancesWidget : public Widget {
     friend class SolverTolerancesProperty;
 

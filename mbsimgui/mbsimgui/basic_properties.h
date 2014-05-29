@@ -272,22 +272,6 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
   };
 
-  class SolverChoiceProperty : public Property {
-
-    public:
-      SolverChoiceProperty(const MBXMLUtils::FQN &xmlName_) : choice("FixedPointSingle"), xmlName(xmlName_) {}
-      virtual Property* clone() const {return new SolverChoiceProperty(*this);}
-
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      std::string choice;
-      MBXMLUtils::FQN xmlName;
-  };
-
   class SolverTolerancesProperty : public Property {
 
     public:
