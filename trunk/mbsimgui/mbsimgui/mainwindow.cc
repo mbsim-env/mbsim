@@ -623,7 +623,10 @@ namespace MBSimGUI {
       cout << "An exception occurred in updateOctaveParameters: " << error.what() << endl;
     }
     catch(runtime_error error) {
-      cout << "An unknown exception occurred in updateOctaveParameters." << error.what() << endl;
+      cout << "An unknown exception occurred in updateOctaveParameters: " << error.what() << endl;
+    }
+    catch(...) {
+      cout << "An unknown exception occurred in updateOctaveParameters." << endl;
     }
   }
 

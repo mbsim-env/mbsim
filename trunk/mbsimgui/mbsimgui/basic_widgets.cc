@@ -552,19 +552,6 @@ namespace MBSimGUI {
       widget[i]->updateWidget();
   }
 
-  SolverChoiceWidget::SolverChoiceWidget() {
-    choice = new QComboBox;
-    choice->addItem("FixedPointSingle");
-    choice->addItem("GaussSeidel");
-    choice->addItem("LinearEquations");
-    choice->addItem("RootFinding");
-    choice->setCurrentIndex(0);
-    QHBoxLayout* layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    layout->addWidget(choice);
-  }
-
   SolverTolerancesWidget::SolverTolerancesWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
