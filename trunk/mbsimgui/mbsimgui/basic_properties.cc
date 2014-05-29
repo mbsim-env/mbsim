@@ -27,7 +27,9 @@
 #include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
+#include "mainwindow.h"
 #include <xercesc/dom/DOMText.hpp>
+#include <mbxmlutils/octeval.h>
 #include <boost/lexical_cast.hpp>
 #include <QDir>
 #include <QTreeWidget>
@@ -368,7 +370,13 @@ namespace MBSimGUI {
   DOMElement* FileProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0 = xmlName.second.empty()?static_cast<DOMElement*>(parent):D(doc)->createElement(xmlName);
-    DOMText *text = doc->createTextNode(X()%file);
+    string fileName = file;
+    if(absolutePath) {
+      fileName = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(fileName));
+      QFileInfo fileInfo = QString::fromStdString(fileName.substr(1,fileName.length()-2));
+      fileName = string("\"")+fileInfo.absoluteFilePath().toStdString()+"\"";
+    }
+    DOMText *text = doc->createTextNode(X()%fileName);
     ele0->insertBefore(text, NULL);
     parent->insertBefore(ele0, NULL);
 

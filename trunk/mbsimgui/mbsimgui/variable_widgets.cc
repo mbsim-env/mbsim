@@ -762,7 +762,8 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::selectFile() {
-    QString file=QFileDialog::getOpenFileName(0, "ASCII files", getFile(), "all files (*.*)");
+    QString file = getFile();
+    file=QFileDialog::getOpenFileName(0, "ASCII files", file.mid(1,file.length()-2), "all files (*.*)");
     if(file!="")
       setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
   }
