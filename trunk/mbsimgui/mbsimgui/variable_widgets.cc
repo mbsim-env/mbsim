@@ -768,7 +768,8 @@ namespace MBSimGUI {
   }
 
   QString FromFileWidget::getValue() const {
-    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load(" + getFile().toStdString() + ")")));
+    string file = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getFile().toStdString()));
+    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load(" + file + ")")));
   }
 
   QWidget* FromFileWidget::getValidatedWidget() const {
