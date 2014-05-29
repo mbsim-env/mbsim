@@ -353,25 +353,12 @@ namespace MBSimGUI {
     static_cast<SignalOfReferenceWidget*>(widget)->updateWidget();
   }
 
-  void FileProperty::setFile(const std::string &str) {
-    file = str;
-    fileInfo = mbsDir.absoluteFilePath(QString::fromStdString(file));
-  }
-
-  std::string FileProperty::getFile() const {
-    return fileInfo.isFile()?fileInfo.canonicalFilePath().toStdString():file;
-  }
-
   DOMElement* FileProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    DOMElement *e = xmlName.second.empty()?element:E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
       DOMText *text = E(e)->getFirstTextChild();
       if(text) {
-        file = X()%text->getData();
-        file = file.substr(1,file.length()-2);
-        setFile(file);
-//        QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(file)));
-//        file = fileInfo.canonicalFilePath().toStdString();
+        setFile(X()%text->getData());
         return e;
       }
     }
@@ -380,13 +367,8 @@ namespace MBSimGUI {
 
   DOMElement* FileProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(xmlName);
-    string filePath;
-    if(fileInfo.isFile())
-      filePath = string("\"")+(absolutePath?mbsDir.absoluteFilePath(fileInfo.absoluteFilePath()).toStdString():mbsDir.relativeFilePath(fileInfo.absoluteFilePath()).toStdString())+"\"";
-    else
-      filePath = file;
-    DOMText *text = doc->createTextNode(X()%filePath);
+    DOMElement *ele0 = xmlName.second.empty()?static_cast<DOMElement*>(parent):D(doc)->createElement(xmlName);
+    DOMText *text = doc->createTextNode(X()%file);
     ele0->insertBefore(text, NULL);
     parent->insertBefore(ele0, NULL);
 

@@ -255,13 +255,13 @@ namespace MBSimGUI {
 
     public:
       FileWidget(const QString &description, const QString &extensions, int mode=0);
-      QString getFile() const {return file;}
-      void setFile(const QString &str);
+      QString getFile() const { return relativeFilePath->text(); }
+      void setFile(const QString &str) { relativeFilePath->setText(str); }
 
     protected:
       QLineEdit *relativeFilePath;
-      QString file, description, extensions;
-      bool mode;
+      QString description, extensions;
+      int mode;
 
     protected slots:
       void selectFile();

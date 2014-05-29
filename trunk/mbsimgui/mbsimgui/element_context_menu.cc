@@ -53,6 +53,9 @@ namespace MBSimGUI {
     action = new QAction("Add string parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
     addAction(action);
+    action = new QAction("Add search path parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSearchPathParameter()));
+    addAction(action);
   }
 
   void EmbeddingContextMenu::addScalarParameter() {
@@ -69,6 +72,10 @@ namespace MBSimGUI {
 
   void EmbeddingContextMenu::addStringParameter() {
     mw->addParameter(new StringParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addSearchPathParameter() {
+    mw->addParameter(new SearchPathParameter);
   }
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {

@@ -53,7 +53,7 @@ namespace MBSimGUI {
 
   StringParameter::StringParameter(const string &name) : Parameter(name) {
 
-   value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0","",vector<string>(2,"")),"",5));
+   value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("'string'","",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
 //   value.setProperty(new TextProperty("0","",true));
 //    setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
@@ -133,38 +133,21 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SearchPathParameter::SearchPathParameter(const string &name) : Parameter("searchPath") {
-    value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0","",vector<string>(2,"")),"",5));
-    setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
+  SearchPathParameter::SearchPathParameter() : Parameter("searchPath") {
+    value.setProperty(new FileProperty(""));
+    setValue(static_cast<FileProperty*>(value.getProperty())->getFile());
   }
   
   void SearchPathParameter::initializeUsingXML(DOMElement *element) {
-   // Parameter::initializeUsingXML(element);
-   // value.initializeUsingXML(element);
-   // setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-
      string value = E(element)->getAttribute("href"); 
-//     setValue(mbsDir.absoluteFilePath(QString::fromStdString(value)).toStdString());
-//     setValue(mbsDir.relativeFilePath(QString::fromStdString(value)).toStdString());
      setValue(value);
-//     cout << getValue() << endl;
-//     cout << MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("\'"+getValue()+"\'")) << endl;
   }
   
   DOMElement* SearchPathParameter::writeXMLFile(DOMNode *parent) {
-    //DOMElement *ele0 = Parameter::writeXMLFile(parent);
-    //value.writeXMLFile(ele0);
-    //return ele0;
-
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PARAM%getType());
     parent->insertBefore(ele0, NULL);
-    string relFileName = absolutePath?getValue():mbsDir.relativeFilePath(QString::fromStdString(getValue())).toStdString();
-    relFileName = getValue();
-    cout << relFileName << endl;
-    E(ele0)->setAttribute("href", relFileName);
-  //  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
-  //  val->writeXMLFile(ele0);
+    E(ele0)->setAttribute("href", getValue());
     return ele0;
   }
 

@@ -435,7 +435,6 @@ namespace MBSimGUI {
     setLayout(layout);
 
     relativeFilePath = new QLineEdit;
-    //  relativeFilePath->setReadOnly(true);
     layout->addWidget(relativeFilePath);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
@@ -443,19 +442,20 @@ namespace MBSimGUI {
     connect(relativeFilePath,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
   }
 
-  void FileWidget::setFile(const QString &str) {
-    file = str;
-    relativeFilePath->setText(mbsDir.relativeFilePath(file));
-  }
-
   void FileWidget::selectFile() {
     QString file;
     if(mode==0) 
       file = QFileDialog::getOpenFileName(0, description, getFile(), extensions);
-    else
+    else if(mode==1)
       file = QFileDialog::getSaveFileName(0, description, getFile(), extensions);
-    if(file!="")
-      setFile(file);
+    else
+      file = QFileDialog::getExistingDirectory ( 0, description, getFile());
+    if(file!="") {
+      if(mode==3)
+        setFile(mbsDir.relativeFilePath(file));
+      else
+        setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
+    }
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
