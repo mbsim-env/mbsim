@@ -376,7 +376,6 @@ signals:
 
     protected:
     QLineEdit *relativeFilePath;
-    //    QString file; 
 
     protected slots:
       void selectFile();

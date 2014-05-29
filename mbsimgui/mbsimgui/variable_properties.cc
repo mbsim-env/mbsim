@@ -343,58 +343,21 @@ namespace MBSimGUI {
     static_cast<PhysicalVariableWidget*>(widget)->setUnit(QString::fromStdString(getUnit()));
   }
 
-  void FromFileProperty::setFile(const std::string &str) {
-    file = str;
-    fileInfo = mbsDir.absoluteFilePath(QString::fromStdString(file));
-  }
-
-  std::string FromFileProperty::getFile() const {
-    return fileInfo.isFile()?fileInfo.canonicalFilePath().toStdString():file;
-  }
-
-  string FromFileProperty::getValue() const {
-    throw;
-    return OctEval::cast<string>(MainWindow::octEval->stringToOctValue("'" + file + "'"));
-  }
-
   DOMElement* FromFileProperty::initializeUsingXML(DOMElement *parent) {
     DOMElement *element=parent->getFirstElementChild();
     if(!element || E(element)->getTagName() != (PV%"fromFile"))
       return 0;
 
     string str = E(element)->getAttribute("href");
-    int pos1 = str.find_first_of('\''); 
-    int pos2 = str.find_last_of('\''); 
-    file = str.substr(pos1+1,pos2-pos1-1).c_str();
-    setFile(file);
+    setFile(str);
 
-    //QFileInfo fileInfo(QString::fromStdString(file));
-    //file = fileInfo.canonicalFilePath().toStdString();
     return element;
   }
-
-  // DOMText* text = E(element)->getFirstTextChild();
-  //  if(!text)
-  //    return 0;
-  //  string str = X()%text->getData();
-  //  if(str.substr(0,8)!="ret=load")
-  //    return 0;
-  //  int pos1 = str.find_first_of('\''); 
-  //  int pos2 = str.find_last_of('\''); 
-  //  file = str.substr(pos1+1,pos2-pos1-1).c_str();
-  //  QFileInfo fileInfo(QString::fromStdString(file));
-  //  file = fileInfo.canonicalFilePath().toStdString();
-  //  return element;
 
   DOMElement* FromFileProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"fromFile");
-    string filePath;
-    if(fileInfo.isFile())
-      filePath = "'"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"'";
-    else
-      filePath = file;
-    E(ele)->setAttribute("href",filePath);
+    E(ele)->setAttribute("href",file);
     parent->insertBefore(ele, NULL);
     return 0;
   }

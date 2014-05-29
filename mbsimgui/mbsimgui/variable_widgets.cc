@@ -751,7 +751,6 @@ namespace MBSimGUI {
     setLayout(layout);
 
     relativeFilePath = new QLineEdit;
-    //  relativeFilePath->setReadOnly(true);
     layout->addWidget(relativeFilePath);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
@@ -759,18 +758,17 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::setFile(const QString &str) {
-    //file = str;
-    relativeFilePath->setText(mbsDir.relativeFilePath(str));
+    relativeFilePath->setText(str);
   }
 
   void FromFileWidget::selectFile() {
     QString file=QFileDialog::getOpenFileName(0, "ASCII files", getFile(), "all files (*.*)");
     if(file!="")
-      setFile(file);
+      setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
   }
 
   QString FromFileWidget::getValue() const {
-    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
+    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load(" + getFile().toStdString() + ")")));
   }
 
   QWidget* FromFileWidget::getValidatedWidget() const {

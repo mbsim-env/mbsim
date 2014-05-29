@@ -188,18 +188,17 @@ namespace MBSimGUI {
     public:
       FromFileProperty(const std::string &file_="") : file(file_) {}
       virtual Property* clone() const {return new FromFileProperty(*this);}
-      std::string getValue() const; 
       void setValue(const std::string &str) {}
+      std::string getValue() const { return ""; }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
-      std::string getFile() const;
-      void setFile(const std::string &str);
+      std::string getFile() const { return file; }
+      void setFile(const std::string &str) { file = str; }
 
     protected:
       std::string file;
-      QFileInfo fileInfo;
   };
 
   class ScalarPropertyFactory: public PropertyFactory {
