@@ -30,30 +30,6 @@
 
 namespace MBSim {
 
-  enum LCPSolvingStrategy {
-    Standard,      //trying to solve the LCP in a standard way (first some steps of Lemke algorithm, then trying iterative schemes in reformulated system, then trying Lemke again as fallback with all steps)
-    ReformulatedStandard,  //trying to use the iterative schemes at first (as fallback use Lemke)
-    ReformulatedNewtonOnly,
-    ReformulatedFixpointOnly,
-    LemkeOnly
-    //only use LemkeAgorithm
-  };
-
-  enum JacobianType {
-    Numerical,  //use only a numerical Jacobian Matrix
-    LCPSpecial
-    //use a analytical Jacobian Matrix almost everywhere and choose a derivation at the kink (=LinearComplementarityJacobianFunction) //TODO: find a better name
-  };
-
-  enum CriteriaType {
-    Global,
-    Local
-  };
-  std::ostream& operator <<(std::ostream & o, const LCPSolvingStrategy &strategy);
-
-  std::ostream& operator <<(std::ostream & o, const JacobianType &jacobianType);
-
-
   /**
    * \brief class to solve a linear complementarity problem
    *
@@ -61,6 +37,26 @@ namespace MBSim {
    */
   class LinearComplementarityProblem {
     public:
+      enum LCPSolvingStrategy {
+        Standard,      //trying to solve the LCP in a standard way (first some steps of Lemke algorithm, then trying iterative schemes in reformulated system, then trying Lemke again as fallback with all steps)
+        ReformulatedStandard,  //trying to use the iterative schemes at first (as fallback use Lemke)
+        ReformulatedNewtonOnly,
+        ReformulatedFixpointOnly,
+        LemkeOnly
+          //only use LemkeAgorithm
+      };
+
+      enum JacobianType {
+        Numerical,  //use only a numerical Jacobian Matrix
+        LCPSpecial
+          //use a analytical Jacobian Matrix almost everywhere and choose a derivation at the kink (=LinearComplementarityJacobianFunction) //TODO: find a better name
+      };
+
+      enum CriteriaType {
+        Global,
+        Local
+      };
+
       /**
        * \brief solves a linear complementarity problem (w = M z + q)
        * \param M                   linear coupling matrix of the LCP
@@ -196,6 +192,11 @@ namespace MBSim {
        */
       unsigned int DEBUGLEVEL;
   };
+
+  std::ostream& operator <<(std::ostream & o, const LinearComplementarityProblem::LCPSolvingStrategy &strategy);
+
+  std::ostream& operator <<(std::ostream & o, const LinearComplementarityProblem::JacobianType &jacobianType);
+
 }
 
 #endif /*__LINEAR_COMPLEMENTARITY_PROBLEM_H_*/
