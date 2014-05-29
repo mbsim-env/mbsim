@@ -443,13 +443,15 @@ namespace MBSimGUI {
   }
 
   void FileWidget::selectFile() {
-    QString file;
+    QString file = getFile();
+    if(mode<3)
+      file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(0, description, getFile(), extensions);
+      file = QFileDialog::getOpenFileName(0, description, file, extensions);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(0, description, getFile(), extensions);
+      file = QFileDialog::getSaveFileName(0, description, file, extensions);
     else
-      file = QFileDialog::getExistingDirectory ( 0, description, getFile());
+      file = QFileDialog::getExistingDirectory ( 0, description, file);
     if(file!="") {
       if(mode==3)
         setFile(mbsDir.relativeFilePath(file));
