@@ -75,14 +75,10 @@ namespace MBSimGUI {
       void run();
       void setParser(const boost::shared_ptr<MBXMLUtils::DOMParser> &parser_) { parser = parser_; }
       void setDocument(const boost::shared_ptr<xercesc::DOMDocument> &doc_) { doc = doc_; }
-      void setOctEval(MBXMLUtils::OctEval *octEval_) { octEval = octEval_; }
-      void setDependencies(const std::vector<boost::filesystem::path>& dependencies_) { dependencies = dependencies_; }
       void setProjectFile(const QString &file) { projectFile = file; }
       const QString& getErrorText() const { return errText; }
     private:
       boost::shared_ptr<MBXMLUtils::DOMParser> parser;
-      MBXMLUtils::OctEval *octEval;
-      std::vector<boost::filesystem::path> dependencies;
       boost::shared_ptr<xercesc::DOMDocument> doc;
       QString projectFile, errText;
     signals:

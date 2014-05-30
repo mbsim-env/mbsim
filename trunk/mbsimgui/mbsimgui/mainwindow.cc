@@ -94,9 +94,6 @@ namespace MBSimGUI {
     octEval=new MBXMLUtils::OctEval(&dependencies);
     octEvalParamLevel=new NewParamLevel(*octEval);
 
-    mbsimThread->setOctEval(octEval);
-    mbsimThread->setDependencies(dependencies);
-
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
 
@@ -291,14 +288,11 @@ namespace MBSimGUI {
   }
 
   void MainWindow::initInlineOpenMBV() {
-    bfs::copy_file(MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"empty.ombv.xml",uniqueTempDir.generic_string()+"/out1.ombv.xml");
-    bfs::copy_file(MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"empty.ombv.h5",uniqueTempDir.generic_string()+"/out1.ombv.h5");
     std::list<string> arg;
     arg.push_back("--wst");
     arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
     arg.push_back("/home/foerg/tmp/openmbv");
     inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
-    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementList, SLOT(openEditor()));
@@ -520,28 +514,43 @@ namespace MBSimGUI {
   }
 
   DOMElement* MainWindow::writeProject(shared_ptr<xercesc::DOMDocument> &doc) {
-    DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
-    doc->insertBefore(ele0, NULL);
-    E(ele0)->setAttribute("name", "Project");
+    string message;
+    try {
+      DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
+      doc->insertBefore(ele0, NULL);
+      E(ele0)->setAttribute("name", "Project");
 
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-    QModelIndex index = model->index(0,0);
-    Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      QModelIndex index = model->index(0,0);
+      Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
 
-    Embed<Solver>::writeXML(solver,ele0);
-    Integrator *integrator = integratorView->getIntegrator();
-    if(not(absolutePath) and integrator->isEmbedded())
-      integrator->writeXMLFileEmbed(ele0);
-    else
-      integrator->writeXMLFile(ele0);
+      Embed<Solver>::writeXML(solver,ele0);
+      Integrator *integrator = integratorView->getIntegrator();
+      if(not(absolutePath) and integrator->isEmbedded())
+        integrator->writeXMLFileEmbed(ele0);
+      else
+        integrator->writeXMLFile(ele0);
 
-    return ele0;
+      return ele0;
+    }
+    catch(const std::exception &ex) {
+      message = ex.what();
+    }
+    catch(const DOMException &ex) {
+      message = "DOM exception: " + X()%ex.getMessage();
+    }
+    catch(...) {
+      message = "Unknown exception.";
+    }
+    cout << message << endl;
+    return 0;
   }
 
  void MainWindow::saveProject(const QString &fileName) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
-    DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
+    if(ele0)
+      DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
   }
 
  void MainWindow::newMBS() {
@@ -627,15 +636,10 @@ namespace MBSimGUI {
       root->insertBefore(filenamePI, root->getFirstChild());
     }
 
+    string message;
     try {
       D(doc)->validate();
-    }
-    catch(...) {
-      cout << "Error in validation" << endl;
-      return;
-    }
 
-    try {
       // remove all parameters from octave using delete and new NewParamLevel
       // (this will not work for nested parameters in embed!???)
       delete octEvalParamLevel;
@@ -644,14 +648,15 @@ namespace MBSimGUI {
       octEval->addParamSet(doc->getDocumentElement());
     }
     catch(DOMEvalExceptionList error) {
-      cout << "An exception occurred in updateOctaveParameters: " << error.what() << endl;
+      message = string("An exception occurred in updateOctaveParameters: ") + error.what();
     }
     catch(runtime_error error) {
-      cout << "An unknown exception occurred in updateOctaveParameters: " << error.what() << endl;
+      message = string("An unknown exception occurred in updateOctaveParameters: ") + error.what();
     }
     catch(...) {
-      cout << "An unknown exception occurred in updateOctaveParameters." << endl;
+      message = "An unknown exception occurred in updateOctaveParameters.";
     }
+    cout << message << endl;
   }
 
   void MainWindow::saveDataAs() {
@@ -729,13 +734,15 @@ namespace MBSimGUI {
       static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
 
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    writeProject(doc);
+    DOMElement *ele0=writeProject(doc);
     slv->setName(saveName);
     absolutePath = false;
 
-    mbsimThread->setDocument(doc);
-    mbsimThread->setProjectFile(projectFile);
-    mbsimThread->start();
+    if(ele0) {
+      mbsimThread->setDocument(doc);
+      mbsimThread->setProjectFile(projectFile);
+      mbsimThread->start();
+    }
   }
 
   void MainWindow::preprocessFinished(int result) {

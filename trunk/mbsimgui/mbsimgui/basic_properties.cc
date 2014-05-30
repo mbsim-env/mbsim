@@ -372,7 +372,7 @@ namespace MBSimGUI {
     DOMElement *ele0 = xmlName.second.empty()?static_cast<DOMElement*>(parent):D(doc)->createElement(xmlName);
     string fileName = file;
     if(absolutePath) {
-      fileName = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(fileName));
+      // fileName = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(fileName));
       QFileInfo fileInfo = QString::fromStdString(fileName.substr(1,fileName.length()-2));
       fileName = string("\"")+fileInfo.absoluteFilePath().toStdString()+"\"";
     }
