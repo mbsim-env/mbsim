@@ -29,10 +29,10 @@ void solve(SymMat& C, Vec& q, int dim) {
   problem.setDebugLevel(1);
   Vec result;
   for (int strategy = 0; strategy < 5; strategy++) {
-    problem.setStrategy(LCPSolvingStrategy(strategy));
-    if (LCPSolvingStrategy(strategy) == 2) {
+    problem.setStrategy(LinearComplementarityProblem::LCPSolvingStrategy(strategy));
+    if (LinearComplementarityProblem::LCPSolvingStrategy(strategy) == 2) {
       for (int jactype = 0; jactype < 2; jactype++) {
-        problem.setJacobianType(JacobianType(jactype));
+        problem.setJacobianType(LinearComplementarityProblem::JacobianType(jactype));
         result = problem.solve();
       }
     }
