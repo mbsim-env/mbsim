@@ -158,7 +158,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       double sLocalTranslation;
       int currentElementTranslation;
       BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
@@ -176,7 +176,7 @@ namespace MBSimFlexibleBody {
       if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
     }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
+    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
       int node = cp.getNodeNumber(); // TODO open structure different?
 
       Vec3 angles(computeAngles(node * l0, q));
@@ -196,7 +196,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * angle->computeOmega(angles, omega));
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -207,10 +207,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+    if (cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
       curve->updateJacobiansForFrame(cp);
     }
-    else if (cp.getContourParameterType() == NODE) { // force on node
+    else if (cp.getContourParameterType() == ContourPointData::node) { // force on node
       int node = cp.getNodeNumber();
       Mat Jacobian_trans(qSize, 3, INIT, 0.);
 
@@ -218,7 +218,7 @@ namespace MBSimFlexibleBody {
 
       cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans.T());
     }
-    else if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
+    else if (cp.getContourParameterType() == ContourPointData::staggeredNode) { // force on staggered node
       int node = cp.getNodeNumber();
       Mat Jacobian_rot(qSize, 3, INIT, 0.); // TODO open structure
       Vec p = q(6 * node + 3, 6 * node + 5);
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot.T());
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::staggeredNode' or 'ContourPointData::continuum'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

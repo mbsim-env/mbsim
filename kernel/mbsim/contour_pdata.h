@@ -27,8 +27,6 @@ namespace MBSim {
 
   class Point;
 
-  enum ContourParameterType { NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL };
-
   /**
    * \brief struct for data-management for single point on a contour to describe contact kinematics
    * \author Roland Zander
@@ -39,15 +37,18 @@ namespace MBSim {
    */
   class ContourPointData {
     public:
+
+      enum ContourParameterType { node, staggeredNode, continuum, extInterpol };
+
       /**
        * \brief constructor
        */
-      ContourPointData() : type(CONTINUUM), ID(0) {}
-      ContourPointData(const double       &alpha_) : type(CONTINUUM), ID(0), alpha() {
+      ContourPointData() : type(continuum), ID(0) {}
+      ContourPointData(const double       &alpha_) : type(continuum), ID(0), alpha() {
         alpha(0) = alpha_;
       }
-      ContourPointData(const fmatvec::Vec2 &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
-      ContourPointData(const int  &id_, const ContourParameterType type_ = NODE) : type(type_), ID(id_) {}
+      ContourPointData(const fmatvec::Vec2 &alpha_) : type(continuum), ID(0), alpha(alpha_) {}
+      ContourPointData(const int  &id_, const ContourParameterType type_ = node) : type(type_), ID(id_) {}
 
       /**
        * \brief destructor

@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // Lagrange parameter of affected FE
@@ -112,7 +112,7 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    else if(cp.getContourParameterType() == NODE) { // frame on node
+    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
       const int &node = cp.getNodeNumber();
 
       Vec tmp(3,NONINIT);
@@ -154,12 +154,12 @@ namespace MBSimFlexibleBody {
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): angularVelocity not implemented for NODE");
+        throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): angularVelocity not implemented for ContourPointData::node");
         tmp(0) = 0.; tmp(1) = 0.; tmp(2) = 0.;
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp); // angular velocity
       }
     }
-    else throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody1sANCF::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition       (cp.getFrameOfReference().getPosition());
@@ -173,7 +173,7 @@ namespace MBSimFlexibleBody {
     Index All(0,6-1);
     Mat Jacobian(qSize,6,INIT,0.);
 
-    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
@@ -186,8 +186,8 @@ namespace MBSimFlexibleBody {
         Jacobian(Index(               0,                 5),All) = Jtmp(Index(6,11),All);
       }
     }
-    else if(cp.getContourParameterType() == NODE) { // frame on node
-      throw MBSimError("ERROR(FlexibleBody1sANCF::updateJacobiansForFrame): not implemented for NODE");
+    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
+      throw MBSimError("ERROR(FlexibleBody1sANCF::updateJacobiansForFrame): not implemented for ContourPointData::node");
       int node = cp.getNodeNumber();
       Jacobian(6*node,0) = 1.;
       Jacobian(6*node+1,1) = 1.;
@@ -195,7 +195,7 @@ namespace MBSimFlexibleBody {
       Jacobian(6*node+3,2) = q(4*node+2);
       Jacobian(Index(6*node+2,6*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
     }
-    else throw MBSimError("ERROR(FlexibleBody1s33ANCF::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody1s33ANCF::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()*Jacobian(Index(0,qSize-1),Index(0,2)).T());
     cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()*Jacobian(Index(0,qSize-1),Index(3,5)).T());

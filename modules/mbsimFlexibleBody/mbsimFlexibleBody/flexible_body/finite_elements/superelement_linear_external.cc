@@ -65,7 +65,7 @@ namespace MBSimFlexibleBody {
       throw MBSimError("ERROR in memory management for SuperElementLinearExternal interfaces");
     }
     MBSim::ContourPointData CP;
-    CP.getContourParameterType() = NODE;
+    CP.getContourParameterType() = ContourPointData::node;
     CP.getNodeNumber()   = J.size() - 1; // position of current Jacobian in array
     CP.getFrameOfReference().getPosition() = KrP[CP.getNodeNumber()];
 
