@@ -80,11 +80,11 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyLinearExternal::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
 	Mat Jacobian;
-	if(cp.getContourParameterType() == NODE) {
+	if(cp.getContourParameterType() == ContourPointData::node) {
 	  Jacobian = discretization[0]->computeJacobianOfMotion(qElement[0],cp);
-	} else if(cp.getContourParameterType() == EXTINTERPOL) {
+	} else if(cp.getContourParameterType() == ContourPointData::extInterpol) {
 //	  for(unsigned int i=0;i<(cp.iPoints).size();i++) {
-//		ContourPointData cpTemp; cpTemp.getContourParameterType()=NODE;
+//		ContourPointData cpTemp; cpTemp.getContourParameterType()=ContourPointData::node;
 //		cpTemp.getNodeNumber() = cp.iPoints[i]->getID();
 //		if(!Jacobian.rows()) Jacobian  = cp.iWeights(i) * ( computeJacobianMatrix (cpTemp) );
 //		else                 Jacobian += cp.iWeights(i) * ( computeJacobianMatrix (cpTemp) );
@@ -110,7 +110,7 @@ namespace MBSimFlexibleBody {
 ////    //    RHitSphere = 0;
 ////    
 ////        for(unsigned int i=0; i<contour.size(); i++)
-////    	  if(contourType[i].getContourParameterType()==NODE) {
+////    	  if(contourType[i].getContourParameterType()==ContourPointData::node) {
 ////    	  ContourPointData cp;
 ////    	  cp.getNodeNumber() = contour[i]->getID();
 ////    	  Mat J = static_cast<SuperElementLinearExternal*>(discretization[0])->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp);
@@ -195,7 +195,7 @@ namespace MBSimFlexibleBody {
 //  void FlexibleBodyLinearExternal::addContourInterpolation(ContourInterpolation *contour_) {
 //    contour_->setID(contourType.size()); // Stelle, an der die Jacobi steht
 //    ContourPointData cpData;
-//    cpData.getContourParameterType()=EXTINTERPOL;
+//    cpData.getContourParameterType()=ContourPointData::extInterpol;
 //	contourType.push_back(cpData);
 //    FlexibleBody::addContour(contour_,cpData,false); 
 //  }
@@ -244,7 +244,7 @@ namespace MBSimFlexibleBody {
 //
 //	if(contour.size()>0) parafile << "\ncontours:" <<endl;
 //	for(unsigned int i=0; i<contour.size(); i++) {
-//	  if(contourType[i].getContourParameterType()!=EXTINTERPOL) {
+//	  if(contourType[i].getContourParameterType()!=ContourPointData::extInterpol) {
 //		parafile << "# J: (contour:  name= "<< contour[i]->getName()<<",  ID= "<<contour[i]->getID()<<")"<< endl;
 //		parafile << discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],contourType[i])<<endl;
 //	  } else {

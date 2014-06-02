@@ -156,7 +156,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Vec q0(3,INIT,0.);
     double xL = i*rodInfo->getLength()/balls.size(); // TODO
     ContourPointData cp;
-    cp.getContourParameterType() = CONTINUUM;
+    cp.getContourParameterType() = ContourPointData::continuum;
     cp.getLagrangeParameterPosition()(0) = xL;
 
     rodInfo->updateKinematicsForFrame(cp,position_cosy);

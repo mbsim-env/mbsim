@@ -132,7 +132,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // joint 
   ContourPointData cpdata;
-  cpdata.getContourParameterType() = CONTINUUM;
+  cpdata.getContourParameterType() = ContourPointData::continuum;
   rod->addFrame("RJ",cpdata);
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 

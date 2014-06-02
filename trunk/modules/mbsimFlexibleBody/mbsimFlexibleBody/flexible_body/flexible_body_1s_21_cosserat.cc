@@ -150,7 +150,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       double sLocalTranslation;
       int currentElementTranslation;
 
@@ -174,7 +174,7 @@ namespace MBSimFlexibleBody {
       if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
     }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
+    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
       int node = cp.getNodeNumber();
       /* 2D -> 3D mapping */
       Vec qTmpNODE(3, INIT, 0.);
@@ -204,12 +204,12 @@ namespace MBSimFlexibleBody {
       if (ff == angularVelocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * angle->computeOmega(qTmpANGLE, uTmpANGLE));
     }
-    else if (cp.getContourParameterType() == STAGGEREDNODE) {
+    else if (cp.getContourParameterType() == ContourPointData::staggeredNode) {
       //TODO
-      MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType 'STAGGEREDNODE' not implemented");
+      MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType 'ContourPointData::staggeredNode' not implemented");
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE', 'STAGGEREDNODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node', 'ContourPointData::staggeredNode' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -220,10 +220,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+    if (cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
       curve->updateJacobiansForFrame(cp);
     }
-    else if (cp.getContourParameterType() == NODE) { // force on node
+    else if (cp.getContourParameterType() == ContourPointData::node) { // force on node
       int node = cp.getNodeNumber();
       /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
       Mat Jacobian_trans(qFull.size(), 3, INIT, 0.);
@@ -232,7 +232,7 @@ namespace MBSimFlexibleBody {
 
       cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans.T());
     }
-    else if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
+    else if (cp.getContourParameterType() == ContourPointData::staggeredNode) { // force on staggered node
       int node = cp.getNodeNumber();
       /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
       Mat Jacobian_rot(qFull.size(), 3, INIT, 0.);
@@ -241,7 +241,7 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot.T());
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::staggeredNode' or 'ContourPointData::continuum'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

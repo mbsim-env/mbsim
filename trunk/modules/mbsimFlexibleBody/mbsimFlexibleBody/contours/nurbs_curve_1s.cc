@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
 
       for (int i = 0; i < Elements; i++) { // TODO openstructure: jacobians of Rotation different
         jacobiansTrans.push_back(ContourPointData(i));
-        jacobiansRot.push_back(ContourPointData(i, STAGGEREDNODE)); // jacobians of rotation are on staggered grid
+        jacobiansRot.push_back(ContourPointData(i, ContourPointData::staggeredNode)); // jacobians of rotation are on staggered grid
       }
       for (int i = 0; i < Elements; i++) {
         jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation().resize();
