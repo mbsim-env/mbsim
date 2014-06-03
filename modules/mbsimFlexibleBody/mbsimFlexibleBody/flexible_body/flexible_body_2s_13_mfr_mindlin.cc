@@ -466,7 +466,7 @@ namespace MBSimFlexibleBody {
       initMatrices(); // calculate constant stiffness matrix and the constant parts of the mass-matrix
 
     }
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

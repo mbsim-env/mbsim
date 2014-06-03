@@ -35,7 +35,7 @@ namespace MBSimControl {
       SignalProcessingSystemSensor(const std::string &name="") : Sensor(name), sps(NULL), spsString("") {}
       virtual std::string getType() const {return "SignalProcessingSystemSensor"; }
       void initializeUsingXML(xercesc::DOMElement * element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
       fmatvec::Vec getSignal();

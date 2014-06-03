@@ -38,7 +38,7 @@ namespace MBSimControl {
   }
 
   void GeneralizedCoordinateSensor::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if (objectString!="")
         setObject(getByPath<Object>(objectString));
       Sensor::init(stage);

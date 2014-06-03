@@ -83,7 +83,7 @@ namespace MBSimFlexibleBody {
        * \brief initialize NURBS disk
        * \param stage of initialisation
        */
-      void initContourFromBody(MBSim::InitStage stage);
+      void initContourFromBody(InitStage stage);
 #endif
 
       /*! 

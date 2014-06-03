@@ -42,7 +42,7 @@ namespace MBSimControl {
       void calcxSize() {xSize=1; }
       fmatvec::Vec calculateOutput() {return x.copy(); }
       
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void updatedx(double t, double dt);
       void updatexd(double t);

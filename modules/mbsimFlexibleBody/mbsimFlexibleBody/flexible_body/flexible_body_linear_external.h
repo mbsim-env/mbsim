@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(MBSim::InitStage stage) { new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::init): Not implemented!"); }
+      virtual void init(InitStage stage) { new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::init): Not implemented!"); }
       virtual void facLLM() {}
       /***************************************************/
       

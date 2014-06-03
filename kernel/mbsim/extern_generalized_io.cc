@@ -94,14 +94,14 @@ namespace MBSim {
       if(qInd<0)
         x.resize(1);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("la(0)");
         Link::init(stage);
       }
     }
-    else if(stage==MBSim::calculateLocalInitialValues) {
+    else if(stage==calculateLocalInitialValues) {
       Link::init(stage);
       if(qInd>=0)
         g(0)=connectedObject->getq()(qInd);

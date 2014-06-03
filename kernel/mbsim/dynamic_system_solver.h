@@ -455,12 +455,6 @@ namespace MBSim {
 
 
       /**
-       * \brief decide, whether the model-hierarchy should be reorganized.
-       * \param true for reorganisation, false otherwise
-       */
-      void setReorganizeHierarchy(bool flag) { reorganizeHierarchy = flag; }
-
-      /**
        * \brief set tolerance for projection of generalized position
        * \param tolerance
        */
@@ -734,12 +728,6 @@ namespace MBSim {
        * TODO
        */
       unsigned int flushCount;
-
-      /**
-       * \brief Flag for reorganisation of hierarchy.
-       * This flag will be removed in the future.
-       */
-      bool reorganizeHierarchy;
 
       /**
        * \brief Tolerance for projection of generalized position.

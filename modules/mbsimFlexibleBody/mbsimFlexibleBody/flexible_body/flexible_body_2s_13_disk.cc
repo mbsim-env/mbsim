@@ -309,7 +309,7 @@ namespace MBSimFlexibleBody {
       initMatrices(); // calculate constant mass- and stiffness matrix
 
     }
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures(); 
 
       if(getPlotFeature(plotRecursive)==enabled) {

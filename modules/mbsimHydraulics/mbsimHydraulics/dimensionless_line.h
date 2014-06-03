@@ -41,7 +41,7 @@ namespace MBSimHydraulics {
       void calcuSize(int j) {uSize[j]=0; }
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void plot(double t, double dt);
     protected:
       fmatvec::Vec Q;
@@ -65,7 +65,7 @@ namespace MBSimHydraulics {
       void setSurface2VelocitySignal(MBSimControl::Signal * s) {s2vSignal=s; }
       double getSurface2Velocity() const;
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void updateStateDependentVariables(double t);
 
@@ -105,7 +105,7 @@ namespace MBSimHydraulics {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement * element);
     private:

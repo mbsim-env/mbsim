@@ -52,7 +52,7 @@ namespace MBSimHydraulics {
   }
 
   void LeakageLine::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       RigidHLine::init(stage);
       if (s1vPath!="")
         setSurface1VelocitySignal(getByPath<Signal>(s1vPath));
@@ -61,7 +61,7 @@ namespace MBSimHydraulics {
       if (glPath!="")
         setGapLengthSignal(getByPath<Signal>(glPath));
     }
-    else if (stage==MBSim::modelBuildup) {
+    else if (stage==modelBuildup) {
       ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LeakagePressureLoss", this, lpl, false, false));
       RigidHLine::init(stage);
     }
@@ -89,7 +89,7 @@ namespace MBSimHydraulics {
   }
 
   void PlaneLeakageLine::init(InitStage stage) {
-    if (stage==MBSim::preInit) {  
+    if (stage==preInit) {  
       LeakageLine::init(stage);
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       Mlocal.resize(1, INIT, rho*length/hGap/wGap);
@@ -116,7 +116,7 @@ namespace MBSimHydraulics {
   }
 
   void CircularLeakageLine::init(InitStage stage) {
-    if (stage==MBSim::preInit) {  
+    if (stage==preInit) {  
       rO=rI+hGap;
       LeakageLine::init(stage);
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();

@@ -39,7 +39,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Frustum, MBSIM%"Frustum")
 
   void Frustum::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {

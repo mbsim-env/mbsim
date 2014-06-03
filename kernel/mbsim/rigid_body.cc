@@ -226,7 +226,7 @@ namespace MBSim {
       updateM_ = &RigidBody::updateMNotConst;
       facLLM_ = &RigidBody::facLLMNotConst;
     }
-    else if(stage==MBSim::unknownStage) {
+    else if(stage==unknownStage) {
       Body::init(stage);
 
       C->getJacobianOfTranslation(1) = PJT[1];
@@ -309,7 +309,7 @@ namespace MBSim {
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
         SThetaS = JMJT(static_cast<FixedRelativeFrame*>(frameForInertiaTensor)->getRelativeOrientation(),SThetaS) - m*JTJ(tilde(static_cast<FixedRelativeFrame*>(frameForInertiaTensor)->getRelativePosition()));
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

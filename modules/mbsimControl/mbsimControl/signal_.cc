@@ -32,7 +32,7 @@ namespace MBSimControl {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternSignalSource, MBSIMCONTROL%"ExternSignalSource")
 
   void Signal::init(InitStage stage) {
-    if (stage==MBSim::plot) {
+    if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled) {

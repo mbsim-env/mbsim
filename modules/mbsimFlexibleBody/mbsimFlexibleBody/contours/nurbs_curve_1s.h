@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
        * \brief initialize NURBS curve 
        * \param stage of initialisation
        */
-      void initContourFromBody(MBSim::InitStage stage);
+      void initContourFromBody(InitStage stage);
 
       /*! 
        * \brief interpolates the translations with node-data from body

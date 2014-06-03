@@ -68,12 +68,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
   DynamicSystemSolver::DynamicSystemSolver() :
-      Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
+      Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
   DynamicSystemSolver::DynamicSystemSolver(const string &projectName) :
-      Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
+      Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
@@ -106,7 +106,7 @@ namespace MBSim {
     signal(SIGTERM, sigInterruptHandler);
     signal(SIGABRT, sigAbortHandler);
 #endif
-    for (int stage = 0; stage < MBSim::LASTINITSTAGE; stage++) {
+    for (int stage = 0; stage < LASTINITSTAGE; stage++) {
       msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage);
       msg(Info) << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
@@ -114,7 +114,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::init(InitStage stage) {
-    if (stage == MBSim::reorganizeHierarchy && reorganizeHierarchy) {
+    if (stage == reorganizeHierarchy) {
       msg(Info) << name << " (special group) stage==preInit:" << endl;
 
       vector<Object*> objList;
@@ -409,18 +409,18 @@ namespace MBSim {
       else
         throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
     }
-    else if (stage == MBSim::modelBuildup) {
+    else if (stage == modelBuildup) {
       msg(Info) << "  initialising modelBuildup ..." << endl;
       Group::init(stage);
       setDynamicSystemSolver(this);
     }
-    else if (stage == MBSim::preInit) {
+    else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;
       Group::init(stage);
       if (inverseKinetics)
         setUpInverseKinetics();
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -429,7 +429,7 @@ namespace MBSim {
 #endif
       msg(Info) << "...... done initialising." << endl << endl;
     }
-    else if (stage == MBSim::calculateLocalInitialValues) {
+    else if (stage == calculateLocalInitialValues) {
       Group::initz();
       updateStateDependentVariables(0);
       updateg(0);
@@ -1407,14 +1407,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
-    // If enviornment variable MBSIMREORGANIZEHIERARCHY=false then do NOT reorganize.
-    // In this case it is not possible to simulate a relativ kinematics (tree structures).
-    char *reorg=getenv("MBSIMREORGANIZEHIERARCHY");
-    if(reorg && strcmp(reorg, "false")==0)
-      setReorganizeHierarchy(false);
-    else
-      setReorganizeHierarchy(true);
-
     Group::initializeUsingXML(element);
     DOMElement *e;
     // search first Environment element

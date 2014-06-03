@@ -134,21 +134,21 @@ namespace MBSimHydraulics {
   }
 
   void RigidHLine::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<refDependencyOnInflowString.size(); i++)
         addInflowDependencyOnInflow(getByPath<RigidHLine>(refDependencyOnInflowString[i]));
       for (unsigned int i=0; i<refDependencyOnOutflowString.size(); i++)
         addInflowDependencyOnOutflow(getByPath<RigidHLine>(refDependencyOnOutflowString[i]));
       HLine::init(stage);
     }
-    else if (stage==MBSim::preInit) {
+    else if (stage==preInit) {
       HLine::init(stage);
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
         dependency.push_back(dependencyOnInflow[i]);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
         dependency.push_back(dependencyOnOutflow[i]);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Volume flow [l/min]");
@@ -158,7 +158,7 @@ namespace MBSimHydraulics {
         HLine::init(stage);
       }
     }
-    else if(stage==MBSim::unknownStage) {
+    else if(stage==unknownStage) {
       HLine::init(stage);
 
       vector<RigidHLine *> dep_check;
@@ -214,7 +214,7 @@ namespace MBSimHydraulics {
     setQFunction(qf);
   }
 
-  void ConstrainedLine::init(MBSim::InitStage stage) {
+  void ConstrainedLine::init(InitStage stage) {
     if (stage==preInit) {
       Object::init(stage); // no check of connected lines
       if (!nFrom && !nTo) 
@@ -238,7 +238,7 @@ namespace MBSimHydraulics {
   }
 
   void FluidPump::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       HLine::init(stage);
       if (QSignalString!="")
         setQSignal(getByPath<Signal>(QSignalString));
@@ -276,7 +276,7 @@ namespace MBSimHydraulics {
   }
 
   void StatelessOrifice::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       HLine::init(stage);
       if (inflowSignalString!="")
         setInflowSignal(getByPath<Signal>(inflowSignalString));
@@ -292,7 +292,7 @@ namespace MBSimHydraulics {
       if (nFrom==nTo)
         throw MBSimError("ERROR! StatelessOrifice \""+name+"\": fromNode and toNode are the same!");
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("pInflow [bar]");

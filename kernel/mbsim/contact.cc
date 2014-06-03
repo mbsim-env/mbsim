@@ -72,10 +72,10 @@ namespace MBSim {
     ds = sys;
   }
 
-  void Contact::setPlotFeatureContactKinematics(std::string cKName, MBSim::PlotFeature pf, MBSim::PlotFeatureStatus value) {
+  void Contact::setPlotFeatureContactKinematics(std::string cKName, PlotFeature pf, PlotFeatureStatus value) {
     if (ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
-      pair<string, MBSim::PlotFeature> Pair(cKName, pf);
-      plotFeatureMap.insert(pair<pair<string, MBSim::PlotFeature>, MBSim::PlotFeatureStatus>(Pair, value));
+      pair<string, PlotFeature> Pair(cKName, pf);
+      plotFeatureMap.insert(pair<pair<string, PlotFeature>, PlotFeatureStatus>(Pair, value));
     }
   }
 
@@ -365,11 +365,11 @@ namespace MBSim {
           contacts[cK][k].connect(contour0);
           contacts[cK][k].connect(contour1);
           //Applies the plot feature to all children (make it possible to set only some children...)
-          for (int i = MBSim::plotRecursive; i != MBSim::LASTPLOTFEATURE; i++) {
-            MBSim::PlotFeature pf = static_cast<MBSim::PlotFeature>(i);
-            MBSim::PlotFeatureStatus pfS = getPlotFeature(pf);
+          for (int i = plotRecursive; i != LASTPLOTFEATURE; i++) {
+            PlotFeature pf = static_cast<PlotFeature>(i);
+            PlotFeatureStatus pfS = getPlotFeature(pf);
 
-            pair<string, MBSim::PlotFeature> Pair(ckNames[cK], pf);
+            pair<string, PlotFeature> Pair(ckNames[cK], pf);
             if (plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
               pfS = plotFeatureMap.find(Pair)->second;
             }
@@ -422,7 +422,7 @@ namespace MBSim {
           jter->init(stage);
       }
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       Element::init(stage);
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {

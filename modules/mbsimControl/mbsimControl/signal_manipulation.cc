@@ -45,7 +45,7 @@ namespace MBSimControl {
   }
 
   void SignalAddition::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++)
         addSignal(getByPath<Signal>(signalString[i]), factorsTmp[i]);
       signalString.clear();
@@ -78,7 +78,7 @@ namespace MBSimControl {
   }
 
   void SignalOffset::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
@@ -103,7 +103,7 @@ namespace MBSimControl {
   }
 
   void SignalMultiplication::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++)
         addSignal(getByPath<Signal>(signalString[i]), exponentsTmp[i]);
       signalString.clear();
@@ -191,7 +191,7 @@ namespace MBSimControl {
       signalString.clear();
       Signal::init(stage);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       for (unsigned int i=0; i<indizes.size(); i++)
         totalSignalSize+=indizes[i].size();
       Signal::init(stage);
@@ -532,7 +532,7 @@ namespace MBSimControl {
     if(xSize) xd=s->getSignal();
   }
 
-  void PIDController::init(MBSim::InitStage stage) {
+  void PIDController::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (sString!="")
         setInputSignal(getByPath<Signal>(sString));
@@ -540,11 +540,11 @@ namespace MBSimControl {
         setDerivativeOfInputSignal(getByPath<Signal>(sdString));
       Signal::init(stage);
     }
-    else if (stage==MBSim::resize) {
+    else if (stage==resize) {
       Signal::init(stage);
       x.resize(xSize, INIT, 0);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         Signal::init(stage);

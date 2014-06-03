@@ -7,7 +7,7 @@
 class System : public MBSim::DynamicSystemSolver {
   public:
     System(const std::string &projectName);
-    void init(MBSim::InitStage stage);
+    void init(InitStage stage);
 };
 
 #endif /* _SYSTEM_H */

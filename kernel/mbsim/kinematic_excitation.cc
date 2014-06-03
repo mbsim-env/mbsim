@@ -122,7 +122,7 @@ namespace MBSim {
       gd.resize(gdSize);
       la.resize(laSize);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       //plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {

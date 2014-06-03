@@ -45,11 +45,11 @@ namespace MBSim {
 
   void PolynomialFrustum::init(InitStage stage) {
 
-    if (stage == MBSim::preInit) {
+    if (stage == preInit) {
       computeEnclosingSphere();
     }
 
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {

@@ -66,7 +66,7 @@ namespace MBSim {
 //      getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
 //      getFrame()->getJacobianOfRotation(1).resize(hSize[1]);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -184,7 +184,7 @@ namespace MBSim {
   void RigidContour::init(InitStage stage) {
     if(stage==unknownStage)
       Contour::init(stage);
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

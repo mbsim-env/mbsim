@@ -27,7 +27,7 @@ namespace MBSimElectronics {
       void updateStateDependentVariables(double t) {};
       void updateJacobians(double t, int j=0) {};
       void updateInverseKineticsJacobians(double t) {};
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       Object* getObjectDependingOn() const {return precessor;}
       void setPrecessor(Object* obj) {precessor = obj;}
       void addBranch(Branch* branch_) {branch.push_back(branch_);}
@@ -65,7 +65,7 @@ namespace MBSimElectronics {
       void clearMeshList() {mesh.clear();}
       int getNumberOfConnectedMeshes() const {return mesh.size();}
       Mesh* getMesh(int i) {return mesh[i];}
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setStartTerminal(Terminal* p) {startTerminal = p; p->addConnectedBranch(this);}
       void setEndTerminal(Terminal* p) {endTerminal = p; p->addConnectedBranch(this);}
       Terminal* getStartTerminal() {return startTerminal;}
@@ -107,7 +107,7 @@ namespace MBSimElectronics {
       bool isActive() const {return true;}
       bool gActiveChanged() {return true;}
       virtual bool isSingleValued() const { return true; }
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &rParent, int j=0);
       virtual double computeVoltage() {return 0;}
@@ -191,7 +191,7 @@ namespace MBSimElectronics {
     protected:
     public:
       ElectronicObject(const std::string &name) : Object(name) {}
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}

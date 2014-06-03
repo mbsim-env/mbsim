@@ -135,7 +135,7 @@ namespace MBSim {
     if(stage==unknownStage) {
       rFactorUnsure.resize(rFactorSize);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

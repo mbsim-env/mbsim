@@ -59,7 +59,7 @@ namespace MBSimControl {
   }
 
   void Actuator::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if(saved_inputSignal!="")
         setSignal(getByPath<Signal>(saved_inputSignal));
       if(saved_ref1!="" && saved_ref2!="")
@@ -68,7 +68,7 @@ namespace MBSimControl {
         throw MBSimError("ERROR in "+getName()+": no connection given!");
       LinkMechanics::init(stage);
     }
-    else if (stage==MBSim::resize) {
+    else if (stage==resize) {
       LinkMechanics::init(stage);
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);

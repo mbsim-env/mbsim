@@ -86,7 +86,7 @@ namespace MBSim {
   }
 
   void Contour1sAnalytical::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {

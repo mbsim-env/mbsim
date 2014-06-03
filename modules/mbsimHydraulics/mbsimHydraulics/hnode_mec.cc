@@ -103,7 +103,7 @@ namespace MBSimHydraulics {
       saved_rotatorial_noVolumeChange.clear();
       HNode::init(stage);
     }
-    else if (stage==MBSim::resize) {
+    else if (stage==resize) {
       HNode::init(stage);
       nTrans=connectedTransFrames.size();
       for (unsigned int i=0; i<nTrans; i++) {
@@ -139,7 +139,7 @@ namespace MBSimHydraulics {
       }
       x.resize(xSize);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Volume [mm^3]");
@@ -184,7 +184,7 @@ namespace MBSimHydraulics {
         HNode::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       HNode::init(stage);
       x0=Vec(1, INIT, V0);
     }
@@ -458,7 +458,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNodeMec, MBSIMHYDRAULICS%"ConstrainedNodeMec")
 
   void ConstrainedNodeMec::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
+    if (stage==unknownStage) {
       HNodeMec::init(stage);
       la.init((*pFun)(0));
       x0=Vec(1, INIT, V0);
@@ -481,7 +481,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNodeMec, MBSIMHYDRAULICS%"EnvironmentNodeMec")
 
   void EnvironmentNodeMec::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
+    if (stage==unknownStage) {
       HNodeMec::init(stage);
       la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
@@ -497,14 +497,14 @@ namespace MBSimHydraulics {
   }
 
   void ElasticNodeMec::init(InitStage stage) {
-    if (stage==MBSim::plot) {
+    if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
         HNodeMec::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       HNodeMec::init(stage);
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
       if (fabs(p0)<epsroot()) {
@@ -577,7 +577,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidNodeMec::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
+    if (stage==unknownStage) {
       HNodeMec::init(stage);
       x0=Vec(1, INIT, V0);
       for (unsigned int i=0; i<nLines; i++) {
