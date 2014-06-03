@@ -42,7 +42,7 @@ namespace MBSimControl {
   }
 
   void AbsolutCoordinateSensor::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if (frameString!="")
         setFrame(getByPath<Frame>(frameString));
       Sensor::init(stage);
@@ -93,7 +93,7 @@ namespace MBSimControl {
   }
 
   void RelativeCoordinateSensor::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if (refFrameString!="")
         setReferenceFrame(getByPath<Frame>(refFrameString));
       if (relFrameString!="")

@@ -236,7 +236,7 @@ namespace MBSim {
   void Object::init(InitStage stage) {
     if (stage == unknownStage) {
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {

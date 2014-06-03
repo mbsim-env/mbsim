@@ -213,7 +213,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
-    if(stage==MBSim::unknownStage)
+    if(stage==unknownStage)
       KinematicConstraint::init(stage);
     else
       KinematicConstraint::init(stage);
@@ -251,7 +251,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
 
   void GeneralizedVelocityConstraint::init(InitStage stage) {
-    if(stage==MBSim::unknownStage)
+    if(stage==unknownStage)
       KinematicConstraint::init(stage);
     else
       KinematicConstraint::init(stage);
@@ -314,7 +314,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
 
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
-    if(stage==MBSim::unknownStage)
+    if(stage==unknownStage)
       KinematicConstraint::init(stage);
     else
       KinematicConstraint::init(stage);

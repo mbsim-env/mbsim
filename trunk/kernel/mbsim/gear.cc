@@ -171,7 +171,7 @@ namespace MBSim {
       gd.resize(1);
       la.resize(1);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       plotColumns.push_back("la(0)");
       for(unsigned int i=0; i<body.size(); i++) {

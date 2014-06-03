@@ -49,7 +49,7 @@ namespace MBSim {
   }
 
   void RigidBodyGroupObserver::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       Observer::init(stage);

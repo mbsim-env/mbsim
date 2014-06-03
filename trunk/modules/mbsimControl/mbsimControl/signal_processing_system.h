@@ -41,7 +41,7 @@ namespace MBSimControl {
       virtual std::string getType() const {return "SignalProcessingSystem"; }
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void updateg(double t) {}
       void updategd(double t) {}

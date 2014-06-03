@@ -236,7 +236,7 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
       }
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       for(int i=0;i<plotElements.size();i++) {
         plotColumns.push_back("eps ("+numtostr(plotElements(i))+")"); // 0
         plotColumns.push_back("epsp("+numtostr(plotElements(i))+")"); // 1

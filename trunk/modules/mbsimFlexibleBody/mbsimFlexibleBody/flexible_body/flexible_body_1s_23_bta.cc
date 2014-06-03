@@ -172,7 +172,7 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s23BTA*>(discretization[i])->setTorsionalDamping(dTorsional);
       }
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif

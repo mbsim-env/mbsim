@@ -203,7 +203,7 @@ namespace MBSim {
       }
       refFrame = refFrameID ? frame[1] : frame[0];
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
         if (getPlotFeature(generalizedLinkForce) == enabled) {

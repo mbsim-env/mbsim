@@ -46,7 +46,7 @@ namespace MBSimHydraulics {
       void setSurface2VelocitySignal(MBSimControl::Signal * s) {s2vSignal=s; }
       double getSurface2Velocity() const;
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement * element);
     protected:
@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
       double getGapHeight() const {return hGap; }
       void setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl);
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement * element);
     private:
@@ -88,7 +88,7 @@ namespace MBSimHydraulics {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement * element);
     private:

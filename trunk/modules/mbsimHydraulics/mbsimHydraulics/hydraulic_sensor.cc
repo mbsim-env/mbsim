@@ -44,8 +44,8 @@ namespace MBSimHydraulics {
     lineString=E(e)->getAttribute("ref");
   }
 
-  void FlowSensor::init(MBSim::InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+  void FlowSensor::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
       if (lineString!="")
         setHLine(getByPath<HLine>(lineString));
       Sensor::init(stage);
@@ -67,8 +67,8 @@ namespace MBSimHydraulics {
     nodeString=E(e)->getAttribute("ref");
   }
 
-  void PressureSensor::init(MBSim::InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+  void PressureSensor::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
       if (nodeString!="")
         setHNode(getByPath<HNode>(nodeString));
       Sensor::init(stage);
@@ -79,8 +79,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TemperatureSensor, MBSIMHYDRAULICS%"TemperatureSensor")
   
-  void TemperatureSensor::init(MBSim::InitStage stage) {
-    if (stage==MBSim::preInit) {
+  void TemperatureSensor::init(InitStage stage) {
+    if (stage==preInit) {
       T(0)=HydraulicEnvironment::getInstance()->getTemperature();
       Sensor::init(stage);
     }
@@ -90,8 +90,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KinematicViscositySensor, MBSIMHYDRAULICS%"KinematicViscositySensor")
   
-  void KinematicViscositySensor::init(MBSim::InitStage stage) {
-    if (stage==MBSim::preInit) {
+  void KinematicViscositySensor::init(InitStage stage) {
+    if (stage==preInit) {
       nu(0)=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       Sensor::init(stage);
     }

@@ -66,7 +66,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineGalerkin::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
+    if (stage==preInit) {
       HLine::init(stage);
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
@@ -83,7 +83,7 @@ namespace MBSimHydraulics {
       MFac=Area*rho*MatIntWWT;
       K=Area*E*MatIntWSWST;
     }
-    else if (stage==MBSim::resize) {
+    else if (stage==resize) {
       HLine::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
@@ -118,7 +118,7 @@ namespace MBSimHydraulics {
         for (int j=0; j<mdim; j++)
           D(i,j)=DTmp(i,j);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       if (relPlotPoints.size()>0) {
         setPlotFeature(globalPosition, enabled);
         setPlotFeature(globalVelocity, enabled);
@@ -142,7 +142,7 @@ namespace MBSimHydraulics {
         HLine::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       HLine::init(stage);
       u0 = inv(MatIntWWT)*WInt*Q0; 
       //      plotParameters();

@@ -104,7 +104,7 @@ namespace MBSim {
       WJP[1].resize(hSize[1]);
       WJR[1].resize(hSize[1]);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {

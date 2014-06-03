@@ -522,7 +522,7 @@ namespace MBSim {
         gddActive[j] = 0;
 
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

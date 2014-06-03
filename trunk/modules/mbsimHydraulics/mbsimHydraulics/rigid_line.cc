@@ -44,19 +44,19 @@ namespace MBSimHydraulics {
   }
 
   void RigidLine::init(InitStage stage) {
-    if (stage==MBSim::modelBuildup) {
+    if (stage==modelBuildup) {
       if (pL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LinePressureLoss", this, pL, false,false));
       RigidHLine::init(stage);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Reynolds number [-]");
         RigidHLine::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       RigidHLine::init(stage);
       double area=M_PI*diameter*diameter/4.;
       Mlocal.resize(1, INIT, HydraulicEnvironment::getInstance()->getSpecificMass()*length/area);
@@ -98,12 +98,12 @@ namespace MBSimHydraulics {
   }
 
   void ClosableRigidLine::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if(refSignalString!="")
         setSignal(getByPath<MBSimControl::Signal>(refSignalString));
       RigidLine::init(stage);
     }
-    else if (stage==MBSim::modelBuildup) {
+    else if (stage==modelBuildup) {
       if (cpLBilateral)
          ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/BilateralClosablePressureLoss", this, cpL, true, false));
      else
@@ -133,7 +133,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnidirectionalRigidLine,  MBSIMHYDRAULICS%"UnidirectionalRigidLine")
 
   void UnidirectionalRigidLine::init(InitStage stage) {
-    if (stage==MBSim::modelBuildup) {
+    if (stage==modelBuildup) {
       if (upL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/RegularizedUnidirectionalPressureLoss", this, upL, false,false));
       else

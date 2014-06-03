@@ -232,7 +232,7 @@ namespace MBSimFlexibleBody {
       }
       initM();
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
 		  for(int i=0;i<q.size()/4;i++) {
 		    plotColumns.push_back("vel_abs node ("+numtostr(i)+")");
 		  }

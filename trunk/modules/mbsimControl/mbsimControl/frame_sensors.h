@@ -37,7 +37,7 @@ namespace MBSimControl {
       AbsolutCoordinateSensor(const std::string &name) : Sensor(name), frame(NULL), direction(), frameString("") {}
       std::string getType() const { return "AbsolutCoordinateSensor"; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setFrame(MBSim::Frame * frame_) {frame=frame_; }
       void setDirection(fmatvec::Mat direction_) {
         direction=direction_;
@@ -84,8 +84,8 @@ namespace MBSimControl {
       fmatvec::Vec getSignal();
 
       void calcxSize() {xSize=direction.cols(); }
-      void init(MBSim::InitStage stage) {
-        if (stage==MBSim::resize) {
+      void init(InitStage stage) {
+        if (stage==resize) {
           AbsolutCoordinateSensor::init(stage);
           g.resize(direction.cols()); 
           gd.resize(direction.cols()); 
@@ -121,7 +121,7 @@ namespace MBSimControl {
       RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(), refFrameString(""), relFrameString("") {}
       std::string getType() const { return "RelativeCoordinateSensor"; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setReferenceFrame(MBSim::Frame * refFrame_) {refFrame=refFrame_; }
       void setRelativeFrame(MBSim::Frame * relFrame_) {relFrame=relFrame_; }
       void setDirection(fmatvec::Mat direction_) {
@@ -170,8 +170,8 @@ namespace MBSimControl {
       fmatvec::Vec getSignal();
       
       void calcxSize() {xSize=direction.cols(); }
-      void init(MBSim::InitStage stage) {
-        if (stage==MBSim::resize) {
+      void init(InitStage stage) {
+        if (stage==resize) {
           RelativeCoordinateSensor::init(stage);
           g.resize(direction.cols()); 
           gd.resize(direction.cols());

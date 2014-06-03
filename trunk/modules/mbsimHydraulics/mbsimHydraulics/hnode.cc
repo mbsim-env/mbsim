@@ -115,14 +115,14 @@ namespace MBSimHydraulics {
   }
 
   void HNode::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<refInflowString.size(); i++)
         addInFlow(getByPath<HLine>(refInflowString[i]));
       for (unsigned int i=0; i<refOutflowString.size(); i++)
         addOutFlow(getByPath<HLine>(refOutflowString[i]));
       Link::init(stage);
     }
-    else if (stage==MBSim::resize) {
+    else if (stage==resize) {
       Link::init(stage);
       gd.resize(1);
       la.resize(1);
@@ -146,7 +146,7 @@ namespace MBSimHydraulics {
         r[1].push_back(Vec(rows));
       }
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node pressure [bar]");
@@ -169,7 +169,7 @@ namespace MBSimHydraulics {
         Link::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       Link::init(stage);
       gdTol/=6e4;
     }
@@ -281,7 +281,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNode, MBSIMHYDRAULICS%"ConstrainedNode")
 
   void ConstrainedNode::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
+    if (stage==unknownStage) {
       HNode::init(stage);
       la.init((*pFun)(0));
     }
@@ -303,7 +303,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNode, MBSIMHYDRAULICS%"EnvironmentNode")
 
   void EnvironmentNode::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
+    if (stage==unknownStage) {
       HNode::init(stage);
       la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
@@ -319,7 +319,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticNode::init(InitStage stage) {
-    if (stage==MBSim::plot) {
+    if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
@@ -587,14 +587,14 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::init(InitStage stage) {
-    if (stage==MBSim::resize) {
+    if (stage==resize) {
       HNode::init(stage);
       g.resize(1, INIT, 0);
       x.resize(1, INIT, 0);
       sv.resize(1, INIT, 0);
       x0=Vec(1, INIT, 0);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("active");
@@ -861,7 +861,7 @@ namespace MBSimHydraulics {
   }
 
   void PressurePump::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       HNode::init(stage);
       if (pSignalString!="")
         setpSignal(getByPath<MBSimControl::Signal>(pSignalString));

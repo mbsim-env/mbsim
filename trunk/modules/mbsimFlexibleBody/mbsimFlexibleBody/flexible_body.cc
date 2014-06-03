@@ -106,7 +106,7 @@ namespace MBSimFlexibleBody {
         S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(uSize[0]);
       }
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

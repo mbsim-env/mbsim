@@ -40,7 +40,7 @@ namespace MBSim {
   }
 
   void LineSegment::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

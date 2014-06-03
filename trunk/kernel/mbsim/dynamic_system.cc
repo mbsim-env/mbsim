@@ -484,7 +484,7 @@ namespace MBSim {
           contour[k]->setFrameOfReference(I);
       }
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       if (parent)
         updatePlotFeatures();
 

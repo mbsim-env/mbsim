@@ -49,7 +49,7 @@ namespace MBSim {
         setFrame(getByPath<Frame>(saved_frame));
       Observer::init(stage);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       Observer::init(stage);
@@ -188,7 +188,7 @@ namespace MBSim {
   }
 
   void CartesianCoordinatesObserver::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       CoordinatesObserver::init(stage);
@@ -396,7 +396,7 @@ namespace MBSim {
   }
 
   void CylinderCoordinatesObserver::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       CoordinatesObserver::init(stage);
@@ -597,7 +597,7 @@ namespace MBSim {
   }
 
   void NaturalCoordinatesObserver::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       CoordinatesObserver::init(stage);

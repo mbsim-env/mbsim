@@ -39,7 +39,7 @@ namespace MBSimControl {
       void setObject(MBSim::Object * object_) {object=object_; }
       void setIndex(int index_) {index=index_; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
     protected:
       MBSim::Object * object;
       std::string objectString;

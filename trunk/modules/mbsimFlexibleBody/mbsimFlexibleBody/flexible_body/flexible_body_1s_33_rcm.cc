@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
         if(fabs(epstD)<epsroot()) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
       }
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
