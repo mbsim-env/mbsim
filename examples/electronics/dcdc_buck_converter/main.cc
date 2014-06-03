@@ -10,8 +10,8 @@ int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
   System *sys = new System("TS");
-  sys->setConstraintSolver(GaussSeidel);
-  sys->setImpactSolver(GaussSeidel);
+  sys->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
+  sys->setImpactSolver(DynamicSystemSolver::GaussSeidel);
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->initialize();

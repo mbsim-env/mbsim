@@ -10,9 +10,9 @@ int main (int argc, char* argv[]) {
 
   sys->setStopIfNoConvergence(true,true);
   sys->dropContactMatrices();
-  sys->setConstraintSolver(FixedPointSingle);
-  sys->setImpactSolver(FixedPointSingle);
-  sys->setStrategy(local);
+  sys->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
+  sys->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
+  sys->setStrategy(DynamicSystemSolver::local);
   sys->initialize();
 
   Integrator *integrator;

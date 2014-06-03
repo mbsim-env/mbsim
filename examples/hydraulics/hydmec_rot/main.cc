@@ -31,11 +31,11 @@ int main (int argc, char* argv[]) {
     HydraulicEnvironment::getInstance()->setTemperature(50+273.16);
     HydraulicEnvironment::getInstance()->initializeFluidData();
 
-    dss->setConstraintSolver(LinearEquations);
-    dss->setImpactSolver(LinearEquations);
+    dss->setConstraintSolver(DynamicSystemSolver::LinearEquations);
+    dss->setImpactSolver(DynamicSystemSolver::LinearEquations);
 
-//    dss->setConstraintSolver(GaussSeidel);
-//    dss->setImpactSolver(GaussSeidel);
+//    dss->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
+//    dss->setImpactSolver(DynamicSystemSolver::GaussSeidel);
     dss->setgdTol(1e-9);
     dss->initialize();
 
