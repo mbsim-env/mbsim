@@ -10,9 +10,9 @@ int main (int argc, char* argv[]) {
 
   sys->setStopIfNoConvergence(false);
 //  sys->dropContactMatrices();
-  sys->setConstraintSolver(FixedPointSingle);
-  sys->setImpactSolver(FixedPointSingle);
-  sys->setStrategy(local);
+  sys->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
+  sys->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
+  sys->setStrategy(DynamicSystemSolver::local);
   sys->initialize();
 
   sys->setgdTol (1.0e-12);

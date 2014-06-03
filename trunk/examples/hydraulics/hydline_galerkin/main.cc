@@ -68,20 +68,20 @@ int main (int argc, char* argv[]) {
           MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
 
           if (isolver==0) {
-            dss->setConstraintSolver(LinearEquations);
-            dss->setImpactSolver(LinearEquations);
+            dss->setConstraintSolver(DynamicSystemSolver::LinearEquations);
+            dss->setImpactSolver(DynamicSystemSolver::LinearEquations);
           }
           else if (isolver==1) {
-            dss->setConstraintSolver(GaussSeidel);
-            dss->setImpactSolver(GaussSeidel);
+            dss->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
+            dss->setImpactSolver(DynamicSystemSolver::GaussSeidel);
           }
           else if(isolver==2) {
-            dss->setConstraintSolver(FixedPointSingle);
-            dss->setImpactSolver(FixedPointSingle);
+            dss->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
+            dss->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
           }
           else if(isolver==3) {
-            dss->setConstraintSolver(RootFinding);
-            dss->setImpactSolver(RootFinding);
+            dss->setConstraintSolver(DynamicSystemSolver::RootFinding);
+            dss->setImpactSolver(DynamicSystemSolver::RootFinding);
           }
           dss->setgdTol(1e-9);
           dss->initialize();

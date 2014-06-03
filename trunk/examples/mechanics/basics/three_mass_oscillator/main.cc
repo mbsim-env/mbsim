@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
   sys->addGroup(new System(2));
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
-  sys->setConstraintSolver(LinearEquations);
-  sys->setImpactSolver(LinearEquations);
+  sys->setConstraintSolver(DynamicSystemSolver::LinearEquations);
+  sys->setImpactSolver(DynamicSystemSolver::LinearEquations);
   sys->setgdTol(1e-9);
 
   sys->initialize();

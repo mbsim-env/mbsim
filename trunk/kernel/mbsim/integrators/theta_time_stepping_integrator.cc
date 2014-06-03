@@ -58,7 +58,7 @@ namespace MBSim {
       system.updateVRef(system.getVParent()(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
       system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
       system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));
-      if (system.getImpactSolver() == RootFinding)
+      if (system.getImpactSolver() == DynamicSystemSolver::RootFinding)
         system.updateresRef(system.getresParent()(0, system.getlaSize() - 1));
       system.updaterFactorRef(system.getrFactorParent()(0, system.getrFactorSize() - 1));
     }

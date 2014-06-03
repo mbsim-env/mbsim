@@ -32,21 +32,6 @@ namespace MBSim {
   class Integrator;
 
   /**
-   * \brief solver for contact equations
-   */
-  enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
-
-  /**
-   * \brief relaxation strategies in solution of contact equations
-   */
-  enum Strategy { global, local };
-
-  /**
-   * \brief linear algebra for Newton scheme in solution of contact equations
-   */
-  enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
-
-  /**
    * \brief solver interface for modelling and simulation of dynamic systems
    * \author Martin Foerg
    * \date 2009-03-31 some comments (Thorsten Schindler)
@@ -65,6 +50,22 @@ namespace MBSim {
    */
   class DynamicSystemSolver : public Group {
     public:
+
+      /**
+       * \brief solver for contact equations
+       */
+      enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
+
+      /**
+       * \brief relaxation strategies in solution of contact equations
+       */
+      enum Strategy { global, local };
+
+      /**
+       * \brief linear algebra for Newton scheme in solution of contact equations
+       */
+      enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
+
       /**
        * \brief constructor
        */
