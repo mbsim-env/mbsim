@@ -30,13 +30,6 @@
 namespace MBSim {
 
   /**
-   * \brief different interest features for frames
-   */
-  enum FrameFeature {
-    position, firstTangent, normal, secondTangent, cosy, position_cosy, velocity, angularVelocity, velocity_cosy, velocities, velocities_cosy, all
-  };
-
-  /**
    * \brief cartesian frame on bodies used for application of e.g. links and loads
    * \author Martin Foerg
    * \date 2009-03-19 some comments (Thorsten Schindler)
@@ -45,6 +38,13 @@ namespace MBSim {
    */
   class Frame : public Element {
     public:
+      /**
+       * \brief different interest features for frames
+       */
+      enum Feature {
+        position, firstTangent, normal, secondTangent, cosy, position_cosy, velocity, angularVelocity, velocity_cosy, velocities, velocities_cosy, all
+      };
+
       /**
        * \brief constructor
        * \param name of coordinate system

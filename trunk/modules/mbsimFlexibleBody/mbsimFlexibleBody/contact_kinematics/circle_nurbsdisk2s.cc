@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
 
     if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g(0) = 1.;
     else {
-      nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],position_cosy); // writes the position, as well as the normal and the tangents into the frame of reference
+      nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],Frame::position_cosy); // writes the position, as well as the normal and the tangents into the frame of reference
 
       cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0));
       cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1));   

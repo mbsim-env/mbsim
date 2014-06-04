@@ -45,7 +45,7 @@ namespace MBSim {
       std::string getType() const {return "Edge";}
       virtual void init(InitStage stage);
 
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
+      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}

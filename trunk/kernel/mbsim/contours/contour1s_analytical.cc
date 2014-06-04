@@ -49,18 +49,18 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-    if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+  void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
+    if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
       cp.getFrameOfReference().getOrientation().set(0, funcCrPC->computeN(cp.getLagrangeParameterPosition()(0)));
       cp.getFrameOfReference().getOrientation().set(1, funcCrPC->computeT(cp.getLagrangeParameterPosition()(0)));
       cp.getFrameOfReference().getOrientation().set(2, funcCrPC->computeB(cp.getLagrangeParameterPosition()(0)));
       cp.getFrameOfReference().getOrientation() = R->getOrientation() * cp.getFrameOfReference().getOrientation();
     }
-    if(ff==position || ff==position_cosy || ff==all) 
+    if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) 
       cp.getFrameOfReference().getPosition() = R->getPosition() + R->getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
-    if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) 
+    if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) 
       cp.getFrameOfReference().getVelocity() = R->getVelocity() + crossProduct(R->getAngularVelocity(),R->getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
-    if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) 
+    if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) 
       cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
   }
 

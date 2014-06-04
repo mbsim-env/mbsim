@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
     // kinematics for azimuthal contact search
-    cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy);
+    cylinder->updateKinematicsForFrame(cpData[icylinder],Frame::position_cosy);
     Vec WrD = cpData[icylinder].getFrameOfReference().getPosition() - WrOP_circle;
 
     const double &R = circle->getRadius();
@@ -117,7 +117,7 @@ namespace MBSimFlexibleBody {
       delete funcPhi;
 
       cpData[icircle].getFrameOfReference().getPosition() = WrOP_circle + R * dTilde/nrm2(dTilde);
-      cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy);
+      cylinder->updateKinematicsForFrame(cpData[icylinder],Frame::position_cosy);
       Vec WrD2 = cpData[icylinder].getFrameOfReference().getPosition() - cpData[icircle].getFrameOfReference().getPosition() ;
 
       Vec normal = (WrD - WtB.T()*WrD*WtB );

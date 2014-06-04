@@ -60,7 +60,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
+      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
       virtual void init(InitStage stage);
       virtual double computeCurvature(ContourPointData &cp);
@@ -68,10 +68,10 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,position); }
-      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,firstTangent); }
-      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,normal); }
-      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); }
+      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::position); }
+      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::firstTangent); }
+      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::normal); }
+      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::secondTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -169,7 +169,7 @@ namespace MBSimFlexibleBody {
         //center of gravity
         cp.getLagrangeParameterPosition()(0) = 0.;
         cp.getLagrangeParameterPosition()(1) = 0.;
-        contour->updateKinematicsForFrame(cp, position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
+        contour->updateKinematicsForFrame(cp, Frame::position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
 
         //Translation of COG
         data.push_back(cp.getFrameOfReference().getPosition()(0)); //global x-coordinate
@@ -196,7 +196,7 @@ namespace MBSimFlexibleBody {
           for(int j = 0; j < drawDegree; j++) {
             cp.getLagrangeParameterPosition()(0) = Ri;
             cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            contour->updateKinematicsForFrame(cp, position);
+            contour->updateKinematicsForFrame(cp, Frame::position);
             Vec pos = cp.getFrameOfReference().getPosition();
 
             data.push_back(pos(0)); //global x-coordinate
@@ -211,7 +211,7 @@ namespace MBSimFlexibleBody {
           for(int j = 0; j < drawDegree; j++) {
             cp.getLagrangeParameterPosition()(0) = Ra;
             cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            contour->updateKinematicsForFrame(cp, position);
+            contour->updateKinematicsForFrame(cp, Frame::position);
             Vec pos = cp.getFrameOfReference().getPosition();
 
             data.push_back(pos(0)); //global x-coordinate

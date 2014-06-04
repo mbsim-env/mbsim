@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
 //	updateContours(t); 
   }
 
-  void FlexibleBodyLinearExternal::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBodyLinearExternal::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
 	Mat J = static_cast<SuperElementLinearExternal*>(discretization[0])->computeJacobianOfMotion(qElement[0],cp);
 //TODO  frame[i]->setWrOP(WrON00  + JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslation(qElement[0],cp)            );
 //TODO  frame[i]->setWvP (          JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslationalVelocity(qElement[0],uElement[0],cp));

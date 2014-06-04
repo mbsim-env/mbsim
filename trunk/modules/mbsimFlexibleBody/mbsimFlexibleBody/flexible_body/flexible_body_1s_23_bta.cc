@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
     gloMat(activeElement) += locMat;
   }
 
-  void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
     if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
       cp.getContourParameterType() = ContourPointData::continuum;
       cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
@@ -79,29 +79,29 @@ namespace MBSimFlexibleBody {
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
       Vec X;
-      if(ff==position || ff==position_cosy || ff==velocity || ff==angularVelocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::velocity || ff==Frame::angularVelocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
         X(0) = cp.getLagrangeParameterPosition()(0);
       }
       SqrMat3 AWK;
-      if(ff==firstTangent || ff==normal || ff==cosy || ff==secondTangent || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::firstTangent || ff==Frame::normal || ff==Frame::cosy || ff==Frame::secondTangent || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         AWK = R->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
       }
 
-      if(ff==position || ff==position_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * X(0,2));
       }
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().getOrientation().set(1, AWK.col(0)); // tangent
       }
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().getOrientation().set(0, AWK.col(1)); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
-      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
+      if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().setVelocity(R->getOrientation() * X(6,8));
       }
-      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * X(9,11));
       }
     }

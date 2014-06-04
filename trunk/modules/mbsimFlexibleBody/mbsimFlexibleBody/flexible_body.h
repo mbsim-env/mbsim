@@ -121,7 +121,7 @@ namespace MBSimFlexibleBody {
        * \param ff selection of specific calculations for frames
        * \param frame optional: external frame, otherwise contour parameters are changed
        */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::FrameFeature ff, MBSim::Frame *frame=0) = 0;
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0) = 0;
 
       /**
        * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class

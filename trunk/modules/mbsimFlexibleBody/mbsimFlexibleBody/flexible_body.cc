@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody::updateStateDependentVariables(double t) {
     BuildElements();
     for(unsigned int i=0; i<frame.size(); i++) { // frames
-      updateKinematicsForFrame(S_Frame[i],all,frame[i]); 
+      updateKinematicsForFrame(S_Frame[i],Frame::all,frame[i]); 
     }
     // TODO contour non native?
   }

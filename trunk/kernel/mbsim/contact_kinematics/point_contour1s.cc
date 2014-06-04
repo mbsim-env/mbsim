@@ -69,7 +69,7 @@ namespace MBSim {
     if (cpData[icontour].getLagrangeParameterPosition()(0) < contour1s->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > contour1s->getAlphaEnd())
       g(0) = 1.0;
     else { // calculate the normal distance
-      contour1s->updateKinematicsForFrame(cpData[icontour], position_cosy);
+      contour1s->updateKinematicsForFrame(cpData[icontour], Frame::position_cosy);
       cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
       cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
       cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));

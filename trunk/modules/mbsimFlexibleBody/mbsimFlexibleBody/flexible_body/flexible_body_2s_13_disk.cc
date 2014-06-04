@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
     if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
 #ifdef HAVE_NURBS
       contour->updateKinematicsForFrame(cp,ff);
@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
       const int &node = cp.getNodeNumber();
 
       Vec tmp(3,NONINIT);
-      if(ff==position || ff==position_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
 
         tmp(0) = NodeCoordinates(node,0)+qext(RefDofs+(node+1)*NodeDofs-2)*(computeThickness(NodeCoordinates(node,0)))/2.; // in deformation direction
         tmp(1) = -qext(RefDofs+(node+1)*NodeDofs-1)*(computeThickness(NodeCoordinates(node,0)))/2.;
@@ -104,11 +104,11 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
 
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
 
-      if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::velocity || ff==Frame::velocities || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = NodeCoordinates(node,0)+qext(RefDofs+(node+1)*NodeDofs-2)*(computeThickness(NodeCoordinates(node,0)))/2.; // in deformation direction
         tmp(1) = -qext(RefDofs+(node+1)*NodeDofs-1)*(computeThickness(NodeCoordinates(node,0)))/2.;
 
@@ -140,7 +140,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
-      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = uext(RefDofs+(node+1)*NodeDofs-2) * (-cos(NodeCoordinates(node,1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node,1))) + uext(RefDofs+(node+1)*NodeDofs-1) * (cos(qext(1)) * cos(NodeCoordinates(node,1)) - sin(qext(1)) * sin(NodeCoordinates(node,1)));
         tmp(1) = uext(RefDofs+(node+1)*NodeDofs-1) * (cos(NodeCoordinates(node,1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node,1))) + uext(RefDofs+(node+1)*NodeDofs-2) * (cos(qext(1)) * cos(NodeCoordinates(node,1)) - sin(qext(1)) * sin(NodeCoordinates(node,1)));
         tmp(2) = uext(1);
