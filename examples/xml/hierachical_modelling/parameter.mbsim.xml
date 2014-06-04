@@ -28,4 +28,5 @@
   <stringParameter name="plotSubType">'Derivative'</stringParameter>
   <scalarParameter name="plotSubTypeEnabled">true</scalarParameter>
   <stringParameter name="pathPrefix">'m'</stringParameter>
+  <stringParameter name="ivdir">'iv'</stringParameter>
 </Parameter>
