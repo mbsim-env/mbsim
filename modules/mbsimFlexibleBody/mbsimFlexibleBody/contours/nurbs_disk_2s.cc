@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+  void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
 #ifdef HAVE_NURBS
     if(nrm2(cp.getLagrangeParameterPosition()) < epsroot()) { // center of gravity
       cp.getFrameOfReference().setOrientation(R->getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA());
@@ -80,7 +80,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else { // somewhere else
-      if(ff==position || ff==position_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
         Point3Dd Tmppt = Surface->pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));  // U-direction is azimuthal, V-direction is radial!
         cp.getFrameOfReference().getPosition()(0) = Tmppt.x();
         cp.getFrameOfReference().getPosition()(1) = Tmppt.y();
@@ -88,10 +88,10 @@ namespace MBSimFlexibleBody {
       }
 
       // first tangent: radial-direction, second tangent:  azimuthal-direction
-      if(ff==firstTangent || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+      if(ff==Frame::firstTangent || ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all)
       cp.getFrameOfReference().getOrientation().set(Index(0,2),Index(1,2), computeDirectionalDerivatives(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0),1));
 
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         Point3Dd normal(Surface->normal(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0)));
 
         double normalLength = sqrt(normal.x()*normal.x() + normal.y()*normal.y() + normal.z()*normal.z());  // to normalize the vector
@@ -103,14 +103,14 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().getOrientation()(2,0) = normal.z() /normalLength;
       }
 
-      if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::velocity || ff==Frame::velocities || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         Point3Dd Tmpv = SurfaceVelocities->pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
         cp.getFrameOfReference().getVelocity()(0) = Tmpv.x();
         cp.getFrameOfReference().getVelocity()(1) = Tmpv.y();
         cp.getFrameOfReference().getVelocity()(2) = Tmpv.z();
       }
 
-      // if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+      // if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
       //   throw MBSimError("ERROR(FlexibleBody2s13::updateKinematicsForFrame::angularVelocity): Not implemented!");
       // }
     }
@@ -273,7 +273,7 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<nr+1; i++) {
       for(int j=0; j<nj; j++) {
         ContourPointData cp(i*nj+j);
-        static_cast<FlexibleBody2s13*>(parent)->updateKinematicsForFrame(cp,position);
+        static_cast<FlexibleBody2s13*>(parent)->updateKinematicsForFrame(cp,Frame::position);
         Nodelist(j,i) = HPoint3Dd(cp.getFrameOfReference().getPosition()(0),cp.getFrameOfReference().getPosition()(1),cp.getFrameOfReference().getPosition()(2),1);
       }
       for(int j=0;j<degU;j++) { //expands the surface addicted to the degree in azimuthal direction
@@ -359,7 +359,7 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<nr+1; i++) {
       for(int j=0; j<nj; j++) {
         ContourPointData cp(i*nj+j);
-        static_cast<FlexibleBody2s13*>(parent)->updateKinematicsForFrame(cp,velocity);
+        static_cast<FlexibleBody2s13*>(parent)->updateKinematicsForFrame(cp,Frame::velocity);
         Nodelist(j,i) = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0),cp.getFrameOfReference().getVelocity()(1),cp.getFrameOfReference().getVelocity()(2), 1);
       }
       for(int j=0;j<degU;j++) { // expands the surface addicted to the degree in azimuthal direction

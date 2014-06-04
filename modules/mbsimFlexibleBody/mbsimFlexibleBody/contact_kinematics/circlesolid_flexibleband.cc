@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
       if(cpData[inode].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[inode].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
         g(0) = 1.0;
       else {
-        band->updateKinematicsForFrame(cpData[inode],position_cosy);
+        band->updateKinematicsForFrame(cpData[inode],Frame::position_cosy);
         Vec Wd = circle->getFrame()->getPosition() - cpData[inode].getFrameOfReference().getPosition();
         g(0) = nrm2(Wd) - rCircle;
 
@@ -137,7 +137,7 @@ namespace MBSimFlexibleBody {
       if(cpData[inode].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[inode].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
         gNri(0) = 1.0;
       else {
-          band->updateKinematicsForFrame(cpData[inode],position_cosy);
+          band->updateKinematicsForFrame(cpData[inode],Frame::position_cosy);
           Vec Wd = circle->getFrame()->getPosition() - cpData[inode].getFrameOfReference().getPosition();
           gNri(0) = nrm2(Wd) - rCircle;
 

@@ -104,31 +104,31 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
     if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       Vec X = computeState(cp.getLagrangeParameterPosition()(0));
 
       Vec tmp(3,NONINIT);
-      if(ff==position || ff==position_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
         tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
       }
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = -sin(X(2)); tmp(1) = cos(X(2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
 
-      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = X(3); tmp(1) = X(4); tmp(2) = 0.;
         cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
-      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = 0.; tmp(1) = 0.; tmp(2) = X(5);
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
       }
@@ -138,27 +138,27 @@ namespace MBSimFlexibleBody {
 
       Vec tmp(3,NONINIT);
 
-      if(ff==position || ff==position_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
         tmp(0) = q(5*node+0); tmp(1) = q(5*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
 
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
       }
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
 
-      if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::velocity || ff==Frame::velocities || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = u(5*node+0); tmp(1) = u(5*node+1); tmp(2) = 0.;
         cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
-      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(5*node+2);
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
       }
@@ -380,11 +380,11 @@ namespace MBSimFlexibleBody {
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
 
-        updateKinematicsForFrame(cp, position);
+        updateKinematicsForFrame(cp, Frame::position);
         NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1); // Third component is zero as Nurbs library supports only 3D interpolation
 
         if(not filenameVel.empty()) {
-          updateKinematicsForFrame(cp, velocity_cosy);
+          updateKinematicsForFrame(cp, Frame::velocity_cosy);
 
           SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
           SqrMat3 AKI(INIT,0.);

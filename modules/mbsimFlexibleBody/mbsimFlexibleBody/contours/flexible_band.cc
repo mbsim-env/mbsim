@@ -36,28 +36,28 @@ namespace MBSimFlexibleBody {
     Cn = Cn_ / nrm2(Cn_);
   }
 
-  void FlexibleBand::updateKinematicsForFrame(ContourPointData& cp, FrameFeature ff) {
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy)
-      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, firstTangent);
-    if (ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy) {
-      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, normal);
-      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, secondTangent);
+  void FlexibleBand::updateKinematicsForFrame(ContourPointData& cp, Frame::Feature ff) {
+    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy)
+      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, Frame::firstTangent);
+    if (ff == Frame::normal || ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy) {
+      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, Frame::normal);
+      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, Frame::secondTangent);
       Vec WnLocal = cp.getFrameOfReference().getOrientation().col(0);
       Vec WbLocal = cp.getFrameOfReference().getOrientation().col(2);
-      if (ff != secondTangent)
+      if (ff != Frame::secondTangent)
         cp.getFrameOfReference().getOrientation().set(0, WnLocal * Cn(0) + WbLocal * Cn(1));
-      if (ff != normal)
+      if (ff != Frame::normal)
         cp.getFrameOfReference().getOrientation().set(2, -WnLocal * Cn(1) + WbLocal * Cn(0));
     }
-    if (ff == position || ff == position_cosy) {
-      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, position);
+    if (ff == Frame::position || ff == Frame::position_cosy) {
+      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, Frame::position);
       cp.getFrameOfReference().getPosition() += cp.getFrameOfReference().getOrientation().col(0) * nDist + cp.getFrameOfReference().getOrientation().col(2) * cp.getLagrangeParameterPosition()(1);
     }
-    if (ff == angularVelocity || ff == velocities || ff == velocities_cosy) {
-      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, angularVelocity);
+    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy) {
+      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, Frame::angularVelocity);
     }
-    if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy) {
-      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, velocity);
+    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy) {
+      static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, Frame::velocity);
       Vec3 dist = cp.getFrameOfReference().getOrientation().col(0) * nDist + cp.getFrameOfReference().getOrientation().col(2) * cp.getLagrangeParameterPosition()(1);
       cp.getFrameOfReference().getVelocity() += crossProduct(cp.getFrameOfReference().getAngularVelocity(), dist);
     }

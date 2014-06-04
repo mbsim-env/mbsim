@@ -64,7 +64,7 @@ namespace MBSimFlexibleBody {
         cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk
 
         //get the position and the derivatives on the disk 
-        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,MBSim::firstTangent); 
+        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,MBSim::Frame::firstTangent); 
 
         //compute the derivates of the radial and the azimuthal coordinates with respect to alpha
         fmatvec::SqrMat A_inv(3,fmatvec::EYE);
@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
         //get the position on the nurbsdisk
         MBSim::ContourPointData cp_nurbsdisk;
         cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(WP_circle - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk
-        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,MBSim::position);
+        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,MBSim::Frame::position);
         fmatvec::Vec WP_nurbsdisk = cp_nurbsdisk.getFrameOfReference().getPosition();
 
         return WP_circle - WP_nurbsdisk;

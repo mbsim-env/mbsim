@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
 
     if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g(0) = 1.;
     else {
-      nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],position_cosy); // writes the position, as well as the normal and the tangents into the FrameOfReference
+      nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],Frame::position_cosy); // writes the position, as well as the normal and the tangents into the FrameOfReference
       // cout << "Position auf Scheibe: " << cpData[inurbsdisk].getFrameOfReference().getPosition() << endl;
 
       cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0));

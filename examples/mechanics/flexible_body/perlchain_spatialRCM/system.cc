@@ -159,7 +159,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cp.getContourParameterType() = ContourPointData::continuum;
     cp.getLagrangeParameterPosition()(0) = xL;
 
-    rodInfo->updateKinematicsForFrame(cp,position_cosy);
+    rodInfo->updateKinematicsForFrame(cp,Frame::position_cosy);
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);
     q0(2) = AIK2RevCardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;

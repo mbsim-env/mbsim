@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
 
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
-    cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy); 
+    cylinder->updateKinematicsForFrame(cpData[icylinder],Frame::position_cosy); 
     Vec WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
 
     // contact in estimated contact area? 

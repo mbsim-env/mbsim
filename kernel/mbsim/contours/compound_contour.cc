@@ -136,7 +136,7 @@ namespace MBSim {
     }
   }
 
-  void CompoundContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+  void CompoundContour::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
     for (unsigned int i = 0; i < element.size(); i++)
       element[i]->updateKinematicsForFrame(cp, ff);
   }
