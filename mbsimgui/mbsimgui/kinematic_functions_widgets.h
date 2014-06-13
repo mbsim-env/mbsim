@@ -147,6 +147,20 @@ namespace MBSimGUI {
       int getArg1Size() const {return 3;}
   };
 
+  class RotationAboutAxesZYXWidget : public FunctionWidget {
+
+    public:
+      RotationAboutAxesZYXWidget() { }
+      int getArg1Size() const {return 3;}
+  };
+
+  class RotationAboutAxesZXZWidget : public FunctionWidget {
+
+    public:
+      RotationAboutAxesZXZWidget() { }
+      int getArg1Size() const {return 3;}
+  };
+
   class RotationAboutFixedAxisWidget : public FunctionWidget {
 
     friend class RotationAboutFixedAxisProperty;

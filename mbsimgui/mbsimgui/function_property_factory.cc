@@ -187,10 +187,14 @@ namespace MBSimGUI {
     if(i==6)
       return new RotationAboutAxesXYZProperty;
     if(i==7)
-      return new RotationAboutFixedAxisProperty;
+      return new RotationAboutAxesZXZProperty;
     if(i==8)
-      return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
+      return new RotationAboutAxesZYXProperty;
     if(i==9)
+      return new RotationAboutFixedAxisProperty;
+    if(i==10)
+      return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
+    if(i==11)
       return new SymbolicFunctionProperty("MV",vector<string>(1,"q"),1);
   }
 
@@ -203,6 +207,8 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"RotationAboutAxesYZ");
     name.push_back(MBSIM%"RotationAboutAxesXZ");
     name.push_back(MBSIM%"RotationAboutAxesXYZ");
+    name.push_back(MBSIM%"RotationAboutAxesZXZ");
+    name.push_back(MBSIM%"RotationAboutAxesZYX");
     name.push_back(MBSIM%"RotationAboutFixedAxis");
     name.push_back(MBSIM%"NestedFunction");
     name.push_back(MBSIM%"SymbolicFunction");
