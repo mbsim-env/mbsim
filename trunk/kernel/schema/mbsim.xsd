@@ -3132,6 +3132,32 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="RotationAboutAxesZXZ" substitutionGroup="Function" type="RotationAboutAxesZXZType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesZXZType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutAxesZYX" substitutionGroup="Function" type="RotationAboutAxesZYXType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesZYXType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="SymbolicFunction" substitutionGroup="Function" type="SymbolicFunctionType"/>
   <xs:complexType name="SymbolicFunctionType" mixed="true">
     <xs:complexContent>
