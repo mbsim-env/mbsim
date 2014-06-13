@@ -579,7 +579,7 @@ namespace MBSim {
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
       public:
-        RotationAboutAxesZXZ() : J(3), Jd(3) { }
+        RotationAboutAxesZXZ() : J(3), Jd(3) { J.e(2,0) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
         fmatvec::RotMat3 operator()(const Arg &q) {
           double psi=q.e(0);
@@ -603,11 +603,93 @@ namespace MBSim {
           return A;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
-          throw MBSimError("RotationAboutAxesZXZ::parDer() not yet implemented.");
+          double psi=q.e(0);
+          double theta=q.e(1);
+          //J.e(0,0) = 0;
+          J.e(0,1) = cos(psi);
+          J.e(0,2) = sin(psi)*sin(theta);
+          //J.e(1,0) = 0;
+          J.e(1,1) = sin(psi);
+          J.e(1,2) = -cos(psi)*sin(theta);
+          //J.e(2,0) = 1;
+          //J.e(2,1) = 1;
+          J.e(2,2) = cos(theta);
           return J;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
-          throw MBSimError("RotationAboutAxesZXZ::parDerDirDer() not yet implemented.");
+          double psi=q.e(0);
+          double theta=q.e(1);
+          double psid=qd.e(0);
+          double thetad=qd.e(1);
+          Jd.e(0,1) = -sin(psi)*psid;
+          Jd.e(0,2) = cos(psi)*sin(theta)*psid + sin(psi)*cos(theta)*thetad;
+          Jd.e(1,1) = cos(psi)*psid;
+          Jd.e(1,2) = sin(psi)*sin(theta)*psid - cos(psi)*cos(theta)*thetad;
+          Jd.e(2,2) = -sin(theta)*thetad;
+          return Jd;
+        }
+    };
+
+  template<class Arg> 
+    class RotationAboutAxesZYX : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        RotationAboutAxesZYX() : J(3), Jd(3) { J.e(2,0) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double a=q.e(0);
+          double b=q.e(1);
+          double g=q.e(2);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          double cosg = cos(g);
+          double sing = sin(g);
+          A.e(0,0) = cosa*cosb;
+          A.e(1,0) = sina*cosb;
+          A.e(2,0) = -sinb;
+          A.e(0,1) = -sina*cosg+cosa*sinb*sing;
+          A.e(1,1) = cosa*cosg+sina*sinb*sing;
+          A.e(2,1) = cosb*sing;
+          A.e(0,2) = sina*sing+cosa*sinb*cosg;
+          A.e(1,2) = -cosa*sing+sina*sinb*cosg;
+          A.e(2,2) = cosb*cosg;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          double a = q.e(0);
+          double b = q.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          //J.e(0,0) = 0;
+          J.e(0,1) = -sina;
+          J.e(0,2) = cosa*cosb;
+          //J.e(1,0) = 0;
+          J.e(1,1) = cosa;
+          J.e(1,2) = sina*cosb;
+          //J.e(2,0) = 1;
+          //J.e(2,1) = 0;
+          J.e(2,2) = -sin(b);
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double a = q.e(0);
+          double b = q.e(1);
+          double ad = qd.e(0);
+          double bd = qd.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          Jd.e(0,1) = -cosa*ad;
+          Jd.e(0,2) = -sina*cosb*ad - cosa*sinb*bd;
+          Jd.e(1,1) = -sina*ad;
+          Jd.e(1,2) = cosa*cosb*ad - sina*sinb*bd;
+          Jd.e(2,2) = -cosb*bd;
           return Jd;
         }
     };
@@ -712,6 +794,31 @@ namespace MBSim {
           T.e(2,0) = -sin_phi/tan_theta;
           T.e(2,1) = -cos_phi/tan_theta;
 
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class RotationAboutAxesZYXMapping : public fmatvec::Function<fmatvec::MatV(Arg)> {
+      private:
+        fmatvec::MatV T;
+      public:
+        RotationAboutAxesZYXMapping() : T(3,3) { T.e(0,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+        fmatvec::MatV operator()(const Arg &q) {
+          double alpha = q.e(0);
+          double beta = q.e(1);
+          double cos_beta = cos(beta);
+          double sin_beta = sin(beta);
+          double cos_alpha = cos(alpha);
+          double sin_alpha = sin(alpha);
+          double tan_beta = sin_beta/cos_beta;
+          T.e(0,0) = cos_alpha*tan_beta;
+          T.e(0,1) = sin_alpha*tan_beta;
+          T.e(1,0) = -sin_alpha;
+          T.e(1,1) = cos_alpha;
+          T.e(2,0) = cos_alpha/cos_beta;
+          T.e(2,1) = sin_alpha/cos_beta;
           return T;
         }
     };

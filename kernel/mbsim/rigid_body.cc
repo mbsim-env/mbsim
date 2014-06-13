@@ -258,6 +258,13 @@ namespace MBSim {
         PJRR = SqrMat3(EYE);
         PJR[0].set(i02,iuR,PJRR);
       }
+      else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
+        fTR = new RotationAboutAxesZYXMapping<VecV>;
+        constJR = true;
+        constjR = true;
+        PJRR = SqrMat3(EYE);
+        PJR[0].set(i02,iuR,PJRR);
+      }
 
       if(fPrPK) {
         if(fPrPK->constParDer1()) {
