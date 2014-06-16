@@ -1,4 +1,4 @@
-SUBDIRS = . functions nonlinear_algebra linear_complementarity_problem nurbs
+SUBDIRS = functions nonlinear_algebra linear_complementarity_problem nurbs .
 
 noinst_LTLIBRARIES = libnumerics.la
 
