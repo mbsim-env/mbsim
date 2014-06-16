@@ -25,6 +25,7 @@
 
 #include <string>
 #include "fmatvec/fmatvec.h"
+#include <mbsim/numerics/csparse.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <limits>
@@ -62,6 +63,11 @@ namespace MBSim {
    * \return angle
    */
   double ArcTan(double x,double y);
+
+  /*!
+   * \brief calculate a fmatvec::Mat out of a sparse matrix
+   */
+  fmatvec::Mat cs2Mat(cs* sparseMat);
 
   template <class T>
     inline std::string toStr(const T &val) {

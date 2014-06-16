@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  System *sys = new System("MBS");
+  Perlchain *sys = new Perlchain("MBS");
 
   StopWatch Timer;
 
