@@ -71,9 +71,7 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-2"),"s",MBSIMINT%"plotStepSize"));
     plotStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new VecProperty(0), "", MBSIMINT%"initialState"));
-    initialState.setProperty(new ExtPhysicalVarProperty(input));
+    initialState.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMINT%"initialState",vector<string>(3,"")),"",4));
 
     embed.setProperty(new EmbedProperty(boost::bind(&Integrator::getName, this)));
   }
