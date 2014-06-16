@@ -298,7 +298,7 @@ namespace MBSim {
        * \brief updates mass action matrix
        * \param time
        */
-      void updateG(double t, int i=0);
+      virtual void updateG(double t, int i=0);
 
       /**
        * \brief decrease relaxation factors if mass action matrix is not diagonal dominant

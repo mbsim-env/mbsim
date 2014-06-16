@@ -97,6 +97,10 @@ namespace MBSim {
        */
       virtual void connect(Contour *contour_);
 
+      const std::vector<Frame*>& getFrame() const {
+        return frame;
+      }
+
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const std::vector<bool>& which);

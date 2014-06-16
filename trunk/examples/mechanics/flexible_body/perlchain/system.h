@@ -6,9 +6,27 @@
 #include "mbsim/rigid_body.h"
 #include <string>
 
-class System : public MBSim::DynamicSystemSolver {
+#include <mbsim/numerics/csparse.h>
+
+
+class Perlchain : public MBSim::DynamicSystemSolver {
   public:
-    System(const std::string &projectName);
+    Perlchain(const std::string &projectName);
+
+    /**
+     * \brief compress the W matrix into csparse compressed-column form
+     * \param time
+     */
+    cs * compressWToCsparse(int j=0);
+
+    /**
+     * \brief compress the W matrix into csparse compressed-column form
+     * \param time
+     */
+    cs * compressLLM_LToCsparse(int j=0);
+
+    virtual void updateG(double t, int i=0);
+
 
   private:
     /** flexible ring */
