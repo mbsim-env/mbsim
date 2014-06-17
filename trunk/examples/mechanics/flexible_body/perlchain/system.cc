@@ -45,7 +45,12 @@ void Perlchain::updateG(double t, int j) {
 //  int I1; // the ending row index of the dense matrix area
 //  int numOfDenseObjects;
   StopWatch sw;
-  sw.start();
+
+  bool comparison = false;
+
+  if (comparison) {
+    sw.start();
+  }
   cs *cs_L_LLM, *cs_Wj;
 //  numOfDenseObjects = 3;
 
@@ -114,8 +119,11 @@ void Perlchain::updateG(double t, int j) {
 //  ycsOfile << y;
 //  ycsOfile.close();
 
-  sw.start();
-  SqrMat Greference(W[j].T() * slvLLFac(LLM[j], V[j]));
+  SqrMat Greference(0, NONINIT);
+  if (comparison) {
+    sw.start();
+    Greference.resize() << W[j].T() * slvLLFac(LLM[j], V[j]);
+  }
   double t_ref = sw.stop(true);
 
 //  ofstream GOfile("G_cs.txt");
@@ -131,14 +139,14 @@ void Perlchain::updateG(double t, int j) {
 //  GOcmpfile << Gcmp;
 //  GOcmpfile.close();
 
-  cout << " *** Comparison *** " << endl;
-  cout << "1-Norm of W-difference:   \t" << nrm1(W[j] - cs2Mat(cs_Wj)) << endl;
-  cout << "1-Norm of LLM-difference: \t" << nrm1(LLM[j] - cs2Mat(cs_L_LLM)) << endl;
-  cout << "1-Norm of G-difference:   \t" << nrm1(G - Greference) << endl;
+  if (comparison) {
+    cout << " *** Comparison *** " << endl;
+    cout << "1-Norm of W-difference:   \t" << nrm1(W[j] - cs2Mat(cs_Wj)) << endl;
+    cout << "1-Norm of LLM-difference: \t" << nrm1(LLM[j] - cs2Mat(cs_L_LLM)) << endl;
+    cout << "1-Norm of G-difference:   \t" << nrm1(G - Greference) << endl;
 
-  cout << "Timing: t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_cs) / t_ref * 100 << " %" << endl;
-
-
+    cout << "Timing: t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_cs) / t_ref * 100 << " %" << endl;
+  }
 
   // todo: declare G to be symmetric matrix
   // if G is symmetric type, only the elements in the lower triangular is stored in column wise.
@@ -275,7 +283,7 @@ cs * Perlchain::compressWToCsparse(int j) {
 
 cs * Perlchain::compressLLM_LToCsparse(int j) {
 
-  int n, nz;
+  int n, nz = 0;
   cs *LLMcs;
   double EPSILON = 1e-17; /*todo: a better epsilion? */
 
