@@ -41,6 +41,7 @@ int main (int argc, char* argv[])
   sys->closePlot();
 
   delete sys;
+  delete integrator;
 
   return 0;
 

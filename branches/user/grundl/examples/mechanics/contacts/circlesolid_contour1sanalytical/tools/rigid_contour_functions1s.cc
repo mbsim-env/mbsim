@@ -27,9 +27,10 @@
 #include "rigid_contour_functions1s.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 double calculateLocalAlpha(const double& alpha) {
   if ((alpha>0) && (alpha<2.*M_PI))
@@ -127,13 +128,21 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   return erg;
 }
 
-FuncCrPC::FuncCrPC() : ContourFunction1s() {
+FuncCrPC::FuncCrPC() : ContourFunction1s(), tab_operator(0), tab_T(0), tab_B(0), tab_N(0), tab_curvature(0) {
   Cb(0)=1;
   operator_ = &FuncCrPC::operatorPPolynom;
   computeT_ = &FuncCrPC::computeTPPolynom;
   computeB_ = &FuncCrPC::computeBPPolynom;
   computeN_ = &FuncCrPC::computeNPPolynom;
   computeCurvature_ = &FuncCrPC::computeCurvaturePPolynom;
+}
+
+FuncCrPC::~FuncCrPC() {
+  delete tab_operator;
+  delete tab_T;
+  delete tab_B;
+  delete tab_N;
+  delete tab_curvature;
 }
 
 void FuncCrPC::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
@@ -186,11 +195,11 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
     N.set(i, this->computeN(alp).T());
     curve(i)=this->computeCurvature(alp);
   }
-  tab_operator = new TabularFunction<Vec3>(phi, Mat(O));
-  tab_T = new TabularFunction<Vec3>(phi, Mat(T));
-  tab_B = new TabularFunction<Vec3>(phi, Mat(B));
-  tab_N = new TabularFunction<Vec3>(phi, Mat(N));
-  tab_curvature = new TabularFunction<Vec3>(phi, curve);
+  tab_operator = new TabularFunction<Vec3(double)>(phi, Mat(O));
+  tab_T = new TabularFunction<Vec3(double)>(phi, Mat(T));
+  tab_B = new TabularFunction<Vec3(double)>(phi, Mat(B));
+  tab_N = new TabularFunction<Vec3(double)>(phi, Mat(N));
+  tab_curvature = new TabularFunction<Vec3(double)>(phi, curve);
 
   operator_ = &FuncCrPC::operatorTabular;
   computeT_ = &FuncCrPC::computeTTabular;
@@ -280,9 +289,9 @@ double FuncCrPC::computeCurvatureTabular(const double& alpha) {
     }
   }
 
-void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
+void FuncCrPC::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
-/* TiXmlElement * e;
+/* DOMElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
   Mat YZ=Element::getMat(e);
   int dis=1;
@@ -302,12 +311,16 @@ void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
 FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : ContourFunction1s(), Cb(Vec("[1; 0; 0]")), pp_r(0), alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
 }
 
+FuncCrPC_PlanePolar::~FuncCrPC_PlanePolar() {
+  delete pp_r;
+}
+
 void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   Mat angleYZ=ContourXY2angleXY(YZ, 1, rYZ , 1); 
   Vec r(angleYZ.rows(), NONINIT);
   for (int i=0; i<r.size(); i++)
     r(i)=nrm2(angleYZ(Index(i,i), Index(1,2)));
-  pp_r=new PiecewisePolynomFunction<VecV>();
+  pp_r=new PiecewisePolynomFunction<VecV(double)>;
   pp_r->setXF(angleYZ.col(0), r, "csplinePer");
   updateData(1.);
 }   
@@ -394,7 +407,7 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
   }
 }
 
-void FuncCrPC_PlanePolar::initializeUsingXML(TiXmlElement * element) {
+void FuncCrPC_PlanePolar::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
 }
 

@@ -20,7 +20,7 @@
 #ifndef RIGID_CONTOUR_FUNCTION1S_H
 #define RIGID_CONTOUR_FUNCTION1S_H
 
-#include <mbsim/utils/ppolynom.h>
+#include <mbsim/functions/piecewise_polynom_function.h>
 #include <mbsim/utils/contour_functions.h>
 
 namespace MBSim {
@@ -30,6 +30,7 @@ namespace MBSim {
 class FuncCrPC : public MBSim::ContourFunction1s {
   public:
     FuncCrPC();
+    ~FuncCrPC();
     
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3, fmatvec::INIT, 0));
 
@@ -47,13 +48,13 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(xercesc::DOMElement * element);
   private:
     fmatvec::Vec3 Cb;
-    MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_y;
-    MBSim::PiecewisePolynomFunction<fmatvec::VecV> pp_z;
-    MBSim::TabularFunction<fmatvec::Vec3> * tab_operator;
-    MBSim::TabularFunction<fmatvec::Vec3> * tab_T;
-    MBSim::TabularFunction<fmatvec::Vec3> * tab_B;
-    MBSim::TabularFunction<fmatvec::Vec3> * tab_N;
-    MBSim::TabularFunction<fmatvec::Vec3> * tab_curvature;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> pp_y;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> pp_z;
+    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_operator;
+    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_T;
+    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_B;
+    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_N;
+    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_curvature;
 
     fmatvec::Vec3 (FuncCrPC::*operator_)(const double& alpha);
     fmatvec::Vec3 operatorPPolynom(const double& alpha);
@@ -77,6 +78,7 @@ class FuncCrPC : public MBSim::ContourFunction1s {
 class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
   public:
     FuncCrPC_PlanePolar();
+    ~FuncCrPC_PlanePolar();
   
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3,fmatvec::INIT, 0));
 
@@ -95,7 +97,7 @@ class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(xercesc::DOMElement * element);
   private:
     const fmatvec::Vec3 Cb;
-    MBSim::PiecewisePolynomFunction<fmatvec::VecV> * pp_r;
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> * pp_r;
 
     double alphaSave, salphaSave, calphaSave, rSave, drdalphaSave, d2rdalpha2Save;
     

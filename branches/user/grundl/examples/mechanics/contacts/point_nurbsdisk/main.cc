@@ -19,8 +19,6 @@ int main (int argc, char* argv[]) {
 
   integrator.integrate(*sys);
 
-  sys->closePlot();
-
   cout << "finished"<<endl;
 
   delete sys;

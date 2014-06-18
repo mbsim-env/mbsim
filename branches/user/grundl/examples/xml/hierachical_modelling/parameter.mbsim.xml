@@ -6,10 +6,10 @@
       <ele>pi/4</ele>
     </xmlVector>
   </vectorParameter>
+  <scalarParameter name="m1">5</scalarParameter>
   <scalarParameter name="m">m1</scalarParameter>
   <scalarParameter name="h">0.8</scalarParameter>
   <scalarParameter name="alphaUG">pi/4</scalarParameter>
-  <scalarParameter name="m1">5</scalarParameter>
   <scalarParameter name="m2">2</scalarParameter>
   <scalarParameter name="c1">1e3</scalarParameter>
   <scalarParameter name="c2">1e2</scalarParameter>

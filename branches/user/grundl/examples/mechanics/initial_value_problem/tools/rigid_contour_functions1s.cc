@@ -26,9 +26,10 @@
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
-using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u , int discretization) { 
   Mat ContourMat;
@@ -173,11 +174,11 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
     N.set(i, this->computeN(alp).T());
     curve(i)=this->computeCurvature(alp);
   }
-  tab_operator = new TabularFunction<Vec3>(phi, Mat(O));
-  tab_T = new TabularFunction<Vec3>(phi, Mat(T));
-  tab_B = new TabularFunction<Vec3>(phi, Mat(B));
-  tab_N = new TabularFunction<Vec3>(phi, Mat(N));
-  tab_curvature = new TabularFunction<Vec3>(phi, curve);
+  tab_operator = new TabularFunction<Vec3(double)>(phi, Mat(O));
+  tab_T = new TabularFunction<Vec3(double)>(phi, Mat(T));
+  tab_B = new TabularFunction<Vec3(double)>(phi, Mat(B));
+  tab_N = new TabularFunction<Vec3(double)>(phi, Mat(N));
+  tab_curvature = new TabularFunction<Vec3(double)>(phi, curve);
 
   operator_ = &FuncCrPC::operatorTabular;
   computeT_ = &FuncCrPC::computeTTabular;
@@ -267,9 +268,9 @@ double FuncCrPC::computeCurvatureTabular(const double& alpha) {
     }
   }
 
-void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
+void FuncCrPC::initializeUsingXML(DOMElement * element) {
   ContourFunction1s::initializeUsingXML(element);
-/* TiXmlElement * e;
+/* DOMElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
   Mat YZ=Element::getMat(e);
   int dis=1;

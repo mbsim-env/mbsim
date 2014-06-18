@@ -158,7 +158,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
-  n0->setpFunction(new ConstantFunction<double>(1e5));
+  n0->setpFunction(new ConstantFunction<double(double)>(1e5));
   n0->addOutFlow(l04);
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
@@ -168,7 +168,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
   n1->setInitialVolume(V0);
-  n1->setpFunction(new ConstantFunction<double>(pressure));
+  n1->setpFunction(new ConstantFunction<double(double)>(pressure));
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 
@@ -189,13 +189,13 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n3->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[1; 0; 0]"), area);
   
   RigidNodeMec * n4 = new RigidNodeMec("n_"+getBodyName(3)+"_"+getBodyName(4));
-  //addLink(n4);
+  addLink(n4);
   n4->setInitialVolume(V0);
   n4->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[-1; 0; 0]"), area); 
   n4->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[1; 0; 0]"), area);
   n4->addInFlow(l04);
 
   EnvironmentNodeMec * n4Inf = new EnvironmentNodeMec("n4Inf");
-  //addLink(n4Inf);
+  addLink(n4Inf);
   n4Inf->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
 }
