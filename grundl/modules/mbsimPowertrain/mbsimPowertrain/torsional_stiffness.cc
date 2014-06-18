@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "mbsimPowertrain/torsional_stiffness.h"
+#include "torsional_stiffness.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/frame.h"

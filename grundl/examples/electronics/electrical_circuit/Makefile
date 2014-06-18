@@ -11,7 +11,7 @@ libsources =
 objects = $(sources:.cc=.o)
 
 OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimElectronics` 
+CPPFLAGS= -g -O3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimElectronics` 
 
 $(Target) : $(objects)
 	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimElectronics` `pkg-config --libs mbsimControl`

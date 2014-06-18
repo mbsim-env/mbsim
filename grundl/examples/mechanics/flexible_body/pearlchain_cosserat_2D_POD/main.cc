@@ -69,6 +69,9 @@ int main (int argc, char* argv[]) {
     double calctime = timer.elapsed();
 
     cout << "Finished reduced Simulation after calculation time [s] : " << calctime << endl;
+
+    delete sys;
+    delete integrator;
   }
 
 

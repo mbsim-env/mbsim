@@ -42,10 +42,11 @@ int main (int argc, char* argv[]) {
   int dimension = 1000;
 
   TestFunction * function = new TestFunction();
+  NewtonJacobianFunction * jac = new NumericalNewtonJacobianFunction();
 
   MultiDimensionalNewtonMethod newton;
   newton.setFunction(function);
-  newton.setJacobianFunction(new NumericalNewtonJacobianFunction());
+  newton.setJacobianFunction(jac);
 
   map<Index, double> tolerances;
   tolerances.insert(pair<Index, double>(Index(0,dimension/2-1), 1e-10));
@@ -66,19 +67,23 @@ int main (int argc, char* argv[]) {
 
   /*New Newton*/
   for(int i =0 ; i < 2; i++) {
+    CriteriaFunction *cfunc;
     if(i==0) {
+      cfunc = new GlobalResidualCriteriaFunction(1e-10);
       cout << "Solving with GlobalResidualCriteriaFunction with tolerance of 1e-10 ... " << endl;
-      newton.setCriteriaFunction(new GlobalResidualCriteriaFunction(1e-10));
     }
     else {
       cout << "Solving with LocalResidualCriteriaFunction with tolerance for first half of solution vector of 1e-10 and second half of 1e-8 ... " << endl;
-      newton.setCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
+      cfunc = new LocalResidualCriteriaFunction(tolerances);
     }
+    newton.setCriteriaFunction(cfunc);
     sw.start();
     test1 = newton.solve(initialSolution);
 
     cout << "Time = " << sw.stop(true) << endl;
     cout << "Iterations = " << newton.getNumberOfIterations() << endl << endl;
+
+    delete cfunc;
   }
 
   /*Old newton*/
@@ -94,6 +99,10 @@ int main (int argc, char* argv[]) {
   cout << "Time = " << sw.stop(true) << endl;
   cout << "Iterations = " << newton2.getNumberOfIterations() << endl;
   cout << "REAMARK: The iterations are counted differently (minus one) with the old newton..." << endl;
+
+  delete function;
+  delete jac;
+  delete function2;
 
   return 0;
 

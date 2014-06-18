@@ -7,7 +7,6 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -41,7 +40,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double mass = 5.; // mass of ball
   double r = 1.e-2; // radius of ball
 
-  // beam with some angle around z-axis and shift
+  // beam
   FlexibleBody1s21ANCF *rod = new FlexibleBody1s21ANCF("Rod", true);
   rod->setLength(l0);
   rod->setEModul(E);
@@ -51,6 +50,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
   rod->setCurlRadius(10.);
+  rod->setMaterialDamping(100.,10.);
   Vec q0 = Vec(4*elements+4,INIT,0.);
   for(int i=0;i<=elements;i++) {
     q0(4*i) = l0*i/elements;
@@ -128,7 +128,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // joint 
   ContourPointData cpdata;
-  cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
   cpdata.getContourParameterType() = CONTINUUM;
   rod->addFrame("RJ",cpdata);
   Joint *joint = new Joint("Clamping");

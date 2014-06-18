@@ -34,7 +34,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   l23->setLength(.1);
   FunctionSensor * l23s = new FunctionSensor("Valveposition23");
   addLink(l23s);
-  l23s->setFunction(new TabularFunction<VecV>(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
+  l23s->setFunction(new TabularFunction<VecV(double)>(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
   l23->setSignal(l23s);
   l23->setMinimalValue(.01);
   if (unilateral)
@@ -59,7 +59,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   l34->setLinePressureLoss(pl34);
 
   ConstrainedNode * n1 = new ConstrainedNode("n1");
-  n1->setpFunction(new TabularFunction<double>(Vec("[0; .35; .65; 1]"), "[5e5; 5e5; 1e5; 1e5]"));
+  n1->setpFunction(new TabularFunction<double(double)>(Vec("[0; .35; .65; 1]"), "[5e5; 5e5; 1e5; 1e5]"));
   addLink(n1);
   n1->addOutFlow(l12);
 
@@ -92,7 +92,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   n3->addOutFlow(l34);
 
   ConstrainedNode * n4 = new ConstrainedNode("n4");
-  n4->setpFunction(new ConstantFunction<double>(2.5e5));
+  n4->setpFunction(new ConstantFunction<double(double)>(2.5e5));
   addLink(n4);
   n4->addInFlow(l34);
 

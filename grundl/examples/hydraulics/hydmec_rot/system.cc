@@ -72,7 +72,7 @@ vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, 
     int b=((i==0)||(i==nA))?1:0;
     vpp->push_back(new OpenMBV::PolygonPoint(x, y, b));
   }
-  vpp->push_back((*vpp)[0]);
+  vpp->push_back(new OpenMBV::PolygonPoint(*(*vpp)[0]));
 
   return vpp;
 }
@@ -139,7 +139,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuMitte->setDiffuseColor(0.5,0.5,0.5);
   traegerVisuMitte->setName("frustum2");
   traegerVisu->addRigidBody(traegerVisuMitte);
-  traeger->setOpenMBVRigidBody(traegerVisuMitte);
+  traeger->setOpenMBVRigidBody(traegerVisu);
 #endif
 
   Vec r(3, INIT, 0);
@@ -208,7 +208,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
-  n0->setpFunction(new ConstantFunction<double>(.9e5));
+  n0->setpFunction(new ConstantFunction<double(double)>(.9e5));
   n0->addOutFlow(l04);
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
@@ -224,7 +224,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n1->enableOpenMBVSphere(.005);
 #endif
   n1->setInitialVolume(V0);
-  n1->setpFunction(new ConstantFunction<double>(pRB));
+  n1->setpFunction(new ConstantFunction<double(double)>(pRB));
   n1->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
   n1->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
 #ifdef HAVE_OPENMBVCPPINTERFACE

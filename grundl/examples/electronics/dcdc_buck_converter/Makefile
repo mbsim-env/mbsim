@@ -3,7 +3,7 @@ sources = main.cc system.cc
 #simulation_classes.cc modeling_classes.cc my_circuit.cc
 libsources = 
 objects = $(sources:.cc=.o) 
-CPPFLAGS= -g3 `pkg-config --cflags mbsimElectronics` 
+CPPFLAGS= -g -O3 `pkg-config --cflags mbsimElectronics` 
 
 
 
