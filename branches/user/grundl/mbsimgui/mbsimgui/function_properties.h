@@ -99,6 +99,65 @@ namespace MBSimGUI {
   //class PositiveFunctionProperty : public FunctionProperty {
   //}
 
+  class ModuloFunctionProperty : public FunctionProperty {
+    public:
+      ModuloFunctionProperty();
+      virtual Property* clone() const {return new ModuloFunctionProperty(*this);}
+      inline std::string getType() const { return "ModuloFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty denom;
+  };
+
+  class AbsoluteValueFunctionProperty : public FunctionProperty {
+    public:
+      AbsoluteValueFunctionProperty();
+      virtual Property* clone() const {return new AbsoluteValueFunctionProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "AbsoluteValueFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty function;
+  };
+
+  class PointSymmetricFunctionProperty : public FunctionProperty {
+    public:
+      PointSymmetricFunctionProperty();
+      virtual Property* clone() const {return new PointSymmetricFunctionProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "PointSymmetricFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty function;
+  };
+  
+  class LineSymmetricFunctionProperty : public FunctionProperty {
+    public:
+      LineSymmetricFunctionProperty();
+      virtual Property* clone() const {return new LineSymmetricFunctionProperty(*this);}
+      int getArg1Size() const;
+      inline std::string getType() const { return "LineSymmetricFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty function;
+  };
+  
   class ScaledFunctionProperty : public FunctionProperty {
     public:
       ScaledFunctionProperty();
@@ -203,6 +262,35 @@ namespace MBSimGUI {
       ChoiceProperty2 choice;
   };
 
+  class TwoDimensionalTabularFunctionProperty : public FunctionProperty {
+    public:
+      TwoDimensionalTabularFunctionProperty();
+      virtual Property* clone() const {return new TwoDimensionalTabularFunctionProperty(*this);}
+      inline std::string getType() const { return "TwoDimensionalTabularFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty x, y ,xy;
+  };
+
+  class PiecewisePolynomFunctionProperty : public FunctionProperty {
+    public:
+      PiecewisePolynomFunctionProperty();
+      virtual Property* clone() const {return new PiecewisePolynomFunctionProperty(*this);}
+      inline std::string getType() const { return "PiecewisePolynomFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ChoiceProperty2 choice;
+      ExtProperty method;
+  };
+
   class LinearSpringDamperForceProperty : public FunctionProperty {
     public:
       LinearSpringDamperForceProperty();
@@ -215,6 +303,20 @@ namespace MBSimGUI {
 
     protected:
       ExtProperty c, d, l0;
+  };
+
+  class NonlinearSpringDamperForceProperty : public FunctionProperty {
+    public:
+      NonlinearSpringDamperForceProperty();
+      virtual Property* clone() const {return new NonlinearSpringDamperForceProperty(*this);}
+      inline std::string getType() const { return "NonlinearSpringDamperForce"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty g, gd;
   };
 
   class LinearRegularizedBilateralConstraintProperty: public FunctionProperty {

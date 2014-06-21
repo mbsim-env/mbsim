@@ -57,7 +57,7 @@ namespace MBSimPowertrain {
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
       std::string getType() const { return "RotationalSpringDamper"; }
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       /** \brief Set function for the torque calculation.
        * The first input parameter to that function is the relative rotation g between frame2 and frame1.

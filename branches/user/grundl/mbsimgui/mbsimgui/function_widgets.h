@@ -98,6 +98,53 @@ namespace MBSimGUI {
   //class PositiveFunctionWidget : public FunctionWidget {
   //}
 
+  class AbsoluteValueFunctionWidget : public FunctionWidget {
+
+    friend class AbsoluteValueFunctionProperty;
+
+    public:
+    AbsoluteValueFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *function;
+  };
+
+  class ModuloFunctionWidget : public FunctionWidget {
+
+    friend class ModuloFunctionProperty;
+
+    public:
+    ModuloFunctionWidget(int m=0);
+
+    protected:
+    ExtWidget *denom;
+  };
+
+  class PointSymmetricFunctionWidget : public FunctionWidget {
+
+    friend class PointSymmetricFunctionProperty;
+
+    public:
+    PointSymmetricFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *function;
+  };
+
+  class LineSymmetricFunctionWidget : public FunctionWidget {
+
+    friend class LineSymmetricFunctionProperty;
+
+    public:
+    LineSymmetricFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *function;
+  };
+
   class ScaledFunctionWidget : public FunctionWidget {
 
     friend class ScaledFunctionProperty;
@@ -140,14 +187,14 @@ namespace MBSimGUI {
     friend class NestedFunctionProperty;
 
     public:
-    //    NestedFunctionWidget(const QString &ext, const std::vector<QWidget*> &widget, const std::vector<QString> &name);
     NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
     int getArg1Size() const;
+    void resize_(int m, int n);
     protected:
     QString ext;
     ExtWidget *fo, *fi;
     public slots:
-      void resizeVariables();
+    void resizeVariables();
   };
 
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
@@ -195,6 +242,31 @@ namespace MBSimGUI {
     ChoiceWidget2* choice;
   };
 
+  class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
+
+    friend class TwoDimensionalTabularFunctionProperty;
+
+    public:
+    TwoDimensionalTabularFunctionWidget(int n);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *x, *y, *xy;
+  };
+
+  class PiecewisePolynomFunctionWidget : public FunctionWidget {
+
+    friend class PiecewisePolynomFunctionProperty;
+
+    public:
+    PiecewisePolynomFunctionWidget(int n);
+    void resize_(int m, int n);
+
+    protected:
+    ChoiceWidget2* choice;
+    ExtWidget *method;
+  };
+
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
     friend class LinearSpringDamperForceProperty;
@@ -203,6 +275,16 @@ namespace MBSimGUI {
     LinearSpringDamperForceWidget();
     protected:
     ExtWidget *c, *d, *l0;
+  };
+
+  class NonlinearSpringDamperForceWidget : public FunctionWidget {
+
+    friend class NonlinearSpringDamperForceProperty;
+
+    public:
+    NonlinearSpringDamperForceWidget();
+    protected:
+    ExtWidget *g, *gd;
   };
 
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {

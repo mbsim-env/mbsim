@@ -79,17 +79,17 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+  void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
 #ifdef HAVE_NURBS
       contour->updateKinematicsForFrame(cp, ff);
 #endif
     }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
+    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
       const int &node = cp.getNodeNumber();
 
       Vec tmp(3, NONINIT);
-      if (ff == position || ff == position_cosy || ff == all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
 
         tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
         tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
@@ -105,14 +105,11 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
 
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
 
-      if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      if (ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
         tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
         tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
@@ -144,7 +141,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
-      if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+      if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
         tmp(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
         tmp(1) = uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 2) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
         tmp(2) = uext(1);
@@ -152,7 +149,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -166,7 +163,7 @@ namespace MBSimFlexibleBody {
     Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+    if (cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
       Vec2 alpha = cp.getLagrangeParameterPosition();
 
       if (nrm2(alpha) < epsroot()) { // center of gravity
@@ -188,7 +185,7 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    else if (cp.getContourParameterType() == NODE) { // force on node
+    else if (cp.getContourParameterType() == ContourPointData::node) { // force on node
       int node = cp.getNodeNumber();
 
       /* Jacobian of element */
@@ -213,7 +210,7 @@ namespace MBSimFlexibleBody {
       Wext(Index(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13Disk::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody2s13Disk::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     // condensation
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
@@ -315,7 +312,7 @@ namespace MBSimFlexibleBody {
       initMatrices(); // calculate constant mass- and stiffness matrix
 
     }
-    if (stage == MBSim::plot) {
+    if (stage == plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {

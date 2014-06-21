@@ -27,9 +27,12 @@
 #include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
+#include "mainwindow.h"
 #include <xercesc/dom/DOMText.hpp>
+#include <mbxmlutils/octeval.h>
 #include <boost/lexical_cast.hpp>
 #include <QDir>
+#include <QTreeWidget>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -353,14 +356,11 @@ namespace MBSimGUI {
   }
 
   DOMElement* FileProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    DOMElement *e = xmlName.second.empty()?element:E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
       DOMText *text = E(e)->getFirstTextChild();
       if(text) {
-        file = X()%text->getData();
-        file = file.substr(1,file.length()-2);
-        QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(file)));
-        file = fileInfo.canonicalFilePath().toStdString();
+        setFile(X()%text->getData());
         return e;
       }
     }
@@ -369,9 +369,14 @@ namespace MBSimGUI {
 
   DOMElement* FileProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(xmlName);
-    string filePath = string("\"")+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"\"";
-    DOMText *text = doc->createTextNode(X()%filePath);
+    DOMElement *ele0 = xmlName.second.empty()?static_cast<DOMElement*>(parent):D(doc)->createElement(xmlName);
+    string fileName = file;
+    if(absolutePath) {
+      // fileName = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(fileName));
+      QFileInfo fileInfo = QString::fromStdString(fileName.substr(1,fileName.length()-2));
+      fileName = string("\"")+fileInfo.absoluteFilePath().toStdString()+"\"";
+    }
+    DOMText *text = doc->createTextNode(X()%fileName);
     ele0->insertBefore(text, NULL);
     parent->insertBefore(ele0, NULL);
 
@@ -379,12 +384,12 @@ namespace MBSimGUI {
   }
 
   void FileProperty::fromWidget(QWidget *widget) {
-    file = static_cast<FileWidget*>(widget)->getFile().toStdString();
+    setFile(static_cast<FileWidget*>(widget)->getFile().toStdString());
   }
 
   void FileProperty::toWidget(QWidget *widget) {
     static_cast<FileWidget*>(widget)->blockSignals(true);
-    static_cast<FileWidget*>(widget)->setFile(QString::fromStdString(file));
+    static_cast<FileWidget*>(widget)->setFile(QString::fromStdString(getFile()));
     static_cast<FileWidget*>(widget)->blockSignals(false);
   }
 
@@ -562,47 +567,6 @@ namespace MBSimGUI {
     static_cast<ConnectContoursWidget*>(widget)->update();
   }
 
-  DOMElement* SolverChoiceProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-    if (e) {
-      if (E(e)->getFirstElementChildNamed(MBSIM%"FixedPointSingle"))
-        choice = "FixedPointSingle";
-      else if (E(e)->getFirstElementChildNamed(MBSIM%"GaussSeidel"))
-        choice = "GaussSeidel";
-      else if (E(e)->getFirstElementChildNamed(MBSIM%"LinearEquations"))
-        choice = "LinearEquations";
-      else if (E(e)->getFirstElementChildNamed(MBSIM%"RootFinding"))
-        choice = "RootFinding";
-      return e;
-    }
-    return 0;
-  }
-
-  DOMElement* SolverChoiceProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *e=D(doc)->createElement(xmlName);
-    parent->insertBefore(e, NULL);
-    if(choice=="FixedPointTotal")
-      e->insertBefore(D(doc)->createElement( MBSIM%"FixedPointTotal" ), NULL);
-    else if(choice=="FixedPointSingle")
-      e->insertBefore(D(doc)->createElement( MBSIM%"FixedPointSingle" ), NULL);
-    else if(choice=="GaussSeidel")
-      e->insertBefore(D(doc)->createElement( MBSIM%"GaussSeidel" ), NULL);
-    else if(choice=="LinearEquations")
-      e->insertBefore(D(doc)->createElement( MBSIM%"LinearEquations" ), NULL);
-    else if(choice=="RootFinding")
-      e->insertBefore(D(doc)->createElement( MBSIM%"RootFinding" ), NULL);
-    return e;
-  }
-
-  void SolverChoiceProperty::fromWidget(QWidget *widget) {
-    choice = static_cast<SolverChoiceWidget*>(widget)->getSolver().toStdString();
-  }
-
-  void SolverChoiceProperty::toWidget(QWidget *widget) {
-    static_cast<SolverChoiceWidget*>(widget)->setSolver(QString::fromStdString(choice));
-  }
-
   SolverTolerancesProperty::SolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
     vector<PhysicalVariableProperty> input;
@@ -675,8 +639,8 @@ namespace MBSimGUI {
   }
 
   SolverParametersProperty::SolverParametersProperty() : constraintSolver(0,false), impactSolver(0,false), numberOfMaximalIterations(0,false), tolerances(0,false) {
-    constraintSolver.setProperty(new SolverChoiceProperty(MBSIM%"constraintSolver"));
-    impactSolver.setProperty(new SolverChoiceProperty(MBSIM%"impactSolver"));
+    constraintSolver.setProperty(new TextProperty("\"FixedPointSingle\"", MBSIM%"constraintSolver"));
+    impactSolver.setProperty(new TextProperty("\"FixedPointSingle\"", MBSIM%"impactSolver"));
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("10000"), "", MBSIM%"numberOfMaximalIterations"));
@@ -756,9 +720,9 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PV%"Embed");
-    if(href.isActive()) {
+    if(not(absolutePath) and href.isActive()) {
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(getFile())).toStdString();
       E(ele0)->setAttribute("href", relFileName);
     }
@@ -766,7 +730,7 @@ namespace MBSimGUI {
       E(ele0)->setAttribute("count", boost::lexical_cast<string>(static_cast<IntegerProperty*>(count.getProperty())->getValue()));
     if(counterName.isActive())
       E(ele0)->setAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
-    if(parameterList.isActive()) {
+    if(not(absolutePath) and parameterList.isActive()) {
       //DOMElement *ele1=D(doc)->createElement(PV%"parameterHref");
       //    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
       //E(ele1)->setAttribute("parameterHref", filePath);
@@ -850,6 +814,53 @@ namespace MBSimGUI {
   void ColorProperty::toWidget(QWidget *widget) {
     color.toWidget(static_cast<ColorWidget*>(widget)->color);
     static_cast<ColorWidget*>(widget)->updateWidget();
+  }
+
+  PlotFeatureStatusProperty::PlotFeatureStatusProperty() {
+  }
+
+  DOMElement* PlotFeatureStatusProperty::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e=parent->getFirstElementChild();
+    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+      string feature = E(e)->getAttribute("feature");
+      type.push_back(E(e)->getTagName().second);
+      value.push_back(feature);
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* PlotFeatureStatusProperty::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(int i=0; i<type.size(); i++) {
+      DOMElement *ele = D(doc)->createElement(MBSIM%type[i]);
+      E(ele)->setAttribute("feature",value[i]);
+      parent->insertBefore(ele, NULL);
+    }
+    return 0;
+  }
+
+  void PlotFeatureStatusProperty::fromWidget(QWidget *widget) {
+    QTreeWidget *tree = static_cast<PlotFeatureStatusWidget*>(widget)->tree;
+    type.clear();
+    value.clear();
+    for(int i=0; i<tree->topLevelItemCount(); i++) {
+      type.push_back(tree->topLevelItem(i)->text(0).toStdString());
+      value.push_back(tree->topLevelItem(i)->text(1).toStdString());
+    }
+  }
+
+  void PlotFeatureStatusProperty::toWidget(QWidget *widget) {
+    QTreeWidget *tree = static_cast<PlotFeatureStatusWidget*>(widget)->tree;
+    tree->clear();
+    for(int i=0; i<type.size(); i++) {
+      QTreeWidgetItem *item = new QTreeWidgetItem;
+      item->setText(0, QString::fromStdString(type[i]));
+      item->setText(1, QString::fromStdString(value[i]));
+      tree->addTopLevelItem(item);
+    }
   }
 
 }

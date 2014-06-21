@@ -11,15 +11,15 @@ int main(int argc, char* argv[]) {
   sw.start();
   PlanarBeamWithLargeDeflectionSystem *sys = new PlanarBeamWithLargeDeflectionSystem("MBS");
 
-  sys->setImpactSolver(RootFinding);
+  sys->setImpactSolver(DynamicSystemSolver::RootFinding);
   sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(1.5e-1);
+  integrator.setEndTime(1.5);
   integrator.setStepSize(1e-5);
-  integrator.setPlotStepSize(1e-3);
+  integrator.setPlotStepSize(1e-4);
   integrator.integrate(*sys);
 
   cout << "finished in " << sw.stop() << endl;

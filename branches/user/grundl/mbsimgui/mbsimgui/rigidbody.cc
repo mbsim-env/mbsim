@@ -149,8 +149,6 @@ namespace MBSimGUI {
 
     jointForceArrow.initializeUsingXML(element);
     jointMomentArrow.initializeUsingXML(element);
-
-    Body::initializeUsingXML(element);
   }
 
   DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {

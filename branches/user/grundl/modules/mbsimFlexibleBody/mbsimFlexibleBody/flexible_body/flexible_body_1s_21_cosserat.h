@@ -75,16 +75,16 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
-      virtual void updateJacobiansAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0);
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
+      virtual void updateJacobiansAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame = 0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(MBSim::InitStage stage);
+      virtual void init(InitStage stage);
       virtual double computePotentialEnergy();
       virtual void facLLM(int i = 0);
 //      virtual void updatedu(double t, double dt);
@@ -107,13 +107,25 @@ namespace MBSimFlexibleBody {
       void setMomentsInertia(double I1_);
       void setCurlRadius(double R1_);
       void setMaterialDamping(double cEps0D_, double cEps1D_);
-      virtual int getNumberOfElementDOF() const { return 3;}
+
+      virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) {
+        if (PODreduced)
+          return J * U;
+        return J;
+      }
+
+      virtual int getNumberOfElementDOF() const {
+        return 3;
+      }
 
       int getNumberElements() const {
         return Elements;
       }
       double getLength() const {
         return L;
+      }
+      virtual int getqSizeFull() const {
+        return qFull.size();
       }
       bool isOpenStructure() const {
         return openStructure;
@@ -151,7 +163,6 @@ namespace MBSimFlexibleBody {
        */
       void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
 
-
     protected:
 
       /*!
@@ -168,7 +179,6 @@ namespace MBSimFlexibleBody {
        * \brief marker if Jacobians already interpolated
        */
       bool JInterp;
-
 
       /**
        * \brief bool true: execute POD, false: without POD
@@ -234,7 +244,8 @@ namespace MBSimFlexibleBody {
        */
       int findPOMSize(const fmatvec::Mat & POM, const fmatvec::Mat &SVD, double precission = 1 - 1.e-3);
 
-  };
+  }
+  ;
 
   inline void FlexibleBody1s21Cosserat::updateM(double t, int k) {
     M[k] << MConst;

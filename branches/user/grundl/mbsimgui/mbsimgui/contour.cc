@@ -24,6 +24,7 @@
 #include "ombv_properties.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
+#include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -51,9 +52,10 @@ namespace MBSimGUI {
   Contour* Contour::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Contour *contour=ObjectFactory::getInstance()->createContour(e, parent);
+//    Contour *contour=ObjectFactory::getInstance()->createContour(e, parent);
+    Contour *contour=Embed<Contour>::createAndInit(e,parent);
     if(contour) {
-      contour->initializeUsingXML(e);
+//      contour->initializeUsingXML(e);
       contour->initialize();
     }
     return contour;

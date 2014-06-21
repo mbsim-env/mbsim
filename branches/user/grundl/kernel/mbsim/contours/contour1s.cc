@@ -41,8 +41,20 @@ namespace MBSim {
   {
   }
 
-  void Contour1s::init(MBSim::InitStage stage) {
-    if (stage == MBSim::preInit) {
+  void Contour1s::init(InitStage stage) {
+
+    if (stage == plotting) {
+      updatePlotFeatures();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+
+      if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
+        openMBVSpineExtrusion->setName(name);
+        parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
+        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
+      }
+#endif
+    }
+    else if (stage == unknownStage) {
       if (nodes.size() == 0) {
         int n = 10; //using ten nodes
         double uMin = 0.;
@@ -55,17 +67,6 @@ namespace MBSim {
           nodes.push_back(i * step);
         }
       }
-    }
-    else if (stage == MBSim::plot) {
-      updatePlotFeatures();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-
-      if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
-        openMBVSpineExtrusion->setName(name);
-        parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
-        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
-      }
-#endif
     }
     ContourContinuum<double>::init(stage);
   }
@@ -86,7 +87,7 @@ namespace MBSim {
 //        ds = (uMax - uMin) / (openMBVBody->getNumberOfSpinePoints() - 2);
       for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints(); i++) {
         ContourPointData cp(s);
-        updateKinematicsForFrame(cp, position);
+        updateKinematicsForFrame(cp, Frame::position);
         Vec pos = cp.getFrameOfReference().getPosition();
         data.push_back(pos(0)); // global x-position
         data.push_back(pos(1)); // global y-position

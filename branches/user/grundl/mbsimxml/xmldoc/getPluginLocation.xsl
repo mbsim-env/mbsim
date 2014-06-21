@@ -23,25 +23,21 @@
 #include <QTreeView>
 #include <QModelIndex>
 
-namespace MBSimGUI {
+class ParameterPropertyDialog;
 
-  class ParameterPropertyDialog;
-
-  class ParameterView : public QTreeView {
-    Q_OBJECT
-    private:
-      QModelIndex index;
-      ParameterPropertyDialog *editor;
-    public:
-      ParameterView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
-    protected:
-      void mouseDoubleClickEvent(QMouseEvent *event);
-      void mousePressEvent(QMouseEvent *event);
-      protected slots:
-        void dialogFinished(int result);
-      void apply();
-  };
-
-}
+class ParameterView : public QTreeView {
+  Q_OBJECT
+  private:
+    QModelIndex index;
+    ParameterPropertyDialog *editor;
+  public:
+    ParameterView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
+  protected:
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+  protected slots:
+    void dialogFinished(int result);
+    void apply();
+};
 
 #endif

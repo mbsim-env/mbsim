@@ -135,7 +135,7 @@ namespace MBSim {
   void SingleContact::updategd(double t) {
     if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(g(0), 0))) { // TODO: nicer implementation
       for (unsigned int i = 0; i < 2; i++)
-        contour[i]->updateKinematicsForFrame(cpData[i], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
+        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
       Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
 
@@ -522,7 +522,7 @@ namespace MBSim {
         gddActive[j] = 0;
 
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -1364,7 +1364,7 @@ namespace MBSim {
     }
     else {
       for (unsigned int i = 0; i < 2; i++)
-        contour[i]->updateKinematicsForFrame(cpData[i], velocities);
+        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities);
       Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
       Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
       gdInActive_(*IndInActive_) = Wn.T() * WvD;

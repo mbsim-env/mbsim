@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void Contour2sNeutralLinearExternalFFR::init(MBSim::InitStage stage) {
+  void Contour2sNeutralLinearExternalFFR::init(InitStage stage) {
 
     if (stage == resize) {
       // construct contourPoint for translation nodes
@@ -100,23 +100,23 @@ namespace MBSimFlexibleBody {
     Contour::init(stage);
   }
 
-  void Contour2sNeutralLinearExternalFFR::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) {
-    if (ff == position || ff == position_cosy || ff == all)
+  void Contour2sNeutralLinearExternalFFR::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
+    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
       NP->update(cp);
-    if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
+    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
       NV->update(cp);
 
-    if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
       cp.getFrameOfReference().setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
     }
-    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       NP->updatePositionNormal(cp);
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       NP->updatePositionFirstTangent(cp);
-    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       NP->updatePositionSecondTangent(cp);
 
-    if (ff == angle) { // only for openmbvBody visualization
+    if (ff == Frame::angle) { // only for openmbvBody visualization
       SqrMat3 ALocal(INIT, 0);
       NP->updatePositionNormal(cp);
       NP->updatePositionFirstTangent(cp);

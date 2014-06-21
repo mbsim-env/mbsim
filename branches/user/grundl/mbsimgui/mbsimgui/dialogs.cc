@@ -34,14 +34,14 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EvalDialog::EvalDialog() {
-    var = new MatWidget(0,0);
+  EvalDialog::EvalDialog(QWidget *var_) : var(var_) {
+    //var = new MatWidget(0,0);
     QScrollArea *tab = new QScrollArea;
     tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     tab->setWidgetResizable(true);
 
-    var->setReadOnly(true);
+    //  var->setReadOnly(true);
     tab->setWidget(var);
 
     QVBoxLayout *layout = new QVBoxLayout;

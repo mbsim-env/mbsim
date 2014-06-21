@@ -83,6 +83,20 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() {return new AbsoluteVelocitySensorPropertyDialog(this);}
   };
 
+  class AbsoluteAngularPositionSensor : public AbsoluteCoordinateSensor {
+    public:
+      AbsoluteAngularPositionSensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
+      virtual std::string getType() const { return "AbsoluteAngularPositionSensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new AbsoluteAngularPositionSensorPropertyDialog(this);}
+  };
+
+  class AbsoluteAngularVelocitySensor : public AbsoluteCoordinateSensor {
+    public:
+      AbsoluteAngularVelocitySensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
+      virtual std::string getType() const { return "AbsoluteAngularVelocitySensor"; }
+      ElementPropertyDialog* createPropertyDialog() {return new AbsoluteAngularVelocitySensorPropertyDialog(this);}
+  };
+
   class FunctionSensor : public Sensor {
     friend class FunctionSensorPropertyDialog;
     public:

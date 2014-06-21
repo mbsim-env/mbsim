@@ -15,7 +15,7 @@ namespace MBSimElectronics {
       if(branch)
 	dependency.push_back(branch);
     } 
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -60,7 +60,7 @@ namespace MBSimElectronics {
       W[1].push_back(Mat(branch->getJacobian(1).cols(),laSize));
       V[1].push_back(Mat(branch->getJacobian(1).cols(),laSize));
   }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -137,7 +137,7 @@ namespace MBSimElectronics {
       if(precessor)
 	dependency.push_back(precessor);
     } 
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -176,7 +176,7 @@ namespace MBSimElectronics {
   }
 
   void Branch::init(InitStage stage) {
-    if(stage==MBSim::unknownStage) {
+    if(stage==unknownStage) {
       if(J[0].cols() == 0) {
 	J[0].resize(1,gethSize(0));
 	for(size_t i=0; i<mesh.size(); i++)

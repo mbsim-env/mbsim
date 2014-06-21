@@ -20,19 +20,12 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
-#include "parameter.h"
 #include <QMainWindow>
-#include <QTabWidget>
 #include <QProcess>
-#include <QTimer>
-#include <casadi/symbolic/sx/sx.hpp>
-#include <mbxmlutils/octeval.h>
+#include <boost/filesystem/path.hpp>
+#include <xercesc/util/XercesDefs.hpp>
 
 class QAction;
-class QLineEdit;
-class QTextBrowser;
-class QProcess;
-class QUrl;
 class QModelIndex;
 
 namespace OpenMBVGUI {
@@ -41,20 +34,31 @@ namespace OpenMBVGUI {
 
 namespace MBXMLUtils {
   class OctEval;
+  class NewParamLevel;
+  class DOMParser;
+}
+
+namespace XERCES_CPP_NAMESPACE {
+  class DOMDocument;
+  class DOMElement;
 }
 
 namespace MBSimGUI {
 
   class Process;
+  class MBSimThread;
   class ElementView;
-  class ParameterView;
+  class EmbeddingView;
   class IntegratorView;
+  class Element;
   class Frame;
   class Contour;
   class Group;
   class Object;
   class Link;
   class Observer;
+  class Parameter;
+  class ParameterList;
 
   class MainWindow : public QMainWindow {
 
@@ -62,31 +66,22 @@ namespace MBSimGUI {
 
     private:
       ElementView *elementList;
-      ParameterView *parameterList;
+      EmbeddingView *embeddingList;
       IntegratorView *integratorView;
-      QLineEdit *fileProject, *fileMBS, *fileIntegrator, *fileParameter;
+      QString fileProject; 
       Process *mbsim;
+      MBSimThread *mbsimThread;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event);
       void dropEvent(QDropEvent *event);
       boost::filesystem::path uniqueTempDir;
-      QString absoluteMBSFilePath;
-      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs; //, *separatorAct;
+      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh; //, *separatorAct;
       std::string currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
-      QAction *recentMBSFileActs[maxRecentFiles];
-      void setCurrentMBSFile(const QString &fileName);
-      void updateRecentMBSFileActions();
-      QAction *recentParameterFileActs[maxRecentFiles];
-      void setCurrentParameterFile(const QString &fileName);
-      void updateRecentParameterFileActions();
-      QAction *recentIntegratorFileActs[maxRecentFiles];
-      void setCurrentIntegratorFile(const QString &fileName);
-      void updateRecentIntegratorFileActions();
 
     public:
       MainWindow(QStringList &arg);
@@ -96,6 +91,7 @@ namespace MBSimGUI {
       static MBXMLUtils::NewParamLevel *octEvalParamLevel;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
+      void addParameter(Parameter *parameter);
       void addFrame(Frame *frame);
       void addContour(Contour *contour);
       void addGroup(Group *group);
@@ -105,20 +101,15 @@ namespace MBSimGUI {
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
-      //    void loadMBS(const QString &file);
-      //    void loadIntegrator(const QString &file);
-      //    void loadParameterList(const QString &file);
-      public slots:
-        void elementListClicked();
+      ElementView* getElementList() { return elementList; }
+    public slots:
+      void elementListClicked();
       void parameterListClicked();
       void newProject(bool ask=true);
       void loadProject();
       void saveProjectAs();
       void saveProject(const QString &filename="");
-      void newMBS(bool ask=true);
-      //    void loadMBS();
-      //    void saveMBSAs();
-      //    void saveMBS();
+      void newMBS();
       void selectIntegrator();
       void selectDOPRI5Integrator();
       void selectRADAU5Integrator();
@@ -127,13 +118,6 @@ namespace MBSimGUI {
       void selectTimeSteppingIntegrator();
       void selectEulerExplicitIntegrator();
       void selectRKSuiteIntegrator();
-      //    void loadIntegrator();
-      //    void saveIntegratorAs();
-      //    void saveIntegrator();
-      void newParameterList(bool ask=true);
-      //    void loadParameterList();
-      //    void saveParameterListAs();
-      //    void saveParameterList(const QString &filename="");
       void saveDataAs();
       void saveMBSimH5DataAs();
       void saveMBSimH5Data(const QString &file);
@@ -141,54 +125,27 @@ namespace MBSimGUI {
       void saveOpenMBVXMLData(const QString &file);
       void saveOpenMBVH5Data(const QString &file);
       void removeParameter();
-      void addStringParameter();
-      void addScalarParameter();
-      void addVectorParameter();
-      void addMatrixParameter();
       void simulate();
+      void refresh();
       void openmbv();
       void h5plotserie();
       void help();
       void about();
-      void updateOctaveParameters(const ParameterList &list=ParameterList());
+      void updateOctaveParameters(Element *element);
       void removeElement();
       void saveElementAs();
-      protected slots:
-        void selectElement(std::string);
+    protected slots:
+      void selectElement(std::string);
       void changeWorkingDir();
-      void selectionChanged();
-      void openPropertyDialog();
+      void selectionChanged(const QModelIndex &current, const QModelIndex &previous);
       void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
-      void timeout();
-      void timeout2();
       void openRecentProjectFile();
+      void preprocessFinished(int result);
     protected:
       void closeEvent ( QCloseEvent * event );
 
       // write parameter list to XML. The returned DOMNodes are owned by doc.
-      xercesc::DOMElement* writeParameterList(boost::shared_ptr<xercesc::DOMDocument> &doc);
-  };
-
-  class Process : public QTabWidget {
-    Q_OBJECT
-    public:
-      Process(QWidget *parent);
-      QProcess *getProcess() { return process; }
-      void clearOutputAndStart(const QString &program, const QStringList &arguments);
-      QSize sizeHint() const;
-      QSize minimumSizeHint() const;
-    private:
-      QProcess *process;
-      QTextBrowser *out, *err;
-      QString outText, errText;
-      static QString convertToHtml(QString &text);
-      void linkClicked(const QUrl &link, QTextBrowser *std);
-      QTimer timer;
-      private slots:
-        void updateOutputAndError();
-      void outLinkClicked(const QUrl &link);
-      void errLinkClicked(const QUrl &link);
-      void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+      xercesc::DOMElement* writeProject(boost::shared_ptr<xercesc::DOMDocument> &doc);
   };
 
 }

@@ -119,41 +119,41 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+  void FlexibleBody1s33RCM::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       Vec X = computeState(cp.getLagrangeParameterPosition()(0)); // state of affected FE
       const Vec &Phi = X(3, 5);
       const Vec &Phit = X(9, 11);
 
-      if (ff == position || ff == position_cosy || ff == all)
+      if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * X(0, 2));
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == secondTangent || ff == all)
+      if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(Phi)); // tangent
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == secondTangent || ff == all)
+      if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * angle->computen(Phi)); // normal
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal
-      if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
+      if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().setVelocity(R->getOrientation() * X(6, 8));
-      if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all)
+      if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * angle->computeOmega(Phi, Phit));
     }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
+    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
       int node = cp.getNodeNumber();
       const Vec &Phi = q(10 * node + 3, 10 * node + 5);
       const Vec &Phit = u(10 * node + 3, 10 * node + 5);
 
-      if (ff == position || ff == position_cosy || ff == all)
+      if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * q(10 * node + 0, 10 * node + 2));
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(Phi)); // tangent
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * angle->computen(Phi)); // normal
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
-      if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if (ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().setVelocity(R->getOrientation() * u(10 * node + 0, 10 * node + 2));
-      if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all)
+      if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * angle->computeOmega(Phi, Phit));
     }
     else
@@ -172,7 +172,7 @@ namespace MBSimFlexibleBody {
     Index One(0, 2);
     Mat Jacobian(qSize, 6, INIT, 0.);
 
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // compute parameters of affected FE
@@ -186,7 +186,7 @@ namespace MBSimFlexibleBody {
         Jacobian(Index(0, 5), All) = Jtmp(Index(10, 15), All);
       }
     }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
+    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
       int node = cp.getNodeNumber();
 
       Vec p = q(10 * node + 3, 10 * node + 5);
@@ -203,7 +203,7 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian(0, 0, qSize - 1, 2).T());
     cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian(0, 3, qSize - 1, 5).T());
@@ -219,7 +219,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::init(InitStage stage) {
-    if (stage == preInit) {
+    if(stage==unknownStage) {
+      FlexibleBodyContinuum<double>::init(stage);
+
+      initialised = true;
+
       /* cylinder */
       cylinder->setAlphaStart(0.);
       cylinder->setAlphaEnd(L);
@@ -285,11 +289,6 @@ namespace MBSimFlexibleBody {
       right->setWidth(cuboidHeight);
       left->setNormalDistance(0.5 * cuboidBreadth);
       right->setNormalDistance(0.5 * cuboidBreadth);
-    }
-    else if (stage == unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
-
-      initialised = true;
 
       l0 = L / Elements;
       Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
@@ -306,7 +305,7 @@ namespace MBSimFlexibleBody {
           static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements * epstL, Elements * k0L);
       }
     }
-    else if (stage == MBSim::plot) {
+    else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       ((OpenMBV::SpineExtrusion*) openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
@@ -476,11 +475,11 @@ namespace MBSimFlexibleBody {
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
 
-        updateKinematicsForFrame(cp, position);
+        updateKinematicsForFrame(cp, Frame::position);
         NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
 
         if (not filenameVel.empty()) {
-          updateKinematicsForFrame(cp, velocity_cosy);
+          updateKinematicsForFrame(cp, Frame::velocity_cosy);
 
           SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
           SqrMat3 AKI(INIT, 0.);
@@ -630,7 +629,7 @@ namespace MBSimFlexibleBody {
       cout << "Positions = [ ";
       for (int ele = 0; ele < Elements; ele++) {
         ContourPointData cp(ele);
-        updateKinematicsForFrame(cp, position_cosy);
+        updateKinematicsForFrame(cp, Frame::position_cosy);
 
         cout << cp.getFrameOfReference().getPosition()(0) << " " << cp.getFrameOfReference().getPosition()(1) << " " << cp.getFrameOfReference().getPosition()(2) << ";";
       }
@@ -639,7 +638,7 @@ namespace MBSimFlexibleBody {
       cout << "Normals = [ ";
       for (int ele = 0; ele < Elements; ele++) {
         ContourPointData cp(ele);
-        updateKinematicsForFrame(cp, position_cosy);
+        updateKinematicsForFrame(cp, Frame::position_cosy);
 
         cout << cp.getFrameOfReference().getOrientation()(0, 0) << " " << cp.getFrameOfReference().getOrientation()(0, 1) << " " << cp.getFrameOfReference().getOrientation()(0, 2) << ";";
       }
@@ -648,7 +647,7 @@ namespace MBSimFlexibleBody {
       cout << "Tangents = [ ";
       for (int ele = 0; ele < Elements; ele++) {
         ContourPointData cp(ele);
-        updateKinematicsForFrame(cp, position_cosy);
+        updateKinematicsForFrame(cp, Frame::position_cosy);
 
         cout << cp.getFrameOfReference().getOrientation()(1, 0) << " " << cp.getFrameOfReference().getOrientation()(1, 1) << " " << cp.getFrameOfReference().getOrientation()(1, 2) << ";";
       }
@@ -657,7 +656,7 @@ namespace MBSimFlexibleBody {
       cout << "Binormals = [ ";
       for (int ele = 0; ele < Elements; ele++) {
         ContourPointData cp(ele);
-        updateKinematicsForFrame(cp, position_cosy);
+        updateKinematicsForFrame(cp, Frame::position_cosy);
 
         cout << cp.getFrameOfReference().getOrientation()(2, 0) << " " << cp.getFrameOfReference().getOrientation()(2, 1) << " " << cp.getFrameOfReference().getOrientation()(2, 2) << ";";
       }

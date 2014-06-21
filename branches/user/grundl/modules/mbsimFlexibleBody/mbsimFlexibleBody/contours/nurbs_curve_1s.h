@@ -72,7 +72,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) {
         throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!");
@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
        * \brief initialize NURBS curve 
        * \param stage of initialisation
        */
-      void initContourFromBody(MBSim::InitStage stage);
+      void initContourFromBody(InitStage stage);
 
       /*! 
        * \brief interpolates the translations with node-data from body

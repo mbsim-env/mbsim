@@ -35,8 +35,8 @@ namespace MBSimFlexibleBody {
       virtual ~Contour2sNeutralLinearExternalFFR();
 
       /*INHERITED INTERFACE */
-      virtual void init(MBSim::InitStage stage);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
+      virtual void init(InitStage stage);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual void updateStateDependentVariables(double t);
       /**/

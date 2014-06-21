@@ -19,7 +19,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1sCosserat::FlexibleBody1sCosserat(const string &name, bool openStructure_) :
-      FlexibleBodyContinuum<double>(name), ANGLE(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.), A(0.), I1(0.), rho(0.), R1(0.), cEps0D(0.), cEps1D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3, INIT, 0.), bound_ang_end(3, INIT, 0.), bound_ang_vel_start(3, INIT, 0.), bound_ang_vel_end(3, INIT, 0.) {
+      FlexibleBodyContinuum<double>(name), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.), A(0.), I1(0.), rho(0.), R1(0.), cEps0D(0.), cEps1D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3, INIT, 0.), bound_ang_end(3, INIT, 0.), bound_ang_vel_start(3, INIT, 0.), bound_ang_vel_end(3, INIT, 0.) {
   }
 
   FlexibleBody1sCosserat::~FlexibleBody1sCosserat() {

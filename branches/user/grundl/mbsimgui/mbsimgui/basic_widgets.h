@@ -29,6 +29,8 @@ class QComboBox;
 class QCheckBox;
 class QStackedWidget;
 class QListWidget;
+class QTreeWidget;
+class QTreeWidgetItem;
  
 namespace MBSimGUI {
 
@@ -253,13 +255,13 @@ namespace MBSimGUI {
 
     public:
       FileWidget(const QString &description, const QString &extensions, int mode=0);
-      QString getFile() const {return file;}
-      void setFile(const QString &str);
+      QString getFile() const { return relativeFilePath->text(); }
+      void setFile(const QString &str) { relativeFilePath->setText(str); }
 
     protected:
       QLineEdit *relativeFilePath;
-      QString file, description, extensions;
-      bool mode;
+      QString description, extensions;
+      int mode;
 
     protected slots:
       void selectFile();
@@ -327,9 +329,14 @@ namespace MBSimGUI {
   class TextChoiceWidget : public BasicTextWidget {
 
     public:
-      TextChoiceWidget(const std::vector<QString> &list, int num);
+      TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false);
       QString getText() const {return text->currentText();}
-      void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
+      void setText(const QString &str) {
+        if(text->isEditable())
+          text->setEditText(str);
+        else
+          text->setCurrentIndex(text->findText(str));
+      }
 
     protected:
       QComboBox *text;
@@ -361,18 +368,6 @@ namespace MBSimGUI {
     protected:
     std::vector<ContourOfReferenceWidget*> widget;
     Element* element;
-  };
-
-  class SolverChoiceWidget : public Widget {
-    friend class SolverChoiceProperty;
-
-    public:
-    SolverChoiceWidget();
-    QString getSolver() const {return choice->currentText();}
-    void setSolver(const QString &str) {choice->setCurrentIndex(choice->findText(str));}
-
-    protected:
-    QComboBox *choice;
   };
 
   class SolverTolerancesWidget : public Widget {
@@ -446,6 +441,25 @@ namespace MBSimGUI {
 
     protected slots:
       void setColor(); 
+  };
+
+  class PlotFeatureStatusWidget : public Widget {
+    Q_OBJECT
+
+    friend class PlotFeatureStatusProperty;
+
+    protected:
+      QComboBox *type, *value;
+      QTreeWidget *tree;
+
+    public:
+      PlotFeatureStatusWidget();
+
+    protected slots:
+      void addFeature();
+      void removeFeature();
+      void updateFeature();
+      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
   };
 
 }

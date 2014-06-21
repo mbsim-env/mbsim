@@ -196,7 +196,7 @@ namespace MBSim {
         fM.push_back(Mat3xV(laSize));
       }
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

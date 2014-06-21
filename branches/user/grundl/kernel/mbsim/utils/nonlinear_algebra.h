@@ -25,10 +25,6 @@
 
 namespace MBSim {
 
-  enum SolverType {
-    RegulaFalsiSolver, FixPointIterationSolver, NewtonMethodSolver
-  };
-
   /*! 
    * \brief Regular Falsi for one-dimensional root-finding
    * \author Martin Foerg

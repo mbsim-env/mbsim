@@ -71,9 +71,9 @@ namespace MBSimGUI {
     public:
     ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false);
     QWidget* getWidget() const {return widget;}
-    virtual void updateWidget() {dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
-    virtual void resizeVariables() {dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
-    void resize_(int m, int n) {dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
+    virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
+    virtual void resizeVariables() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
+    void resize_(int m, int n) {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
     void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
     void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
@@ -91,14 +91,14 @@ namespace MBSimGUI {
 
     public:
     ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
+    QWidget* getWidget() const { return widget; }
+    void updateWidget() { dynamic_cast<WidgetInterface*>(getWidget())->updateWidget(); }
+    QString getName() const { return comboBox->currentText(); }
+    int getIndex() const { return comboBox->currentIndex(); }
+    void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
 
-    void resize_(int m, int n);
-    QWidget* getWidget() const;
-    QString getName() const;
-    int getIndex() const;
-    void updateWidget();
     protected slots:
-      void defineWidget(int);
+    void defineWidget(int);
 
     protected:
     QBoxLayout *layout;

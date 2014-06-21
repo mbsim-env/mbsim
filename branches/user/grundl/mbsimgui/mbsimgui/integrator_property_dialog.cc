@@ -66,10 +66,7 @@ namespace MBSimGUI {
     plotStepSize= new ExtWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
     addToTab("General", plotStepSize);
 
-    input.clear();
-    z0 = new VecWidget(0);
-    input.push_back(new PhysicalVariableWidget(z0, QStringList(), 0));
-    initialState= new ExtWidget("Initial state",new ExtPhysicalVarWidget(input),true);
+    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", initialState);
 
     addTab("Embedding");

@@ -37,14 +37,14 @@ using namespace xercesc;
 namespace MBSimHydraulics {
 
   void DimensionlessLine::init(InitStage stage) {
-    if(stage==MBSim::preInit) {
+    if(stage==preInit) {
       if (dynamic_cast<RigidNode*>(nFrom) || dynamic_cast<RigidNodeMec*>(nFrom))
         throw MBSimError("pFrom is of setValued type. not valid for dimensionless lines.");
       if (dynamic_cast<RigidNode*>(nTo) || dynamic_cast<RigidNodeMec*>(nTo))
         throw MBSimError("pTo is of setValued type. not valid for dimensionless lines.");
       HLine::init(stage);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Volume flow [l/min]");
@@ -88,7 +88,7 @@ namespace MBSimHydraulics {
   }
 
   void Leakage0DOF::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       DimensionlessLine::init(stage);
       if (s1vPath!="")
         setSurface1VelocitySignal(getByPath<Signal>(s1vPath));
@@ -145,7 +145,7 @@ namespace MBSimHydraulics {
   }
 
   void CircularLeakage0DOF::init(InitStage stage) {
-    if (stage==MBSim::preInit) {  
+    if (stage==preInit) {  
       rO=rI+hGap;
       Leakage0DOF::init(stage);
     }

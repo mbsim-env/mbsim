@@ -271,7 +271,7 @@ namespace MBSim {
        *
        * \todo: see remark of ckNames
        */
-      std::map<std::pair<std::string, MBSim::PlotFeature>, MBSim::PlotFeatureStatus> plotFeatureMap;
+      std::map<std::pair<std::string, PlotFeature>, PlotFeatureStatus> plotFeatureMap;
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level

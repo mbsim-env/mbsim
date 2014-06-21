@@ -23,33 +23,33 @@ using namespace H5;
 #include <fmatvec/fmatvec.h>
 #include <iostream>
 
-Mat read3D(const string SysName) {
-  H5File *file = new H5File(SysName, H5F_ACC_RDONLY);
-  H5::Group group = file->openGroup("Rod");
-  H5::VectorSerie<double> * data = new H5::VectorSerie<double>;
-  data->open(group, "data");
-
-  int qsize = (data->getColumns() - 1) / 4;
-  int tsize = data->getColumn(0).size();
-
-  int i;
-  int j;
-  int elements = (qsize) / 3;
-  Mat X_(tsize, qsize, INIT, 0.);
-
-  for (i = 0; i < elements; i++) {
-    j = 3 * i;
-    Vec tmp_x(data->getColumn(2 * j + 1));
-    Vec tmp_y(data->getColumn(2 * j + 1 + 1));
-    Vec tmp_gamma(data->getColumn(2 * j + 5 + 1));
-
-    X_(Index(0, tsize - 1), Index(j, j)) = tmp_x(Index(0, tsize - 1));
-    X_(Index(0, tsize - 1), Index(j + 1, j + 1)) = tmp_y(Index(0, tsize - 1));
-    X_(Index(0, tsize - 1), Index(j + 2, j + 2)) = tmp_gamma(Index(0, tsize - 1));
-  }
-
-  return X_.T();
-}
+//Mat read3D(const string SysName) {
+//  H5File *file = new H5File(SysName, H5F_ACC_RDONLY);
+//  H5::Group group = file->openGroup("Rod");
+//  H5::VectorSerie<double> * data = new H5::VectorSerie<double>;
+//  data->open(group, "data");
+//
+//  int qsize = (data->getColumns() - 1) / 4;
+//  int tsize = data->getColumn(0).size();
+//
+//  int i;
+//  int j;
+//  int elements = (qsize) / 3;
+//  Mat X_(tsize, qsize, INIT, 0.);
+//
+//  for (i = 0; i < elements; i++) {
+//    j = 3 * i;
+//    Vec tmp_x(data->getColumn(2 * j + 1));
+//    Vec tmp_y(data->getColumn(2 * j + 1 + 1));
+//    Vec tmp_gamma(data->getColumn(2 * j + 5 + 1));
+//
+//    X_(Index(0, tsize - 1), Index(j, j)) = tmp_x(Index(0, tsize - 1));
+//    X_(Index(0, tsize - 1), Index(j + 1, j + 1)) = tmp_y(Index(0, tsize - 1));
+//    X_(Index(0, tsize - 1), Index(j + 2, j + 2)) = tmp_gamma(Index(0, tsize - 1));
+//  }
+//
+//  return X_.T();
+//}
 
 System::System(const string &projectName) :
     DynamicSystemSolver(projectName) {
@@ -80,7 +80,7 @@ System::System(const string &projectName) :
   rod->setDensity(rho);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
-  rod->setCuboid(b0, b0);
+//  rod->setCuboid(b0, b0);
   rod->setCurlRadius(l / (2 * M_PI));
   //  rod->setMassProportionalDamping(20.);
   //  rod->setMaterialDamping(0.1,0.1);
@@ -100,6 +100,7 @@ System::System(const string &projectName) :
   rod->setu0(Vec(q0.size(), INIT, 0.));
   addObject(rod);
 
+  Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(elements*4); // resolution of visualisation
@@ -116,7 +117,7 @@ System::System(const string &projectName) :
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
-  rod->setOpenMBVSpineExtrusion(cuboid);
+  rodCont->setOpenMBVSpineExtrusion(cuboid);
 #endif
 }
 

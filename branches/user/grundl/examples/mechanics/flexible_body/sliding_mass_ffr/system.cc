@@ -236,7 +236,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     this->addLink(contact);
 
     ContourPointData cpdata;
-    cpdata.getContourParameterType() = CONTINUUM;
+    cpdata.getContourParameterType() = ContourPointData::continuum;
     rod->addFrame("RJ", cpdata);
 
     FixedRelativeFrame * fixFrameRCM = new FixedRelativeFrame("refFrameRCMFix");

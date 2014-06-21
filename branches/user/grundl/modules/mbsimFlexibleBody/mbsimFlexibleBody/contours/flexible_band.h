@@ -49,24 +49,21 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::FrameFeature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Frame::Feature ff);   
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual fmatvec::Vec3 computePosition(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::position_cosy);
+        updateKinematicsForFrame(cp, MBSim::Frame::position_cosy);
         return cp.getFrameOfReference().getPosition();
       }
       virtual fmatvec::Vec3 computeVelocity(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::velocity_cosy);
+        updateKinematicsForFrame(cp, MBSim::Frame::velocity_cosy);
         return cp.getFrameOfReference().getVelocity();
       }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::position); }
-//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::firstTangent); }
-      // they are the same as the original ones.
-//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { neutral->updateKinematicsForFrame(cp, MBSim::position); }
-//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { neutral->updateKinematicsForFrame(cp, MBSim::firstTangent); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -86,7 +83,6 @@ namespace MBSimFlexibleBody {
       double getNormalDistance() {
         return nDist;
       }
-      ;
       double getWidth() const;
       /***************************************************/
 

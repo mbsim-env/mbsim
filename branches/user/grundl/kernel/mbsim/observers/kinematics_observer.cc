@@ -45,7 +45,7 @@ namespace MBSim {
         setFrame(getByPath<Frame>(saved_frame));
       Observer::init(stage);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       Observer::init(stage);
@@ -235,7 +235,7 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       KinematicsObserver::init(stage);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       KinematicsObserver::init(stage);

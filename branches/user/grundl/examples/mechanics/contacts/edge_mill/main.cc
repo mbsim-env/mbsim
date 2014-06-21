@@ -6,9 +6,9 @@ using namespace MBSim;
 
 int main (int argc, char* argv[]) {
   System *sys = new System("TS");
-  sys->setImpactSolver(RootFinding);
-  sys->setConstraintSolver(RootFinding);
-  sys->setLinAlg(PseudoInverse);
+  sys->setImpactSolver(DynamicSystemSolver::RootFinding);
+  sys->setConstraintSolver(DynamicSystemSolver::RootFinding);
+  sys->setLinAlg(DynamicSystemSolver::PseudoInverse);
   sys->setNumJacProj(true);
   sys->initialize();
 

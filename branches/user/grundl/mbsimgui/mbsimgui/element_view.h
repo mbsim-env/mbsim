@@ -36,13 +36,14 @@ namespace MBSimGUI {
       ElementPropertyDialog *editor;
     public:
       ElementView(QWidget *parent=0) : QTreeView(parent), element(0), editor(0) {}
-      void openEditor();
     protected:
       void mouseDoubleClickEvent(QMouseEvent *event);
       void mousePressEvent(QMouseEvent *event);
-      protected slots:
-        void dialogFinished(int result);
+    protected slots:
+      void dialogFinished(int result);
       void apply();
+    public slots:
+      void openEditor();
   };
 
 }

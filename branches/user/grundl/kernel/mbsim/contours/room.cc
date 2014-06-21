@@ -107,7 +107,7 @@ namespace MBSim {
         addContour(rectangle);
       }
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       RigidContour::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVRigidBody)

@@ -430,8 +430,8 @@ namespace MBSim {
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->closePlot();
 
-      if (not parent)
-        delete plotGroup;
+      //if (not parent) //TODO: why was that active once?
+      //  delete plotGroup;
     }
   }
 
@@ -488,7 +488,7 @@ namespace MBSim {
           contour[k]->setFrameOfReference(I);
       }
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       if (parent)
         updatePlotFeatures();
 

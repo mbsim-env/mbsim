@@ -35,12 +35,12 @@ namespace MBSim {
   }
 
   void ExternGeneralizedIO::updateh(double t, int j) {
-    if(type==CONSTANT) {
+    if(type==constant) {
       connectedObject->geth(j)(uInd)+=la(0);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
         applyForceAlsoTo[i].ref->geth(j)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
-    else if(type==LINEAR) {
+    else if(type==linear) {
       la(0)=m*(t-t0)+a;
       connectedObject->geth(j)(uInd)+=la(0);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
@@ -94,14 +94,14 @@ namespace MBSim {
       if(qInd<0)
         x.resize(1);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("la(0)");
         Link::init(stage);
       }
     }
-    else if(stage==MBSim::calculateLocalInitialValues) {
+    else if(stage==calculateLocalInitialValues) {
       Link::init(stage);
       if(qInd>=0)
         g(0)=connectedObject->getq()(qInd);
@@ -125,11 +125,11 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"type");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
-      if(str=="\"constant\"") type=CONSTANT;
-      else if(str=="\"linear\"") type=LINEAR;
+      if(str=="\"constant\"") type=constant;
+      else if(str=="\"linear\"") type=linear;
     }
     else
-      type=CONSTANT;
+      type=constant;
     saved_connectedObject=E(E(element)->getFirstElementChildNamed(MBSIM%"connectedObject"))->getAttribute("ref");
     qInd=getInt(E(element)->getFirstElementChildNamed(MBSIM%"qIndex"));
     uInd=getInt(E(element)->getFirstElementChildNamed(MBSIM%"uIndex"));

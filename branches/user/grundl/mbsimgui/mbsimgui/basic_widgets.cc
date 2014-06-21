@@ -435,7 +435,6 @@ namespace MBSimGUI {
     setLayout(layout);
 
     relativeFilePath = new QLineEdit;
-    //  relativeFilePath->setReadOnly(true);
     layout->addWidget(relativeFilePath);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
@@ -443,20 +442,22 @@ namespace MBSimGUI {
     connect(relativeFilePath,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
   }
 
-  void FileWidget::setFile(const QString &str) {
-    file = str;
-    relativeFilePath->setText(mbsDir.relativeFilePath(file));
-    cout << "file path = "<< relativeFilePath->text().toStdString() << endl;
-  }
-
   void FileWidget::selectFile() {
-    QString file;
+    QString file = getFile();
+    if(mode<3)
+      file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(0, description, getFile(), extensions);
+      file = QFileDialog::getOpenFileName(0, description, file, extensions);
+    else if(mode==1)
+      file = QFileDialog::getSaveFileName(0, description, file, extensions);
     else
-      file = QFileDialog::getSaveFileName(0, description, getFile(), extensions);
-    if(file!="")
-      setFile(file);
+      file = QFileDialog::getExistingDirectory ( 0, description, file);
+    if(file!="") {
+      if(mode==3)
+        setFile(mbsDir.relativeFilePath(file));
+      else
+        setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
+    }
   }
 
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
@@ -495,8 +496,9 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num) { 
+  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) { 
     text = new QComboBox;
+    text->setEditable(editable);
     for(unsigned int i=0; i<list.size(); i++)
       text->addItem(list[i]);
     text->setCurrentIndex(num);
@@ -552,51 +554,38 @@ namespace MBSimGUI {
       widget[i]->updateWidget();
   }
 
-  SolverChoiceWidget::SolverChoiceWidget() {
-    choice = new QComboBox;
-    choice->addItem("FixedPointSingle");
-    choice->addItem("GaussSeidel");
-    choice->addItem("LinearEquations");
-    choice->addItem("RootFinding");
-    choice->setCurrentIndex(0);
-    QHBoxLayout* layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    layout->addWidget(choice);
-  }
-
   SolverTolerancesWidget::SolverTolerancesWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
 
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-15"), noUnitUnits(), 1));
     projection = new ExtWidget("Projection",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(projection);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-8"), noUnitUnits(), 1));
     g = new ExtWidget("g",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(g);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
     gd = new ExtWidget("gd",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(gd);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
     gdd = new ExtWidget("gdd",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(gdd);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
     la = new ExtWidget("la",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(la);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
     La = new ExtWidget("La",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(La);
   }
@@ -606,14 +595,19 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    constraintSolver = new ExtWidget("Constraint solver",new SolverChoiceWidget,true);
+    vector<QString> list;
+    list.push_back("\"FixedPointSingle\"");
+    list.push_back("\"GaussSeidel\"");
+    list.push_back("\"LinearEquations\"");
+    list.push_back("\"RootFinding\"");
+    constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,1,true),true);
     layout->addWidget(constraintSolver);
 
-    impactSolver = new ExtWidget("Impact solver",new SolverChoiceWidget,true);
+    impactSolver = new ExtWidget("Imapct solver",new TextChoiceWidget(list,1,true),true);
     layout->addWidget(impactSolver);
 
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 0));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("10000"), QStringList(), 0));
     numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(numberOfMaximalIterations);
 
@@ -639,7 +633,7 @@ namespace MBSimGUI {
     layout->addWidget(href);
     count = new ExtWidget("Count", new SpinBoxWidget(1,1), true);
     layout->addWidget(count);
-    counterName = new ExtWidget("Counter name", new TextWidget, true);
+    counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
     layout->addWidget(counterName);
     parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.xml)", 1), true);
     layout->addWidget(parameterList);
@@ -695,6 +689,104 @@ namespace MBSimGUI {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
       static_cast<ExtPhysicalVarWidget*>(color->getWidget())->setValue(str);
       updateWidget();
+    }
+  }
+ 
+  PlotFeatureStatusWidget::PlotFeatureStatusWidget() {
+    QGridLayout *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    QStringList value_;
+    value_.push_back("+plotRecursive");
+    value_.push_back("+separateFilePerGroup");
+    value_.push_back("+state");
+    value_.push_back("+stateDerivative");
+    value_.push_back("+notMinimalState");
+    value_.push_back("+rightHandSide");
+    value_.push_back("+globalPosition");
+    value_.push_back("+globalVelocity");
+    value_.push_back("+globalAcceleration");
+    value_.push_back("+energy");
+    value_.push_back("+openMBV");
+    value_.push_back("+generalizedLinkForce");
+    value_.push_back("+linkKinematics");
+    value_.push_back("+stopVector");
+    value_.push_back("+debug");
+    value_.push_back("-plotRecursive");
+    value_.push_back("-separateFilePerGroup");
+    value_.push_back("-state");
+    value_.push_back("-stateDerivative");
+    value_.push_back("-notMinimalState");
+    value_.push_back("-rightHandSide");
+    value_.push_back("-globalPosition");
+    value_.push_back("-globalVelocity");
+    value_.push_back("-globalAcceleration");
+    value_.push_back("-energy");
+    value_.push_back("-openMBV");
+    value_.push_back("-generalizedLinkForce");
+    value_.push_back("-linkKinematics");
+    value_.push_back("-stopVector");
+    value_.push_back("-debug");
+
+    QStringList type_;
+    type_ << "plotFeature";
+    type_ << "plotFeatureForChildren";
+    type_ << "plotFeatureRecursive";
+
+    tree = new QTreeWidget;
+    QStringList labels;
+    labels << "Type" << "Value";
+    tree->setHeaderLabels(labels);
+    layout->addWidget(tree,0,0,2,1);
+
+    type = new QComboBox;
+    type->addItems(type_);
+    layout->addWidget(type,0,1);
+
+    value = new QComboBox;
+    value->setEditable(true);
+    value->addItems(value_);
+    layout->addWidget(value,1,1);
+
+    QPushButton *add = new QPushButton("Add");
+    connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
+    layout->addWidget(add,2,0);
+
+    QPushButton *remove = new QPushButton("Remove");
+    connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
+    layout->addWidget(remove,2,1);
+
+    connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
+    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
+    connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+  }
+
+  void PlotFeatureStatusWidget::addFeature() {
+    QTreeWidgetItem *item = new QTreeWidgetItem;
+    item->setText(0, type->currentText());
+    item->setText(1, value->currentText());
+    tree->addTopLevelItem(item);
+  }
+
+  void PlotFeatureStatusWidget::removeFeature() {
+    tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+  }
+
+  void PlotFeatureStatusWidget::updateFeature() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, type->currentText());
+      item->setText(1, value->currentText());
+    }
+  }
+
+  void PlotFeatureStatusWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
+    if(item) {
+      type->blockSignals(true);
+      type->setCurrentIndex(type->findText(item->text(0)));
+      type->blockSignals(false);
+      value->setEditText(item->text(1));
     }
   }
 

@@ -64,7 +64,7 @@ namespace MBSim {
       C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
       C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(generalizedLinkForce)==enabled)

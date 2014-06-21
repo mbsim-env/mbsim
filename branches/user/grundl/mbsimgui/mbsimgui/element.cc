@@ -29,6 +29,7 @@
 #include "link.h"
 #include "observer.h"
 #include "mainwindow.h"
+#include "embed.h"
 #include <boost/bind.hpp>
 
 using namespace std;
@@ -47,11 +48,16 @@ namespace MBSimGUI {
   Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(boost::bind(&Element::getName, this)));
+    plotFeature.setProperty(new PlotFeatureStatusProperty);
     ID=toStr(IDcounter++);
   }
 
   string Element::getPath() {
     return parent?(parent->getPath()+"."+getName()):getName();
+  }
+
+  std::string Element::getValue() const {
+    return isEmbedded()?("counterName="+static_cast<const EmbedProperty*>(embed.getProperty())->getCounterName()+"; count="+toStr(static_cast<const EmbedProperty*>(embed.getProperty())->getCount())):"";
   }
 
   void Element::writeXMLFile(const string &name) {
@@ -64,18 +70,25 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
+  void Element::writeXMLFileEmbed(const string &name) {
+    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    Embed<Element>::writeXML(this,doc.get());
+    QFileInfo info(QString::fromStdString(name));
+    QDir dir;
+    if(!dir.exists(info.absolutePath()))
+      dir.mkpath(info.absolutePath());
+    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  }
+
   void Element::initializeUsingXML(DOMElement *element) {
-    //  for(unsigned int i=0; i<plotFeature.size(); i++)
-    //    plotFeature[i]->initializeUsingXML(element);
+    plotFeature.initializeUsingXML(element);
   }
 
   DOMElement* Element::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType());
-    //name->writeXMLFile(ele0);
     E(ele0)->setAttribute("name", getName());
-    //  for(unsigned int i=0; i<plotFeature.size(); i++)
-    //    plotFeature[i]->writeXMLFile(ele0);
+    plotFeature.writeXMLFile(ele0);
     parent->insertBefore(ele0, NULL);
     return ele0;
   }
@@ -86,10 +99,11 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    //DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = embed.writeXMLFile(parent);
 
-    if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
+    if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {
       string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
       string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
@@ -98,7 +112,7 @@ namespace MBSimGUI {
     else
       parameters.writeXMLFile(ele);
 
-    if(static_cast<const EmbedProperty*>(embed.getProperty())->hasFile()) {
+    if(not(absolutePath) and static_cast<const EmbedProperty*>(embed.getProperty())->hasFile()) {
       string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getFile();
       string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
       string name=absolutePath?(mw->getUniqueTempDir().generic_string()+"/"+relFileName):absFileName;
@@ -195,16 +209,20 @@ namespace MBSimGUI {
     }
   }
 
-  ParameterList Element::getParameterList(bool addCounter) const {
-    ParameterList list;
+  string Element::getCounterName() const {
     const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
-    if(parent)
-      list.addParameterList(parent->getParameterList(false));
-    if(isEmbedded() && e->hasParameterFile())
-      list.readXMLFile(e->getParameterFile());
-    if(addCounter && e->hasCounter())
-      list.addParameter(e->getCounterName(),"1","scalarParameter"); 
-    return list;
+    if(e->hasCounter())
+      return e->getCounterName();
+    return "";
+  }
+
+  vector<Element*> Element::getParents() {
+    vector<Element*> parents;
+    if(getParent()) {
+      parents = getParent()->getParents();
+      parents.push_back(getParent());
+    }
+    return parents;
   }
 
 }

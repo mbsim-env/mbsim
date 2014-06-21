@@ -150,13 +150,13 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33Cosserat::updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+  void FlexibleBody1s33Cosserat::updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
     int node = frame->getNodeNumber();
 
     // Translational node
-    if (ff == position || ff == position_cosy || ff == all)
+    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
       frame->setPosition(R->getPosition() + R->getOrientation() * q(6 * node + 0, 6 * node + 2));
-    if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
+    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
       frame->setVelocity(R->getOrientation() * u(6 * node + 0, 6 * node + 2));
 
     // Rotational Node
@@ -164,22 +164,22 @@ namespace MBSimFlexibleBody {
     Vec3 angles = q(6 * node + 3, 6 * node + 5);
     Vec3 dotAngles = u(6 * node + 3, 6 * node + 5); //TODO
 
-    if (ff == MBSim::angle || ff == all)
+    if (ff == Frame::angle || ff == Frame::all)
       frame->setAnglesOfOrientation(R->getOrientation() * angles);
-    if (ff == dotAngle || ff == all)
+    if (ff == Frame::dotAngle || ff == Frame::all)
       frame->setDotAnglesOfOrientation(R->getOrientation() * dotAngles);
-    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(0, R->getOrientation() * ANGLE->computen(angles)); // normal
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(1, R->getOrientation() * ANGLE->computet(angles)); // tangent
-    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
+      frame->getOrientation().set(0, R->getOrientation() * angle->computen(angles)); // normal
+    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
+      frame->getOrientation().set(1, R->getOrientation() * angle->computet(angles)); // tangent
+    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       //cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
-      frame->getOrientation().set(2, R->getOrientation() * ANGLE->computeb(angles)); // binormal (cartesian system)
-    if (ff == angularVelocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->setAngularVelocity(R->getOrientation() * ANGLE->computeOmega(angles, dotAngles));
+      frame->getOrientation().set(2, R->getOrientation() * angle->computeb(angles)); // binormal (cartesian system)
+    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
+      frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(angles, dotAngles));
   }
 
-  void FlexibleBody1s33Cosserat::updateJacobiansAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+  void FlexibleBody1s33Cosserat::updateJacobiansAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
 
     //Translational Node
     int node = frame->getNodeNumber();
@@ -194,12 +194,12 @@ namespace MBSimFlexibleBody {
     Mat3xV Jacobian_rot(qSize, INIT, 0.); // TODO open structure
     Vec p = q(6 * node + 3, 6 * node + 5);
 
-    Jacobian_rot.set(Index(0, 2), Index(6 * node + 3, 6 * node + 5), ANGLE->computeT(p)); // rotation
+    Jacobian_rot.set(Index(0, 2), Index(6 * node + 3, 6 * node + 5), angle->computeT(p)); // rotation
 
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
   }
 
-  void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
     /*    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
      double sLocalTranslation;
      int currentElementTranslation;
@@ -331,7 +331,7 @@ namespace MBSimFlexibleBody {
 
       /* translational elements */
       for (int i = 0; i < Elements; i++) {
-        discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, ANGLE));
+        discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, angle));
         qElement.push_back(Vec(discretization[i]->getqSize(), INIT, 0.));
         uElement.push_back(Vec(discretization[i]->getuSize(), INIT, 0.));
         static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements * cEps0D, cEps1D, cEps2D);
@@ -339,7 +339,7 @@ namespace MBSimFlexibleBody {
 
       /* rotational elements */
       for (int i = 0; i < rotationalElements; i++) {
-        rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, ANGLE));
+        rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(), INIT, 0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(), INIT, 0.));
         if (fabs(R1) > epsroot() || fabs(R2) > epsroot())
@@ -348,8 +348,7 @@ namespace MBSimFlexibleBody {
 
       initM();
     }
-    else if (stage == MBSim::plot) {
-
+    else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (openMBVBody)
         ((OpenMBV::SpineExtrusion*) openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
@@ -419,8 +418,8 @@ namespace MBSimFlexibleBody {
           // Get continous information from neutral fibre
           ContourPointData cp(uMin + ds * i);
 
-          ncc->updateKinematicsForFrame(cp, position);
-          ncc->updateKinematicsForFrame(cp, MBSim::angle);
+          ncc->updateKinematicsForFrame(cp, Frame::position);
+          ncc->updateKinematicsForFrame(cp, Frame::angle);
           X(0, 2) = cp.getFrameOfReference().getPosition();
           X(3, 5) = cp.getFrameOfReference().getAnglesOfOrientation();
 
@@ -485,9 +484,9 @@ namespace MBSimFlexibleBody {
 //    temp(6, 8) = cp.getFrameOfReference().getVelocity();
 //    temp(9, 11) = cp.getFrameOfReference().getAngularVelocity();
 
-    ncc->updateKinematicsForFrame(cp, position);
-    ncc->updateKinematicsForFrame(cp, MBSim::angle);
-    ncc->updateKinematicsForFrame(cp, velocities);
+    ncc->updateKinematicsForFrame(cp, Frame::position);
+    ncc->updateKinematicsForFrame(cp, Frame::angle);
+    ncc->updateKinematicsForFrame(cp, Frame::velocities);
     temp(0, 2) = cp.getFrameOfReference().getPosition();
     temp(3, 5) = cp.getFrameOfReference().getAnglesOfOrientation();
     temp(6, 8) = cp.getFrameOfReference().getVelocity();
@@ -537,14 +536,14 @@ namespace MBSimFlexibleBody {
 
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
-      discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, ANGLE));
+      discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, angle));
       qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
       uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
     }
 
     /* rotational elements */
     for (int i = 0; i < rotationalElements; i++) {
-      rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, ANGLE));
+      rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
       qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(), INIT, 0.));
       uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(), INIT, 0.));
     }

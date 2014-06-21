@@ -47,59 +47,6 @@ namespace MBSim {
 
   const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
 
-  class ObjectInterface;
-
-  /** \brief Plot feature status */
-  enum PlotFeatureStatus {
-    enabled, /*!< set the feature enabled */
-    disabled, /*!< set the feature disabled */
-    unset /*!< use the default value for the feature */
-  };
-
-  // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
-  // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
-  // new feature must also be added in
-  // element.cc:Element::initializeUsingXML(xercesc::DOMElement *element)
-  // and in
-  // mbsimxml/schema/mbsim.xsd.in
-  /** \brief Plot Features */
-  enum PlotFeature {
-    plotRecursive=0, /*!< enables/disables all plotting beyond this hierarchy */
-    separateFilePerGroup, /*!< create a separate h5 file for the Group */
-    state, /*!< plot the state vector (x, q, u) */
-    stateDerivative, /*!< plot the derivative of the state vector (xd, qd, ud) */
-    notMinimalState, // TODO
-    rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
-    globalPosition, /*!< plot some global (world) positions/orientation */
-    globalVelocity, /*!< plot some global (world) velocities */
-    globalAcceleration, /*!< plot some global (world) accelerations */
-    energy, /*!< plot the energy */
-    openMBV, /*!< plot the OpenMBV part */
-    generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
-    linkKinematics, /*!< plot the kinematic of links (g, gd) */
-    stopVector, /*!< plot the stop vector (sv) */
-    debug, /*!< plot internal sizes */
-    LASTPLOTFEATURE
-  };
-
-  /** \brief The stages of the initialization
-   *
-   * see also DynamicSystemSolver::init()
-   */
-  enum InitStage {
-    modelBuildup=0, /*< build up complex internal models */
-    resolveXMLPath, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
-    preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
-    resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
-    relativeFrameContourLocation, /*!< Set the relative position and orientation of all Frame's/Contour's in all Group's/RigidBody's */
-    worldFrameContourLocation, /*!< Set the world position and orientation of all Frame's/Contour's in all Group's */
-    plot, /*!< Build/initialize the plot structure */
-    reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structur) */
-    unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
-    calculateLocalInitialValues, /*!< calculation of non-linear initial values in complex internal models */
-    LASTINITSTAGE
-  };
-
   class DynamicSystemSolver;
 
   /**
@@ -110,6 +57,57 @@ namespace MBSim {
    */
   class Element : public fmatvec::Atom {
     public:
+      /** \brief Plot feature status */
+      enum PlotFeatureStatus {
+        enabled, /*!< set the feature enabled */
+        disabled, /*!< set the feature disabled */
+        unset /*!< use the default value for the feature */
+      };
+
+      // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
+      // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
+      // new feature must also be added in
+      // element.cc:Element::initializeUsingXML(xercesc::DOMElement *element)
+      // and in
+      // mbsimxml/schema/mbsim.xsd.in
+      /** \brief Plot Features */
+      enum PlotFeature {
+        plotRecursive=0, /*!< enables/disables all plotting beyond this hierarchy */
+        separateFilePerGroup, /*!< create a separate h5 file for the Group */
+        state, /*!< plot the state vector (x, q, u) */
+        stateDerivative, /*!< plot the derivative of the state vector (xd, qd, ud) */
+        notMinimalState, // TODO
+        rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
+        globalPosition, /*!< plot some global (world) positions/orientation */
+        globalVelocity, /*!< plot some global (world) velocities */
+        globalAcceleration, /*!< plot some global (world) accelerations */
+        energy, /*!< plot the energy */
+        openMBV, /*!< plot the OpenMBV part */
+        generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
+        linkKinematics, /*!< plot the kinematic of links (g, gd) */
+        stopVector, /*!< plot the stop vector (sv) */
+        debug, /*!< plot internal sizes */
+        LASTPLOTFEATURE
+      };
+
+      /** \brief The stages of the initialization
+       *
+       * see also DynamicSystemSolver::init()
+       */
+      enum InitStage {
+        modelBuildup=0, /*< build up complex internal models */
+        resolveXMLPath, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
+        preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
+        resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
+        relativeFrameContourLocation, /*!< Set the relative position and orientation of all Frame's/Contour's in all Group's/RigidBody's */
+        worldFrameContourLocation, /*!< Set the world position and orientation of all Frame's/Contour's in all Group's */
+        plotting, /*!< Build/initialize the plot structure */
+        reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structur) */
+        unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
+        calculateLocalInitialValues, /*!< calculation of non-linear initial values in complex internal models */
+        LASTINITSTAGE
+      };
+
       /**
        * \brief constructor
        */

@@ -126,8 +126,8 @@ FuncCrPC::FuncCrPC() : ContourFunction1s() {
 
 void FuncCrPC::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   Mat angleYZ=ContourXY2angleXY(YZ, 1., rYZ , discretization); 
-  pp_y.setXF(angleYZ.col(0), angleYZ.col(1), "csplinePer");
-  pp_z.setXF(angleYZ.col(0), angleYZ.col(2), "csplinePer");
+  pp_y.setXF(angleYZ.col(0), angleYZ.col(1), PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
+  pp_z.setXF(angleYZ.col(0), angleYZ.col(2), PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
 }   
 
 //void FuncCrPC::init(const double& alpha) {

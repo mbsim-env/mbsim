@@ -46,7 +46,7 @@ namespace MBSim {
       std::string getType() const {
         return "Contour1s";
       }
-      void init(MBSim::InitStage stage_);
+      void init(InitStage stage_);
       void plot(double t, double dt);
       /***************************************************/
 
@@ -56,7 +56,7 @@ namespace MBSim {
        * \param contour position
        */
       virtual fmatvec::Vec3 computeTangent(ContourPointData &cp) {
-        updateKinematicsForFrame(cp, firstTangent);
+        updateKinematicsForFrame(cp, Frame::firstTangent);
         return cp.getFrameOfReference().getOrientation().col(1);
       }
 
@@ -65,7 +65,7 @@ namespace MBSim {
        * \param Lagrangian position
        */
       virtual fmatvec::Vec3 computeBinormal(ContourPointData &cp) {
-        updateKinematicsForFrame(cp, secondTangent);
+        updateKinematicsForFrame(cp, Frame::secondTangent);
         return cp.getFrameOfReference().getOrientation().col(2);
       }
       /***************************************************/

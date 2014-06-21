@@ -136,12 +136,12 @@ namespace MBSimControl {
      */
   }
 
-  void MasslessSpringDamper::init(MBSim::InitStage stage) {
-    if (stage==MBSim::resize) {
+  void MasslessSpringDamper::init(InitStage stage) {
+    if (stage==resize) {
       SignalProcessingSystem::init(stage);
       x.resize(xSize, INIT, 0);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if (getPlotFeature(globalPosition)==enabled) {
@@ -151,7 +151,7 @@ namespace MBSimControl {
         SignalProcessingSystem::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       assert(dPos>epsroot());
       if (fabs(dNeg)<epsroot())
         dNeg=dPos;

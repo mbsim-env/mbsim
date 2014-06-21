@@ -53,7 +53,7 @@ System::System(const string &projectName) :
   //rod->setMaterialDamping(0.1,0.1,0.1);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
-  rod->setCuboid(b0, b0);
+//  rod->setCuboid(b0, b0);
   rod->setCurlRadius(0., l / (2 * M_PI));
 
   // circle shape
@@ -146,7 +146,7 @@ System::System(const string &projectName) :
   Contact *contact = new Contact("Contact");
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
-  contact->connect(ball->getContour("Point"), rod->getContour("Top"));
+  contact->connect(ball->getContour("Point"), top);
   contact->enableOpenMBVNormalForce();
   contact->enableOpenMBVTangentialForce();
   contact->enableOpenMBVContactPoints();

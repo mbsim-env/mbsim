@@ -20,7 +20,7 @@
 
 #include <config.h> 
 #include <mbsimFlexibleBody/contact_kinematics/point_contour2s.h>
-#include <mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_factory.h>
+#include <mbsimFlexibleBody/contours/contour_2s_neutral_factory.h>
 //#include <mbsim/contour.h>
 #include <mbsim/functions_contact.h>
 #include "mbsim/contours/point.h"
@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
 
     cpData[icontour2s].getLagrangeParameterPosition() = search.slv();
 
-    contour2s->updateKinematicsForFrame(cpData[icontour2s],position_cosy); 
+    contour2s->updateKinematicsForFrame(cpData[icontour2s],Frame::position_cosy);
     Vec WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour2s].getFrameOfReference().getPosition();
 
     // contact in estimated contact area? 

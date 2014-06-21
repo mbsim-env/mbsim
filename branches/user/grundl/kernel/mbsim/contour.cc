@@ -66,7 +66,7 @@ namespace MBSim {
 //      getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
 //      getFrame()->getJacobianOfRotation(1).resize(hSize[1]);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -157,14 +157,14 @@ namespace MBSim {
   RigidContour::~RigidContour() {
   }
 
-  void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-    if(ff==velocity || ff==velocities) {
+  void RigidContour::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
+    if(ff==Frame::velocity || ff==Frame::velocities) {
       Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
       cp.getFrameOfReference().setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPC));
     }
-    if(ff==angularVelocity || ff==velocities)
+    if(ff==Frame::angularVelocity || ff==Frame::velocities)
       cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
-    if(ff!=velocity && ff!=angularVelocity && ff!=velocities) throw MBSimError("ERROR (RigidContour::updateKinematicsForFrame): FrameFeature not implemented!");
+    if(ff!=Frame::velocity && ff!=Frame::angularVelocity && ff!=Frame::velocities) throw MBSimError("ERROR (RigidContour::updateKinematicsForFrame): Frame::Feature not implemented!");
   }
 
   void RigidContour::updateJacobiansForFrame(ContourPointData &cp, int j) {
@@ -184,7 +184,7 @@ namespace MBSim {
   void RigidContour::init(InitStage stage) {
     if(stage==unknownStage)
       Contour::init(stage);
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

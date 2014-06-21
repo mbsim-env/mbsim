@@ -370,10 +370,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(2,2) = inertiaDisks(i);//2./5.*massDisks(i)*radiiDisks(i)*radiiDisks(i);
     disk->setInertiaTensor(Theta);
 
-    disk->setPlotFeature(MBSim::globalPosition,enabled);
-    disk->setPlotFeature(MBSim::globalVelocity,enabled);
-    disk->getFrame("C")->setPlotFeature(MBSim::globalPosition,enabled);
-    disk->getFrame("C")->setPlotFeature(MBSim::globalVelocity,enabled);
+    disk->setPlotFeature(Element::globalPosition,enabled);
+    disk->setPlotFeature(Element::globalVelocity,enabled);
+    disk->getFrame("C")->setPlotFeature(Element::globalPosition,enabled);
+    disk->getFrame("C")->setPlotFeature(Element::globalVelocity,enabled);
 
     Vec JR("[0;0;1.0]");
     if(i==0)

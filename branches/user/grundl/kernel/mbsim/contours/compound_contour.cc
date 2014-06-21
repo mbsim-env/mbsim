@@ -110,7 +110,7 @@ namespace MBSim {
       for (unsigned int i = 0; i < element.size(); i++)
         element[i]->sethSize(hSize[0]);
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (parent)
         updatePlotFeatures();
@@ -136,7 +136,7 @@ namespace MBSim {
     }
   }
 
-  void CompoundContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+  void CompoundContour::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
     for (unsigned int i = 0; i < element.size(); i++)
       element[i]->updateKinematicsForFrame(cp, ff);
   }

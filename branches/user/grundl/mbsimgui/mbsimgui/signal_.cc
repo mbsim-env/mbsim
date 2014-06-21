@@ -123,7 +123,7 @@ namespace MBSimGUI {
     //  var.push_back("x");
     //  property.push_back(new SymbolicFunctionProperty("VV",var));
     //  f.setProperty(new ChoiceProperty(MBSIMCONTROL%"function",property));
-    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
+    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory3("VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
   }
 
   void UnarySignalOperation::initialize() {

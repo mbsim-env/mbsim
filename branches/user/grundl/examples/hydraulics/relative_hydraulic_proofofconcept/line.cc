@@ -53,7 +53,7 @@ void Line::updateJacobians(double, int k) {
 }
 
 void Line::init(InitStage stage) {
-  if(stage==MBSim::plot) {
+  if(stage==plotting) {
     updatePlotFeatures();
 
     if(getPlotFeature(plotRecursive)==enabled) {

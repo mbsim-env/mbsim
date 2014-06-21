@@ -79,8 +79,8 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0);
-      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame = 0);
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
       virtual void updateJacobiansAtNode(NodeFrame * frame);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void updateh(double t, int k = 0);
@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(MBSim::InitStage stage);
+      virtual void init(InitStage stage);
       virtual void calcqSize();
       virtual void calcuSize(int j);
       /***************************************************/

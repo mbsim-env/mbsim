@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(MBSim::InitStage stage);
+      virtual void init(InitStage stage);
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
       virtual void setFrameOfReference(MBSim::Frame *frame);
@@ -123,12 +123,12 @@ namespace MBSimFlexibleBody {
        * \param ff selection of specific calculations for frames
        * \param frame optional: external frame, otherwise contour parameters are changed
        */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::FrameFeature ff, MBSim::Frame *frame=0) = 0;
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0) = 0;
 
       /*!
        * \brief cartesian kinematic on a node
        */
-      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
     	  throw MBSim::MBSimError("updateKinematicsAtNode(): Not implemented for " + getType()); //TODO: make that interface prettier
       }
 
@@ -222,6 +222,10 @@ namespace MBSimFlexibleBody {
        * \brief vector of contour parameters each describing a frame
        */
       std::vector<MBSim::ContourPointData> S_Frame;
+
+      // Workaround to free memory of contourFrame in dtor.
+      // TODO: provide a consistent solution and remove the following line
+      MBSim::Frame *contourFrame;
 
       /*!
        * \brief list of all contour frames

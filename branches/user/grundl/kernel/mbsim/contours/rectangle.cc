@@ -43,7 +43,7 @@ namespace MBSim {
       setVertices();
       Plane::init(stage);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

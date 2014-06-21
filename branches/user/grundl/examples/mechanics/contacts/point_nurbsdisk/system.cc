@@ -48,7 +48,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   disk->setRadius(rI,rO);
   disk->setThickness(d);
   disk->setFrameOfReference(this->getFrame("I")); // location of disk
-  disk->setLockType(innerring); // inner ring has no elastic dof
+  disk->setLockType(FlexibleBody2s13::innerring); // inner ring has no elastic dof
   disk->setReferenceInertia(1.,SymMat(3,EYE)); // inertia of the reference frame
   disk->setNumberElements(nr,nj);
 

@@ -8,7 +8,7 @@ int main (int argc, char* argv[]) {
 
   System *sys = new System("MBS");
 
-  sys->setImpactSolver(RootFinding);
+  sys->setImpactSolver(DynamicSystemSolver::RootFinding);
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 
@@ -18,8 +18,6 @@ int main (int argc, char* argv[]) {
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
   integrator.integrate(*sys);
-
-  sys->closePlot();
 
   cout << "finished"<<endl;
 

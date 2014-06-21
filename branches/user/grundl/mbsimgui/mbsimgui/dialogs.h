@@ -45,11 +45,11 @@ namespace MBSimGUI {
 
   class EvalDialog : public QDialog {
     public:
-      EvalDialog();
-      void setValue(const std::vector<std::vector<QString> > &A) {var->setMat(A);}
+      EvalDialog(QWidget *widget);
+      //    void setValue(const std::vector<std::vector<QString> > &A) {var->setMat(A);}
       //QString getValue() const {return var->getValue();}
     protected:
-      MatWidget *var;
+      QWidget *var;
   };
 
   class ObjectBrowser : public QDialog {

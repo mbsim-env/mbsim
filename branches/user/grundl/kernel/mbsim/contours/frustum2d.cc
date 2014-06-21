@@ -31,7 +31,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   void Frustum2D::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {

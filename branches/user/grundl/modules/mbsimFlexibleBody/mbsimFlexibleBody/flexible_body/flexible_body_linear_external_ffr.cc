@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
       fistIterFlag = true;
 
     }
-    else if (stage == MBSim::plot) {
+    else if (stage == plotting) {
       updatePlotFeatures();
     }
     else if (stage == unknownStage) {
@@ -582,7 +582,7 @@ namespace MBSimFlexibleBody {
   }
 
   //TODO: should we add updateAGbarGbardot() before updateKinematics and updateJacobian.
-  void FlexibleBodyLinearExternalFFR::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBodyLinearExternalFFR::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
 
     throw MBSimError("ERROR(FlexibleBodyLinearExternalFFR::updateKinematicsForFrame): has to be avoided");
 
@@ -594,7 +594,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyLinearExternalFFR::updateKinematicsAtNode(NodeFrame * frame, FrameFeature ff) {
+  void FlexibleBodyLinearExternalFFR::updateKinematicsAtNode(NodeFrame * frame, Frame::Feature ff) {
 
     // The node numbers start at 1...
     // The indexing starts at 0 ...
@@ -602,7 +602,7 @@ namespace MBSimFlexibleBody {
 
     FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
 
-    if (ff == position || ff == position_cosy || ff == all) {
+    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
 
       Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
 //        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
@@ -612,7 +612,7 @@ namespace MBSimFlexibleBody {
       // TODO:  why in cosserat is there not  plus R->getPosition() ?
     }
 
-    if (ff == localPosition || ff == all) {
+    if (ff == Frame::localPosition || ff == Frame::all) {
 
       Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
 
@@ -621,14 +621,14 @@ namespace MBSimFlexibleBody {
 
     // TODO: interpolate the position of lumped node to get a smooth surface, and then get A from that curve.
     SqrMat3 wA(R->getOrientation() * A);
-    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       frame->getOrientation().set(0, wA.col(0));
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       frame->getOrientation().set(1, wA.col(1));
-    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       frame->getOrientation().set(2, wA.col(2));
 
-    if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
       Vec3 A_S_qfDot = A * node->getModeShape() * u(6, 5 + nf);
 
       Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
@@ -638,7 +638,7 @@ namespace MBSimFlexibleBody {
       frame->setVelocity(R->getOrientation() * (u(0, 2) + u_ref_1 + A_S_qfDot));  // Schabana 5.15
     }
 
-    if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
       // In reality, each point on the flexible body should has a different angular rotation velocity omega as the effect of deformation. But as we assume the deformation is small and thus linearizable, in calculating
       // deformation u_f, we neglect the effect of the change of orientation, simply set the deformation to be equal a weighted summation of different modes vectors.
       // For kinematics, it means that we assume that every point in the flexible body have the same angular velocity omega of the FFR, neglecting the effect of deformation on angular velocity.
@@ -685,7 +685,7 @@ namespace MBSimFlexibleBody {
       fixedRelativeFrames[i]->updateStateDependentVariables();
 
     for (size_t i = 0; i < nodeFrames.size(); i++)
-      updateKinematicsAtNode(nodeFrames[i], MBSim::all);
+      updateKinematicsAtNode(nodeFrames[i], Frame::all);
 
     for (size_t i = 0; i < contour.size(); i++) {
       contour[i]->updateStateDependentVariables(t);

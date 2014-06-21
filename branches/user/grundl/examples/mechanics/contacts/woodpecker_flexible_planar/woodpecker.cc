@@ -64,7 +64,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   // inertiale Einspannung -----------------------------
   ContourPointData cpdata;
-  cpdata.getContourParameterType() = CONTINUUM;
+  cpdata.getContourParameterType() = ContourPointData::continuum;
   balken->addFrame("RJ",cpdata);
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"),balken->getFrame("RJ")); 

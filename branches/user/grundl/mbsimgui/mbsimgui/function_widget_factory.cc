@@ -42,17 +42,27 @@ namespace MBSimGUI {
     if(i==4)
       return new SinusoidalFunctionWidget(1);
     if(i==5)
-      return new ScaledFunctionWidget(1);
+      return new AbsoluteValueFunctionWidget(1);
     if(i==6)
-      return new SummationFunctionWidget;
+      return new PointSymmetricFunctionWidget(1);
     if(i==7)
-      return new VectorValuedFunctionWidget(1,true);
+      return new LineSymmetricFunctionWidget(1);
     if(i==8)
-      return new PiecewiseDefinedFunctionWidget;
+      return new ScaledFunctionWidget(1);
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList("t"),1,1);
+      return new SummationFunctionWidget;
     if(i==10)
+      return new VectorValuedFunctionWidget(1,true);
+    if(i==11)
+      return new PiecewiseDefinedFunctionWidget;
+    if(i==12)
+      return new NestedFunctionWidget(new FunctionWidgetFactory2, new FunctionWidgetFactory2);
+    if(i==13)
+      return new SymbolicFunctionWidget(QStringList("t"),1,3);
+    if(i==14)
       return new TabularFunctionWidget(1);
+    if(i==15)
+      return new PiecewisePolynomFunctionWidget(1);
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -62,12 +72,17 @@ namespace MBSimGUI {
     name.push_back("Quadratic function");
     name.push_back("Polynom function");
     name.push_back("Sinusoidal function");
+    name.push_back("Absolute value function");
+    name.push_back("Point symmetric function");
+    name.push_back("Line symmetric function");
     name.push_back("Scaled function");
     name.push_back("Summation function");
     name.push_back("Vector valued function");
     name.push_back("Piecewise defined function");
+    name.push_back("Nested function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
+    name.push_back("Piecewise polynom function");
     return name;
   }
 
@@ -91,7 +106,7 @@ namespace MBSimGUI {
     if(i==8)
       return new LinearTranslationWidget(3,1);
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList("q"),3,1);
+      return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
       return new NestedFunctionWidget(new TranslationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
   }
@@ -118,7 +133,7 @@ namespace MBSimGUI {
     if(i==1)
       return new NestedFunctionWidget(new TranslationWidgetFactory2, new FunctionWidgetFactory2);
     if(i==2)
-      return new SymbolicFunctionWidget(QStringList("t"),3,1);
+      return new SymbolicFunctionWidget(QStringList("t"),3,3);
     if(i==3)
       return new TabularFunctionWidget(1);
     if(i==4)
@@ -127,6 +142,8 @@ namespace MBSimGUI {
       return new SummationFunctionWidget;
     if(i==6)
       return new PiecewiseDefinedFunctionWidget;
+    if(i==7)
+      return new PiecewisePolynomFunctionWidget(1);
   }
 
   vector<QString> TranslationWidgetFactory3::getNames() {
@@ -138,6 +155,7 @@ namespace MBSimGUI {
     name.push_back("Scaled function");
     name.push_back("Summation function");
     name.push_back("Piecewise defined function");
+    name.push_back("Piecewise polynom function");
     return name;
   }
 
@@ -158,11 +176,15 @@ namespace MBSimGUI {
     if(i==6)
       return new RotationAboutAxesXYZWidget;
     if(i==7)
-      return new RotationAboutFixedAxisWidget;
+      return new RotationAboutAxesZXZWidget;
     if(i==8)
-      return new NestedFunctionWidget(new RotationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
+      return new RotationAboutAxesZYXWidget;
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList("q"),1,1);
+      return new RotationAboutFixedAxisWidget;
+    if(i==10)
+      return new NestedFunctionWidget(new RotationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
+    if(i==11)
+      return new SymbolicFunctionWidget(QStringList("q"),1,3);
   }
 
   vector<QString> RotationWidgetFactory2::getNames() {
@@ -174,6 +196,8 @@ namespace MBSimGUI {
     name.push_back("Rotation about axes y and z");
     name.push_back("Rotation about axes x and z");
     name.push_back("Rotation about axes x,y and z");
+    name.push_back("Rotation about axes z,x and z");
+    name.push_back("Rotation about axes z,y and x");
     name.push_back("Rotation about fixed axis");
     name.push_back("Nested function");
     name.push_back("Symbolic function");
@@ -184,7 +208,7 @@ namespace MBSimGUI {
     if(i==0)
       return new NestedFunctionWidget(new RotationWidgetFactory2, new FunctionWidgetFactory2);
     if(i==1)
-      return new SymbolicFunctionWidget(QStringList("t"),1,1);
+      return new SymbolicFunctionWidget(QStringList("t"),1,3);
   }
 
   vector<QString> RotationWidgetFactory3::getNames() {
@@ -195,12 +219,29 @@ namespace MBSimGUI {
   }
 
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
-    return new SymbolicFunctionWidget(var,1,1);
+    if(i==0)
+      return new SymbolicFunctionWidget(var,1,3);
+    if(i==1)
+      return new TwoDimensionalTabularFunctionWidget(1);
   }
 
   vector<QString> SymbolicFunctionWidgetFactory2::getNames() {
     vector<QString> name;
     name.push_back("Symbolic function");
+    name.push_back("Two dimensional tabular function");
+    return name;
+  }
+  QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
+    if(i==0)
+      return new SymbolicFunctionWidget(var,1,3);
+    if(i==1)
+      return new ModuloFunctionWidget;
+  }
+
+  vector<QString> SymbolicFunctionWidgetFactory3::getNames() {
+    vector<QString> name;
+    name.push_back("Symbolic function");
+    name.push_back("Modulo function");
     return name;
   }
 
@@ -274,16 +315,19 @@ namespace MBSimGUI {
 
   SpringDamperWidgetFactory::SpringDamperWidgetFactory() {
     name.push_back("Linear spring damper force");
+    name.push_back("Nonlinear spring damper force");
     name.push_back("Symbolic function");
   }
 
   QWidget* SpringDamperWidgetFactory::createWidget(int i) {
     if(i==0)
       return new LinearSpringDamperForceWidget;
-    if(i==1) {
+    if(i==1)
+      return new NonlinearSpringDamperForceWidget;
+    if(i==2) {
       QStringList var;
       var << "g" << "gd";
-      return new SymbolicFunctionWidget(var,1,1);
+      return new SymbolicFunctionWidget(var,1,3);
     }
   }
 

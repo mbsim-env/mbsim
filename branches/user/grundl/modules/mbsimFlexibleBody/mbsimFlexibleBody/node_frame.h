@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
         return "NodeFrame";
       }
 
-      virtual void init(MBSim::InitStage stage);
+      virtual void init(InitStage stage);
 
       void setNodeNumber(const size_t nodeNumber_) {
         nodeNumber = nodeNumber_;

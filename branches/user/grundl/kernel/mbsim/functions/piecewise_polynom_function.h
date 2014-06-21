@@ -64,6 +64,12 @@ namespace MBSim {
   class PiecewisePolynomFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
 
     public:
+      enum InterpolationMethod {
+        cSplinePeriodic,
+        cSplineNatural,
+        piecewiseLinear
+      };
+
       PiecewisePolynomFunction() : f(this), fd(this), fdd(this) { }
 
       Ret operator()(const Arg &x) { return f(x); }
@@ -74,24 +80,24 @@ namespace MBSim {
        * \brief set interpolation
        * @param x vector of ordered x values
        * @param f corresponding f(x) values (rowwise)
-       * @param InterpolationMethod     'csplinePer' -> cubic Spline with periodic end conditions (two-times continuously differentiable)
+       * @param InterpolationMethod     'cSplinePeriodic' -> cubic Spline with periodic end conditions (two-times continuously differentiable)
        *                                                                                        S(x1) = S(xN) -> f(0)=f(end)
        *                                                                                        S'(x1) = S'(xN)
        *                                                                                        S''(x1) = S''(xN)
-       *                                'csplineNat' -> cubic Spline with natural end conditions (two-times continuously differentiable)
+       *                                'cSplineNatural' -> cubic Spline with natural end conditions (two-times continuously differentiable)
        *                                                                                        S''(x1) = S''(xN) = 0
-       *                                'plinear'    -> piecewise linear function (weak differentiable)
+       *                                'piecewiseLinear'    -> piecewise linear function (weak differentiable)
        */
-      void setXF(const fmatvec::VecV &x, const fmatvec::MatV &f, std::string InterpolationMethod) {
+      void setXF(const fmatvec::VecV &x, const fmatvec::MatV &f, InterpolationMethod method=cSplineNatural) {
         assert(x.size() == f.rows());
 
-        if(InterpolationMethod == "csplinePer") {
+        if(method == cSplinePeriodic) {
           calculateSplinePeriodic(x,f);   
         }
-        else if(InterpolationMethod == "csplineNat") { 
+        else if(method == cSplineNatural) { 
           calculateSplineNatural(x,f);   
         }
-        else if(InterpolationMethod == "plinear") {
+        else if(method == piecewiseLinear) {
           calculatePLinear(x,f);
         }
         else throw MBSimError("(PiecewisePolynomFunction::setXF): No valid method to calculate pp-form");
@@ -493,13 +499,14 @@ namespace MBSim {
       x=xy.col(0);
       y=xy(fmatvec::Index(0, xy.rows()-1), fmatvec::Index(1, xy.cols()-1));
     }
-    std::string method;
-    if (MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"cSplinePeriodic"))
-      method="csplinePer";
-    else if (MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"cSplineNatural"))
-      method="csplineNat";
-    else if (MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"piecewiseLinear"))
-      method="plinear";
+    InterpolationMethod method=cSplineNatural;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
+    if(e) { 
+      std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
+      if(str=="\"cSplinePeriodic\"") method=cSplinePeriodic;
+      else if(str=="\"cSplineNatural\"") method=cSplineNatural;
+      else if(str=="\"piecewiseLinear\"") method=piecewiseLinear;
+    }
     setXF(x, y, method);
   }
 

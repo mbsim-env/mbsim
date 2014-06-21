@@ -48,7 +48,7 @@ namespace MBSim {
        * \return tangents in world frame
        * \param Lagrangian position
        */
-      virtual fmatvec::Mat3x2 computeTangentialPlane(fmatvec::Vec alpha) { ContourPointData cp(alpha); updateKinematicsForFrame(cp,cosy); return cp.getFrameOfReference().getOrientation()(fmatvec::Range<fmatvec::Fixed<0>,fmatvec::Fixed<2> >(),fmatvec::Range<fmatvec::Fixed<1>,fmatvec::Fixed<2> >()); }
+      virtual fmatvec::Mat3x2 computeTangentialPlane(fmatvec::Vec alpha) { ContourPointData cp(alpha); updateKinematicsForFrame(cp,Frame::cosy); return cp.getFrameOfReference().getOrientation()(fmatvec::Range<fmatvec::Fixed<0>,fmatvec::Fixed<2> >(),fmatvec::Range<fmatvec::Fixed<1>,fmatvec::Fixed<2> >()); }
 
       /**
        * \return nodes lagrange parameters for contact2sSearch in U direction

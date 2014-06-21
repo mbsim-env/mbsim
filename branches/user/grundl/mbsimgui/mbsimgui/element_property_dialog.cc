@@ -45,6 +45,7 @@
 #include "integrator.h"
 #include "sensor.h"
 #include "function_widget_factory.h"
+#include "torsional_stiffness.h"
 #include <QPushButton>
 
 using namespace std;
@@ -79,7 +80,7 @@ namespace MBSimGUI {
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
-    widget->addWidget(new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input)));
+    widget->addWidget(new ExtWidget("Ratio",new ExtPhysicalVarWidget(input)));
     return widget;
   }
 
@@ -99,31 +100,27 @@ namespace MBSimGUI {
     return widget;
   }
 
-  ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), embed(0) {
+  ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), element(element_) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget);
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
-    if(embedding) {
-      addTab("Embedding");
-      embed = new ExtWidget("Embed", new EmbedWidget, true);
-      addToTab("Embedding",embed);
-    }
+    addTab("Plot");
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget);
+    addToTab("Plot", plotFeature);
   }
 
   void ElementPropertyDialog::toWidget(Element *element) {
     element->name.toWidget(name);
-    if(embed)
-      element->embed.toWidget(embed);
+    element->plotFeature.toWidget(plotFeature);
   }
 
   void ElementPropertyDialog::fromWidget(Element *element) {
     element->name.fromWidget(name);
-    if(embed)
-      element->embed.fromWidget(embed);
+    element->plotFeature.fromWidget(plotFeature);
   }
 
-  FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(frame,parent,f,embedding) {
+  FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
     visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
     visu->setToolTip("Set the visualisation parameters for the frame");
@@ -140,13 +137,13 @@ namespace MBSimGUI {
     static_cast<Frame*>(element)->visu.fromWidget(visu);
   }
 
-  FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
+  FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
     addTab("Kinematics",1);
 
-    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
+    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", position);
 
-    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
+    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", orientation);
 
     refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true);
@@ -285,10 +282,10 @@ namespace MBSimGUI {
     if(kinematics) {
       addTab("Kinematics",1);
 
-      position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3)),true);
+      position = new ExtWidget("Position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);
       addToTab("Kinematics", position);
 
-      orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory),true);
+      orientation = new ExtWidget("Orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
       addToTab("Kinematics", orientation);
 
       frameOfReference = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(group,0),true);
@@ -317,19 +314,15 @@ namespace MBSimGUI {
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
     addTab("Environment",1);
     addTab("Solver parameters",2);
-    addTab("Extra",3);
+    addTab("Extra");
 
-    //  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
-    //  environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
-    environment = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits()))),true);
+    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft));
     addToTab("Environment", environment);
 
     solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
     addToTab("Solver parameters",solverParameters);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("1"),QStringList(),1));
-    inverseKinetics = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
+    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
     addToTab("Extra", inverseKinetics);
   }
 
@@ -359,8 +352,8 @@ namespace MBSimGUI {
   }
 
   BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-    addTab("Kinematics");
-    addTab("Initial conditions");
+    addTab("Kinematics",1);
+    addTab("Initial conditions",2);
 
     q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", q0);
@@ -370,7 +363,7 @@ namespace MBSimGUI {
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 
-    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,0),true);
+    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
     addToTab("Kinematics",R);
   }
 
@@ -389,16 +382,16 @@ namespace MBSimGUI {
   }
 
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
-    addTab("Visualisation");
+    addTab("Visualisation",3);
     addTab("Extra");
 
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("Kinematics",K);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()))));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
-    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2))));
+    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
     addToTab("General",inertia);
 
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
@@ -455,7 +448,6 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
     static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
     static_cast<RigidBody*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
-    //resizeVariables();
   }
 
   void RigidBodyPropertyDialog::fromWidget(Element *element) {
@@ -479,12 +471,18 @@ namespace MBSimGUI {
     if(translation->isActive()) {
       ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
       ChoiceWidget2 *trans = static_cast<ChoiceWidget2*>(extWidget->getWidget());
-      nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()==1)
+        nqT = 0;
+      else
+        nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
     }
     if(rotation->isActive()) {
       ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget());
       ChoiceWidget2 *rot = static_cast<ChoiceWidget2*>(extWidget->getWidget());
-      nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()==1)
+        nqR = 0;
+      else
+        nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
     }
     int nq = nqT + nqR;
     return nq;
@@ -496,21 +494,21 @@ namespace MBSimGUI {
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
     int size =  body->isConstrained() ? 0 : getqRelSize();
-    ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(q0->getWidget());
-    choice->resize_(size,1);
-  }
+    q0->resize_(size,1);
+    translation->resize_(3,1);
+    rotation->resize_(3,1);
+    }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
     int size =  body->isConstrained() ? 0 : getuRelSize();
-    ChoiceWidget2 *choice = static_cast<ChoiceWidget2*>(u0->getWidget());
-    choice->resize_(size,1);
+    u0->resize_(size,1);
   }
 
   ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {
   }
 
   GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Visualisation");
+    addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", dependentBody);
@@ -519,7 +517,7 @@ namespace MBSimGUI {
     //  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
     //  addToTab("General", independentBodies);
 
-    independentBodies = new ExtWidget("Independent bodies",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Body"));
+    independentBodies = new ExtWidget("Transmissions",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Transmission"));
     addToTab("General",independentBodies);
 
     gearForceArrow = new ExtWidget("OpenMBV gear force arrow",new OMBVArrowWidget("NOTSET"),true);
@@ -554,7 +552,7 @@ namespace MBSimGUI {
   }
 
   KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Visualisation");
+    addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", dependentBody);
@@ -600,7 +598,7 @@ namespace MBSimGUI {
   void GeneralizedPositionConstraintPropertyDialog::resizeVariables() {
     RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
     int size = refBody?refBody->getqRelSize():0;
-    static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
+    constraintFunction->resize_(size,1);
   }
 
   void GeneralizedPositionConstraintPropertyDialog::toWidget(Element *element) {
@@ -614,7 +612,7 @@ namespace MBSimGUI {
   }
 
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Initial conditions");
+    addTab("Initial conditions",1);
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
     addToTab("General", constraintFunction);
@@ -632,12 +630,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::resizeVariables() {
-    //RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
-    //int size = refBody?refBody->getqRelSize():0;
-    //((ChoiceWidget*)constraintFunction->getWidget())->resize_(size,1);
-    //if(x0_ && x0_->size() != size)
-    //  x0_->resize_(size);
-    //static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+    cout << "GeneralizedVelocityConstraintPropertyDialog::resizeVariables() not yet implemented" << endl;
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::toWidget(Element *element) {
@@ -653,7 +646,7 @@ namespace MBSimGUI {
   }
 
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
-    addTab("Initial conditions");
+    addTab("Initial conditions",1);
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
     addToTab("General", constraintFunction);
@@ -697,8 +690,8 @@ namespace MBSimGUI {
   JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
 
     addTab("Kinetics",1);
-    addTab("Visualisation");
-    addTab("Initial conditions");
+    addTab("Visualisation",2);
+    addTab("Initial conditions",2);
 
     independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", independentBody);
@@ -783,6 +776,7 @@ namespace MBSimGUI {
   }
 
   void JointConstraintPropertyDialog::fromWidget(Element *element) {
+    ConstraintPropertyDialog::fromWidget(element);
     ListProperty *list1 = static_cast<ListProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty());
     for(int i=0; i<list1->getSize(); i++) {
       RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list1->getProperty(i))->getBodyPtr();
@@ -895,8 +889,7 @@ namespace MBSimGUI {
 
   void KineticExcitationPropertyDialog::resizeVariables() {
     int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
-    cout << size << endl;
-    static_cast<ChoiceWidget2*>(forceFunction->getWidget())->resize_(size,1);
+    forceFunction->resize_(size,1);
   }
 
   void KineticExcitationPropertyDialog::toWidget(Element *element) {
@@ -1373,6 +1366,12 @@ namespace MBSimGUI {
   AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
   }
 
+  AbsoluteAngularPositionSensorPropertyDialog::AbsoluteAngularPositionSensorPropertyDialog(AbsoluteAngularPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  }
+
+  AbsoluteAngularVelocitySensorPropertyDialog::AbsoluteAngularVelocitySensorPropertyDialog(AbsoluteAngularVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+  }
+
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
     function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
     addToTab("General", function);
@@ -1462,7 +1461,7 @@ namespace MBSimGUI {
     sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
     addToTab("General", sRef);
 
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("x"))));
+    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(QStringList("x"))));
     addToTab("General", f);
   }
 
@@ -1503,6 +1502,49 @@ namespace MBSimGUI {
     static_cast<BinarySignalOperation*>(element)->s1Ref.fromWidget(s1Ref);
     static_cast<BinarySignalOperation*>(element)->s2Ref.fromWidget(s2Ref);
     static_cast<BinarySignalOperation*>(element)->f.fromWidget(f);
+  }
+
+  TorsionalStiffnessPropertyDialog::TorsionalStiffnessPropertyDialog(Link *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    function = new ExtWidget("GeneralizedForceFunction",new ChoiceWidget2(new SpringDamperWidgetFactory));
+    addToTab("Kinetics", function);
+
+    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0));
+    addToTab("General", body1);
+
+    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(springDamper,0));
+    addToTab("General", body2);
+
+    coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+    addToTab("Visualisation", coilSpring);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", momentArrow);
+  }
+
+  void TorsionalStiffnessPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<TorsionalStiffness*>(element)->function.toWidget(function);
+    static_cast<TorsionalStiffness*>(element)->body1.toWidget(body1);
+    static_cast<TorsionalStiffness*>(element)->body2.toWidget(body2);
+    static_cast<TorsionalStiffness*>(element)->coilSpring.toWidget(coilSpring);
+    static_cast<TorsionalStiffness*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<TorsionalStiffness*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void TorsionalStiffnessPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<TorsionalStiffness*>(element)->function.fromWidget(function);
+    static_cast<TorsionalStiffness*>(element)->body1.fromWidget(body1);
+    static_cast<TorsionalStiffness*>(element)->body2.fromWidget(body2);
+    static_cast<TorsionalStiffness*>(element)->coilSpring.fromWidget(coilSpring);
+    static_cast<TorsionalStiffness*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<TorsionalStiffness*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
 }

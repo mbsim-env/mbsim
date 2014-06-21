@@ -69,7 +69,7 @@ namespace MBSimHydraulics {
       
       void updateM(double t, int j=0) {M[j]=Mlocal; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
       
     protected:
@@ -108,7 +108,7 @@ namespace MBSimHydraulics {
       void updateM(double t, int j=0);
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void plot(double t, double dt);
       
     protected:
@@ -138,7 +138,7 @@ namespace MBSimHydraulics {
       void updateh(double t, int j=0) {};
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       
     private:
       fmatvec::Function<double(double)> * QFun;
@@ -163,7 +163,7 @@ namespace MBSimHydraulics {
       void updateh(double t, int j=0) {};
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       
     private:
       MBSimControl::Signal * QSignal;
@@ -194,7 +194,7 @@ namespace MBSimHydraulics {
       void updateh(double t, int j=0) {};
       
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void plot(double t, double dt);
       
     private:

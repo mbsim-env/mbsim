@@ -57,7 +57,7 @@ System::System(const string &projectName) :
   rod->setDensity(rho);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
-  rod->setCuboid(b0, b0);
+//  rod->setCuboid(b0, b0);
   rod->setCurlRadius(0., l0 / (2 * M_PI));
 
   // circle shape
@@ -162,10 +162,10 @@ System::System(const string &projectName) :
     Vec q0(3, INIT, 0.);
     double xL = i * rodInfo->getLength() / balls.size();
     ContourPointData cp;
-    cp.getContourParameterType() = CONTINUUM;
+    cp.getContourParameterType() = ContourPointData::continuum;
     cp.getLagrangeParameterPosition()(0) = xL;
 
-    neutralFactory->updateKinematicsForFrame(cp, position_cosy);
+    neutralFactory->updateKinematicsForFrame(cp, Frame::position_cosy);
 
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);

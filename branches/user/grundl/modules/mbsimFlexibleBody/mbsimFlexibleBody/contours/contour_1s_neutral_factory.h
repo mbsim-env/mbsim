@@ -27,21 +27,21 @@ namespace MBSimFlexibleBody {
       }
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
       virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::position);
+        updateKinematicsForFrame(cp, MBSim::Frame::position);
       }
       virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::firstTangent);
+        updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
       }
       virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::normal);
+        updateKinematicsForFrame(cp, MBSim::Frame::normal);
       }
       virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::secondTangent);
+        updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
       }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) = 0;
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) = 0;
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) = 0;
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());

@@ -67,14 +67,9 @@ namespace MBSim {
       Contour1s *contour1s;
 
       /*!
-       * \brief function for search
+       * \brief use local law
        */
-      FuncPairContour1sPoint *func;
-
-      /*!
-       * \brief search object to identify lagrange parameter position
-       */
-      Contact1sSearch search;
+      bool useLocal;
   };
 
 }

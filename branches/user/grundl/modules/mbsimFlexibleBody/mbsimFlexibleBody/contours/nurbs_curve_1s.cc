@@ -35,18 +35,18 @@ namespace MBSimFlexibleBody {
   NurbsCurve1s::~NurbsCurve1s() {
   }
 
-  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-    if (ff == position || ff == position_cosy || ff == all) {
+  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
+    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
       Vec3 Tmppt = curveTranslations.pointAt(cp.getLagrangeParameterPosition()(0));
       cp.getFrameOfReference().setPosition(Tmppt);
     }
 
-    if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
       Vec3 Tmpv = curveVelocities.pointAt(cp.getLagrangeParameterPosition()(0));
       cp.getFrameOfReference().setVelocity(Tmpv);
     }
 
-    if (ff == angularVelocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::angularVelocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
       double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
       double l0 = L / Elements;
       if (uStaggered < l0 / 2.)
@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
 
       for (int i = 0; i < Elements; i++) { // TODO openstructure: jacobians of Rotation different
         jacobiansTrans.push_back(ContourPointData(i));
-        jacobiansRot.push_back(ContourPointData(i, STAGGEREDNODE)); // jacobians of rotation are on staggered grid
+        jacobiansRot.push_back(ContourPointData(i, ContourPointData::staggeredNode)); // jacobians of rotation are on staggered grid
       }
       for (int i = 0; i < Elements; i++) {
         jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation().resize();
@@ -120,7 +120,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, Frame::position);
       Nodelist.set(i, trans(cp.getFrameOfReference().getPosition()));
     }
 
@@ -144,7 +144,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, velocity);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, Frame::velocity);
       Nodelist.set(i, trans(cp.getFrameOfReference().getVelocity()));
     }
 
@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, angularVelocity);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, Frame::angularVelocity);
       Nodelist.set(i, trans(cp.getFrameOfReference().getAngularVelocity()));
     }
 

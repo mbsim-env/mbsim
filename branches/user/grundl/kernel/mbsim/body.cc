@@ -111,7 +111,7 @@ namespace MBSim {
       if(obj)
         dependency.push_back(obj);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
