@@ -51,7 +51,7 @@ namespace MBSimGUI {
     property->addProperty(new ExtProperty(new ChoiceProperty2(factory,xmlName,0),true,MBSIM%"function",false));
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"limit"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"limit"));
     property->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
     return property;
   }
@@ -263,6 +263,112 @@ namespace MBSimGUI {
     f.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->f);
     p.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->p);
     o.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
+  }
+
+  AbsoluteValueFunctionProperty::AbsoluteValueFunctionProperty() {
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
+  }
+
+  int AbsoluteValueFunctionProperty::getArg1Size() const {
+    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+  }
+
+  DOMElement* AbsoluteValueFunctionProperty::initializeUsingXML(DOMElement *element) {
+    function.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* AbsoluteValueFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void AbsoluteValueFunctionProperty::fromWidget(QWidget *widget) {
+    function.fromWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
+  }
+
+  void AbsoluteValueFunctionProperty::toWidget(QWidget *widget) {
+    function.toWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
+  }
+
+  ModuloFunctionProperty::ModuloFunctionProperty() {
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"denominator"));
+    denom.setProperty(new ExtPhysicalVarProperty(input));
+  }
+
+  DOMElement* ModuloFunctionProperty::initializeUsingXML(DOMElement *element) {
+    denom.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ModuloFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    denom.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void ModuloFunctionProperty::fromWidget(QWidget *widget) {
+    denom.fromWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
+  }
+
+  void ModuloFunctionProperty::toWidget(QWidget *widget) {
+    denom.toWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
+  }
+
+  PointSymmetricFunctionProperty::PointSymmetricFunctionProperty() {
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
+  }
+
+  int PointSymmetricFunctionProperty::getArg1Size() const {
+    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+  }
+
+  DOMElement* PointSymmetricFunctionProperty::initializeUsingXML(DOMElement *element) {
+    function.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PointSymmetricFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void PointSymmetricFunctionProperty::fromWidget(QWidget *widget) {
+    function.fromWidget(static_cast<PointSymmetricFunctionWidget*>(widget)->function);
+  }
+
+  void PointSymmetricFunctionProperty::toWidget(QWidget *widget) {
+    function.toWidget(static_cast<PointSymmetricFunctionWidget*>(widget)->function);
+  }
+
+  LineSymmetricFunctionProperty::LineSymmetricFunctionProperty() {
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
+  }
+
+  int LineSymmetricFunctionProperty::getArg1Size() const {
+    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
+  }
+
+  DOMElement* LineSymmetricFunctionProperty::initializeUsingXML(DOMElement *element) {
+    function.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LineSymmetricFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    function.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void LineSymmetricFunctionProperty::fromWidget(QWidget *widget) {
+    function.fromWidget(static_cast<LineSymmetricFunctionWidget*>(widget)->function);
+  }
+
+  void LineSymmetricFunctionProperty::toWidget(QWidget *widget) {
+    function.toWidget(static_cast<LineSymmetricFunctionWidget*>(widget)->function);
   }
 
   ScaledFunctionProperty::ScaledFunctionProperty() : factor(0,false) {
@@ -517,6 +623,68 @@ namespace MBSimGUI {
     choice.toWidget(static_cast<TabularFunctionWidget*>(widget)->choice);
   }
 
+  TwoDimensionalTabularFunctionProperty::TwoDimensionalTabularFunctionProperty() {
+    x.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"xValues",vector<string>(3,"")),"",4));
+    y.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"yValues",vector<string>(3,"")),"",4));
+    xy.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,1,"0"),MBSIM%"xyValues",vector<string>(3,"")),"",4));
+  }
+
+  DOMElement* TwoDimensionalTabularFunctionProperty::initializeUsingXML(DOMElement *element) {
+    x.initializeUsingXML(element);
+    y.initializeUsingXML(element);
+    xy.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TwoDimensionalTabularFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    x.writeXMLFile(ele0);
+    y.writeXMLFile(ele0);
+    xy.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void TwoDimensionalTabularFunctionProperty::fromWidget(QWidget *widget) {
+    x.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
+    y.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
+    xy.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
+  }
+
+  void TwoDimensionalTabularFunctionProperty::toWidget(QWidget *widget) {
+    x.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
+    y.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
+    xy.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
+  }
+
+  PiecewisePolynomFunctionProperty::PiecewisePolynomFunctionProperty() : choice(new TabularFunctionPropertyFactory,"",3), method(0,false) {
+    
+    method.setProperty(new TextProperty("\"cSplineNatural\"", MBSIM%"interpolationMethod"));
+
+  }
+
+  DOMElement* PiecewisePolynomFunctionProperty::initializeUsingXML(DOMElement *element) {
+    choice.initializeUsingXML(element);
+    method.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PiecewisePolynomFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    choice.writeXMLFile(ele0);
+    method.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void PiecewisePolynomFunctionProperty::fromWidget(QWidget *widget) {
+    choice.fromWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->choice);
+    method.fromWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
+  }
+
+  void PiecewisePolynomFunctionProperty::toWidget(QWidget *widget) {
+    choice.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->choice);
+    method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
+  }
+
   LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
 
     vector<PhysicalVariableProperty> input;
@@ -557,6 +725,36 @@ namespace MBSimGUI {
     c.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->c);
     d.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->d);
     l0.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->l0);
+  }
+
+  NonlinearSpringDamperForceProperty::NonlinearSpringDamperForceProperty() {
+
+    g.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"distanceForce",0));
+
+    gd.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"velocityForce",0));
+  }
+
+  DOMElement* NonlinearSpringDamperForceProperty::initializeUsingXML(DOMElement *element) {
+    g.initializeUsingXML(element);
+    gd.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* NonlinearSpringDamperForceProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    g.writeXMLFile(ele0);
+    gd.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void NonlinearSpringDamperForceProperty::fromWidget(QWidget *widget) {
+    g.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
+    gd.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
+  }
+
+  void NonlinearSpringDamperForceProperty::toWidget(QWidget *widget) {
+    g.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
+    gd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
   }
 
   LinearRegularizedBilateralConstraintProperty::LinearRegularizedBilateralConstraintProperty() {

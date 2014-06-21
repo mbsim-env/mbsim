@@ -32,7 +32,7 @@ class initLink : public Link {
     virtual bool isSingleValued() const { return true; }
     bool gActiveChanged() {return false; }
     void init(InitStage stage) {
-      if (stage==MBSim::calculateLocalInitialValues) {
+      if (stage==calculateLocalInitialValues) {
         class CamRockerDistance : public fmatvec::Function<double(double)> {
           public:
             CamRockerDistance(RigidBody * rocker_, Contact * contactCamRocker_) : rocker(rocker_), contactCamRocker(contactCamRocker_) {}

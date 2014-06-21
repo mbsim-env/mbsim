@@ -45,7 +45,7 @@ namespace MBSimGUI {
     widget->addWidget(new ExtWidget("Function",new ChoiceWidget2(factory)));
 
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),1));
     widget->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
     return widget;
   }
@@ -197,6 +197,56 @@ namespace MBSimGUI {
     layout->addWidget(o);
   }
 
+  AbsoluteValueFunctionWidget::AbsoluteValueFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(function);
+  }
+
+  void AbsoluteValueFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
+  ModuloFunctionWidget::ModuloFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+    denom = new ExtWidget("Denominator",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(denom);
+  }
+
+  PointSymmetricFunctionWidget::PointSymmetricFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(function);
+  }
+
+  void PointSymmetricFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
+  LineSymmetricFunctionWidget::LineSymmetricFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(function);
+  }
+
+  void LineSymmetricFunctionWidget::resize_(int m, int n) {
+    function->resize_(m,n);
+  }
+
   ScaledFunctionWidget::ScaledFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -295,12 +345,18 @@ namespace MBSimGUI {
   }
 
   int NestedFunctionWidget::getArg1Size() const {
-    // return ext[2]=='V'?static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fi->getWidget())->getWidget())->getArg1Size():0;
+    return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi->getWidget())->getWidget())->getArg1Size();
   }
 
   void NestedFunctionWidget::resizeVariables() {
+    cout << "NestedFunctionWidget::resizeVariables() not yet implemented" << endl;
     // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
+  }
+
+  void NestedFunctionWidget::resize_(int m, int n) {
+    static_cast<ChoiceWidget2*>(fo->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
   PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(int n) {
@@ -381,6 +437,60 @@ namespace MBSimGUI {
     }
   }
 
+  TwoDimensionalTabularFunctionWidget::TwoDimensionalTabularFunctionWidget(int n) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    x = new ExtWidget("X",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    layout->addWidget(x);
+    y = new ExtWidget("Y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    layout->addWidget(y);
+    xy = new ExtWidget("XY",new ChoiceWidget2(new MatWidgetFactory(getScalars<QString>(3,3,"0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+    layout->addWidget(xy);
+  }
+
+  void TwoDimensionalTabularFunctionWidget::resize_(int m, int n) {
+    //ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(x->getWidget());
+    //if(choice_->getIndex()==0)
+    //  x->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+    //choice_ = static_cast<ChoiceWidget2*>(y->getWidget());
+    //if(choice_->getIndex()==0)
+    //  y->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+    //choice_ = static_cast<ChoiceWidget2*>(xy->getWidget());
+    //if(choice_->getIndex()==0)
+    //  xy->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+  }
+
+  PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget(int n) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory);
+    layout->addWidget(choice);
+
+    vector<QString> list;
+    list.push_back("\"cSplinePeriodic\"");
+    list.push_back("\"cSplineNatural\"");
+    list.push_back("\"piecewiseLinear\"");
+    method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true);
+    layout->addWidget(method);
+  }
+
+  void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
+    if(choice->getIndex()==0) {
+      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      if(choice_->getIndex()==0)
+        choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+    }
+    else {
+      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      if(choice_->getIndex()==0)
+        choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+    }
+  }
+
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -400,6 +510,18 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),lengthUnits(),4));
     l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input));
     layout->addWidget(l0);
+  }
+
+  NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    g = new ExtWidget("Distance function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(g);
+
+    gd = new ExtWidget("Velocity function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(gd);
   }
 
   LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {

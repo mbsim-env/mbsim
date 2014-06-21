@@ -187,16 +187,16 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody2s13MFRMindlin::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+  void FlexibleBody2s13MFRMindlin::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
 #ifdef HAVE_NURBS
       contour->updateKinematicsForFrame(cp, ff);
 #endif
     }
-    else if (cp.getContourParameterType() == NODE) { // frame on node
+    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
       const int &node = cp.getNodeNumber();
 
-      if (ff == position || ff == position_cosy || ff == all) {
+      if(ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
         Vec r_ref(3, NONINIT);
         //first compute vector
         r_ref(0) = qext(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0); // radial component
@@ -210,14 +210,11 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * r_ref); //at last step: transformation into world frame
       }
 
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
 
-      if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      if(ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
         Vec u_ref_1(3, NONINIT);
         u_ref_1(0) = computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 1);
         u_ref_1(1) = -computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 2);
@@ -236,7 +233,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setVelocity(R->getOrientation() * u_ref_2);
       }
 
-      if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+      if(ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
         Vec w_ref_1(3, INIT, 0.);
         w_ref_1(0) = -uext(RefDofs + node * NodeDofs + 2);
         w_ref_1(1) = uext(RefDofs + node * NodeDofs + 1);
@@ -247,7 +244,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -258,7 +255,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
       Vec2 alpha = cp.getLagrangeParameterPosition();
 
       if (nrm2(alpha) < epsroot()) { // center of gravity
@@ -280,7 +277,7 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    else if (cp.getContourParameterType() == NODE) { // force on node
+    else if(cp.getContourParameterType() == ContourPointData::node) { // force on node
       int Node = cp.getNodeNumber();
 
       // Jacobian of element
@@ -375,7 +372,7 @@ namespace MBSimFlexibleBody {
 
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -471,7 +468,7 @@ namespace MBSimFlexibleBody {
       initMatrices(); // calculate constant stiffness matrix and the constant parts of the mass-matrix
 
     }
-    if (stage == MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {

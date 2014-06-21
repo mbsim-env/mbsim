@@ -165,6 +165,22 @@ namespace MBSimGUI {
       inline std::string getType() const { return "RotationAboutAxesXYZ"; }
   };
 
+  class RotationAboutAxesZXZProperty : public FunctionProperty {
+    public:
+      RotationAboutAxesZXZProperty() { }
+      virtual Property* clone() const {return new RotationAboutAxesZXZProperty(*this);}
+      int getArg1Size() const {return 3;}
+      inline std::string getType() const { return "RotationAboutAxesZXZ"; }
+  };
+
+  class RotationAboutAxesZYXProperty : public FunctionProperty {
+    public:
+      RotationAboutAxesZYXProperty() { }
+      virtual Property* clone() const {return new RotationAboutAxesZYXProperty(*this);}
+      int getArg1Size() const {return 3;}
+      inline std::string getType() const { return "RotationAboutAxesZYX"; }
+  };
+
   class RotationAboutFixedAxisProperty : public FunctionProperty {
     public:
       RotationAboutFixedAxisProperty();

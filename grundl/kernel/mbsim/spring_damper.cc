@@ -92,7 +92,7 @@ namespace MBSim {
       gd.resize(1);
       la.resize(1);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -223,7 +223,7 @@ namespace MBSim {
       gd.resize(1);
       la.resize(1);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -382,7 +382,7 @@ namespace MBSim {
       gd.resize(1);
       la.resize(1);
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
       plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {

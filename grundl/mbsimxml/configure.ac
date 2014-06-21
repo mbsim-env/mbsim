@@ -34,6 +34,14 @@ AC_ARG_WITH([boost-system-lib],
   [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
   [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
 AC_SUBST([BOOST_SYSTEM_LIB])
+AC_ARG_WITH([boost-timer-lib],
+  [  --with-boost-timer-lib=LIBNAME  The library name of boost timer excluding prefix/suffix (Default: boost_timer).],
+  [BOOST_TIMER_LIB="$withval"], [BOOST_TIMER_LIB="boost_timer"])
+AC_SUBST([BOOST_TIMER_LIB])
+AC_ARG_WITH([boost-chrono-lib],
+  [  --with-boost-chrono-lib=LIBNAME  The library name of boost chrono excluding prefix/suffix (Default: boost_chrono).],
+  [BOOST_CHRONO_LIB="$withval"], [BOOST_CHRONO_LIB="boost_chrono"])
+AC_SUBST([BOOST_CHRONO_LIB])
 
 AC_MSG_CHECKING([for WEXITSTATUS])
 AC_COMPILE_IFELSE([
@@ -46,22 +54,13 @@ int main() {
 ], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_WEXITSTATUS"], [AC_MSG_RESULT([no])])
 
 dnl Check for xslt
-AC_ARG_WITH([xsltprocpath],
-  [  --with-xsltproc-path=PATHTOXSLTPROC  The path to the 'xsltproc' program.],
-  [xsltprocpath="$withval"],[xsltprocpath=""])
-AC_PATH_PROG([xsltproc],[xsltproc],[no],[$xsltprocpath:$prefix/bin:$PATH])
-test $xsltproc = "no" && AC_MSG_ERROR([xsltproc not found])
-AC_SUBST([XSLTPROC],[$xsltproc])
+AC_ARG_WITH([xalan],
+  [  --with-xalan=XALAN  The Xalan program.],
+  [xalan="$withval"],[xalan="$(which Xalan)"])
+test -x $xalan || AC_MSG_ERROR([xalan not found])
+AC_SUBST([XALAN],[$xalan])
 
-dnl Check for xmllint
-AC_ARG_WITH([xmllintpath],
-  [  --with-xmllint-path=PATHTOXMLLINT  The path to the 'xmllint' program.],
-  [xmllintpath="$withval"],[xmllintpath=""])
-AC_PATH_PROG([xmllint],[xmllint],[no],[$xmllintpath:$prefix/bin:$PATH])
-test $xmllint = "no" && AC_MSG_ERROR([xmllint not found])
-AC_SUBST([XMLLINT],[$xmllint])
-
-
+AC_SUBST([MBXMLUTILSVALIDATE],[$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutilsvalidate$EXEEXT])
 
 dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])

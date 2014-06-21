@@ -37,9 +37,6 @@ int main (int argc, char* argv[]) {
   cout << ue << endl;
 
   System *sys = new System("TS");
-  sys->setReorganizeHierarchy(true);
-  //sys->setImpactSolver(GaussSeidel);
-  //sys->setImpactSolver(FixedPointSingle);
 
   sys->initialize();
   sys->setStopIfNoConvergence(true,true);

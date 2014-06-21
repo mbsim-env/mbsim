@@ -8,9 +8,9 @@ int main (int argc, char* argv[]) {
   bool setValued=false;
 
   System *sys = new System("MBS", setValued);
-  sys->setPlotFeature(plotRecursive, enabled);
-  sys->setPlotFeature(state, enabled);
-  sys->setPlotFeature(globalPosition, enabled);
+  sys->setPlotFeature(Element::plotRecursive, Element::enabled);
+  sys->setPlotFeature(Element::state, Element::enabled);
+  sys->setPlotFeature(Element::globalPosition, Element::enabled);
   sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 

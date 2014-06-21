@@ -24,13 +24,6 @@
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 
-extern MBXMLUtils::NamespaceURI MBSIM;
-extern MBXMLUtils::NamespaceURI PARAM;
-extern MBXMLUtils::NamespaceURI OPENMBV;
-extern MBXMLUtils::NamespaceURI MBSIMINT;
-extern MBXMLUtils::NamespaceURI MBSIMCONTROL;
-extern MBXMLUtils::NamespaceURI MBSIMXML;
-
 namespace XERCES_CPP_NAMESPACE {
   class DOMNode;
   class DOMElement;
@@ -39,6 +32,14 @@ namespace XERCES_CPP_NAMESPACE {
 class QWidget;
 
 namespace MBSimGUI {
+
+  const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
+  const MBXMLUtils::NamespaceURI PARAM("http://openmbv.berlios.de/MBXMLUtils/physicalvariable");
+  const MBXMLUtils::NamespaceURI OPENMBV("http://openmbv.berlios.de/OpenMBV");
+  const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://mbsim.berlios.de/MBSimControl");
+  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
+  const MBXMLUtils::NamespaceURI MBSIMXML("http://mbsim.berlios.de/MBSimXML");
 
   class PropertyInterface {
     public:

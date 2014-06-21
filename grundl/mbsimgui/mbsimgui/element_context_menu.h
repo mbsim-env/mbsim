@@ -26,14 +26,28 @@ namespace MBSimGUI {
 
   class Element;
 
+  class EmbeddingContextMenu : public QMenu {
+    Q_OBJECT
+
+    public:
+      EmbeddingContextMenu(Element *element, const QString &title="", QWidget * parent = 0);
+
+    protected slots:
+      void addScalarParameter();
+      void addVectorParameter();
+      void addMatrixParameter();
+      void addStringParameter();
+      void addSearchPathParameter();
+
+    protected:
+      Element *element;
+  };
+
   class ElementContextMenu : public QMenu {
     Q_OBJECT
 
     public:
       ElementContextMenu(Element *element, QWidget * parent = 0, bool removable=true);
-
-      protected slots:
-        void addContour();
 
     protected:
       Element *element;
@@ -45,13 +59,13 @@ namespace MBSimGUI {
     public:
       GroupContextMenu(Element *group, QWidget * parent = 0, bool removable=true);
 
-      protected slots:
-        void addFixedRelativeFrame();
+    protected slots:
+      void addFixedRelativeFrame();
       void addGroup();
       void addObject();
       void addLink();
       void addObserver();
-      void addElementFromFile();
+      void addModel();
   };
 
   class FrameContextContextMenu : public QMenu {
@@ -73,8 +87,8 @@ namespace MBSimGUI {
     public:
       ContourContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addPoint();
+    protected slots:
+      void addPoint();
       void addLine();
       void addPlane();
       void addSphere();
@@ -152,6 +166,7 @@ namespace MBSimGUI {
       void addActuator();
       void addSignal();
       void addLinearTransferSystem();
+      void addTorsionalStiffness();
 
     protected:
       Element *element;
@@ -228,6 +243,8 @@ namespace MBSimGUI {
       void addGeneralizedVelocitySensor();
       void addAbsolutePositionSensor();
       void addAbsoluteVelocitySensor();
+      void addAbsoluteAngularPositionSensor();
+      void addAbsoluteAngularVelocitySensor();
       void addFunctionSensor();
       void addSignalProcessingSystemSensor();
 

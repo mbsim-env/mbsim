@@ -136,7 +136,7 @@ namespace MBSimHydraulics {
   void Controlvalve43::setTOutflow(HLine * hl) {nT->addOutFlow(hl); }
 
   void Controlvalve43::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if (positionString!="")
         setRelativePositionSignal(getByPath<Signal>(positionString));
       if (nPInflowString!="")

@@ -131,7 +131,7 @@ namespace MBSimGUI {
           DOMElement* ee=e;
           if(ee) {
             for(int i=0; i<factory->getSize(); i++) {
-              DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;;
+              DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
               if(eee) {
                 index = i;
                 property = factory->createProperty(i);
@@ -226,7 +226,8 @@ namespace MBSimGUI {
     static_cast<ExtWidget*>(widget)->setActive(active);
     static_cast<ExtWidget*>(widget)->setWidgetVisible(active);
     static_cast<ExtWidget*>(widget)->blockSignals(false);
-    property->toWidget(static_cast<ExtWidget*>(widget)->widget);
+    if(active)
+      property->toWidget(static_cast<ExtWidget*>(widget)->widget);
   }
 
   ContainerProperty::ContainerProperty(const ContainerProperty &p) : xmlName(p.xmlName) {

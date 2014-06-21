@@ -23,7 +23,7 @@ namespace MBSimFlexibleBody {
 
 //      Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~Contour1sNeutralLinearExternalFFR();
-      virtual void init(MBSim::InitStage stage);
+      virtual void init(InitStage stage);
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsLocalPosition1s* createNeutralLocalPosition();
@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
       void readTransNodes(std::string file);
 
 
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual void updateStateDependentVariables(double t);
 

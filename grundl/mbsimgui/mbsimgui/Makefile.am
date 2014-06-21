@@ -12,7 +12,8 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
 
-mbsimgui_SOURCES = element.cc \
+mbsimgui_SOURCES = mainwindow.cc \
+		   element.cc \
 		   frame.cc \
 		   contour.cc \
 		   group.cc \
@@ -60,23 +61,25 @@ mbsimgui_SOURCES = element.cc \
 		   element_property_dialog.cc \
 		   integrator_property_dialog.cc \
 		   parameter_property_dialog.cc \
+		   embedding_property_dialog.cc \
 		   element_context_menu.cc \
 		   parameter_context_menu.cc \
 		   element_view.cc \
-		   parameter_view.cc \
+		   embedding_view.cc \
 		   integrator_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
-		   property.cc \
-		   mainwindow.cc \
+		   process.cc \
 		   main.cc \
-		   embed.cc
+		   embed.cc \
+		   torsional_stiffness.cc
 		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
-QT_BUILT_SOURCES = basic_widgets.moc.cc \
+QT_BUILT_SOURCES = mainwindow.moc.cc \
+		   basic_widgets.moc.cc \
 		   variable_widgets.moc.cc \
 		   function_widget.moc.cc \
 		   function_widgets.moc.cc \
@@ -87,14 +90,15 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   element_property_dialog.moc.cc \
 		   integrator_property_dialog.moc.cc \
 		   parameter_property_dialog.moc.cc \
+		   embedding_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \
 		   element_view.moc.cc \
-		   parameter_view.moc.cc \
+		   embedding_view.moc.cc \
 		   integrator_view.moc.cc \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
-		   mainwindow.moc.cc
+		   process.moc.cc
 
 mbsimgui_HEADERS = 
 		   

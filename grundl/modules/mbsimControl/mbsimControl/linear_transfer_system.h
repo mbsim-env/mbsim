@@ -41,7 +41,7 @@ namespace MBSimControl {
       
       void calcxSize() {xSize=A.rows(); }
       
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void updatedx(double t, double dt);
       void updatexd(double t);

@@ -22,10 +22,13 @@
 
 #include <mbxmlutilshelper/dom.h>
 #include <parameter.h>
+#include <QFileInfo>
+#include <QDir>
 
 namespace MBSimGUI {
 
   class Element;
+  extern QDir mbsDir;
 
   template <typename T>
     class Embed {
@@ -38,7 +41,8 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = 0;
             Parameters param;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              param = Parameters::readXMLFile(MBXMLUtils::E(ele1)->getAttribute("parameterHref"));
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("parameterHref"))));
+              param = Parameters::readXMLFile(fileInfo.canonicalFilePath().toStdString());
               ele2=ele1->getFirstElementChild();
             }
             else {
@@ -50,18 +54,23 @@ namespace MBSimGUI {
               else 
                 ele2=ele1->getFirstElementChild();
             }
-            if(MBXMLUtils::E(ele1)->hasAttribute("href"))
-              object=T::readXMLFile(MBXMLUtils::E(ele1)->getAttribute("href"),parent);
+            if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
+              QFileInfo fileInfo(mbsDir.absoluteFilePath(QString::fromStdString(MBXMLUtils::E(ele1)->getAttribute("href"))));
+//              object=T::readXMLFile(MBXMLUtils::E(ele1)->getAttribute("href"),parent);
+              object=T::readXMLFile(fileInfo.canonicalFilePath().toStdString(),parent);
+            }
             else
               object=create(ele2,parent);
-            object->initializeUsingXMLEmbed(ele1);
-            if(ele2)
-              object->initializeUsingXML(ele2);
-            object->setParameters(param);
+            if(object) {
+              object->initializeUsingXMLEmbed(ele1);
+              if(ele2)
+                object->initializeUsingXML(ele2);
+              object->setParameters(param);
+            }
           }
           else {
             object=create(ele1,parent);
-            object->initializeUsingXML(ele1);
+            if(object) object->initializeUsingXML(ele1);
           }
           return object;
         }

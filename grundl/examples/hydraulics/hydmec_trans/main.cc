@@ -33,8 +33,8 @@ int main (int argc, char* argv[]) {
 
 
 
-    dss->setConstraintSolver(GaussSeidel);
-    dss->setImpactSolver(GaussSeidel);
+    dss->setConstraintSolver(DynamicSystemSolver::GaussSeidel);
+    dss->setImpactSolver(DynamicSystemSolver::GaussSeidel);
     dss->setgdTol(1e-9);
     dss->initialize();
 

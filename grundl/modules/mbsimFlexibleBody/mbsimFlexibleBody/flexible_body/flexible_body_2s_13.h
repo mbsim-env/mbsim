@@ -26,11 +26,6 @@ namespace MBSimFlexibleBody {
 
   class NurbsDisk2s;
 
-  /**
-   * \brief condensation setting for clamping to rigid body motion
-   */
-  enum LockType { innerring,outerring };
-
   /*!
    * \brief condenses rows of matrix concerning index
    * \param input matrix
@@ -78,7 +73,13 @@ namespace MBSimFlexibleBody {
    * Thus the radial and the azimuthal component give the x- and y- coordinates where the z-coordinate is defined by the thickness parameterization. (neglecting the flexible dofs)
    */
   class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Vec> {
+
     public:
+      /**
+       * \brief condensation setting for clamping to rigid body motion
+       */
+      enum LockType { innerring,outerring };
+
       /**
        * \brief constructor
        * \param name of body

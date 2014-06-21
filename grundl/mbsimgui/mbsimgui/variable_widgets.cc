@@ -145,7 +145,11 @@ namespace MBSimGUI {
     return true;
   }
 
-  OctaveExpressionWidget::OctaveExpressionWidget() {
+  QWidget* BoolWidget::getValidatedWidget() const {
+    return new BoolWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+  }
+
+  OctaveExpressionWidget::OctaveExpressionWidget(const QString &str) {
     QVBoxLayout *layout=new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -158,6 +162,15 @@ namespace MBSimGUI {
     value->setFont(font);
     value->setLineWrapMode(QPlainTextEdit::NoWrap);
     layout->addWidget(value);
+    setValue(str);
+  }
+
+  QWidget* OctaveExpressionWidget::getValidatedWidget() const {
+    //  return new OctaveExpressionWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+    QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+    str = removeWhiteSpace(str);
+    vector<vector<QString> > A = strToMat(str);
+    return new MatWidget(A);
   }
 
   ScalarWidget::ScalarWidget(const QString &d) {
@@ -177,6 +190,10 @@ namespace MBSimGUI {
     if(A[0].size()!=1)
       return false;
     return true;
+  }
+
+  QWidget* ScalarWidget::getValidatedWidget() const {
+    return new ScalarWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
   }
 
   VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
@@ -421,7 +438,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void VecSizeVarWidget::setVec(const std::vector<QString> &x) {
+  void VecSizeVarWidget::setVec(const vector<QString> &x) {
     sizeCombo->blockSignals(true);
     sizeCombo->setValue(x.size());
     sizeCombo->blockSignals(false);
@@ -471,7 +488,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void MatColsVarWidget::setMat(const std::vector<std::vector<QString> > &A) {
+  void MatColsVarWidget::setMat(const vector<vector<QString> > &A) {
     rowsLabel->setText(QString::number(A.size()));
     colsCombo->blockSignals(true);
     colsCombo->setValue(A[0].size());
@@ -523,7 +540,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void MatRowsVarWidget::setMat(const std::vector<std::vector<QString> > &A) {
+  void MatRowsVarWidget::setMat(const vector<vector<QString> > &A) {
     rowsCombo->blockSignals(true);
     rowsCombo->setValue(A.size());
     rowsCombo->blockSignals(false);
@@ -578,7 +595,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void MatRowsColsVarWidget::setMat(const std::vector<std::vector<QString> > &A) {
+  void MatRowsColsVarWidget::setMat(const vector<vector<QString> > &A) {
     rowsCombo->blockSignals(true);
     rowsCombo->setValue(A.size());
     rowsCombo->blockSignals(false);
@@ -618,9 +635,11 @@ namespace MBSimGUI {
 
   CardanWidget::CardanWidget() {
 
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+    mainlayout->setMargin(0);
+    setLayout(mainlayout);
     QGridLayout *layout = new QGridLayout;
-    layout->setMargin(0);
-    setLayout(layout);
+    mainlayout->addLayout(layout);
     box.resize(3);
     for(int i=0; i<3; i++) {
       box[i] = new QLineEdit(this);
@@ -631,7 +650,7 @@ namespace MBSimGUI {
     unit = new QComboBox;
     unit->addItems(angleUnits());
     unit->setCurrentIndex(1);
-    layout->addWidget(unit);
+    mainlayout->addWidget(unit);
   }
 
   vector<QString> CardanWidget::getAngles() const {
@@ -662,6 +681,41 @@ namespace MBSimGUI {
     return true;
   }
 
+  QWidget* CardanWidget::getValidatedWidget() const {
+    vector<QString> x = getAngles();
+    for(int i=0; i<x.size(); i++)
+      x[i] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(x[i].toStdString())));
+    return new VecWidget(x);
+  }
+
+  AboutZWidget::AboutZWidget() {
+
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+    mainlayout->setMargin(0);
+    setLayout(mainlayout);
+    QGridLayout *layout = new QGridLayout;
+    mainlayout->addLayout(layout);
+    box = new QLineEdit(this);
+    box->setPlaceholderText("0");
+    layout->addWidget(box);
+    unit = new QComboBox;
+    unit->addItems(angleUnits());
+    unit->setCurrentIndex(1);
+    mainlayout->addWidget(unit);
+  }
+
+  bool AboutZWidget::validate(const vector<vector<QString> > &A) const {
+    if(A.size()!=1)
+      return false;
+    if(A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  QWidget* AboutZWidget::getValidatedWidget() const {
+    return new ScalarWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+  }
+
   PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
     QHBoxLayout *layout = new QHBoxLayout;
     setLayout(layout);
@@ -675,22 +729,20 @@ namespace MBSimGUI {
 
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-    evalDialog = new EvalDialog;
     layout->addWidget(evalButton);
   }
 
   void PhysicalVariableWidget::openEvalDialog() {
-    //evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
-    str = removeWhiteSpace(str);
-    vector<vector<QString> > A = strToMat(str);
-    //  if(str=="" || (!inputWidget[0]->validate(A))) {
-    //    QMessageBox::warning( this, "Validation", "Value not valid"); 
-    //    return;
-    //  }
-    evalDialog->setValue(A);
-    evalDialog->exec();
-    //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
+    QWidget *w=0;
+    try {
+      w = widget->getValidatedWidget();
+    }
+    catch(MBXMLUtils::DOMEvalException e) {
+      int ret = QMessageBox::warning(0, "Octave evaluation", QString::fromStdString(e.getMessage()));
+      return;
+    }
+    EvalDialog evalDialog(w); 
+    evalDialog.exec();
   }
 
   FromFileWidget::FromFileWidget() {
@@ -699,7 +751,6 @@ namespace MBSimGUI {
     setLayout(layout);
 
     relativeFilePath = new QLineEdit;
-    //  relativeFilePath->setReadOnly(true);
     layout->addWidget(relativeFilePath);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
@@ -707,18 +758,35 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::setFile(const QString &str) {
-    //file = str;
-    relativeFilePath->setText(mbsDir.relativeFilePath(str));
+    relativeFilePath->setText(str);
   }
 
   void FromFileWidget::selectFile() {
-    QString file=QFileDialog::getOpenFileName(0, "ASCII files", getFile(), "all files (*.*)");
+    QString file = getFile();
+    file=QFileDialog::getOpenFileName(0, "ASCII files", file.mid(1,file.length()-2), "all files (*.*)");
     if(file!="")
-      setFile(file);
+      setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
   }
 
   QString FromFileWidget::getValue() const {
-    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load('" + getFile().toStdString() + "')")));
+    string file = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getFile().toStdString()));
+    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load(" + file + ")")));
+  }
+
+  QWidget* FromFileWidget::getValidatedWidget() const {
+    return new MatWidget(strToMat(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())))));
+  }
+
+  BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,4) {
+    name[0] = "Boolean";
+    name[1] = "Editor";
+  }
+
+  QWidget* BoolWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PhysicalVariableWidget(new BoolWidget(value), unit[0], defaultUnit[0]);
+    if(i==1)
+      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
   }
 
   ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
@@ -739,6 +807,13 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+  }
+
+  QWidget* BasicVecWidget::getValidatedWidget() const {
+    vector<QString> x = getVec();
+    for(int i=0; i<x.size(); i++)
+      x[i] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(x[i].toStdString())));
+    return new VecWidget(x);
   }
 
   VecWidgetFactory::VecWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {
@@ -787,6 +862,14 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+  }
+
+  QWidget* BasicMatWidget::getValidatedWidget() const {
+    vector<vector<QString> > A = getMat();
+    for(int i=0; i<A.size(); i++)
+      for(int j=0; j<A[i].size(); j++)
+        A[i][j] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(A[i][j].toStdString())));
+    return new MatWidget(A);
   }
 
   MatWidgetFactory::MatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
@@ -852,13 +935,15 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
   }
 
-  RotMatWidgetFactory::RotMatWidgetFactory() : name(3), unit(3), defaultUnit(3,1) {
-    name[0] = "Matrix";
+  RotMatWidgetFactory::RotMatWidgetFactory() : name(4), unit(4), defaultUnit(4,1) {
+    name[0] = "AboutZ";
     name[1] = "Cardan";
-    name[2] = "Editor";
-    unit[0] = noUnitUnits();
+    name[2] = "Matrix";
+    name[3] = "Editor";
+    unit[0] = QStringList();
     unit[1] = QStringList();
-    unit[2] = noUnitUnits();
+    unit[2] = QStringList();
+    unit[3] = QStringList();
   }
 
   RotMatWidgetFactory::RotMatWidgetFactory(const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : name(name_), unit(unit_), defaultUnit(defaultUnit_) {
@@ -866,10 +951,12 @@ namespace MBSimGUI {
 
   QWidget* RotMatWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+      return new PhysicalVariableWidget(new AboutZWidget,unit[1],defaultUnit[1]);
     if(i==1)
       return new PhysicalVariableWidget(new CardanWidget,unit[1],defaultUnit[1]);
     if(i==2)
+      return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
+    if(i==3)
       return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
   }
 

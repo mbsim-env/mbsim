@@ -29,8 +29,8 @@ namespace MBSimFlexibleBody {
 
   SuperElementLinearExternal::SuperElementLinearExternal() : MBSim::DiscretizationInterface(), M(0), K(0), alpha(0.), beta(0.) {}
 
-  void SuperElementLinearExternal::init(InitStage stage) {
-    if(stage==unknownStage) {
+  void SuperElementLinearExternal::init(Element::InitStage stage) {
+    if(stage==Element::unknownStage) {
       D = static_cast<SqrMat>( alpha*M + beta * K );
       Dhq = -K;
       Dhqp = -D;
@@ -65,7 +65,7 @@ namespace MBSimFlexibleBody {
       throw MBSimError("ERROR in memory management for SuperElementLinearExternal interfaces");
     }
     MBSim::ContourPointData CP;
-    CP.getContourParameterType() = NODE;
+    CP.getContourParameterType() = ContourPointData::node;
     CP.getNodeNumber()   = J.size() - 1; // position of current Jacobian in array
     CP.getFrameOfReference().getPosition() = KrP[CP.getNodeNumber()];
 

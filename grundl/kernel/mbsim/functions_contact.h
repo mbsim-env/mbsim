@@ -575,14 +575,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
-        cp.getLagrangeParameterPosition() = fmatvec::VecV(1, fmatvec::INIT, alpha);
+        cp.getLagrangeParameterPosition()(0) = alpha;
         fmatvec::Vec3 Wd = computeWrD(alpha);
         fmatvec::Vec3 Wt = contour->computeTangent(cp);
         return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
-        cp.getLagrangeParameterPosition() = fmatvec::VecV(1, fmatvec::INIT, alpha);
+        cp.getLagrangeParameterPosition()(0) = alpha;
         contour->computeRootFunctionPosition(cp);
         contour->computeRootFunctionFirstTangent(cp);
         contour->computeRootFunctionNormal(cp);

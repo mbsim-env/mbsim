@@ -56,7 +56,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 	rod->setDensity(rho);
 	rod->setFrameOfReference(this->getFrame("I"));
 	rod->setNumberElements(elements);
-	rod->setCuboid(b0,b0);
+//	rod->setCuboid(b0,b0);
 	rod->setCurlRadius(l0/(2*M_PI));
 	//rod->setMassProportionalDamping(20.);
 	//rod->setMaterialDamping(0.1,0.1;
@@ -86,6 +86,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //---------------------------------------------------------------------------------------------------------------------------------------//
 //--- OPENMBV ---------------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------------------------------------//
+
+	Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 #ifdef HAVE_OPENMBVCPPINTERFACE
 	OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
 	cuboid->setNumberOfSpinePoints(elements*4+1);
@@ -102,7 +104,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 	rectangle->push_back(corner4);
 
 	cuboid->setContour(rectangle);
-	rod->setOpenMBVSpineExtrusion(cuboid);
+	rodCont->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
 //---------------------------------------------------------------------------------------------------------------------------------------//
@@ -156,18 +158,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 	rodInfo->setNumberElements(rod->getNumberElements());
 	rodInfo->setLength(rod->getLength());
 	rodInfo->setFrameOfReference(rod->getFrameOfReference());
+	Contour1sNeutralFactory * cont = rodInfo->createNeutralPhase();
 
 	rodInfo->initInfo();
 	rodInfo->updateStateDependentVariables(0.);
 
 	for(unsigned int i=0;i<balls.size();i++) {
 		Vec q0(3,INIT,0.);
-		double xL = i*rodInfo->getLength()/balls.size();
+		double xL = i*cont->getAlphaEnd()/balls.size();
 		ContourPointData cp;
-		cp.getContourParameterType() = CONTINUUM;
+		cp.getContourParameterType() = ContourPointData::continuum;
 		cp.getLagrangeParameterPosition()(0) = xL;
 
-		rodInfo->updateKinematicsForFrame(cp,position_cosy);
+		cont->updateKinematicsForFrame(cp,Frame::position_cosy);
 		q0(0) = cp.getFrameOfReference().getPosition()(0);
 		q0(1) = cp.getFrameOfReference().getPosition()(1);
 		q0(2) = - AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + 0.5 * M_PI;
@@ -189,7 +192,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		Contact *contact = new Contact("Band_"+balls[i]->getName());
 		contact->setNormalForceLaw(new BilateralConstraint);
 		contact->setNormalImpactLaw(new BilateralImpact);
-		contact->connect(balls[i]->getContour("COG"),rod->getContour("NeutralFibre"));
+		contact->connect(balls[i]->getContour("COG"),rodCont);
 		contact->enableOpenMBVContactPoints(0.01);
 		this->addLink(contact);
 	}

@@ -37,7 +37,7 @@ namespace MBSim {
       std::vector<ApplyForceAlsoTo> applyForceAlsoTo;
     public:
       enum Type {
-        CONSTANT, LINEAR
+        constant, linear
       };
       ExternGeneralizedIO(const std::string &name="");
       void updateh(double, int i=0);

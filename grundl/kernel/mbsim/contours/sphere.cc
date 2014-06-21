@@ -35,7 +35,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Sphere, MBSIM%"Sphere")
 
   void Sphere::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {

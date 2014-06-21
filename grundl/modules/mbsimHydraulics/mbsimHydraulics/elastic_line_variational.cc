@@ -41,7 +41,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineVariational::init(InitStage stage) {
-    if (stage==MBSim::resize) {
+    if (stage==resize) {
       HLine::init(stage);
 
       const double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
@@ -192,7 +192,7 @@ namespace MBSimHydraulics {
         for (int i=0; i<n; i++)
           relPlot(i, j)=sin(i*M_PI*relPlotPoints(j));
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -206,7 +206,7 @@ namespace MBSimHydraulics {
         HLine::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       HLine::init(stage);
       if (printStateSpace)
         doPrintStateSpace();

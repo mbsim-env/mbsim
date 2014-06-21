@@ -27,10 +27,6 @@ namespace MBSim {
 
   class Point;
 
-  enum ContourParameterType {
-    NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL, FFRORIGIN, FIXEDRELATIVEFRAME
-  };
-
   /**
    * \brief struct for data-management for single point on a contour to describe contact kinematics
    * \author Roland Zander
@@ -41,20 +37,23 @@ namespace MBSim {
    */
   class ContourPointData {
     public:
+
+      enum ContourParameterType { node, staggeredNode, continuum, extInterpol, ffrorigin, fixedrelativeframe };
+
       /**
        * \brief constructor
        */
       ContourPointData() :
-          type(CONTINUUM), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
       }
       ContourPointData(const double &alpha_) :
-          type(CONTINUUM), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
         alpha(0) = alpha_;
       }
       ContourPointData(const fmatvec::Vec2 &alpha_) :
-          type(CONTINUUM), ID(0), alpha(alpha_), alphap(fmatvec::Vec2()) {
+          type(continuum), ID(0), alpha(alpha_), alphap(fmatvec::Vec2()) {
       }
-      ContourPointData(const int &id_, const ContourParameterType type_ = NODE) :
+      ContourPointData(const int &id_, const ContourParameterType type_ = node) :
           type(type_), ID(id_), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
       }
 

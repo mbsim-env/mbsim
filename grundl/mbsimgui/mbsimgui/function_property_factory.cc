@@ -53,17 +53,27 @@ namespace MBSimGUI {
     if(i==4)
       return new SinusoidalFunctionProperty;
     if(i==5)
-      return new ScaledFunctionProperty;
+      return new AbsoluteValueFunctionProperty;
     if(i==6)
-      return new SummationFunctionProperty;
+      return new PointSymmetricFunctionProperty;
     if(i==7)
-      return new VectorValuedFunctionProperty;
+      return new LineSymmetricFunctionProperty;
     if(i==8)
-      return new PiecewiseDefinedFunctionProperty;
+      return new ScaledFunctionProperty;
     if(i==9)
-      return new SymbolicFunctionProperty("VS",vector<string>(1,"t"),1);
+      return new SummationFunctionProperty;
     if(i==10)
+      return new VectorValuedFunctionProperty;
+    if(i==11)
+      return new PiecewiseDefinedFunctionProperty;
+    if(i==12)
+      return new NestedFunctionProperty(new FunctionPropertyFactory2, new FunctionPropertyFactory2);
+    if(i==13)
+      return new SymbolicFunctionProperty("VS",vector<string>(1,"t"),1);
+    if(i==14)
       return new TabularFunctionProperty;
+    if(i==15)
+      return new PiecewisePolynomFunctionProperty;
   }
 
   vector<FQN> FunctionPropertyFactory2::getNames() {
@@ -73,12 +83,17 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"QuadraticFunction");
     name.push_back(MBSIM%"PolynomFunction");
     name.push_back(MBSIM%"SinusoidalFunction");
+    name.push_back(MBSIM%"AbsoluteValueFunction");
+    name.push_back(MBSIM%"PointSymmetricFunction");
+    name.push_back(MBSIM%"LineSymmetricFunction");
     name.push_back(MBSIM%"ScaledFunction");
     name.push_back(MBSIM%"SummationFunction");
     name.push_back(MBSIM%"VectorValuedFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
+    name.push_back(MBSIM%"NestedFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
     return name;
   }
 
@@ -138,6 +153,8 @@ namespace MBSimGUI {
       return new SummationFunctionProperty;
     if(i==6)
       return new PiecewiseDefinedFunctionProperty;
+    if(i==7)
+      return new PiecewisePolynomFunctionProperty;
   }
 
   vector<FQN> TranslationPropertyFactory3::getNames() {
@@ -149,6 +166,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"ScaledFunction");
     name.push_back(MBSIM%"SummationFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
     return name;
   }
 
@@ -169,10 +187,14 @@ namespace MBSimGUI {
     if(i==6)
       return new RotationAboutAxesXYZProperty;
     if(i==7)
-      return new RotationAboutFixedAxisProperty;
+      return new RotationAboutAxesZXZProperty;
     if(i==8)
-      return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
+      return new RotationAboutAxesZYXProperty;
     if(i==9)
+      return new RotationAboutFixedAxisProperty;
+    if(i==10)
+      return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
+    if(i==11)
       return new SymbolicFunctionProperty("MV",vector<string>(1,"q"),1);
   }
 
@@ -185,6 +207,8 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"RotationAboutAxesYZ");
     name.push_back(MBSIM%"RotationAboutAxesXZ");
     name.push_back(MBSIM%"RotationAboutAxesXYZ");
+    name.push_back(MBSIM%"RotationAboutAxesZXZ");
+    name.push_back(MBSIM%"RotationAboutAxesZYX");
     name.push_back(MBSIM%"RotationAboutFixedAxis");
     name.push_back(MBSIM%"NestedFunction");
     name.push_back(MBSIM%"SymbolicFunction");
@@ -206,12 +230,30 @@ namespace MBSimGUI {
   }
 
   Property* SymbolicFunctionPropertyFactory2::createProperty(int i) {
-    return new SymbolicFunctionProperty(ext,var,1);
+    if(i==0)
+      return new SymbolicFunctionProperty(ext,var,1);
+    if(i==1)
+      return new TwoDimensionalTabularFunctionProperty;
   }
 
   vector<FQN> SymbolicFunctionPropertyFactory2::getNames() {
     vector<FQN> name;
     name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"TwoDimensionalTabularFunction");
+    return name;
+  }
+
+  Property* SymbolicFunctionPropertyFactory3::createProperty(int i) {
+    if(i==0)
+      return new SymbolicFunctionProperty(ext,var,1);
+    if(i==1)
+      return new ModuloFunctionProperty;
+  }
+
+  vector<FQN> SymbolicFunctionPropertyFactory3::getNames() {
+    vector<FQN> name;
+    name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"ModuloFunction");
     return name;
   }
 
@@ -298,13 +340,16 @@ namespace MBSimGUI {
 
   SpringDamperPropertyFactory::SpringDamperPropertyFactory() {
     name.push_back(MBSIM%"LinearSpringDamperForce");
+    name.push_back(MBSIM%"NonlinearSpringDamperForce");
     name.push_back(MBSIM%"SymbolicFunction");
   }
 
   Property* SpringDamperPropertyFactory::createProperty(int i) {
     if(i==0)
       return new LinearSpringDamperForceProperty;
-    if(i==1) {
+    if(i==1)
+      return new NonlinearSpringDamperForceProperty;
+    if(i==2) {
       vector<string> var;
       var.push_back("gd");
       var.push_back("g");

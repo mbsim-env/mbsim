@@ -65,7 +65,7 @@ namespace MBSim {
   }
 
   void Element::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -237,8 +237,8 @@ namespace MBSim {
         throw DOMEvalException(str.str(), e);
       }
       if(E(e)->getTagName()==MBSIM%"plotFeature") setPlotFeature(feature, status);
-      if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
-      if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
+      else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
+      else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
       e=e->getNextElementSibling();
     }
   }

@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) { neutral->updateKinematicsForFrame(cp,ff); }
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) { neutral->updateKinematicsForFrame(cp,ff); }
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) { neutral->updateJacobiansForFrame(cp); }
       /***************************************************/
 

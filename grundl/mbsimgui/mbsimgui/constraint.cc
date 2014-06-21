@@ -48,18 +48,17 @@ namespace MBSimGUI {
 
   class GearConstraintPropertyFactory : public PropertyFactory {
     public:
-      GearConstraintPropertyFactory(Element *element_, const FQN &xmlName_) : element(element_), xmlName(xmlName_) { }
+      GearConstraintPropertyFactory(Element *element_) : element(element_) { }
       Property* createProperty(int i=0);
     protected:
       Element *element;
-      FQN xmlName;
   };
 
   Property* GearConstraintPropertyFactory::createProperty(int i) {
     ContainerProperty *property = new ContainerProperty;
-    property->addProperty(new RigidBodyOfReferenceProperty("",element,xmlName));
+    property->addProperty(new RigidBodyOfReferenceProperty("",element, MBSIM%"rigidBody"));
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIM%"transmissionRatio"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIM%"ratio"));
     property->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
     return property;
   }
@@ -71,9 +70,8 @@ namespace MBSimGUI {
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
-    //independentBodies.setProperty(new GearDependenciesProperty(this,MBSIM%"independentRigidBodies"));
-    independentBodies.setProperty(new ListProperty(new GearConstraintPropertyFactory(this,""),MBSIM%"independentRigidBody"));
-    independentBodies.setXMLName(MBSIM%"independentRigidBodies");
+    independentBodies.setProperty(new ListProperty(new GearConstraintPropertyFactory(this),MBSIM%"Transmission"));
+    independentBodies.setXMLName(MBSIM%"transmissions");
 
     gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
     gearForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);

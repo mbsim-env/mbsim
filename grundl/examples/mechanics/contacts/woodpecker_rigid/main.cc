@@ -7,8 +7,8 @@ using namespace MBSim;
 int main (int argc, char* argv[]) {
 
   Woodpecker sys("MBS");
-  sys.setConstraintSolver(GaussSeidel);
-  sys.setImpactSolver(GaussSeidel);
+  sys.setConstraintSolver(DynamicSystemSolver::GaussSeidel);
+  sys.setImpactSolver(DynamicSystemSolver::GaussSeidel);
 //  sys.setFlushEvery(100);
   sys.initialize();
 

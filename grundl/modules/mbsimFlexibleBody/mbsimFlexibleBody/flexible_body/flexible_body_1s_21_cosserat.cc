@@ -142,7 +142,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21Cosserat::updateKinematicsAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+  void FlexibleBody1s21Cosserat::updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
     int node = frame->getNodeNumber();
     /* 2D -> 3D mapping */
     Vec qTmpNODE(3, INIT, 0.);
@@ -154,26 +154,26 @@ namespace MBSimFlexibleBody {
     Vec uTmpANGLE(3, INIT, 0.);
     uTmpANGLE(2) = uFull(3 * node + 2);
 
-    if (ff == position || ff == position_cosy || ff == all)
+    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
       frame->setPosition(R->getPosition() + R->getOrientation() * qTmpNODE);
 
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(1, R->getOrientation() * ANGLE->computet(qTmpANGLE)); // tangent
+    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
+      frame->getOrientation().set(1, R->getOrientation() * angle->computet(qTmpANGLE)); // tangent
 
-    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->getOrientation().set(0, R->getOrientation() * ANGLE->computen(qTmpANGLE)); // normal
+    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
+      frame->getOrientation().set(0, R->getOrientation() * angle->computen(qTmpANGLE)); // normal
 
-    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
       frame->getOrientation().set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1))); // binormal (cartesian system)
 
-    if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
+    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
       frame->setVelocity(R->getOrientation() * uTmp);
 
-    if (ff == angularVelocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-      frame->setAngularVelocity(R->getOrientation() * ANGLE->computeOmega(qTmpANGLE, uTmpANGLE));
+    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
+      frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(qTmpANGLE, uTmpANGLE));
   }
 
-  void FlexibleBody1s21Cosserat::updateJacobiansAtNode(NodeFrame *frame, MBSim::FrameFeature ff) {
+  void FlexibleBody1s21Cosserat::updateJacobiansAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
     int node = frame->getNodeNumber();
     /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
     Mat3xV Jacobian_trans(qFull.size(), INIT, 0.);
@@ -183,7 +183,7 @@ namespace MBSimFlexibleBody {
     frame->setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
   }
 
-  void FlexibleBody1s21Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+  void FlexibleBody1s21Cosserat::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
 //    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 //      double sLocalTranslation;
 //      int currentElementTranslation;
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
 //      curve->updateJacobiansForFrame(cp);
 //    }
 //    else
-    if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
+    if (cp.getContourParameterType() == ContourPointData::staggeredNode) { // force on staggered node
       int node = cp.getNodeNumber();
       /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
       Mat3xV Jacobian_rot(qFull.size(), INIT, 0.);
@@ -381,10 +381,10 @@ namespace MBSimFlexibleBody {
       initM();
     }
 
-    else if (stage == MBSim::plot) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*) openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
-#endif
+    else if (stage == plotting) {
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//      ((OpenMBV::SpineExtrusion*) openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+//#endif
       FlexibleBodyContinuum<double>::init(stage);
     }
 
@@ -522,11 +522,11 @@ namespace MBSimFlexibleBody {
     Vec temp(12, INIT, 0.);
     ContourPointData cp(sGlobal);
 
-    updateKinematicsForFrame(cp, position);
+    updateKinematicsForFrame(cp, Frame::position);
     temp(0, 2) = cp.getFrameOfReference().getPosition();
     temp(3, 5) = computeAngles(sGlobal, qFull);
 
-    updateKinematicsForFrame(cp, velocities);
+    updateKinematicsForFrame(cp, Frame::velocities);
     temp(6, 8) = cp.getFrameOfReference().getVelocity();
     temp(9, 11) = cp.getFrameOfReference().getAngularVelocity();
 
@@ -568,6 +568,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::initInfo() {
+    init(preInit);
+    init(resize);
     FlexibleBodyContinuum<double>::init(unknownStage);
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");

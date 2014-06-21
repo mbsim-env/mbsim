@@ -77,7 +77,7 @@ namespace MBSimHydraulics {
 
       void calcgdSize(int j) {gdSize=1; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
@@ -125,7 +125,7 @@ namespace MBSimHydraulics {
       void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
       virtual bool isSingleValued() const {return true;}
 
@@ -140,7 +140,7 @@ namespace MBSimHydraulics {
       EnvironmentNode(const std::string &name="") : HNode(name) {}
       virtual std::string getType() const { return "EnvironmentNode"; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       virtual bool isSingleValued() const {return true;}
   };
@@ -159,7 +159,7 @@ namespace MBSimHydraulics {
 
       void calcxSize() {xSize=1; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
@@ -235,7 +235,7 @@ namespace MBSimHydraulics {
       void calcrFactorSize(int j) {rFactorSize=1; }
       void calcsvSize() {svSize=1; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
       void plot(double t, double dt);
 
@@ -281,7 +281,7 @@ namespace MBSimHydraulics {
       void setpSignal(MBSimControl::Signal * pSignal_) {pSignal=pSignal_; }
 
       void updateg(double t);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
     private:

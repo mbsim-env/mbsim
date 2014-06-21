@@ -68,44 +68,44 @@ namespace MBSimFlexibleBody {
     gloMat(activeElement) += locMat;
   }
 
-  void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if(cp.getContourParameterType() == NODE) { // frame on node
-      cp.getContourParameterType() = CONTINUUM;
+  void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
+    if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
+      cp.getContourParameterType() = ContourPointData::continuum;
       cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
     }
 
-    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
       Vec X;
-      if(ff==position || ff==position_cosy || ff==velocity || ff==angularVelocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::velocity || ff==Frame::angularVelocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
         X(0) = cp.getLagrangeParameterPosition()(0);
       }
       SqrMat3 AWK;
-      if(ff==firstTangent || ff==normal || ff==cosy || ff==secondTangent || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::firstTangent || ff==Frame::normal || ff==Frame::cosy || ff==Frame::secondTangent || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         AWK = R->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
       }
 
-      if(ff==position || ff==position_cosy || ff==all) {
+      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * X(0,2));
       }
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().getOrientation().set(1, AWK.col(0)); // tangent
       }
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().getOrientation().set(0, AWK.col(1)); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
-      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
+      if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().setVelocity(R->getOrientation() * X(6,8));
       }
-      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * X(9,11));
       }
     }
-    else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition       (cp.getFrameOfReference().getPosition());
@@ -119,12 +119,12 @@ namespace MBSimFlexibleBody {
     Index All(0,5-1);
     Mat Jacobian(qSize, 5, INIT, 0); // boeser Kaefer, Initialisierung notwendig!!! M. Schneider
 
-    if(cp.getContourParameterType() == NODE) { // force on node
-      cp.getContourParameterType() = CONTINUUM;
+    if(cp.getContourParameterType() == ContourPointData::node) { // force on node
+      cp.getContourParameterType() = ContourPointData::continuum;
       cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
     }
 
-    if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
+    if(cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
@@ -132,7 +132,7 @@ namespace MBSimFlexibleBody {
       Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
       Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
     }
-    else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
     cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
@@ -172,7 +172,7 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s23BTA*>(discretization[i])->setTorsionalDamping(dTorsional);
       }
     }
-    else if(stage==MBSim::plot) {
+    else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif

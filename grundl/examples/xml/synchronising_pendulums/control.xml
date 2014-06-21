@@ -38,7 +38,7 @@
           <PiecewisePolynomFunction xmlns="http://mbsim.berlios.de/MBSim">
             <x>xValue(:,1)</x>
             <y>xValue(:,2:4)</y>
-            <cSplineNatural/>
+            <interpolationMethod>"cSplineNatural"</interpolationMethod>
           </PiecewisePolynomFunction>
         </timeDependentTranslation>
         <frames>

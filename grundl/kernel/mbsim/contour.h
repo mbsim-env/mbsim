@@ -72,7 +72,7 @@ namespace MBSim {
        * \param contour parameter
        * \param selection of specific calculations for frames
        */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) = 0;
+      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) = 0;
 
       /**
        * \brief JACOBIAN for contour (normal, tangent, binormal) is set by implementation class
@@ -85,25 +85,25 @@ namespace MBSim {
        * \return normal in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,normal); return cp.getFrameOfReference().getOrientation().col(0); }
+      virtual fmatvec::Vec3 computeNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::normal); return cp.getFrameOfReference().getOrientation().col(0); }
 
       /**
        * \return position in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computePosition(ContourPointData &cp) { updateKinematicsForFrame(cp,position); return cp.getFrameOfReference().getPosition(); }
+      virtual fmatvec::Vec3 computePosition(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::position); return cp.getFrameOfReference().getPosition(); }
 
       /**
        * \return velocity in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,velocity); return cp.getFrameOfReference().getVelocity(); }
+      virtual fmatvec::Vec3 computeVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::velocity); return cp.getFrameOfReference().getVelocity(); }
 
       /**
        * \return angular in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); }
+      virtual fmatvec::Vec3 computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); }
 
       /**
        * \return curvature of contour in contour point
@@ -267,7 +267,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
+      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
       /***************************************************/
 

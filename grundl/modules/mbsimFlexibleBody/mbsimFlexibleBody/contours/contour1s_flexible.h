@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) {
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff) {
         if (neutral)
           neutral->updateKinematicsForFrame(cp, ff);
         else
@@ -75,27 +75,27 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
       virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
         if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::position);
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::position);
         else
-          updateKinematicsForFrame(cp, MBSim::position);
+          updateKinematicsForFrame(cp, MBSim::Frame::position);
       }
       virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
         if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::firstTangent);
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
         else
-          updateKinematicsForFrame(cp, MBSim::firstTangent);
+          updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
       }
       virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
         if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::normal);
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::normal);
         else
-          updateKinematicsForFrame(cp, MBSim::normal);
+          updateKinematicsForFrame(cp, MBSim::Frame::normal);
       }
       virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
         if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::secondTangent);
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
         else
-          updateKinematicsForFrame(cp, MBSim::secondTangent);
+          updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
       }
       /***************************************************/
 

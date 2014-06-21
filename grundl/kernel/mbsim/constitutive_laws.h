@@ -770,7 +770,7 @@ namespace MBSim {
       void setDebuglevel(int debuglevel) {
         DEBUGLEVEL = debuglevel;
       }
-      void setLCPSolvingStrategy(LCPSolvingStrategy strategy) {
+      void setLCPSolvingStrategy(LinearComplementarityProblem::LCPSolvingStrategy strategy) {
         LCP.setStrategy(strategy);
       }
       /*****************/

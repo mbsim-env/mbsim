@@ -33,7 +33,7 @@ namespace MBSimControl {
     public:
       SignalAddition(const std::string &name="") : Signal(name) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void addSignal(Signal * signal, double factor=1.);
       fmatvec::Vec getSignal();
     private:
@@ -51,7 +51,7 @@ namespace MBSimControl {
     public:
       SignalOffset(const std::string &name="") : Signal(name), signal(0), offset(0, fmatvec::NONINIT), signalString("") {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal(Signal * s) {signal=s; }
       void setOffset(fmatvec::Vec o) {offset=o; }
       fmatvec::Vec getSignal();
@@ -69,7 +69,7 @@ namespace MBSimControl {
     public:
       SignalMultiplication(const std::string &name="") : Signal(name) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void addSignal(Signal * signal, double exp);
       fmatvec::Vec getSignal();
     private:
@@ -88,7 +88,7 @@ namespace MBSimControl {
     public:
       SignalMux(const std::string &name="") : Signal(name) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void addSignal(Signal * signal) {signals.push_back(signal); }
       fmatvec::Vec getSignal();
     private:
@@ -105,7 +105,7 @@ namespace MBSimControl {
     public:
       SignalDemux(const std::string &name="") : Signal(name), totalSignalSize(0) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
       fmatvec::Vec getSignal();
     private:
@@ -125,7 +125,7 @@ namespace MBSimControl {
     public:
       SignalLimitation(const std::string &name="") : Signal(name), s(NULL), minValue(), maxValue(), signalString("") {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
       void setMaximalValue(fmatvec::Vec maxValue_) {maxValue=maxValue_; }
       void setSignal(Signal * signal_) {s=signal_; }
@@ -145,7 +145,7 @@ namespace MBSimControl {
     public:
       SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), y(), tOld(-99e99), signalString("") {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
       fmatvec::Vec getSignal();
@@ -165,7 +165,7 @@ namespace MBSimControl {
     public:
       SignalOperation(const std::string &name="") : Signal(name), s(NULL), s2(NULL), signalString(""), signal2String(""), op(0), s2values(0, fmatvec::NONINIT) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void setSecondSignal(Signal * signal_) {s2=signal_; }
       void setSecondSignalValues(fmatvec::Vec s2_) {s2values=s2_; }
@@ -189,7 +189,7 @@ namespace MBSimControl {
     public:
       SpecialSignalOperation(const std::string &name="") : Signal(name), s(NULL), s2(NULL), signalString(""), signal2String(""), op(0), s2values(0, fmatvec::NONINIT) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void setSecondSignal(Signal * signal_) {s2=signal_; }
       void setSecondSignalValues(fmatvec::Vec s2_) {s2values=s2_; }
@@ -216,7 +216,7 @@ namespace MBSimControl {
       
       void calcxSize() {xSize=getSignalMethod==&PIDController::getSignalPD?0:1;}
       
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void updatedx(double t, double dt);
       void updatexd(double t);
@@ -246,7 +246,7 @@ namespace MBSimControl {
     public:
       UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal(Signal *signal_) {s=signal_; }
       void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *f_) {f=f_; };
       fmatvec::Vec getSignal();
@@ -264,7 +264,7 @@ namespace MBSimControl {
     public:
       BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) {}
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal1(Signal *signal_) {s1=signal_; }
       void setSignal2(Signal *signal_) {s2=signal_; }
       void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,fmatvec::Vec)> *f_) {f=f_; };

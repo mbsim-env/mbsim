@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include <iostream>
 #include <QApplication>
 #include "mainwindow.h"
 #include <H5Cpp.h>
@@ -67,6 +68,7 @@ int main(int argc, char *argv[]) {
   H5::Exception::dontPrint();
 
   QApplication app(argc, argv);
+  app.setOrganizationName("MBSimGUI");
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow mainwindow(arg);

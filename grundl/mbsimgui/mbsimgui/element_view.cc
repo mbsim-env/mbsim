@@ -30,13 +30,12 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ElementView::openEditor () {
+  void ElementView::openEditor() {
     if(!editor) {
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
       if(element) {
-        if(element->isEmbedded())
-          mw->updateOctaveParameters(element->getParameterList());
+        mw->updateOctaveParameters(element);
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
@@ -47,19 +46,17 @@ namespace MBSimGUI {
     }
   }
 
-  void ElementView::mouseDoubleClickEvent ( QMouseEvent * event ) {
+  void ElementView::mouseDoubleClickEvent(QMouseEvent *event) {
     openEditor();
   }
 
-  void ElementView::mousePressEvent ( QMouseEvent * event ) {
+  void ElementView::mousePressEvent (QMouseEvent *event) {
     if(!editor)
       QTreeView::mousePressEvent(event);
   }
 
   void ElementView::dialogFinished(int result) {
     if(result != 0) {
-      if(element->isEmbedded())
-        mw->updateOctaveParameters(ParameterList());
       mw->mbsimxml(1);
     }
     editor = 0;
@@ -68,8 +65,6 @@ namespace MBSimGUI {
 
   void ElementView::apply() {
     update(index);
-    if(element->isEmbedded())
-      mw->updateOctaveParameters(element->getParameterList());
     mw->mbsimxml(1);
   }
 

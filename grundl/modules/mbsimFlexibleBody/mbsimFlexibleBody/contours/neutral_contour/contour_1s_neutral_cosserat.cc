@@ -48,23 +48,16 @@ namespace MBSimFlexibleBody {
     return new NeutralNurbsDotangle1s(parent, rotNodes, nodeOffset, uMin, uMax, degU, openStructure);
   }
 
-  void Contour1sNeutralCosserat::init(MBSim::InitStage stage) {
+  void Contour1sNeutralCosserat::init(InitStage stage) {
 
     if (stage == preInit) {
       NP = createNeutralPosition();
+      NP->setBinormalDir(R->getOrientation().col(2));
       NV = createNeutralVelocity();
       NA = createNeutralAngle();
       NDA = createNeutralDotangle();
 
-      NP->computeCurve(false); // the first time call the computeCurveVelocity, the flag should be false
-      NV->computeCurve(false);
-      NA->computeCurve(false);
-      NDA->computeCurve(false);
 
-      Vec u(NV->getuVec());
-      for (int i = 0; i < u.size() - degU; i++)
-        nodes.push_back(u(i));
-      nodes.push_back(uMax);
     }
     else if (stage == resize) {
       // construct contourPoint for translation nodes
@@ -77,18 +70,29 @@ namespace MBSimFlexibleBody {
       R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
       R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
     }
+    else if(stage == unknownStage) {
+      NP->computeCurve(false); // the first time call the computeCurveVelocity, the flag should be false
+      NV->computeCurve(false);
+      NA->computeCurve(false);
+      NDA->computeCurve(false);
+
+      Vec u(NV->getuVec());
+      for (int i = 0; i < u.size() - degU; i++)
+        nodes.push_back(u(i));
+      nodes.push_back(uMax);
+    }
 
     Contour1sNeutralFactory::init(stage);
   }
 
-  void Contour1sNeutralCosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) {
-    if (ff == position || ff == position_cosy || ff == all)
+  void Contour1sNeutralCosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
+    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
       NP->update(cp);
-    if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all)
+    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
       NV->update(cp);
-    if (ff == angle || ff == all)
+    if (ff == Frame::angle || ff == Frame::all)
       NA->update(cp); //TODO: use NP here also?
-    if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
       // G(angle) * dotAngle
       //TODO: use NP here also??
       NA->update(cp); // staggered stuff is handled inside the updateAngle()
@@ -97,17 +101,17 @@ namespace MBSimFlexibleBody {
       Vec3 dotAngles = cp.getFrameOfReference().getDotAnglesOfOrientation();
       cp.getFrameOfReference().setAngularVelocity(ANGLE->computeOmega(angles, dotAngles));
     }
-    if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
       //TODO: using the position information of the angle curve seems not to work!
 //      NA->updateAngleNormal(cp); // normal
       NP->updatePositionNormal(cp);
     }
-    if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
       //TODO: using the position information of the angle curve seems not to work!
 //      NA->updateAngleFirstTangent(cp); // tangent
       NP->updatePositionFirstTangent(cp);
     }
-    if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
       //TODO: using the position information of the angle curve seems not to work!
 //      NA->updateAngleSecondTangent(cp); // binormal (cartesian system)
       NP->updatePositionSecondTangent(cp);
@@ -116,7 +120,7 @@ namespace MBSimFlexibleBody {
 
   void Contour1sNeutralCosserat::updateJacobiansForFrame(MBSim::ContourPointData &cp, int j) {
 
-    int qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSize();
+    int qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSizeFull();
 
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
     double sGlobal = cp.getLagrangeParameterPosition()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
@@ -160,7 +164,7 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    cp.getFrameOfReference().setJacobianOfTranslation(Jacobian_trans);
+    cp.getFrameOfReference().setJacobianOfTranslation(static_cast<FlexibleBody1sCosserat*>(parent)->transformJacobian(Jacobian_trans));
 
     /******************************************************************  Jacobian of Rotation  *******************************************************************************/
     // calculate the local position
@@ -202,7 +206,7 @@ namespace MBSimFlexibleBody {
       }
     }
 
-    cp.getFrameOfReference().setJacobianOfRotation(Jacobian_rot);   // TODO: simplify computeT(), check which is to be used G() or A()*Gbar()
+    cp.getFrameOfReference().setJacobianOfRotation(static_cast<FlexibleBody1sCosserat*>(parent)->transformJacobian(Jacobian_rot));
 
   }
   

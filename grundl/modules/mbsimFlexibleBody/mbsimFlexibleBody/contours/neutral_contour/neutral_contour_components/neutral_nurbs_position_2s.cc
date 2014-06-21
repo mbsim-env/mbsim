@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
         frame.setNodeNumber(nodes(i,j));
-        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, position);
+        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::position);
         Nodelist(i,j) = frame.getPosition();
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;

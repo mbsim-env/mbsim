@@ -71,7 +71,7 @@ namespace MBSimGUI {
   class ScalarParameter : public Parameter {
     friend class ScalarParameterPropertyDialog;
     public:
-    ScalarParameter(const std::string &name);
+    ScalarParameter(const std::string &name, const std::string &value="0");
     virtual ~ScalarParameter() {}
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -101,26 +101,15 @@ namespace MBSimGUI {
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
   };
 
-  //class SearchPath : public Parameter {
-  //  friend class SearchPathPropertyDialog;
-  //  public:
-  //    SearchPath(const std::string &name);
-  //    virtual ~SearchPath() {}
-  //    virtual void initializeUsingXML(xercesc::DOMElement *element);
-  //    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-  //    virtual std::string getType() const { return "searchPath"; }
-  ////    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
-  //};
-
-  class ParameterList {
+  class SearchPathParameter : public Parameter {
+    friend class SearchPathParameterPropertyDialog;
     public:
-      bool readXMLFile(const std::string &filename);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) const;
-      int getSize() const {return name.size();}
-      void addParameter(const std::string &name, const std::string &value, const std::string &type);
-      void addParameterList(const ParameterList &list); 
-    private:
-      std::vector<std::string> name, value, type;
+      SearchPathParameter();
+      virtual ~SearchPathParameter() {}
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      virtual std::string getType() const { return "searchPath"; }
+      virtual ParameterPropertyDialog* createPropertyDialog() {return new SearchPathParameterPropertyDialog(this);}
   };
 
   class Parameters {
@@ -128,7 +117,10 @@ namespace MBSimGUI {
       std::vector<Parameter*> parameter;
     public:
       void addParameter(Parameter *param) { parameter.push_back(param); }
-      Parameter *getParameter(int i) { return parameter[i]; }
+      void addParameters(const Parameters &list); 
+      void removeParameter(Parameter *param);
+      void removeParameters();
+      Parameter *getParameter(int i) const { return parameter[i]; }
       int getNumberOfParameters() const { return parameter.size(); }
       void initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

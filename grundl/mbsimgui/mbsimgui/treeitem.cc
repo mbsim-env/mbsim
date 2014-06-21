@@ -46,6 +46,16 @@ namespace MBSimGUI {
     return true;
   }
 
+  bool TreeItem::insertChildren(TreeItem *item, int index, int count) {
+
+    ID++;
+
+    for (int row = 0; row < count; ++row)
+      childItems.insert(index, item);
+
+    return true;
+  }
+
   bool TreeItem::removeChildren(int position, int count) {
     if (position < 0 || position + count > childItems.size())
       return false;

@@ -27,6 +27,7 @@
 #include "link.h"
 #include "observer.h"
 #include "parameter.h"
+#include "constraint.h"
 #include <iostream>
 
 using namespace std;
@@ -46,18 +47,19 @@ namespace MBSimGUI {
       return item->getData(index.column());
     } 
     else if(role==Qt::ForegroundRole) {
-      if(getItem(index)->getData1()=="") {
-        QPalette palette;
-        QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
-        return brush;
-      }
+      TreeItem *item = getItem(index);
+      return item->getForeground();
+    }
+    else if(role==Qt::UserRole) {
+      TreeItem *item = getItem(index);
+      return item->getEnabled();
     }
     return QVariant();
   }
 
   Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const {
     if(!index.isValid())
-      return 0;
+      return Qt::NoItemFlags;
 
     return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
   }
@@ -119,28 +121,25 @@ namespace MBSimGUI {
   }
 
   bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(role != Qt::EditRole)
+    if(role != Qt::EditRole && role != Qt::ForegroundRole)
       return false;
 
     TreeItem *item = getItem(index);
-    if(index.column()==0)
+    if(role == Qt::EditRole && index.column()==0)
       item->setData0(value);
+    if(role == Qt::ForegroundRole && index.column()==0)
+      item->setForeground(value.value<QBrush>());
 
     emit dataChanged(index, index);
 
     return true;
   }
 
-  bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
-      const QVariant &value, int role)
-  {
+  bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) {
     if(role != Qt::EditRole || orientation != Qt::Horizontal)
       return false;
 
-    if(section==0)
-      rootItem->setData0(value);
-    else
-      rootItem->setData1(value);
+    rootItem->setData(section,value);
 
     emit headerDataChanged(orientation, section, section);
 
@@ -149,7 +148,7 @@ namespace MBSimGUI {
 
   ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new BasicItemData("Name","Type"));
+    rootItem = new TreeItem(new BasicItemData("Name","Value","Type"));
   }
 
   void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
@@ -195,12 +194,12 @@ namespace MBSimGUI {
       index = parent.child(i,0);
     i = rowCount(index);
     beginInsertRows(index, i, i+5);
-    item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
-    item->insertChildren(new TreeItem(new ContourItemData(group),item),1);
-    item->insertChildren(new TreeItem(new GroupItemData(group),item),1);
-    item->insertChildren(new TreeItem(new ObjectItemData(group),item),1);
-    item->insertChildren(new TreeItem(new LinkItemData(group),item),1);
-    item->insertChildren(new TreeItem(new ObserverItemData(group),item),1);
+    item->insertChildren(new TreeItem(new FrameItemData(group),item,0,Qt::gray),1);
+    item->insertChildren(new TreeItem(new ContourItemData(group),item,1,Qt::gray),1);
+    item->insertChildren(new TreeItem(new GroupItemData(group),item,1,Qt::gray),1);
+    item->insertChildren(new TreeItem(new ObjectItemData(group),item,1,Qt::gray),1);
+    item->insertChildren(new TreeItem(new LinkItemData(group),item,1,Qt::gray),1);
+    item->insertChildren(new TreeItem(new ObserverItemData(group),item,1,Qt::gray),1);
     endInsertRows();
     i = rowCount(index);
 
@@ -230,18 +229,20 @@ namespace MBSimGUI {
 
     idEleMap.insert(make_pair(object->getID(), parent.child(i,0)));
 
-    QModelIndex index = parent.child(i,0);
-    i = rowCount(index);
-    beginInsertRows(index, i, i+1);
-    item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
-    item->insertChildren(new TreeItem(new ContourItemData(object),item),1);
-    endInsertRows();
-    i = rowCount(index);
+    if(not(dynamic_cast<Constraint*>(object))) {
+      QModelIndex index = parent.child(i,0);
+      i = rowCount(index);
+      beginInsertRows(index, i, i+1);
+      item->insertChildren(new TreeItem(new FrameItemData(object),item,0,Qt::gray),1);
+      item->insertChildren(new TreeItem(new ContourItemData(object),item,1,Qt::gray),1);
+      endInsertRows();
+      i = rowCount(index);
 
-    for(int i=0; i<object->getNumberOfFrames(); i++)
-      createFrameItem(object->getFrame(i),index.child(0,0));
-    for(int i=0; i<object->getNumberOfContours(); i++)
-      createContourItem(object->getContour(i),index.child(1,0));
+      for(int i=0; i<object->getNumberOfFrames(); i++)
+        createFrameItem(object->getFrame(i),index.child(0,0));
+      for(int i=0; i<object->getNumberOfContours(); i++)
+        createContourItem(object->getContour(i),index.child(1,0));
+    }
   }
 
   void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
@@ -270,20 +271,109 @@ namespace MBSimGUI {
     idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
   }
 
-  ParameterListModel::ParameterListModel(QObject *parent) : TreeModel(parent) {
+  EmbeddingTreeModel::EmbeddingTreeModel(QObject *parent) : TreeModel(parent) {
 
-    rootItem = new TreeItem(new BasicItemData("Name","Value"));
+    rootItem = new TreeItem(new BasicItemData("Name","Value","Type"));
   }
 
-  void ParameterListModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
+  void EmbeddingTreeModel::createElementItem(Element *element, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(parameter,parentItem);
+    TreeItem *item = new TreeItem(element,parentItem,1,Qt::gray);
     parentItem->insertChildren(item,1);
     endInsertRows();
+
+    QModelIndex index;
+    if(parent.row()==-1)
+      index = this->index(0,0,parent);
+    else
+      index = parent.child(i,0);
+    i = rowCount(index);
+
+    idEleMap.insert(make_pair(element, index));
+
+    for(int i=0; i<element->getNumberOfParameters(); i++)
+      createParameterItem(element->getParameter(i),index);
+    for(int i=0; i<element->getNumberOfFrames(); i++)
+      createElementItem(element->getFrame(i),index);
+    for(int i=0; i<element->getNumberOfContours(); i++)
+      createElementItem(element->getContour(i),index);
+    for(int i=0; i<element->getNumberOfGroups(); i++)
+      createElementItem(element->getGroup(i),index);
+    for(int i=0; i<element->getNumberOfObjects(); i++)
+      createElementItem(element->getObject(i),index);
+    for(int i=0; i<element->getNumberOfLinks(); i++)
+      createElementItem(element->getLink(i),index);
+    for(int i=0; i<element->getNumberOfObservers(); i++)
+      createElementItem(element->getObserver(i),index);
+
+//    beginInsertRows(index, i, i+6);
+//    item->insertChildren(new TreeItem(new FrameItemData(element),item,0),1);
+//    item->insertChildren(new TreeItem(new ContourItemData(element),item),1);
+//    item->insertChildren(new TreeItem(new GroupItemData(element),item),1);
+//    item->insertChildren(new TreeItem(new ObjectItemData(element),item),1);
+//    item->insertChildren(new TreeItem(new LinkItemData(element),item),1);
+//    item->insertChildren(new TreeItem(new ObserverItemData(element),item),1);
+//    item->insertChildren(new TreeItem(new BasicItemData("parameter",""),item),1);
+//    endInsertRows();
+//    i = rowCount(index);
+
+//    for(int i=0; i<element->getNumberOfFrames(); i++)
+//      createElementItem(element->getFrame(i),index.child(0,0));
+//    for(int i=0; i<element->getNumberOfContours(); i++)
+//      createElementItem(element->getContour(i),index.child(1,0));
+//    for(int i=0; i<element->getNumberOfGroups(); i++)
+//      createElementItem(element->getGroup(i),index.child(2,0));
+//    for(int i=0; i<element->getNumberOfObjects(); i++)
+//      createElementItem(element->getObject(i),index.child(3,0));
+//    for(int i=0; i<element->getNumberOfLinks(); i++)
+//      createElementItem(element->getLink(i),index.child(4,0));
+//    for(int i=0; i<element->getNumberOfObservers(); i++)
+//      createElementItem(element->getObserver(i),index.child(5,0));
+//    for(int i=0; i<element->getNumberOfParameters(); i++)
+//      createParameterItem(element->getParameter(i),index.child(6,0));
   }
+
+  QModelIndex EmbeddingTreeModel::createEmbeddingItem(Element *element, const QModelIndex &parent) {
+
+    TreeItem *parentItem = getItem(parent);
+
+    int i = rowCount(parent);
+    beginInsertRows(parent, i, i);
+    //TreeItem *item = new TreeItem(new Embedding(element),parentItem,1,Qt::gray);
+    TreeItem *item = new TreeItem(element,parentItem,1,Qt::gray);
+    parentItem->insertChildren(item,1);
+    endInsertRows();
+
+    QModelIndex index;
+    if(parent.row()==-1)
+      index = this->index(0,0,parent);
+    else
+      index = parent.child(i,0);
+    i = rowCount(index);
+
+    for(int i=0; i<element->getNumberOfParameters(); i++)
+      createParameterItem(element->getParameter(i),index);
+
+    return index;
+  }
+
+  QModelIndex EmbeddingTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
+
+    TreeItem *parentItem = getItem(parent);
+
+    int i = rowCount(parent);
+    if(dynamic_cast<Element*>(getItem(parent.child(i-1,0))->getItemData())) i--;
+    beginInsertRows(parent, i, i);
+
+    TreeItem *item = new TreeItem(parameter,parentItem);
+    parentItem->insertChildren(item,i,1);
+    endInsertRows();
+    return parent.child(i,0);
+  }
+
 
 }

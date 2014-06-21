@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
     NodeFrame frame;
     for (int i = 0; i < nodes.size(); i++) {
       frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame,  localPosition);
+      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame,  Frame::localPosition);
       Nodelist.set(i, trans(frame.getLocalPosition()));
     }
 //    cout << "neutralLocalPosition"<< Nodelist << endl << endl;

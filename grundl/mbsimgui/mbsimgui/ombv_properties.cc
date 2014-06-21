@@ -395,7 +395,7 @@ namespace MBSimGUI {
     numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", MBSIM%"springRadius"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"springRadius"));
     springRadius.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
@@ -418,11 +418,11 @@ namespace MBSimGUI {
   DOMElement* OMBVCoilSpringProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
-      type.initializeUsingXML(e);
       numberOfCoils.initializeUsingXML(e);
       springRadius.initializeUsingXML(e);
       crossSectionRadius.initializeUsingXML(e);
       nominalLength.initializeUsingXML(e);
+      type.initializeUsingXML(e);
       diffuseColor.initializeUsingXML(e);
       transparency.initializeUsingXML(e);
     }
@@ -435,21 +435,21 @@ namespace MBSimGUI {
       DOMElement *e=D(doc)->createElement(xmlName);
       writeXMLFileID(e);
       parent->insertBefore(e, NULL);
-      type.writeXMLFile(e);
       numberOfCoils.writeXMLFile(e);
       springRadius.writeXMLFile(e);
       crossSectionRadius.writeXMLFile(e);
       nominalLength.writeXMLFile(e);
+      type.writeXMLFile(e);
       diffuseColor.writeXMLFile(e);
       transparency.writeXMLFile(e);
       return e;
     } else {
       writeXMLFileID(parent);
-      type.writeXMLFile(parent);
       numberOfCoils.writeXMLFile(parent);
       springRadius.writeXMLFile(parent);
       crossSectionRadius.writeXMLFile(parent);
       nominalLength.writeXMLFile(parent);
+      type.writeXMLFile(parent);
       diffuseColor.writeXMLFile(parent);
       transparency.writeXMLFile(parent);
       return 0;
@@ -480,15 +480,11 @@ namespace MBSimGUI {
 
     transparency.setActive(true);
 
+    trans.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,OPENMBV%"initialTranslation"),"",4));
+
+    rot.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,OPENMBV%"initialRotation",vector<string>(3,"rad")),"",4));
+
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBV%"initialTranslation"));
-    trans.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new VecProperty(3), "rad", OPENMBV%"initialRotation"));
-    rot.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBV%"scaleFactor"));
     scale.setProperty(new ExtPhysicalVarProperty(input));
   }

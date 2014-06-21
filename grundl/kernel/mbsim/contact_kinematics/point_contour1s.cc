@@ -18,9 +18,10 @@
  *          rzander@users.berlios.de
  */
 
-#include "config.h"
+#include <config.h> 
 #include "point_contour1s.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/functions_contact.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -28,10 +29,9 @@ using namespace std;
 namespace MBSim {
 
   ContactKinematicsPointContour1s::ContactKinematicsPointContour1s() :
-      ContactKinematics(), ipoint(0), icontour(0), point(0), contour1s(0), func(0), search() {
+      ContactKinematics(), ipoint(0), icontour(0), point(0), contour1s(0), useLocal(false) {
   }
   ContactKinematicsPointContour1s::~ContactKinematicsPointContour1s() {
-    delete func;
   }
 
   void ContactKinematicsPointContour1s::assignContours(const vector<Contour*> &contour) {
@@ -47,31 +47,35 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       contour1s = static_cast<Contour1s*>(contour[0]);
     }
-
-    func = new FuncPairContour1sPoint(point, contour1s); // root function for searching contact parameters
-
-    search.setFunction(func);
-    search.setSearchAll(true); // for first search it is important to have a global search
-    search.setNodes(contour1s->getNodes()); // defining search areas for contacts
   }
 
   void ContactKinematicsPointContour1s::updateg(Vec &g, ContourPointData *cpData, int index) {
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
     
+    FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, contour1s); // root function for searching contact parameters
+    Contact1sSearch search(func);
+    search.setNodes(contour1s->getNodes()); // defining search areas for contacts
+
+    if (useLocal) { // select start value from last search
+      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
+    }
+    else { // define start search with regula falsi
+      search.setSearchAll(true);
+      useLocal = true;
+    }
+
     cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
 
     if (cpData[icontour].getLagrangeParameterPosition()(0) < contour1s->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > contour1s->getAlphaEnd())
       g(0) = 1.0;
     else { // calculate the normal distance
-      search.setSearchAll(false);
-      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
-
-      contour1s->updateKinematicsForFrame(cpData[icontour], position_cosy);
+      contour1s->updateKinematicsForFrame(cpData[icontour], Frame::position_cosy);
       cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
       cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
       cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));
       g(0) = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
     }
+    delete func;
   }
 
 }

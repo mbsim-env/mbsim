@@ -41,7 +41,7 @@ namespace MBSimHydraulics {
       double getDiameter() const {return diameter; }
       void setLinePressureLoss(LinePressureLoss * pL_) {pL=pL_; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void plot(double t, double dt);
 
@@ -72,7 +72,7 @@ namespace MBSimHydraulics {
       bool isClosed() const;
       double getRegularizedValue() const;
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement *element);
     private:
@@ -97,7 +97,7 @@ namespace MBSimHydraulics {
       void setMinimalPressureDrop(double v) {dpMin=v; }
       double getMinimalPressureDrop() const {return dpMin; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement *element);
     private:

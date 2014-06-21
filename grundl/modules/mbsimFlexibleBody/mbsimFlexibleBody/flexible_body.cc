@@ -41,8 +41,9 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody::FlexibleBody(const string &name) :
-      Body(name), d_massproportional(0.) {
+  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {
+    contourFrame = new Frame("ContourFrame");
+    //addFrame(contourFrame,0);
   }
 
   FlexibleBody::~FlexibleBody() {
@@ -88,14 +89,14 @@ namespace MBSimFlexibleBody {
     // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
     //        The idea is to use a contour frame that has all necessary position information
     for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-      updateKinematicsForFrame(S_Frame[i], all, frame[i]);
+      updateKinematicsForFrame(S_Frame[i], Frame::all, frame[i]);
     }
 
     for (size_t i  = 0; i < fixedRelativeFrames.size(); i++)
       fixedRelativeFrames[i]->updateStateDependentVariables();
 
     for (size_t i  = 0; i < nodeFrames.size(); i++)
-      updateKinematicsAtNode(nodeFrames[i], MBSim::all);
+      updateKinematicsAtNode(nodeFrames[i], MBSim::Frame::all);
 
     for (size_t i = 0; i < contour.size(); i++) {
       contour[i]->updateStateDependentVariables(t);
@@ -127,7 +128,7 @@ namespace MBSimFlexibleBody {
         S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(uSize[0]);
       }
     }
-    else if (stage == MBSim::plot) {
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
@@ -187,10 +188,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
-    stringstream frameName;
-    frameName << "ContourFrame" << contour.size();
-    Frame *contourFrame = new Frame(frameName.str());
-//    addFrame(contourFrame,0);
     contour_->setFrameOfReference(contourFrame);
     Body::addContour(contour_);
   }

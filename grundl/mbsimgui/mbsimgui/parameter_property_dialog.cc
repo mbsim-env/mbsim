@@ -28,9 +28,9 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), parameter(parameter_) {
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, QWidget *parent, Qt::WindowFlags f, bool readOnly) : PropertyDialog(parent,f), parameter(parameter_) {
     addTab("General");
-    name=new ExtWidget("Name",new TextWidget);
+    name=new ExtWidget("Name",new TextWidget("",readOnly));
     addToTab("General",name);
   }
 
@@ -43,7 +43,7 @@ namespace MBSimGUI {
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(StringParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-    value = new ExtWidget("Value",new TextWidget("0"));
+    value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()))));
     addToTab("General", value);
   }
 
@@ -55,7 +55,7 @@ namespace MBSimGUI {
   void StringParameterPropertyDialog::fromWidget(Parameter *parameter) {
     ParameterPropertyDialog::fromWidget(parameter);
     static_cast<StringParameter*>(parameter)->value.fromWidget(value);
-    parameter->setValue(static_cast<const TextProperty*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getText());
+    parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<StringParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
   }
 
   ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
@@ -105,6 +105,21 @@ namespace MBSimGUI {
     static_cast<MatrixParameter*>(parameter)->value.fromWidget(value);
     parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
 
+  }
+
+  SearchPathParameterPropertyDialog::SearchPathParameterPropertyDialog(SearchPathParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f,true) {
+    value = new ExtWidget("Path",new FileWidget("Path","",3));
+    addToTab("General", value);
+  }
+
+  void SearchPathParameterPropertyDialog::toWidget(Parameter *parameter) {
+    ParameterPropertyDialog::toWidget(parameter);
+    static_cast<FileWidget*>(value->getWidget())->setFile(QString::fromStdString(parameter->getValue()));
+  }
+
+  void SearchPathParameterPropertyDialog::fromWidget(Parameter *parameter) {
+    ParameterPropertyDialog::fromWidget(parameter);
+    parameter->setValue(static_cast<FileWidget*>(value->getWidget())->getFile().toStdString());
   }
 
 }

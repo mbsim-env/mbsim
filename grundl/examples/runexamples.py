@@ -1232,12 +1232,14 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
-                          outputFD)!=0:
+        try:
+          subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
+                          outputFD)
+          print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
+        except:
           nrFailed+=1
           print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
-        else:
-          print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
+          
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()

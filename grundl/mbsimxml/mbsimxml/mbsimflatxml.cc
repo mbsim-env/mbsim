@@ -1,8 +1,6 @@
 #include "config.h"
 #include <stdlib.h>
 #include <iostream>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/dom.h>
@@ -10,15 +8,14 @@
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/xmlnamespacemapping.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
-#define BOOST_CHRONO_HEADER_ONLY
-#include <boost/chrono.hpp>
+#include <boost/timer/timer.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/algorithm/string.hpp>
 
 #ifndef _WIN32
 #  include <dlfcn.h>
@@ -28,6 +25,8 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace xercesc;
+using namespace boost;
 
 namespace {
 
@@ -91,7 +90,7 @@ boost::filesystem::path relLibName(const string &base) {
 // If a module plugin (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 void loadPlugins() {
-  static NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
+  static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
   static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
@@ -128,16 +127,25 @@ void loadPlugins() {
 
 namespace MBSim {
 
+int PrefixedStringBuf::sync() {
+  // split current buffer into lines
+  vector<string> line;
+  string full=str();
+  boost::split(line, full, boost::is_from_range('\n', '\n'));
+  // clear the current buffer
+  str("");
+  // print each line prefixed with prefix to outstr
+  for(vector<string>::iterator it=line.begin(); it!=line.end(); ++it)
+    if(it!=--line.end())
+      outstr<<prefix<<*it<<"\n";
+    else
+      if(*it!="")
+        outstr<<prefix<<*it;
+  outstr<<flush;
+  return 0;
+}
+
 int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator) {
-
-  // print namespace-prefix mapping
-  if(argc==2 && strcmp(argv[1], "--printNamespacePrefixMapping")==0) {
-    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
-    for(map<string, string>::iterator it=nsprefix.begin(); it!=nsprefix.end(); it++)
-      cout<<it->first<<" "<<it->second<<endl;
-    return 1;
-  }
-
 
   // help
   if(argc<2 || argc>3) {
@@ -165,25 +173,24 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
   if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
 
+  // setup message streams
+  static PrefixedStringBuf infoBuf("Info:    ", cout);
+  static PrefixedStringBuf warnBuf("Warning: ", cerr);
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<ostream>(&infoBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&warnBuf));
+
   loadPlugins();
 
   // load MBSim project XML document
-  TiXmlDocument *doc=new TiXmlDocument;
-  if(doc->LoadFile(argv[startArg])==false)
-    throw MBSimError(string("ERROR! Unable to load file: ")+argv[startArg]);
-  TiXml_PostLoadFile(doc);
-  TiXmlElement *e=doc->FirstChildElement();
-  TiXml_setLineNrFromProcessingInstruction(e);
-  map<string,string> dummy;
-  incorporateNamespace(e, dummy);
+  shared_ptr<DOMParser> parser=DOMParser::create(false);
+  shared_ptr<xercesc::DOMDocument> doc=parser->parse(argv[startArg]);
+  DOMElement *e=doc->getDocumentElement();
 
   // create object for DynamicSystemSolver and check correct type
-  dss=ObjectFactory<Element>::createAndInit<DynamicSystemSolver>(e->FirstChildElement());
+  dss=ObjectFactory::createAndInit<DynamicSystemSolver>(e->getFirstElementChild());
 
   // create object for Integrator and check correct type
-  integrator=ObjectFactory<Integrator>::createAndInit<Integrator>(e->FirstChildElement()->NextSiblingElement());
-
-  delete doc;
+  integrator=ObjectFactory::createAndInit<Integrator>(e->getFirstElementChild()->getNextElementSibling());
 
   return 0;
 }
@@ -207,15 +214,13 @@ void MBSimXML::plotInitialState(Integrator*& integrator, DynamicSystemSolver*& d
 }
 
 void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
-  using namespace boost::chrono;
-
-  process_cpu_clock::time_point cpuStart=process_cpu_clock::now();
+  boost::timer::cpu_timer t;
+  t.start();
 
   integrator->integrate(*dss);
 
-  process_cpu_clock::time_point cpuEnd=process_cpu_clock::now();
-
-  cout<<"Integration CPU times {real,user,system} = "<<duration_cast<duration<process_times<double> > >(cpuEnd-cpuStart)<<endl;
+  t.stop();
+  cout<<"Integration CPU times: "<<t.format()<<endl;
 }
 
 void MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {

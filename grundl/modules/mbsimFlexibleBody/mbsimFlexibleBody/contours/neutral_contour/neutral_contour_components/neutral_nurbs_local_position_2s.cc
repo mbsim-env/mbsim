@@ -31,7 +31,7 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
         frame.setNodeNumber(nodes(i, j));
-        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, localPosition);
+        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::localPosition);
         Nodelist(i,j) = frame.getLocalPosition();
 //        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
 //        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;

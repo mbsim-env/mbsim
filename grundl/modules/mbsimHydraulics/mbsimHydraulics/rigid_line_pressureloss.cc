@@ -79,7 +79,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::init(InitStage stage) {
-    if (stage==MBSim::resize) {
+    if (stage==resize) {
       Link::init(stage);
       int j=1;
       W[0].push_back(Mat(j, 1));
@@ -99,7 +99,7 @@ namespace MBSimHydraulics {
         sv.resize(1);
       }
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       if (line->getPlotFeature(plotRecursive)!=enabled)
         this->setPlotFeature(plotRecursive, disabled);
       updatePlotFeatures();
@@ -110,7 +110,7 @@ namespace MBSimHydraulics {
         Element::init(stage);
       }
     }
-    else if (stage==MBSim::unknownStage) {
+    else if (stage==unknownStage) {
       gdTol/=6e4;
       Link::init(stage);
     }

@@ -25,12 +25,12 @@ namespace MBSimFlexibleBody {
 //      virtual std::string getType() const {
 //        return "Contour1sNeutralCosserat";
 //      }
-      virtual void init(MBSim::InitStage stage);
+      virtual void init(InitStage stage);
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
       virtual NeutralNurbsAngle1s* createNeutralAngle();
       virtual NeutralNurbsDotangle1s* createNeutralDotangle();
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
       virtual void updateStateDependentVariables(double t);

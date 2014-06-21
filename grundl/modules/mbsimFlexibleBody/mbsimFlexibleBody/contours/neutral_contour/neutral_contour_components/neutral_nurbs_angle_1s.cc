@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
     NodeFrame frame;
     for (int i = 0; i < nodes.size(); i++) {
       frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, angle);
+      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::angle);
       Nodelist.set(i, trans(frame.getAnglesOfOrientation()));
     }
 //    for (int i = 0; i < degU; i++){

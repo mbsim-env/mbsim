@@ -152,7 +152,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   nurbsdisk->setRadius(rI,rO);
   nurbsdisk->setThickness(d);
   nurbsdisk->setFrameOfReference(this->getFrame("D")); // location of disk
-  nurbsdisk->setLockType(innerring); // inner ring has no elastic dof
+  nurbsdisk->setLockType(FlexibleBody2s13::innerring); // inner ring has no elastic dof
   nurbsdisk->setReferenceInertia(1.,SymMat(3,EYE)); // inertia of the reference frame
   nurbsdisk->setNumberElements(nr,nj);
 

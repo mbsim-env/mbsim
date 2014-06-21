@@ -33,11 +33,50 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
+#include "torsional_stiffness.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
+
+  EmbeddingContextMenu::EmbeddingContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+    QAction *action = new QAction("Add scalar parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+    addAction(action);
+    action = new QAction("Add vector parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+    addAction(action);
+    action = new QAction("Add matrix parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
+    addAction(action);
+    action = new QAction("Add string parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
+    addAction(action);
+    action = new QAction("Add search path parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSearchPathParameter()));
+    addAction(action);
+  }
+
+  void EmbeddingContextMenu::addScalarParameter() {
+    mw->addParameter(new ScalarParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addVectorParameter() {
+    mw->addParameter(new VectorParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addMatrixParameter() {
+    mw->addParameter(new MatrixParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addStringParameter() {
+    mw->addParameter(new StringParameter("a"));
+  }
+
+  void EmbeddingContextMenu::addSearchPathParameter() {
+    mw->addParameter(new SearchPathParameter);
+  }
 
   ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {
     if(removable) {
@@ -50,11 +89,6 @@ namespace MBSimGUI {
       addAction(action);
       addSeparator();
     }
-  }
-
-  void ElementContextMenu::addContour() {
-    ContourContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
   }
 
   FrameContextMenu::FrameContextMenu(Element *frame, QWidget * parent, bool removable) : ElementContextMenu(frame,parent,removable) {
@@ -81,8 +115,8 @@ namespace MBSimGUI {
     addMenu(menu);
     menu = new ObserverContextContextMenu(element, "Add observer");
     addMenu(menu);
-    action = new QAction("Add element from File", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addElementFromFile()));
+    action = new QAction("Add model", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addModel()));
     addAction(action);
   } 
 
@@ -90,7 +124,7 @@ namespace MBSimGUI {
     mw->addFrame(new FixedRelativeFrame("P",element));
   }
 
-  void GroupContextMenu::addElementFromFile() {
+  void GroupContextMenu::addModel() {
     QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.xml)");
     if(file!="") {
       Frame *frame = Frame::readXMLFile(file.toStdString(),element);
@@ -269,7 +303,7 @@ namespace MBSimGUI {
     action = new QAction("Add directional spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
     addAction(action);
-    action = new QAction("Add relative rotational spring damper", this);
+    action = new QAction("Add generalized spring damper", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
     addAction(action);
     action = new QAction("Add joint", this);
@@ -285,6 +319,9 @@ namespace MBSimGUI {
     addMenu(menu);
     action = new QAction("Add linear transfer system", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
+    addAction(action);
+    action = new QAction("Add torsional stiffness", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addTorsionalStiffness()));
     addAction(action);
   }
 
@@ -323,6 +360,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addLinearTransferSystem() {
     mw->addLink(new LinearTransferSystem("LTS",element));
+  }
+
+  void LinkContextContextMenu::addTorsionalStiffness() {
+    mw->addLink(new TorsionalStiffness("TorsionalStiffness",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -434,6 +475,12 @@ namespace MBSimGUI {
     action = new QAction("Add absolute velocity sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteVelocitySensor()));
     addAction(action);
+    action = new QAction("Add absolute angular position sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteAngularPositionSensor()));
+    addAction(action);
+    action = new QAction("Add absolute angular velocity sensor", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteAngularVelocitySensor()));
+    addAction(action);
     action = new QAction("Add function sensor", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
     addAction(action);
@@ -456,6 +503,14 @@ namespace MBSimGUI {
 
   void SensorContextContextMenu::addAbsoluteVelocitySensor() {
     mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor",element));
+  }
+
+  void SensorContextContextMenu::addAbsoluteAngularPositionSensor() {
+    mw->addLink(new AbsoluteAngularPositionSensor("AbsoluteAngularPositionSensor",element));
+  }
+
+  void SensorContextContextMenu::addAbsoluteAngularVelocitySensor() {
+    mw->addLink(new AbsoluteAngularVelocitySensor("AbsoluteAngularVelocitySensor",element));
   }
 
   void SensorContextContextMenu::addFunctionSensor() {

@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
     NodeFrame frame;
     for (int i = 0; i < nodes.size(); i++) {
       frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, dotAngle);
+      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::dotAngle);
       Nodelist.set(i, trans(frame.getDotAnglesOfOrientation()));
     }
 //    cout << "neutralDotAngle" << Nodelist << endl << endl;

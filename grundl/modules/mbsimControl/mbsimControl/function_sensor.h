@@ -53,7 +53,7 @@ namespace MBSimControl {
       Function_SSEvaluation(const std::string &name="") : Signal(name), signal(NULL), fun(NULL), signalString("") {}
       ~Function_SSEvaluation() { delete fun; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignal(Signal * s) {signal=s; }
       void setFunction(fmatvec::Function<double(double)>* fun_) {fun=fun_; }
       fmatvec::Vec getSignal();
@@ -72,7 +72,7 @@ namespace MBSimControl {
       Function_SSSEvaluation(const std::string &name="") : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
       ~Function_SSSEvaluation() { delete fun; }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
       void setFunction(fmatvec::Function<double(double,double)>* fun_) {fun=fun_; }
       fmatvec::Vec getSignal();

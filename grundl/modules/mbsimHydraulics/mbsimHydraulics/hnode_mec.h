@@ -69,7 +69,7 @@ namespace MBSimHydraulics {
 
       void calcxSize() {xSize=1; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
@@ -116,7 +116,7 @@ namespace MBSimHydraulics {
 
       void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updateg(double t);
@@ -134,7 +134,7 @@ namespace MBSimHydraulics {
       EnvironmentNodeMec(const std::string &name="") : HNodeMec(name) {}
       virtual std::string getType() const { return "EnvironmentNodeMec"; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       virtual bool isSingleValued() const {return true;}
   };
@@ -152,7 +152,7 @@ namespace MBSimHydraulics {
 
       void calcxSize() {xSize=2; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
@@ -188,7 +188,7 @@ namespace MBSimHydraulics {
       //void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize(int j) {rFactorSize=1; }
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 

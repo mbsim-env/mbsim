@@ -26,6 +26,7 @@
 
 namespace MBSimGUI {
 
+  class Element;
   class Frame;
   class Contour;
   class Group;
@@ -47,7 +48,7 @@ namespace MBSimGUI {
       QModelIndex parent(const QModelIndex &index) const;
 
       int rowCount(const QModelIndex &parent = QModelIndex()) const;
-      int columnCount(const QModelIndex &) const {return 2;}
+      int columnCount(const QModelIndex &) const {return 3;}
 
       Qt::ItemFlags flags(const QModelIndex &index) const;
       bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
@@ -75,11 +76,15 @@ namespace MBSimGUI {
       std::map<std::string, QModelIndex> idEleMap;
   };
 
-  class ParameterListModel : public TreeModel {
+  class EmbeddingTreeModel : public TreeModel {
     public:
-      ParameterListModel(QObject *parent = 0);
+      EmbeddingTreeModel(QObject *parent = 0);
 
-      void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
+      void createElementItem(Element *element, const QModelIndex &parent = QModelIndex());
+      QModelIndex createEmbeddingItem(Element *element, const QModelIndex &parent = QModelIndex());
+      QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
+
+      std::map<Element*, QModelIndex> idEleMap;
   };
 
 }

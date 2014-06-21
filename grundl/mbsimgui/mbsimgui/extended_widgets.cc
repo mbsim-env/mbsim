@@ -38,7 +38,7 @@ namespace MBSimGUI {
 
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-    evalDialog = new EvalDialog;
+    evalDialog = new EvalDialog(0);
 
     inputCombo = new QComboBox;
     stackedWidget = new QStackedWidget;
@@ -55,7 +55,7 @@ namespace MBSimGUI {
     inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     layout->addWidget(stackedWidget);
-    layout->addWidget(evalButton);
+//    layout->addWidget(evalButton);
     layout->addWidget(inputCombo);
   }
 
@@ -96,7 +96,7 @@ namespace MBSimGUI {
       QMessageBox::warning( this, "Validation", "Value not valid"); 
       return;
     }
-    evalDialog->setValue(A);
+    //evalDialog->setValue(A);
     evalDialog->exec();
     //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
   }
@@ -112,26 +112,6 @@ namespace MBSimGUI {
     layout->addWidget(comboBox);
     defineWidget(0);
     connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
-  }
-
-  void ChoiceWidget2::resize_(int m, int n) {
-    dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n);
-  }
-
-  void ChoiceWidget2::updateWidget() {
-    dynamic_cast<WidgetInterface*>(getWidget())->updateWidget();
-  }
-
-  QWidget* ChoiceWidget2::getWidget() const {
-    return widget;
-  }
-
-  QString ChoiceWidget2::getName() const {
-    return comboBox->currentText();
-  }
-
-  int ChoiceWidget2::getIndex() const {
-    return comboBox->currentIndex();
   }
 
   void ChoiceWidget2::defineWidget(int index) {

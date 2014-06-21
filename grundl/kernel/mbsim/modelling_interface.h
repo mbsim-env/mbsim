@@ -43,7 +43,7 @@ namespace MBSim {
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
        */
-      virtual void init(InitStage stage) = 0;
+      virtual void init(Element::InitStage stage) = 0;
 
       /*!
        * \brief Get the name of the model 

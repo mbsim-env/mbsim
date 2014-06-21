@@ -60,14 +60,14 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat)=0;
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0)=0;
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0)=0;
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0)=0;
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false)=0;
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string())=0;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(MBSim::InitStage stage)=0;
+      virtual void init(InitStage stage)=0;
       virtual double computePotentialEnergy()=0;
       virtual void facLLM(int i = 0)=0;
       /***************************************************/
@@ -108,6 +108,17 @@ namespace MBSimFlexibleBody {
        */
       virtual Contour1sNeutralCosserat* createNeutralPhase(const std::string & contourName = "Neutral");
 
+      /*!
+       * \brief interface function to transform the Jacobian if the generalized coordinates have been changed
+       *
+       * default: no transformation!
+       *
+       * \todo: make real concept for reduced bodies in MBSim
+       */
+      virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) {
+        return J;
+      }
+
       virtual int getNumberOfElementDOF() const {
         throw MBSim::MBSimError("ERROR(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");
       }
@@ -117,9 +128,14 @@ namespace MBSimFlexibleBody {
       virtual double getLength() const {
         return L;
       }
+      virtual int getqSizeFull() const {
+        return getqSize();
+      }
       virtual bool isOpenStructure() const {
         return openStructure;
       }
+
+
       /***************************************************/
 
       /**
@@ -167,7 +183,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief angle parametrisation
        */
-      CardanPtr ANGLE;
+      CardanPtr angle;
 
       /**
        * \brief number of translational elements

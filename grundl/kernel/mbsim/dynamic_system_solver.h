@@ -32,21 +32,6 @@ namespace MBSim {
   class Integrator;
 
   /**
-   * \brief solver for contact equations
-   */
-  enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
-
-  /**
-   * \brief relaxation strategies in solution of contact equations
-   */
-  enum Strategy { global, local };
-
-  /**
-   * \brief linear algebra for Newton scheme in solution of contact equations
-   */
-  enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
-
-  /**
    * \brief solver interface for modelling and simulation of dynamic systems
    * \author Martin Foerg
    * \date 2009-03-31 some comments (Thorsten Schindler)
@@ -65,6 +50,22 @@ namespace MBSim {
    */
   class DynamicSystemSolver : public Group {
     public:
+
+      /**
+       * \brief solver for contact equations
+       */
+      enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
+
+      /**
+       * \brief relaxation strategies in solution of contact equations
+       */
+      enum Strategy { global, local };
+
+      /**
+       * \brief linear algebra for Newton scheme in solution of contact equations
+       */
+      enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
+
       /**
        * \brief constructor
        */
@@ -297,7 +298,7 @@ namespace MBSim {
        * \brief updates mass action matrix
        * \param time
        */
-      void updateG(double t, int i=0);
+      virtual void updateG(double t, int i=0);
 
       /**
        * \brief decrease relaxation factors if mass action matrix is not diagonal dominant
@@ -455,12 +456,6 @@ namespace MBSim {
 
 
       /**
-       * \brief decide, whether the model-hierarchy should be reorganized.
-       * \param true for reorganisation, false otherwise
-       */
-      void setReorganizeHierarchy(bool flag) { reorganizeHierarchy = flag; }
-
-      /**
        * \brief set tolerance for projection of generalized position
        * \param tolerance
        */
@@ -490,12 +485,6 @@ namespace MBSim {
        * \param tolerance for impact
        */
       void setLaTol(double tol) {LaTol = tol; Group::setLaTol(tol);}
-
-
-      /**
-       * \param decide, whether information should be printed on standard output.
-       */
-      void setInformationOutput(bool INFO_) { INFO = INFO_; }
 
       /**
        * \brief references to external state
@@ -742,12 +731,6 @@ namespace MBSim {
       unsigned int flushCount;
 
       /**
-       * \brief Flag for reorganisation of hierarchy.
-       * This flag will be removed in the future.
-       */
-      bool reorganizeHierarchy;
-
-      /**
        * \brief Tolerance for projection of generalized position.
        */
       double tolProj;
@@ -805,11 +788,6 @@ namespace MBSim {
        * \brief boolean signal evaluation for end integration set by user
        */
       static bool exitRequest;
-
-      /**
-       * \brief information on standard output
-       */
-      bool INFO;
 
       /**
        * \brief is a state read from a file

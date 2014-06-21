@@ -94,12 +94,12 @@ namespace MBSimControl {
     xd=A*x+B*inputSignal->getSignal();
   }
 
-  void LinearTransferSystem::init(MBSim::InitStage stage) {
-    if (stage==MBSim::resize) {
+  void LinearTransferSystem::init(InitStage stage) {
+    if (stage==resize) {
       SignalProcessingSystem::init(stage);
       x.resize(xSize, INIT, 0);
     }
-    else if (stage==MBSim::plot) {
+    else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if (getPlotFeature(globalPosition)==enabled)

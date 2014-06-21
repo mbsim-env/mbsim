@@ -100,8 +100,8 @@
           <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0;0;0]</initialTranslation>
           <initialRotation>[0;0;0]</initialRotation>
-          <scaleFactor>1</scaleFactor>
-          <ivFileName>"iv/hat.iv"</ivFileName>
+          <scaleFactor>1.5</scaleFactor>
+          <ivFileName>['../' ivdir '/hat.iv']</ivFileName>
           <creaseEdges unit="degree">30</creaseEdges>
         </IvBody>
       </openMBVRigidBody>

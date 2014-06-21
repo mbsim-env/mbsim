@@ -39,7 +39,7 @@ namespace MBSimControl {
     public:
       Signal(const std::string &name) : Link(name) {}
 
-      void init(MBSim::InitStage stage);
+      void init(InitStage stage);
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg(double t) {getSignal(); }; // at least one signal-update

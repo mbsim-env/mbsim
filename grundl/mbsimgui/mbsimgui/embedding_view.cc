@@ -18,24 +18,35 @@
 */
 
 #include <config.h>
-#include "parameter_view.h"
-#include "parameter.h"
-#include "parameter_property_dialog.h"
+#include "embedding_view.h"
 #include "treemodel.h"
 #include "treeitem.h"
+#include "parameter.h"
+#include "element.h"
 #include "mainwindow.h"
-#include <QEvent>
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ParameterView::mouseDoubleClickEvent ( QMouseEvent * event ) {
+  void EmbeddingView::openEditor() {
     if(!editor) {
       index = selectionModel()->currentIndex();
-      if(index.isValid()) {
-        Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(model())->getItem(index)->getItemData());
+      Parameter *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
+      if(parameter) {
+        Element *element = static_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
+        mw->updateOctaveParameters(element);
         editor = parameter->createPropertyDialog();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->toWidget();
+        editor->show();
+        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+        return;
+      }
+      Element *element = dynamic_cast<Element*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
+      if(element) {
+        editor = element->createEmbeddingPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
         editor->show();
@@ -45,23 +56,25 @@ namespace MBSimGUI {
     }
   }
 
-  void ParameterView::mousePressEvent ( QMouseEvent * event ) {
+  void EmbeddingView::mouseDoubleClickEvent(QMouseEvent *event) {
+    openEditor();
+  }
+
+  void EmbeddingView::mousePressEvent ( QMouseEvent * event ) {
     if(!editor)
       QTreeView::mousePressEvent(event);
   }
 
-  void ParameterView::dialogFinished(int result) {
+  void EmbeddingView::dialogFinished(int result) {
     if(result != 0) {
-      mw->updateOctaveParameters();
       mw->mbsimxml(1);
     }
     editor = 0;
   }
 
-  void ParameterView::apply() {
+  void EmbeddingView::apply() {
     update(index);
     update(index.sibling(index.row(),1));
-    mw->updateOctaveParameters();
     mw->mbsimxml(1);
   }
 
