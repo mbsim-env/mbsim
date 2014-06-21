@@ -206,9 +206,9 @@ namespace MBSim {
         XY << XY_;
 
         if (xSize == 0)
-          std::cerr << "It is strongly recommended to set x file first! Continuing anyway." << std::endl;
+          fmatvec::Atom::msg(fmatvec::Atom::Warn) << "It is strongly recommended to set x file first! Continuing anyway." << std::endl;
         else if (ySize == 0)
-          std::cerr << "It is strongly recommended to set y file first! Continuing anyway." << std::endl;
+          fmatvec::Atom::msg(fmatvec::Atom::Warn) << "It is strongly recommended to set y file first! Continuing anyway." << std::endl;
         else {
           if (XY.cols() != xSize)
             throw MBSimError("Dimension missmatch in xSize");
@@ -251,12 +251,12 @@ namespace MBSim {
         if (*x <= X(0)) {
           *xIndexPlus = 1;
           *xIndexMinus = 0;
-          std::cerr << "TwoDimensionalTabularFunction: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << std::endl;
+          fmatvec::Atom::msg(fmatvec::Atom::Warn) << "TwoDimensionalTabularFunction: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << std::endl;
         }
         else if (*x >= X(*xSize - 1)) {
           *xIndexPlus = *xSize - 1;
           *xIndexMinus = *xSize - 2;
-          std::cerr << "TwoDimensionalTabularFunction: Value (" << *x << ") is greater than the greatest table value(" << X(*xSize - 1) << ")!" << std::endl;
+          fmatvec::Atom::msg(fmatvec::Atom::Warn) << "TwoDimensionalTabularFunction: Value (" << *x << ") is greater than the greatest table value(" << X(*xSize - 1) << ")!" << std::endl;
         }
         else {
           if (*x < X(*xIndexPlus))
