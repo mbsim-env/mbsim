@@ -213,7 +213,7 @@ namespace MBSim {
 
             if(s_PF < 0. || s_PF > h_F) {
               if(warnLevel!=0) {
-                cerr << "WARNING (ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Cylinder not represented at the moment!" << endl;
+                msg(Warn) << "(ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Cylinder not represented at the moment!" << endl;
               }
               g(0) = 1.;
             }
@@ -344,7 +344,7 @@ namespace MBSim {
 
             if(s_PF < 0. || s_PF > h_F) {
               if(warnLevel!=0) {
-                cerr << "WARNING (ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Frustum not represented at the moment!" << endl;
+                msg(Warn) << "(ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Frustum not represented at the moment!" << endl;
               }
               g(0) = 1.;
             }

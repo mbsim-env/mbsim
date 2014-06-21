@@ -176,7 +176,7 @@ namespace MBSimGUI {
 
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();
-      preprocess(parser, octEval, dependencies, mainxmlele);
+      Preprocess::preprocess(parser, octEval, dependencies, mainxmlele);
     }
     catch(...) {
       errText = "error in preprocess";

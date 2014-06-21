@@ -76,16 +76,16 @@ namespace MBSim {
     tFrustum=crossProduct(nFrustum, Vec3("[0; 0; 1]"));
     tFrustum/=nrm2(tFrustum);
 
-    // cerr << "ET=" << trans(ET) << endl;
-    // cerr << "EP=" << trans(EP) << endl;
-    // cerr << "MT=" << trans(MT) << endl;
-    // cerr << "MP=" << trans(MP) << endl;
-    // cerr << "nFrustum=" << trans(nFrustum) << endl;
-    // cerr << "tFrustum=" << trans(tFrustum) << endl;
-    // cerr << "rTop=" << rTop << endl;
-    // cerr << "rPlane=" << rPlane << endl;
-    // cerr << "rFrustumTop=" << rFrustumTop << endl;
-    // cerr << "rFrustumPlane=" << rFrustumPlane << endl;
+    msg(Debug) << "ET=" << trans(ET) << endl;
+    msg(Debug) << "EP=" << trans(EP) << endl;
+    msg(Debug) << "MT=" << trans(MT) << endl;
+    msg(Debug) << "MP=" << trans(MP) << endl;
+    msg(Debug) << "nFrustum=" << trans(nFrustum) << endl;
+    msg(Debug) << "tFrustum=" << trans(tFrustum) << endl;
+    msg(Debug) << "rTop=" << rTop << endl;
+    msg(Debug) << "rPlane=" << rPlane << endl;
+    msg(Debug) << "rFrustumTop=" << rFrustumTop << endl;
+    msg(Debug) << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
   void ContactKinematicsPointPlaneWithFrustum::updateg(Vec &g, ContourPointData* cpData, int index) {
@@ -117,21 +117,21 @@ namespace MBSim {
     AKW.set(2, crossProduct(AKW.row(0).T(), AKW.row(1).T()).T());
     Vec3 KrOPoint = AKW*WrPlanePoint;
 
-    // cerr << "\n\n\n\n" << endl;
-    // cerr << "WrOPoint=" << trans(WrOPoint) << endl;
-    // cerr << "WrOPlane=" << trans(WrOPlane) << endl;
-    // cerr << "WnContour=" << trans(WnContour) << endl;
-    // cerr << "WrPlanePoint=" << trans(WrPlanePoint) << endl;
-    // cerr << "d=" << d << endl;
-    // cerr << "AKW=" << AKW << endl;
-    // cerr << "KrOPoint=" << trans(KrOPoint) << endl;
+    msg(Debug) << "\n\n\n\n" << endl;
+    msg(Debug) << "WrOPoint=" << trans(WrOPoint) << endl;
+    msg(Debug) << "WrOPlane=" << trans(WrOPlane) << endl;
+    msg(Debug) << "WnContour=" << trans(WnContour) << endl;
+    msg(Debug) << "WrPlanePoint=" << trans(WrPlanePoint) << endl;
+    msg(Debug) << "d=" << d << endl;
+    msg(Debug) << "AKW=" << AKW << endl;
+    msg(Debug) << "KrOPoint=" << trans(KrOPoint) << endl;
 
     Vec3 Kn;
     Vec3 Kt;
     Vec3 Kb("[0; 0; 1]");
     Vec3 KrCP;
     if (d<rTop) { // Contact with small plane
-      // cerr << "Fall 1" << endl;
+      msg(Debug) << "Fall 1" << endl;
       Kn=Vec3("[1; 0; 0]");
       Kt=Vec3("[0; -1; 0]");
       g(0)=KrOPoint(0)-h;
@@ -139,7 +139,7 @@ namespace MBSim {
       KrCP(1)=KrOPoint(1);
     }
     else if (d<rFrustumTop) { // contact with inner rounding
-      // cerr << "Fall 2" << endl;
+      msg(Debug) << "Fall 2" << endl;
       double sin_alpha=(KrOPoint(1)-MT(1))/rho;
       double cos_alpha=cos(asin(sin_alpha));
       Kn(0)=cos_alpha;
@@ -151,7 +151,7 @@ namespace MBSim {
       g(0)=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else if (d<rFrustumPlane) { // contact with frustum
-      // cerr << "Fall 3" << endl;
+      msg(Debug) << "Fall 3" << endl;
       Kn=nFrustum;
       Kt=tFrustum;
       Vec3 KrExP;
@@ -166,7 +166,7 @@ namespace MBSim {
       g(0)=sign(KrExP.T()*nFrustum)*nrm2(KrCP-KrOPoint);
     }
     else if (d < rPlane) { // contact with outer rounding
-      // cerr << "Fall 4" << endl;
+      msg(Debug) << "Fall 4" << endl;
       double sin_alpha=(-KrOPoint(1)+MP(1))/rho;
       double cos_alpha=cos(asin(sin_alpha));
       Kn(0)=cos_alpha;
@@ -178,7 +178,7 @@ namespace MBSim {
       g(0)=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else { // contact with infinite plane
-      // cerr << "Fall 5" << endl;
+      msg(Debug) << "Fall 5" << endl;
       Kn=Vec3("[1; 0; 0]");
       Kt=Vec3("[0; -1; 0]");
       g(0)=KrOPoint(0);
@@ -192,16 +192,16 @@ namespace MBSim {
     Vec3 Wb = AWK * Kb;
     Vec3 WrCP = WrOPlane + AWK * KrCP;
 
-    // cerr << "Kn=" << trans(Kn) << endl;
-    // cerr << "Kt=" << trans(Kt) << endl;
-    // cerr << "Kb=" << trans(Kb) << endl;
-    // cerr << "g=" << g(0) << endl;
-    // cerr << "KrCP=" << trans(KrCP) << endl;
-    // cerr << "Wn=" << trans(Wn) << endl;
-    // cerr << "Wt=" << trans(Wt) << endl;
-    // cerr << "Wb=" << trans(Wb) << endl;
-    // cerr << "WrCP=" << trans(WrCP) << endl;
-    // cerr << "========================" << endl;
+    msg(Debug) << "Kn=" << trans(Kn) << endl;
+    msg(Debug) << "Kt=" << trans(Kt) << endl;
+    msg(Debug) << "Kb=" << trans(Kb) << endl;
+    msg(Debug) << "g=" << g(0) << endl;
+    msg(Debug) << "KrCP=" << trans(KrCP) << endl;
+    msg(Debug) << "Wn=" << trans(Wn) << endl;
+    msg(Debug) << "Wt=" << trans(Wt) << endl;
+    msg(Debug) << "Wb=" << trans(Wb) << endl;
+    msg(Debug) << "WrCP=" << trans(WrCP) << endl;
+    msg(Debug) << "========================" << endl;
 
     cpData[ipoint].getFrameOfReference().getPosition() = WrOPoint;
     cpData[iplane].getFrameOfReference().getPosition() =  WrCP;

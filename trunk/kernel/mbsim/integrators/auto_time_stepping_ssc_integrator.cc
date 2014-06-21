@@ -1478,7 +1478,7 @@ namespace MBSim {
         StepTrials++;
         if (dtOld<=dtMin+macheps()) {
           StepFinished = -1;
-          //cerr << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
+          //msg(Warn) << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
           //exit(StepFinished);
         }
       }
@@ -1983,7 +1983,7 @@ namespace MBSim {
                   dte= dt/2.0;
                 }
               }   
-              if (testOK) cerr<<"High order refused; order 1 accepted."<<endl; 
+              if (testOK) msg(Warn)<<"High order refused; order 1 accepted."<<endl; 
             }
 
           }     
@@ -2087,7 +2087,7 @@ namespace MBSim {
                     dte= dt/2.0;
                   }
                 }  
-                if (testOK) cerr<<"Hohe Ordnung abgeleht aber dafuer Order 1 akzeptiert!!!"<<endl; 
+                if (testOK) msg(Warn)<<"Hohe Ordnung abgeleht aber dafuer Order 1 akzeptiert!!!"<<endl; 
           }
 
         } //endif !ConstraintsChanged
@@ -2118,7 +2118,7 @@ namespace MBSim {
           //cout<<"step size halved because of failed convergence"<<endl;
         }
         else {
-          cerr<<"Error: no convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
+          msg(Warn)<<"No convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
         }
       }
       else {

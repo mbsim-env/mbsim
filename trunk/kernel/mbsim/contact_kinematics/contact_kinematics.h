@@ -21,6 +21,7 @@
 #define _CONTACT_KINEMATICS_H_
 
 #include "fmatvec/fmatvec.h"
+#include "fmatvec/atom.h"
 #include "mbsim/mbsim_event.h"
 #include <mbsim/single_contact.h>
 #include <vector>
@@ -43,7 +44,7 @@ namespace MBSim {
    * \date 2009-04-02 velocity part deleted (Thorsten Schindler)
    * \date 2009-07-28 updates are pure virtual (Thorsten Schindler)
    */
-  class ContactKinematics {
+  class ContactKinematics : public fmatvec::Atom {
     public:
       /**
        * \brief constructor
