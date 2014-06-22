@@ -608,16 +608,6 @@ namespace MBSimGUI {
       ExtWidget *s1Ref, *s2Ref, *f;
   };
 
-  class TorsionalStiffnessPropertyDialog : public LinkPropertyDialog {
-
-    public:
-      TorsionalStiffnessPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
-    protected:
-      ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
-  };
-
 }
 
 #endif

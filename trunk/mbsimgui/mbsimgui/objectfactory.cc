@@ -36,7 +36,6 @@
 #include "parameter.h"
 #include "observer.h"
 #include "integrator.h"
-#include "torsional_stiffness.h"
 #include "friction.h"
 #include <string>
 
@@ -196,8 +195,6 @@ namespace MBSimGUI {
       return new BinarySignalOperation(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
       return new LinearTransferSystem(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIMPOWERTRAIN%"TorsionalStiffness")
-      return new TorsionalStiffness(E(element)->getAttribute("name"),parent);
     return 0;
   }  
 
