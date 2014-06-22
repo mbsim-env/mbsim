@@ -34,6 +34,7 @@
 #include "contour.h"
 #include "group.h"
 #include "torsional_stiffness.h"
+#include "friction.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
@@ -323,6 +324,9 @@ namespace MBSimGUI {
     action = new QAction("Add torsional stiffness", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addTorsionalStiffness()));
     addAction(action);
+    action = new QAction("Add generalized friction", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
+    addAction(action);
   }
 
   void LinkContextContextMenu::addKineticExcitation() {
@@ -364,6 +368,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addTorsionalStiffness() {
     mw->addLink(new TorsionalStiffness("TorsionalStiffness",element));
+  }
+
+  void LinkContextContextMenu::addGeneralizedFriction() {
+    mw->addLink(new GeneralizedFriction("GeneralizedFriction",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
