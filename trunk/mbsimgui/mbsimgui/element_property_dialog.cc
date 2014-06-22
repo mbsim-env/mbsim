@@ -989,15 +989,18 @@ namespace MBSimGUI {
     static_cast<DirectionalSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
   }
 
-  GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+  GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(Link *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
     function = new ExtWidget("GeneralizedForceFunction",new ChoiceWidget2(new SpringDamperWidgetFactory));
     addToTab("Kinetics", function);
 
-    body = new ExtWidget("Rigid body",new RigidBodyOfReferenceWidget(springDamper,0));
-    addToTab("General", body);
+    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);
+    addToTab("General", body1);
+
+    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(springDamper,0));
+    addToTab("General", body2);
 
     coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
     addToTab("Visualisation", coilSpring);
@@ -1012,7 +1015,8 @@ namespace MBSimGUI {
   void GeneralizedSpringDamperPropertyDialog::toWidget(Element *element) {
     LinkPropertyDialog::toWidget(element);
     static_cast<GeneralizedSpringDamper*>(element)->function.toWidget(function);
-    static_cast<GeneralizedSpringDamper*>(element)->body.toWidget(body);
+    static_cast<GeneralizedSpringDamper*>(element)->body1.toWidget(body1);
+    static_cast<GeneralizedSpringDamper*>(element)->body2.toWidget(body2);
     static_cast<GeneralizedSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
     static_cast<GeneralizedSpringDamper*>(element)->forceArrow.toWidget(forceArrow);
     static_cast<GeneralizedSpringDamper*>(element)->momentArrow.toWidget(momentArrow);
@@ -1021,7 +1025,8 @@ namespace MBSimGUI {
   void GeneralizedSpringDamperPropertyDialog::fromWidget(Element *element) {
     LinkPropertyDialog::fromWidget(element);
     static_cast<GeneralizedSpringDamper*>(element)->function.fromWidget(function);
-    static_cast<GeneralizedSpringDamper*>(element)->body.fromWidget(body);
+    static_cast<GeneralizedSpringDamper*>(element)->body1.fromWidget(body1);
+    static_cast<GeneralizedSpringDamper*>(element)->body2.fromWidget(body2);
     static_cast<GeneralizedSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
     static_cast<GeneralizedSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
     static_cast<GeneralizedSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
