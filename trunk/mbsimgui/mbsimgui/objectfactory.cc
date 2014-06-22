@@ -37,6 +37,7 @@
 #include "observer.h"
 #include "integrator.h"
 #include "torsional_stiffness.h"
+#include "friction.h"
 #include <string>
 
 using namespace std;
@@ -161,6 +162,8 @@ namespace MBSimGUI {
       return new DirectionalSpringDamper(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"GeneralizedSpringDamper")
       return new GeneralizedSpringDamper(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
+      return new GeneralizedFriction(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Contact")

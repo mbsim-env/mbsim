@@ -46,6 +46,7 @@
 #include "sensor.h"
 #include "function_widget_factory.h"
 #include "torsional_stiffness.h"
+#include "friction.h"
 #include <QPushButton>
 
 using namespace std;
@@ -1030,6 +1031,49 @@ namespace MBSimGUI {
     static_cast<GeneralizedSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
     static_cast<GeneralizedSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
     static_cast<GeneralizedSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
+  }
+
+  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Link *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    function = new ExtWidget("Generalized friction force law",new FrictionForceLawChoiceWidget,true);
+    addToTab("Kinetics", function);
+
+    normalForce = new ExtWidget("Generalized normal force",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft));
+    addToTab("Kinetics",normalForce);
+
+    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);
+    addToTab("General", body1);
+
+    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(springDamper,0));
+    addToTab("General", body2);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", momentArrow);
+  }
+
+  void GeneralizedFrictionPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<GeneralizedFriction*>(element)->function.toWidget(function);
+    static_cast<GeneralizedFriction*>(element)->normalForce.toWidget(normalForce);
+    static_cast<GeneralizedFriction*>(element)->body1.toWidget(body1);
+    static_cast<GeneralizedFriction*>(element)->body2.toWidget(body2);
+    static_cast<GeneralizedFriction*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<GeneralizedFriction*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void GeneralizedFrictionPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<GeneralizedFriction*>(element)->function.fromWidget(function);
+    static_cast<GeneralizedFriction*>(element)->normalForce.fromWidget(normalForce);
+    static_cast<GeneralizedFriction*>(element)->body1.fromWidget(body1);
+    static_cast<GeneralizedFriction*>(element)->body2.fromWidget(body2);
+    static_cast<GeneralizedFriction*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<GeneralizedFriction*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
