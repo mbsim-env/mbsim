@@ -380,6 +380,16 @@ namespace MBSimGUI {
       ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
   };
 
+  class GeneralizedFrictionPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      GeneralizedFrictionPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *function, *normalForce, *body1, *body2, *connections, *forceArrow, *momentArrow;
+  };
+
   class JointPropertyDialog : public LinkPropertyDialog {
 
     public:

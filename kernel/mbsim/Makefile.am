@@ -20,6 +20,7 @@ joint.cc\
 gear.cc\
 gearing.cc\
 spring_damper.cc\
+friction.cc\
 extern_generalized_io.cc\
 link.cc\
 link_mechanics.cc\
@@ -67,6 +68,7 @@ gear.h\
 gearing.h\
 isotropic_rotational_spring_damper.h\
 spring_damper.h\
+friction.h\
 extern_generalized_io.h\
 link.h\
 link_mechanics.h\

@@ -373,8 +373,6 @@ namespace MBSim {
         throw MBSim::MBSimError("ERROR in "+getName()+": rigid body on second side must be given!");
       if(body[0]) LinkMechanics::connect(body[0]->getFrameForKinematics());
       LinkMechanics::connect(body[1]->getFrameForKinematics());
-      if((body[0] and body[0]->getTranslation()==NULL and body[0]->getRotation()==NULL) or (body[1]->getTranslation()==NULL and body[1]->getRotation()==NULL))
-        throw MBSim::MBSimError("ERROR in "+getName()+": bodies must have a dof!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -395,6 +393,13 @@ namespace MBSim {
   #endif
         LinkMechanics::init(stage);
       }
+    }
+    else if(stage==unknownStage) {
+      if(body[0] and body[0]->getuRelSize()!=1)
+        throw MBSim::MBSimError("ERROR in "+getName()+": rigid body on first side to must have of 1 dof!");
+      if(body[1]->getuRelSize()!=1)
+        throw MBSim::MBSimError("ERROR in "+getName()+": rigid body on second side must have 1 dof!");
+      LinkMechanics::init(stage);
     }
     else
       LinkMechanics::init(stage);
