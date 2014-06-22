@@ -1667,7 +1667,15 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="rigidBody">
+          <xs:element name="rigidBodyFirstSide" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="rigidBodySecondSide">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
             </xs:documentation></xs:annotation>

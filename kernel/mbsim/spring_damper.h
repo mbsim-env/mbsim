@@ -157,8 +157,7 @@ namespace MBSim {
   class GeneralizedSpringDamper : public LinkMechanics {
     protected:
       fmatvec::Function<double(double,double)> *func;
-      RigidBody *body;
-      Frame C;
+      std::vector<RigidBody*> body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
@@ -166,7 +165,6 @@ namespace MBSim {
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
       void updateh(double, int i=0);
-      void updateJacobians(double t, int j=0);
       void updateg(double);
       void updategd(double);
 
@@ -193,7 +191,8 @@ namespace MBSim {
        * the two connected frames in the projected direction; (!) this might induce violation of the global equality of torques (!).
        * The direction vector dir is given in coordinates of frame refFrame.
        */
-      void setRigidBody(RigidBody* body_) { body = body_; }
+      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
+      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -207,7 +206,7 @@ namespace MBSim {
       }
 
       /** \brief Visualize a force arrow acting on each of both connected frames */
-     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
         LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
@@ -221,7 +220,7 @@ namespace MBSim {
       }
 #endif
     private:
-      std::string saved_body;
+      std::string saved_body1, saved_body2;
   };
 
 }

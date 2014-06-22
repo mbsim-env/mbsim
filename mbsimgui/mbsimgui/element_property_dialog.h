@@ -373,11 +373,11 @@ namespace MBSimGUI {
   class GeneralizedSpringDamperPropertyDialog : public LinkPropertyDialog {
 
     public:
-      GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      GeneralizedSpringDamperPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *body, *connections, *coilSpring, *forceArrow, *momentArrow;
+      ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
   };
 
   class JointPropertyDialog : public LinkPropertyDialog {
