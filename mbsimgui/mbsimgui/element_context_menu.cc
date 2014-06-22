@@ -33,7 +33,6 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "torsional_stiffness.h"
 #include "friction.h"
 #include <QFileDialog>
 
@@ -321,9 +320,6 @@ namespace MBSimGUI {
     action = new QAction("Add linear transfer system", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
     addAction(action);
-    action = new QAction("Add torsional stiffness", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addTorsionalStiffness()));
-    addAction(action);
     action = new QAction("Add generalized friction", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
     addAction(action);
@@ -364,10 +360,6 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addLinearTransferSystem() {
     mw->addLink(new LinearTransferSystem("LTS",element));
-  }
-
-  void LinkContextContextMenu::addTorsionalStiffness() {
-    mw->addLink(new TorsionalStiffness("TorsionalStiffness",element));
   }
 
   void LinkContextContextMenu::addGeneralizedFriction() {

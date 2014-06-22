@@ -166,7 +166,6 @@ namespace MBSimGUI {
       void addActuator();
       void addSignal();
       void addLinearTransferSystem();
-      void addTorsionalStiffness();
       void addGeneralizedFriction();
 
     protected:
