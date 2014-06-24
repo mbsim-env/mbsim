@@ -77,9 +77,9 @@ namespace MBSimGUI {
     if(i==16)
       return new SignumFunctionProperty;
     if(i==17)
-      return new SumFunctionProperty;
+      return new AdditionFunctionProperty;
     if(i==18)
-      return new ProductFunctionProperty;
+      return new MultiplicationFunctionProperty;
   }
 
   vector<FQN> FunctionPropertyFactory2::getNames() {
@@ -101,8 +101,8 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"TabularFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
     name.push_back(MBSIM%"SignumFunction");
-    name.push_back(MBSIM%"SumFunction");
-    name.push_back(MBSIM%"ProductFunction");
+    name.push_back(MBSIM%"AdditionFunction");
+    name.push_back(MBSIM%"MultiplicationFunction");
     return name;
   }
 

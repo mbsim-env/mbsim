@@ -173,24 +173,24 @@ namespace MBSimGUI {
     ExtWidget *functions;
   };
 
-  class SumFunctionWidget : public FunctionWidget {
+  class AdditionFunctionWidget : public FunctionWidget {
 
-    friend class SumFunctionProperty;
+    friend class AdditionFunctionProperty;
 
     public:
-    SumFunctionWidget(int m=0);
+    AdditionFunctionWidget(int m=0);
     void resize_(int m, int n);
 
     protected:
     ExtWidget *f1, *f2;
   };
 
-  class ProductFunctionWidget : public FunctionWidget {
+  class MultiplicationFunctionWidget : public FunctionWidget {
 
-    friend class ProductFunctionProperty;
+    friend class MultiplicationFunctionProperty;
 
     public:
-    ProductFunctionWidget(int m=0);
+    MultiplicationFunctionWidget(int m=0);
     void resize_(int m, int n);
 
     protected:

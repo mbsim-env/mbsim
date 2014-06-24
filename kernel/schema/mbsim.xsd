@@ -3676,14 +3676,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SumFunction" substitutionGroup="Function" type="SumFunctionType">
+  <xs:element name="AdditionFunction" substitutionGroup="Function" type="AdditionFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SumFunctionType">
+  <xs:complexType name="AdditionFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
@@ -3712,14 +3712,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="ProductFunction" substitutionGroup="Function" type="ProductFunctionType">
+  <xs:element name="MultiplicationFunction" substitutionGroup="Function" type="MultiplicationFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ProductFunctionType">
+  <xs:complexType name="MultiplicationFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>

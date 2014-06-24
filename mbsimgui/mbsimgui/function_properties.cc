@@ -403,60 +403,60 @@ namespace MBSimGUI {
     functions.toWidget(static_cast<SummationFunctionWidget*>(widget)->functions);
   }
 
-  SumFunctionProperty::SumFunctionProperty() {
+  AdditionFunctionProperty::AdditionFunctionProperty() {
     f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"firstSummand",0));
     f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"secondSummand",0));
   }
 
-  DOMElement* SumFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* AdditionFunctionProperty::initializeUsingXML(DOMElement *element) {
     f1.initializeUsingXML(element);
     f2.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* SumFunctionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* AdditionFunctionProperty::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
     f1.writeXMLFile(ele0);
     f2.writeXMLFile(ele0);
     return ele0;
   }
 
-  void SumFunctionProperty::fromWidget(QWidget *widget) {
-    f1.fromWidget(static_cast<SumFunctionWidget*>(widget)->f1);
-    f2.fromWidget(static_cast<SumFunctionWidget*>(widget)->f2);
+  void AdditionFunctionProperty::fromWidget(QWidget *widget) {
+    f1.fromWidget(static_cast<AdditionFunctionWidget*>(widget)->f1);
+    f2.fromWidget(static_cast<AdditionFunctionWidget*>(widget)->f2);
   }
 
-  void SumFunctionProperty::toWidget(QWidget *widget) {
-    f1.toWidget(static_cast<SumFunctionWidget*>(widget)->f1);
-    f2.toWidget(static_cast<SumFunctionWidget*>(widget)->f2);
+  void AdditionFunctionProperty::toWidget(QWidget *widget) {
+    f1.toWidget(static_cast<AdditionFunctionWidget*>(widget)->f1);
+    f2.toWidget(static_cast<AdditionFunctionWidget*>(widget)->f2);
   }
 
-  ProductFunctionProperty::ProductFunctionProperty() {
+  MultiplicationFunctionProperty::MultiplicationFunctionProperty() {
     f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"firstFactor",0));
     f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"secondFactor",0));
   }
 
-  DOMElement* ProductFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* MultiplicationFunctionProperty::initializeUsingXML(DOMElement *element) {
     f1.initializeUsingXML(element);
     f2.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* ProductFunctionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* MultiplicationFunctionProperty::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
     f1.writeXMLFile(ele0);
     f2.writeXMLFile(ele0);
     return ele0;
   }
 
-  void ProductFunctionProperty::fromWidget(QWidget *widget) {
-    f1.fromWidget(static_cast<ProductFunctionWidget*>(widget)->f1);
-    f2.fromWidget(static_cast<ProductFunctionWidget*>(widget)->f2);
+  void MultiplicationFunctionProperty::fromWidget(QWidget *widget) {
+    f1.fromWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f1);
+    f2.fromWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f2);
   }
 
-  void ProductFunctionProperty::toWidget(QWidget *widget) {
-    f1.toWidget(static_cast<ProductFunctionWidget*>(widget)->f1);
-    f2.toWidget(static_cast<ProductFunctionWidget*>(widget)->f2);
+  void MultiplicationFunctionProperty::toWidget(QWidget *widget) {
+    f1.toWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f1);
+    f2.toWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f2);
   }
 
   VectorValuedFunctionProperty::VectorValuedFunctionProperty(int m) {
