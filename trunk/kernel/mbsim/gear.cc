@@ -26,8 +26,12 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
 
   Gear::Gear(const string &name) : LinkMechanics(name) {
     body.push_back(0); 
@@ -144,8 +148,16 @@ namespace MBSim {
   }
 
  void Gear::init(InitStage stage) {
-    if(stage==unknownStage) {
-      //LinkMechanics::init(stage);
+    if(stage==resolveXMLPath) {
+      if (saved_DependentBody!="")
+        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+      if (saved_IndependentBody.size()>0) {
+        for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
+          body.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
+      }
+      LinkMechanics::init(stage);
+    }
+    else if(stage==unknownStage) {
 
       for(unsigned int i=0; i<body.size(); i++) {
         h[0].push_back(Vec(body[i]->getFrameForKinematics()->getJacobianOfTranslation(0).cols()));
@@ -255,6 +267,24 @@ namespace MBSim {
       }
 #endif
       LinkMechanics::plot(t,dt);
+    }
+  }
+
+  void Gear::initializeUsingXML(DOMElement* element) {
+    LinkMechanics::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
+    if(e) {
+      Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+      setGeneralizedForceFunction(f);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
+    saved_DependentBody=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"transmissions");
+    DOMElement *ee=e->getFirstElementChild();
+    while(ee && E(ee)->getTagName()==MBSIM%"Transmission") {
+      saved_IndependentBody.push_back(E(E(ee)->getFirstElementChildNamed(MBSIM%"rigidBody"))->getAttribute("ref"));
+      ratio.push_back(getDouble(E(ee)->getFirstElementChildNamed(MBSIM%"ratio")));
+      ee=ee->getNextElementSibling();
     }
   }
 

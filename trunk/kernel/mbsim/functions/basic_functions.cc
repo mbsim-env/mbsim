@@ -66,6 +66,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ModuloFunction<VecV(VecV)>, MBSIM%"ModuloFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ModuloFunction<Vec(Vec)>, MBSIM%"ModuloFunction")
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignumFunction<double(double)>, MBSIM%"SignumFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignumFunction<VecV(double)>, MBSIM%"SignumFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignumFunction<VecV(VecV)>, MBSIM%"SignumFunction")
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<double(double)>, MBSIM%"PositiveFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<VecV(double)>, MBSIM%"PositiveFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<VecV(VecV)>, MBSIM%"PositiveFunction")
@@ -83,6 +87,14 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<VecV(double)>, MBSIM%"SummationFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<Vec3(double)>, MBSIM%"SummationFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<double(double)>, MBSIM%"SummationFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SumFunction<VecV(double)>, MBSIM%"SumFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SumFunction<Vec3(double)>, MBSIM%"SumFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SumFunction<double(double)>, MBSIM%"SumFunction")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ProductFunction<VecV(double)>, MBSIM%"ProductFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ProductFunction<Vec3(double)>, MBSIM%"ProductFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ProductFunction<double(double)>, MBSIM%"ProductFunction")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(VectorValuedFunction<VecV(double)>, MBSIM%"VectorValuedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(VectorValuedFunction<Vec3(double)>, MBSIM%"VectorValuedFunction")

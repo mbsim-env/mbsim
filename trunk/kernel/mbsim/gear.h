@@ -38,8 +38,10 @@ namespace MBSim {
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
       std::vector<Frame> C;
+      std::string saved_DependentBody;
+      std::vector<std::string> saved_IndependentBody;
     public:
-      Gear(const std::string &name);
+      Gear(const std::string &name="");
       void updateh(double, int i=0);
       void updateW(double, int i=0);
       void updateg(double);
@@ -56,6 +58,7 @@ namespace MBSim {
       std::string getType() const { return "Gear"; }
       void init(InitStage stage);
       bool isSetValued() const;
+      bool isSingleValued() const { return not(isSetValued()); }
       virtual void calclaSize(int j);
       virtual void calcgSize(int j);
       virtual void calcgdSize(int j);
@@ -63,6 +66,8 @@ namespace MBSim {
       void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
+
+      void initializeUsingXML(xercesc::DOMElement * element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
      /** \brief Visualize a force arrow */
