@@ -95,7 +95,7 @@ namespace MBSimGUI {
   //class StepFunctionWidget : public FunctionWidget {
   //}
 
-  //class PositiveFunctionWidget : public FunctionWidget {
+  //class PositiveValueFunctionWidget : public FunctionWidget {
   //}
 
   class AbsoluteValueFunctionWidget : public FunctionWidget {
@@ -123,54 +123,6 @@ namespace MBSimGUI {
 
     public:
     SignumFunctionWidget(int m=0) { }
-  };
-
-  class PointSymmetricFunctionWidget : public FunctionWidget {
-
-    friend class PointSymmetricFunctionProperty;
-
-    public:
-    PointSymmetricFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *function;
-  };
-
-  class LineSymmetricFunctionWidget : public FunctionWidget {
-
-    friend class LineSymmetricFunctionProperty;
-
-    public:
-    LineSymmetricFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *function;
-  };
-
-  class ScaledFunctionWidget : public FunctionWidget {
-
-    friend class ScaledFunctionProperty;
-
-    public:
-    ScaledFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *function, *factor;
-  };
-
-  class SummationFunctionWidget : public FunctionWidget {
-
-    friend class SummationFunctionProperty;
-
-    public:
-    SummationFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *functions;
   };
 
   class AdditionFunctionWidget : public FunctionWidget {

@@ -96,7 +96,7 @@ namespace MBSimGUI {
   //class StepFunctionProperty : public FunctionProperty {
   //}
 
-  //class PositiveFunctionProperty : public FunctionProperty {
+  //class PositiveValueFunctionProperty : public FunctionProperty {
   //}
 
   class AbsoluteValueFunctionProperty : public FunctionProperty {
@@ -125,66 +125,6 @@ namespace MBSimGUI {
       SignumFunctionProperty() { }
       virtual Property* clone() const {return new SignumFunctionProperty(*this);}
       inline std::string getType() const { return "SignumFunction"; }
-  };
-
-  class PointSymmetricFunctionProperty : public FunctionProperty {
-    public:
-      PointSymmetricFunctionProperty();
-      virtual Property* clone() const {return new PointSymmetricFunctionProperty(*this);}
-      int getArg1Size() const;
-      inline std::string getType() const { return "PointSymmetricFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      ExtProperty function;
-  };
-  
-  class LineSymmetricFunctionProperty : public FunctionProperty {
-    public:
-      LineSymmetricFunctionProperty();
-      virtual Property* clone() const {return new LineSymmetricFunctionProperty(*this);}
-      int getArg1Size() const;
-      inline std::string getType() const { return "LineSymmetricFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      ExtProperty function;
-  };
-  
-  class ScaledFunctionProperty : public FunctionProperty {
-    public:
-      ScaledFunctionProperty();
-      virtual Property* clone() const {return new ScaledFunctionProperty(*this);}
-      int getArg1Size() const;
-      inline std::string getType() const { return "ScaledFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      ExtProperty function, factor;
-  };
-
-  class SummationFunctionProperty : public FunctionProperty {
-
-    public:
-      SummationFunctionProperty();
-      virtual Property* clone() const {return new SummationFunctionProperty(*this);}
-      inline std::string getType() const { return "SummationFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      ExtProperty functions;
   };
 
   class AdditionFunctionProperty : public FunctionProperty {

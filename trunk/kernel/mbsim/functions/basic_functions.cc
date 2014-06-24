@@ -70,23 +70,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignumFunction<VecV(double)>, MBSIM%"SignumFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignumFunction<VecV(VecV)>, MBSIM%"SignumFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<double(double)>, MBSIM%"PositiveFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<VecV(double)>, MBSIM%"PositiveFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveFunction<VecV(VecV)>, MBSIM%"PositiveFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PointSymmetricFunction<double(double)>, MBSIM%"PointSymmetricFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PointSymmetricFunction<VecV(double)>, MBSIM%"PointSymmetricFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSymmetricFunction<double(double)>, MBSIM%"LineSymmetricFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSymmetricFunction<VecV(double)>, MBSIM%"LineSymmetricFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ScaledFunction<VecV(double)>, MBSIM%"ScaledFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ScaledFunction<Vec3(double)>, MBSIM%"ScaledFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ScaledFunction<double(double)>, MBSIM%"ScaledFunction")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<VecV(double)>, MBSIM%"SummationFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<Vec3(double)>, MBSIM%"SummationFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SummationFunction<double(double)>, MBSIM%"SummationFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveValueFunction<double(double)>, MBSIM%"PositiveFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveValueFunction<VecV(double)>, MBSIM%"PositiveFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PositiveValueFunction<VecV(VecV)>, MBSIM%"PositiveFunction")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AdditionFunction<VecV(double)>, MBSIM%"AdditionFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AdditionFunction<Vec3(double)>, MBSIM%"AdditionFunction")

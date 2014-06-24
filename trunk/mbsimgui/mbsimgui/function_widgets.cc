@@ -208,63 +208,6 @@ namespace MBSimGUI {
     layout->addWidget(denom);
   }
 
-  PointSymmetricFunctionWidget::PointSymmetricFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
-    layout->addWidget(function);
-  }
-
-  void PointSymmetricFunctionWidget::resize_(int m, int n) {
-    function->resize_(m,n);
-  }
-
-  LineSymmetricFunctionWidget::LineSymmetricFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
-    layout->addWidget(function);
-  }
-
-  void LineSymmetricFunctionWidget::resize_(int m, int n) {
-    function->resize_(m,n);
-  }
-
-  ScaledFunctionWidget::ScaledFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
-    layout->addWidget(function);
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-    factor = new ExtWidget("Scaling factor",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(factor);
-  }
-
-  void ScaledFunctionWidget::resize_(int m, int n) {
-    function->resize_(m,n);
-  }
-
-  SummationFunctionWidget::SummationFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    functions = new ExtWidget("Summands",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2),"Function",m,1));
-    layout->addWidget(functions);
-  }
-
-  void SummationFunctionWidget::resize_(int m, int n) {
-    functions->resize_(m,n);
-  }
-
   AdditionFunctionWidget::AdditionFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
