@@ -265,33 +265,6 @@ namespace MBSimGUI {
     o.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
   }
 
-  AbsoluteValueFunctionProperty::AbsoluteValueFunctionProperty() {
-    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"function",0));
-  }
-
-  int AbsoluteValueFunctionProperty::getArg1Size() const {
-    return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty2*>(function.getProperty())->getProperty())->getArg1Size();
-  }
-
-  DOMElement* AbsoluteValueFunctionProperty::initializeUsingXML(DOMElement *element) {
-    function.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* AbsoluteValueFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
-    function.writeXMLFile(ele0);
-    return ele0;
-  } 
-
-  void AbsoluteValueFunctionProperty::fromWidget(QWidget *widget) {
-    function.fromWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
-  }
-
-  void AbsoluteValueFunctionProperty::toWidget(QWidget *widget) {
-    function.toWidget(static_cast<AbsoluteValueFunctionWidget*>(widget)->function);
-  }
-
   ModuloFunctionProperty::ModuloFunctionProperty() {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"denominator"));
@@ -407,7 +380,6 @@ namespace MBSimGUI {
   }
 
   SummationFunctionProperty::SummationFunctionProperty() {
-    //  functions.setProperty(new ListProperty(new FunctionPropertyFactory("SummationFunction",1),""));
     functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2,""),""));
     functions.setXMLName(MBSIM%"summands");
   }
@@ -431,9 +403,63 @@ namespace MBSimGUI {
     functions.toWidget(static_cast<SummationFunctionWidget*>(widget)->functions);
   }
 
+  SumFunctionProperty::SumFunctionProperty() {
+    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"firstSummand",0));
+    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"secondSummand",0));
+  }
+
+  DOMElement* SumFunctionProperty::initializeUsingXML(DOMElement *element) {
+    f1.initializeUsingXML(element);
+    f2.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SumFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    f1.writeXMLFile(ele0);
+    f2.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void SumFunctionProperty::fromWidget(QWidget *widget) {
+    f1.fromWidget(static_cast<SumFunctionWidget*>(widget)->f1);
+    f2.fromWidget(static_cast<SumFunctionWidget*>(widget)->f2);
+  }
+
+  void SumFunctionProperty::toWidget(QWidget *widget) {
+    f1.toWidget(static_cast<SumFunctionWidget*>(widget)->f1);
+    f2.toWidget(static_cast<SumFunctionWidget*>(widget)->f2);
+  }
+
+  ProductFunctionProperty::ProductFunctionProperty() {
+    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"firstFactor",0));
+    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"secondFactor",0));
+  }
+
+  DOMElement* ProductFunctionProperty::initializeUsingXML(DOMElement *element) {
+    f1.initializeUsingXML(element);
+    f2.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ProductFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    f1.writeXMLFile(ele0);
+    f2.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void ProductFunctionProperty::fromWidget(QWidget *widget) {
+    f1.fromWidget(static_cast<ProductFunctionWidget*>(widget)->f1);
+    f2.fromWidget(static_cast<ProductFunctionWidget*>(widget)->f2);
+  }
+
+  void ProductFunctionProperty::toWidget(QWidget *widget) {
+    f1.toWidget(static_cast<ProductFunctionWidget*>(widget)->f1);
+    f2.toWidget(static_cast<ProductFunctionWidget*>(widget)->f2);
+  }
+
   VectorValuedFunctionProperty::VectorValuedFunctionProperty(int m) {
-    //  functions.setProperty(new ListProperty(new FunctionPropertyFactory("VectorValuedFunction",1),""));
-    //  functions.setXMLName(MBSIM%"components");
     functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2,""),""));
     functions.setXMLName(MBSIM%"components");
   }

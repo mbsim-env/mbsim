@@ -26,6 +26,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
 		   friction.cc \
+		   gear.cc \
 		   joint.cc \
 		   contact.cc \
 		   actuator.cc \

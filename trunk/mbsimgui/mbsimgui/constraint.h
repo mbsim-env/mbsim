@@ -27,6 +27,23 @@ namespace MBSimGUI {
 
   class RigidBody;
 
+  class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
+    public:
+      RigidBodyOfReferencePropertyFactory(Element *element_, const MBXMLUtils::FQN &xmlName_) : element(element_), xmlName(xmlName_) { }
+      Property* createProperty(int i=0);
+    protected:
+      Element *element;
+      MBXMLUtils::FQN xmlName;
+  };
+
+  class GearConstraintPropertyFactory : public PropertyFactory {
+    public:
+      GearConstraintPropertyFactory(Element *element_) : element(element_) { }
+      Property* createProperty(int i=0);
+    protected:
+      Element *element;
+  };
+
   class Constraint : public Object {
     public:
       Constraint(const std::string &str, Element *parent);

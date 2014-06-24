@@ -197,19 +197,6 @@ namespace MBSimGUI {
     layout->addWidget(o);
   }
 
-  AbsoluteValueFunctionWidget::AbsoluteValueFunctionWidget(int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
-    layout->addWidget(function);
-  }
-
-  void AbsoluteValueFunctionWidget::resize_(int m, int n) {
-    function->resize_(m,n);
-  }
-
   ModuloFunctionWidget::ModuloFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -252,11 +239,6 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    //  FunctionWidgetFactory factory("ScaledFunction","SS",1);
-    //  function = new ExtWidget("Function",factory.createWidget());
-    //  layout->addWidget(function);
-    //connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-
     function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
     layout->addWidget(function);
 
@@ -275,9 +257,6 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    //functions = new ExtWidget("Summands",new ListWidget(new FunctionWidgetFactory("SummationFunction","SS",1),"Function",m,1));
-    //layout->addWidget(functions);
-
     functions = new ExtWidget("Summands",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2),"Function",m,1));
     layout->addWidget(functions);
   }
@@ -286,14 +265,42 @@ namespace MBSimGUI {
     functions->resize_(m,n);
   }
 
+  SumFunctionWidget::SumFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    f1 = new ExtWidget("First summand",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(f1);
+    f2 = new ExtWidget("Second summand",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(f2);
+  }
+
+  void SumFunctionWidget::resize_(int m, int n) {
+    static_cast<ChoiceWidget2*>(f1->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget2*>(f2->getWidget())->resize_(m,n);
+  }
+
+  ProductFunctionWidget::ProductFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    f1 = new ExtWidget("First factor",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(f1);
+    f2 = new ExtWidget("Second factor",new ChoiceWidget2(new FunctionWidgetFactory2));
+    layout->addWidget(f2);
+  }
+
+  void ProductFunctionWidget::resize_(int m, int n) {
+//    functions->resize_(m,n);
+  }
+
   VectorValuedFunctionWidget::VectorValuedFunctionWidget(int m, bool fixedSize) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-
-    // functions = new ExtWidget("Components",new ListWidget(new FunctionWidgetFactory("VectorValuedFunction","SS",1),"Function",m,1,fixedSize));
-    // layout->addWidget(functions);
 
     functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2),"Function",m,1));
     layout->addWidget(functions);
@@ -302,35 +309,6 @@ namespace MBSimGUI {
   void VectorValuedFunctionWidget::resize_(int m, int n) {
     static_cast<ListWidget*>(functions->getWidget())->setSize(m);
   }
-
-  //NestedFunctionWidget::NestedFunctionWidget(const QString &ext_, const vector<QWidget*> &widget_, const vector<QString> &name_) : ext(ext_) {
-  //
-  //  QVBoxLayout *layout = new QVBoxLayout;
-  //  layout->setMargin(0);
-  //  setLayout(layout);
-  //  fo = new ExtWidget("Outer function",new ChoiceWidget(widget_,name_));
-  //  layout->addWidget(fo);
-  //  connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-  //
-  //  vector<QWidget*> widget;
-  //  vector<QString> name;
-  //  QStringList var;
-  //  if(ext[1]=='V' and ext[2]=='V') {
-  //    var << "q";
-  //    widget.push_back(new SymbolicFunctionWidget(var)); name.push_back("Symbolic function");
-  //  }
-  //  else if(ext[1]=='V' and ext[2]=='S') {
-  //    var << "t";
-  //    widget.push_back(new SymbolicFunctionWidget(var)); name.push_back("Symbolic function");
-  //    widget.push_back(new ConstantFunctionWidget); name.push_back("Constant function");
-  //    widget.push_back(new LinearFunctionWidget); name.push_back("Linear function v(t)");
-  //    widget.push_back(new QuadraticFunctionWidget); name.push_back("Quadratic function");
-  //    widget.push_back(new SinusoidalFunctionWidget); name.push_back("Sinusoidal function");
-  //  }
-  //  fi = new ExtWidget("Inner function",new ChoiceWidget(widget,name));
-  //  layout->addWidget(fi);
-  //  connect((ChoiceWidget*)fi->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-  //}
 
   NestedFunctionWidget::NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi) {
 
@@ -364,8 +342,6 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    //  functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory,"Function",n,1));
-    //  layout->addWidget(functions);
     functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2),"Function",n,1));
     layout->addWidget(functions);
 

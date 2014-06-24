@@ -37,6 +37,7 @@
 #include "observer.h"
 #include "integrator.h"
 #include "friction.h"
+#include "gear.h"
 #include <string>
 
 using namespace std;
@@ -163,6 +164,8 @@ namespace MBSimGUI {
       return new GeneralizedSpringDamper(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
       return new GeneralizedFriction(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"Gear")
+      return new Gear(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Contact")

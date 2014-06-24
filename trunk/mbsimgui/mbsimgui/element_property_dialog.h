@@ -390,6 +390,16 @@ namespace MBSimGUI {
       ExtWidget *function, *normalForce, *body1, *body2, *connections, *forceArrow, *momentArrow;
   };
 
+  class GearPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      GearPropertyDialog(Link *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *function, *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
+  };
+
   class JointPropertyDialog : public LinkPropertyDialog {
 
     public:
