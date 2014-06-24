@@ -386,13 +386,13 @@ namespace MBSim {
         std::vector<fmatvec::Function<Ret(Arg)> *> summand;
     };
 
-  template<typename Sig> class SumFunction; 
+  template<typename Sig> class AdditionFunction; 
 
   template<typename Ret, typename Arg>
-    class SumFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class AdditionFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
       public:
-        SumFunction() : f1(0), f2(0) { }
-        ~SumFunction() { delete f1; delete f2; }
+        AdditionFunction() : f1(0), f2(0) { }
+        ~AdditionFunction() { delete f1; delete f2; }
         void setFirstSummand(fmatvec::Function<Ret(Arg)> *function) { f1 = function; }
         void setSecondSummand(fmatvec::Function<Ret(Arg)> *function) { f2 = function; }
         Ret operator()(const Arg &x) {
@@ -414,23 +414,35 @@ namespace MBSim {
         fmatvec::Function<Ret(Arg)> *f1, *f2;
     };
 
-  template<typename Sig> class ProductFunction; 
+  template<typename Sig> class MultiplicationFunction; 
 
   template<typename Ret, typename Arg>
-    class ProductFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class MultiplicationFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
       public:
-        ProductFunction() : f1(0), f2(0) { }
-        ~ProductFunction() { delete f1; delete f2; }
+        MultiplicationFunction() : f1(0), f2(0) { }
+        ~MultiplicationFunction() { delete f1; delete f2; }
         void setFirstFactor(fmatvec::Function<Ret(Arg)> *function) { f1 = function; }
         void setSecondFactor(fmatvec::Function<Ret(Arg)> *function) { f2 = function; }
         Ret operator()(const Arg &x) {
-          return FromDouble<Ret>::cast(ToDouble<Ret>::cast((*(f1))(x))*ToDouble<Ret>::cast((*(f2))(x)));
+          double a1 = ToDouble<Ret>::cast((*f1)(x));
+          double a2 = ToDouble<Ret>::cast((*f2)(x));
+          return FromDouble<Ret>::cast(a1*a2);
         }
-        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {  
-          return FromDouble<Ret>::cast(ToDouble<Ret>::cast(f1->parDer(x))*ToDouble<Ret>::cast((*(f2))(x)) + ToDouble<Ret>::cast((*(f1))(x))*ToDouble<Ret>::cast(f2->parDer(x)));
+        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+          double a1 = ToDouble<Ret>::cast((*f1)(x));
+          double a2 = ToDouble<Ret>::cast((*f2)(x));
+          double a1d = ToDouble<typename fmatvec::Der<Ret, double>::type>::cast(f1->parDer(x));
+          double a2d = ToDouble<typename fmatvec::Der<Ret, double>::type>::cast(f2->parDer(x));
+          return FromDouble<typename fmatvec::Der<Ret, double>::type>::cast(a1d*a2+a1*a2d);
         }
-        typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) {  
-          return FromDouble<Ret>::cast(ToDouble<Ret>::cast(f1->parDerParDer(x))*ToDouble<Ret>::cast((*(f2))(x)) + 2*ToDouble<Ret>::cast(f1->parDer(x))*ToDouble<Ret>::cast(f2->parDer(x)) + ToDouble<Ret>::cast((*(f1))(x))*ToDouble<Ret>::cast(f2->parDerParDer(x)));
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+          double a1 = ToDouble<Ret>::cast((*f1)(x));
+          double a2 = ToDouble<Ret>::cast((*f2)(x));
+          double a1d = ToDouble<typename fmatvec::Der<Ret, double>::type>::cast(f1->parDer(x));
+          double a2d = ToDouble<typename fmatvec::Der<Ret, double>::type>::cast(f2->parDer(x));
+          double a1dd = ToDouble<typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type>::cast(f1->parDerParDer(x));
+          double a2dd = ToDouble<typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type>::cast(f2->parDerParDer(x));
+          return FromDouble<typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type>::cast(a1dd*a2 + 2*a1d*a2d + a1*a2dd);
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstFactor");

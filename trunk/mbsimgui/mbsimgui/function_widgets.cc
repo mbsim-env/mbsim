@@ -265,7 +265,7 @@ namespace MBSimGUI {
     functions->resize_(m,n);
   }
 
-  SumFunctionWidget::SumFunctionWidget(int m) {
+  AdditionFunctionWidget::AdditionFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -276,12 +276,12 @@ namespace MBSimGUI {
     layout->addWidget(f2);
   }
 
-  void SumFunctionWidget::resize_(int m, int n) {
+  void AdditionFunctionWidget::resize_(int m, int n) {
     static_cast<ChoiceWidget2*>(f1->getWidget())->resize_(m,n);
     static_cast<ChoiceWidget2*>(f2->getWidget())->resize_(m,n);
   }
 
-  ProductFunctionWidget::ProductFunctionWidget(int m) {
+  MultiplicationFunctionWidget::MultiplicationFunctionWidget(int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -292,7 +292,7 @@ namespace MBSimGUI {
     layout->addWidget(f2);
   }
 
-  void ProductFunctionWidget::resize_(int m, int n) {
+  void MultiplicationFunctionWidget::resize_(int m, int n) {
 //    functions->resize_(m,n);
   }
 

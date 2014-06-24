@@ -187,12 +187,12 @@ namespace MBSimGUI {
       ExtProperty functions;
   };
 
-  class SumFunctionProperty : public FunctionProperty {
+  class AdditionFunctionProperty : public FunctionProperty {
 
     public:
-      SumFunctionProperty();
-      virtual Property* clone() const {return new SumFunctionProperty(*this);}
-      inline std::string getType() const { return "SumFunction"; }
+      AdditionFunctionProperty();
+      virtual Property* clone() const {return new AdditionFunctionProperty(*this);}
+      inline std::string getType() const { return "AdditionFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -202,12 +202,12 @@ namespace MBSimGUI {
       ExtProperty f1, f2;
   };
 
-  class ProductFunctionProperty : public FunctionProperty {
+  class MultiplicationFunctionProperty : public FunctionProperty {
 
     public:
-      ProductFunctionProperty();
-      virtual Property* clone() const {return new ProductFunctionProperty(*this);}
-      inline std::string getType() const { return "ProductFunction"; }
+      MultiplicationFunctionProperty();
+      virtual Property* clone() const {return new MultiplicationFunctionProperty(*this);}
+      inline std::string getType() const { return "MultiplicationFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);

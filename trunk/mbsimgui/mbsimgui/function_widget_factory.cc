@@ -66,9 +66,9 @@ namespace MBSimGUI {
     if(i==16)
       return new SignumFunctionWidget(1);
     if(i==17)
-      return new SumFunctionWidget(1);
+      return new AdditionFunctionWidget(1);
     if(i==18)
-      return new ProductFunctionWidget(1);
+      return new MultiplicationFunctionWidget(1);
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -90,8 +90,8 @@ namespace MBSimGUI {
     name.push_back("Tabular function");
     name.push_back("Piecewise polynom function");
     name.push_back("Signum function");
-    name.push_back("Sum function");
-    name.push_back("Product function");
+    name.push_back("Addition function");
+    name.push_back("Multiplication function");
     return name;
   }
 
