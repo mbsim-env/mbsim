@@ -46,6 +46,7 @@
 #include "sensor.h"
 #include "function_widget_factory.h"
 #include "friction.h"
+#include "gear.h"
 #include <QPushButton>
 
 using namespace std;
@@ -993,7 +994,7 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    function = new ExtWidget("GeneralizedForceFunction",new ChoiceWidget2(new SpringDamperWidgetFactory));
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory));
     addToTab("Kinetics", function);
 
     body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);
@@ -1074,6 +1075,51 @@ namespace MBSimGUI {
     static_cast<GeneralizedFriction*>(element)->forceArrow.fromWidget(forceArrow);
     static_cast<GeneralizedFriction*>(element)->momentArrow.fromWidget(momentArrow);
   }
+
+  GearPropertyDialog::GearPropertyDialog(Link *constraint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(constraint,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory),true);
+    addToTab("Kinetics", function);
+
+    dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
+    addToTab("General", dependentBody);
+
+    //  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
+    //  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+    //  addToTab("General", independentBodies);
+
+    independentBodies = new ExtWidget("Transmissions",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Transmission"));
+    addToTab("General",independentBodies);
+
+    gearForceArrow = new ExtWidget("OpenMBV gear force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",gearForceArrow);
+
+    gearMomentArrow = new ExtWidget("OpenMBV gear moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",gearMomentArrow);
+
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+  }
+
+  void GearPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<Gear*>(element)->function.toWidget(function);
+    static_cast<Gear*>(element)->dependentBody.toWidget(dependentBody);
+    static_cast<Gear*>(element)->independentBodies.toWidget(independentBodies);
+    static_cast<Gear*>(element)->gearForceArrow.toWidget(gearForceArrow);
+    static_cast<Gear*>(element)->gearMomentArrow.toWidget(gearMomentArrow);
+  }
+
+  void GearPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<Gear*>(element)->function.fromWidget(function);
+    static_cast<Gear*>(element)->dependentBody.fromWidget(dependentBody);
+    static_cast<Gear*>(element)->independentBodies.fromWidget(independentBodies);
+    static_cast<Gear*>(element)->gearForceArrow.fromWidget(gearForceArrow);
+    static_cast<Gear*>(element)->gearMomentArrow.fromWidget(gearMomentArrow);
+  }
+
 
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
     addTab("Kinetics",1);

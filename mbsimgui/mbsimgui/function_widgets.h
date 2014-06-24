@@ -103,11 +103,7 @@ namespace MBSimGUI {
     friend class AbsoluteValueFunctionProperty;
 
     public:
-    AbsoluteValueFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *function;
+    AbsoluteValueFunctionWidget(int m=0) { }
   };
 
   class ModuloFunctionWidget : public FunctionWidget {
@@ -119,6 +115,14 @@ namespace MBSimGUI {
 
     protected:
     ExtWidget *denom;
+  };
+
+  class SignumFunctionWidget : public FunctionWidget {
+
+    friend class SignumFunctionProperty;
+
+    public:
+    SignumFunctionWidget(int m=0) { }
   };
 
   class PointSymmetricFunctionWidget : public FunctionWidget {
@@ -167,6 +171,30 @@ namespace MBSimGUI {
 
     protected:
     ExtWidget *functions;
+  };
+
+  class SumFunctionWidget : public FunctionWidget {
+
+    friend class SumFunctionProperty;
+
+    public:
+    SumFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *f1, *f2;
+  };
+
+  class ProductFunctionWidget : public FunctionWidget {
+
+    friend class ProductFunctionProperty;
+
+    public:
+    ProductFunctionWidget(int m=0);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *f1, *f2;
   };
 
   class VectorValuedFunctionWidget : public FunctionWidget {
