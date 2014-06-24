@@ -242,6 +242,17 @@ namespace MBSim {
         }
     };
 
+  template<typename Sig> class SignumFunction; 
+
+  template<typename Ret, typename Arg>
+  class SignumFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    public:
+      Ret operator()(const Arg &x_) {
+        double x = ToDouble<Arg>::cast(x_);
+        return FromDouble<Ret>::cast(sign(x));
+      }
+  };
+
   template<typename Sig> class PositiveFunction; 
 
   template<typename Ret, typename Arg>
@@ -375,6 +386,62 @@ namespace MBSim {
         std::vector<fmatvec::Function<Ret(Arg)> *> summand;
     };
 
+  template<typename Sig> class SumFunction; 
+
+  template<typename Ret, typename Arg>
+    class SumFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+      public:
+        SumFunction() : f1(0), f2(0) { }
+        ~SumFunction() { delete f1; delete f2; }
+        void setFirstSummand(fmatvec::Function<Ret(Arg)> *function) { f1 = function; }
+        void setSecondSummand(fmatvec::Function<Ret(Arg)> *function) { f2 = function; }
+        Ret operator()(const Arg &x) {
+          return (*(f1))(x)+(*(f2))(x);
+        }
+        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {  
+          return f1->parDer(x)+f2->parDer(x);
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) {  
+          return f1->parDerParDer(x)+f2->parDerParDer(x);
+        }
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstSummand");
+          f1=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondSummand");
+          f2=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+        }
+      private:
+        fmatvec::Function<Ret(Arg)> *f1, *f2;
+    };
+
+  template<typename Sig> class ProductFunction; 
+
+  template<typename Ret, typename Arg>
+    class ProductFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+      public:
+        ProductFunction() : f1(0), f2(0) { }
+        ~ProductFunction() { delete f1; delete f2; }
+        void setFirstFactor(fmatvec::Function<Ret(Arg)> *function) { f1 = function; }
+        void setSecondFactor(fmatvec::Function<Ret(Arg)> *function) { f2 = function; }
+        Ret operator()(const Arg &x) {
+          return FromDouble<Ret>::cast(ToDouble<Ret>::cast((*(f1))(x))*ToDouble<Ret>::cast((*(f2))(x)));
+        }
+        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {  
+          return FromDouble<Ret>::cast(ToDouble<Ret>::cast(f1->parDer(x))*ToDouble<Ret>::cast((*(f2))(x)) + ToDouble<Ret>::cast((*(f1))(x))*ToDouble<Ret>::cast(f2->parDer(x)));
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) {  
+          return FromDouble<Ret>::cast(ToDouble<Ret>::cast(f1->parDerParDer(x))*ToDouble<Ret>::cast((*(f2))(x)) + 2*ToDouble<Ret>::cast(f1->parDer(x))*ToDouble<Ret>::cast(f2->parDer(x)) + ToDouble<Ret>::cast((*(f1))(x))*ToDouble<Ret>::cast(f2->parDerParDer(x)));
+        }
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstFactor");
+          f1=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondFactor");
+          f2=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+        }
+      private:
+        fmatvec::Function<Ret(Arg)> *f1, *f2;
+    };
+
   template<typename Sig> class VectorValuedFunction; 
 
   template<typename Ret, typename Arg>
@@ -457,7 +524,7 @@ namespace MBSim {
   template<typename Ret, typename Arg>
     class PiecewiseDefinedFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
       public:
-        PiecewiseDefinedFunction() : contDiff(0) { }
+        PiecewiseDefinedFunction() : contDiff(0) { a.push_back(0); }
         ~PiecewiseDefinedFunction() { 
           for(unsigned int i=0; i<function.size(); i++)
             delete function[i];
@@ -471,8 +538,8 @@ namespace MBSim {
         Ret zeros(const Ret &x) { return Ret(x.size()); }
         Ret operator()(const Arg &x) {
           for(unsigned int i=0; i<a.size(); i++)
-            if(x<=a[i])
-              return (*function[i])(x);
+            if(x<=a[i+1])
+              return (*function[i])(x-a[i]);
           if(contDiff==0)
             return yEnd;
           else if(contDiff==1)
@@ -482,8 +549,8 @@ namespace MBSim {
         }
         typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
           for(unsigned int i=0; i<a.size(); i++)
-            if(x<=a[i])
-              return function[i]->parDer(x);
+            if(x<=a[i+1])
+              return function[i]->parDer(x-a[i]);
           if(contDiff==0)
             return zeros(yEnd);
           else if(contDiff==1)
@@ -493,8 +560,8 @@ namespace MBSim {
         }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
           for(unsigned int i=0; i<a.size(); i++)
-            if(x<=a[i])
-              return function[i]->parDerParDer(x);
+            if(x<=a[i+1])
+              return function[i]->parDerParDer(x-a[i]);
           if(contDiff==0)
             return zeros(yEnd);
           else if(contDiff==1)
@@ -521,11 +588,11 @@ namespace MBSim {
         int contDiff;
         Ret yEnd, ysEnd, yssEnd;
         void init() {
-          yEnd = (*function[function.size()-1])(a[a.size()-1]); 
+          yEnd = (*function[function.size()-1])(a[a.size()-1]-a[a.size()-2]); 
           if(contDiff>0) {
-            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]); 
+            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]-a[a.size()-2]); 
             if(contDiff>1)
-              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]); 
+              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-a[a.size()-2]); 
           }
         }
     };
