@@ -70,7 +70,7 @@ fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimPowertrain/Makefile doc/Makefile mbsimPowertrain.pc schema/Makefile xmldoc/Makefile doc/doxyfile])
+AC_CONFIG_FILES([Makefile mbsimPowertrain/Makefile doc/Makefile mbsimPowertrain.pc schema/Makefile doc/doxyfile])
 
 AC_OUTPUT
 
