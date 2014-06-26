@@ -15,12 +15,25 @@
   </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
 
   <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
     schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSim"
     schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
+
+  <xs:element name="Dummy" abstract="true" substitutionGroup="mbsim:Link" type="DummyType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Dummy
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DummyType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
 
 </xs:schema>
