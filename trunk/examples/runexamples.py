@@ -347,14 +347,8 @@ def main():
   print('  <title>MBSim runexamples Results</title>', file=mainFD)
   print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>', file=mainFD)
   print('  <style type="text/css">', file=mainFD)
-  print('    table.sortable th {', file=mainFD)
-  print('      cursor: move;', file=mainFD)
-  print('      border-width: 2pt;', file=mainFD)
-  print('      border-color: #D0D0D0;', file=mainFD)
-  print('      border-style: outset;', file=mainFD)
-  print('      background-color: #E0E0E0;', file=mainFD)
-  print('      padding: 2px;', file=mainFD)
-  print('    }', file=mainFD)
+  print('    table.sortable th { cursor: move; }', file=mainFD)
+  print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=mainFD)
   print('  </style>', file=mainFD)
   print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=mainFD)
   print('  <base id="BASE" href="." target="_self"/>', file=mainFD)
@@ -454,7 +448,8 @@ def main():
   print('<b>Update references</b><br/>', file=mainFD)
   print('Update the references of the selected examples before next build<br/>', file=mainFD)
   print('Password: <input id="PASSWORD" type="password" name="PASSWORD" disabled="disabled"/>', file=mainFD)
-  print('          <input id="SUBMIT" type="submit" value="Submit" disabled="disabled"/><br/>', file=mainFD)
+  print('          <input id="SUBMIT" type="submit" value="Submit" disabled="disabled"/>', file=mainFD)
+  print('          <input id="CANCEL" type="button" value="Cancel" onclick="window.location.href=\'.\'" disabled="disabled"/><br/>', file=mainFD)
   print('<span id="PASSWORDMSG"/>', file=mainFD)
   print('</p>', file=mainFD)
   print('</form>', file=mainFD)
@@ -672,23 +667,23 @@ def runExample(resultQueue, example):
       refTimeFD.close()
     # print result to resultStr
     if compareRet==-1:
-      resultStr+='<td><span style="color:orange;float:left;text-align:left">not run</span>'+\
+      resultStr+='<td sorttable_customkey="not run"><span style="color:orange;float:left;text-align:left">not run</span>'+\
                  '<span style="float:right;text-align:right">[<input type="checkbox" disabled="disabled"/>]</span></td>'
     else:
       global dummyID
       dummyID=dummyID+1
       if nrFailed==0:
         if nrAll==0:
-          resultStr+='<td><span style="color:orange;float:left;text-align:left">no reference</span>'+\
+          resultStr+='<td sorttable_customkey="no reference"><span style="color:orange;float:left;text-align:left">no reference</span>'+\
                      '<span style="float:right;text-align:right">[<input id="EXAMPLE_'+str(dummyID)+\
                      '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</span></td>'
         else:
-          resultStr+='<td><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td sorttable_customkey="all passed"><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
                      '"><span style="color:green">all '+str(nrAll)+\
                      ' passed</span></a></span>'+\
                      '<span style="float:right;text-align:right">[<input type="checkbox" disabled="disabled"/>]</span></td>'
       else:
-        resultStr+='<td><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
+        resultStr+='<td sorttable_customkey="failed"><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
                    '"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+\
                    ')</span></a></span><span style="float:right;text-align:right">[<input id="EXAMPLE_'+str(dummyID)+\
                    '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</span></td>'
@@ -719,14 +714,8 @@ def runExample(resultQueue, example):
       print('<head>', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <style type="text/css">', file=htmlOutputFD)
-      print('    table.sortable th {', file=htmlOutputFD)
-      print('      cursor: move;', file=htmlOutputFD)
-      print('      border-width: 2pt;', file=htmlOutputFD)
-      print('      border-color: #D0D0D0;', file=htmlOutputFD)
-      print('      border-style: outset;', file=htmlOutputFD)
-      print('      background-color: #E0E0E0;', file=htmlOutputFD)
-      print('      padding: 2px;', file=htmlOutputFD)
-      print('    }', file=htmlOutputFD)
+      print('    table.sortable th { cursor: move; }', file=htmlOutputFD)
+      print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=htmlOutputFD)
       print('  </style>', file=htmlOutputFD)
       print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
@@ -1100,14 +1089,8 @@ def compareExample(example, compareFN):
   print('<head>', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <style type="text/css">', file=compareFD)
-  print('    table.sortable th {', file=compareFD)
-  print('      cursor: move;', file=compareFD)
-  print('      border-width: 2pt;', file=compareFD)
-  print('      border-color: #D0D0D0;', file=compareFD)
-  print('      border-style: outset;', file=compareFD)
-  print('      background-color: #E0E0E0;', file=compareFD)
-  print('      padding: 2px;', file=compareFD)
-  print('    }', file=compareFD)
+  print('    table.sortable th { cursor: move; }', file=compareFD)
+  print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=compareFD)
   print('  </style>', file=compareFD)
   print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=compareFD)
   print('</head>', file=compareFD)
