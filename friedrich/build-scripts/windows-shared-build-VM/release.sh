@@ -1,8 +1,8 @@
 #! /bin/sh
 
 SRCDIR=/home/user/MBSimWindows
-OUTDIR=/media/mbsim-env/MBSimWindows
-URL=http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimWindows
+OUTDIR=/var/www/html/mbsim-env/MBSimWindows
+URL=http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows
 
 
 
