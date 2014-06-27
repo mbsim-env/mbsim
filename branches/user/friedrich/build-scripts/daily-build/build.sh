@@ -3,6 +3,15 @@
 # update build scripts
 svn update $(dirname $0)/build-scripts
 
+# update references of examples
+CURDIR=$(pwd)
+SRCDIR=$(dirname $0)
+export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig
+cd $SRCDIR/mbsim/examples
+./runexamples.py --action copyToReference @/home/user/Tools/runexamples-refupdate-cgi.py.conf/updateList # update reference
+echo -n "" > /home/user/Tools/runexamples-refupdate-cgi.py.conf/updateList # remove all entries from updateList
+cd $CURDIR
+
 # build and run all examples
 $(dirname $0)/build-scripts/daily-build/build.py "$@" --rotate 30 -j 2 --forceBuild --sourceDir /home/user/MBSimDailyBuild --prefix /home/user/MBSimDailyBuild/local --docOutDir /var/www/html/mbsim-env/MBSimDailyBuild/doc --reportOutDir /var/www/html/mbsim-env/MBSimDailyBuild/report --url http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report --buildType "Daily Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt
 
