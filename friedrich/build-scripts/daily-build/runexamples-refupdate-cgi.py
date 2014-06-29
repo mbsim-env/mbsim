@@ -57,23 +57,25 @@ else: # no form elements provided -> just read updateLists from server
 
 # read output file
 xml.etree.ElementTree.register_namespace('',"http://www.w3.org/1999/xhtml")
-inputURI=codecs.open(pj(configDir, "inputURI"), "r", encoding="utf-8").readline().rstrip()
+inputURI=codecs.open(pj(configDir, "inputURI"), "r", encoding="utf-8").readlines()
+content=codecs.open(inputURI[0].rstrip(), "r").read()
 try:
-  root=xml.etree.ElementTree.fromstring(myurllib.urlopen(inputURI).read().decode("utf-8"))
+  root=xml.etree.ElementTree.fromstring(content)
 except:
-  print('<html><body><b><p>Sorry, the runexamples.py script seems to be currently running or has been crashed last time.</p>')
-  print('<p>Please try again later when the runexamples.py script is finished or newly started.</p></b></body></html>')
+  # if a error in reading the doc occures writing the doc is still not finished ->
+  # return current document and exit
+  print(content)
   sys.exit(0);
 
 # fix base adress
-root.findall(".//*[@id='BASE']")[0].attrib["href"]=inputURI
+root.findall(".//*[@id='BASE']")[0].attrib["href"]=inputURI[1].rstrip()
 
 # replace the action link of the form and the cancel with this script name
 if 'SERVER_NAME' in os.environ and 'SERVER_PORT' in os.environ and 'SCRIPT_NAME' in os.environ:
   thisURL='http://'+os.environ['SERVER_NAME']+':'+os.environ['SERVER_PORT']+os.environ['SCRIPT_NAME']
 else: # just to be able to run the script output a web server
   thisURL='dummy'
-root.findall(".//*[@id='ACTION']")[0].attrib["action"]=thisURL
+root.findall(".//*[@id='ACTION']")[0].attrib["action"]=thisURL+'#PASSWORDMSGANCHOR'
 root.findall(".//*[@id='CANCEL']")[0].attrib["onclick"]="window.location.href='"+thisURL+"'"
 
 # remove the disabled attribute from the password input
@@ -85,6 +87,7 @@ del root.findall(".//*[@id='CANCEL']")[0].attrib["disabled"]
 # add the password result text
 e=root.findall(".//*[@id='PASSWORDMSG']")[0]
 b=xml.etree.ElementTree.SubElement(e, "b")
+b.attrib["id"]="PASSWORDMSGANCHOR"
 if action==1:
   e.attrib["style"]="color:red"
   b.text="WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry."
