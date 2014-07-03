@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mainwindow.h"
+#include "options.h"
 #include "solver.h"
 #include "frame.h"
 #include "contour.h"
@@ -64,7 +65,7 @@ namespace MBSimGUI {
   vector<boost::filesystem::path> dependencies;
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
 
     mw = this;
 
@@ -100,6 +101,11 @@ namespace MBSimGUI {
     QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
     action->setStatusTip(tr("Change working directory"));
 
+    action = GUIMenu->addAction("Options", this, SLOT(openOptionsMenu()));
+    action->setStatusTip(tr("Open options menu"));
+
+    GUIMenu->addSeparator();
+
     GUIMenu->addSeparator();
 
     action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"exit.svg").string())), "E&xit", this, SLOT(close()));
@@ -134,9 +140,11 @@ namespace MBSimGUI {
     actionSaveDataAs = menu->addAction("Export all data", this, SLOT(saveDataAs()));
     actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, SLOT(saveMBSimH5DataAs()));
     actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
+    actionSaveStateVectorAs = menu->addAction("Export state vector", this, SLOT(saveStateVectorAs()));
     actionSaveDataAs->setDisabled(true);
     actionSaveMBSimH5DataAs->setDisabled(true);
     actionSaveOpenMBVDataAs->setDisabled(true);
+    actionSaveStateVectorAs->setDisabled(true);
     menuBar()->addMenu(menu);
 
     menuBar()->addSeparator();
@@ -269,6 +277,13 @@ namespace MBSimGUI {
 
     setAcceptDrops(true);
 
+    autoSaveTimer = new QTimer(this);
+    connect(autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
+    autoSaveTimer->start(autoSaveInterval*60000);
+  }
+
+  void MainWindow::autoSaveProject() {
+    saveProject("./.MBS.mbsimprj.xml");
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -279,6 +294,13 @@ namespace MBSimGUI {
       Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
       if(element)
         highlightObject(element->getID());
+    }
+    else if(autoExport) {
+      saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
+      saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
+      saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+      if(saveFinalStateVector)
+        saveStateVector(autoExportDir+"/statevector.asc");
     }
     actionSimulate->setDisabled(false);
     actionOpenMBV->setDisabled(false);
@@ -312,6 +334,29 @@ namespace MBSimGUI {
       mbsDir = QFileInfo(absoluteMBSFilePath).absolutePath();
       fileProject = QDir::current().relativeFilePath(absoluteMBSFilePath);
       updateRecentProjectFileActions();
+    }
+  }
+
+  void MainWindow::openOptionsMenu() {
+    OptionsDialog menu;
+    menu.setAutoSave(autoSave);
+    menu.setAutoSaveInterval(autoSaveInterval);
+    menu.setAutoExport(autoExport);
+    menu.setAutoExportDir(autoExportDir);
+    menu.setSaveStateVector(saveFinalStateVector);
+    int res = menu.exec();
+    if(res == 1) {
+      autoSave = menu.getAutoSave();
+      autoSaveInterval = menu.getAutoSaveInterval();
+      autoExport = menu.getAutoExport();
+      autoExportDir = menu.getAutoExportDir();
+      saveFinalStateVector = menu.getSaveStateVector();
+      if(not(saveFinalStateVector)) 
+        actionSaveStateVectorAs->setDisabled(true);
+      if(not(autoSaveTimer->isActive()) and autoSave)
+        autoSaveTimer->start(autoSaveInterval*60000);
+      else
+        autoSaveTimer->stop();
     }
   }
 
@@ -560,6 +605,7 @@ namespace MBSimGUI {
    actionSaveDataAs->setDisabled(true);
    actionSaveMBSimH5DataAs->setDisabled(true);
    actionSaveOpenMBVDataAs->setDisabled(true);
+   actionSaveStateVectorAs->setDisabled(true);
 
    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
    QModelIndex index = pmodel->index(0,0);
@@ -670,6 +716,8 @@ namespace MBSimGUI {
         saveMBSimH5Data(dir+"/MBS.mbsim.h5");
         saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
         saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
+        if(saveFinalStateVector)
+          saveStateVector(dir+"/statevector.asc");
       }
     }
   }
@@ -715,6 +763,21 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/out0.ombv.h5",file);
   }
 
+  void MainWindow::saveStateVectorAs() {
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = model->index(0,0);
+    QString file=QFileDialog::getSaveFileName(0, "Export state vector file", "./statevector.asc", "ASCII files (*.asc)");
+    if(file!="") {
+      saveStateVector(file);
+    }
+  }
+
+  void MainWindow::saveStateVector(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statevector.asc",file);
+  }
+
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
@@ -752,6 +815,8 @@ namespace MBSimGUI {
       QStringList arg;
       if(currentTask==1)
         arg.append("--stopafterfirststep");
+      else if(saveFinalStateVector)
+        arg.append("--savefinalstatevector");
       arg.append(projectFile);
       mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
       mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
@@ -769,6 +834,8 @@ namespace MBSimGUI {
     actionSaveDataAs->setDisabled(false);
     actionSaveMBSimH5DataAs->setDisabled(false);
     actionSaveOpenMBVDataAs->setDisabled(false);
+    if(saveFinalStateVector)
+      actionSaveStateVectorAs->setDisabled(false);
     actionSimulate->setDisabled(true);
     actionOpenMBV->setDisabled(true);
     actionH5plotserie->setDisabled(true);
