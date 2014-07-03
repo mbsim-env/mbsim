@@ -76,12 +76,16 @@ namespace MBSimGUI {
       void dragEnterEvent(QDragEnterEvent *event);
       void dropEvent(QDropEvent *event);
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh; //, *separatorAct;
+      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs;
+      QTimer *autoSaveTimer;
       std::string currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
+      bool autoSave, autoExport, saveFinalStateVector;
+      int autoSaveInterval;
+      QString autoExportDir;
 
     public:
       MainWindow(QStringList &arg);
@@ -124,6 +128,8 @@ namespace MBSimGUI {
       void saveOpenMBVDataAs();
       void saveOpenMBVXMLData(const QString &file);
       void saveOpenMBVH5Data(const QString &file);
+      void saveStateVectorAs();
+      void saveStateVector(const QString &file);
       void removeParameter();
       void simulate();
       void refresh();
@@ -137,10 +143,12 @@ namespace MBSimGUI {
     protected slots:
       void selectElement(std::string);
       void changeWorkingDir();
+      void openOptionsMenu();
       void selectionChanged(const QModelIndex &current, const QModelIndex &previous);
       void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void openRecentProjectFile();
       void preprocessFinished(int result);
+      void autoSaveProject();
     protected:
       void closeEvent ( QCloseEvent * event );
 
