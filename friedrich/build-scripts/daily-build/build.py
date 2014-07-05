@@ -52,6 +52,7 @@ cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not man
 cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
 cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
 cfgOpts.add_argument("--disableMake", action="store_true", help="Do not 'make clean', 'make' and 'make install'")
+cfgOpts.add_argument("--disableMakeCheck", action="store_true", help="Do not 'make check'")
 cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
 cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
 cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
@@ -147,6 +148,7 @@ def main():
         pj('hdf5serie', 'hdf5serie')
       ])],
     pj('hdf5serie', 'hdf5serie'): [False, set([ # depends on
+        pj('fmatvec')
       ])],
     pj('openmbv', 'mbxmlutils'): [False, set([ # depends on
       ])],
@@ -374,6 +376,7 @@ def main():
   print('<th>SVN Update</th>', file=mainFD)
   print('<th>Configure</th>', file=mainFD)
   print('<th>Make</th>', file=mainFD)
+  print('<th>Check</th>', file=mainFD)
   print('<th>Doxygen Doc.</th>', file=mainFD)
   print('<th>XML Doc.</th>', file=mainFD)
   print('</tr>', file=mainFD)
@@ -383,6 +386,7 @@ def main():
     print('<tr>', file=mainFD)
     print('<td>'+tool+'</td>', file=mainFD)
     print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">up to date, no rebuild required</span></a></td>', file=mainFD)
+    print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
@@ -541,6 +545,10 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
     print(", make", end=""); sys.stdout.flush()
     ret+=make(tool, mainFD)
 
+    # make check
+    print(", check", end=""); sys.stdout.flush()
+    ret+=check(tool, mainFD)
+
     # doxygen
     print(", doxygen-doc", end=""); sys.stdout.flush()
     ret+=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
@@ -641,6 +649,48 @@ def make(tool, mainFD):
 
 
 
+def check(tool, mainFD):
+  checkFD=open(pj(args.reportOutDir, tool, "check.txt"), "w")
+  if not args.disableMakeCheck:
+    # make check
+    print("RUNNING make check\n", file=checkFD); checkFD.flush()
+    if subprocess.call(["make", "-j", str(args.j), "check"], stderr=subprocess.STDOUT, stdout=checkFD)==0:
+      result="done"
+    else:
+      result="failed"
+  else:
+    print("make check disabled", file=checkFD); checkFD.flush()
+    result="done"
+
+  foundTestSuiteLog=False
+  testSuiteLogFD=open(pj(args.reportOutDir, tool, "test-suite.log.txt"), "w")
+  for rootDir,_,files in os.walk('.'): # append all test-suite.log files
+    if "test-suite.log" in files:
+      testSuiteLogFD.write('\n\n')
+      testSuiteLogFD.write(open(pj(rootDir, "test-suite.log")).read())
+      foundTestSuiteLog=True
+  testSuiteLogFD.close()
+  if not args.disableMakeCheck:
+    if not foundTestSuiteLog:
+      print('<td>not available</td>', file=mainFD)
+    else:
+      print('<td>', file=mainFD)
+      print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'"><span style="color:'+
+                           ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+      print('  <a href="'+myurllib.pathname2url(pj(tool, "test-suite.log.txt"))+'"><span style="color:'+
+                           ('green' if result=="done" else 'red')+'">test-suite.log</span></a>', file=mainFD)
+      print('</td>', file=mainFD)
+  else:
+    print('<td>not run</td>', file=mainFD)
+  checkFD.close()
+  mainFD.flush()
+
+  if result!="done":
+    return 1
+  return 0
+
+
+
 def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   if not os.path.isdir(docDirName):
     print('<td>not available</td>', file=mainFD)
@@ -697,7 +747,7 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
 
 def runexamples(mainFD):
   if args.disableRunExamples:
-    print('<td colspan="4">runexamples disabled</td>', file=mainFD)
+    print('<td colspan="5">runexamples disabled</td>', file=mainFD)
     mainFD.flush()
     return 0
 
@@ -720,10 +770,10 @@ def runexamples(mainFD):
   ret=subprocess.call(command, stderr=subprocess.STDOUT)
 
   if ret==0:
-    print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
+    print('<td colspan="5"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '"><span style="color:green">all examples passed</span></a></td>', file=mainFD)
   else:
-    print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
+    print('<td colspan="5"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '"><span style="color:red">examples failed</span></a></td>', file=mainFD)
 
   mainFD.flush()
