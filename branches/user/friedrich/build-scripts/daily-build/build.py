@@ -671,15 +671,13 @@ def check(tool, mainFD):
       foundTestSuiteLog=True
   testSuiteLogFD.close()
   if not args.disableMakeCheck:
-    if not foundTestSuiteLog:
-      print('<td>not available</td>', file=mainFD)
-    else:
-      print('<td>', file=mainFD)
-      print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'"><span style="color:'+
-                           ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+    print('<td>', file=mainFD)
+    print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'"><span style="color:'+
+                         ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+    if foundTestSuiteLog:
       print('  <a href="'+myurllib.pathname2url(pj(tool, "test-suite.log.txt"))+'"><span style="color:'+
                            ('green' if result=="done" else 'red')+'">test-suite.log</span></a>', file=mainFD)
-      print('</td>', file=mainFD)
+    print('</td>', file=mainFD)
   else:
     print('<td>not run</td>', file=mainFD)
   checkFD.close()
