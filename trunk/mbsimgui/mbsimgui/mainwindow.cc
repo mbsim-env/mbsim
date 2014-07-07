@@ -324,6 +324,7 @@ namespace MBSimGUI {
     delete mbsim;
     delete mbsimThread;
     bfs::remove_all(uniqueTempDir);
+    bfs::remove("./.MBS.mbsimprj.xml");
   }
 
   void MainWindow::changeWorkingDir() {
@@ -353,7 +354,7 @@ namespace MBSimGUI {
       saveFinalStateVector = menu.getSaveStateVector();
       if(not(saveFinalStateVector)) 
         actionSaveStateVectorAs->setDisabled(true);
-      if(not(autoSaveTimer->isActive()) and autoSave)
+      if(autoSave)
         autoSaveTimer->start(autoSaveInterval*60000);
       else
         autoSaveTimer->stop();
