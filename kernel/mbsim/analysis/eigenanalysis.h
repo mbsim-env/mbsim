@@ -90,8 +90,8 @@ namespace MBSim {
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
 
       /**
-       * \brief Set the plot step size for the analysis
-       * \param dtPlot_ The plot step size
+       * \brief Set the equilibrium state for the analysis
+       * \param zEq_ The equilibrium state
        */
       void setEquilibriumState(const fmatvec::Vec &zEq_) { zEq = zEq_; }
 
@@ -108,10 +108,34 @@ namespace MBSim {
       const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> >& getEigenvectors() const { return V; }
 
       /**
+       * \brief Get the eigenfrequencies
+       * \return A vector containing the eigenfrequencies of the system
+       */
+      const fmatvec::Vec& getEigenfrequencies() const { return freq; }
+
+      /**
        * \brief Set the name of the output file
        * \param fileName_ The output file name
        */
       void setOutputFileName(const std::string &fileName_) { fileName = fileName_; }
+
+      /**
+       * \brief Compute and plot the i-th eigenmode
+       * \param system The dynamic system to be analysed
+       */
+      void eigenmode(int i, DynamicSystemSolver& system);
+
+      /**
+       * \brief Compute and plot all eigenmodes
+       * \param system The dynamic system to be analysed
+       */
+      void eigenmodes(DynamicSystemSolver& system);
+
+      /**
+       * \brief Compute and plot the eigenmotion
+       * \param system The dynamic system to be analysed
+       */
+      void eigenmotion(DynamicSystemSolver& system);
 
     protected:
 
@@ -122,8 +146,14 @@ namespace MBSim {
 
       fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
       fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
+      fmatvec::Vec freq;
+      std::vector<std::pair<double,int> > f;
 
       std::string fileName;
+
+      bool saveEigenanalyis(const std::string &fileName);
+      bool loadEigenanalyis(const std::string &fileName);
+      void computeEigenfrequencies();
  };
 
 }
