@@ -92,6 +92,7 @@ namespace MBSim {
   }
 
   void Eigenanalysis::computeEigenfrequencies() {
+    f.clear();
     for (int i=0; i<w.size(); i++) {
       if((i < w.size()-1) and (w(i+1)==conj(w(i)))) {
         f.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
