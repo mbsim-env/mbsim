@@ -18,6 +18,9 @@ int main (int argc, char* argv[]) {
   z0(0) = 0.02;
   analysis.setInitialDeviation(z0);
   analysis.analyse(*sys);
+  analysis.eigenmode(2,*sys);
+//  analysis.eigenmodes(*sys);
+//  analysis.eigenmotion(*sys);
 
   delete sys;
 
