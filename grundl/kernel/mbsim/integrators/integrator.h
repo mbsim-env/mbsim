@@ -23,6 +23,7 @@
 #include <fmatvec/fmatvec.h>
 #include <fmatvec/atom.h>
 #include <mbxmlutilshelper/dom.h>
+#include <mbsim/mbsim_event.h>
 #include <string>
 #include <iostream>
 
@@ -79,9 +80,9 @@ namespace MBSim {
        */
       void debugInit();
 
-      virtual void preIntegrate(DynamicSystemSolver& system) { std::cerr<<"preIntegrate is not defined\n"<<std::endl; }
-      virtual void subIntegrate(DynamicSystemSolver& system, double tStop) { std::cerr<<"subIntegrate is not defined\n"<<std::endl; }
-      virtual void postIntegrate(DynamicSystemSolver& system) { std::cerr<<"postIntegrate is not defined\n"<<std::endl; }
+      virtual void preIntegrate(DynamicSystemSolver& system) { throw MBSimError("preIntegrate is not defined"); }
+      virtual void subIntegrate(DynamicSystemSolver& system, double tStop) { throw MBSimError("subIntegrate is not defined"); }
+      virtual void postIntegrate(DynamicSystemSolver& system) { throw MBSimError("postIntegrate is not defined"); }
 
       /*! 
        * \brief initialize integrator

@@ -31,6 +31,7 @@ else:
   import urllib.request as myurllib
 
 # global variables
+dummyID=0
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -56,7 +57,6 @@ argparser = argparse.ArgumentParser(
   Run MBSim examples.
   This script runs the action given by --action on all specified directories recursively.
   However only examples of the type matching --filter are executed.
-  If the directory is prefixed with '^' this directory (and subdirectories) is removed from the current list.
   The specified directories are processed from left to right.
   The type of an example is defined dependent on some key files in the corrosponding example directory:
   - If a file named 'Makefile' exists, than it is treated as a SRC example.
@@ -68,7 +68,10 @@ argparser = argparse.ArgumentParser(
 )
 
 mainOpts=argparser.add_argument_group('Main Options')
-mainOpts.add_argument("directories", nargs="*", default=os.curdir, help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
+mainOpts.add_argument("directories", nargs="*", default=os.curdir,
+  help='''A directory to run (recursively). If prefixed with '^' remove the directory form the current list
+          If starting with '@' read directories from the file after the '@'. This file must provide
+          one directory per line and each line may itself be prefixed with '^' or '@'.''')
 mainOpts.add_argument("--action", default="report", type=str,
   help='''The action of this script:
           'report': run examples and report results (default);
@@ -344,16 +347,11 @@ def main():
   print('  <title>MBSim runexamples Results</title>', file=mainFD)
   print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>', file=mainFD)
   print('  <style type="text/css">', file=mainFD)
-  print('    table.sortable th {', file=mainFD)
-  print('      cursor: move;', file=mainFD)
-  print('      border-width: 2pt;', file=mainFD)
-  print('      border-color: #D0D0D0;', file=mainFD)
-  print('      border-style: outset;', file=mainFD)
-  print('      background-color: #E0E0E0;', file=mainFD)
-  print('      padding: 2px;', file=mainFD)
-  print('    }', file=mainFD)
+  print('    table.sortable th { cursor: move; }', file=mainFD)
+  print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=mainFD)
   print('  </style>', file=mainFD)
-  print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=mainFD)
+  print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=mainFD)
+  print('  <base id="BASE" href="." target="_self"/>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body>', file=mainFD)
 
@@ -369,7 +367,7 @@ def main():
   if args.timeID!="":
     timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%S")
   print('   <b>Time ID:</b> '+str(timeID)+'<br/>', file=mainFD)
-  print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
+  print('   <b>End time:</b> <!--S_ENDTIME--><span style="color:red"><b>still running or aborted</b></span><!--E_ENDTIME--><br/>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   navA=""
   navB=""
@@ -385,13 +383,15 @@ def main():
   print('</p>', file=mainFD)
   print('<p>A example name in gray color is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
+  print('<form id="ACTION" action="" method="post">', file=mainFD)
   print('<table border="1" class="sortable">', file=mainFD)
   print('<tr>', file=mainFD)
   print('<th>Example</th>', file=mainFD)
   print('<th>Compile/Run</th>', file=mainFD)
   print('<th>Time [s]</th>', file=mainFD)
   print('<th>Ref. Time [s]</th>', file=mainFD)
-  print('<th>Reference</th>', file=mainFD)
+  print('<th><span style="float:left;text-align:left">Reference</span>'+\
+        '<span style="float:right;text-align:right">[update]</span></th>', file=mainFD)
   print('<th>Deprecated</th>', file=mainFD)
   print('<th>XML output</th>', file=mainFD)
   print('</tr>', file=mainFD)
@@ -444,15 +444,25 @@ def main():
     print('</tt><br/>', file=mainFD)
     print('</p>', file=mainFD)
 
+  print('<p>', file=mainFD)
+  print('<b>Update references</b><br/>', file=mainFD)
+  print('Update the references of the selected examples before next build<br/>', file=mainFD)
+  print('Password: <input id="PASSWORD" type="password" name="PASSWORD" disabled="disabled"/>', file=mainFD)
+  print('          <input id="SUBMIT" type="submit" value="Submit" disabled="disabled"/>', file=mainFD)
+  print('          <input id="CANCEL" type="button" value="Cancel" onclick="window.location.href=\'.\'" disabled="disabled"/><br/>', file=mainFD)
+  print('<span id="PASSWORDMSG"/>', file=mainFD)
+  print('</p>', file=mainFD)
+  print('</form>', file=mainFD)
+
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
   mainFD.close()
-  # replace <span id="STILLRUNNINGORABORTED"...</span> in index.html
+  # replace end time in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
+    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', str(endTime), line)
     print(line)
 
   # write RSS feed
@@ -524,6 +534,14 @@ def sortDirectories(directoriesSet, dirs):
 
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
+  # if staring with @ use dirs from file defined by @<filename>: one dir per line
+  if baseDir[0]=="@":
+    line=codecs.open(baseDir[1:], "r", encoding="utf-8").readlines()
+    line=list(map(lambda x: x.rstrip(), line)) # newlines must be removed
+    for d in line:
+      addExamplesByFilter(d, directoriesSet)
+    return
+
   if baseDir[0]!="^": # add dir
     addOrDiscard=directoriesSet.add
   else: # remove dir
@@ -633,7 +651,7 @@ def runExample(resultQueue, example):
     if not math.isinf(refTime):
       resultStr+='<td>%.3f</td>'%refTime
     else:
-      resultStr+='<td><span style="color:orange">no reference<span></td>'
+      resultStr+='<td><span style="color:orange">no reference</span></td>'
 
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
@@ -649,15 +667,26 @@ def runExample(resultQueue, example):
       refTimeFD.close()
     # print result to resultStr
     if compareRet==-1:
-      resultStr+='<td><span style="color:orange">not run</span></td>'
+      resultStr+='<td sorttable_customkey="not run"><span style="color:orange;float:left;text-align:left">not run</span>'+\
+                 '<span style="float:right;text-align:right">[<input type="checkbox" disabled="disabled"/>]</span></td>'
     else:
+      global dummyID
+      dummyID=dummyID+1
       if nrFailed==0:
         if nrAll==0:
-          resultStr+='<td><span style="color:orange">no reference<span></td>'
+          resultStr+='<td sorttable_customkey="no reference"><span style="color:orange;float:left;text-align:left">no reference</span>'+\
+                     '<span style="float:right;text-align:right">[<input id="EXAMPLE_'+str(dummyID)+\
+                     '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</span></td>'
         else:
-          resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:green">all '+str(nrAll)+' passed</span></a></td>'
+          resultStr+='<td sorttable_customkey="all passed"><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
+                     '"><span style="color:green">all '+str(nrAll)+\
+                     ' passed</span></a></span>'+\
+                     '<span style="float:right;text-align:right">[<input type="checkbox" disabled="disabled"/>]</span></td>'
       else:
-        resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
+        resultStr+='<td sorttable_customkey="failed"><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
+                   '"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+\
+                   ')</span></a></span><span style="float:right;text-align:right">[<input id="EXAMPLE_'+str(dummyID)+\
+                   '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</span></td>'
 
     # check for deprecated features
     if args.disableRun:
@@ -685,16 +714,10 @@ def runExample(resultQueue, example):
       print('<head>', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <style type="text/css">', file=htmlOutputFD)
-      print('    table.sortable th {', file=htmlOutputFD)
-      print('      cursor: move;', file=htmlOutputFD)
-      print('      border-width: 2pt;', file=htmlOutputFD)
-      print('      border-color: #D0D0D0;', file=htmlOutputFD)
-      print('      border-style: outset;', file=htmlOutputFD)
-      print('      background-color: #E0E0E0;', file=htmlOutputFD)
-      print('      padding: 2px;', file=htmlOutputFD)
-      print('    }', file=htmlOutputFD)
+      print('    table.sortable th { cursor: move; }', file=htmlOutputFD)
+      print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=htmlOutputFD)
       print('  </style>', file=htmlOutputFD)
-      print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=htmlOutputFD)
+      print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body>', file=htmlOutputFD)
       print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
@@ -1066,16 +1089,10 @@ def compareExample(example, compareFN):
   print('<head>', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <style type="text/css">', file=compareFD)
-  print('    table.sortable th {', file=compareFD)
-  print('      cursor: move;', file=compareFD)
-  print('      border-width: 2pt;', file=compareFD)
-  print('      border-color: #D0D0D0;', file=compareFD)
-  print('      border-style: outset;', file=compareFD)
-  print('      background-color: #E0E0E0;', file=compareFD)
-  print('      padding: 2px;', file=compareFD)
-  print('    }', file=compareFD)
+  print('    table.sortable th { cursor: move; }', file=compareFD)
+  print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=compareFD)
   print('  </style>', file=compareFD)
-  print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=compareFD)
+  print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body>', file=compareFD)
   print('<h1>Compare Results</h1>', file=compareFD)

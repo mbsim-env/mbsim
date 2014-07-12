@@ -46,7 +46,7 @@ namespace MBSim {
       /**
        * \brief Standard constructor 
        */
-      Eigenanalysis() : tStart(0), tEnd(1), dtPlot(1e-2) {}
+      Eigenanalysis() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), compEq(false), autoUpdate(false) {}
       
       /**
        * \brief Destructor
@@ -60,16 +60,16 @@ namespace MBSim {
       void analyse(DynamicSystemSolver& system);
 
       /**
-       * \brief Set the initial guess for the computation of the equilibrium position
-       * \param z0_ The initial guess
-       */
-      void setInitialGuess(const fmatvec::Vec &z0_) { z0 = z0_; }
-
-      /**
-       * \brief Set the initial deviation of the equilibrium position
+       * \brief Set the initial deviation of the equilibrium
        * \param deltaz_ The deviation
        */
       void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0 = deltaz0_; }
+
+      /**
+       * \brief Set the amplitude for the eigemode analysis
+       * \param A_ The amplitude
+       */
+      void setAmplitude(double A_) { A = A_; }
 
       /**
        * \brief Set the start time for the analysis
@@ -90,10 +90,23 @@ namespace MBSim {
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
 
       /**
-       * \brief Set the plot step size for the analysis
-       * \param dtPlot_ The plot step size
+       * \brief Set the initital state for the analysis
+       * \param z0 The initital state
        */
-      void setEquilibriumState(const fmatvec::Vec &zEq_) { zEq = zEq_; }
+      void setInitialState(const fmatvec::Vec &z0) { zEq = z0; }
+//      void setEquilibriumState(const fmatvec::Vec &zEq_) { zEq = zEq_; }
+
+      /**
+       * \brief Determine the equilibrium state for the analysis
+       * \param eq True, if the equilibrium state should be determined
+       */
+      void setDetermineEquilibriumState(bool eq) { compEq = eq; }
+
+      /**
+       * \brief Determine the equilibrium state for the analysis
+       * \param update True, if the analysis should be updated, automatically
+       */
+      void setAutoUpdateAnalysis(bool update) { autoUpdate = update; }
 
       /**
        * \brief Get the eigenvalues
@@ -108,22 +121,53 @@ namespace MBSim {
       const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> >& getEigenvectors() const { return V; }
 
       /**
+       * \brief Get the eigenfrequencies
+       * \return A vector containing the eigenfrequencies of the system
+       */
+      const fmatvec::Vec& getEigenfrequencies() const { return freq; }
+
+      /**
        * \brief Set the name of the output file
        * \param fileName_ The output file name
        */
       void setOutputFileName(const std::string &fileName_) { fileName = fileName_; }
+
+      /**
+       * \brief Compute and plot the i-th eigenmode
+       * \param system The dynamic system to be analysed
+       */
+      void eigenmode(int i, DynamicSystemSolver& system);
+
+      /**
+       * \brief Compute and plot all eigenmodes
+       * \param system The dynamic system to be analysed
+       */
+      void eigenmodes(DynamicSystemSolver& system);
+
+      /**
+       * \brief Compute and plot the eigenmotion
+       * \param system The dynamic system to be analysed
+       */
+      void eigenmotion(DynamicSystemSolver& system);
 
     protected:
 
       static DynamicSystemSolver* system;
 
       fmatvec::Vec z0, deltaz0, zEq;
-      double tStart, tEnd, dtPlot;
+      double tStart, tEnd, dtPlot, A;
+      bool compEq, autoUpdate;
 
       fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
       fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
+      fmatvec::Vec freq;
+      std::vector<std::pair<double,int> > f;
 
       std::string fileName;
+
+      bool saveEigenanalyis(const std::string &fileName);
+      bool loadEigenanalyis(const std::string &fileName);
+      void computeEigenfrequencies();
  };
 
 }

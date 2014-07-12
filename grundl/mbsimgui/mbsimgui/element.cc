@@ -57,7 +57,7 @@ namespace MBSimGUI {
   }
 
   std::string Element::getValue() const {
-    return isEmbedded()?("counterName="+static_cast<const EmbedProperty*>(embed.getProperty())->getCounterName()+"; count="+toStr(static_cast<const EmbedProperty*>(embed.getProperty())->getCount())):"";
+    return isEmbedded()?("counterName="+static_cast<const EmbedProperty*>(embed.getProperty())->getCounterName()+"; count="+static_cast<const EmbedProperty*>(embed.getProperty())->getCount()):"";
   }
 
   void Element::writeXMLFile(const string &name) {

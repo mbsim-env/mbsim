@@ -324,7 +324,7 @@ signals:
       protected slots:
         void openEvalDialog();
     public:
-      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units, int defaultUnit);
+      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0);
       QString getValue() const {return widget->getValue();}
       void setValue(const QString &str) {widget->setValue(str);}
       void setReadOnly(bool flag) {widget->setReadOnly(flag);}

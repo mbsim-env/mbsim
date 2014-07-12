@@ -33,26 +33,9 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  class RigidBodyOfReferencePropertyFactory : public PropertyFactory {
-    public:
-      RigidBodyOfReferencePropertyFactory(Element *element_, const FQN &xmlName_) : element(element_), xmlName(xmlName_) { }
-      Property* createProperty(int i=0);
-    protected:
-      Element *element;
-      FQN xmlName;
-  };
-
   Property* RigidBodyOfReferencePropertyFactory::createProperty(int i) {
     return new RigidBodyOfReferenceProperty("",element,xmlName);
   }
-
-  class GearConstraintPropertyFactory : public PropertyFactory {
-    public:
-      GearConstraintPropertyFactory(Element *element_) : element(element_) { }
-      Property* createProperty(int i=0);
-    protected:
-      Element *element;
-  };
 
   Property* GearConstraintPropertyFactory::createProperty(int i) {
     ContainerProperty *property = new ContainerProperty;

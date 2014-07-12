@@ -1,5 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
- *
+/* Copyright (C) 2004-2009 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -14,14 +13,15 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@gmail.com
+ * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GEAR_H_
-#define _GEAR_H_
+#ifndef _FRICTION_H_
+#define _FRICTION_H_
 
 #include "mbsim/link_mechanics.h"
-#include "mbsim/rigid_body.h"
+#include <mbsim/frame.h>
+#include "fmatvec/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -30,68 +30,61 @@
 
 namespace MBSim {
 
-  class Transmission;
+  class RigidBody;
+  class FrictionForceLaw;
 
-  class Gear : public LinkMechanics {
+  class GeneralizedFriction : public LinkMechanics {
     protected:
-      fmatvec::Function<double(double,double)> *func;
+      //fmatvec::Function<double(double,double)> *func;
+      FrictionForceLaw *func;
+      double laN;
       std::vector<RigidBody*> body;
-      std::vector<double> ratio;
-      std::vector<Frame> C;
-      std::string saved_DependentBody;
-      std::vector<std::string> saved_IndependentBody;
     public:
-      Gear(const std::string &name="");
+      GeneralizedFriction(const std::string &name="");
+      ~GeneralizedFriction();
       void updateh(double, int i=0);
-      void updateW(double, int i=0);
-      void updateg(double);
+      void updateg(double) { }
       void updategd(double);
-      void updateJacobians(double t, int j=0);
-      void updatewb(double t, int i=0);
-      void updatehRef(const fmatvec::Vec &hParent, int j=0);
-      void updateWRef(const fmatvec::Mat &WParent, int j=0);
-      void setDependentBody(RigidBody* body_) {body[0] = body_;}
-      void addTransmission(const Transmission &transmission);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      std::string getType() const { return "Gear"; }
+      virtual bool isSingleValued() const { return true; }
+      std::string getType() const { return "GeneralizedFriction"; }
       void init(InitStage stage);
-      bool isSetValued() const;
-      bool isSingleValued() const { return not(isSetValued()); }
-      virtual void calclaSize(int j);
-      virtual void calcgSize(int j);
-      virtual void calcgdSize(int j);
 
-      void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      /** \brief Set the function for the torque calculation. */
+      //void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_) { func = func_; }
+      void setGeneralizedNormalForce(double laN_) { laN = laN_; }
+
+      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
+      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
 
       void plot(double t, double dt=1);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void updatehRef(const fmatvec::Vec &hParent, int j=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-     /** \brief Visualize a force arrow */
+      /** \brief Visualize a force arrow acting on each of both connected frames */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVForce(ombv.createOpenMBV());
+        std::vector<bool> which; which.resize(2, true);
+        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
-      void setOpenMBVForce(OpenMBV::Arrow *arrow) { FArrow[0]=arrow; }
 
-      /** \brief Visualize a moment arrow */
+      /** \brief Visualize a torque arrow acting on each of both connected frames */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVMoment(ombv.createOpenMBV());
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        std::vector<bool> which; which.resize(2, true);
+        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
-      void setOpenMBVMoment(OpenMBV::Arrow *arrow) { MArrow[0]=arrow; }
 #endif
-
-    protected:
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      std::vector<OpenMBV::Arrow*> FArrow, MArrow;
-#endif
-
+    private:
+      std::string saved_body1, saved_body2;
   };
 
 }
 
-#endif
+#endif 
+

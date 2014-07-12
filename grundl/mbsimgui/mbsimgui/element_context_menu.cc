@@ -33,7 +33,8 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "torsional_stiffness.h"
+#include "friction.h"
+#include "gear.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
@@ -320,8 +321,11 @@ namespace MBSimGUI {
     action = new QAction("Add linear transfer system", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
     addAction(action);
-    action = new QAction("Add torsional stiffness", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addTorsionalStiffness()));
+    action = new QAction("Add generalized friction", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
+    addAction(action);
+    action = new QAction("Add gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGear()));
     addAction(action);
   }
 
@@ -362,8 +366,12 @@ namespace MBSimGUI {
     mw->addLink(new LinearTransferSystem("LTS",element));
   }
 
-  void LinkContextContextMenu::addTorsionalStiffness() {
-    mw->addLink(new TorsionalStiffness("TorsionalStiffness",element));
+  void LinkContextContextMenu::addGeneralizedFriction() {
+    mw->addLink(new GeneralizedFriction("GeneralizedFriction",element));
+  }
+
+  void LinkContextContextMenu::addGear() {
+    mw->addLink(new Gear("Gear",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

@@ -115,11 +115,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), body1(0,false), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"generalizedForceFunction"));
 
-    body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
+    body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodyFirstSide"));
+    body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodySecondSide"));
 
     coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
     coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
@@ -142,7 +143,8 @@ namespace MBSimGUI {
     DOMElement *e;
     Link::initializeUsingXML(element);
     function.initializeUsingXML(element);
-    body.initializeUsingXML(element);
+    body1.initializeUsingXML(element);
+    body2.initializeUsingXML(element);
     coilSpring.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
     momentArrow.initializeUsingXML(element);
@@ -151,7 +153,8 @@ namespace MBSimGUI {
   DOMElement* GeneralizedSpringDamper::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Link::writeXMLFile(parent);
     function.writeXMLFile(ele0);
-    body.writeXMLFile(ele0);
+    body1.writeXMLFile(ele0);
+    body2.writeXMLFile(ele0);
     coilSpring.writeXMLFile(ele0);
     forceArrow.writeXMLFile(ele0);
     momentArrow.writeXMLFile(ele0);

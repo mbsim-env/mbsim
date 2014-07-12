@@ -229,15 +229,25 @@ namespace MBSimGUI {
     delete frictionForceFunc;
     if(index==0)
       frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
+    else {
+      vector<string> var;
+      var.push_back("gd");
+      var.push_back("laN");
+      frictionForceFunc = new SymbolicFunctionProperty("VVS",var,1);
+    }
   }
 
   DOMElement* RegularizedPlanarFrictionProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
     DOMElement *e1 = e->getFirstElementChild();
-    if(e1 && E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
-      index = 0;
-    defineFunction(0);
+    if(e1) {
+      if(E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
+        index = 0;
+      else if(E(e1)->getTagName() == MBSIM%"SymbolicFunction")
+        index = 1;
+    }
+    defineFunction(index);
     frictionForceFunc->initializeUsingXML(e->getFirstElementChild());
     return e;
   }

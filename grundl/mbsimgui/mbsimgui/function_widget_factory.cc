@@ -44,25 +44,23 @@ namespace MBSimGUI {
     if(i==5)
       return new AbsoluteValueFunctionWidget(1);
     if(i==6)
-      return new PointSymmetricFunctionWidget(1);
-    if(i==7)
-      return new LineSymmetricFunctionWidget(1);
-    if(i==8)
-      return new ScaledFunctionWidget(1);
-    if(i==9)
-      return new SummationFunctionWidget;
-    if(i==10)
       return new VectorValuedFunctionWidget(1,true);
-    if(i==11)
+    if(i==7)
       return new PiecewiseDefinedFunctionWidget;
-    if(i==12)
+    if(i==8)
       return new NestedFunctionWidget(new FunctionWidgetFactory2, new FunctionWidgetFactory2);
-    if(i==13)
+    if(i==9)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
-    if(i==14)
+    if(i==10)
       return new TabularFunctionWidget(1);
-    if(i==15)
+    if(i==11)
       return new PiecewisePolynomFunctionWidget(1);
+    if(i==12)
+      return new SignumFunctionWidget(1);
+    if(i==13)
+      return new AdditionFunctionWidget(1);
+    if(i==14)
+      return new MultiplicationFunctionWidget(1);
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -73,16 +71,15 @@ namespace MBSimGUI {
     name.push_back("Polynom function");
     name.push_back("Sinusoidal function");
     name.push_back("Absolute value function");
-    name.push_back("Point symmetric function");
-    name.push_back("Line symmetric function");
-    name.push_back("Scaled function");
-    name.push_back("Summation function");
     name.push_back("Vector valued function");
     name.push_back("Piecewise defined function");
     name.push_back("Nested function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise polynom function");
+    name.push_back("Signum function");
+    name.push_back("Addition function");
+    name.push_back("Multiplication function");
     return name;
   }
 
@@ -137,12 +134,8 @@ namespace MBSimGUI {
     if(i==3)
       return new TabularFunctionWidget(1);
     if(i==4)
-      return new ScaledFunctionWidget(1);
-    if(i==5)
-      return new SummationFunctionWidget;
-    if(i==6)
       return new PiecewiseDefinedFunctionWidget;
-    if(i==7)
+    if(i==5)
       return new PiecewisePolynomFunctionWidget(1);
   }
 
@@ -152,8 +145,6 @@ namespace MBSimGUI {
     name.push_back("Nested function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
-    name.push_back("Scaled function");
-    name.push_back("Summation function");
     name.push_back("Piecewise defined function");
     name.push_back("Piecewise polynom function");
     return name;

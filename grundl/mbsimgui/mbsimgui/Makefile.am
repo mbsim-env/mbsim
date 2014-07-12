@@ -13,6 +13,7 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
 
 mbsimgui_SOURCES = mainwindow.cc \
+		   options.cc \
 		   element.cc \
 		   frame.cc \
 		   contour.cc \
@@ -25,6 +26,8 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   link.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
+		   friction.cc \
+		   gear.cc \
 		   joint.cc \
 		   contact.cc \
 		   actuator.cc \
@@ -71,14 +74,14 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   utils.cc \
 		   process.cc \
 		   main.cc \
-		   embed.cc \
-		   torsional_stiffness.cc
+		   embed.cc
 		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 QT_BUILT_SOURCES = mainwindow.moc.cc \
+		   options.moc.cc \
 		   basic_widgets.moc.cc \
 		   variable_widgets.moc.cc \
 		   function_widget.moc.cc \

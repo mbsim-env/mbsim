@@ -198,7 +198,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->addContour(schnabel);
 
   GeneralizedSpringDamper *feder = new GeneralizedSpringDamper("Drehfeder");
-  feder->setRigidBody(specht);
+  feder->setRigidBodySecondSide(specht);
   double cDF = 0.5;
   feder->setGeneralizedForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
   addLink(feder);

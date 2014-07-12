@@ -688,7 +688,7 @@ namespace MBSimGUI {
   EmbedProperty::EmbedProperty(boost::function<const std::string&()> f) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
     href.setProperty(new FileProperty(""));
     static_cast<FileProperty*>(href.getProperty())->setFile(f()+".xml");
-    count.setProperty(new IntegerProperty(1,""));
+    count.setProperty(new PhysicalVariableProperty(new ScalarProperty("1")));
     counterName.setProperty(new TextProperty("n",""));
     parameterList.setProperty(new FileProperty(""));
   }
@@ -701,7 +701,7 @@ namespace MBSimGUI {
     }
     if(E(parent)->hasAttribute("count")) {
       count.setActive(true);
-      static_cast<IntegerProperty*>(count.getProperty())->setValue(atoi(E(parent)->getAttribute("count").c_str()));
+      static_cast<PhysicalVariableProperty*>(count.getProperty())->setValue(E(parent)->getAttribute("count").c_str());
     }
     if(E(parent)->hasAttribute("counterName")) {
       counterName.setActive(true);
@@ -727,7 +727,7 @@ namespace MBSimGUI {
       E(ele0)->setAttribute("href", relFileName);
     }
     if(count.isActive())
-      E(ele0)->setAttribute("count", boost::lexical_cast<string>(static_cast<IntegerProperty*>(count.getProperty())->getValue()));
+      E(ele0)->setAttribute("count", static_cast<PhysicalVariableProperty*>(count.getProperty())->getValue());
     if(counterName.isActive())
       E(ele0)->setAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
     if(not(absolutePath) and parameterList.isActive()) {
