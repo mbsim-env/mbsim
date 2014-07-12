@@ -1,8 +1,16 @@
 #ifndef _MBSIMFLATXML_H_
 #define _MBSIMFLATXML_H_
 
+#include <xercesc/util/XercesDefs.hpp>
+#include <boost/shared_ptr.hpp>
+#include <mbxmlutilshelper/dom.h>
 #include <string>
 #include <sstream>
+#include <boost/program_options.hpp>
+
+namespace XERCES_CPP_NAMESPACE {
+  class DOMDocument;
+}
 
 namespace MBSim {
 
@@ -23,11 +31,12 @@ namespace MBSim {
 
   class MBSimXML {
     public:
-      static int preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator);
-      static void initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
-      static void plotInitialState(Integrator*& integrator, DynamicSystemSolver*& dss);
-      static void main(Integrator *&integrator, DynamicSystemSolver *&dss);
-      static void postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss);
+      static int preInit(const boost::program_options::variables_map &vm, DynamicSystemSolver*& dss, Integrator*& integrator);
+      static void initDynamicSystemSolver(const boost::program_options::variables_map &vm, DynamicSystemSolver*& dss);
+      static void plotInitialState(Integrator* integrator, DynamicSystemSolver* dss);
+      static void eigenAnalysis(const boost::program_options::variables_map &vm, Integrator*& integrator, DynamicSystemSolver*& dss);
+      static void main(Integrator *integrator, DynamicSystemSolver *dss);
+      static void postMain(const boost::program_options::variables_map &vm, Integrator *&integrator, DynamicSystemSolver*& dss);
   };
 
 }
