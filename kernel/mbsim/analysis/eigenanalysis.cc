@@ -58,31 +58,28 @@ namespace MBSim {
   void Eigenanalysis::analyse(DynamicSystemSolver& system_) {
     system = &system_;
 
-    double t=tStart;
-    int zSize=system->getzSize();
-    Vec z(zSize);
-    if(z0.size())
-      z = z0;
-    else
-      system->initz(z);          
-
     if(not(zEq.size())) {
-      Residuum f(system,t);
+      zEq.resize(system->getzSize());
+      system->initz(zEq);          
+    }
+
+    if(compEq) {
+      Residuum f(system,tStart);
       MultiDimNewtonMethod newton(&f);
       newton.setLinearAlgebra(1);
-      zEq = newton.solve(z);
+      zEq = newton.solve(zEq);
       if(newton.getInfo() != 0)
-        throw MBSimError("ERROR in Eigenanalysis: computation of equilibrium position failed!");
+        throw MBSimError("ERROR in Eigenanalysis: computation of equilibrium state failed!");
     }
 
     double delta = epsroot();
     SqrMat A(zEq.size());
     Vec zd, zdOld;
-    zdOld = system->zdot(zEq,t);
-    for (int i=0; i<z.size(); i++) {
+    zdOld = system->zdot(zEq,tStart);
+    for (int i=0; i<zEq.size(); i++) {
       double ztmp = zEq(i);
       zEq(i) += delta;
-      zd = system->zdot(zEq,t);
+      zd = system->zdot(zEq,tStart);
       A.col(i) = (zd - zdOld) / delta;
       zEq(i) = ztmp;
     }
@@ -185,17 +182,18 @@ namespace MBSim {
 
   void Eigenanalysis::eigenmode(int i, DynamicSystemSolver& system_) {
     system = &system_;
-    if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
+    if(autoUpdate)
       analyse(system_);
-//      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
+    else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
+      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
     if(i<1 or i>f.size())
       throw MBSimError("ERROR in Eigenanalysis: frequency number out of range!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
     Vec z;
-    c(f[i-1].second) = complex<double>(0,1);
-    c(f[i-1].second+1) = complex<double>(0,-1);
+    c(f[i-1].second) = complex<double>(0,A);
+    c(f[i-1].second+1) = complex<double>(0,-A);
     double T=1./f[i-1].first;
     for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
       deltaz.init(0);
@@ -208,16 +206,18 @@ namespace MBSim {
 
   void Eigenanalysis::eigenmodes(DynamicSystemSolver& system_) {
     system = &system_;
-    if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
+    if(autoUpdate)
       analyse(system_);
+    else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
+      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
     Vec z;
     double t0 = tStart;
     for(int j=0; j<f.size(); j++) {
-      c(f[j].second) = complex<double>(0,1);
-      c(f[j].second+1) = complex<double>(0,-1);
+      c(f[j].second) = complex<double>(0,A);
+      c(f[j].second+1) = complex<double>(0,-A);
       double T=10*1./f[j].first;
       for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
         deltaz.init(0);
@@ -234,8 +234,10 @@ namespace MBSim {
 
   void Eigenanalysis::eigenmotion(DynamicSystemSolver& system_) {
     system = &system_;
-    if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
+    if(autoUpdate)
       analyse(system_);
+    else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
+      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
     Vec z;
