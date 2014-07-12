@@ -11,11 +11,13 @@
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
 #include <boost/timer/timer.hpp>
-
+#include <boost/scoped_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include <mbsim/analysis/eigenanalysis.h>
 
 #ifndef _WIN32
 #  include <dlfcn.h>
@@ -27,6 +29,7 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
+namespace po = boost::program_options;
 
 namespace {
 
@@ -145,33 +148,7 @@ int PrefixedStringBuf::sync() {
   return 0;
 }
 
-int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator) {
-
-  // help
-  if(argc<2 || argc>3) {
-    cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
-    cout<<"                    <mbsimprjfile>"<<endl;
-    cout<<"   or: mbsimflatxml --printNamespacePrefixMapping"<<endl;
-    cout<<endl;
-    cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
-    cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
-    cout<<"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."<<endl;
-    cout<<endl;
-    cout<<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl;
-    cout<<endl;
-    cout<<"--donotintegrate               Stop after the initialization stage, do not integrate"<<endl;
-    cout<<"--stopafterfirststep           Stop after outputting the first step (usually at t=0)"<<endl;
-    cout<<"                               This generates a HDF5 output file with only one time serie"<<endl;
-    cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
-    cout<<"--printNamespacePrefixMapping  Print the recommended mapping of XML namespaces to XML prefix"<<endl;
-    cout<<"<mbsimprjfile>                 The preprocessed mbsim project xml file"<<endl;
-    return 1;
-  }
-
-
-  int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
-    startArg=2;
+int MBSimXML::preInit(const po::variables_map &vm, DynamicSystemSolver*& dss, Integrator*& integrator) {
 
   // setup message streams
   static PrefixedStringBuf infoBuf("Info:    ", cout);
@@ -183,7 +160,8 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
 
   // load MBSim project XML document
   shared_ptr<DOMParser> parser=DOMParser::create(false);
-  shared_ptr<xercesc::DOMDocument> doc=parser->parse(argv[startArg]);
+  cout << vm["projectfile"].as<string>() << endl;
+  shared_ptr<xercesc::DOMDocument> doc=parser->parse(vm["projectfile"].as<string>());
   DOMElement *e=doc->getDocumentElement();
 
   // create object for DynamicSystemSolver and check correct type
@@ -195,14 +173,14 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
   return 0;
 }
 
-void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
-  if(strcmp(argv[1],"--donotintegrate")==0)
+void MBSimXML::initDynamicSystemSolver(const po::variables_map &vm, DynamicSystemSolver*& dss) {
+  if(vm.count("donotintegrate"))
     dss->setTruncateSimulationFiles(false);
 
   dss->initialize();
 }
 
-void MBSimXML::plotInitialState(Integrator*& integrator, DynamicSystemSolver*& dss) {
+void MBSimXML::plotInitialState(Integrator* integrator, DynamicSystemSolver* dss) {
   int zSize=dss->getzSize();
   fmatvec::Vec z(zSize);
   if(integrator->getInitialState().size())
@@ -213,7 +191,35 @@ void MBSimXML::plotInitialState(Integrator*& integrator, DynamicSystemSolver*& d
   dss->plot(z, 0);
 }
 
-void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
+void MBSimXML::eigenAnalysis(const po::variables_map &vm, Integrator*& integrator, DynamicSystemSolver*& dss) {
+  Eigenanalysis analysis;
+//  analysis.setOutputFileName("MBS.eigenanalysis.mat");
+  int zSize=dss->getzSize();
+  fmatvec::Vec z0(zSize);
+  if(integrator->getInitialState().size())
+    z0 = integrator->getInitialState();
+  else
+    dss->initz(z0);          
+  analysis.setInitialState(z0);
+//  fmatvec::Vec deltaz(dss->getzSize(),fmatvec::INIT,1);
+//  analysis.setInitialDeviation(deltaz);
+  analysis.setDetermineEquilibriumState(vm.count("equilibrium"));
+  analysis.setAutoUpdateAnalysis(vm.count("autoupdate"));
+  if(vm.count("amplitude"))
+    analysis.setAmplitude(vm["amplitude"].as<double>());
+  analysis.setPlotStepSize(integrator->getPlotStepSize());
+  string task = vm["task"].as<string>();
+  if(task=="eigenanalyis")
+    analysis.analyse(*dss);
+  if(task=="eigenmode") {
+    int i = vm.count("mode")?vm["mode"].as<int>():1;
+    analysis.eigenmode(i,*dss);
+  }
+  else if(task=="eigenmodes")
+    analysis.eigenmodes(*dss);
+}
+
+void MBSimXML::main(Integrator *integrator, DynamicSystemSolver *dss) {
   boost::timer::cpu_timer t;
   t.start();
 
@@ -223,9 +229,9 @@ void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
   cout<<"Integration CPU times: "<<t.format()<<endl;
 }
 
-void MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {
+void MBSimXML::postMain(const po::variables_map &vm, Integrator *&integrator, DynamicSystemSolver*& dss) {
 
-  if(strcmp(argv[1],"--savefinalstatevector")==0)
+  if(vm.count("savefinalstatevector"))
     dss->writez("statevector.asc", false);
   delete dss;
   delete integrator;
