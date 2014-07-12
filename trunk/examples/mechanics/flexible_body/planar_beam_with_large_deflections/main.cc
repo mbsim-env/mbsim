@@ -4,12 +4,15 @@
 using namespace MBSim;
 using namespace std;
 
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 
-  System *sys = new System("MBS");
+  StopWatch sw;
+
+  sw.start();
+  PlanarBeamWithLargeDeflectionSystem *sys = new PlanarBeamWithLargeDeflectionSystem("MBS");
 
   sys->setImpactSolver(DynamicSystemSolver::RootFinding);
-  sys->setStopIfNoConvergence(true,true);
+  sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
@@ -19,7 +22,7 @@ int main (int argc, char* argv[]) {
   integrator.setPlotStepSize(1e-4);
   integrator.integrate(*sys);
 
-  cout << "finished"<<endl;
+  cout << "finished in " << sw.stop() << endl;
 
   delete sys;
 

@@ -28,10 +28,15 @@ namespace fmatvec {
   typedef Matrix<General, Var, Fixed<4>, double> MatVx4;
 }
 
+using namespace std;
+using namespace fmatvec;
+
 namespace MBSim {
 
   /*!
    * \brief class that copies the nurbs++-library using the fmatvec as a basis-math-library
+   *
+   * \todo: could/should be derived by fmatvec::function<Vec3(double)>
    */
   class NurbsCurve {
     public:
@@ -57,9 +62,9 @@ namespace MBSim {
       {
         return P;
       }
-      const fmatvec::MatVx4 ctrlPnts(int i) const //!< a reference to one of the control points
+      const fmatvec::Vec4 ctrlPnts(int i) const //!< a reference to one of the control points
       {
-        return P.row(i);
+        return trans(P.row(i));
       }
       const fmatvec::Vec& knot() const //!< a reference to the vector of knots
       {
@@ -68,6 +73,10 @@ namespace MBSim {
       double knot(int i) const //!< the i-th knot
       {
         return U(i);
+      }
+
+      const fmatvec::Vec getuVec() const {
+        return u;
       }
 
       // basic functions
@@ -91,7 +100,7 @@ namespace MBSim {
 //        } //!< returns the curvePoint in 3D
 
       // derivative functions
-      void deriveAtH(double u, int, fmatvec::MatVx4 & ders) const;
+      void deriveAtH(double u, int d, fmatvec::MatVx4 & ders) const;
 //        void deriveAt(double u, int, Vector<fmatvec::Point<3>  >&) const;
 //        void deriveAtH(double u, int, int, Vector<fmatvec::HPoint<3>  >&) const;
 //        void deriveAt(double u, int, int, Vector<fmatvec::Point<3>  >&) const;
@@ -156,10 +165,13 @@ namespace MBSim {
       /*!
        * \brief do global interpolation for given interpolation-points list and knots with the given degree
        */
+      void globalInterp(const std::vector<fmatvec::Point<3> >& Q, const std::vector<double>& uk, int d, bool updateLater = false);
+      void globalInterp(const std::vector<fmatvec::Point<3> >& Q, double uMin, double uMax, int d, bool updateLater = false);
       void globalInterp(const fmatvec::MatVx3& Q, double uMin, double uMax, int d, bool updateLater = false);
+
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, int d);
 //        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& U, int d);
-//        void globalInterpH(const Vector<fmatvec::HPoint<3>  >& Q, const std::vector<double>& ub, const std::vector<double>& U, int d);
+      void globalInterpH(const MatVx4& Q, const Vec& ub, const Vec& Uc, int d, bool updateLater = false);
 //        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, int d);
       /*!
        * \brief closed interpolation of the given (not yet wrapped) points at the given knot vector "ub" in a degree of "d"
@@ -170,10 +182,11 @@ namespace MBSim {
        * \brief update the control points with the same matrix as before
        */
       void update(const fmatvec::MatVx3& Q);
+      void update(const fmatvec::MatVx4& Q);
 
 //        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, int d);
 //        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, const std::vector<double>& U, int d);
-//        void globalInterpClosedH(const Vector<fmatvec::HPoint<3>  >& Qw, const std::vector<double>& ub, const std::vector<double>& U, int d);
+      void globalInterpClosedH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater = false);
 //        void globalInterpClosed(const Vector<fmatvec::Point<3>  >& Qw, const std::vector<double>& ub, const std::vector<double>& Uc, int d);
 //
 //        void globalInterpD(const Vector<fmatvec::Point<3>  >& Q, const Vector<fmatvec::Point<3>  >& D, int d, int unitD, T a = 1.0);
@@ -209,9 +222,9 @@ namespace MBSim {
 //
 //        // Modifies the NURBS curve
 //        void transform(const MatrixRT<T>& A);
-//        void modCP(int i, const fmatvec::HPoint<3> & a) {
-//          P[i] = a;
-//        } // To manipulate the value of the control point $P[i]$
+      void modCP(int i, const fmatvec::HPoint<3> & a) {
+        P.set(i, a.T());
+      } // To manipulate the value of the control point $P[i]$
 //        void modCPby(int i, const fmatvec::HPoint<3> & a) {
 //          P[i] += a;
 //        } // To manipulate the value of the control point $P[i]$
@@ -265,6 +278,8 @@ namespace MBSim {
 //
 //        BasicList<fmatvec::Point<3>  > tesselate(T tolerance, BasicList<T> *uk) const;
 
+      int findSpan(double u) const;
+
     protected:
       fmatvec::MatVx4 P; // the vector of control points
       fmatvec::SqrMat inverse; //Inverse of Ansatz-functions in case of only update later (different points, same knot-Vecs and same degree)
@@ -275,20 +290,22 @@ namespace MBSim {
       void resize(int n, int Deg);
 
       void knotAveraging(const std::vector<double>& uk, int deg);
+      double chordLengthParam(const MatVx3& Q, Vec& ub);
       void updateUVecs(double uMin, double uMax);
 
       void knotAveragingClosed(const std::vector<double>& uk, int deg);
       void updateUVecsClosed(double uMin, double uMax);
-
-      int findSpan(double u) const;
 
 //      Matrix<T> Inverse; //changed
 //      int Inverse_setted; //changed
   };
 
   //TODO: put those functions into mother nurbs class (maybe) to make them "func(...) const"
+  void knotAveraging(const Vec& uk, int deg, Vec& U);
+  void knotAveragingClosed(const Vec& uk, int deg, Vec& U);
   void basisFuns(double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Vec& funs);
   void dersBasisFuns(int n, double u, int span, int deg, const fmatvec::Vec & U, fmatvec::Mat& ders);
+  void binomialCoef(Mat& Bin);
 
 }
 #endif

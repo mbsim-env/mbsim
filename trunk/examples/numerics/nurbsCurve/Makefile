@@ -14,7 +14,7 @@ OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsimFlexibleBody` ma
 CPPFLAGS= -g -O3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimFlexibleBody` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimFlexibleBody` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimFlexibleBody`  
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \

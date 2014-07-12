@@ -51,19 +51,19 @@ namespace MBSimFlexibleBody {
       /**
        * \return tangent 
        */
-      virtual fmatvec::Vec computet(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::Vec3 computet(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
        * \return normal
        */
-      virtual fmatvec::Vec computen(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::Vec3 computen(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
        * \return binormal 
        */
-      virtual fmatvec::Vec computeb(const fmatvec::Vec& q) const = 0;
+      virtual fmatvec::Vec3 computeb(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
@@ -214,13 +214,13 @@ namespace MBSimFlexibleBody {
        * \param derivative of angles
        * \return angular velocity
        */
-      fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
+      virtual fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
 
       /**
        * \param angles
        * \return T-matrix (transformation matrix from differentiated angles to angular velocity omega)
        */
-       fmatvec::SqrMat computeT(const fmatvec::Vec& q) const;
+      virtual fmatvec::SqrMat computeT(const fmatvec::Vec& q) const; // JacobianOfRotation = G
       /********************************************************/
   };
 

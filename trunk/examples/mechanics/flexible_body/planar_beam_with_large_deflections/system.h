@@ -4,9 +4,9 @@
 #include "mbsim/dynamic_system_solver.h"
 #include <string>
 
-class System : public MBSim::DynamicSystemSolver {
+class PlanarBeamWithLargeDeflectionSystem : public MBSim::DynamicSystemSolver {
   public:
-    System(const std::string &projectName); 
+    PlanarBeamWithLargeDeflectionSystem(const std::string &projectName);
 };
 
 #endif

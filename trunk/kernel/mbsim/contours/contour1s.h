@@ -22,6 +22,10 @@
 
 #include "mbsim/contours/contour_continuum.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#endif
+
 namespace MBSim {
 
   /** 
@@ -36,10 +40,14 @@ namespace MBSim {
        * \brief constructor 
        * \param name of contour
        */
-      Contour1s(const std::string &name) : ContourContinuum<double>(name), diameter(0.) {}
+      Contour1s(const std::string &name);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Contour1s"; }
+      std::string getType() const {
+        return "Contour1s";
+      }
+      void init(InitStage stage_);
+      void plot(double t, double dt);
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
@@ -47,38 +55,75 @@ namespace MBSim {
        * \return tangent in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::firstTangent); return cp.getFrameOfReference().getOrientation().col(1); }
+      virtual fmatvec::Vec3 computeTangent(ContourPointData &cp) {
+        updateKinematicsForFrame(cp, Frame::firstTangent);
+        return cp.getFrameOfReference().getOrientation().col(1);
+      }
 
       /**
        * \return binormal in world frame
        * \param Lagrangian position
        */
-      virtual fmatvec::Vec3 computeBinormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::secondTangent); return cp.getFrameOfReference().getOrientation().col(2); }
+      virtual fmatvec::Vec3 computeBinormal(ContourPointData &cp) {
+        updateKinematicsForFrame(cp, Frame::secondTangent);
+        return cp.getFrameOfReference().getOrientation().col(2);
+      }
       /***************************************************/
 
       /**
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeCurvature): Not implemented."); return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) {
+        throw MBSimError("ERROR (Contour::computeCurvature): Not implemented.");
+        return 0;
+      }
 
       /**
        * \return distance between frameOfReference and possible contour point
        * \param Lagrangian position
        * \param orderOfDerivative
        */
-      virtual double computeDistance(const double s, const int order=0) { throw MBSimError("ERROR (Contour::computeDistance): Not implemented."); return 0; } 
+      virtual double computeDistance(const double s, const int order = 0) {
+        throw MBSimError("ERROR (Contour::computeDistance): Not implemented.");
+        return 0;
+      }
 
       /* GETTER / SETTER */
-      void setDiameter(double diameter_) { diameter= diameter_; }
-      double getDiameter() { return diameter; }
+      void setDiameter(double diameter_) {
+        diameter = diameter_;
+      }
+      double getDiameter() {
+        return diameter;
+      }
       /***************************************************/
+
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* spineExtrusion) {
+        openMBVSpineExtrusion = spineExtrusion;
+      }
+      OpenMBV::Body* getOpenMBVSpineExtrusion() {
+        return openMBVSpineExtrusion;
+      }
+#endif
 
     protected:
       /**
        * \brief diameter of neutral fibre
+       *
+       * \todo: this is not really general --> diameter only valid for round neutral contours!
        */
       double diameter;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /*!
+       * \brief body for the spine extrusion for visualisation of the 1s-body
+       */
+      OpenMBV::SpineExtrusion* openMBVSpineExtrusion;
+
+#endif
+
   };
 
 }

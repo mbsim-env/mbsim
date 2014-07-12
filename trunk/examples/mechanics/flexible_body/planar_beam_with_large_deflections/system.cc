@@ -13,7 +13,6 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
-#include <openmbvcppinterface/arrow.h>
 #endif
 
 using namespace MBSimFlexibleBody;
@@ -21,7 +20,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-System::System(const string &projectName) :
+PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const string &projectName) :
     DynamicSystemSolver(projectName) {
 
 //  Vec grav(3);//"[0.0;-9.81;0.0]");
@@ -54,18 +53,18 @@ System::System(const string &projectName) :
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
+  OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
   cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0*0.5,b0*0.5,1);
+  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0*0.5,-b0*0.5,1);
+  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0*0.5,-b0*0.5,1);
+  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0*0.5,b0*0.5,1);
+  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
@@ -110,7 +109,7 @@ System::System(const string &projectName) :
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
+  OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
   sphere->setRadius(r);
   sphere->setDiffuseColor(1/3.0, 1, 1);
   ball->setOpenMBVRigidBody(sphere);

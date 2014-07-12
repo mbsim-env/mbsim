@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
 
   Cardan::~Cardan() {}
 
-  Vec Cardan::computet(const Vec& q) const {
+  Vec3 Cardan::computet(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -38,14 +38,14 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec t(3);
+    Vec3 t(NONINIT);
     t(0) = cq1*cq2;
     t(1) = cq0*sq2+sq0*sq1*cq2;
     t(2) = sq0*sq2-cq0*sq1*cq2;
-    return t.copy();
+    return t;
   }
 
-  Vec Cardan::computen(const Vec& q) const {
+  Vec3 Cardan::computen(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -53,24 +53,24 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec n(3);
+    Vec3 n(NONINIT);
     n(0) = -cq1*sq2;
     n(1) = cq0*cq2-sq0*sq1*sq2;
     n(2) = sq0*cq2+cq0*sq1*sq2;
-    return n.copy();
+    return n;
   }
 
-  Vec Cardan::computeb(const Vec& q) const {
+  Vec3 Cardan::computeb(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double cq0 = cos(q(0));
     double cq1 = cos(q(1));
 
-    Vec b(3);
+    Vec3 b(NONINIT);
     b(0) = sq1;
     b(1) = -sq0*cq1;
     b(2) = cq0*cq1;
-    return b.copy();
+    return b;
   }
 
   Vec Cardan::computentil(const Vec& q) const {
@@ -279,4 +279,52 @@ namespace MBSimFlexibleBody {
     return btilq2.copy();
   }
 
+  Vec Cardan::computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const{
+
+    fmatvec::SqrMat G(3, INIT, 0);
+
+    double sinalpha = sin(q(0));
+    double cosalpha = cos(q(0));
+    double sinbeta  = sin(q(1));
+    double cosbeta  = cos(q(1));
+ //   double singamma = sin(q(2));
+ //   double cosgamma = cos(q(2));
+
+    G(0, 0) = 1;
+    G(0, 1) = 0;
+    G(0, 2) = sinbeta;
+    G(1, 0) = 0;
+    G(1, 1) = cosalpha;
+    G(1, 2) = -sinalpha * cosbeta;
+    G(2, 0) = 0;
+    G(2, 1) = sinalpha;
+    G(2, 2) = cosalpha * cosbeta;
+
+    Vec omega = G * qt;
+
+    return omega;
+  }
+
+  SqrMat Cardan::computeT(const fmatvec::Vec& q) const{
+    fmatvec::SqrMat G(3, INIT, 0);
+
+    double sinalpha = sin(q(0));
+    double cosalpha = cos(q(0));
+    double sinbeta  = sin(q(1));
+    double cosbeta  = cos(q(1));
+  //  double singamma = sin(q(2));
+  //  double cosgamma = cos(q(2));
+
+    G(0, 0) = 1;
+    G(0, 1) = 0;
+    G(0, 2) = sinbeta;
+    G(1, 0) = 0;
+    G(1, 1) = cosalpha;
+    G(1, 2) = -sinalpha * cosbeta;
+    G(2, 0) = 0;
+    G(2, 1) = sinalpha;
+    G(2, 2) = cosalpha * cosbeta;
+
+    return G;
+  }
 }

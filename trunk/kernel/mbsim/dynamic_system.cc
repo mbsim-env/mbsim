@@ -46,9 +46,10 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), R(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
+  DynamicSystem::DynamicSystem(const string &name) :
+      Element(name), R(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
-  , openMBVGrp(0), corrInd(0)
+          , openMBVGrp(0), corrInd(0)
 #endif
   {
     uSize[0] = 0;
@@ -60,7 +61,7 @@ namespace MBSim {
     hInd[0] = 0;
     hInd[1] = 0;
 
-    I=new FixedRelativeFrame("I");
+    I = new FixedRelativeFrame("I");
     addFrame(I);
   }
 
@@ -428,12 +429,15 @@ namespace MBSim {
         link[i]->closePlot();
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->closePlot();
+
+      //if (not parent) //TODO: why was that active once?
+      //  delete plotGroup;
     }
   }
 
   void DynamicSystem::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
+    if (stage == resolveXMLPath) {
+      if (saved_frameOfReference != "")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
     }
     else if (stage == preInit) {
@@ -934,30 +938,30 @@ namespace MBSim {
 
   void DynamicSystem::writez(const H5::CommonFG & parent) {
     for (unsigned i = 0; i < dynamicsystem.size(); i++) {
-      H5::Group group = parent.createGroup("System_" + numtostr((int)i));
+      H5::Group group = parent.createGroup("System_" + numtostr((int) i));
       dynamicsystem[i]->writez(group);
     }
     for (unsigned i = 0; i < object.size(); i++) {
-      H5::Group group = parent.createGroup("Object_" + numtostr((int)i));
+      H5::Group group = parent.createGroup("Object_" + numtostr((int) i));
       object[i]->writez(group);
     }
     for (unsigned i = 0; i < link.size(); i++) {
-      H5::Group group = parent.createGroup("Link_" + numtostr((int)i));
+      H5::Group group = parent.createGroup("Link_" + numtostr((int) i));
       link[i]->writez(group);
     }
   }
 
   void DynamicSystem::readz0(const H5::CommonFG & parent) {
     for (unsigned i = 0; i < dynamicsystem.size(); i++) {
-      H5::Group group = parent.openGroup("System_" + numtostr((int)i));
+      H5::Group group = parent.openGroup("System_" + numtostr((int) i));
       dynamicsystem[i]->readz0(group);
     }
     for (unsigned i = 0; i < object.size(); i++) {
-      H5::Group group = parent.openGroup("Object_" + numtostr((int)i));
+      H5::Group group = parent.openGroup("Object_" + numtostr((int) i));
       object[i]->readz0(group);
     }
     for (unsigned i = 0; i < link.size(); i++) {
-      H5::Group group = parent.openGroup("Link_" + numtostr((int)i));
+      H5::Group group = parent.openGroup("Link_" + numtostr((int) i));
       link[i]->readz0(group);
     }
   }

@@ -1830,6 +1830,7 @@ namespace MBSim {
 
     updateStateDependentVariables(t);
     updateg(t);
+//    checkActive(1); //TODO: seems to be necessary to avoid wrong settings of gdActive!
     updategd(t);
     updateJacobians(t);
     updateT(t);

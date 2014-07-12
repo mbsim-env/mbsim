@@ -23,6 +23,7 @@
 #include "mbsim/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "contour_1s_neutral_factory.h"
 
 namespace MBSim {
   class ContactKinematics;
@@ -37,6 +38,10 @@ namespace MBSimFlexibleBody {
    * \date 2009-03-18 initial comment (Thorsten Schindler)
    * \date 2009-04-05 adapted to non-template FlexibleBody (Schindler / Zander)
    * \date 2009-06-04 new file (Thorsten Schindler)
+   *
+   * \todo: make this class to be the neutral factory...
+   *        For it all "natural" contours of the bodies would have to implement a neutral_contour
+   *        Then it would not be the case, that the neutral_contour1s as a contour1s as well as this contour1s_flexible
    */
   class Contour1sFlexible : public MBSim::Contour1s {
     public:
@@ -44,27 +49,71 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const std::string &name) : Contour1s(name) {}
+      Contour1sFlexible(const std::string &name);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contour1sFlexible"; }
+      virtual std::string getType() const {
+        return "Contour1sFlexible";
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j=0) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff) {
+        if (neutral)
+          neutral->updateKinematicsForFrame(cp, ff);
+        else
+          static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, ff); //TODO: avoid asking parent body here!
+      }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) {
+        if (neutral)
+          neutral->updateJacobiansForFrame(cp);
+        else
+          static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp);
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::Frame::position); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::Frame::normal); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::Frame::secondTangent); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
+        if (neutral)
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::position);
+        else
+          updateKinematicsForFrame(cp, MBSim::Frame::position);
+      }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
+        if (neutral)
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
+        else
+          updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
+      }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
+        if (neutral)
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::normal);
+        else
+          updateKinematicsForFrame(cp, MBSim::Frame::normal);
+      }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
+        if (neutral)
+          neutral->updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
+        else
+          updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
+      }
       /***************************************************/
 
       MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());
       }
+
+      void setNeutral(Contour1sNeutralFactory* neutral_) {
+        neutral = neutral_;
+      }
+
+    protected:
+      /*!
+       * \brief object for 1s-flexible curves that is the interface
+       *
+       * \todo: maybe this actually should be used for all 1s contours (as the same interface?)
+       */
+      Contour1sNeutralFactory* neutral;
 
   };
 

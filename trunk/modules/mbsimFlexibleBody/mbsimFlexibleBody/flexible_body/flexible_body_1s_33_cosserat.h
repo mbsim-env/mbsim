@@ -23,17 +23,18 @@
 #include "flexible_body_1s_cosserat.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
-#include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
+//#include "mbsimFlexibleBody/contours/flexible_band.h"
+//#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
+
 #endif
 
 namespace MBSimFlexibleBody {
 
-  class NurbsCurve1s;
+//  class NurbsCurve1s;
 
   /**
    * \brief finite element for spatial beam using Cosserat model
@@ -66,7 +67,7 @@ namespace MBSimFlexibleBody {
        * \param name of body
        * \param bool to specify open (cantilever) or closed (ring) structure
        */
-      FlexibleBody1s33Cosserat(const std::string &name, bool openStructure); 
+      FlexibleBody1s33Cosserat(const std::string &name, bool openStructure);
 
       /**
        * \brief destructor
@@ -78,25 +79,29 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
+      virtual void updateJacobiansAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ), const int & deg = 3, const bool & writePsFile = false);
-      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ));
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
+      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
       virtual double computePotentialEnergy();
-      virtual void facLLM(int i=0);
+      virtual void facLLM(int i = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int i=0);
+      virtual void updateh(double t, int i = 0);
       virtual void updateStateDependentVariables(double t);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
-      virtual std::string getType() const { return "FlexibleBody1s33Cosserat"; }
+      virtual void plot(double t, double dt = 1);
+      virtual std::string getType() const {
+        return "FlexibleBody1s33Cosserat";
+      }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -104,18 +109,25 @@ namespace MBSimFlexibleBody {
 
       void setMomentsInertia(double I1_, double I2_, double I0_);
 
-      void setCurlRadius(double R1_,double R2_);
-      void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);
+      void setCurlRadius(double R1_, double R2_);
+      void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_);
 
+      virtual int getNumberOfElementDOF() const {
+        return 6;
+      }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
-#endif
-
-      int getNumberElements() const { return Elements; }   	
-      int getNumberDOFs() const { return qSize; }
-      double getLength() const { return L; }
-      bool isOpenStructure() const { return openStructure; }
+      int getNumberElements() const {
+        return Elements;
+      }
+      int getNumberDOFs() const {
+        return qSize;
+      }
+      double getLength() const {
+        return L;
+      }
+      bool isOpenStructure() const {
+        return openStructure;
+      }
       /***************************************************/
 
       /**
@@ -136,6 +148,22 @@ namespace MBSimFlexibleBody {
        */
       void initInfo();
 
+      /**
+       * \brief detect current finite element (t
+       #ifdef HAVE_OPENMBVCPPINTERFACE
+       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* spineExtrusion) {
+       openMBVSpineExtrusion = spineExtrusion;
+       }
+       OpenMBV::Body* getOpenMBVSpineExtrusion() {
+       return openMBVSpineExtrusion;
+       }
+       #endifranslation)
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
     protected:
 
       /*!
@@ -149,7 +177,7 @@ namespace MBSimFlexibleBody {
        * I1: in t-b-plane
        * I2: in t-n-plane
        */
-      double  I2, I0;
+      double I2, I0;
 
       /**
        * \brief radius of undeformed shape
@@ -163,18 +191,9 @@ namespace MBSimFlexibleBody {
        */
       double cEps2D;
 
-
       FlexibleBody1s33Cosserat(); // standard constructor
       FlexibleBody1s33Cosserat(const FlexibleBody1s33Cosserat&); // copy constructor
       FlexibleBody1s33Cosserat& operator=(const FlexibleBody1s33Cosserat&); // assignment operator
-
-      /**
-       * \brief detect current finite element (translation)
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
 
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
@@ -197,10 +216,27 @@ namespace MBSimFlexibleBody {
       void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
   };
 
-  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }
+  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) {
+    I1 = I1_;
+    I2 = I2_;
+    I0 = I0_;
+  }
 
-  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2); }
-  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_) { cEps0D = cEps0D_; cEps1D = cEps1D_; cEps2D = cEps2D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D,cEps1D,cEps2D); }
+  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_, double R2_) {
+    R1 = R1_;
+    R2 = R2_;
+    if (initialised)
+      for (int i = 0; i < Elements; i++)
+        static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1, R2);
+  }
+  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
+    cEps0D = cEps0D_;
+    cEps1D = cEps1D_;
+    cEps2D = cEps2D_;
+    if (initialised)
+      for (int i = 0; i < Elements; i++)
+        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements * cEps0D, cEps1D, cEps2D);
+  }
 
 }
 

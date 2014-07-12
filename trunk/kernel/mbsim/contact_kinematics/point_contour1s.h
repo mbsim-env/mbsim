@@ -23,6 +23,8 @@
 
 #include "contact_kinematics.h"
 
+#include "mbsim/functions_contact.h"
+
 namespace MBSim {
 
   class Point;

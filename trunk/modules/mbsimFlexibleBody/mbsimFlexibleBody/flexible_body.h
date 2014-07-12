@@ -21,6 +21,8 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
+#include <mbsimFlexibleBody/node_frame.h>
+
 #include "mbsim/body.h"
 #include "mbsim/frame.h"
 
@@ -123,6 +125,13 @@ namespace MBSimFlexibleBody {
        */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0) = 0;
 
+      /*!
+       * \brief cartesian kinematic on a node
+       */
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
+    	  throw MBSim::MBSimError("updateKinematicsAtNode(): Not implemented for " + getType()); //TODO: make that interface prettier
+      }
+
       /**
        * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
        * \param data contour parameter
@@ -159,10 +168,14 @@ namespace MBSimFlexibleBody {
       void addFrame(const std::string &name, const int &id);
 
       /**
-       * \param frame
-       * \param node of frame
+       * \param node frame
        */
-      void addFrame(MBSim::Frame *frame, const  int &id);
+      void addFrame(NodeFrame *frame);
+
+      /**
+       * \param fixed relative frame that should be added
+       */
+      void addFrame(MBSim::FixedRelativeFrame *frame);
 
       void addContour(MBSim::Contour *contour);
 
@@ -213,6 +226,21 @@ namespace MBSimFlexibleBody {
       // Workaround to free memory of contourFrame in dtor.
       // TODO: provide a consistent solution and remove the following line
       MBSim::Frame *contourFrame;
+
+      /*!
+       * \brief list of all contour frames
+       * \todo: actually continous frames should be added to a contour and not to the body?!
+       */
+
+      /*!
+       * \brief list of all fixed relative frames
+       */
+      std::vector<MBSim::FixedRelativeFrame*> fixedRelativeFrames;
+
+      /*!
+       * \brief list of all  Node-Frames
+       */
+      std::vector<NodeFrame*> nodeFrames;
   };
 
   /**
@@ -256,11 +284,20 @@ namespace MBSimFlexibleBody {
           FlexibleBody::addFrame(frame,cp);
         }
 
+        void setNodeOffset(const AT nodeOffset_){ nodeOffset = nodeOffset_;}  // TODO:: call this function in the init() of flexible body.
+        AT getNodeOffset() const { return nodeOffset;}
+
       protected:
         /**
          * \brief grid for contact point detection
          */
         std::vector<AT> userContourNodes;
+
+        /**
+         * \brief offset of the ROTNODE from the TRANSNODE
+         */
+        AT nodeOffset;
+
     };
 }
 

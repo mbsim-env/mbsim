@@ -23,6 +23,8 @@
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsim/contour.h"
 
+#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_factory.h"
+
 namespace MBSimFlexibleBody {
 
   /**
@@ -31,8 +33,8 @@ namespace MBSimFlexibleBody {
    * \author Roland Zander
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
    * \date 2009-07-10 calculation of Jacobian of Translation for Contours (Thorsten Schindler)
-   */ 
-  class FlexibleBand : public Contour1sFlexible {	
+   */
+  class FlexibleBand : public Contour1sFlexible {
     public:
       /**
        * \brief constructor
@@ -41,40 +43,50 @@ namespace MBSimFlexibleBody {
       FlexibleBand(const std::string& name);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBand"; }
+      virtual std::string getType() const {
+        return "FlexibleBand";
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Frame::Feature ff);   
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual fmatvec::Vec3 computePosition(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::Frame::position_cosy); return cp.getFrameOfReference().getPosition(); }
-      virtual fmatvec::Vec3 computeVelocity(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::Frame::velocity_cosy); return cp.getFrameOfReference().getVelocity(); }
+      virtual fmatvec::Vec3 computePosition(MBSim::ContourPointData &cp) {
+        updateKinematicsForFrame(cp, MBSim::Frame::position_cosy);
+        return cp.getFrameOfReference().getPosition();
+      }
+      virtual fmatvec::Vec3 computeVelocity(MBSim::ContourPointData &cp) {
+        updateKinematicsForFrame(cp, MBSim::Frame::velocity_cosy);
+        return cp.getFrameOfReference().getVelocity();
+      }
       /***************************************************/
-      
+
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
       virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
       virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
       /***************************************************/
-      
+
       /* GETTER / SETTER */
-      void setCn(const fmatvec::Vec& Cn_);   
+      void setCn(const fmatvec::Vec& Cn_);
       void setWidth(double width_);
-      
+
       /*!
        * \brief set normal distance of band surface to fibre of reference of one dimensional continuum
        * \param normal distance
        */
       void setNormalDistance(double nDist_);
-      
+
       /*!
        * \brief get normal distance of band surface to fibre of reference of one dimensional continuum
        * \return normal distance
        */
-      double getNormalDistance() {return nDist;};
-      double getWidth() const; 
+      double getNormalDistance() {
+        return nDist;
+      }
+      double getWidth() const;
       /***************************************************/
 
-    private:
+    protected:
       /**
        * \brief normal of flexible band with respect to referencing neutral fibre (outward normal = (n b)*Cn)
        */
@@ -88,12 +100,19 @@ namespace MBSimFlexibleBody {
       /**
        * \brief distance from the referencing neutral fibre in direction of given normal
        */
-      double nDist; 
+      double nDist;
+
   };
 
-  inline void FlexibleBand::setWidth(double width_) { width = width_; }
-  inline void FlexibleBand::setNormalDistance(double nDist_) { nDist = nDist_; }
-  inline double FlexibleBand::getWidth() const { return width; } 
+  inline void FlexibleBand::setWidth(double width_) {
+    width = width_;
+  }
+  inline void FlexibleBand::setNormalDistance(double nDist_) {
+    nDist = nDist_;
+  }
+  inline double FlexibleBand::getWidth() const {
+    return width;
+  }
 
 }
 

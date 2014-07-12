@@ -75,7 +75,9 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame = 0);
+      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
+      virtual void updateJacobiansAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame = 0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
@@ -106,17 +108,24 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double R1_);
       void setMaterialDamping(double cEps0D_, double cEps1D_);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) {
-        openMBVBody = body;
+      virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) {
+        if (PODreduced)
+          return J * U;
+        return J;
       }
-#endif
+
+      virtual int getNumberOfElementDOF() const {
+        return 3;
+      }
 
       int getNumberElements() const {
         return Elements;
       }
       double getLength() const {
         return L;
+      }
+      virtual int getqSizeFull() const {
+        return qFull.size();
       }
       bool isOpenStructure() const {
         return openStructure;
@@ -146,6 +155,14 @@ namespace MBSimFlexibleBody {
        */
       void initInfo();
 
+      /**
+       * \brief detect current finite element (translation)
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
     protected:
 
       /*!
@@ -162,7 +179,6 @@ namespace MBSimFlexibleBody {
        * \brief marker if Jacobians already interpolated
        */
       bool JInterp;
-
 
       /**
        * \brief bool true: execute POD, false: without POD
@@ -192,14 +208,6 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s21Cosserat(); // standard constructor
       FlexibleBody1s21Cosserat(const FlexibleBody1s21Cosserat&); // copy constructor
       FlexibleBody1s21Cosserat& operator=(const FlexibleBody1s21Cosserat&); // assignment operator
-
-      /**
-       * \brief detect current finite element (translation)
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
 
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
@@ -236,7 +244,8 @@ namespace MBSimFlexibleBody {
        */
       int findPOMSize(const fmatvec::Mat & POM, const fmatvec::Mat &SVD, double precission = 1 - 1.e-3);
 
-  };
+  }
+  ;
 
   inline void FlexibleBody1s21Cosserat::updateM(double t, int k) {
     M[k] << MConst;
