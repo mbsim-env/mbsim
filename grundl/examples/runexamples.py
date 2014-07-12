@@ -22,28 +22,24 @@ import traceback
 import tarfile
 import re
 import hashlib
-import codecs
-import threading
-import time
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
   import urllib.request as myurllib
 
 # global variables
-dummyID=0
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
-mbxmlutilsvalidate=None
+xmllint=None
 ombvSchema =None
-mbsimXMLSchema=None
+mbsimSchema=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
 # pj('xml', 'time_dependent_kinematics')
-  pj("mechanics", "flexible_body", "beltdrive"),
-  pj("mechanics", "contacts", "self_siphoning_beads")
+  pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD'),
+  pj('fmi', 'two_mass_oscillator')
 ])
 
 # MBSim Modules
@@ -57,6 +53,7 @@ argparser = argparse.ArgumentParser(
   Run MBSim examples.
   This script runs the action given by --action on all specified directories recursively.
   However only examples of the type matching --filter are executed.
+  If the directory is prefixed with '^' this directory (and subdirectories) is removed from the current list.
   The specified directories are processed from left to right.
   The type of an example is defined dependent on some key files in the corrosponding example directory:
   - If a file named 'Makefile' exists, than it is treated as a SRC example.
@@ -68,10 +65,7 @@ argparser = argparse.ArgumentParser(
 )
 
 mainOpts=argparser.add_argument_group('Main Options')
-mainOpts.add_argument("directories", nargs="*", default=os.curdir,
-  help='''A directory to run (recursively). If prefixed with '^' remove the directory form the current list
-          If starting with '@' read directories from the file after the '@'. This file must provide
-          one directory per line and each line may itself be prefixed with '^' or '@'.''')
+mainOpts.add_argument("directories", nargs="*", default=os.curdir, help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
 mainOpts.add_argument("--action", default="report", type=str,
   help='''The action of this script:
           'report': run examples and report results (default);
@@ -104,7 +98,6 @@ cfgOpts.add_argument("--buildType", default="", type=str, help="Description of t
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
-cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -131,7 +124,7 @@ class MultiFile(object):
       self.filelist.append(second)
   def write(self, str):
     for f in self.filelist:
-      f.write(str)
+      f.write(str.encode("utf-8").decode("utf-8"))
   def flush(self):
     for f in self.filelist:
       f.flush()
@@ -139,32 +132,9 @@ class MultiFile(object):
     for f in self.filelist:
       if f!=sys.stdout and f!=sys.stderr:
         f.close()
-# kill the called subprocess
-def killSubprocessCall(proc, f, killed):
-  killed.set()
-  f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
-  f.write("The maximal execution time (%d min) has reached (option --maxExecutionTime),\n"%(args.maxExecutionTime))
-  f.write("but the program is still running. Terminating the program now.\n")
-  f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
-  proc.terminate()
-  time.sleep(30)
-  # if proc has not terminated after 30 seconds kill it
-  if proc.poll()==None:
-    f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
-    f.write("Program has not terminated after 30 seconds, killing the program now.\n")
-    f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
-    proc.kill()
 # subprocess call with MultiFile output
-def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
-  # start the program to execute
+def subprocessCall(args, f, env=os.environ):
   proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
-  # a guard for the maximal execution time for the starte program
-  guard=None
-  killed=threading.Event()
-  if maxExecutionTime>0:
-    guard=threading.Timer(maxExecutionTime*60, killSubprocessCall, args=(proc, f, killed))
-    guard.start()
-  # read all output in 100 byte blocks
   lineNP=b'' # not already processed bytes (required since we read 100 bytes which may break a unicode multi byte character)
   while True:
     line=lineNP+proc.stdout.read(100)
@@ -175,16 +145,7 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
     except UnicodeDecodeError as ex: # catch broken multibyte unicode characters and append it to next line
       print(line[0:ex.start].decode("utf-8"), end="", file=f) # print up to first broken character
       lineNP=ex.object[ex.start:] # add broken characters to next line
-  # wait for the call program to exit
-  ret=proc.wait()
-  # stop the execution time guard thread
-  if maxExecutionTime>0:
-    if killed.isSet():
-      return None # return None to indicate that the program was terminated/killed
-    else:
-      guard.cancel()
-  # return the return value ot the called programm
-  return ret
+  return proc.wait()
 
 # rotate
 def rotateOutput():
@@ -287,21 +248,21 @@ def main():
     print("However at least one of these modules are not found. Hence comparing the results will be disabled.\n")
     global canCompare
     canCompare=False
-  # get mbxmlutilsvalidate program
-  global mbxmlutilsvalidate
-  mbxmlutilsvalidate=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "mbxmlutilsvalidate"+args.exeExt)
-  if not os.path.isfile(mbxmlutilsvalidate):
-    mbxmlutilsvalidate="mbxmlutilsvalidate"+args.exeExt
+  # get xmllint program
+  global xmllint
+  xmllint=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "xmllint")
+  if not os.path.isfile(xmllint):
+    xmllint="xmllint"
   # set global dirs
   global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
-  global ombvSchema, mbsimXMLSchema
+  global ombvSchema, mbsimSchema
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
-  mbsimXMLSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
-  subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
+  mbsimSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
+  subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimSchema])
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -339,7 +300,7 @@ def main():
   # write empty RSS feed
   writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
   # create index.html
-  mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
+  mainFD=open(pj(args.reportOutDir, "index.html"), "w")
   print('<?xml version="1.0" encoding="UTF-8"?>', file=mainFD)
   print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=mainFD)
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
@@ -347,11 +308,16 @@ def main():
   print('  <title>MBSim runexamples Results</title>', file=mainFD)
   print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>', file=mainFD)
   print('  <style type="text/css">', file=mainFD)
-  print('    table.sortable th { cursor: move; }', file=mainFD)
-  print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=mainFD)
+  print('    table.sortable th {', file=mainFD)
+  print('      cursor: move;', file=mainFD)
+  print('      border-width: 2pt;', file=mainFD)
+  print('      border-color: #D0D0D0;', file=mainFD)
+  print('      border-style: outset;', file=mainFD)
+  print('      background-color: #E0E0E0;', file=mainFD)
+  print('      padding: 2px;', file=mainFD)
+  print('    }', file=mainFD)
   print('  </style>', file=mainFD)
-  print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=mainFD)
-  print('  <base id="BASE" href="." target="_self"/>', file=mainFD)
+  print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body>', file=mainFD)
 
@@ -367,7 +333,7 @@ def main():
   if args.timeID!="":
     timeID=datetime.datetime.strptime(args.timeID, "%Y-%m-%dT%H:%M:%S")
   print('   <b>Time ID:</b> '+str(timeID)+'<br/>', file=mainFD)
-  print('   <b>End time:</b> <!--S_ENDTIME--><span style="color:red"><b>still running or aborted</b></span><!--E_ENDTIME--><br/>', file=mainFD)
+  print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   navA=""
   navB=""
@@ -383,15 +349,13 @@ def main():
   print('</p>', file=mainFD)
   print('<p>A example name in gray color is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
-  print('<form id="ACTION" action="" method="post">', file=mainFD)
   print('<table border="1" class="sortable">', file=mainFD)
   print('<tr>', file=mainFD)
   print('<th>Example</th>', file=mainFD)
   print('<th>Compile/Run</th>', file=mainFD)
   print('<th>Time [s]</th>', file=mainFD)
   print('<th>Ref. Time [s]</th>', file=mainFD)
-  print('<th><span style="float:left;text-align:left">Reference</span>'+\
-        '<span style="float:right;text-align:right">[update]</span></th>', file=mainFD)
+  print('<th>Reference</th>', file=mainFD)
   print('<th>Deprecated</th>', file=mainFD)
   print('<th>XML output</th>', file=mainFD)
   print('</tr>', file=mainFD)
@@ -444,25 +408,15 @@ def main():
     print('</tt><br/>', file=mainFD)
     print('</p>', file=mainFD)
 
-  print('<p>', file=mainFD)
-  print('<b>Update references</b><br/>', file=mainFD)
-  print('Update the references of the selected examples before next build<br/>', file=mainFD)
-  print('Password: <input id="PASSWORD" type="password" name="PASSWORD" disabled="disabled"/>', file=mainFD)
-  print('          <input id="SUBMIT" type="submit" value="Submit" disabled="disabled"/>', file=mainFD)
-  print('          <input id="CANCEL" type="button" value="Cancel" onclick="window.location.href=\'.\'" disabled="disabled"/><br/>', file=mainFD)
-  print('<span id="PASSWORDMSG"/>', file=mainFD)
-  print('</p>', file=mainFD)
-  print('</form>', file=mainFD)
-
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
   mainFD.close()
-  # replace end time in index.html
+  # replace <span id="STILLRUNNINGORABORTED"...</span> in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', str(endTime), line)
+    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line)
 
   # write RSS feed
@@ -491,14 +445,14 @@ def pkgconfig(module, options):
   comm=["pkg-config", module]
   comm.extend(options)
   try:
-    output=subprocess.check_output(comm).decode("utf-8")
+    output=subprocess.check_output(comm)
   except subprocess.CalledProcessError as ex:
     if ex.returncode==0:
       raise
     else:
       print("Error: pkg-config module "+module+" not found. Trying to continue.", file=sys.stderr)
-      output="pkg_config_"+module+"_not_found"
-  return output.rstrip()
+      output=("pkg_config_"+module+"_not_found").encode("ascii")
+  return output.rstrip().decode("utf-8")
 
 
 
@@ -522,7 +476,7 @@ def sortDirectories(directoriesSet, dirs):
   unsortedDir=[]
   for example in directoriesSet:
     if os.path.isfile(pj(example, "reference", "time.dat")):
-      refTimeFD=codecs.open(pj(example, "reference", "time.dat"), "r", encoding="utf-8")
+      refTimeFD=open(pj(example, "reference", "time.dat"), "r")
       refTime=float(refTimeFD.read())
       refTimeFD.close()
     else:
@@ -534,14 +488,6 @@ def sortDirectories(directoriesSet, dirs):
 
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
-  # if staring with @ use dirs from file defined by @<filename>: one dir per line
-  if baseDir[0]=="@":
-    line=codecs.open(baseDir[1:], "r", encoding="utf-8").readlines()
-    line=list(map(lambda x: x.rstrip(), line)) # newlines must be removed
-    for d in line:
-      addExamplesByFilter(d, directoriesSet)
-    return
-
   if baseDir[0]!="^": # add dir
     addOrDiscard=directoriesSet.add
   else: # remove dir
@@ -563,7 +509,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       d[m]=False
     # check for MBSim modules in src examples
     if src:
-      filecont=codecs.open(pj(root, "Makefile"), "r", encoding="utf-8").read()
+      filecont=open(pj(root, "Makefile"), "rb").read().decode('utf-8')
       for m in mbsimModules:
         if re.search("\\b"+m+"\\b", filecont): d[m]=True
     # check for MBSim modules in xml and flatxml examples
@@ -571,7 +517,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       for filedir, _, filenames in os.walk(root):
         for filename in fnmatch.filter(filenames, "*.xml"):
           if filename[0:4]==".pp.": continue # skip generated .pp.* files
-          filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
+          filecont=open(pj(filedir, filename), "rb").read().decode('utf-8')
           for m in mbsimModules:
             if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): d[m]=True
     # evaluate filter
@@ -598,11 +544,7 @@ def runExample(resultQueue, example):
     executeFN=pj(example[0], "execute.txt")
     executeRet=0
     if not args.disableRun:
-      # clean output of previous run
-      if os.path.isfile("time.dat"): os.remove("time.dat")
-      list(map(os.remove, glob.glob("*.h5")))
-
-      executeFD=MultiFile(codecs.open(pj(args.reportOutDir, executeFN), "w", encoding="utf-8"), args.printToConsole)
+      executeFD=MultiFile(open(pj(args.reportOutDir, executeFN), "w"), args.printToConsole)
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
@@ -615,7 +557,7 @@ def runExample(resultQueue, example):
         executeRet=1
         dt=0
       executeFD.close()
-    if executeRet==None or executeRet!=0: runExampleRet=1
+    if executeRet!=0: runExampleRet=1
     # get reference time
     refTime=example[1]
     # print result to resultStr
@@ -627,18 +569,7 @@ def runExample(resultQueue, example):
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
-      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'">'
-      if executeRet==None or executeRet!=0:
-        resultStr+='<span style="color:red">'
-      else:
-        resultStr+='<span style="color:green">'
-      if executeRet==None:
-        resultStr+='timed out'
-      elif executeRet!=0:
-        resultStr+='failed'
-      else:
-        resultStr+='passed'
-      resultStr+='</span></a></td>'
+      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:'+('green' if executeRet==0 else 'red')+'">'+('passed' if executeRet==0 else 'failed')+'</span></a></td>'
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
@@ -651,7 +582,7 @@ def runExample(resultQueue, example):
     if not math.isinf(refTime):
       resultStr+='<td>%.3f</td>'%refTime
     else:
-      resultStr+='<td><span style="color:orange">no reference</span></td>'
+      resultStr+='<td><span style="color:orange">no reference<span></td>'
 
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
@@ -662,36 +593,23 @@ def runExample(resultQueue, example):
 
     # write time to time.dat for possible later copying it to the reference
     if not args.disableRun:
-      refTimeFD=codecs.open("time.dat", "w", encoding="utf-8")
+      refTimeFD=open("time.dat", "w")
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
     if compareRet==-1:
-      resultStr+='<td sorttable_customkey="not run"><span style="color:orange;float:left;text-align:left">not run</span>'+\
-                 '<span style="float:right;text-align:right">[<input type="checkbox" disabled="disabled"/>]</span></td>'
-    else:
-      global dummyID
-      dummyID=dummyID+1
-      if nrFailed==0:
-        if nrAll==0:
-          resultStr+='<td sorttable_customkey="no reference"><span style="color:orange;float:left;text-align:left">no reference</span>'+\
-                     '<span style="float:right;text-align:right">[<input id="EXAMPLE_'+str(dummyID)+\
-                     '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</span></td>'
-        else:
-          resultStr+='<td sorttable_customkey="all passed"><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
-                     '"><span style="color:green">all '+str(nrAll)+\
-                     ' passed</span></a></span>'+\
-                     '<span style="float:right;text-align:right">[<input type="checkbox" disabled="disabled"/>]</span></td>'
-      else:
-        resultStr+='<td sorttable_customkey="failed"><span style="float:left;text-align:left"><a href="'+myurllib.pathname2url(compareFN)+\
-                   '"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+\
-                   ')</span></a></span><span style="float:right;text-align:right">[<input id="EXAMPLE_'+str(dummyID)+\
-                   '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</span></td>'
-
-    # check for deprecated features
-    if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
+      if nrFailed==0:
+        if nrAll==0:
+          resultStr+='<td><span style="color:orange">no reference<span></td>'
+        else:
+          resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:green">all '+str(nrAll)+' passed</span></a></td>'
+      else:
+        resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
+
+    # check for deprecated features
+    if(not args.disableRun):
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
         match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
@@ -706,7 +624,7 @@ def runExample(resultQueue, example):
     # validate XML
     if not args.disableValidate:
       htmlOutputFN=pj(example[0], "validateXML.html")
-      htmlOutputFD=codecs.open(pj(args.reportOutDir, htmlOutputFN), "w", encoding="utf-8")
+      htmlOutputFD=open(pj(args.reportOutDir, htmlOutputFN), "w")
       # write header
       print('<?xml version="1.0" encoding="UTF-8"?>', file=htmlOutputFD)
       print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=htmlOutputFD)
@@ -714,10 +632,16 @@ def runExample(resultQueue, example):
       print('<head>', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <style type="text/css">', file=htmlOutputFD)
-      print('    table.sortable th { cursor: move; }', file=htmlOutputFD)
-      print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=htmlOutputFD)
+      print('    table.sortable th {', file=htmlOutputFD)
+      print('      cursor: move;', file=htmlOutputFD)
+      print('      border-width: 2pt;', file=htmlOutputFD)
+      print('      border-color: #D0D0D0;', file=htmlOutputFD)
+      print('      border-style: outset;', file=htmlOutputFD)
+      print('      background-color: #E0E0E0;', file=htmlOutputFD)
+      print('      padding: 2px;', file=htmlOutputFD)
+      print('    }', file=htmlOutputFD)
       print('  </style>', file=htmlOutputFD)
-      print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=htmlOutputFD)
+      print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body>', file=htmlOutputFD)
       print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
@@ -762,7 +686,7 @@ def runExample(resultQueue, example):
 
   except:
     fatalScriptErrorFN=pj(example[0], "fatalScriptError.txt")
-    fatalScriptErrorFD=MultiFile(codecs.open(pj(args.reportOutDir, fatalScriptErrorFN), "w", encoding="utf-8"), args.printToConsole)
+    fatalScriptErrorFD=MultiFile(open(pj(args.reportOutDir, fatalScriptErrorFN), "w"), args.printToConsole)
     print("Fatal Script Errors should not happen. So this is a bug in runexamples.py which should be fixed.", file=fatalScriptErrorFD)
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
@@ -799,11 +723,10 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD,
-                     env=mainEnv, maxExecutionTime=args.maxExecutionTime)
+  if subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt
+  return 0, dt
 
 
 
@@ -814,11 +737,11 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                     ["MBS.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime)
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+                    ["MBS.mbsimprj.xml"], executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt
+  return 0, dt
 
 
 
@@ -829,11 +752,11 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
-                     executeFD, maxExecutionTime=args.maxExecutionTime)
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+                    executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt
+  return 0, dt
 
 
 
@@ -844,7 +767,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   if not os.path.isdir(diffDir): os.makedirs(diffDir)
 
   # create html page
-  diffHTMLPlotFD=codecs.open(diffHTMLFileName, "w", encoding="utf-8")
+  diffHTMLPlotFD=open(diffHTMLFileName, "w")
   print('<?xml version="1.0" encoding="UTF-8"?>', file=diffHTMLPlotFD)
   print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=diffHTMLPlotFD)
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=diffHTMLPlotFD)
@@ -907,7 +830,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   diffGPFileName=pj(diffDir, "diffplot.gnuplot")
   SVGFileName=pj(diffDir, "plot.svg")
   dataFileName=pj(diffDir, "data.dat")
-  diffGPFD=codecs.open(diffGPFileName, "w", encoding="utf-8")
+  diffGPFD=open(diffGPFileName, "w")
   print("set terminal svg size 900, 1400", file=diffGPFD)
   print("set output '"+SVGFileName+"'", file=diffGPFD)
   print("set multiplot layout 3, 1", file=diffGPFD)
@@ -998,10 +921,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       refLabels=refObj.attrs["Column Label"]
       # append missing dummy labels
       for x in range(len(refLabels), refObjCols):
-        refLabels=numpy.append(refLabels, ('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>').encode("utf-8"))
+        refLabels=numpy.append(refLabels, ('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
     except KeyError:
       refLabels=numpy.array(list(map(
-        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("utf-8"),
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
         range(refObjCols))), dtype=bytes
       )
     # get labels from current
@@ -1009,10 +932,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       curLabels=curObj.attrs["Column Label"]
       # append missing dummy labels
       for x in range(len(curLabels), curObjCols):
-        curLabels=numpy.append(curLabels, ('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>').encode("utf-8"))
+        curLabels=numpy.append(curLabels, ('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
     except KeyError:
       curLabels=numpy.array(list(map(
-        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("utf-8"),
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
         range(refObjCols))), dtype=bytes
       )
     # loop over all columns
@@ -1080,7 +1003,7 @@ def appendDatasetName(curMemberNames, datasetName, curObj):
 def compareExample(example, compareFN):
   import h5py
 
-  compareFD=codecs.open(pj(args.reportOutDir, compareFN), "w", encoding="utf-8")
+  compareFD=open(pj(args.reportOutDir, compareFN), "w")
 
   # print html header
   print('<?xml version="1.0" encoding="UTF-8"?>', file=compareFD)
@@ -1089,10 +1012,16 @@ def compareExample(example, compareFN):
   print('<head>', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <style type="text/css">', file=compareFD)
-  print('    table.sortable th { cursor: move; }', file=compareFD)
-  print('    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { content: " \\25B4\\25BE" }', file=compareFD)
+  print('    table.sortable th {', file=compareFD)
+  print('      cursor: move;', file=compareFD)
+  print('      border-width: 2pt;', file=compareFD)
+  print('      border-color: #D0D0D0;', file=compareFD)
+  print('      border-style: outset;', file=compareFD)
+  print('      background-color: #E0E0E0;', file=compareFD)
+  print('      padding: 2px;', file=compareFD)
+  print('    }', file=compareFD)
   print('  </style>', file=compareFD)
-  print('  <script type="text/javascript" src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js">1;</script>', file=compareFD)
+  print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body>', file=compareFD)
   print('<h1>Compare Results</h1>', file=compareFD)
@@ -1186,9 +1115,9 @@ def copyAndSHA1AndAppendIndex(src, dst):
   # copy src to dst
   shutil.copyfile(src, dst)
   # create sha1 hash of dst (save to <dst>.sha1)
-  codecs.open(dst+".sha1", "w", encoding="utf-8").write(hashlib.sha1(codecs.open(dst, "rb").read()).hexdigest())
+  open(dst+".sha1", "w").write(hashlib.sha1(open(dst, "rb").read()).hexdigest())
   # add file to index
-  index=codecs.open(pj(os.path.dirname(dst), "index.txt"), "a", encoding="utf-8")
+  index=open(pj(os.path.dirname(dst), "index.txt"), "a")
   index.write(os.path.basename(dst)+":")
 def pushReference():
   print("WARNING! pushReference is a internal action!")
@@ -1200,14 +1129,14 @@ def downloadFileIfDifferent(src):
   remoteSHA1Url=args.updateURL+"/"+myurllib.pathname2url(src+".sha1")
   remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
   try:
-    localSHA1=hashlib.sha1(codecs.open(src, "rb").read()).hexdigest()
+    localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
   except IOError: 
     localSHA1=""
   if remoteSHA1!=localSHA1:
     remoteUrl=args.updateURL+"/"+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
     if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
-    codecs.open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
+    open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
 def updateReference():
   curNumber=0
   lenDirs=len(directories)
@@ -1220,7 +1149,7 @@ def updateReference():
     try:
       for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
         downloadFileIfDifferent(pj(example[0], "reference", fileName))
-    except (IOError):
+    except (myurllib.HTTPError, myurllib.URLError):
       pass
 
 
@@ -1235,28 +1164,31 @@ def listExamples():
 def validateXML(example, consoleOutput, htmlOutputFD):
   nrFailed=0
   nrTotal=0
-  types=[["*.ombv.xml",                ombvSchema], # validate openmbv files generated by MBSim
-         ["*.ombv.env.xml",            ombvSchema], # validate openmbv environment user files
-         ["MBS.mbsimprj.flat.xml", mbsimXMLSchema]] # validate user mbsim flat xml files
+  types=[["*.ombv.xml",       ombvSchema],
+         ["*.ombv.env.xml",   ombvSchema],
+         ["*.mbsim.xml",      mbsimSchema],
+         ["*.mbsim.flat.xml", mbsimSchema],
+         ["*.mbsimint.xml",   mbsimSchema]]
   for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
+        # skip error file
+        if filename==".err.MBS.mbsimprj.xml":
+          continue
         outputFN=pj(example[0], filename+".txt")
-        outputFD=MultiFile(codecs.open(pj(args.reportOutDir, outputFN), "w", encoding="utf-8"), args.printToConsole)
+        outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
-        list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
+        list(map(lambda x: print(x, end=" ", file=outputFD), [xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        try:
-          subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
-                          outputFD)
-          print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
-        except:
+        if subprocessCall([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
+                          outputFD)!=0:
           nrFailed+=1
           print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
-          
+        else:
+          print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()
@@ -1266,7 +1198,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 def writeRSSFeed(nrFailed, nrTotal):
   rssFN="result.rss.xml"
-  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
+  rssFD=open(pj(args.reportOutDir, os.pardir, rssFN), "w")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -1307,7 +1239,8 @@ def validateHTMLOutput():
   for root, _, filenames in os.walk(args.reportOutDir):
     for filename in filenames:
       if os.path.splitext(filename)[1]==".html":
-        subprocessCall([mbxmlutilsvalidate, schema, pj(root, filename)], sys.stdout)
+        subprocessCall([xmllint, "--xinclude", "--noout", "--schema",
+          schema, pj(root, filename)], sys.stdout)
 
 
 
