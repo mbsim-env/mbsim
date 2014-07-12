@@ -130,6 +130,7 @@ namespace MBSimGUI {
       setCheckable(true);
       connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize_()));
       connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
+      connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
       setChecked(active);
     }
     setLayout(layout);

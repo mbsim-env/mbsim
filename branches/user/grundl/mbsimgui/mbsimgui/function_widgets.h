@@ -95,7 +95,7 @@ namespace MBSimGUI {
   //class StepFunctionWidget : public FunctionWidget {
   //}
 
-  //class PositiveFunctionWidget : public FunctionWidget {
+  //class PositiveValueFunctionWidget : public FunctionWidget {
   //}
 
   class AbsoluteValueFunctionWidget : public FunctionWidget {
@@ -103,11 +103,7 @@ namespace MBSimGUI {
     friend class AbsoluteValueFunctionProperty;
 
     public:
-    AbsoluteValueFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *function;
+    AbsoluteValueFunctionWidget(int m=0) { }
   };
 
   class ModuloFunctionWidget : public FunctionWidget {
@@ -121,52 +117,36 @@ namespace MBSimGUI {
     ExtWidget *denom;
   };
 
-  class PointSymmetricFunctionWidget : public FunctionWidget {
+  class SignumFunctionWidget : public FunctionWidget {
 
-    friend class PointSymmetricFunctionProperty;
+    friend class SignumFunctionProperty;
 
     public:
-    PointSymmetricFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *function;
+    SignumFunctionWidget(int m=0) { }
   };
 
-  class LineSymmetricFunctionWidget : public FunctionWidget {
+  class AdditionFunctionWidget : public FunctionWidget {
 
-    friend class LineSymmetricFunctionProperty;
+    friend class AdditionFunctionProperty;
 
     public:
-    LineSymmetricFunctionWidget(int m=0);
+    AdditionFunctionWidget(int m=0);
     void resize_(int m, int n);
 
     protected:
-    ExtWidget *function;
+    ExtWidget *f1, *f2;
   };
 
-  class ScaledFunctionWidget : public FunctionWidget {
+  class MultiplicationFunctionWidget : public FunctionWidget {
 
-    friend class ScaledFunctionProperty;
+    friend class MultiplicationFunctionProperty;
 
     public:
-    ScaledFunctionWidget(int m=0);
+    MultiplicationFunctionWidget(int m=0);
     void resize_(int m, int n);
 
     protected:
-    ExtWidget *function, *factor;
-  };
-
-  class SummationFunctionWidget : public FunctionWidget {
-
-    friend class SummationFunctionProperty;
-
-    public:
-    SummationFunctionWidget(int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *functions;
+    ExtWidget *f1, *f2;
   };
 
   class VectorValuedFunctionWidget : public FunctionWidget {

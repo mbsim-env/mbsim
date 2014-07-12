@@ -1667,7 +1667,15 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="rigidBody">
+          <xs:element name="rigidBodyFirstSide" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="rigidBodySecondSide">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
             </xs:documentation></xs:annotation>
@@ -1700,6 +1708,126 @@
             </xs:complexType> 
           </xs:element>
         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedFriction" substitutionGroup="LinkMechanics" type="GeneralizedFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedFrictionType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="generalizedFrictionForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionForceLaw"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="generalizedNormalForce" type="pv:nounitScalar"/>
+          <xs:element name="rigidBodyFirstSide" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="rigidBodySecondSide">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Gear" substitutionGroup="LinkMechanics" type="GearType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+        Kinematische Zwangsbedingung durch Angabe eines Übersetzungsverhältnisses.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GearType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="generalizedForceFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="dependentRigidBody">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Starrkörper, dessen generalisierte Koordinaten von den generalisierten Koordinaten anderer Körper abhängig ist.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="transmissions">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Liste der Starrkörper, von deren generalisierten Koordinaten die generalisierten Koordinaten des abhängigen Körpers direkt bestimmt werden können.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element ref="Transmission"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -3405,87 +3533,44 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PositiveFunction" substitutionGroup="Function" type="PositiveFunctionType">
+  <xs:element name="SignumFunction" substitutionGroup="Function" type="SignumFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PositiveFunctionType">
+  <xs:complexType name="SignumFunctionType">
     <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="function">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
+      <xs:extension base="FunctionType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PointSymmetricFunction" substitutionGroup="Function" type="PointSymmetricFunctionType">
+  <xs:element name="PositiveValueFunction" substitutionGroup="Function" type="PositiveValueFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PointSymmetricFunctionType">
+  <xs:complexType name="PositiveValueFunctionType">
     <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="function">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
+      <xs:extension base="FunctionType"/>
     </xs:complexContent>
   </xs:complexType>   
 
- <xs:element name="LineSymmetricFunction" substitutionGroup="Function" type="LineSymmetricFunctionType">
+  <xs:element name="AdditionFunction" substitutionGroup="Function" type="AdditionFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      tbd
+        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="LineSymmetricFunctionType">
+  <xs:complexType name="AdditionFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="function">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="ScaledFunction" substitutionGroup="Function" type="ScaledFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Vektorwertige Sprungfunktion <object class="inlineeqn">y_i=\begin{cases}c_i\ \text{bei}\ t\geq t_i\\0\ \text{bei}\ t\leq t_i\end{cases}</object>.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="ScaledFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="function">
+          <xs:element name="firstSummand">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             tbd
             </xs:documentation></xs:annotation>
@@ -3495,37 +3580,48 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="scalingFactor" type="pv:nounitScalar" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Skalarierungsfaktor.
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="secondSummand">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
-        </xs:sequence> 
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SummationFunction" substitutionGroup="Function" type="SummationFunctionType">
+  <xs:element name="MultiplicationFunction" substitutionGroup="Function" type="MultiplicationFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SummationFunctionType">
+  <xs:complexType name="MultiplicationFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="summands">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                tbd
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="firstFactor">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondFactor">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
                 <xs:element ref="Function"/>
               </xs:sequence>
             </xs:complexType>

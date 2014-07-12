@@ -631,7 +631,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     href = new ExtWidget("File", new FileWidget("XML model files", "xml files (*.xml)", 1), true);
     layout->addWidget(href);
-    count = new ExtWidget("Count", new SpinBoxWidget(1,1), true);
+    count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")));
     layout->addWidget(count);
     counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
     layout->addWidget(counterName);

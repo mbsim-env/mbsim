@@ -71,7 +71,6 @@ namespace MBSimGUI {
     public:
     ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false);
     QWidget* getWidget() const {return widget;}
-    virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
     virtual void resizeVariables() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
     void resize_(int m, int n) {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
@@ -80,6 +79,8 @@ namespace MBSimGUI {
 
     protected:
     QWidget *widget;
+    public slots:
+    virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
     signals:
     void resize_();
   };

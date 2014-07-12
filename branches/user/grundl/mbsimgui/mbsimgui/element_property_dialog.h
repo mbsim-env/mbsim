@@ -373,11 +373,31 @@ namespace MBSimGUI {
   class GeneralizedSpringDamperPropertyDialog : public LinkPropertyDialog {
 
     public:
-      GeneralizedSpringDamperPropertyDialog(GeneralizedSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      GeneralizedSpringDamperPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *body, *connections, *coilSpring, *forceArrow, *momentArrow;
+      ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
+  };
+
+  class GeneralizedFrictionPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      GeneralizedFrictionPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *function, *normalForce, *body1, *body2, *connections, *forceArrow, *momentArrow;
+  };
+
+  class GearPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      GearPropertyDialog(Link *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *function, *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
   };
 
   class JointPropertyDialog : public LinkPropertyDialog {
@@ -596,16 +616,6 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *s1Ref, *s2Ref, *f;
-  };
-
-  class TorsionalStiffnessPropertyDialog : public LinkPropertyDialog {
-
-    public:
-      TorsionalStiffnessPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
-    protected:
-      ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
   };
 
 }

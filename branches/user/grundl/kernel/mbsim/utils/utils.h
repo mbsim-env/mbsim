@@ -170,6 +170,14 @@ namespace MBSim {
         }
     };
 
+  template <class Row>
+    class ToDouble<fmatvec::RowVector<Row,double> > {
+      public:
+        static double cast(const fmatvec::RowVector<Row,double> &x) {
+          return x.e(0); 
+        }
+    };
+
   template <class Ret>
   class FromMatStr {
     public:

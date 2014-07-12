@@ -105,6 +105,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     funcList = new QComboBox;
     funcList->addItem(tr("Linear regularized coulomb friction"));
+    funcList->addItem(tr("Symbolic friction function"));
     layout->addWidget(funcList);
     setLayout(layout);
     connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
@@ -117,6 +118,14 @@ namespace MBSimGUI {
       layout->removeWidget(frictionForceFunc);
       delete frictionForceFunc;
       frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
+      layout->addWidget(frictionForceFunc);
+    }
+    else {
+      layout->removeWidget(frictionForceFunc);
+      delete frictionForceFunc;
+       QStringList var;
+      var << "gd" << "laN";
+      frictionForceFunc = new SymbolicFunctionWidget(var,1,1);
       layout->addWidget(frictionForceFunc);
     }
   }

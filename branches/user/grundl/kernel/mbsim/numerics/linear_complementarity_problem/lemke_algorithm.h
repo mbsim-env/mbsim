@@ -21,10 +21,11 @@
 #define NUMERICS_LEMKE_ALGORITHM_H_
 
 #include <fmatvec/fmatvec.h>
+#include <fmatvec/atom.h>
 
 namespace MBSim {
 
-  class LemkeAlgorithm {
+  class LemkeAlgorithm : public fmatvec::Atom {
     public:
       LemkeAlgorithm(const bool & DEBUGLEVEL_ = 0) :
           M(), q(), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {

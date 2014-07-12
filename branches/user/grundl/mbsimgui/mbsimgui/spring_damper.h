@@ -64,7 +64,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty function, body, connections, coilSpring, forceArrow, momentArrow;
+    ExtProperty function, body1, body2, connections, coilSpring, forceArrow, momentArrow;
   };
 
 }

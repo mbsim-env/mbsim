@@ -26,7 +26,6 @@
 
 class QPushButton;
 class QComboBox;
-class QCheckBox;
 class QStackedWidget;
 class QListWidget;
 class QTreeWidget;
