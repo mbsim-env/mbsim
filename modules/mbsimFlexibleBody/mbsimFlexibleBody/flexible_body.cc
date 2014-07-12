@@ -28,6 +28,7 @@
 #include <mbsim/contour_pdata.h>
 #include <mbsim/discretization_interface.h>
 
+
 //#ifdef _OPENMP
 //#include <omp.h>
 //#endif
@@ -46,62 +47,83 @@ namespace MBSimFlexibleBody {
   }
 
   FlexibleBody::~FlexibleBody() {
-    for(unsigned int i=0; i<discretization.size(); i++) {
-      if(discretization[i]) { delete discretization[i]; discretization[i] = NULL; }
+    for (unsigned int i = 0; i < discretization.size(); i++) {
+      if (discretization[i]) {
+        delete discretization[i];
+        discretization[i] = NULL;
+      }
     }
-    delete contourFrame;
   }
 
   void FlexibleBody::updateh(double t, int k) {
-    for(int i=0;i<(int)discretization.size();i++)
-      discretization[i]->computeh(qElement[i],uElement[i]); // compute attributes of finite element
-    for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h[k]); // assemble
+    for (int i = 0; i < (int) discretization.size(); i++)
+      discretization[i]->computeh(qElement[i], uElement[i]); // compute attributes of finite element
+    for (int i = 0; i < (int) discretization.size(); i++)
+      GlobalVectorContribution(i, discretization[i]->geth(), h[k]); // assemble
 
-    if(d_massproportional>0) { // mass proportional damping
-      h[k] -= d_massproportional*(M[k]*u);
+    if (d_massproportional > 0) { // mass proportional damping
+      h[k] -= d_massproportional * (M[k] * u);
     }
   }
 
   void FlexibleBody::updateM(double t, int k) {
-    for(int i=0;i<(int)discretization.size();i++)
+    for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computeM(qElement[i]); // compute attributes of finite element
-    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[k]); // assemble
+    for (int i = 0; i < (int) discretization.size(); i++)
+      GlobalMatrixContribution(i, discretization[i]->getM(), M[k]); // assemble
   }
 
   void FlexibleBody::updatedhdz(double t) {
     updateh(t);
-    for(int i=0;i<(int)discretization.size();i++)
-      discretization[i]->computedhdz(qElement[i],uElement[i]); // compute attributes of finite element
-   for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdq(),dhdq); // assemble
-   for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdu(),dhdu); // assemble
+    for (int i = 0; i < (int) discretization.size(); i++)
+      discretization[i]->computedhdz(qElement[i], uElement[i]); // compute attributes of finite element
+    for (int i = 0; i < (int) discretization.size(); i++)
+      GlobalMatrixContribution(i, discretization[i]->getdhdq(), dhdq); // assemble
+    for (int i = 0; i < (int) discretization.size(); i++)
+      GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
   void FlexibleBody::updateStateDependentVariables(double t) {
     BuildElements();
-    for(unsigned int i=0; i<frame.size(); i++) { // frames
-      updateKinematicsForFrame(S_Frame[i],Frame::all,frame[i]); 
+
+    // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
+    //        The idea is to use a contour frame that has all necessary position information
+    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
+      updateKinematicsForFrame(S_Frame[i], Frame::all, frame[i]);
     }
-    // TODO contour non native?
+
+    for (size_t i  = 0; i < fixedRelativeFrames.size(); i++)
+      fixedRelativeFrames[i]->updateStateDependentVariables();
+
+    for (size_t i  = 0; i < nodeFrames.size(); i++)
+      updateKinematicsAtNode(nodeFrames[i], MBSim::Frame::all);
+
+    for (size_t i = 0; i < contour.size(); i++) {
+      contour[i]->updateStateDependentVariables(t);
+    }
   }
 
   void FlexibleBody::updateJacobians(double t, int k) {
-    for(unsigned int i=0; i<frame.size(); i++) { // frames
-      updateJacobiansForFrame(S_Frame[i],frame[i]);
+    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
+      updateJacobiansForFrame(S_Frame[i], frame[i]);
     }
-    // TODO contour non native?
+    // TODO contour non native?  DONE!
+//    for (size_t i = 0; i < contour.size(); i++) {
+//      contour[i]->updateJacobians;
+//    }
   }
 
   void FlexibleBody::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Body::plot(t,dt);
+    if (getPlotFeature(plotRecursive) == enabled) {
+      Body::plot(t, dt);
     }
   }
 
   void FlexibleBody::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if (stage == unknownStage) {
       Body::init(stage);
-      T = SqrMat(qSize,fmatvec::EYE);
-      for(unsigned int i=0; i<frame.size(); i++) { // frames
+      T = SqrMat(qSize, fmatvec::EYE);
+      for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
         S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(uSize[0]);
         S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(uSize[0]);
       }
@@ -109,7 +131,7 @@ namespace MBSimFlexibleBody {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if (getPlotFeature(plotRecursive) == enabled) {
         Body::init(stage);
       }
     }
@@ -119,30 +141,30 @@ namespace MBSimFlexibleBody {
 
   double FlexibleBody::computeKineticEnergy() {
     double T = 0.;
-    for(unsigned int i=0; i<discretization.size(); i++) {
-      T += discretization[i]->computeKineticEnergy(qElement[i],uElement[i]);
+    for (unsigned int i = 0; i < discretization.size(); i++) {
+      T += discretization[i]->computeKineticEnergy(qElement[i], uElement[i]);
     }
     return T;
   }
 
   double FlexibleBody::computePotentialEnergy() {
     double V = 0.;
-    for(unsigned int i=0; i<discretization.size(); i++) {
+    for (unsigned int i = 0; i < discretization.size(); i++) {
       V += discretization[i]->computeElasticEnergy(qElement[i]) + discretization[i]->computeGravitationalEnergy(qElement[i]);
     }
     return V;
   }
 
-  void FlexibleBody::setFrameOfReference(Frame *frame) { 
-    if(dynamic_cast<DynamicSystem*>(frame->getParent())) 
-      R = frame; 
-    else 
-      throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); 
+  void FlexibleBody::setFrameOfReference(Frame *frame) {
+    if (dynamic_cast<DynamicSystem*>(frame->getParent()))
+      R = frame;
+    else
+      throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!");
   }
 
   void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
     Frame *frame = new Frame(name);
-    addFrame(frame,S_);
+    addFrame(frame, S_);
   }
 
   void FlexibleBody::addFrame(Frame* frame, const ContourPointData &S_) {
@@ -151,13 +173,18 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addFrame(const std::string &name, const int &id) {
-    ContourPointData cp(id);
-    addFrame(name,cp);
+    NodeFrame * frame = new NodeFrame(name, id);
+    addFrame(frame);
   }
 
-  void FlexibleBody::addFrame(Frame *frame, const  int &id) {
-    ContourPointData cp(id);
-    addFrame(frame,cp);
+  void FlexibleBody::addFrame(NodeFrame *frame) {
+    nodeFrames.push_back(frame);
+    Body::addFrame(frame);
+  }
+
+  void FlexibleBody::addFrame(MBSim::FixedRelativeFrame *frame) {
+    fixedRelativeFrames.push_back(frame);
+    Body::addFrame(frame);
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
@@ -174,3 +201,4 @@ namespace MBSimFlexibleBody {
   }
 
 }
+

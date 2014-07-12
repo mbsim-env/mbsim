@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libcontour.la
 libcontour_la_SOURCES = circle.cc\
 			rectangle.cc\
 			compound_contour.cc\
+			contour1s.cc\
 			contour1s_analytical.cc\
 			contour_interpolation.cc\
 			contour_quad.cc\

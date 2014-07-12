@@ -25,8 +25,6 @@ $(Target) : $(objects)
 	  | sed 's/\(.*\)\.o[ :]*/\1.o \1.d : /g' > $@; \
 	  [ -s $@ ] || rm -f $@
 
-include $(sources:.cc=.d)
-
 .PHONY : clean
 clean :
 	-rm $(Target) $(objects) $(sources:.cc=.d)

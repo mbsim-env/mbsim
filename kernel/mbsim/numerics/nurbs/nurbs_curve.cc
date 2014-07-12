@@ -1,26 +1,7 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
- *
- * Contact: martin.o.foerg@googlemail.com
- */
-
 #include <config.h>
 
 #include "nurbs_curve.h"
-
+#include <vector>
 #include <mbsim/mbsim_event.h>
 
 #include <iostream>
@@ -125,6 +106,70 @@ namespace MBSim {
     return crossProduct(firstDn(u), v);
   }
 
+  // use the user offered knot point vector uk  to calculate the knotvector U by funtion knotAveraging
+  //  knotAveraging is the same as updateUVecs if offering uniform u vector.
+  void NurbsCurve::globalInterp(const std::vector<fmatvec::Point<3> >& Q, const std::vector<double>& uk, int d, bool updateLater) {
+    MatVx3 Qnew(Q.size(), NONINIT);
+
+    // Transformation from the user given standard vector form to fmetvec::MatVx3 form
+    for (int i = 0; i < Qnew.rows(); i++)
+      for (int j = 0; j < 3; j++)
+        Qnew(i, j) = Q.at(i)(j);
+
+    if (d <= 0) {
+      throw MBSimError("Degree is too small!");
+    }
+    if (d >= Qnew.rows()) {
+      throw MBSimError("The degree specified is greater then Q.rows()+1\n");
+    }
+
+    // resize control point matrix and knotVector matrix
+    deg = d;
+    P.resize(Qnew.rows());
+    U.resize(Qnew.rows() + d + 1);
+
+    SqrMat A(Qnew.rows(), INIT, 0.);
+
+    knotAveraging(uk, deg); // as deg=d, in resize();
+
+    // Initialize the basis matrix A
+    Vec N(deg + 1, NONINIT);
+
+    for (int i = 1; i < Qnew.rows() - 1; i++) {
+      int span = findSpan(uk.at(i));
+      basisFuns(uk.at(i), span, deg, U, N);
+      for (int j = 0; j <= deg; j++) {
+        A(i, span - deg + j) = N(j);
+      }
+    }
+    A(0, 0) = 1.0;
+    A(Qnew.rows() - 1, Qnew.rows() - 1) = 1.0;
+
+    // Set weights to 1
+    for (int i = 0; i < P.rows(); i++) {
+      P(i, 3) = 1.0;
+    }
+
+    if (updateLater) {
+      inverse.resize() = inv(A);
+      update(Qnew);
+    }
+    else {
+      P.set(Index(0, P.rows() - 1), Index(0, 2), slvLU(A, Mat(Qnew)));
+    }
+  }
+
+  void NurbsCurve::globalInterp(const std::vector<fmatvec::Point<3> >& Q, double uMin, double uMax, int d, bool updateLater) {
+    MatVx3 Qnew(Q.size(), NONINIT);
+
+    // Transformation from the user given standard vector form to fmetvec::MatVx3 form
+    for (int i = 0; i < Qnew.rows(); i++)
+      for (int j = 0; j < 3; j++)
+        Qnew(i, j) = Q.at(i)(j);
+
+    globalInterp(Qnew, uMin, uMax, d, updateLater);
+  }
+
   void NurbsCurve::globalInterp(const MatVx3& Q, double uMin, double uMax, int d, bool updateLater) {
     int i, j;
 
@@ -132,13 +177,17 @@ namespace MBSim {
       throw MBSimError("Degree is too small!");
     }
     if (d >= Q.rows()) {
-      throw MBSimError("The degree specified is greater then Q.n()+1");
+      throw MBSimError("The degree specified should be smaller or equal than Q.rows()-1\n");
     }
 
     resize(Q.rows(), d);
     SqrMat A(Q.rows(), INIT, 0.);
 
     updateUVecs(uMin, uMax);
+
+//    double chordLength = chordLengthParam(Q,u);
+//    cout << "chrodLength" << chordLength << endl;
+//    knotAveraging(u, deg);
 
     // Initialize the basis matrix A
     Vec N(deg + 1, NONINIT);
@@ -210,6 +259,118 @@ namespace MBSim {
 
   }
 
+  void NurbsCurve::globalInterpH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater) {
+    int i, j;
+
+    resize(Qw.rows(), d);
+    SqrMat A(Qw.rows(), INIT, 0.);
+
+//  if(Uc.n() != U.n())  // TODO:: check this!
+    if (Uc.rows() != U.rows())
+      throw MBSimError("Error(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
+
+    U = Uc;
+
+    // Init matrix for LSE
+//    Matrix<T> qq(Q.rows(),D+1) ;
+//    Matrix<T> xx(Q.rows(),D+1) ;
+
+//    for(i=0;i<Q.rows();i++)
+//      for(j=0; j<4;j++)
+//        qq(i,j) = (double)Q[i].data[j] ;
+
+//    if (Inverse_setted != 1) //changed
+//      computeInverse(ub, Uc, d);
+//
+//    xx = Inverse * qq;
+//
+//    // Store the data
+//    for(i=0;i<xx.rows();i++){
+//      for(j=0;j<D+1;j++)
+//        P[i].data[j] = (T)xx(i,j) ;
+//    }
+
+    Vec N(deg + 1, NONINIT);
+
+    for (i = 1; i < Qw.rows() - 1; i++) {
+      int span = findSpan(ub(i));
+//      cout << span << endl;
+      basisFuns(ub(i), span, deg, U, N);
+      for (j = 0; j <= deg; j++) {
+        A(i, span - deg + j) = N(j);
+//        cout << N(j) << endl;
+      }
+    }
+    A(0, 0) = 1.0;
+    A(Qw.rows() - 1, Qw.rows() - 1) = 1.0;
+//    cout << "A = " << A << endl << endl;
+    if (updateLater) {
+      inverse.resize() = inv(A);
+      update(Qw);
+    }
+    else {
+      P = slvLU(A, Mat(Qw));
+    }
+
+  }
+  /*!
+   \brief global curve interpolation with homogenous points
+
+   Global curve interpolation with 4D points, a knot vector
+   defined and the parametric value vector defined.The curve will have C(d-1)
+   continuity at the point u=0 and u=1.
+
+   \param Qw  the 3D points to interpolate (wrapped around)
+   \param ub  the parametric values vector
+   \param Uc  the knot vector computed using knotAveragingClosed
+   \param d   the degree of the closed curve
+
+   \warning The number of points to interpolate must be greater than
+   the degree specified for the curve. Uc must be compatible with
+   the values given for Q.n(), ub.n().
+   \author  Alejandro Frangi
+   \date 13 July, 1998
+   */
+  void NurbsCurve::globalInterpClosedH(const MatVx4& Qw, const Vec& ub, const Vec& Uc, int d, bool updateLater) {
+    int i, j;
+
+//  int iN = Qw.rows() - d - 1;
+//  resize(Qw.rows(),d) ;
+    int iN = Qw.rows();
+    resize(iN + d, d);
+
+    SqrMat A(iN, INIT, 0.);
+    if (Uc.rows() != U.rows())
+      throw MBSimError("Error(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
+
+    U = Uc;
+    // Initialize the basis matrix A
+    Vec N(d + 1);
+
+    for (i = 0; i < iN; i++) {
+      int span = findSpan(ub(i));
+      basisFuns(ub(i), span, d, U, N);
+      for (j = span - d; j <= span; j++)
+        A(i, j % (iN)) = (double) N(j - span + d);
+    }
+
+//    cout << "A = "  << A  << endl << endl;
+
+    if (updateLater) {
+      inverse.resize() = inv(A);
+      update(Qw);
+    }
+    else {
+      P = slvLU(A, Mat(Qw));
+      // Wrap around of control points
+      //Possible: wrapping around is just a reference ?
+      for (int i = 0; i < deg; i++) {
+        for (int j = 0; j < 3; j++)
+          P(P.rows() - deg + i, j) = P(i, j);
+      }
+    }
+
+  }
   void NurbsCurve::update(const MatVx3 & Q) {
 
     if (P.rows() > Q.rows()) { //closed interpolation
@@ -227,6 +388,25 @@ namespace MBSim {
     }
   }
 
+  void NurbsCurve::update(const MatVx4 & Qw) {
+
+    if (P.rows() > Qw.rows()) { //closed interpolation
+
+      P.set(Index(0, P.rows() - deg - 1), Index(0, 3), inverse * Qw);
+      // Wrap around of control points
+      //Possible: wrapping around is just a reference ?
+      for (int i = 0; i < deg; i++) {
+        for (int j = 0; j < 4; j++)
+          P(P.rows() - deg + i, j) = P(i, j);
+      }
+    }
+    else {
+      P = inverse * Qw;
+    }
+//    cout << "fmatvec_surface: Qw =" << Qw << endl;
+//    cout << "fmatvec_surface: P =" << P << endl;
+
+  }
   void NurbsCurve::resize(int n, int Deg) {
     deg = Deg;
     P.resize(n);
@@ -246,6 +426,29 @@ namespace MBSim {
       U(j) = 0.0;
     for (j = U.size() - deg - 1; j < U.size(); ++j)
       U(j) = 1.0;
+  }
+
+  double NurbsCurve::chordLengthParam(const MatVx3& Q, Vec& ub) {
+    int i;
+    double d = 0;
+
+    ub.resize(Q.rows());
+    ub(0) = 0;
+    for (i = 1; i < ub.rows(); i++) {
+      d += nrm2(Q.row(i) - Q.row(i - 1));
+    }
+    if (d > 0) {
+      for (i = 1; i < ub.rows() - 1; ++i) {
+        ub(i) = ub(i - 1) + nrm2(Q.row(i) - Q.row(i - 1)) / d;
+      }
+      ub(ub.rows() - 1) = 1.0; // In case there is some addition round-off
+    }
+    else {
+      for (i = 1; i < ub.rows() - 1; ++i)
+        ub(i) = double(i) / double(ub.rows() - 1);
+      ub(ub.rows() - 1) = 1.0;
+    }
+    return d;
   }
 
   void NurbsCurve::updateUVecs(double uMin, double uMax) {
@@ -335,11 +538,97 @@ namespace MBSim {
 
   }
 
+  /*!
+   \brief Generates a knot vector using the averaging technique
+   \relates NurbsCurve
+
+   \latexonly
+   The technique is as follows:
+   \begin{itemize}
+   \item $u_0 = \cdots = u_{deg} = 0$
+   \item $u_{m-deg} = \cdots = u_{m-1} = 1$
+   \item \begin{equation}
+   u_{j+deg} = \frac{1}{deg}\sum_{i=j}^{j+deg+1}\bar{u}_i
+   \hspace{0.5in} j= 1,\ldots,n-deg-1
+   \end{equation}
+   \end{itemize}
+   where $n$ is the size of the $\bar{u}$ knot coefficient vector,
+   $m=n+deg+1$ is the size of the knot vector and $deg$ is the
+   degree of the curve.
+   \endlatexonly
+   \htmlonly
+   There is more information about this routine in the LaTeX version.
+   \endhtmlonly
+
+   \param uk  the knot coefficients
+   \param deg  the degree of the curve associated with the knot vector
+   \param U  an average knot vector
+
+   \author Philippe Lavoie
+   \date 24 January, 1997
+   */
+  void knotAveraging(const Vec& uk, int deg, Vec& U) {
+    //    U.resize(uk.n()+deg+1) ;
+    int j;
+    for (j = 1; j < uk.rows() - deg; ++j) {
+      U(j + deg) = 0.0;
+      for (int i = j; i < j + deg; ++i)
+        U(j + deg) += uk(i);
+      U(j + deg) /= (double) deg;
+    }
+    for (j = 0; j <= deg; ++j)
+      U(j) = 0.0;
+    for (j = U.rows() - deg - 1; j < U.rows(); ++j)
+      U(j) = 1.0;
+  }
+
+  /*!
+   \brief generates a knot vector using the averaging technique for interpolation with closed curve.
+
+   Generates a knot vector using the averaging technique for interpolation with closed curve. See eq 9.9 in the NURBS Book
+
+   \param uk  the knot coefficients
+   \param deg  the degree of the curve associated with the knot vector
+   \param U  an average knot vector
+
+   \author Alejandro Frangi
+   \date 13 July, 1998
+   */
+  void knotAveragingClosed(const Vec& uk, int deg, Vec& U) {
+//    U.resize(uk.n()+deg+1) ;
+    int i, j;
+    int index;
+    int iN = uk.rows() - deg - 1;
+    int n = uk.rows() - 1;
+    int m = U.rows() - 1;
+
+    // Build temporary average sequence
+    // Data stored in range U(deg+1 .. n)
+    for (j = 0; j <= iN; j++) {
+      index = j + deg + 1;
+      U(index) = 0.0;
+      for (i = j; i <= j + deg - 1; i++)
+        U(index) += uk(i);
+      U(index) /= (double) deg;
+    }
+
+    // Now make the left and right periodic extensions
+    // Left
+    for (j = 0; j < deg; j++)
+      U(j) = U(j + iN + 1) - 1;
+    // Right
+    for (j = n + 1; j <= m; j++)
+      U(j) = 1 + U(j - (iN + 1));
+
+  }
+
   void basisFuns(double u, int span, int deg, const Vec & U, Vec& funs) {
     double* left = (double*) alloca(2 * (deg + 1) * sizeof(double));
     double* right = &left[deg + 1];
 
     double temp, saved;
+
+    funs.resize(deg + 1);
 
     funs(0) = 1.0;
     for (int j = 1; j <= deg; j++) {
@@ -444,6 +733,50 @@ namespace MBSim {
       r *= deg - k;
     }
 
+  }
+
+  // Setup the binomial coefficients into th matrix Bin
+  // Bin(i,j) = (i  j)
+  // The binomical coefficients are defined as follow
+  //   (n)         n!
+  //   (k)  =    k!(n-k)!       0<=k<=n
+  // and the following relationship applies
+  // (n+1)     (n)   ( n )
+  // ( k ) =   (k) + (k-1)
+  /*!
+   \brief Setup a matrix containing binomial coefficients
+
+   Setup the binomial coefficients into th matrix Bin
+   \htmlonly
+   \[ Bin(i,j) = \left( \begin{array}{c}i \\ j\end{array} \right)\]
+   The binomical coefficients are defined as follow
+   \[ \left(\begin{array}{c}   n \\ k \end{array} \right)= \frac{ n!}{k!(n-k)!} \mbox{for $0\leq k \leq n$} \]
+   and the following relationship applies
+   \[ \left(\begin{array}{c} n+1 \\ k \end{array} \right) =
+   \left(\begin{array}{c} n \\ k \end{array} \right) +
+   \left(\begin{array}{c} n \\ k-1 \end{array} \right) \]
+   \endhtmlonly
+
+   \param Bin  the binomial matrix
+   \author Philippe Lavoie
+   \date 24 January, 1997
+   */
+  void binomialCoef(Mat& Bin) {
+    int n, k;
+    // Setup the first line
+    Bin(0, 0) = 1.0;
+    for (k = Bin.cols() - 1; k > 0; --k)
+      Bin(0, k) = 0.0;
+    // Setup the other lines
+    for (n = 0; n < Bin.rows() - 1; n++) {
+      Bin(n + 1, 0) = 1.0;
+      for (k = 1; k < Bin.cols(); k++) {
+        if (n + 1 < k)
+          Bin(n, k) = 0.0;
+        else
+          Bin(n + 1, k) = Bin(n, k) + Bin(n, k - 1);
+      }
+    }
   }
 
 }

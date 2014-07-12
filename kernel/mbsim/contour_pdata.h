@@ -38,39 +38,71 @@ namespace MBSim {
   class ContourPointData {
     public:
 
-      enum ContourParameterType { node, staggeredNode, continuum, extInterpol };
+      enum ContourParameterType { node, staggeredNode, continuum, extInterpol, ffrorigin, fixedrelativeframe };
 
       /**
        * \brief constructor
        */
-      ContourPointData() : type(continuum), ID(0) {}
-      ContourPointData(const double       &alpha_) : type(continuum), ID(0), alpha() {
+      ContourPointData() :
+          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+      }
+      ContourPointData(const double &alpha_) :
+          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
         alpha(0) = alpha_;
       }
-      ContourPointData(const fmatvec::Vec2 &alpha_) : type(continuum), ID(0), alpha(alpha_) {}
-      ContourPointData(const int  &id_, const ContourParameterType type_ = node) : type(type_), ID(id_) {}
+      ContourPointData(const fmatvec::Vec2 &alpha_) :
+          type(continuum), ID(0), alpha(alpha_), alphap(fmatvec::Vec2()) {
+      }
+      ContourPointData(const int &id_, const ContourParameterType type_ = node) :
+          type(type_), ID(id_), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+      }
 
       /**
        * \brief destructor
        */
-      virtual ~ContourPointData() {}
+      virtual ~ContourPointData() {
+      }
 
       /* GETTER / SETTER */
-      ContourParameterType& getContourParameterType() { return type; }
-      const ContourParameterType& getContourParameterType() const { return type; }
-      int& getNodeNumber() { return ID; }
-      const int& getNodeNumber() const { return ID; }
-      fmatvec::Vec2& getLagrangeParameterPosition() { return alpha; }
-      const fmatvec::Vec2& getLagrangeParameterPosition() const { return alpha; }
-      fmatvec::Vec2& getLagrangeParameterVelocity() { return alphap; }
-      const fmatvec::Vec2& getLagrangeParameterVelocity() const { return alphap; }
-      fmatvec::VecV& getInterpolationWeights() { return iWeights; }
-      const fmatvec::VecV& getInterpolationWeights() const { return iWeights; }
-      Frame& getFrameOfReference() { return cosy; }
-      const Frame& getFrameOfReference() const { return cosy; }
+      ContourParameterType& getContourParameterType() {
+        return type;
+      }
+      const ContourParameterType& getContourParameterType() const {
+        return type;
+      }
+      int& getNodeNumber() {
+        return ID;
+      }
+      const int& getNodeNumber() const {
+        return ID;
+      }
+      fmatvec::Vec2& getLagrangeParameterPosition() {
+        return alpha;
+      }
+      const fmatvec::Vec2& getLagrangeParameterPosition() const {
+        return alpha;
+      }
+      fmatvec::Vec2& getLagrangeParameterVelocity() {
+        return alphap;
+      }
+      const fmatvec::Vec2& getLagrangeParameterVelocity() const {
+        return alphap;
+      }
+      fmatvec::VecV& getInterpolationWeights() {
+        return iWeights;
+      }
+      const fmatvec::VecV& getInterpolationWeights() const {
+        return iWeights;
+      }
+      Frame& getFrameOfReference() {
+        return cosy;
+      }
+      const Frame& getFrameOfReference() const {
+        return cosy;
+      }
       /***************************************************/
 
-    protected:
+    private:
       /** 
        * \brief type of data representation: node, continuum, interpolation (extinterpol) 
        */

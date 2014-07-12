@@ -42,7 +42,7 @@ namespace MBSim {
        * \brief different interest features for frames
        */
       enum Feature {
-        position, firstTangent, normal, secondTangent, cosy, position_cosy, velocity, angularVelocity, velocity_cosy, velocities, velocities_cosy, all
+        position, localPosition, firstTangent, normal, secondTangent, cosy, position_cosy, velocity, angularVelocity, velocity_cosy, velocities, velocities_cosy, angle, dotAngle, all
       };
 
       /**
@@ -68,10 +68,12 @@ namespace MBSim {
       //virtual ObjectInterface* getParent() { return parent; }
       //virtual void setParent(ObjectInterface* parent_) { parent = parent_; }
       virtual const fmatvec::Vec3& getPosition() const { return WrOP; }
+      virtual const fmatvec::Vec3& getLocalPosition() const { return LrOP; }
       virtual const fmatvec::SqrMat3& getOrientation() const { return AWP; }
       virtual fmatvec::Vec3& getPosition() { return WrOP; }
       virtual fmatvec::SqrMat3& getOrientation() { return AWP; }
       virtual void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
+      virtual void setLocalPosition(const fmatvec::Vec3 &v) { LrOP = v; }
       virtual void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
       virtual const fmatvec::Vec3& getVelocity() const { return WvP; } 
       virtual const fmatvec::Vec3& getAngularVelocity() const { return WomegaP; }
@@ -113,6 +115,10 @@ namespace MBSim {
       fmatvec::Vec3& getAngularAcceleration() { return WpsiP; }
       void setAcceleration(const fmatvec::Vec3 &a) { WaP = a; } 
       void setAngularAcceleration(const fmatvec::Vec3 &psi) { WpsiP = psi; }
+      void setAnglesOfOrientation(const fmatvec::Vec3 &angles_) { angles = angles_; }
+      const fmatvec::Vec3& getAnglesOfOrientation() const { return angles; }
+      void setDotAnglesOfOrientation(const fmatvec::Vec3 &dotAngles_ ) { dotAngles = dotAngles_; }
+      const fmatvec::Vec3& getDotAnglesOfOrientation() const { return dotAngles; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -135,6 +141,11 @@ namespace MBSim {
        * \brief position of coordinate system in inertial frame of reference
        */
       fmatvec::Vec3 WrOP;
+
+      /**
+       * \brief position of coordinate system in object local frame of reference
+       */
+      fmatvec::Vec3 LrOP;
 
       /**
        * \brief transformation matrix in inertial frame of reference
@@ -160,6 +171,11 @@ namespace MBSim {
        * \brief acceleration and angular acceleration of coordinate system in inertial frame of reference
        */
       fmatvec::Vec3 WaP, WpsiP;
+
+      /**
+       * \brief orientation angles and the time derivative of angles of the contour point
+       */
+      fmatvec::Vec3 angles, dotAngles;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Frame* openMBVFrame;

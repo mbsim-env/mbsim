@@ -227,7 +227,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {
+void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     FlexibleBody::initializeUsingXML(element);
 
@@ -286,4 +286,5 @@ namespace MBSimFlexibleBody {
   }
 
 }
+
 

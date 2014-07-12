@@ -32,6 +32,7 @@
 #include "mbsim/contours/edge.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/plane.h"
+#include "mbsim/contours/contour2s.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/contours/contour_interpolation.h"
 #include "mbsim/contours/contour_quad.h"
@@ -42,38 +43,38 @@
 
 namespace MBSim {
 
-  template<typename Sig> class DistanceFunction;
+  template <typename Sig> class DistanceFunction;
 
   /*! 
    * \brief class for distances and root functions of contact problems
    * \author Roland Zander
    * \date 2009-04-21 some comments (Thorsten Schindler)
    */
-  template<typename Ret, typename Arg>
-    class DistanceFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
-      public:
+  template <typename Ret, typename Arg>
+  class DistanceFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    public:
       virtual ~DistanceFunction() {
       }
-        /* INTERFACE FOR DERIVED CLASSES */
-        /*!
-         * \param contour parameter
-         * \return root function evaluation at contour parameter
-         */
-        virtual Ret operator()(const Arg &x) = 0;
+      /* INTERFACE FOR DERIVED CLASSES */
+      /*!
+       * \param contour parameter
+       * \return root function evaluation at contour parameter
+       */
+      virtual Ret operator()(const Arg &x) = 0;
 
-        /*!
-         * \param contour parameter
-         * \return possible contact-distance at contour parameter
-         */
-        virtual double operator[](const Arg& x) { return nrm2(computeWrD(x)); };	
+      /*!
+       * \param contour parameter
+       * \return possible contact-distance at contour parameter
+       */
+        virtual double operator[](const Arg& x) { return nrm2(computeWrD(x)); }
 
-        /*!
-         * \param contour parameter
-         * \return helping distance vector at contour parameter
-         */
-        virtual fmatvec::Vec3 computeWrD(const Arg& x) = 0;
-        /*************************************************/
-    };
+      /*!
+       * \param contour parameter
+       * \return helping distance vector at contour parameter
+       */
+      virtual fmatvec::Vec3 computeWrD(const Arg& x) = 0;
+      /*************************************************/
+  };
 
   /*!
    * \brief root function for pairing Contour1s and Point
@@ -95,7 +96,7 @@ namespace MBSim {
       double operator()(const double &alpha) {
         fmatvec::Vec3 Wd = computeWrD(alpha);
         fmatvec::Vec3 Wt = cp.getFrameOfReference().getOrientation().col(1);
-        return Wt.T()*Wd;
+        return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
@@ -122,6 +123,55 @@ namespace MBSim {
   };
 
   /*!
+   * \brief root function for pairing Contour2s and Point
+   * \author Zhan Wang
+   * \date 2013-12-05
+   */
+  class FuncPairContour2sPoint : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
+    public:
+      /**
+       * \brief constructor
+       * \param point contour
+       * \param contour contour2s surface
+       */
+      FuncPairContour2sPoint(Point* point_, Contour2s *contour_) :
+          contour(contour_), point(point_), cp() {
+      }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      fmatvec::Vec operator()(const fmatvec::Vec &alpha) {  // Vec2: U and V direction
+        fmatvec::Vec3 Wd = computeWrD(alpha);
+        fmatvec::Vec3 Wt1 = cp.getFrameOfReference().getOrientation().col(1);
+        fmatvec::Vec3 Wt2 = cp.getFrameOfReference().getOrientation().col(2);
+        fmatvec::Vec Wt(2, fmatvec::NONINIT);  // TODO:: check this?
+        Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
+        Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
+        return Wt;
+      }
+
+      fmatvec::Vec3 computeWrD(const fmatvec::Vec &alpha) {
+        cp.getLagrangeParameterPosition()(0) = alpha(0);
+        cp.getLagrangeParameterPosition()(1) = alpha(1);
+        contour->computeRootFunctionPosition(cp);
+        contour->computeRootFunctionFirstTangent(cp); // TODO:: move these two line into operator() ?? maybe not possible, as when opertor[] is called, the orientation need to be updated
+        contour->computeRootFunctionSecondTangent(cp);
+        return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
+      }
+      /*************************************************/
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour2s *contour;
+      Point *point;
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
+  };
+
+  /*!
    * \brief root function for pairing CylinderFlexible and CircleHollow
    * \author Roland Zander
    * \date 2009-04-21 contour point data included (Thorsten Schindler)
@@ -140,7 +190,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
         fmatvec::Vec3 Wd = computeWrD(alpha);
-        return circle->getReferenceOrientation().col(2).T()*Wd;
+        return circle->getReferenceOrientation().col(2).T() * Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
@@ -156,7 +206,7 @@ namespace MBSim {
       /**
        * \brief contours
        */
-      Contour1s *contour;      
+      Contour1s *contour;
       CircleHollow *circle;
 
       /**
@@ -164,7 +214,6 @@ namespace MBSim {
        */
       ContourPointData cp;
   };
-
 
   /*! 
    * \brief root function for pairing ContourInterpolation and Point
@@ -186,7 +235,7 @@ namespace MBSim {
         fmatvec::Vec3 WrOC[2];
         WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
-        return Wt.T() * ( WrOC[1] - WrOC[0] ); 
+        return Wt.T() * (WrOC[1] - WrOC[0]);
       }
 
       fmatvec::Vec3 computeWrD(const fmatvec::VecV &alpha) {
@@ -202,7 +251,7 @@ namespace MBSim {
       Point *point;
   };
 
-  /*! 
+  /*!
    * \brief base root function for planar pairing ConeSection and Circle 
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
@@ -225,7 +274,9 @@ namespace MBSim {
        * \param length of second semi-axis
        * \param conesection in circle 
        */
-      FuncPairConeSectionCircle(double R_,double a_,double b_,bool sec_IN_ci_) : R(R_), a(a_), b(b_), sec_IN_ci(sec_IN_ci_) {}
+      FuncPairConeSectionCircle(double R_, double a_, double b_, bool sec_IN_ci_) :
+          R(R_), a(a_), b(b_), sec_IN_ci(sec_IN_ci_) {
+      }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       virtual double operator()(const double &phi) = 0;
@@ -236,7 +287,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setDiffVec(fmatvec::Vec3 d_);
 
-      void setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_);
+      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
       /*************************************************/
 
     protected:
@@ -258,12 +309,22 @@ namespace MBSim {
       /** 
        * \brief distance-vector of cone-section- and circle-midpoint
        */
-      fmatvec::Vec3 d;  
+      fmatvec::Vec3 d;
   };
 
-  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) { d=d_; }
-  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_) { b1=b1_; b2=b2_; }
-  inline double FuncPairConeSectionCircle::operator[](const double &phi) { if(sec_IN_ci) return R - nrm2(computeWrD(phi)); else return nrm2(computeWrD(phi)) - R; }
+  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
+    d = d_;
+  }
+  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
+    b1 = b1_;
+    b2 = b2_;
+  }
+  inline double FuncPairConeSectionCircle::operator[](const double &phi) {
+    if (sec_IN_ci)
+      return R - nrm2(computeWrD(phi));
+    else
+      return nrm2(computeWrD(phi)) - R;
+  }
 
   /*! 
    * \brief root function for planar pairing Ellipse and Circle 
@@ -280,7 +341,9 @@ namespace MBSim {
        * \param length of second semi-axis
        * \default conesection in circle 
        */
-      FuncPairEllipseCircle(double R_,double a_,double b_) : FuncPairConeSectionCircle(R_,a_,b_) {}
+      FuncPairEllipseCircle(double R_, double a_, double b_) :
+          FuncPairConeSectionCircle(R_, a_, b_) {
+      }
 
       /*! 
        * \brief constructor
@@ -289,7 +352,9 @@ namespace MBSim {
        * \param length of second semi-axis
        * \param conesection in circle 
        */
-      FuncPairEllipseCircle(double R_,double a_,double b_,bool el_IN_ci_) : FuncPairConeSectionCircle(R_,a_,b_,el_IN_ci_) {}
+      FuncPairEllipseCircle(double R_, double a_, double b_, bool el_IN_ci_) :
+          FuncPairConeSectionCircle(R_, a_, b_, el_IN_ci_) {
+      }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &phi);
@@ -297,13 +362,19 @@ namespace MBSim {
       /*************************************************/
 
       /* GETTER / SETTER */
-      void setEllipseCOS(fmatvec::Vec3 b1e_,fmatvec::Vec3 b2e_);
+      void setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_);
       /*************************************************/
   };
 
-  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec3 b1e_,fmatvec::Vec3 b2e_) {setSectionCOS(b1e_,b2e_);}
-  inline double FuncPairEllipseCircle::operator()(const double &phi) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cos(phi) + 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sin(phi) + ((a*a) - (b*b))*sin(2*phi); }
-  inline fmatvec::Vec3 FuncPairEllipseCircle::computeWrD(const double &phi) { return d + b1*a*cos(phi) + b2*b*sin(phi); }
+  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_) {
+    setSectionCOS(b1e_, b2e_);
+  }
+  inline double FuncPairEllipseCircle::operator()(const double &phi) {
+    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cos(phi) + 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sin(phi) + ((a * a) - (b * b)) * sin(2 * phi);
+  }
+  inline fmatvec::Vec3 FuncPairEllipseCircle::computeWrD(const double &phi) {
+    return d + b1 * a * cos(phi) + b2 * b * sin(phi);
+  }
 
   /*! 
    * \brief root function for planar pairing Hyperbola and Circle 
@@ -319,7 +390,9 @@ namespace MBSim {
        * \param length of second semi-axis
        * \default conesection in circle 
        */
-      FuncPairHyperbolaCircle(double R_, double a_, double b_) : FuncPairConeSectionCircle(R_,a_,b_) {}
+      FuncPairHyperbolaCircle(double R_, double a_, double b_) :
+          FuncPairConeSectionCircle(R_, a_, b_) {
+      }
 
       /*! 
        * \brief constructor
@@ -328,7 +401,9 @@ namespace MBSim {
        * \param length of second semi-axis
        * \param conesection in circle 
        */
-      FuncPairHyperbolaCircle(double R_, double a_, double b_, bool hy_IN_ci_) : FuncPairConeSectionCircle(R_,a_,b_,hy_IN_ci_) {}
+      FuncPairHyperbolaCircle(double R_, double a_, double b_, bool hy_IN_ci_) :
+          FuncPairConeSectionCircle(R_, a_, b_, hy_IN_ci_) {
+      }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &phi);
@@ -336,8 +411,12 @@ namespace MBSim {
       /*************************************************/
   };
 
-  inline double FuncPairHyperbolaCircle::operator()(const double &phi) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cosh(phi) - 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sinh(phi) - ((a*a) + (b*b))*sinh(2*phi); }
-  inline fmatvec::Vec3 FuncPairHyperbolaCircle::computeWrD(const double &phi) { return d + b1*a*cosh(phi) + b2*b*sinh(phi); }
+  inline double FuncPairHyperbolaCircle::operator()(const double &phi) {
+    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cosh(phi) - 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sinh(phi) - ((a * a) + (b * b)) * sinh(2 * phi);
+  }
+  inline fmatvec::Vec3 FuncPairHyperbolaCircle::computeWrD(const double &phi) {
+    return d + b1 * a * cosh(phi) + b2 * b * sinh(phi);
+  }
 
   /*! 
    * \brief base Jacobian of root function for planar pairing ConeSection and Circle 
@@ -351,11 +430,13 @@ namespace MBSim {
        * \param length of first semi-axis
        * \param length of second semi-axis
        */
-      JacobianPairConeSectionCircle(double a_, double b_) : a(a_), b(b_) {}
+      JacobianPairConeSectionCircle(double a_, double b_) :
+          a(a_), b(b_) {
+      }
 
       /* GETTER / SETTER */
       void setDiffVec(fmatvec::Vec3 d_);
-      void setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_);
+      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
       /*************************************************/
 
     protected:
@@ -375,8 +456,13 @@ namespace MBSim {
       fmatvec::Vec3 d;
   };
 
-  inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) { d=d_; }
-  inline void JacobianPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_) { b1=b1_; b2=b2_; }
+  inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
+    d = d_;
+  }
+  inline void JacobianPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
+    b1 = b1_;
+    b2 = b2_;
+  }
 
   /*! 
    * \brief Jacobian of root function for planar pairing Ellipse and Circle
@@ -390,14 +476,18 @@ namespace MBSim {
        * \param length of first semi-axis
        * \param length of second semi-axis
        */
-      JacobianPairEllipseCircle(double a_, double b_) : JacobianPairConeSectionCircle(a_,b_) {}
+      JacobianPairEllipseCircle(double a_, double b_) :
+          JacobianPairConeSectionCircle(a_, b_) {
+      }
 
       /* INHERITED INTERFACE OF FUNCTION */
       double operator()(const double &phi);
       /*************************************************/
   };
 
-  inline double JacobianPairEllipseCircle::operator()(const double &phi) { return 2.*(b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*sin(phi) + a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*cos(phi) + ((a*a) - (b*b))*cos(2*phi)); }
+  inline double JacobianPairEllipseCircle::operator()(const double &phi) {
+    return 2. * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sin(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cos(phi) + ((a * a) - (b * b)) * cos(2 * phi));
+  }
 
   /*! 
    * \brief Jacobian of root function for planar pairing Hyperbola and Circle 
@@ -411,14 +501,18 @@ namespace MBSim {
        * \param length of first semi-axis
        * \param length of second semi-axis
        */
-      JacobianPairHyperbolaCircle(double a_,double b_) : JacobianPairConeSectionCircle(a_,b_) {}
+      JacobianPairHyperbolaCircle(double a_, double b_) :
+          JacobianPairConeSectionCircle(a_, b_) {
+      }
 
       /* INHERITED INTERFACE OF FUNCTION */
       double operator()(const double &phi);
       /*************************************************/
   };
 
-  inline double JacobianPairHyperbolaCircle::operator()(const double &phi) { return -2*(b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*sinh(phi) + a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*cosh(phi) + ((a*a) + (b*b))*cosh(2*phi));}
+  inline double JacobianPairHyperbolaCircle::operator()(const double &phi) {
+    return -2 * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sinh(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cosh(phi) + ((a * a) + (b * b)) * cosh(2 * phi));
+  }
 
   /*!
    * \brief root function for pairing Contour1s and Line
@@ -433,7 +527,9 @@ namespace MBSim {
        * \param line
        * \param contour1s
        */
-      FuncPairContour1sLine(Line* line_, Contour1s *contour_) : contour(contour_), line(line_) {}
+      FuncPairContour1sLine(Line* line_, Contour1s *contour_) :
+          contour(contour_), line(line_) {
+      }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       virtual double operator()(const double &s) {
@@ -473,14 +569,16 @@ namespace MBSim {
        * \param circle solid contour
        * \param contour with one contour parameter
        */
-      FuncPairContour1sCircleSolid(CircleSolid* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
+      FuncPairContour1sCircleSolid(CircleSolid* circle_, Contour1s *contour_) :
+          contour(contour_), circle(circle_) {
+      }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
         fmatvec::Vec3 Wd = computeWrD(alpha);
         fmatvec::Vec3 Wt = contour->computeTangent(cp);
-        return Wt.T()*Wd;
+        return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
@@ -488,7 +586,7 @@ namespace MBSim {
         contour->computeRootFunctionPosition(cp);
         contour->computeRootFunctionFirstTangent(cp);
         contour->computeRootFunctionNormal(cp);
-        WrOC[0] = circle->getFrame()->getPosition() - circle->getRadius()*cp.getFrameOfReference().getOrientation().col(0);
+        WrOC[0] = circle->getFrame()->getPosition() - circle->getRadius() * cp.getFrameOfReference().getOrientation().col(0);
         WrOC[1] = cp.getFrameOfReference().getPosition();
         return WrOC[1] - WrOC[0];
       }
@@ -525,12 +623,21 @@ namespace MBSim {
   class Contact1sSearch {
     public:
       /*! 
+       * \brief standard constructor
+       */
+      Contact1sSearch() :
+          func(0), jac(0), s0(0.), searchAll(false) {
+      }
+
+      /*!
        * \brief constructor 
        * \param root function
        * \default numerical Jacobian evaluation
        * \default only local search
        */
-      Contact1sSearch(DistanceFunction<double(double)> *func_) : func(func_), jac(0), s0(0.), searchAll(false) {}
+      Contact1sSearch(DistanceFunction<double(double)> *func_) :
+          func(func_), jac(0), s0(0.), searchAll(false) {
+      }
 
       /*! 
        * \brief constructor 
@@ -538,12 +645,28 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      Contact1sSearch(DistanceFunction<double(double)> *func_,fmatvec::Function<double(double)> *jac_) : func(func_), jac(jac_), s0(0.), searchAll(false) {}
+      Contact1sSearch(DistanceFunction<double(double)> *func_, fmatvec::Function<double(double)> *jac_) :
+          func(func_), jac(jac_), s0(0.), searchAll(false) {
+      }
 
       /* GETTER / SETTER */
-      void setInitialValue(const double &s0_ ) { s0=s0_; }
-      void setNodes(const fmatvec::Vec &nodes_) {nodes=nodes_;}
-      void setSearchAll(bool searchAll_) { searchAll=searchAll_; }
+      void setFunction(DistanceFunction<double(double)> *func_) {
+        func = func_;
+      }
+
+      void setJacobianFunction(fmatvec::Function<double(double)> *jac_) {
+        jac = jac_;
+      }
+
+      void setInitialValue(const double &s0_) {
+        s0 = s0_;
+      }
+      void setNodes(const fmatvec::Vec &nodes_) {
+        nodes = nodes_;
+      }
+      void setSearchAll(bool searchAll_) {
+        searchAll = searchAll_;
+      }
       /*************************************************/
 
       /*! 
@@ -565,7 +688,6 @@ namespace MBSim {
        */
       fmatvec::Mat slvAll();
 
-
     private:
       /** 
        * \brief distance-function holding all information for contact-search 
@@ -575,7 +697,7 @@ namespace MBSim {
       /** 
        * \brief Jacobian of root function part of distance function
        */
-      fmatvec::Function<double(double)> *jac;      
+      fmatvec::Function<double(double)> *jac;
 
       /**
        * \brief initial value for Newton method 
@@ -593,6 +715,104 @@ namespace MBSim {
       bool searchAll;
   };
 
+  /*!
+   * \brief general class for contact search with respect to two contour-parameter
+   * \author Zhan Wang
+   *
+   * General remarks:
+   * - both operators () and [] are necessary to calculate the root-function "()" and the distance of possible contact points "[]"
+   * - then it is possible to compare different root-values during
+   */
+  class Contact2sSearch {
+    public:
+      /*!
+       * \brief constructor
+       * \param root function
+       * \default numerical Jacobian evaluation
+       * \default only local search
+       */
+      Contact2sSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_) :
+          func(func_), jac(0), s0(2), searchAll(false) {
+      }
+
+      /*!
+       * \brief constructor
+       * \param root function
+       * \param Jacobian evaluation
+       * \default only local search
+       */
+      Contact2sSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_, fmatvec::Function<fmatvec::Mat(fmatvec::Mat)> *jac_) :
+          func(func_), jac(jac_), s0(2), searchAll(false) {
+      }
+
+      /* GETTER / SETTER */
+      void setInitialValue(const fmatvec::Vec2 &s0_) {
+        s0 = s0_;
+      }
+      void setNodes(const fmatvec::Vec &nodesU_, const fmatvec::Vec &nodesV_) {
+        nodesU = nodesU_;
+        nodesV = nodesV_;
+      }
+      void setSearchAll(bool searchAll_) {
+        searchAll = searchAll_;
+      }
+      /*************************************************/
+
+      /*!
+       * \brief set equally distanced nodes
+       * \param number of search areas in U direction
+       * \param number of search areas in V direction
+       * \param beginning parameter of U direction
+       * \param beginning parameter of V direction
+       * \param increment length of the U direction search
+       * \param increment length of the V direction search
+       */
+      void setEqualSpacing(const int nU, const int nV, const double U0, const double V0, const double dU, const double dV);
+
+      /*!
+       * \brief solve for the one potential contact point with minimal distance (might be negative)
+       * \return point with minimal distance at contour-parameter
+       */
+      fmatvec::Vec2 slv();
+
+//      /*!
+//       * \brief solve for all potential contact points
+//       * \return matrix holding LagrangeParameterPosition in col(0) and respective distances in col(1)
+//       */
+//      fmatvec::Mat slvAll();
+
+    protected:
+      /**
+       * \brief search all possible contact point along the V direction
+       */
+      std::vector<double> searchVdirection(double u);
+
+    private:
+      /**
+       * \brief distance-function holding all information for contact-search
+       */
+      DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func;
+
+      /**
+       * \brief Jacobian of root function part of distance function
+       */
+      fmatvec::Function<fmatvec::Mat(fmatvec::Mat)> *jac;  // TODO::check the template type
+
+      /**
+       * \brief initial value for Newton method
+       */
+      fmatvec::Vec2 s0;
+
+      /**
+       * \brief nodes defining search-areas for Regula-Falsi
+       */
+      fmatvec::Vec nodesU, nodesV;
+
+      /**
+       * \brief all area searching by Regular-Falsi or known initial value for Newton-Method?
+       */
+      bool searchAll;
+  };
 }
 
 #endif /* FUNCTIONS_CONTACT_H_ */
