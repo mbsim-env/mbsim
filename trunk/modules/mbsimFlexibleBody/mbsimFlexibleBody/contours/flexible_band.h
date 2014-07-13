@@ -23,7 +23,7 @@
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsim/contour.h"
 
-#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_factory.h"
+#include "mbsimFlexibleBody/contours/contour_1s_neutral_factory.h"
 
 namespace MBSimFlexibleBody {
 
