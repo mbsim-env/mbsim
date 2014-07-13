@@ -1,5 +1,0 @@
-<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-  <scalarParameter name="h1">0.5</scalarParameter>
-  <scalarParameter name="h2">h1</scalarParameter>
-  <searchPath href="../{pathPrefix}files"/>
-</Parameter>

@@ -1,2 +1,0 @@
-SUBDIRS= matrix nurbs
-
