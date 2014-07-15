@@ -1,43 +1,17 @@
-/*
-    MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+<xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:plugin="http://mbsim.berlios.de/MBSimPlugin"
+  version="1.0">
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+  <xsl:output method="text"/>
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  <xsl:template match="/">
+    <xsl:apply-templates select="/plugin:MBSimPlugin/plugin:schemas/plugin:Schema"/>
+  </xsl:template>
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+  <xsl:template match="/plugin:MBSimPlugin/plugin:schemas/plugin:Schema">
+    <xsl:value-of select="@schemaLocation"/><xsl:text>
+</xsl:text>
+  </xsl:template>
 
-#ifndef _PARAMETER_VIEW__H_
-#define _PARAMETER_VIEW__H_
-
-#include <QTreeView>
-#include <QModelIndex>
-
-class ParameterPropertyDialog;
-
-class ParameterView : public QTreeView {
-  Q_OBJECT
-  private:
-    QModelIndex index;
-    ParameterPropertyDialog *editor;
-  public:
-    ParameterView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
-  protected:
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-  protected slots:
-    void dialogFinished(int result);
-    void apply();
-};
-
-#endif
+</xsl:stylesheet>
