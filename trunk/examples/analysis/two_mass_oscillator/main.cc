@@ -17,6 +17,8 @@ int main (int argc, char* argv[]) {
   Vec z0(sys->getzSize());
   z0(0) = 0.02;
   analysis.setInitialDeviation(z0);
+  analysis.setDetermineEquilibriumState(true);
+  analysis.setAmplitude(0.5);
   analysis.analyse(*sys);
   analysis.eigenmode(2,*sys);
 //  analysis.eigenmodes(*sys);

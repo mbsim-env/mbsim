@@ -30,7 +30,7 @@ int main (int argc, char* argv[]) {
   z0(1) = 1.0/180*M_PI;
   analysis.setInitialDeviation(z0);
   Vec zEq(sys->getzSize());
-  analysis.setEquilibriumState(zEq);
+  analysis.setInitialState(zEq);
   analysis.analyse(*sys);
 
   cout << "Eigenfrequency is " << analysis.getEigenvalues()(0).imag();
@@ -43,7 +43,7 @@ int main (int argc, char* argv[]) {
   zEq(1) = theta0/180*M_PI;
   zEq(2) = psid;
   analysis.setInitialDeviation(z0);
-  analysis.setEquilibriumState(zEq);
+  analysis.setInitialState(zEq);
   analysis.analyse(*sys);
 
   cout << "Eigenfrequency is " << analysis.getEigenvalues()(0).imag();
