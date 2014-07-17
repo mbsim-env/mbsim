@@ -25,6 +25,8 @@ AC_SUBST([MBSIMFLATXML_CFLAGS])
 
 dnl boost
 AC_CHECK_HEADERS([boost/filesystem.hpp], [], [AC_MSG_ERROR(boost/filesystem.hpp not found.)])
+dnl boost
+AC_CHECK_HEADERS([boost/program_options.hpp], [], [AC_MSG_ERROR(boost/program_options.hpp not found.)])
 
 AC_ARG_WITH([boost-filesystem-lib],
   [  --with-boost-filesystem-lib=LIBNAME  The library name of boost filesystem excluding prefix/suffix (Default: boost_filesystem).],
@@ -42,6 +44,12 @@ AC_ARG_WITH([boost-chrono-lib],
   [  --with-boost-chrono-lib=LIBNAME  The library name of boost chrono excluding prefix/suffix (Default: boost_chrono).],
   [BOOST_CHRONO_LIB="$withval"], [BOOST_CHRONO_LIB="boost_chrono"])
 AC_SUBST([BOOST_CHRONO_LIB])
+AC_ARG_WITH([boost-program-options-lib],
+  [  --with-boost-program-options-lib=LIBNAME  The library name of boost
+  program-options excluding prefix/suffix (Default: boost_program_options).],
+  [BOOST_PROGRAM_OPTIONS_LIB="$withval"],
+  [BOOST_PROGRAM_OPTIONS_LIB="boost_program_options"])
+AC_SUBST([BOOST_PROGRAM_OPTIONS_LIB])
 
 AC_MSG_CHECKING([for WEXITSTATUS])
 AC_COMPILE_IFELSE([
