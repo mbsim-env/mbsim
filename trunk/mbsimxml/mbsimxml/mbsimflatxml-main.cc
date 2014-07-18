@@ -12,7 +12,7 @@ using namespace MBSim;
 int main(int argc, char *argv[]) {
   try {
 
-    Integrator *integrator;
+    Solver *solver;
     DynamicSystemSolver *dss;
   
     bool doNotIntegrate=false;
@@ -22,14 +22,14 @@ int main(int argc, char *argv[]) {
     if(argc>=2 && strcmp(argv[1],"--stopafterfirststep")==0)
       stopAfterFirstStep=true;
   
-    if(MBSimXML::preInit(argc, argv, dss, integrator)!=0) return 0; 
+    if(MBSimXML::preInit(argc, argv, dss, solver)!=0) return 0; 
     MBSimXML::initDynamicSystemSolver(argc, argv, dss);
   
     if(doNotIntegrate==false) {
       if(stopAfterFirstStep)
-        MBSimXML::plotInitialState(integrator, dss);
+        MBSimXML::plotInitialState(solver, dss);
       else
-        MBSimXML::main(integrator, dss);
+        MBSimXML::main(solver, dss);
       // Remove the following block if --lastframe works in OpenMBV.
       // If this is removed openmbv should be opened with the --lastframe option.
       // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    MBSimXML::postMain(argc, argv, integrator, dss);
+    MBSimXML::postMain(argc, argv, solver, dss);
   }
   catch(const MBSimError &e) {
     cerr<<e.what()<<endl;
