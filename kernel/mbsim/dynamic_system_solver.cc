@@ -1423,23 +1423,25 @@ namespace MBSim {
       ee = E(e)->getFirstElementChildNamed(MBSIM%"constraintSolver");
       if (ee) {
         Solver solver=FixedPointSingle;
-        std::string str=MBXMLUtils::X()%MBXMLUtils::E(ee)->getFirstTextChild()->getData();
-        if(str=="\"FixedPointTotal\"") solver=FixedPointTotal;
-        else if(str=="\"FixedPointSingle\"") solver=FixedPointSingle;
-        else if(str=="\"GaussSeidel\"") solver=GaussSeidel;
-        else if(str=="\"LinearEquations\"") solver=LinearEquations;
-        else if(str=="\"RootFinding\"") solver=RootFinding;
+        std::string str=X()%E(ee)->getFirstTextChild()->getData();
+        str=str.substr(1,str.length()-2);
+        if(str=="FixedPointTotal") solver=FixedPointTotal;
+        else if(str=="FixedPointSingle") solver=FixedPointSingle;
+        else if(str=="GaussSeidel") solver=GaussSeidel;
+        else if(str=="LinearEquations") solver=LinearEquations;
+        else if(str=="RootFinding") solver=RootFinding;
         setConstraintSolver(solver);
       }
       ee = E(e)->getFirstElementChildNamed(MBSIM%"impactSolver");
       if (ee) {
         Solver solver=FixedPointSingle;
-        std::string str=MBXMLUtils::X()%MBXMLUtils::E(ee)->getFirstTextChild()->getData();
-        if(str=="\"FixedPointTotal\"") solver=FixedPointTotal;
-        else if(str=="\"FixedPointSingle\"") solver=FixedPointSingle;
-        else if(str=="\"GaussSeidel\"") solver=GaussSeidel;
-        else if(str=="\"LinearEquations\"") solver=LinearEquations;
-        else if(str=="\"RootFinding\"") solver=RootFinding;
+        std::string str=X()%E(ee)->getFirstTextChild()->getData();
+        str=str.substr(1,str.length()-2);
+        if(str=="FixedPointTotal") solver=FixedPointTotal;
+        else if(str=="FixedPointSingle") solver=FixedPointSingle;
+        else if(str=="GaussSeidel") solver=GaussSeidel;
+        else if(str=="LinearEquations") solver=LinearEquations;
+        else if(str=="RootFinding") solver=RootFinding;
         setImpactSolver(solver);
       }
       ee = E(e)->getFirstElementChildNamed(MBSIM%"numberOfMaximalIterations");
