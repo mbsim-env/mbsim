@@ -19,15 +19,15 @@ namespace MBSim {
   };
 
   class DynamicSystemSolver;
-  class Integrator;
+  class Solver;
 
   class MBSimXML {
     public:
-      static int preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator);
+      static int preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*& solver);
       static void initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
-      static void plotInitialState(Integrator*& integrator, DynamicSystemSolver*& dss);
-      static void main(Integrator *&integrator, DynamicSystemSolver *&dss);
-      static void postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss);
+      static void plotInitialState(Solver*& solver, DynamicSystemSolver*& dss);
+      static void main(Solver *&solver, DynamicSystemSolver *&dss);
+      static void postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss);
   };
 
 }

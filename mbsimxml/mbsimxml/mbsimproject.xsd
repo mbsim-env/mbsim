@@ -4,7 +4,6 @@
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSimXML"
   xmlns:mbsim="http://mbsim.berlios.de/MBSim"
-  xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -13,6 +12,8 @@
     schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
   <xs:import namespace="http://mbsim.berlios.de/MBSimIntegrator"
     schemaLocation="../http___mbsim_berlios_de_MBSimIntegrator/mbsimintegrator.xsd"/>
+  <xs:import namespace="http://mbsim.berlios.de/MBSimAnalyser"
+    schemaLocation="../http___mbsim_berlios_de_MBSimAnalyser/mbsimanalyser.xsd"/>
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
 
@@ -46,7 +47,7 @@
         </xs:element>
       </xs:choice>
       <xs:choice>
-        <xs:element ref="mbsimint:Integrator">
+        <xs:element ref="mbsim:Solver">
           <xs:annotation>
             <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               Integrator.

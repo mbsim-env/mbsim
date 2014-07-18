@@ -8,6 +8,7 @@
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/solver.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
 #include <boost/timer/timer.hpp>
@@ -145,7 +146,7 @@ int PrefixedStringBuf::sync() {
   return 0;
 }
 
-int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integrator*& integrator) {
+int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*& solver) {
 
   // help
   if(argc<2 || argc>3) {
@@ -189,8 +190,8 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Integra
   // create object for DynamicSystemSolver and check correct type
   dss=ObjectFactory::createAndInit<DynamicSystemSolver>(e->getFirstElementChild());
 
-  // create object for Integrator and check correct type
-  integrator=ObjectFactory::createAndInit<Integrator>(e->getFirstElementChild()->getNextElementSibling());
+  // create object for Solver and check correct type
+  solver=ObjectFactory::createAndInit<Solver>(e->getFirstElementChild()->getNextElementSibling());
 
   return 0;
 }
@@ -202,33 +203,33 @@ void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolv
   dss->initialize();
 }
 
-void MBSimXML::plotInitialState(Integrator*& integrator, DynamicSystemSolver*& dss) {
+void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
   int zSize=dss->getzSize();
   fmatvec::Vec z(zSize);
-  if(integrator->getInitialState().size())
-    z = integrator->getInitialState();
+  if(solver->getInitialState().size())
+    z = solver->getInitialState();
   else
     dss->initz(z);          
   dss->computeInitialCondition();
   dss->plot(z, 0);
 }
 
-void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
+void MBSimXML::main(Solver *&solver, DynamicSystemSolver *&dss) {
   boost::timer::cpu_timer t;
   t.start();
 
-  integrator->integrate(*dss);
+  solver->execute(*dss);
 
   t.stop();
   cout<<"Integration CPU times: "<<t.format()<<endl;
 }
 
-void MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {
+void MBSimXML::postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss) {
 
   if(strcmp(argv[1],"--savefinalstatevector")==0)
     dss->writez("statevector.asc", false);
   delete dss;
-  delete integrator;
+  delete solver;
 }
 
 }
