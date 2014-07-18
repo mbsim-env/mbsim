@@ -1,5 +1,5 @@
 #include "system.h"
-#include <mbsim/analysis/eigenanalysis.h>
+#include <mbsim/analysers/eigenanalyser.h>
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -12,17 +12,18 @@ int main (int argc, char* argv[]) {
 
   sys->initialize();
 
-  Eigenanalysis analysis;
-  analysis.setOutputFileName("Eigenanalysis.mat");
+  Eigenanalyser analyser;
+  analyser.setOutputFileName("Eigenanalysis.mat");
   Vec z0(sys->getzSize());
   z0(0) = 0.02;
-  analysis.setInitialDeviation(z0);
-  analysis.setDetermineEquilibriumState(true);
-  analysis.setAmplitude(0.5);
-  analysis.analyse(*sys);
-  analysis.eigenmode(2,*sys);
-//  analysis.eigenmodes(*sys);
-//  analysis.eigenmotion(*sys);
+  analyser.setInitialDeviation(z0);
+  analyser.setDetermineEquilibriumState(true);
+  analyser.setAmplitude(0.5);
+  analyser.setMode(2);
+  analyser.setTask(Eigenanalyser::eigenmode);
+  analyser.analyse(*sys);
+//  analyser.eigenmodes(*sys);
+//  analyser.eigenmotion(*sys);
 
   delete sys;
 

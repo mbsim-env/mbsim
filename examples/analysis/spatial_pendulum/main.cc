@@ -1,5 +1,5 @@
 #include "system.h"
-#include <mbsim/analysis/eigenanalysis.h>
+#include <mbsim/analysers/eigenanalyser.h>
 #include "mbsim/utils/eps.h"
 #include "mbsim/integrators/integrators.h"
 
@@ -23,30 +23,31 @@ int main (int argc, char* argv[]) {
   integrator.integrate(*sys);
 
   cout << "Analyse planar motion" << endl;
-  Eigenanalysis analysis;
-  analysis.setOutputFileName("Eigenanalysis1.mat");
-  analysis.setEndTime(4.5);
+  Eigenanalyser analyser;
+  analyser.setOutputFileName("Eigenanalysis1.mat");
+  analyser.setEndTime(4.5);
   Vec z0(sys->getzSize());
   z0(1) = 1.0/180*M_PI;
-  analysis.setInitialDeviation(z0);
+  analyser.setInitialDeviation(z0);
   Vec zEq(sys->getzSize());
-  analysis.setInitialState(zEq);
-  analysis.analyse(*sys);
+  analyser.setInitialState(zEq);
+  analyser.setTask(Eigenanalyser::eigenfrequencies);
+  analyser.analyse(*sys);
 
-  cout << "Eigenfrequency is " << analysis.getEigenvalues()(0).imag();
+  cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a) << ")" << endl;
 
   cout << "Analyse cone-pendel" << endl;
-  analysis.setOutputFileName("Eigenanalysis2.mat");
+  analyser.setOutputFileName("Eigenanalysis2.mat");
   z0.init(0);
   zEq.init(0);
   zEq(1) = theta0/180*M_PI;
   zEq(2) = psid;
-  analysis.setInitialDeviation(z0);
-  analysis.setInitialState(zEq);
-  analysis.analyse(*sys);
+  analyser.setInitialDeviation(z0);
+  analyser.setInitialState(zEq);
+  analyser.analyse(*sys);
 
-  cout << "Eigenfrequency is " << analysis.getEigenvalues()(0).imag();
+  cout << "Eigenfrequency is " << analyser.getEigenvalues()(0).imag();
   cout << " (should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << ")" << endl;
 
   delete sys;
