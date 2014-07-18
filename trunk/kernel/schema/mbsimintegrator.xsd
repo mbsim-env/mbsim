@@ -3,6 +3,7 @@
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSimIntegrator"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -16,35 +17,39 @@
 
 
 
-  <xs:element name="Integrator" abstract="true" type="IntegratorType">
+  <xs:element name="Integrator" abstract="true" substitutionGroup="mbsim:Solver" type="IntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Oberklasse für Zeitintegratoren.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="IntegratorType">
-    <xs:sequence>
-      <xs:element name="startTime" type="pv:timeScalar">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Startzeitpunkt der Integration.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="endTime" type="pv:timeScalar">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Endzeitpunkt der Integration.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="plotStepSize" type="pv:timeScalar">  
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Schrittweite zur Ausgabe von Plotdaten.<br/>
-            Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"> 
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Anfangszustand der Differentialinklusion.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-    </xs:sequence>
+    <xs:complexContent>
+      <xs:extension base="mbsim:SolverType">
+        <xs:sequence>
+          <xs:element name="startTime" type="pv:timeScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Startzeitpunkt der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="endTime" type="pv:timeScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Endzeitpunkt der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="plotStepSize" type="pv:timeScalar">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Schrittweite zur Ausgabe von Plotdaten.<br/>
+                Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Anfangszustand der Differentialinklusion.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType> 
 
   <xs:element name="DOPRI5Integrator" substitutionGroup="Integrator" type="DOPRI5IntegratorType">
