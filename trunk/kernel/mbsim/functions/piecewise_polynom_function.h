@@ -503,9 +503,10 @@ namespace MBSim {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
     if(e) { 
       std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
-      if(str=="\"cSplinePeriodic\"") method=cSplinePeriodic;
-      else if(str=="\"cSplineNatural\"") method=cSplineNatural;
-      else if(str=="\"piecewiseLinear\"") method=piecewiseLinear;
+      str=str.substr(1,str.length()-2);
+      if(str=="cSplinePeriodic") method=cSplinePeriodic;
+      else if(str=="cSplineNatural") method=cSplineNatural;
+      else if(str=="piecewiseLinear") method=piecewiseLinear;
     }
     setXF(x, y, method);
   }

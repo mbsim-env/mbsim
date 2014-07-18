@@ -125,8 +125,9 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"type");
     if(e) {
       string str=X()%E(e)->getFirstTextChild()->getData();
-      if(str=="\"constant\"") type=constant;
-      else if(str=="\"linear\"") type=linear;
+      str=str.substr(1,str.length()-2);
+      if(str=="constant") type=constant;
+      else if(str=="linear") type=linear;
     }
     else
       type=constant;
