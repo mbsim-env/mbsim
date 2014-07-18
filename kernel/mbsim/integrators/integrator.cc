@@ -31,9 +31,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  DynamicSystemSolver * Integrator::system = 0;
-
-  Integrator::Integrator() : fmatvec::Atom(), tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
+  Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
 
   void Integrator::initializeUsingXML(DOMElement *element) {
     DOMElement *e;

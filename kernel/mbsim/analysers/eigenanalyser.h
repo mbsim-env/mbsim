@@ -17,21 +17,22 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _EIGENANALYSIS_H_
-#define _EIGENANALYSIS_H_
+#ifndef _EIGENANALYSER_H_
+#define _EIGENANALYSER_H_
 
 #include "fmatvec/fmatvec.h"
 #include "fmatvec/function.h"
+#include "mbsim/solver.h"
 
 namespace MBSim {
 
-  class DynamicSystemSolver;
+  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://mbsim.berlios.de/MBSimAnalyser");
 
   /**
-   * \brief Eigenanalysis for dynamic systems
+   * \brief Eigenanalyser for dynamic systems
    * \author Martin Foerg
    */
-  class Eigenanalysis {
+  class Eigenanalyser : public Solver {
 
     class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
@@ -43,15 +44,20 @@ namespace MBSim {
     };
 
     public:
+
+      enum Task { eigenfrequencies, eigenmodes, eigenmode, eigenmotion };
+
       /**
        * \brief Standard constructor 
        */
-      Eigenanalysis() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), compEq(false), autoUpdate(false) {}
+      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), autoUpdate(false), task(eigenmode) {}
       
       /**
        * \brief Destructor
        */
-      ~Eigenanalysis() {}
+      ~Eigenanalyser() {}
+
+      void execute(DynamicSystemSolver& system) { analyse(system); }
 
       /**
        * \brief Perform the eigenanalysis
@@ -70,6 +76,12 @@ namespace MBSim {
        * \param A_ The amplitude
        */
       void setAmplitude(double A_) { A = A_; }
+
+      /**
+       * \brief Set the mode for the eigemode analysis
+       * \param n_ The mode number
+       */
+      void setMode(int n_) { n = n_; }
 
       /**
        * \brief Set the start time for the analysis
@@ -103,10 +115,14 @@ namespace MBSim {
       void setDetermineEquilibriumState(bool eq) { compEq = eq; }
 
       /**
-       * \brief Determine the equilibrium state for the analysis
-       * \param update True, if the analysis should be updated, automatically
+       * \brief Automatic update of the eigenanalysis
+       * \param update True, if the eigenanalysis should be updated, automatically
        */
-      void setAutoUpdateAnalysis(bool update) { autoUpdate = update; }
+      void setAutoUpdate(bool update) { autoUpdate = update; }
+
+      void setTask(Task task_) { task = task_; }
+
+      const fmatvec::Vec& getInitialState() const { return z0; }
 
       /**
        * \brief Get the eigenvalues
@@ -132,31 +148,15 @@ namespace MBSim {
        */
       void setOutputFileName(const std::string &fileName_) { fileName = fileName_; }
 
-      /**
-       * \brief Compute and plot the i-th eigenmode
-       * \param system The dynamic system to be analysed
-       */
-      void eigenmode(int i, DynamicSystemSolver& system);
-
-      /**
-       * \brief Compute and plot all eigenmodes
-       * \param system The dynamic system to be analysed
-       */
-      void eigenmodes(DynamicSystemSolver& system);
-
-      /**
-       * \brief Compute and plot the eigenmotion
-       * \param system The dynamic system to be analysed
-       */
-      void eigenmotion(DynamicSystemSolver& system);
+      void initializeUsingXML(xercesc::DOMElement *element);
 
     protected:
 
-      static DynamicSystemSolver* system;
-
       fmatvec::Vec z0, deltaz0, zEq;
       double tStart, tEnd, dtPlot, A;
+      int n;
       bool compEq, autoUpdate;
+      Task task;
 
       fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
       fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
@@ -168,6 +168,10 @@ namespace MBSim {
       bool saveEigenanalyis(const std::string &fileName);
       bool loadEigenanalyis(const std::string &fileName);
       void computeEigenfrequencies();
+      void computeEigenvalues();
+      void computeEigenmodes();
+      void computeEigenmode();
+      void computeEigenmotion();
  };
 
 }

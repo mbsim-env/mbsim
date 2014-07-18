@@ -1,4 +1,4 @@
-SUBDIRS =  numerics utils integrators analysis contact_kinematics contours functions observers .
+SUBDIRS =  numerics utils integrators analysers contact_kinematics contours functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
@@ -32,10 +32,11 @@ objectfactory.cc\
 rigid_body.cc\
 graph.cc\
 constraint.cc \
-observer.cc
+observer.cc \
+solver.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la
-libmbsim_la_LIBADD += analysis/libanalysis.la 
+libmbsim_la_LIBADD += analysers/libanalysers.la 
 libmbsim_la_LIBADD += utils/libutils.la 
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
 libmbsim_la_LIBADD += contours/libcontour.la 
@@ -81,4 +82,5 @@ objectfactory.h\
 rigid_body.h\
 graph.h\
 constraint.h \
-observer.h
+observer.h \
+solver.h

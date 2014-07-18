@@ -24,6 +24,7 @@
 #include <fmatvec/atom.h>
 #include <mbxmlutilshelper/dom.h>
 #include <mbsim/mbsim_event.h>
+#include <mbsim/solver.h>
 #include <string>
 #include <iostream>
 
@@ -31,14 +32,12 @@ namespace MBSim {
 
   const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
 
-  class DynamicSystemSolver;
-
   /**
    * \brief integrator-interface for dynamic systems
    * \author Martin Foerg
    * \date 2009-07-13 some comments (Thorsten Schindler) 
    */
-  class Integrator : public fmatvec::Atom {
+  class Integrator : public Solver {
     public:
       /**
        * \brief constructor 
@@ -65,6 +64,8 @@ namespace MBSim {
       bool getOutput() const { return output; }
       /***************************************************/
       
+      void execute(DynamicSystemSolver& system) { integrate(system); }
+
       /* INTERFACE FOR DERIVED CLASSES */
       /*! 
        * \brief start the integration
@@ -103,11 +104,6 @@ namespace MBSim {
       virtual std::string getType() const { return "Integrator"; }
 
     protected:
-      /**
-       * \brief integrated dynamic system
-       */
-      static DynamicSystemSolver* system;
-
       /**
        * \brief start, end, plot time
        */
