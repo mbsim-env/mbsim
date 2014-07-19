@@ -20,7 +20,7 @@
 #include <config.h>
 #include "integrator.h"
 #include "integrator_properties.h"
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include <QtGui/QMenu>

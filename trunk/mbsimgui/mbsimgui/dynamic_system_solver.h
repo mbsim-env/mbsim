@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _SOLVER__H_
-#define _SOLVER__H_
+#ifndef _DYNAMIC_SYSTEM_SOLVER__H_
+#define _DYNAMIC_SYSTEM_SOLVER__H_
 
 #include "group.h"
 #include "extended_properties.h"
@@ -38,22 +38,22 @@ namespace MBSimGUI {
       static Environment *instance;
   };
 
-  class Solver : public Group {
-    friend class SolverPropertyDialog;
+  class DynamicSystemSolver : public Group {
+    friend class DynamicSystemSolverPropertyDialog;
     protected:
     ExtProperty environment, solverParameters, inverseKinetics;
     public:
-    Solver(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new Solver(*this);}
+    DynamicSystemSolver(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new DynamicSystemSolver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }
 
-    static Solver* readXMLFile(const std::string &filename, Element *parent=0);
+    static DynamicSystemSolver* readXMLFile(const std::string &filename, Element *parent=0);
 
-    ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
-    QMenu* createContextMenu() {return new SolverContextMenu(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new DynamicSystemSolverPropertyDialog(this);}
+    QMenu* createContextMenu() {return new DynamicSystemSolverContextMenu(this);}
   };
 
 }

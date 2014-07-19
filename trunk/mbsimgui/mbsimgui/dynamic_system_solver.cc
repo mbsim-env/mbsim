@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "mainwindow.h"
 #include <QtGui/QMenu>
 #include "objectfactory.h"
@@ -53,7 +53,7 @@ namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
 
-  Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
 
     vector<string> g(3);
     g[0] = "0";
@@ -61,12 +61,12 @@ namespace MBSimGUI {
     g[2] = "0";
     environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIM%"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
 
-    solverParameters.setProperty(new SolverParametersProperty); 
+    solverParameters.setProperty(new DynamicSystemSolverParametersProperty); 
 
     inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
   }
 
-  void Solver::initializeUsingXML(DOMElement *element) {
+  void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
     Group::initializeUsingXML(element);
     DOMElement *e;
 
@@ -84,7 +84,7 @@ namespace MBSimGUI {
     inverseKinetics.initializeUsingXML(element);
   }
 
-  DOMElement* Solver::writeXMLFile(DOMNode *parent) {
+  DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0 = Group::writeXMLFile(parent);
 
@@ -101,11 +101,11 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  Solver* Solver::readXMLFile(const string &filename, Element *parent) {
+  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename, Element *parent) {
     MBSimObjectFactory::initialize();
     shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-    Solver *solver=static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, parent));
+    DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e, parent));
     solver->initializeUsingXML(e);
     solver->initialize();
     return solver;

@@ -271,11 +271,11 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
   };
 
-  class SolverTolerancesProperty : public Property {
+  class DynamicSystemSolverTolerancesProperty : public Property {
 
     public:
-      SolverTolerancesProperty();
-      virtual Property* clone() const {return new SolverTolerancesProperty(*this);}
+      DynamicSystemSolverTolerancesProperty();
+      virtual Property* clone() const {return new DynamicSystemSolverTolerancesProperty(*this);}
 
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -286,11 +286,11 @@ namespace MBSimGUI {
       ExtProperty projection, g, gd, gdd, la, La;
   };
 
-  class SolverParametersProperty : public Property {
+  class DynamicSystemSolverParametersProperty : public Property {
 
     public:
-      SolverParametersProperty();
-      virtual Property* clone() const {return new SolverParametersProperty(*this);}
+      DynamicSystemSolverParametersProperty();
+      virtual Property* clone() const {return new DynamicSystemSolverParametersProperty(*this);}
 
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

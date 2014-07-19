@@ -253,10 +253,10 @@ namespace MBSimGUI {
       Element *element;
   };
 
-  class SolverContextMenu : public GroupContextMenu {
+  class DynamicSystemSolverContextMenu : public GroupContextMenu {
 
     public:
-      SolverContextMenu(Element *solver, QWidget * parent = 0);
+      DynamicSystemSolverContextMenu(Element *solver, QWidget * parent = 0);
   };
 
   class FrameContextMenu : public ElementContextMenu {

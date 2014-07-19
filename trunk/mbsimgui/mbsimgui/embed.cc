@@ -19,15 +19,15 @@
 
 #include <config.h>
 #include "embed.h"
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "parameter.h"
 #include "objectfactory.h"
 
 namespace MBSimGUI {
 
   template <>
-    Solver* Embed<Solver>::create(xercesc::DOMElement *element, Element *parent) {
-      return static_cast<Solver*>(ObjectFactory::getInstance()->createGroup(element,parent));
+    DynamicSystemSolver* Embed<DynamicSystemSolver>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(element,parent));
     }
 
   template <>

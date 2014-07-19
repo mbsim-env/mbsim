@@ -28,7 +28,7 @@
 #include "ombv_widgets.h"
 #include "integrator_widgets.h"
 #include "extended_widgets.h"
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "frame.h"
 #include "contour.h"
 #include "rigidbody.h"
@@ -312,7 +312,7 @@ namespace MBSimGUI {
     }
   }
 
-  SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
+  DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
     addTab("Environment",1);
     addTab("Solver parameters",2);
     addTab("Extra");
@@ -320,25 +320,25 @@ namespace MBSimGUI {
     environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft));
     addToTab("Environment", environment);
 
-    solverParameters = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
+    solverParameters = new ExtWidget("Solver parameters",new DynamicSystemSolverParametersWidget,true); 
     addToTab("Solver parameters",solverParameters);
 
     inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
     addToTab("Extra", inverseKinetics);
   }
 
-  void SolverPropertyDialog::toWidget(Element *element) {
+  void DynamicSystemSolverPropertyDialog::toWidget(Element *element) {
     GroupPropertyDialog::toWidget(element);
-    static_cast<Solver*>(element)->environment.toWidget(environment);
-    static_cast<Solver*>(element)->solverParameters.toWidget(solverParameters);
-    static_cast<Solver*>(element)->inverseKinetics.toWidget(inverseKinetics);
+    static_cast<DynamicSystemSolver*>(element)->environment.toWidget(environment);
+    static_cast<DynamicSystemSolver*>(element)->solverParameters.toWidget(solverParameters);
+    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.toWidget(inverseKinetics);
   }
 
-  void SolverPropertyDialog::fromWidget(Element *element) {
+  void DynamicSystemSolverPropertyDialog::fromWidget(Element *element) {
     GroupPropertyDialog::fromWidget(element);
-    static_cast<Solver*>(element)->environment.fromWidget(environment);
-    static_cast<Solver*>(element)->solverParameters.fromWidget(solverParameters);
-    static_cast<Solver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
+    static_cast<DynamicSystemSolver*>(element)->environment.fromWidget(environment);
+    static_cast<DynamicSystemSolver*>(element)->solverParameters.fromWidget(solverParameters);
+    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {

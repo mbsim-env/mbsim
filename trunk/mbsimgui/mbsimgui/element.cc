@@ -24,7 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include "frame.h"
 #include "contour.h"
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "object.h"
 #include "link.h"
 #include "observer.h"
@@ -129,13 +129,13 @@ namespace MBSimGUI {
       vector<Element*> e0, e1;
       Element* element = ref;
       e0.push_back(element);
-      while(!dynamic_cast<Solver*>(element)) {
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         element = element->getParent();
         e0.push_back(element);
       }
       element = parent;
       e1.push_back(element);
-      while(!dynamic_cast<Solver*>(element)) {
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         element = element->getParent();
         e1.push_back(element);
       }
@@ -191,7 +191,7 @@ namespace MBSimGUI {
         type = getType();
       string str = type + "[" + getName() + "]";
       Element* element = parent;
-      while(!dynamic_cast<Solver*>(element)) {
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         if(dynamic_cast<Group*>(element))
           str = string("Group[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(element))

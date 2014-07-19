@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class Plane;
   class Sphere;
   class CircleSolid;
-  class Solver;
+  class DynamicSystemSolver;
   class Group;
   class Object;
   class Body;
@@ -188,12 +188,12 @@ namespace MBSimGUI {
       ExtWidget *position, *orientation, *frameOfReference; 
   };
 
-  class SolverPropertyDialog : public GroupPropertyDialog {
+  class DynamicSystemSolverPropertyDialog : public GroupPropertyDialog {
     protected:
       ExtWidget *environment, *solverParameters, *inverseKinetics;
 
     public:
-      SolverPropertyDialog(Solver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
   };
