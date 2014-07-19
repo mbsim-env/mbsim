@@ -22,7 +22,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** 
    * \brief time-integrator for dynamical systems using D1MinusLinear ansatz
@@ -45,12 +45,12 @@ namespace MBSim {
        */
       virtual ~TimeSteppingD1MinusLinearIntegrator() {}
 
-      void preIntegrate(DynamicSystemSolver& system);
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
-      void postIntegrate(DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system);
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+      void postIntegrate(MBSim::DynamicSystemSolver& system);
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      virtual void integrate(DynamicSystemSolver& system);
+      virtual void integrate(MBSim::DynamicSystemSolver& system);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 

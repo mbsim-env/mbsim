@@ -22,7 +22,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** 
    * brief theta-time-stepping integrator with step size adjustment

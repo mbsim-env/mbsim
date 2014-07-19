@@ -22,7 +22,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator RKSuite.
     Integrator for ODEs.
@@ -39,9 +39,9 @@ namespace MBSim {
        */
       virtual ~RKSuiteIntegrator() { if(dworkarray) { delete[] dworkarray; dworkarray=0; } }
 
-      void preIntegrate(DynamicSystemSolver& system);
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
-      void postIntegrate(DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system);
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+      void postIntegrate(MBSim::DynamicSystemSolver& system);
 
       /* GETTER / SETTER */
       void setMethod(int method_) {method = method_;}
@@ -53,7 +53,7 @@ namespace MBSim {
 
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      virtual void integrate(DynamicSystemSolver& system);
+      virtual void integrate(MBSim::DynamicSystemSolver& system);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 

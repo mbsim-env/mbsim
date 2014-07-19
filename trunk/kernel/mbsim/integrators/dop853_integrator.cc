@@ -29,8 +29,9 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   DOP853Integrator::DOP853Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0) {
   }

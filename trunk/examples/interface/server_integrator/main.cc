@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace MBSim;
+using namespace MBSimIntegrator;
 using namespace fmatvec;
 
 #include <sstream>

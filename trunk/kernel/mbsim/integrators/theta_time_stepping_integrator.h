@@ -23,7 +23,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** 
    * brief theta-time-stepping integrator of first order
@@ -47,7 +47,7 @@ namespace MBSim {
       virtual ~ThetaTimeSteppingIntegrator() {}
 
       /* INHERITED INTERFACE OF INTEGRATOR */
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
@@ -63,26 +63,26 @@ namespace MBSim {
        * \param state vector
        * \param time
        */
-      void update(DynamicSystemSolver& system, const fmatvec::Vec& z, double t);
+      void update(MBSim::DynamicSystemSolver& system, const fmatvec::Vec& z, double t);
 
       /**
        * \brief preintegration steps
        * \param dynamic system
        */
-      void preIntegrate(DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system);
       
       /**
        * \brief integration steps
        * \param dynamic system
        * \param end time of integration
        */
-      
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+
       /**
        * \brief postintegration steps
        * \param dynamic system
        */
-      void postIntegrate(DynamicSystemSolver& system);
+      void postIntegrate(MBSim::DynamicSystemSolver& system);
 
     private:
       /**

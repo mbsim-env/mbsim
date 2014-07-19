@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
@@ -45,7 +46,7 @@ const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double> > &x) {
   return y;
 }
 
-namespace MBSim {
+namespace MBSimAnalyser {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Eigenanalyser, MBSIMANALYSER%"Eigenanalyser")
 

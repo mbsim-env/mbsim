@@ -28,7 +28,6 @@
 #include "mbsim/graph.h"
 #include "mbsim/object.h"
 #include "mbsim/observer.h"
-#include "mbsim/integrators/integrator.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
 #include <mbsim/environment.h>

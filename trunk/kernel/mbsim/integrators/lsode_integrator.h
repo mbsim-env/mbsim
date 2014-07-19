@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator LSODE
     Integrator with root finding for ODEs.
@@ -66,7 +66,7 @@ namespace MBSim {
       void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
       void setStiff(bool flag) {stiff = flag;}
 
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

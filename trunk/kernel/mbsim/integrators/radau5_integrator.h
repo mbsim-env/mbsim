@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief DAE-Integrator RADAU5
   */
@@ -68,7 +68,7 @@ namespace MBSim {
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}
 
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };

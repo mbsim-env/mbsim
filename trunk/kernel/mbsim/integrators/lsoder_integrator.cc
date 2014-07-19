@@ -32,8 +32,9 @@ using namespace std;
 #endif
 
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   LSODERIntegrator::LSODERIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), plotOnRoot(true) {
   }

@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator DOP853.
   */
@@ -64,7 +64,7 @@ namespace MBSim {
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
 
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
 
   };
 

@@ -25,11 +25,12 @@
 #include "mbsim/objectfactory.h"
 
 using namespace std;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
 
