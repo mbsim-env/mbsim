@@ -17,14 +17,15 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _INTEGRATOR_PROPERTY_DIALOG_H_
-#define _INTEGRATOR_PROPERTY_DIALOG_H_
+#ifndef _SOLVER_PROPERTY_DIALOG_H_
+#define _SOLVER_PROPERTY_DIALOG_H_
 
 #include "property_dialog.h"
 #include "widget.h"
 
 namespace MBSimGUI {
 
+  class Solver;
   class Integrator;
   class DOPRI5Integrator;
   class RADAU5Integrator;
@@ -46,27 +47,38 @@ namespace MBSimGUI {
       std::vector<QString> name;
   };
 
-  class IntegratorPropertyDialog : public PropertyDialog {
+  class SolverPropertyDialog : public PropertyDialog {
+
+    public:
+      SolverPropertyDialog(Solver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      virtual void toWidget(Solver *solver);
+      virtual void fromWidget(Solver *solver);
+      void toWidget() {toWidget(solver);}
+      void fromWidget() {fromWidget(solver);}
+      Solver* getSolver() {return solver;}
+    protected:
+      Solver *solver;
+      ExtWidget *embed;
+  };
+
+
+  class IntegratorPropertyDialog : public SolverPropertyDialog {
 
     public:
       IntegratorPropertyDialog(Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
-      void toWidget() {toWidget(integrator);}
-      void fromWidget() {fromWidget(integrator);}
-      Integrator* getIntegrator() {return integrator;}
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
-      Integrator *integrator;
       VecWidget *z0;
-      ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *embed;
+      ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
   };
 
   class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
     public:
       DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       VecWidget *aTol, *rTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
@@ -76,8 +88,8 @@ namespace MBSimGUI {
 
     public:
       RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       VecWidget *aTol, *rTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
@@ -87,8 +99,8 @@ namespace MBSimGUI {
 
     public:
       LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       VecWidget *aTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
@@ -98,8 +110,8 @@ namespace MBSimGUI {
 
     public:
       LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       VecWidget *aTol;
       ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
@@ -109,8 +121,8 @@ namespace MBSimGUI {
 
     public:
       TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       ExtWidget *stepSize;
   };
@@ -119,8 +131,8 @@ namespace MBSimGUI {
 
     public:
       EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       ExtWidget *stepSize;
   };
@@ -129,8 +141,8 @@ namespace MBSimGUI {
 
     public:
       RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      virtual void toWidget(Integrator *integrator);
-      virtual void fromWidget(Integrator *integrator);
+      virtual void toWidget(Solver *integrator);
+      virtual void fromWidget(Solver *integrator);
     protected:
       ExtWidget *type, *relTol, *threshold, *initialStepSize;
   };

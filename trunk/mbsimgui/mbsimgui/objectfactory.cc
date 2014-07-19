@@ -222,14 +222,14 @@ namespace MBSimGUI {
     return 0;
   }  
 
-  Integrator* ObjectFactory::createIntegrator(DOMElement *element) {
+  Solver* ObjectFactory::createSolver(DOMElement *element) {
     if(element==NULL) return NULL;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-      return (*i)->createIntegrator(element);
+      return (*i)->createSolver(element);
     return 0;
   }
 
-  Integrator* MBSimObjectFactory::createIntegrator(DOMElement *element) {
+  Solver* MBSimObjectFactory::createSolver(DOMElement *element) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIMINT%"DOPRI5Integrator")
       return new DOPRI5Integrator;

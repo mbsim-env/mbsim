@@ -34,7 +34,7 @@
 #include "treeitem.h"
 #include "element_view.h"
 #include "embedding_view.h"
-#include "integrator_view.h"
+#include "solver_view.h"
 #include "embed.h"
 #include "process.h"
 #include <openmbv/mainwindow.h>
@@ -495,8 +495,8 @@ namespace MBSimGUI {
       setWindowTitle(fileProject);
 
       DOMElement *ele1 = ele0->getFirstElementChild();
-      DynamicSystemSolver *solver=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
-      solver->initialize();
+      DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
+      dss->initialize();
 
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = pmodel->index(0,0);
@@ -507,29 +507,29 @@ namespace MBSimGUI {
       if(model->rowCount(index))
         delete model->getItem(index)->getItemData();
       model->removeRow(index.row(), index.parent());
-      model->createGroupItem(solver);
+      model->createGroupItem(dss);
 
       elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
       ele1 = ele1->getNextElementSibling();
 
-      Integrator *integrator;
+      Solver *solver;
       if(E(ele1)->getTagName()==PV%"Embed") {
         DOMElement *ele2 = 0;
         if(E(ele1)->hasAttribute("href"))
-          integrator=Integrator::readXMLFile(E(ele1)->getAttribute("href"));
+          solver=Solver::readXMLFile(E(ele1)->getAttribute("href"));
         else {
           ele2 = ele1->getFirstElementChild();
-          integrator=ObjectFactory::getInstance()->createIntegrator(ele2);
+          solver=ObjectFactory::getInstance()->createSolver(ele2);
         }
-        integrator->initializeUsingXMLEmbed(ele1);
+        solver->initializeUsingXMLEmbed(ele1);
         if(ele2)
-          integrator->initializeUsingXML(ele2);
+          solver->initializeUsingXML(ele2);
       } else {
-        integrator=ObjectFactory::getInstance()->createIntegrator(ele1);
-        integrator->initializeUsingXML(ele1);
+        solver=ObjectFactory::getInstance()->createSolver(ele1);
+        solver->initializeUsingXML(ele1);
       }
-      integratorView->setIntegrator(integrator);
+      integratorView->setSolver(solver);
 
       actionSaveProject->setDisabled(false);
 
@@ -568,14 +568,14 @@ namespace MBSimGUI {
 
       ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
       QModelIndex index = model->index(0,0);
-      DynamicSystemSolver *solver = static_cast<DynamicSystemSolver*>(model->getItem(index)->getItemData());
+      DynamicSystemSolver *dss = static_cast<DynamicSystemSolver*>(model->getItem(index)->getItemData());
 
-      Embed<DynamicSystemSolver>::writeXML(solver,ele0);
-      Integrator *integrator = integratorView->getIntegrator();
-      if(not(absolutePath) and integrator->isEmbedded())
-        integrator->writeXMLFileEmbed(ele0);
+      Embed<DynamicSystemSolver>::writeXML(dss,ele0);
+      Solver *solver = integratorView->getSolver();
+      if(not(absolutePath) and solver->isEmbedded())
+        solver->writeXMLFileEmbed(ele0);
       else
-        integrator->writeXMLFile(ele0);
+        solver->writeXMLFile(ele0);
 
       return ele0;
     }
@@ -617,8 +617,8 @@ namespace MBSimGUI {
    if(model->rowCount(index))
      delete model->getItem(index)->getItemData();
    model->removeRow(index.row(), index.parent());
-   DynamicSystemSolver *solver = new DynamicSystemSolver("MBS",0);
-   model->createGroupItem(solver,QModelIndex());
+   DynamicSystemSolver *dss = new DynamicSystemSolver("MBS",0);
+   model->createGroupItem(dss,QModelIndex());
 
    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
@@ -632,31 +632,31 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectDOPRI5Integrator() {
-    integratorView->setIntegrator(0);
+    integratorView->setSolver(0);
   }
 
   void MainWindow::selectRADAU5Integrator() {
-    integratorView->setIntegrator(1);
+    integratorView->setSolver(1);
   }
 
   void MainWindow::selectLSODEIntegrator() {
-    integratorView->setIntegrator(2);
+    integratorView->setSolver(2);
   }
 
   void MainWindow::selectLSODARIntegrator() {
-    integratorView->setIntegrator(3);
+    integratorView->setSolver(3);
   }
 
   void MainWindow::selectTimeSteppingIntegrator() {
-    integratorView->setIntegrator(4);
+    integratorView->setSolver(4);
   }
 
   void MainWindow::selectEulerExplicitIntegrator() {
-    integratorView->setIntegrator(5);
+    integratorView->setSolver(5);
   }
 
   void MainWindow::selectRKSuiteIntegrator() {
-    integratorView->setIntegrator(6);
+    integratorView->setSolver(6);
   }
 
   // update model parameters including additional paramters from paramList
@@ -782,14 +782,14 @@ namespace MBSimGUI {
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
-    DynamicSystemSolver *slv=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-    Integrator *integ=integratorView->getIntegrator();
-    if(!slv || !integ)
+    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
+    Solver *solver=integratorView->getSolver();
+    if(!dss || !solver)
       return;
 
     QString sTask = QString::number(task); 
-    string saveName=slv->getName();
-    slv->setName("out"+sTask.toStdString());
+    string saveName=dss->getName();
+    dss->setName("out"+sTask.toStdString());
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.xml";
 
     currentTask = task;
@@ -799,7 +799,7 @@ namespace MBSimGUI {
 
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
-    slv->setName(saveName);
+    dss->setName(saveName);
     absolutePath = false;
 
     if(ele0) {

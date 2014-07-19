@@ -17,16 +17,16 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _INTEGRATOR_VIEW__H_
-#define _INTEGRATOR_VIEW__H_
+#ifndef _SOLVER_VIEW__H_
+#define _SOLVER_VIEW__H_
 
 #include <QLineEdit>
 #include <QMenu>
 
 namespace MBSimGUI {
 
-  class Integrator;
-  class IntegratorPropertyDialog;
+  class Solver;
+  class SolverPropertyDialog;
 
   class IntegratorViewContextMenu : public QMenu {
 
@@ -39,13 +39,13 @@ namespace MBSimGUI {
     public:
       IntegratorView();
       ~IntegratorView();
-      void setIntegrator(int i_) {i = i_; updateText();}
-      Integrator* getIntegrator() {return integrator[i];}
-      void setIntegrator(Integrator *integrator_);
+      void setSolver(int i_) {i = i_; updateText();}
+      Solver* getSolver() {return solver[i];}
+      void setSolver(Solver *solver_);
       void updateText() {setText(type[i]);}
       QMenu* createContextMenu() {return new IntegratorViewContextMenu;}
     protected:
-      std::vector<Integrator*> integrator;
+      std::vector<Solver*> solver;
       std::vector<QString> type;
       int i;
       protected slots:
@@ -58,7 +58,7 @@ namespace MBSimGUI {
       IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
     protected:
       IntegratorView *view;
-      IntegratorPropertyDialog *editor;
+      SolverPropertyDialog *editor;
       bool eventFilter(QObject *obj, QEvent *event);
       protected slots:
         void dialogFinished(int result);
