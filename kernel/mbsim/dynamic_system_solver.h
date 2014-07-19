@@ -26,10 +26,7 @@
 
 namespace MBSim {
 
-  class Frame;
-  class Node;
   class Graph;
-  class Integrator;
 
   /**
    * \brief solver interface for modelling and simulation of dynamic systems

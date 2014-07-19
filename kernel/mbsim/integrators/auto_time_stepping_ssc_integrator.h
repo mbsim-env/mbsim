@@ -26,8 +26,10 @@
 #include "mbsim/utils/stopwatch.h"
 
 namespace MBSim {
-  
   class Link;
+}
+
+namespace MBSimIntegrator {
 
   /** \brief Explicit and Implicit time-stepping integrator of first or higer order with StepSize Control (SSC)
    *  StepSizeControl, GapControl, Extrapolation und concept analogue to TimeSteppingSSCIntegrator
@@ -91,10 +93,10 @@ namespace MBSim {
   class AutoTimeSteppingSSCIntegrator : public Integrator { 
 
     protected:
-      DynamicSystemSolver* sysT1;
-      DynamicSystemSolver* sysT2;
-      DynamicSystemSolver* sysT3;
-      DynamicSystemSolver* sysTP;
+      MBSim::DynamicSystemSolver* sysT1;
+      MBSim::DynamicSystemSolver* sysT2;
+      MBSim::DynamicSystemSolver* sysT3;
+      MBSim::DynamicSystemSolver* sysTP;
 
       double dt, dtOld, dte;
       double dtMin, dtMax;
@@ -198,7 +200,7 @@ namespace MBSim {
       double time, dhdztime, timeB1, timeB2, timePlot, timePlotPar;
       
       /** for internal use (start clock, integration info ...) */
-      StopWatch Timer, dhdzTimer, TimerB1, TimerB2, TimerPlot, TimerPlotPar;
+      MBSim::StopWatch Timer, dhdzTimer, TimerB1, TimerB2, TimerPlot, TimerPlotPar;
 
       /** Iterations for solving set-valued laws of different systems */
       int iter, iterA, iterB1, iterB2, iterC1, iterC2, iterC3, iterC4, iterB2RE, maxIterUsed, maxIter, sumIter;
@@ -267,7 +269,7 @@ namespace MBSim {
       bool parJac;
       bool parInt;
 
-      std::vector<DynamicSystemSolver*> *psystems;
+      std::vector<MBSim::DynamicSystemSolver*> *psystems;
 
       /** Flag of Exact or Inexact Jacobians should be uses */
       bool inexactJac;
@@ -350,11 +352,11 @@ namespace MBSim {
       void setFlagErrorTest(int Flag, bool alwaysValid=true);
 
       /*! Start the integration */
-      void integrate(DynamicSystemSolver& system_);
-      void integrate(DynamicSystemSolver& system_, std::vector<DynamicSystemSolver*> systems);
+      void integrate(MBSim::DynamicSystemSolver& system_);
+      void integrate(MBSim::DynamicSystemSolver& system_, std::vector<MBSim::DynamicSystemSolver*> systems);
 
-      void integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, DynamicSystemSolver& systemTP_, int Threads=0);
-      void integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, DynamicSystemSolver& systemTP_, std::vector<DynamicSystemSolver*> systems, int Threads=0);
+      void integrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, MBSim::DynamicSystemSolver& systemTP_, int Threads=0);
+      void integrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, MBSim::DynamicSystemSolver& systemTP_, std::vector<MBSim::DynamicSystemSolver*> systems, int Threads=0);
       
       /** Tolerances for Integrator */
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
@@ -364,10 +366,10 @@ namespace MBSim {
       void setgapTolerance(double gTol) {gapTol = gTol;}
 
       /** subroutines for integrate function */
-      void preIntegrate(DynamicSystemSolver& system);
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
-      void postIntegrate(DynamicSystemSolver& system);
-      void preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, DynamicSystemSolver& systemTP_);
+      void preIntegrate(MBSim::DynamicSystemSolver& system);
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, MBSim::DynamicSystemSolver& systemTP_);
        
       /** internal subroutines */
       void getAllSetValuedla(fmatvec::Vec& la_,fmatvec::VecInt& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
@@ -390,9 +392,9 @@ namespace MBSim {
        * \param time
        * \param System number
        */
-      void update(DynamicSystemSolver& system, const fmatvec::Vec& z, double t, int nrSys_=1);
+      void update(MBSim::DynamicSystemSolver& system, const fmatvec::Vec& z, double t, int nrSys_=1);
       
-      void doStep(DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_, bool exp_);
+      void doStep(MBSim::DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_, bool exp_);
       
       /** 
        * \brief Do One Explicit Time Integration Step
@@ -402,7 +404,7 @@ namespace MBSim {
        * \param Current Time
        * \param Current TimeStepSize
        */
-      void doExpStep(DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_);
+      void doExpStep(MBSim::DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_);
       
       /** 
        * \brief Do One Implicit Time Integration Step
@@ -412,7 +414,7 @@ namespace MBSim {
        * \param Current Time
        * \param Current TimeStepSize
        */
-      void doImpStep(DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_);
+      void doImpStep(MBSim::DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_);
      
       /** 
        * \brief Do One Linear Implicit Time Integration Step
@@ -422,7 +424,7 @@ namespace MBSim {
        * \param Current Time
        * \param Current TimeStepSize
        */
-      void doLinImpStep(DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_);
+      void doLinImpStep(MBSim::DynamicSystemSolver& system_, fmatvec::Vec& z_, int nrSys_, double t_, double dt_);
 
       /** set combination parameter between explicit (0) and implicit (1) Euler scheme */
       void setTheta(double theta_ ) { theta  = theta_; }

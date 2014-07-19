@@ -35,7 +35,7 @@
 // 
 // using namespace fmatvec;
 // 
-// namespace MBSim {
+// namespace MBSimIntegrator {
 // 
 //   DASPKIntegrator::DASPKIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
 //   }

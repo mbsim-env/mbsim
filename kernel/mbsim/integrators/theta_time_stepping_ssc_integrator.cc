@@ -32,7 +32,7 @@ using namespace std;
 
 using namespace fmatvec;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   ThetaTimeSteppingSSCIntegrator::ThetaTimeSteppingSSCIntegrator() : dt(1e-3), theta(0.5), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 

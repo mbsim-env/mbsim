@@ -3,6 +3,7 @@
 
 using namespace std;
 using namespace MBSim;
+using namespace MBSimIntegrator;
 
 bool rigidContacts;
 bool rigidJoints;

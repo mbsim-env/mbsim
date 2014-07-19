@@ -6,6 +6,7 @@
 #include <boost/timer.hpp>
 
 using namespace MBSim;
+using namespace MBSimIntegrator;
 using namespace fmatvec;
 using namespace std;
 

@@ -24,7 +24,7 @@
 #include "fmatvec/function.h"
 #include "mbsim/solver.h"
 
-namespace MBSim {
+namespace MBSimAnalyser {
 
   const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://mbsim.berlios.de/MBSimAnalyser");
 
@@ -32,14 +32,14 @@ namespace MBSim {
    * \brief Eigenanalyser for dynamic systems
    * \author Martin Foerg
    */
-  class Eigenanalyser : public Solver {
+  class Eigenanalyser : public MBSim::Solver {
 
     class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
-        Residuum(DynamicSystemSolver *sys_, double t_);
+        Residuum(MBSim::DynamicSystemSolver *sys_, double t_);
         fmatvec::Vec operator()(const fmatvec::Vec &z);
       private:
-        DynamicSystemSolver *sys;
+        MBSim::DynamicSystemSolver *sys;
         double t;
     };
 
@@ -57,13 +57,13 @@ namespace MBSim {
        */
       ~Eigenanalyser() {}
 
-      void execute(DynamicSystemSolver& system) { analyse(system); }
+      void execute(MBSim::DynamicSystemSolver& system) { analyse(system); }
 
       /**
        * \brief Perform the eigenanalysis
        * \param system The dynamic system to be analysed
        */
-      void analyse(DynamicSystemSolver& system);
+      void analyse(MBSim::DynamicSystemSolver& system);
 
       /**
        * \brief Set the initial deviation of the equilibrium

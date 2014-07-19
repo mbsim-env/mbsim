@@ -28,10 +28,11 @@ using namespace std;
 #endif
 
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   TimeSteppingD1MinusLinearIntegrator::TimeSteppingD1MinusLinearIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0) {}
 

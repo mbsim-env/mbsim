@@ -49,7 +49,7 @@ namespace MBSimInterface {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(InterfaceIntegrator, MBSIMINTERFACE%"InterfaceIntegrator")
 
-    InterfaceIntegrator::InterfaceIntegrator(): MBSim::Integrator(), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
+    InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
     }
 
   void InterfaceIntegrator::initializeUsingXML(xercesc::DOMElement *element) {

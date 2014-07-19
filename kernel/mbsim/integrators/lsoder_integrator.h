@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator LSODER
     Integrator with root finding for ODEs.
@@ -64,7 +64,7 @@ namespace MBSim {
 
       void setPlotOnRoot(bool b) {plotOnRoot = b;}
 
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
 
   };
 

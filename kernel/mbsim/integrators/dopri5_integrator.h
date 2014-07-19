@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator DOPRI5.
   */
@@ -75,7 +75,7 @@ namespace MBSim {
       int getMaxStepNumber() const { return maxSteps; }
       double getMaximalStepSize() const { return dtMax; }
 
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

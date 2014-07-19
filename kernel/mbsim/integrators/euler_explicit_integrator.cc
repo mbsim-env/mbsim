@@ -27,10 +27,11 @@ using namespace std;
 #endif
 
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EulerExplicitIntegrator, MBSIMINT%"EulerExplicitIntegrator")
 

@@ -32,8 +32,9 @@ using namespace std;
 #endif
 
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   ODEXIntegrator::ODEXIntegrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0), maxSteps(100000) {
   }

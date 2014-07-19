@@ -25,8 +25,10 @@
 #include "mbsim/utils/stopwatch.h"
 
 namespace MBSim {
-  
   class Link;
+}
+
+namespace MBSimIntegrator {
 
   /** \brief Half-explicit time-stepping integrator of first or higer order with StepSize Control (SSC)
    *  important options / settings :      
@@ -65,9 +67,9 @@ namespace MBSim {
   class TimeSteppingSSCIntegrator : public Integrator { 
 
     protected:
-      DynamicSystemSolver* sysT1;
-      DynamicSystemSolver* sysT2;
-      DynamicSystemSolver* sysT3;
+      MBSim::DynamicSystemSolver* sysT1;
+      MBSim::DynamicSystemSolver* sysT2;
+      MBSim::DynamicSystemSolver* sysT3;
 
       double dt, dtOld, dte;
       double dtMin, dtMax;
@@ -145,7 +147,7 @@ namespace MBSim {
       /** computaional time*/
       double time;
       /** for internal use (start clock, integration info ...) */
-      StopWatch Timer;
+      MBSim::StopWatch Timer;
       int iter, iterA, iterB1, iterB2, iterC1, iterC2, iterC3, iterC4, iterB2RE, maxIterUsed, maxIter, sumIter;
       int integrationSteps, integrationStepswithChange, refusedSteps, refusedStepsWithImpact;
       int wrongAlertGapControl, stepsOkAfterGapControl, stepsRefusedAfterGapControl, statusGapControl;
@@ -214,9 +216,9 @@ namespace MBSim {
       void setFlagErrorTest(int Flag, bool alwaysValid=true);
 
       /*! Start the integration */
-      void integrate(DynamicSystemSolver& system_);
+      void integrate(MBSim::DynamicSystemSolver& system_);
       /*! Threads: Number of Threads (0,1,2 or 3) 0: auto (number of threads depends on order and SSC)*/ 
-      void integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, int Threads=0);
+      void integrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, int Threads=0);
 
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
       void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
@@ -226,10 +228,10 @@ namespace MBSim {
 
       /** subroutines for integrate function */
 
-      void preIntegrate(DynamicSystemSolver& system);
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
-      void postIntegrate(DynamicSystemSolver& system);
-      void preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_);
+      void preIntegrate(MBSim::DynamicSystemSolver& system);
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+      void postIntegrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_);
        
       /** internal subroutines */
       void getAllSetValuedla(fmatvec::Vec& la_,fmatvec::VecInt& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);

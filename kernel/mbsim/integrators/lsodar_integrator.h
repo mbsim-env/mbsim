@@ -25,7 +25,7 @@
 
 #include "integrator.h"
 
-namespace MBSim {
+namespace MBSimIntegrator {
 
   /** \brief ODE-Integrator LSODAR
     Integrator with root finding for ODEs.
@@ -68,10 +68,10 @@ namespace MBSim {
 
       void setPlotOnRoot(bool b) {plotOnRoot = b;}
 
-      void integrate(DynamicSystemSolver& system);
-      void preIntegrate(DynamicSystemSolver& system);
-      void subIntegrate(DynamicSystemSolver& system, double tStop);
-      void postIntegrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
+      void preIntegrate(MBSim::DynamicSystemSolver& system);
+      void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+      void postIntegrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

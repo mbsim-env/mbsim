@@ -25,7 +25,7 @@
 //  
 //  #include "integrator.h"
 //  
-//  namespace MBSim {
+//  namespace MBSimIntegrator {
 //  
 //    /** \brief ODE-Integrator DASPK
 //      Integrator with root finding for ODEs.
