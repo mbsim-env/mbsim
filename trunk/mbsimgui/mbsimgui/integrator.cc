@@ -20,13 +20,6 @@
 #include <config.h>
 #include "integrator.h"
 #include "integrator_properties.h"
-#include "dynamic_system_solver.h"
-#include "objectfactory.h"
-#include "mainwindow.h"
-#include <QtGui/QMenu>
-#include <QtGui/QFileDialog>
-#include <QtGui/QHBoxLayout>
-#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -34,10 +27,6 @@ using namespace xercesc;
 using namespace boost;
 
 namespace MBSimGUI {
-
-  extern MainWindow *mw;
-  extern bool absolutePath;
-  extern QDir mbsDir;
 
   TolerancePropertyFactory::TolerancePropertyFactory(const string &type_) : type(type_) {
     name.push_back(MBSIMINT%(type+"ToleranceScalar"));
@@ -72,8 +61,6 @@ namespace MBSimGUI {
     plotStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
     initialState.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIMINT%"initialState",vector<string>(3,"")),"",4));
-
-    embed.setProperty(new EmbedProperty(boost::bind(&Integrator::getName, this)));
   }
 
   Integrator::~Integrator() {

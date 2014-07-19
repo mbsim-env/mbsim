@@ -53,7 +53,6 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "Integrator"; }
     virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
-    bool isEmbedded() const {return embed.isActive();}
   };
 
   class DOPRI5Integrator : public Integrator {
