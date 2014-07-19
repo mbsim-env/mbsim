@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "integrator_property_dialog.h"
+#include "solver_property_dialog.h"
 #include "integrator.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
@@ -47,7 +47,21 @@ namespace MBSimGUI {
     }
   }
 
-  IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), integrator(integrator_) {
+  SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), solver(solver_) {
+    addTab("Embedding");
+    embed = new ExtWidget("Embed", new EmbedWidget, true);
+    addToTab("Embedding",embed);
+  }
+
+  void SolverPropertyDialog::toWidget(Solver *solver) {
+    solver->embed.toWidget(embed);
+  }
+
+  void SolverPropertyDialog::fromWidget(Solver *solver) {
+    solver->embed.fromWidget(embed);
+  }
+
+  IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : SolverPropertyDialog(integrator,parent,f) {
     addTab("General");
     addTab("Initial conditions");
 
@@ -68,26 +82,22 @@ namespace MBSimGUI {
 
     initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", initialState);
-
-    addTab("Embedding");
-    embed = new ExtWidget("Embed", new EmbedWidget, true);
-    addToTab("Embedding",embed);
   }
 
-  void IntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void IntegratorPropertyDialog::toWidget(Solver *integrator) {
+    SolverPropertyDialog::toWidget(integrator);
     static_cast<Integrator*>(integrator)->startTime.toWidget(startTime);
     static_cast<Integrator*>(integrator)->endTime.toWidget(endTime);
     static_cast<Integrator*>(integrator)->plotStepSize.toWidget(plotStepSize);
     static_cast<Integrator*>(integrator)->initialState.toWidget(initialState);
-    integrator->embed.toWidget(embed);
   }
 
-  void IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void IntegratorPropertyDialog::fromWidget(Solver *integrator) {
+    SolverPropertyDialog::fromWidget(integrator);
     static_cast<Integrator*>(integrator)->startTime.fromWidget(startTime);
     static_cast<Integrator*>(integrator)->endTime.fromWidget(endTime);
     static_cast<Integrator*>(integrator)->plotStepSize.fromWidget(plotStepSize);
     static_cast<Integrator*>(integrator)->initialState.fromWidget(initialState);
-    integrator->embed.fromWidget(embed);
   }
 
   DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
@@ -116,7 +126,7 @@ namespace MBSimGUI {
     addToTab("Step size", maxSteps);
   }
 
-  void DOPRI5IntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void DOPRI5IntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<DOPRI5Integrator*>(integrator)->absTol.toWidget(absTol);
     static_cast<DOPRI5Integrator*>(integrator)->relTol.toWidget(relTol);
@@ -125,7 +135,7 @@ namespace MBSimGUI {
     static_cast<DOPRI5Integrator*>(integrator)->maxSteps.toWidget(maxSteps);
   }
 
-  void DOPRI5IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void DOPRI5IntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<DOPRI5Integrator*>(integrator)->absTol.fromWidget(absTol);
     static_cast<DOPRI5Integrator*>(integrator)->relTol.fromWidget(relTol);
@@ -160,7 +170,7 @@ namespace MBSimGUI {
     addToTab("Step size", maxSteps);
   }
 
-  void RADAU5IntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void RADAU5IntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<RADAU5Integrator*>(integrator)->absTol.toWidget(absTol);
     static_cast<RADAU5Integrator*>(integrator)->relTol.toWidget(relTol);
@@ -169,7 +179,7 @@ namespace MBSimGUI {
     static_cast<RADAU5Integrator*>(integrator)->maxSteps.toWidget(maxSteps);
   }
 
-  void RADAU5IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void RADAU5IntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<RADAU5Integrator*>(integrator)->absTol.fromWidget(absTol);
     static_cast<RADAU5Integrator*>(integrator)->relTol.fromWidget(relTol);
@@ -217,7 +227,7 @@ namespace MBSimGUI {
     addToTab("Extra", stiff);
   }
 
-  void LSODEIntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void LSODEIntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<LSODEIntegrator*>(integrator)->absTol.toWidget(absTol);
     static_cast<LSODEIntegrator*>(integrator)->relTol.toWidget(relTol);
@@ -227,7 +237,7 @@ namespace MBSimGUI {
     static_cast<LSODEIntegrator*>(integrator)->stiff.toWidget(stiff);
   }
 
-  void LSODEIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void LSODEIntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<LSODEIntegrator*>(integrator)->absTol.fromWidget(absTol);
     static_cast<LSODEIntegrator*>(integrator)->relTol.fromWidget(relTol);
@@ -266,7 +276,7 @@ namespace MBSimGUI {
     addToTab("Extra", plotOnRoot);
   }
 
-  void LSODARIntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void LSODARIntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<LSODARIntegrator*>(integrator)->absTol.toWidget(absTol);
     static_cast<LSODARIntegrator*>(integrator)->relTol.toWidget(relTol);
@@ -275,7 +285,7 @@ namespace MBSimGUI {
     static_cast<LSODARIntegrator*>(integrator)->plotOnRoot.toWidget(plotOnRoot);
   }
 
-  void LSODARIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void LSODARIntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<LSODARIntegrator*>(integrator)->absTol.fromWidget(absTol);
     static_cast<LSODARIntegrator*>(integrator)->relTol.fromWidget(relTol);
@@ -293,12 +303,12 @@ namespace MBSimGUI {
     addToTab("Step size", stepSize);
   }
 
-  void TimeSteppingIntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void TimeSteppingIntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<TimeSteppingIntegrator*>(integrator)->stepSize.toWidget(stepSize);
   }
 
-  void TimeSteppingIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void TimeSteppingIntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<TimeSteppingIntegrator*>(integrator)->stepSize.fromWidget(stepSize);
   }
@@ -312,12 +322,12 @@ namespace MBSimGUI {
     addToTab("Step size", stepSize);
   }
 
-  void EulerExplicitIntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void EulerExplicitIntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<EulerExplicitIntegrator*>(integrator)->stepSize.toWidget(stepSize);
   }
 
-  void EulerExplicitIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void EulerExplicitIntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<EulerExplicitIntegrator*>(integrator)->stepSize.fromWidget(stepSize);
   }
@@ -345,7 +355,7 @@ namespace MBSimGUI {
     addToTab("Step size", initialStepSize);
   }
 
-  void RKSuiteIntegratorPropertyDialog::toWidget(Integrator *integrator) {
+  void RKSuiteIntegratorPropertyDialog::toWidget(Solver *integrator) {
     IntegratorPropertyDialog::toWidget(integrator);
     static_cast<RKSuiteIntegrator*>(integrator)->type.toWidget(type);
     static_cast<RKSuiteIntegrator*>(integrator)->relTol.toWidget(relTol);
@@ -353,7 +363,7 @@ namespace MBSimGUI {
     static_cast<RKSuiteIntegrator*>(integrator)->initialStepSize.toWidget(initialStepSize);
   }
 
-  void RKSuiteIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
+  void RKSuiteIntegratorPropertyDialog::fromWidget(Solver *integrator) {
     IntegratorPropertyDialog::fromWidget(integrator);
     static_cast<RKSuiteIntegrator*>(integrator)->type.fromWidget(type);
     static_cast<RKSuiteIntegrator*>(integrator)->relTol.fromWidget(relTol);

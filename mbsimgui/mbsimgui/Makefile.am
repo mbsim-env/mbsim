@@ -62,19 +62,20 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   integrator_widgets.cc \
 		   property_dialog.cc \
 		   element_property_dialog.cc \
-		   integrator_property_dialog.cc \
+		   solver_property_dialog.cc \
 		   parameter_property_dialog.cc \
 		   embedding_property_dialog.cc \
 		   element_context_menu.cc \
 		   parameter_context_menu.cc \
 		   element_view.cc \
 		   embedding_view.cc \
-		   integrator_view.cc \
+		   solver_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
 		   process.cc \
 		   main.cc \
-		   embed.cc
+		   embed.cc \
+		   solver.cc 
 		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
@@ -91,16 +92,14 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   extended_widgets.moc.cc \
 		   property_dialog.moc.cc  \
 		   element_property_dialog.moc.cc \
-		   integrator_property_dialog.moc.cc \
+		   solver_property_dialog.moc.cc \
 		   parameter_property_dialog.moc.cc \
 		   embedding_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \
 		   element_view.moc.cc \
 		   embedding_view.moc.cc \
-		   integrator_view.moc.cc \
+		   solver_view.moc.cc \
 		   dialogs.moc.cc  \
-		   integrator.moc.cc \
-		   parameter.moc.cc \
 		   process.moc.cc
 
 mbsimgui_HEADERS = 

@@ -34,9 +34,9 @@ namespace MBSimGUI {
   class Object;
   class Link;
   class Observer;
-  class Integrator;
   class Parameter;
   class Environment;
+  class Solver;
   class TreeItem;
 
   class ObjectFactoryBase {
@@ -54,7 +54,7 @@ namespace MBSimGUI {
       virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
-      virtual Integrator* createIntegrator(xercesc::DOMElement *element) { return NULL; }
+      virtual Solver* createSolver(xercesc::DOMElement *element) { return NULL; }
       virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
       virtual Environment *getEnvironment(xercesc::DOMElement *element) { return NULL; }
   };
@@ -77,7 +77,7 @@ namespace MBSimGUI {
       Object* createObject(xercesc::DOMElement *element, Element *parent);
       Link* createLink(xercesc::DOMElement *element, Element *parent);
       Observer* createObserver(xercesc::DOMElement *element, Element *parent);
-      Integrator* createIntegrator(xercesc::DOMElement *element);
+      Solver* createSolver(xercesc::DOMElement *element);
       Parameter* createParameter(xercesc::DOMElement *element);
       Environment *getEnvironment(xercesc::DOMElement *element);
   };
@@ -98,7 +98,7 @@ namespace MBSimGUI {
       Object* createObject(xercesc::DOMElement *element, Element *parent);
       Link* createLink(xercesc::DOMElement *element, Element *parent);
       Observer* createObserver(xercesc::DOMElement *element, Element *parent);
-      Integrator* createIntegrator(xercesc::DOMElement *element);
+      Solver* createSolver(xercesc::DOMElement *element);
       Parameter* createParameter(xercesc::DOMElement *element);
       Environment *getEnvironment(xercesc::DOMElement *element);
   };

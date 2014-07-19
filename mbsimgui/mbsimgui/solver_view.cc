@@ -19,8 +19,8 @@
 
 #include <config.h>
 #include "integrator.h"
-#include "integrator_view.h"
-#include "integrator_property_dialog.h"
+#include "solver_view.h"
+#include "solver_property_dialog.h"
 #include "utils.h"
 #include "mainwindow.h"
 #include <QEvent>
@@ -54,13 +54,13 @@ namespace MBSimGUI {
   }
 
   IntegratorView::IntegratorView() : i(0) {
-    integrator.push_back(new DOPRI5Integrator);
-    integrator.push_back(new RADAU5Integrator);
-    integrator.push_back(new LSODEIntegrator);
-    integrator.push_back(new LSODARIntegrator);
-    integrator.push_back(new TimeSteppingIntegrator);
-    integrator.push_back(new EulerExplicitIntegrator);
-    integrator.push_back(new RKSuiteIntegrator);
+    solver.push_back(new DOPRI5Integrator);
+    solver.push_back(new RADAU5Integrator);
+    solver.push_back(new LSODEIntegrator);
+    solver.push_back(new LSODARIntegrator);
+    solver.push_back(new TimeSteppingIntegrator);
+    solver.push_back(new EulerExplicitIntegrator);
+    solver.push_back(new RKSuiteIntegrator);
     type.push_back("DOPRI5");
     type.push_back("RADAU5");
     type.push_back("LSODE");
@@ -76,8 +76,8 @@ namespace MBSimGUI {
   }
 
   IntegratorView::~IntegratorView() {
-    for(int i=0; i<integrator.size(); i++)
-      delete integrator[i];
+    for(int i=0; i<solver.size(); i++)
+      delete solver[i];
   }
 
   void IntegratorView::openContextMenu() {
@@ -86,29 +86,29 @@ namespace MBSimGUI {
     delete menu;
   }
 
-  void IntegratorView::setIntegrator(Integrator *integrator_) {
-    if(dynamic_cast<DOPRI5Integrator*>(integrator_))
+  void IntegratorView::setSolver(Solver *solver_) {
+    if(dynamic_cast<DOPRI5Integrator*>(solver_))
       i=0;
-    else if(dynamic_cast<RADAU5Integrator*>(integrator_))
+    else if(dynamic_cast<RADAU5Integrator*>(solver_))
       i=1;
-    else if(dynamic_cast<LSODEIntegrator*>(integrator_))
+    else if(dynamic_cast<LSODEIntegrator*>(solver_))
       i=2;
-    else if(dynamic_cast<LSODARIntegrator*>(integrator_))
+    else if(dynamic_cast<LSODARIntegrator*>(solver_))
       i=3;
-    else if(dynamic_cast<TimeSteppingIntegrator*>(integrator_))
+    else if(dynamic_cast<TimeSteppingIntegrator*>(solver_))
       i=4;
-    else if(dynamic_cast<EulerExplicitIntegrator*>(integrator_))
+    else if(dynamic_cast<EulerExplicitIntegrator*>(solver_))
       i=5;
-    else if(dynamic_cast<RKSuiteIntegrator*>(integrator_))
+    else if(dynamic_cast<RKSuiteIntegrator*>(solver_))
       i=6;
-    delete integrator[i];
-    integrator[i] = integrator_;
+    delete solver[i];
+    solver[i] = solver_;
     updateText();
   }
 
   bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick) {
-      editor = view->getIntegrator()->createPropertyDialog();
+      editor = view->getSolver()->createPropertyDialog();
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
