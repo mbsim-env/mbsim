@@ -369,22 +369,22 @@ namespace MBSimGUI {
     Element* element;
   };
 
-  class SolverTolerancesWidget : public Widget {
-    friend class SolverTolerancesProperty;
+  class DynamicSystemSolverTolerancesWidget : public Widget {
+    friend class DynamicSystemSolverTolerancesProperty;
 
     public:
-    SolverTolerancesWidget();
+    DynamicSystemSolverTolerancesWidget();
 
     protected:
     ExtWidget *projection, *g, *gd, *gdd, *la, *La;
   };
 
-  class SolverParametersWidget : public Widget {
+  class DynamicSystemSolverParametersWidget : public Widget {
 
-    friend class SolverParametersProperty;
+    friend class DynamicSystemSolverParametersProperty;
 
     public:
-    SolverParametersWidget();
+    DynamicSystemSolverParametersWidget();
 
     protected:
     ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;

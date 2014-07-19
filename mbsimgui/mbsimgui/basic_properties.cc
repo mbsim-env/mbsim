@@ -567,7 +567,7 @@ namespace MBSimGUI {
     static_cast<ConnectContoursWidget*>(widget)->update();
   }
 
-  SolverTolerancesProperty::SolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
+  DynamicSystemSolverTolerancesProperty::DynamicSystemSolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-15"), "-", MBSIM%"projection"));
@@ -594,7 +594,7 @@ namespace MBSimGUI {
     La.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* SolverTolerancesProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* DynamicSystemSolverTolerancesProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"tolerances");
     if(e) {
       projection.initializeUsingXML(e);
@@ -607,7 +607,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* SolverTolerancesProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* DynamicSystemSolverTolerancesProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *e=D(doc)->createElement(MBSIM%"tolerances");
     parent->insertBefore(e, NULL);
@@ -620,25 +620,25 @@ namespace MBSimGUI {
     return e;
   }
 
-  void SolverTolerancesProperty::fromWidget(QWidget *widget) {
-    projection.fromWidget(static_cast<SolverTolerancesWidget*>(widget)->projection);
-    g.fromWidget(static_cast<SolverTolerancesWidget*>(widget)->g);
-    gd.fromWidget(static_cast<SolverTolerancesWidget*>(widget)->gd);
-    gdd.fromWidget(static_cast<SolverTolerancesWidget*>(widget)->gdd);
-    la.fromWidget(static_cast<SolverTolerancesWidget*>(widget)->la);
-    La.fromWidget(static_cast<SolverTolerancesWidget*>(widget)->La);
+  void DynamicSystemSolverTolerancesProperty::fromWidget(QWidget *widget) {
+    projection.fromWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->projection);
+    g.fromWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->g);
+    gd.fromWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->gd);
+    gdd.fromWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->gdd);
+    la.fromWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->la);
+    La.fromWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->La);
   }
 
-  void SolverTolerancesProperty::toWidget(QWidget *widget) {
-    projection.toWidget(static_cast<SolverTolerancesWidget*>(widget)->projection);
-    g.toWidget(static_cast<SolverTolerancesWidget*>(widget)->g);
-    gd.toWidget(static_cast<SolverTolerancesWidget*>(widget)->gd);
-    gdd.toWidget(static_cast<SolverTolerancesWidget*>(widget)->gdd);
-    la.toWidget(static_cast<SolverTolerancesWidget*>(widget)->la);
-    La.toWidget(static_cast<SolverTolerancesWidget*>(widget)->La);
+  void DynamicSystemSolverTolerancesProperty::toWidget(QWidget *widget) {
+    projection.toWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->projection);
+    g.toWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->g);
+    gd.toWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->gd);
+    gdd.toWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->gdd);
+    la.toWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->la);
+    La.toWidget(static_cast<DynamicSystemSolverTolerancesWidget*>(widget)->La);
   }
 
-  SolverParametersProperty::SolverParametersProperty() : constraintSolver(0,false), impactSolver(0,false), numberOfMaximalIterations(0,false), tolerances(0,false) {
+  DynamicSystemSolverParametersProperty::DynamicSystemSolverParametersProperty() : constraintSolver(0,false), impactSolver(0,false), numberOfMaximalIterations(0,false), tolerances(0,false) {
     constraintSolver.setProperty(new TextProperty("\"FixedPointSingle\"", MBSIM%"constraintSolver"));
     impactSolver.setProperty(new TextProperty("\"FixedPointSingle\"", MBSIM%"impactSolver"));
 
@@ -646,10 +646,10 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new ScalarProperty("10000"), "", MBSIM%"numberOfMaximalIterations"));
     numberOfMaximalIterations.setProperty(new ExtPhysicalVarProperty(input));
 
-    tolerances.setProperty(new SolverTolerancesProperty);
+    tolerances.setProperty(new DynamicSystemSolverTolerancesProperty);
   }
 
-  DOMElement* SolverParametersProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* DynamicSystemSolverParametersProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"solverParameters");
     if(e) {
       constraintSolver.initializeUsingXML(e);
@@ -660,7 +660,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* SolverParametersProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* DynamicSystemSolverParametersProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *e=D(doc)->createElement(MBSIM%"solverParameters");
     parent->insertBefore(e, NULL);
@@ -671,18 +671,18 @@ namespace MBSimGUI {
     return e;
   }
 
-  void SolverParametersProperty::fromWidget(QWidget *widget) {
-    constraintSolver.fromWidget(static_cast<SolverParametersWidget*>(widget)->constraintSolver);
-    impactSolver.fromWidget(static_cast<SolverParametersWidget*>(widget)->impactSolver);
-    numberOfMaximalIterations.fromWidget(static_cast<SolverParametersWidget*>(widget)->numberOfMaximalIterations);
-    tolerances.fromWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
+  void DynamicSystemSolverParametersProperty::fromWidget(QWidget *widget) {
+    constraintSolver.fromWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->constraintSolver);
+    impactSolver.fromWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->impactSolver);
+    numberOfMaximalIterations.fromWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->numberOfMaximalIterations);
+    tolerances.fromWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->tolerances);
   }
 
-  void SolverParametersProperty::toWidget(QWidget *widget) {
-    constraintSolver.toWidget(static_cast<SolverParametersWidget*>(widget)->constraintSolver);
-    impactSolver.toWidget(static_cast<SolverParametersWidget*>(widget)->impactSolver);
-    numberOfMaximalIterations.toWidget(static_cast<SolverParametersWidget*>(widget)->numberOfMaximalIterations);
-    tolerances.toWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
+  void DynamicSystemSolverParametersProperty::toWidget(QWidget *widget) {
+    constraintSolver.toWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->constraintSolver);
+    impactSolver.toWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->impactSolver);
+    numberOfMaximalIterations.toWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->numberOfMaximalIterations);
+    tolerances.toWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->tolerances);
   }
 
   EmbedProperty::EmbedProperty(boost::function<const std::string&()> f) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {

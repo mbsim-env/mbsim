@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mainwindow.h"
 #include "options.h"
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "frame.h"
 #include "contour.h"
 #include "object.h"
@@ -495,7 +495,7 @@ namespace MBSimGUI {
       setWindowTitle(fileProject);
 
       DOMElement *ele1 = ele0->getFirstElementChild();
-      Solver *solver=Embed<Solver>::createAndInit(ele1,0);
+      DynamicSystemSolver *solver=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
       solver->initialize();
 
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
@@ -568,9 +568,9 @@ namespace MBSimGUI {
 
       ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
       QModelIndex index = model->index(0,0);
-      Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+      DynamicSystemSolver *solver = static_cast<DynamicSystemSolver*>(model->getItem(index)->getItemData());
 
-      Embed<Solver>::writeXML(solver,ele0);
+      Embed<DynamicSystemSolver>::writeXML(solver,ele0);
       Integrator *integrator = integratorView->getIntegrator();
       if(not(absolutePath) and integrator->isEmbedded())
         integrator->writeXMLFileEmbed(ele0);
@@ -617,7 +617,7 @@ namespace MBSimGUI {
    if(model->rowCount(index))
      delete model->getItem(index)->getItemData();
    model->removeRow(index.row(), index.parent());
-   Solver *solver = new Solver("MBS",0);
+   DynamicSystemSolver *solver = new DynamicSystemSolver("MBS",0);
    model->createGroupItem(solver,QModelIndex());
 
    elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
@@ -782,7 +782,7 @@ namespace MBSimGUI {
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
-    Solver *slv=dynamic_cast<Solver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
+    DynamicSystemSolver *slv=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
     Integrator *integ=integratorView->getIntegrator();
     if(!slv || !integ)
       return;

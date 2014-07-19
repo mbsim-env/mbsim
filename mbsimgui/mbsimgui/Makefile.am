@@ -18,7 +18,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   frame.cc \
 		   contour.cc \
 		   group.cc \
-		   solver.cc \
+		   dynamic_system_solver.cc \
 		   object.cc \
 		   body.cc \
 		   rigidbody.cc \

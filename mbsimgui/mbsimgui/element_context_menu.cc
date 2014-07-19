@@ -162,7 +162,7 @@ namespace MBSimGUI {
     menu.exec(QCursor::pos());
   }
 
-  SolverContextMenu::SolverContextMenu(Element *solver, QWidget * parent) : GroupContextMenu(solver,parent,false) {
+  DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *solver, QWidget * parent) : GroupContextMenu(solver,parent,false) {
   }
 
   ObjectContextMenu::ObjectContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,true) {

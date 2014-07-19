@@ -554,7 +554,7 @@ namespace MBSimGUI {
       widget[i]->updateWidget();
   }
 
-  SolverTolerancesWidget::SolverTolerancesWidget() {
+  DynamicSystemSolverTolerancesWidget::DynamicSystemSolverTolerancesWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
@@ -590,7 +590,7 @@ namespace MBSimGUI {
     layout->addWidget(La);
   }
 
-  SolverParametersWidget::SolverParametersWidget() {
+  DynamicSystemSolverParametersWidget::DynamicSystemSolverParametersWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -611,7 +611,7 @@ namespace MBSimGUI {
     numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(numberOfMaximalIterations);
 
-    tolerances = new ExtWidget("Tolerances",new SolverTolerancesWidget,true);
+    tolerances = new ExtWidget("Tolerances",new DynamicSystemSolverTolerancesWidget,true);
     layout->addWidget(tolerances);
   }
 

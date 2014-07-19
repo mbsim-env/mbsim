@@ -21,7 +21,7 @@
 #include "objectfactory.h"
 #include "frame.h"
 #include "contour.h"
-#include "solver.h"
+#include "dynamic_system_solver.h"
 #include "group.h"
 #include "rigidbody.h"
 #include "constraint.h"
@@ -117,7 +117,7 @@ namespace MBSimGUI {
   Group* MBSimObjectFactory::createGroup(DOMElement *element, Element *parent) {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"DynamicSystemSolver")
-      return new Solver(E(element)->getAttribute("name"),parent);
+      return new DynamicSystemSolver(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"Group")
       return new Group(E(element)->getAttribute("name"),parent);
     return 0;
