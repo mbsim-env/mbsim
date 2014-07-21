@@ -49,7 +49,7 @@ namespace MBSimGUI {
   class MBSimThread;
   class ElementView;
   class EmbeddingView;
-  class IntegratorView;
+  class SolverView;
   class Element;
   class Frame;
   class Contour;
@@ -67,7 +67,7 @@ namespace MBSimGUI {
     private:
       ElementView *elementList;
       EmbeddingView *embeddingList;
-      IntegratorView *integratorView;
+      SolverView *solverView;
       QString fileProject; 
       Process *mbsim;
       MBSimThread *mbsimThread;
@@ -76,7 +76,7 @@ namespace MBSimGUI {
       void dragEnterEvent(QDragEnterEvent *event);
       void dropEvent(QDropEvent *event);
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs;
+      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
       QTimer *autoSaveTimer;
       std::string currentID;
       enum { maxRecentFiles = 5 };
@@ -122,6 +122,7 @@ namespace MBSimGUI {
       void selectTimeSteppingIntegrator();
       void selectEulerExplicitIntegrator();
       void selectRKSuiteIntegrator();
+      void selectEigenanalyser();
       void saveDataAs();
       void saveMBSimH5DataAs();
       void saveMBSimH5Data(const QString &file);
@@ -130,6 +131,8 @@ namespace MBSimGUI {
       void saveOpenMBVH5Data(const QString &file);
       void saveStateVectorAs();
       void saveStateVector(const QString &file);
+      void saveEigenanalysisAs();
+      void saveEigenanalysis(const QString &file);
       void removeParameter();
       void simulate();
       void refresh();

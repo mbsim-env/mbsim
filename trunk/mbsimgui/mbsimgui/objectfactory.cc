@@ -36,6 +36,7 @@
 #include "parameter.h"
 #include "observer.h"
 #include "integrator.h"
+#include "analyser.h"
 #include "friction.h"
 #include "gear.h"
 #include <string>
@@ -245,6 +246,8 @@ namespace MBSimGUI {
       return new EulerExplicitIntegrator;
     else if(E(element)->getTagName()==MBSIMINT%"RKSuiteIntegrator")
       return new RKSuiteIntegrator;
+    else if(E(element)->getTagName()==MBSIMANALYSER%"Eigenanalyser")
+      return new Eigenanalyser;
     return 0;
   }
 

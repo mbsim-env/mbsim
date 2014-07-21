@@ -22,9 +22,7 @@
 #include "dynamic_system_solver.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
-#include <QtGui/QMenu>
-#include <QtGui/QFileDialog>
-#include <QtGui/QHBoxLayout>
+#include <QDir>
 #include <boost/bind.hpp>
 
 using namespace std;
