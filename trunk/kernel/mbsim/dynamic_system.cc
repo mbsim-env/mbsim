@@ -27,7 +27,8 @@
 #include "mbsim/joint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observer.h"
-#include "hdf5serie/fileserie.h"
+#include "hdf5serie/file.h"
+#include "hdf5serie/simpleattribute.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -496,14 +497,15 @@ namespace MBSim {
         if (getPlotFeature(separateFilePerGroup) == enabled) {
           // create symbolic link in parent plot file if exist
           if (parent)
-            H5Lcreate_external((getPath() + ".mbsim.h5").c_str(), "/", parent->getPlotGroup()->getId(), name.c_str(), H5P_DEFAULT, H5P_DEFAULT);
+            parent->getPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(getPath() + ".mbsim.h5"), string("/")));
           // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
-          plotGroup = (H5::Group*) new H5::FileSerie(getPath() + ".mbsim.h5", H5F_ACC_TRUNC);
+          hdf5File = boost::make_shared<H5::File>(getPath() + ".mbsim.h5", H5::File::write);
+          plotGroup = hdf5File.get();
         }
         else
-          plotGroup = new H5::Group(parent->getPlotGroup()->createGroup(name));
+          plotGroup = parent->getPlotGroup()->createChildObject<H5::Group>(name)();
 
-        H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: " + getType());
+        plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: " + getType());
         plotVectorSerie = NULL;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -516,7 +518,9 @@ namespace MBSim {
           openMBVGrp->setSeparateFile(true);
 #endif
 
-        plotGroup->flush(H5F_SCOPE_GLOBAL);
+        H5::File *file=dynamic_cast<H5::File*>(plotGroup);
+        if(file)
+          file->flush();
       }
     }
 
@@ -936,32 +940,32 @@ namespace MBSim {
       link[i]->initz();
   }
 
-  void DynamicSystem::writez(const H5::CommonFG & parent) {
+  void DynamicSystem::writez(H5::GroupBase *parent) {
     for (unsigned i = 0; i < dynamicsystem.size(); i++) {
-      H5::Group group = parent.createGroup("System_" + numtostr((int) i));
+      H5::Group *group = parent->createChildObject<H5::Group>("System_" + numtostr((int) i))();
       dynamicsystem[i]->writez(group);
     }
     for (unsigned i = 0; i < object.size(); i++) {
-      H5::Group group = parent.createGroup("Object_" + numtostr((int) i));
+      H5::Group *group = parent->createChildObject<H5::Group>("Object_" + numtostr((int) i))();
       object[i]->writez(group);
     }
     for (unsigned i = 0; i < link.size(); i++) {
-      H5::Group group = parent.createGroup("Link_" + numtostr((int) i));
+      H5::Group *group = parent->createChildObject<H5::Group>("Link_" + numtostr((int) i))();
       link[i]->writez(group);
     }
   }
 
-  void DynamicSystem::readz0(const H5::CommonFG & parent) {
+  void DynamicSystem::readz0(H5::GroupBase *parent) {
     for (unsigned i = 0; i < dynamicsystem.size(); i++) {
-      H5::Group group = parent.openGroup("System_" + numtostr((int) i));
+      H5::Group *group = parent->openChildObject<H5::Group>("System_" + numtostr((int) i));
       dynamicsystem[i]->readz0(group);
     }
     for (unsigned i = 0; i < object.size(); i++) {
-      H5::Group group = parent.openGroup("Object_" + numtostr((int) i));
+      H5::Group *group = parent->openChildObject<H5::Group>("Object_" + numtostr((int) i));
       object[i]->readz0(group);
     }
     for (unsigned i = 0; i < link.size(); i++) {
-      H5::Group group = parent.openGroup("Link_" + numtostr((int) i));
+      H5::Group *group = parent->openChildObject<H5::Group>("Link_" + numtostr((int) i));
       link[i]->readz0(group);
     }
   }

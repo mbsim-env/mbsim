@@ -78,7 +78,7 @@ namespace MBSim {
       //virtual int gethInd(DynamicSystem* sys,int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
-      virtual H5::Group *getPlotGroup() { return plotGroup; }
+      virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
       virtual void updateStateDependentVariables(double t) = 0;
@@ -210,12 +210,12 @@ namespace MBSim {
       /*!
        * \brief writes its z-Vector to a subgroup of the given group
        */
-      virtual void writez(const H5::Group & group);
+      virtual void writez(H5::GroupBase *group);
 
       /*!
        * \brief reads the z-Vector of a subgroup of the given group
        */
-      virtual void readz0(const H5::Group & group);
+      virtual void readz0(H5::GroupBase *group);
 
       /**
        * \brief perform Cholesky decomposition of mass martix

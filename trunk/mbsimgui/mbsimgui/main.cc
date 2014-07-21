@@ -21,7 +21,6 @@
 #include <iostream>
 #include <QApplication>
 #include "mainwindow.h"
-#include <H5Cpp.h>
 #include <QLocale>
 
 using namespace std;
@@ -64,8 +63,6 @@ int main(int argc, char *argv[]) {
     arg.removeAll("--help"); 
     return 0;
   }
-  // disalbe HDF5 error message print
-  H5::Exception::dontPrint();
 
   QApplication app(argc, argv);
   app.setOrganizationName("MBSimGUI");

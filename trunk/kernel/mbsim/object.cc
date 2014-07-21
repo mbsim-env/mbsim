@@ -277,24 +277,16 @@ namespace MBSim {
     x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
-  void Object::writez(const H5::Group & group) {
-    H5::SimpleDataSet<vector<double> > qWrite;
-    qWrite.create(group, "q0");
-    qWrite.write(q);
+  void Object::writez(H5::GroupBase *group) {
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("q0")(q.size())->write(q);
 
-    H5::SimpleDataSet<vector<double> > uWrite;
-    uWrite.create(group, "u0");
-    uWrite.write(u);
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("u0")(u.size())->write(u);
   }
 
-  void Object::readz0(const H5::Group & group) {
-    H5::SimpleDataSet<vector<double> > qWrite;
-    qWrite.open(group, "q0");
-    q0.resize() = qWrite.read();
+  void Object::readz0(H5::GroupBase *group) {
+    q0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("q0")->read();
 
-    H5::SimpleDataSet<vector<double> > uWrite;
-    uWrite.open(group, "u0");
-    u0.resize() = uWrite.read();
+    u0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("u0")->read();
   }
 
   void Object::sethInd(int hInd_, int j) {

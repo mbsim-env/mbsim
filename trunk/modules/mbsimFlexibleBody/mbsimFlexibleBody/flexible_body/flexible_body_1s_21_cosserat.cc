@@ -794,10 +794,9 @@ namespace MBSimFlexibleBody {
   }
 
   Mat FlexibleBody1s21Cosserat::readPositionMatrix(const string & h5File, const string & Job) {
-    H5File *file = new H5File(h5File, H5F_ACC_RDONLY);
-    H5::Group group = file->openGroup(name);
-    H5::VectorSerie<double> * data = new H5::VectorSerie<double>;
-    data->open(group, "data");
+    H5::File file(h5File, H5::File::read);
+    H5::Group *group = file.openChildObject<H5::Group>(name);
+    H5::VectorSerie<double> *data = group->openChildObject<H5::VectorSerie<double> >("data");
 
     int qsize = data->getColumns();
     int tsize = data->getColumn(0).size();
@@ -839,8 +838,6 @@ namespace MBSimFlexibleBody {
       X_(Index(0, tsize - 1), Index(i - start, i - start)) = tmp(Index(0, tsize - 1));
     }
 
-    delete data;
-    delete file;
     return X_.T();
   }
 

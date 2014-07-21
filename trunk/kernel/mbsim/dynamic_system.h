@@ -101,7 +101,7 @@ namespace MBSim {
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
       virtual fmatvec::Vec& getu() { return u; };
-      virtual H5::Group *getPlotGroup() { return plotGroup; }
+      virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -143,8 +143,8 @@ namespace MBSim {
       void updatexdRef(const fmatvec::Vec &ref);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void writez(const H5::CommonFG & group);
-      virtual void readz0(const H5::CommonFG & parent);
+      virtual void writez(H5::GroupBase *group);
+      virtual void readz0(H5::GroupBase *parent);
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -892,6 +892,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* openMBVGrp;
 #endif
+      boost::shared_ptr<H5::File> hdf5File;
 
       /**
        * \param contour to add
