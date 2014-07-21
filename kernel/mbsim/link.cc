@@ -172,16 +172,12 @@ namespace MBSim {
     x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
-  void Link::writez(const H5::Group & group) {
-    H5::SimpleDataSet<vector<double> > ds;
-    ds.create(group, "x0");
-    ds.write(x);
+  void Link::writez(H5::GroupBase *group) {
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("x0")(x.size())->write(x);
   }
 
-  void Link::readz0(const H5::Group & group) {
-    H5::SimpleDataSet<vector<double> > ds;
-    ds.open(group, "x0");
-    x0.resize() = ds.read();
+  void Link::readz0(H5::GroupBase *group) {
+    x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
   }
 
   void Link::savela(double dt) {

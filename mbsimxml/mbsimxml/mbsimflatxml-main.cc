@@ -48,8 +48,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   catch(const H5::Exception &e) {
-    cerr<<"HDF5 exception: "<<e.getCDetailMsg()<<endl<<
-          "function: "<<e.getCFuncName()<<endl;
+    cerr<<"HDF5 exception: "<<e.what()<<endl;
     return 1;
   }
   catch(const exception &e) {

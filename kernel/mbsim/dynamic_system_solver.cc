@@ -33,8 +33,7 @@
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
 
-#include <H5Cpp.h>
-#include <hdf5serie/fileserie.h>
+#include <hdf5serie/file.h>
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
 #include <unistd.h>
@@ -78,11 +77,16 @@ namespace MBSim {
 
   DynamicSystemSolver::~DynamicSystemSolver() {
     closePlot();
-    H5::FileSerie::deletePIDFiles();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if(openMBVGrp)
       openMBVGrp->destroy();
 #endif
+
+    // Now we also delete the DynamicSystem's which exists before "reorganizing hierarchie" takes place.
+    // Note all other containers are readded to DynamicSystemSolver and deleted by the dtor of
+    // DynamicSystem (a base class of DynamicSystemSolver).
+    for (unsigned int i = 0; i < dynamicsystemPreReorganize.size(); i++)
+      delete dynamicsystemPreReorganize[i];
   }
 
   void DynamicSystemSolver::initialize() {
@@ -142,8 +146,7 @@ namespace MBSim {
       vector<Observer*> obsrvList;
       buildListOfObservers(obsrvList);
 
-      vector<DynamicSystem*> dsList;
-      buildListOfDynamicSystems(dsList);
+      buildListOfDynamicSystems(dynamicsystemPreReorganize);
 
       clearElementLists();
 
@@ -195,9 +198,6 @@ namespace MBSim {
         obsrvList[i]->setName(str.str());
         addObserver(obsrvList[i]);
       }
-
-      for (unsigned int i = 0; i < dsList.size(); i++)
-        delete dsList[i];
 
       /* matrix of body dependencies */
       SqrMat A(objList.size(), INIT, 0.);
@@ -832,18 +832,16 @@ namespace MBSim {
 
     if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
       msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
-      H5::FileSerie::deletePIDFiles();
       _exit(1);
     }
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
       msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
-      H5::FileSerie::flushAllFiles();
+      H5::File::flushAllFiles(); // flush files
       integratorExitRequest = true;
     }
 
-    if (H5::FileSerie::getFlushOnes())
-      H5::FileSerie::flushAllFiles(); // flush files ones if requested
+    H5::File::flushAllFiles(true); // flush files if requested by signal from hdf5serie reader process
   }
 
   void DynamicSystemSolver::updater(double t, int j) {
@@ -1312,16 +1310,14 @@ namespace MBSim {
 
   void DynamicSystemSolver::sigAbortHandler(int) {
     msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files and abort!" << endl;
-    H5::FileSerie::flushAllFiles();
+    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
     if (formatH5) {
-      H5::H5File file(fileName, H5F_ACC_TRUNC);
+      H5::File file(fileName, H5::File::write);
 
-      Group::writez(file);
-
-      file.close();
+      Group::writez(&file);
     }
     else {
       ofstream file(fileName.c_str());
@@ -1338,11 +1334,9 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::readz0(string fileName) {
-    H5::H5File file(fileName, H5F_ACC_RDONLY);
+    H5::File file(fileName, H5::File::read);
 
-    DynamicSystem::readz0(file);
-
-    file.close();
+    DynamicSystem::readz0(&file);
 
     READZ0 = true;
   }
@@ -1816,7 +1810,7 @@ namespace MBSim {
 
     if (++flushCount > flushEvery) {
       flushCount = 0;
-      H5::FileSerie::flushAllFiles();
+      H5::File::flushAllFiles();
     }
   }
 
@@ -1844,7 +1838,7 @@ namespace MBSim {
 
     if (++flushCount > flushEvery) {
       flushCount = 0;
-      H5::FileSerie::flushAllFiles();
+      H5::File::flushAllFiles();
     }
   }
 

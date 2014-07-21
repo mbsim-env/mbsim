@@ -199,7 +199,7 @@ namespace MBSim {
       /**
        * \return associated plot group
        */
-      H5::Group *getPlotGroup() { return plotGroup; }
+      H5::GroupBase *getPlotGroup() { return plotGroup; }
 
       /**
        * \brief Set a plot feature
@@ -312,7 +312,7 @@ namespace MBSim {
       /**
        * \brief associated plot group
        */
-      H5::Group *plotGroup;
+      H5::GroupBase *plotGroup;
 
       void updatePlotFeatures();
 

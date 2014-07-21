@@ -28,6 +28,7 @@
 #include <mbsim/observer.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
+#include <hdf5serie/simpleattribute.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -44,8 +45,6 @@ namespace MBSim {
   }
 
   Element::~Element() {
-    delete plotGroup;
-    delete plotVectorSerie;
   }
 
   void Element::plot(double t, double dt) {
@@ -84,10 +83,9 @@ namespace MBSim {
           }
           createPlotGroup();
           if(plotColumns.size()>1) {
-            plotVectorSerie=new H5::VectorSerie<double>;
             // copy plotColumns to a std::vector
             vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
-            plotVectorSerie->create(*plotGroup,"data",dummy);
+            plotVectorSerie=plotGroup->createChildObject<H5::VectorSerie<double> >("data")(dummy.size());
             plotVectorSerie->setDescription("Default dataset for class: "+getType());
           }
           plotVector.clear();
@@ -98,8 +96,8 @@ namespace MBSim {
   }
 
   void Element::createPlotGroup() {
-    plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
-    H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+    plotGroup=parent->getPlotGroup()->createChildObject<H5::Group>(name)();
+    plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: "+getType());
 
     plotColumns.insert(plotColumns.begin(), "Time");
   }
