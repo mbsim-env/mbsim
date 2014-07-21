@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "integrator.h"
+#include "analyser.h"
 #include "solver_view.h"
 #include "solver_property_dialog.h"
 #include "utils.h"
@@ -29,31 +30,34 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  IntegratorViewContextMenu::IntegratorViewContextMenu(QWidget *parent) : QMenu(parent) {
-    QAction *action = new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
+  SolverViewContextMenu::SolverViewContextMenu(QWidget *parent) : QMenu(parent) {
+    QAction *action = new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5 integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectDOPRI5Integrator()));
     addAction(action);
-    action = new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"RADAU5 integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectRADAU5Integrator()));
     addAction(action);
-    action = new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"LSODE integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODEIntegrator()));
     addAction(action);
-    action = new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"LSODAR integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectLSODARIntegrator()));
     addAction(action);
-    action = new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"Time stepping integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectTimeSteppingIntegrator()));
     addAction(action);
-    action = new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectEulerExplicitIntegrator()));
     addAction(action);
-    action = new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"RKSuite integrator", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(selectRKSuiteIntegrator()));
+    addAction(action);
+    action = new QAction(Utils::QIconCached("newobject.svg"),"Eigenanalyser", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(selectEigenanalyser()));
     addAction(action);
   }
 
-  IntegratorView::IntegratorView() : i(0) {
+  SolverView::SolverView() : i(0) {
     solver.push_back(new DOPRI5Integrator);
     solver.push_back(new RADAU5Integrator);
     solver.push_back(new LSODEIntegrator);
@@ -61,13 +65,15 @@ namespace MBSimGUI {
     solver.push_back(new TimeSteppingIntegrator);
     solver.push_back(new EulerExplicitIntegrator);
     solver.push_back(new RKSuiteIntegrator);
-    type.push_back("DOPRI5");
-    type.push_back("RADAU5");
-    type.push_back("LSODE");
-    type.push_back("LSODAR");
-    type.push_back("Time stepping");
-    type.push_back("Euler explicit");
-    type.push_back("RKSuite");
+    solver.push_back(new Eigenanalyser);
+    type.push_back("DOPRI5 integrator");
+    type.push_back("RADAU5 integrator");
+    type.push_back("LSODE integrator");
+    type.push_back("LSODAR integrator");
+    type.push_back("Time stepping integrator");
+    type.push_back("Euler explicit integrator");
+    type.push_back("RKSuite integrator");
+    type.push_back("Eigenanalyser");
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
 
@@ -75,18 +81,18 @@ namespace MBSimGUI {
     setReadOnly(true);
   }
 
-  IntegratorView::~IntegratorView() {
+  SolverView::~SolverView() {
     for(int i=0; i<solver.size(); i++)
       delete solver[i];
   }
 
-  void IntegratorView::openContextMenu() {
+  void SolverView::openContextMenu() {
     QMenu *menu = createContextMenu();
     menu->exec(QCursor::pos());
     delete menu;
   }
 
-  void IntegratorView::setSolver(Solver *solver_) {
+  void SolverView::setSolver(Solver *solver_) {
     if(dynamic_cast<DOPRI5Integrator*>(solver_))
       i=0;
     else if(dynamic_cast<RADAU5Integrator*>(solver_))
@@ -101,6 +107,8 @@ namespace MBSimGUI {
       i=5;
     else if(dynamic_cast<RKSuiteIntegrator*>(solver_))
       i=6;
+    else if(dynamic_cast<Eigenanalyser*>(solver_))
+      i=7;
     delete solver[i];
     solver[i] = solver_;
     updateText();

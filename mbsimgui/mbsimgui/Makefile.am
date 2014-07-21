@@ -37,6 +37,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   linear_transfer_system.cc \
 		   observer.cc \
 		   integrator.cc \
+		   analyser.cc \
 		   parameter.cc \
 		   objectfactory.cc \
 		   treeitem.cc \

@@ -141,10 +141,12 @@ namespace MBSimGUI {
     actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, SLOT(saveMBSimH5DataAs()));
     actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
     actionSaveStateVectorAs = menu->addAction("Export state vector", this, SLOT(saveStateVectorAs()));
+    actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, SLOT(saveEigenanalysisAs()));
     actionSaveDataAs->setDisabled(true);
     actionSaveMBSimH5DataAs->setDisabled(true);
     actionSaveOpenMBVDataAs->setDisabled(true);
     actionSaveStateVectorAs->setDisabled(true);
+    actionSaveEigenanalysisAs->setDisabled(true);
     menuBar()->addMenu(menu);
 
     menuBar()->addSeparator();
@@ -186,7 +188,7 @@ namespace MBSimGUI {
     embeddingList->setColumnWidth(0,150);
     embeddingList->setColumnWidth(1,200);
 
-    integratorView = new IntegratorView;
+    solverView = new SolverView;
 
     connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
     connect(embeddingList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
@@ -214,9 +216,9 @@ namespace MBSimGUI {
     widgetLayout3->addWidget(parameterListFilter, 0, 0);
     widgetLayout3->addWidget(embeddingList, 1, 0);
 
-    QDockWidget *dockWidget2 = new QDockWidget("Integrator");
+    QDockWidget *dockWidget2 = new QDockWidget("Solver");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
-    dockWidget2->setWidget(integratorView);
+    dockWidget2->setWidget(solverView);
 
     //tabifyDockWidget(dockWidget3,dockWidget4);
     //tabifyDockWidget(dockWidget2,dockWidget3);
@@ -529,7 +531,7 @@ namespace MBSimGUI {
         solver=ObjectFactory::getInstance()->createSolver(ele1);
         solver->initializeUsingXML(ele1);
       }
-      integratorView->setSolver(solver);
+      solverView->setSolver(solver);
 
       actionSaveProject->setDisabled(false);
 
@@ -571,7 +573,7 @@ namespace MBSimGUI {
       DynamicSystemSolver *dss = static_cast<DynamicSystemSolver*>(model->getItem(index)->getItemData());
 
       Embed<DynamicSystemSolver>::writeXML(dss,ele0);
-      Solver *solver = integratorView->getSolver();
+      Solver *solver = solverView->getSolver();
       if(not(absolutePath) and solver->isEmbedded())
         solver->writeXMLFileEmbed(ele0);
       else
@@ -607,6 +609,7 @@ namespace MBSimGUI {
    actionSaveMBSimH5DataAs->setDisabled(true);
    actionSaveOpenMBVDataAs->setDisabled(true);
    actionSaveStateVectorAs->setDisabled(true);
+   actionSaveEigenanalysisAs->setDisabled(true);
 
    EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
    QModelIndex index = pmodel->index(0,0);
@@ -626,37 +629,41 @@ namespace MBSimGUI {
  }
 
   void MainWindow::selectIntegrator() {
-    QMenu *menu = integratorView->createContextMenu();
+    QMenu *menu = solverView->createContextMenu();
     menu->exec(QCursor::pos());
     delete menu;
   }
 
   void MainWindow::selectDOPRI5Integrator() {
-    integratorView->setSolver(0);
+    solverView->setSolver(0);
   }
 
   void MainWindow::selectRADAU5Integrator() {
-    integratorView->setSolver(1);
+    solverView->setSolver(1);
   }
 
   void MainWindow::selectLSODEIntegrator() {
-    integratorView->setSolver(2);
+    solverView->setSolver(2);
   }
 
   void MainWindow::selectLSODARIntegrator() {
-    integratorView->setSolver(3);
+    solverView->setSolver(3);
   }
 
   void MainWindow::selectTimeSteppingIntegrator() {
-    integratorView->setSolver(4);
+    solverView->setSolver(4);
   }
 
   void MainWindow::selectEulerExplicitIntegrator() {
-    integratorView->setSolver(5);
+    solverView->setSolver(5);
   }
 
   void MainWindow::selectRKSuiteIntegrator() {
-    integratorView->setSolver(6);
+    solverView->setSolver(6);
+  }
+
+  void MainWindow::selectEigenanalyser() {
+    solverView->setSolver(7);
   }
 
   // update model parameters including additional paramters from paramList
@@ -779,11 +786,26 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statevector.asc",file);
   }
 
+  void MainWindow::saveEigenanalysisAs() {
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = model->index(0,0);
+    QString file=QFileDialog::getSaveFileName(0, "Export eigenanalysis file", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".eigenanalysis.mat", "mat files (*.eigenanalysis.mat)");
+    if(file!="") {
+      saveEigenanalysis(file);
+    }
+  }
+
+  void MainWindow::saveEigenanalysis(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/out0.eigenanalysis.mat",file);
+  }
+
   void MainWindow::mbsimxml(int task) {
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
     DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-    Solver *solver=integratorView->getSolver();
+    Solver *solver=solverView->getSolver();
     if(!dss || !solver)
       return;
 
@@ -837,6 +859,8 @@ namespace MBSimGUI {
     actionSaveOpenMBVDataAs->setDisabled(false);
     if(saveFinalStateVector)
       actionSaveStateVectorAs->setDisabled(false);
+    if(solverView->getSolverNumber()==7)
+      actionSaveEigenanalysisAs->setDisabled(false);
     actionSimulate->setDisabled(true);
     actionOpenMBV->setDisabled(true);
     actionH5plotserie->setDisabled(true);

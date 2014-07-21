@@ -28,22 +28,23 @@ namespace MBSimGUI {
   class Solver;
   class SolverPropertyDialog;
 
-  class IntegratorViewContextMenu : public QMenu {
+  class SolverViewContextMenu : public QMenu {
 
     public:
-      IntegratorViewContextMenu(QWidget * parent = 0);
+      SolverViewContextMenu(QWidget * parent = 0);
   };
 
-  class IntegratorView : public QLineEdit {
+  class SolverView : public QLineEdit {
     Q_OBJECT
     public:
-      IntegratorView();
-      ~IntegratorView();
+      SolverView();
+      ~SolverView();
+      int getSolverNumber() const {return i;}
       void setSolver(int i_) {i = i_; updateText();}
       Solver* getSolver() {return solver[i];}
       void setSolver(Solver *solver_);
       void updateText() {setText(type[i]);}
-      QMenu* createContextMenu() {return new IntegratorViewContextMenu;}
+      QMenu* createContextMenu() {return new SolverViewContextMenu;}
     protected:
       std::vector<Solver*> solver;
       std::vector<QString> type;
@@ -55,9 +56,9 @@ namespace MBSimGUI {
   class IntegratorMouseEvent : public QObject {
     Q_OBJECT
     public:
-      IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
+      IntegratorMouseEvent(SolverView* view_) : view(view_) {}
     protected:
-      IntegratorView *view;
+      SolverView *view;
       SolverPropertyDialog *editor;
       bool eventFilter(QObject *obj, QEvent *event);
       protected slots:
