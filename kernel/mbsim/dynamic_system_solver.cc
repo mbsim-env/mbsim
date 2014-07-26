@@ -426,6 +426,7 @@ namespace MBSim {
       if (getPlotFeature(plotRecursive) == enabled)
         openMBVGrp->write(true, truncateSimulationFiles);
 #endif
+      H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
     }
     else if (stage == calculateLocalInitialValues) {
@@ -841,7 +842,7 @@ namespace MBSim {
       integratorExitRequest = true;
     }
 
-    H5::File::flushAllFiles(true); // flush files if requested by signal from hdf5serie reader process
+    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
   }
 
   void DynamicSystemSolver::updater(double t, int j) {
