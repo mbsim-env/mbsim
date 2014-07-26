@@ -86,6 +86,7 @@ namespace MBSim {
             // copy plotColumns to a std::vector
             vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
             plotVectorSerie=plotGroup->createChildObject<H5::VectorSerie<double> >("data")(dummy.size());
+            plotVectorSerie->setColumnLabel(dummy);
             plotVectorSerie->setDescription("Default dataset for class: "+getType());
           }
           plotVector.clear();
