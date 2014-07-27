@@ -710,7 +710,7 @@ namespace MBSim {
         }
         else {
           for (int j = 0; j < 1 + getFrictionDirections(); j++)
-            plotVector.push_back(NAN); //gd
+            plotVector.push_back(numeric_limits<double>::quiet_NaN()); //gd
         }
       }
       if (getPlotFeature(generalizedLinkForce) == enabled) {

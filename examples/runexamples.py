@@ -647,7 +647,7 @@ def runExample(resultQueue, example):
         resultStr+='<td>%.3f</td>'%dt
       # dt differs more then 10% from refTime => display in yellow color
       else:
-        resultStr+='<td><span style="color:orange">%.3f</span></td>'%dt
+        resultStr+='<td><span style="color:%s">%.3f</span></td>'%("green" if dt<refTime else "orange", dt)
     if not math.isinf(refTime):
       resultStr+='<td>%.3f</td>'%refTime
     else:
@@ -1022,7 +1022,8 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       nrAll[0]+=1
       # if if curObj[:,column] does not exitst
       if column>=curObjCols:
-        printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
+        printLabel='<span style="color:red">&lt;label '+printLabel+' not in cur.&gt;</span>'
+        nrFailed[0]+=1
       else:
         # compare
         if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
@@ -1036,7 +1037,8 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       if column<curObjCols and refLabels[column]==curLabels[column]:
         print('<td>'+printLabel+'</td>', file=compareFD)
       else:
-        print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
+        print('<td><span style="color:red">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
+        nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         #check for NaN/Inf # check for NaN and Inf
         #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:

@@ -833,7 +833,7 @@ namespace MBSim {
 
     if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
       msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
-      _exit(1);
+      exit(1);
     }
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
