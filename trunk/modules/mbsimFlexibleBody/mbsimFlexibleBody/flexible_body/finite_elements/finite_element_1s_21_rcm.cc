@@ -229,6 +229,19 @@ namespace MBSimFlexibleBody {
     return (EA*Power(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2,2) + 35280*EI*(640*Power(aL,2) + 640*Power(aR,2) + 8*aR*(11*bL - 43*bR)*l0 - 8*aL*(32*aR + 43*bL*l0 - 11*bR*l0) + l0h2*(57*Power(bL,2) - 30*bL*bR + 57*Power(bR,2) - 10*(bL + bR)*l0*wss0 + 5*l0h2*Power(wss0,2))))/(352800.*l0h3);
   }
 
+  double FiniteElement1s21RCM::computePhysicalStrain(const Vec& qElement) {
+    Vec qLocal(8, fmatvec::NONINIT);
+
+    double &eps = qLocal(3);
+    double &aL = qLocal(4);
+    double &bL = qLocal(5);
+    double &aR = qLocal(6);
+    double &bR = qLocal(7);
+
+    BuildqLocal(qElement, qLocal);
+    return 32 * (17 * Power(aL, 2) - 2 * aL * aR + 17 * Power(aR, 2)) * (1 + eps) - 12 * (8 * aL * bL - 3 * aR * bL - 3 * aL * bR + 8 * aR * bR) * (1 + eps) * l0 + 3 * (140 * eps + 3 * (3 * Power(bL, 2) - 2 * bL * bR + 3 * Power(bR, 2)) * (1 + eps)) * l0h2;
+  }
+
   void FiniteElement1s21RCM::setCurlRadius(double R) {
     if (fabs(R) < epsroot()) throw MBSimError("CurlRadius must not be 0!\n");
     wss0 = 1/R;
@@ -470,14 +483,14 @@ namespace MBSimFlexibleBody {
     dphih = (phi1 - phi2)/2.0;
     sphih = (phi1 + phi2)/2.0;
 
-    qLocal(0) = (Sec(dphih)*(36*(x1 + x2)*cos(dphih) + 36*(y1 - y2)*sin(dphih) - (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*sin(sphih)))/72.;
-    qLocal(1) = ((64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*cos(sphih)*Sec(dphih) + 36*(y1 + y2 + (-x1 + x2)*tan(dphih)))/72.;
-    qLocal(2) = (2*(-8*a1 + 8*a2 + l0*2.0*sphih) + 11*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/(4.*l0);
-    qLocal(3) = -(Sec(dphih)*(36*l0*cos(dphih) + 36*(x1 - x2)*cos(sphih) - (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*sin(dphih) + 36*(y1 - y2)*sin(sphih)))/(36.*l0);
-    qLocal(4) = (64*a1 + 64*a2 + 5*l0*(-2.*dphih) + 36*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/72.;
-    qLocal(5) = (2*(-8*a1 + 8*a2 + l0*(-2.*dphih)) + 11*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/(4.*l0);
-    qLocal(6) = (64*a1 + 64*a2 + 5*l0*(-2.*dphih)  + 36*Sec(dphih)*((y1 - y2)*cos(sphih) + (-x1 + x2)*sin(sphih)))/72.;
-    qLocal(7) = (2*(8*a1 - 8*a2 +  l0*(-2.*dphih)) + 11*Sec(dphih)*((y1 - y2)*cos(sphih) + (-x1 + x2)*sin(sphih)))/(4.*l0);
+    qLocal(0) = (Sec(dphih)*(36*(x1 + x2)*cos(dphih) + 36*(y1 - y2)*sin(dphih) - (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*sin(sphih)))/72.; //xS
+    qLocal(1) = ((64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*cos(sphih)*Sec(dphih) + 36*(y1 + y2 + (-x1 + x2)*tan(dphih)))/72.; //yS
+    qLocal(2) = (2*(-8*a1 + 8*a2 + l0*2.0*sphih) + 11*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/(4.*l0); //phiS
+    qLocal(3) = -(Sec(dphih)*(36*l0*cos(dphih) + 36*(x1 - x2)*cos(sphih) - (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*sin(dphih) + 36*(y1 - y2)*sin(sphih)))/(36.*l0); //eps
+    qLocal(4) = (64*a1 + 64*a2 + 5*l0*(-2.*dphih) + 36*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/72.; //aL
+    qLocal(5) = (2*(-8*a1 + 8*a2 + l0*(-2.*dphih)) + 11*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/(4.*l0); //bL
+    qLocal(6) = (64*a1 + 64*a2 + 5*l0*(-2.*dphih)  + 36*Sec(dphih)*((y1 - y2)*cos(sphih) + (-x1 + x2)*sin(sphih)))/72.; //aR
+    qLocal(7) = (2*(8*a1 - 8*a2 +  l0*(-2.*dphih)) + 11*Sec(dphih)*((y1 - y2)*cos(sphih) + (-x1 + x2)*sin(sphih)))/(4.*l0); //bR
   }
 
   void FiniteElement1s21RCM::BuildJacobi(const Vec& qElement, SqrMat& Jeg) {

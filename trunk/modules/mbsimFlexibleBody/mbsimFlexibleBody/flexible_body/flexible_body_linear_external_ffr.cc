@@ -18,7 +18,7 @@
  */
 
 #include<config.h>
-#include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
+#include "flexible_body_linear_external_ffr.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
