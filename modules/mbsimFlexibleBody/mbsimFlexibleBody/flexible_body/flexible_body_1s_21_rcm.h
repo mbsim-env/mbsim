@@ -111,6 +111,11 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec computeState(double x);
 
+      /*!
+       * \brief computes the phyiscal strain (compare Zander p.71) of the element, defined by the global position
+       */
+      double computePhysicalStrain(double sGlobal);
+
       /**
        * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring
        * \param angle of slope in case of cantilever

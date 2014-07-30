@@ -130,6 +130,9 @@ namespace MBSim {
   void SingleContact::updateg(double t) {
     if (g.size())
       contactKinematics->updateg(g, cpData);
+    else {
+      cout << "No contact" << endl;
+    }
   }
 
   void SingleContact::updategd(double t) {

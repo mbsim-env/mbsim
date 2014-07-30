@@ -71,6 +71,7 @@ namespace MBSimFlexibleBody {
       virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
+      virtual double computePhysicalStrain(const fmatvec::Vec& qElement);
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
       virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
       virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
