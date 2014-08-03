@@ -108,6 +108,7 @@ namespace MBSim {
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
     signal(SIGABRT, sigAbortHandler);
+    signal(SIGSEGV, sigSegfaultHandler);
 #endif
     for (int stage = 0; stage < LASTINITSTAGE; stage++) {
       msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
@@ -1310,8 +1311,17 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::sigAbortHandler(int) {
-    msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files and abort!" << endl;
+    msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files (this may crash) and abort!" << endl;
     H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
+    signal(SIGABRT, SIG_DFL);
+    raise(SIGABRT);
+  }
+
+  void DynamicSystemSolver::sigSegfaultHandler(int) {
+    msgStatic(Info) << "MBSim: Received segmentation fault signal! Flushing HDF5 files (this may crash again) and abort!" << endl;
+    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
+    signal(SIGSEGV, SIG_DFL);
+    raise(SIGSEGV);
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
