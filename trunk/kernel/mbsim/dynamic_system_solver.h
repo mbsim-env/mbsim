@@ -428,6 +428,8 @@ namespace MBSim {
        */
       static void sigAbortHandler(int);
 
+      static void sigSegfaultHandler(int);
+
       // TODO just for testing
       void setPartialEventDrivenSolver(bool peds_) { peds = peds_; }
 
