@@ -23,6 +23,7 @@
 #include "mbsim/utils/eps.h"
 #include "fmatvec/linear_algebra_complex.h"
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/utils/eps.h"
 #include <iostream>
 
 using namespace std;
@@ -70,7 +71,7 @@ namespace MBSimAnalyser {
   void Eigenanalyser::computeEigenfrequencies() {
     f.clear();
     for (int i=0; i<w.size(); i++) {
-      if((i < w.size()-1) and (w(i+1)==conj(w(i)))) {
+      if((abs(imag(w(i))) > macheps()) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
         f.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
         i++;
       }
@@ -118,17 +119,21 @@ namespace MBSimAnalyser {
       throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
+    Vector<Ref, complex<double> > wbuf;
+    wbuf = w;
 
     Vec z;
     double t0 = tStart;
     for(int j=0; j<f.size(); j++) {
       c(f[j].second) = complex<double>(0,A);
       c(f[j].second+1) = complex<double>(0,-A);
+      real(wbuf(f[j].second)) = 0;
+      real(wbuf(f[j].second+1)) = 0;
       double T=10*1./f[j].first;
       for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
         deltaz.init(0);
-        for(int i=0; i<w.size(); i++)
-          deltaz += c(i)*V.col(i)*exp(w(i)*t); 
+        for(int i=0; i<wbuf.size(); i++)
+          deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
         z = zEq + fromComplex(deltaz);
         system->plot(z,t);
       }
@@ -146,15 +151,19 @@ namespace MBSimAnalyser {
       throw MBSimError("ERROR in Eigenanalysis: frequency number out of range!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
+    Vector<Ref, complex<double> > wbuf;
+    wbuf = w;
 
     Vec z;
     c(f[n-1].second) = complex<double>(0,A);
     c(f[n-1].second+1) = complex<double>(0,-A);
+    real(wbuf(f[n-1].second)) = 0;
+    real(wbuf(f[n-1].second+1)) = 0;
     double T=1./f[n-1].first;
     for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
       deltaz.init(0);
-      for(int i=0; i<w.size(); i++)
-        deltaz += c(i)*V.col(i)*exp(w(i)*t); 
+      for(int i=0; i<wbuf.size(); i++)
+        deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
       z = zEq + fromComplex(deltaz);
       system->plot(z,t);
     }
