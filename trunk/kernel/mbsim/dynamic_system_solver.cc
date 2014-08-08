@@ -1311,16 +1311,16 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::sigAbortHandler(int) {
+    signal(SIGABRT, SIG_DFL);
     msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files (this may crash) and abort!" << endl;
     H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
-    signal(SIGABRT, SIG_DFL);
     raise(SIGABRT);
   }
 
   void DynamicSystemSolver::sigSegfaultHandler(int) {
+    signal(SIGSEGV, SIG_DFL);
     msgStatic(Info) << "MBSim: Received segmentation fault signal! Flushing HDF5 files (this may crash again) and abort!" << endl;
     H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
-    signal(SIGSEGV, SIG_DFL);
     raise(SIGSEGV);
   }
 
