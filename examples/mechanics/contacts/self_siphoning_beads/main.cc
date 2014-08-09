@@ -15,15 +15,13 @@ int main(int argc, char *argv[]) {
   SelfSiphoningBeats *sys;
   TimeSteppingSSCIntegrator *integrator;
 
-  srand (static_cast <unsigned> (time(0)));
-
-  int numEles = 200;
+  int numEles = 30;
 
   /* Assembly */
   {
     integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 1;
+    double endTime = 0.2;
 
     sys = new SelfSiphoningBeats("Metallkette_Assembly", numEles, 1e-6);
     sys->addEmptyLeader();
@@ -32,8 +30,8 @@ int main(int argc, char *argv[]) {
 
     integrator->setPlotStepSize(plotStepSize);
     integrator->setEndTime(endTime);
-    integrator->setAbsoluteTolerance(1e-1);
-    integrator->setRelativeTolerance(1e-2);
+    integrator->setAbsoluteTolerance(1e-4);
+    integrator->setRelativeTolerance(1e-5);
 
     boost::timer timer;
 
@@ -70,8 +68,8 @@ int main(int argc, char *argv[]) {
 
     integrator->setPlotStepSize(plotStepSize);
     integrator->setEndTime(endTime);
-    integrator->setAbsoluteTolerance(1e-2);
-    integrator->setRelativeTolerance(1e-3);
+    integrator->setAbsoluteTolerance(1e-4);
+    integrator->setRelativeTolerance(1e-5);
 
     boost::timer timer;
 
@@ -94,7 +92,7 @@ int main(int argc, char *argv[]) {
   {
     integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.5;
+    double endTime = 0.1;
 
     sys = new SelfSiphoningBeats("Metallkette", numEles);
 
@@ -105,8 +103,8 @@ int main(int argc, char *argv[]) {
 
     integrator->setPlotStepSize(plotStepSize);
     integrator->setEndTime(endTime);
-    integrator->setAbsoluteTolerance(1e-2);
-    integrator->setRelativeTolerance(1e-3);
+    integrator->setAbsoluteTolerance(1e-4);
+    integrator->setRelativeTolerance(1e-5);
 
     boost::timer timer;
 
