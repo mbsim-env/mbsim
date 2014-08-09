@@ -4,6 +4,7 @@
 
 #include <mbsim/environment.h>
 #include <mbsim/rigid_body.h>
+#include <mbsim/contours/frustum.h>
 #include <mbsim/contours/sphere.h>
 #include <mbsim/contours/rectangle.h>
 #include <mbsim/joint.h>
@@ -17,14 +18,27 @@
 #include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/invisiblebody.h>
+#include "openmbvcppinterface/frustum.h"
+#include "openmbvcppinterface/sphere.h"
+#include "openmbvcppinterface/ivbody.h"
+#endif
+
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace CasADi;
 
-System::System(const string &projectName, int elements) :
+double createAngle() {
+  return M_PI / 200 * (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5);
+}
+
+SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, double isoDamping) :
     DynamicSystemSolver(projectName), elements(elements) {
   if (elements) {
+    const double R = 1.0 * (radius + distance / 2. / sin(angle / 2));
+
     Vec grav(3);
     grav(1) = -9.81;
     MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
@@ -41,15 +55,49 @@ System::System(const string &projectName, int elements) :
     upperTable->enableOpenMBV(true, 100);
     addContour(upperTable);
 
+    Vec3 rCup;
+    rCup(0) = -1.5 * radius;
+    rCup(2) = -R + radius;
+    FixedRelativeFrame * refCup = new FixedRelativeFrame("CupFrame", rCup, BasicRotAIKz(0));
+    addFrame(refCup);
+
+    Frustum * cup = new Frustum("Becher");
+    cup->setFrameOfReference(refCup);
+    Vec2 radii(INIT, R);
+    cup->setRadii(radii);
+    cup->setHeight(R);
+    cup->enableOpenMBV(_transparency = 0.5);
+    cup->setOutCont(false);
+    addContour(cup);
+
     /*Lower Plane*/
     Vec3 rPlane;
-    rPlane(1) = -8e-1;
-    FixedRelativeFrame * refUnten = new FixedRelativeFrame("Unten - Referenz", rPlane, BasicRotAIKz(M_PI_2));
+    rPlane(1) = -1e-1;
+    FixedRelativeFrame * refUnten = new FixedRelativeFrame("Table - Reference", rPlane, BasicRotAIKz(M_PI_2));
     addFrame(refUnten);
+    RigidBody* table = new RigidBody("Table");
+    addObject(table);
+
+    table->setFrameOfReference(refUnten);
+    table->setMass(1.);
+    table->setInertiaTensor(SymMat3(EYE));
+
     Plane * lowerTable = new Plane("Unten");
-    lowerTable->setFrameOfReference(refUnten);
-    lowerTable->enableOpenMBV(true, 0.1);
-    addContour(lowerTable);
+    lowerTable->setFrameOfReference(table->getFrameC());
+    table->addContour(lowerTable);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+
+    OpenMBV::IvBody *v_table = new OpenMBV::IvBody;
+    v_table->setIvFileName("objects/tisch.wrl");
+    v_table->setScaleFactor(0.004);
+    v_table->setDiffuseColor(Vec3(INIT,1.));
+    v_table->setName("Table");
+    v_table->setInitialRotation(0.,M_PI_2,M_PI_2);
+    v_table->setInitialTranslation(0.,-0.1,0);
+
+    table->setOpenMBVRigidBody(v_table);
+#endif
 
     /*Prepare Contact*/
     Contact* ballOben = new Contact("Ball_Boden");
@@ -58,7 +106,7 @@ System::System(const string &projectName, int elements) :
       ballOben->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
     else {
-      ballOben->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, damping)));
+      ballOben->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, isoDamping)));
     }
     addLink(ballOben);
 
@@ -68,9 +116,19 @@ System::System(const string &projectName, int elements) :
       ballUnten->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
     else {
-      ballUnten->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100*damping)));
+      ballUnten->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100 * isoDamping)));
     }
     addLink(ballUnten);
+
+    Contact* ballCup = new Contact("Ball_Cup");
+    if (not ODE) {
+      ballCup->setNormalForceLaw(new UnilateralConstraint());
+      ballCup->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    }
+    else {
+      ballCup->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(stiffness, 100 * isoDamping)));
+    }
+    addLink(ballCup);
 
     /*Balls*/
 
@@ -90,13 +148,17 @@ System::System(const string &projectName, int elements) :
       Sphere * sphere = new Sphere("Kugel");
       sphere->setFrameOfReference(balls[ele]->getFrameC());
       sphere->setRadius(radius);
-      sphere->enableOpenMBV(true);
+      Vec3 color(INIT, 1.);
+      color(0) = (double) (ele) / (elements - 1);
+      sphere->enableOpenMBV(_diffuseColor = color);
       balls[ele]->addContour(sphere);
 
       //add contact
       ballOben->connect(upperTable, sphere);
 
       ballUnten->connect(lowerTable, sphere);
+
+      ballCup->connect(cup, sphere);
 
       //Add Frame for next body
       Vec3 r;
@@ -106,7 +168,7 @@ System::System(const string &projectName, int elements) :
 
       if (ele > 1) {
         IsotropicRotationalSpringDamper * iso = new IsotropicRotationalSpringDamper("Iso" + numtostr(ele));
-        iso->setParameters(0, 1e-7, 0);
+        iso->setParameters(0, isoDamping, 0);
         iso->setMomentDirection(Mat("[0,0;1,0;0,1]"));
         iso->connect(balls[ele - 1]->getFrameC(), balls[ele]->getFrameC());
         addLink(iso);
@@ -126,20 +188,53 @@ System::System(const string &projectName, int elements) :
     //initialize first straight part
     Vec q0(5, INIT, 0.);
     q0(0) = 0;
-    q0(1) = radius;
-    q0(3) = M_PI / 10.;
+    q0(1) = radius + elements * distance;
+    q0(2) = -R;
+    q0(4) = -M_PI_2;
     balls[0]->setInitialGeneralizedPosition(q0);
 
     //initialize circle
+    double ang1 = createAngle();
+    double ang2 = createAngle();
     for (int ele = 1; ele < elements; ele++) {
-      Vec3 abc;
-      abc(0) = M_PI / 10.;
+      Vec2 abc;
+      abc(0) = ang1;
+      abc(1) = ang2;
+      if(ele%2) {
+        ang1 = createAngle();
+        ang2 = createAngle();
+      }
+      else {
+        ang1 = -ang1;
+        ang2 = -ang2;
+      }
       balls[ele]->setInitialGeneralizedPosition(abc);
     }
   }
 }
 
-void System::addTrajectory(double tEnd) {
+void SelfSiphoningBeats::addEmptyLeader() {
+  RigidBody* leader = new RigidBody("Leader");
+  leader->setMass(1e-8);
+  leader->setInertiaTensor(1e-8 * SymMat3(EYE));
+  leader->setFrameOfReference(getFrameI());
+  leader->setFrameForKinematics(leader->getFrameC());
+  addObject(leader);
+
+  Joint* joint = new Joint("Joint");
+  if (elements) {
+    Joint* joint = new Joint("Joint");
+    joint->setForceDirection(Mat3x3(EYE));
+    joint->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(0, 0)));
+
+    joint->connect(leader->getFrameC(), balls[0]->getFrameC());
+
+    addLink(joint);
+  }
+
+}
+
+void SelfSiphoningBeats::addTrajectory(double tEnd) {
 
   RigidBody* leader = new RigidBody("Leader");
   leader->setMass(1e-8);
