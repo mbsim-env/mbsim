@@ -112,6 +112,13 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec computeData(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
 
+      /*!
+       * \brief compute the physical strain as defined in Schindler2010, p. 25, eq. (2.52)
+       * \param global coordinates
+       * \param global velocities
+       */
+      double computePhysicalStrain(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
+
     private:
       /**
        * \brief length of finite element

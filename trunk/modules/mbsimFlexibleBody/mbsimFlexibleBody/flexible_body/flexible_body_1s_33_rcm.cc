@@ -376,6 +376,13 @@ namespace MBSimFlexibleBody {
     return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeState(qElement[currentElement], uElement[currentElement], sLocal);
   }
 
+  double FlexibleBody1s33RCM::computePhysicalStrain(const double sGlobal) {
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computePhysicalStrain(qElement[currentElement], uElement[currentElement]);
+  }
+
   void FlexibleBody1s33RCM::initInfo() {
     FlexibleBodyContinuum<double>::init(unknownStage);
     l0 = L / Elements;

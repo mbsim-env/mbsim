@@ -378,6 +378,13 @@ namespace MBSimFlexibleBody {
     return Data.copy();
   }
 
+  double FiniteElement1s33RCM::computePhysicalStrain(const Vec& qG,const Vec& qGt) {
+    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
+      wt->computeintD(qG,qGt);
+
+    return tf->getepstil() + (wt->getIwh1xwh1x() + wt->getIwh2xwh2x()) / (2. * l0);
+  }
+
   void FiniteElement1s33RCM::computedrS() {
     drS(0,0) = 1.; 
     drS(1,1) = 1.; 
