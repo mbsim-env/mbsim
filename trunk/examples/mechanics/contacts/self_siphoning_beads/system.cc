@@ -30,8 +30,8 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace CasADi;
 
-double createAngle() {
-  return M_PI / 200 * (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5);
+double createAngle(double i) {
+  return M_PI / 200 * sin(i);
 }
 
 SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, double isoDamping) :
@@ -194,15 +194,15 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     balls[0]->setInitialGeneralizedPosition(q0);
 
     //initialize circle
-    double ang1 = createAngle();
-    double ang2 = createAngle();
+    double ang1 = createAngle(0);
+    double ang2 = createAngle(0);
     for (int ele = 1; ele < elements; ele++) {
       Vec2 abc;
       abc(0) = ang1;
       abc(1) = ang2;
       if(ele%2) {
-        ang1 = createAngle();
-        ang2 = createAngle();
+        ang1 = createAngle(ele);
+        ang2 = createAngle(ele);
       }
       else {
         ang1 = -ang1;
