@@ -104,7 +104,13 @@ namespace MBSimFlexibleBody {
        * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec computeState(double x);
+      fmatvec::Vec computeState(double sGlobal);
+
+      /*!
+       * \brief compute the physical strain of the element
+       * \param Lagrangian coordinate
+       */
+      double computePhysicalStrain(const double sGlobal);
 
       /**
        * initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
