@@ -12,24 +12,66 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-  System *sys;
-  LSODEIntegrator *integrator;
+  SelfSiphoningBeats *sys;
+  TimeSteppingSSCIntegrator *integrator;
 
-  int numEles = 100;
+  srand (static_cast <unsigned> (time(0)));
 
-  //PREINTEGRATION
+  int numEles = 200;
+
+  /* Assembly */
   {
-    integrator = new LSODEIntegrator;
+    integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.04;
+    double endTime = 1;
 
-    sys = new System("Metallkette_PreInit", numEles);
-    sys->addTrajectory(endTime);
+    sys = new SelfSiphoningBeats("Metallkette_Assembly", numEles, 1e-6);
+    sys->addEmptyLeader();
 
     sys->initialize();
 
     integrator->setPlotStepSize(plotStepSize);
     integrator->setEndTime(endTime);
+    integrator->setAbsoluteTolerance(1e-1);
+    integrator->setRelativeTolerance(1e-2);
+
+    boost::timer timer;
+
+    integrator->integrate(*sys);
+    Vec u = sys->getu();
+    u.init(fmatvec::INIT,0.);
+    sys->getu() = u.copy();
+    sys->writez("Assembly.h5");
+
+    double elapsedIntegrationTime = timer.elapsed();
+
+    sys->closePlot();
+
+    cout << "******** Results of speed are:****************" << endl;
+    cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
+    cout << "**********************************************" << endl;
+
+    delete sys;
+    delete integrator;
+
+  }
+
+  //PREINTEGRATION
+  {
+    integrator = new TimeSteppingSSCIntegrator;
+    double plotStepSize = 1e-3;
+    double endTime = 0.04;
+
+    sys = new SelfSiphoningBeats("Metallkette_PreInit", numEles);
+    sys->addTrajectory(endTime);
+
+    sys->initialize();
+    sys->readz0("Assembly.h5");
+
+    integrator->setPlotStepSize(plotStepSize);
+    integrator->setEndTime(endTime);
+    integrator->setAbsoluteTolerance(1e-2);
+    integrator->setRelativeTolerance(1e-3);
 
     boost::timer timer;
 
@@ -50,11 +92,11 @@ int main(int argc, char *argv[]) {
 
   //MAIN INTEGRATION
   {
-    integrator = new LSODEIntegrator;
+    integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.03;
+    double endTime = 0.5;
 
-    sys = new System("Metallkette", numEles);
+    sys = new SelfSiphoningBeats("Metallkette", numEles);
 
     sys->initialize();
 
@@ -63,6 +105,8 @@ int main(int argc, char *argv[]) {
 
     integrator->setPlotStepSize(plotStepSize);
     integrator->setEndTime(endTime);
+    integrator->setAbsoluteTolerance(1e-2);
+    integrator->setRelativeTolerance(1e-3);
 
     boost::timer timer;
 
@@ -79,8 +123,6 @@ int main(int argc, char *argv[]) {
     delete sys;
     delete integrator;
   }
-
-
 
   cout << "finished" << endl;
   return 0;
