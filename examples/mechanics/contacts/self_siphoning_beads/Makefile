@@ -11,10 +11,14 @@ libsources =
 objects = $(sources:.cc=.o)
 
 OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -g -O3 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim` 
+CPPFLAGS= -g -O0 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim` 
+LDFLAGS=`pkg-config --libs-only-L mbsim | sed 's/-L/-Wl,-rpath,/g'`
+LIBFLAGS=`pkg-config --libs mbsim`
+
+refresh : clean $(Target)
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsim` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) $(LDFLAGS) $(LIBFLAGS)
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
