@@ -96,7 +96,7 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
-CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
 CPPFLAGS_OLD=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
