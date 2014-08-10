@@ -13,7 +13,7 @@ libutils_la_SOURCES = colors.cc\
 utilsincludedir = $(includedir)/mbsim/utils
 
 libutils_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
-libutils_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libutils_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 
 utilsinclude_HEADERS = colors.h\
                        eps.h\
@@ -34,5 +34,6 @@ if COND_CASADI
 endif
 noinst_PROGRAMS = $(MAYBE_CPPCASADITOXML)
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
-cppCasADiToXML_LDADD = libutils.la
+cppCasADiToXML_LDADD = libutils.la 
+cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed
 cppCasADiToXML_CPPFLAGS = $(libutils_la_CPPFLAGS)
