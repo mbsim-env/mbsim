@@ -351,9 +351,9 @@ def main():
   print('  <base id="BASE" href="." target="_self"/>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body style="margin:1em">', file=mainFD)
-  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>', file=mainFD)
-  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>', file=mainFD)
-  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>', file=mainFD)
+  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
+  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=mainFD)
+  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=mainFD)
   print('<script type="text/javascript">', file=mainFD)
   print('  $(document).ready(function() {', file=mainFD)
   print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': []});", file=mainFD)
@@ -379,14 +379,14 @@ def main():
   if args.currentID!=0:
     navA="/../.."
     navB="/runexamples_report/result_current"
-  print('  <dt>Navigate</dt><dd><a class="btn btn-info btn-xs" href="..%s/result_%010d%s/index.html"><span class="glyphicon glyphicon-step-backward"></span> previous</a>'%(navA, currentID-1, navB), file=mainFD)
-  print('                    <a class="btn btn-info btn-xs" href="..%s/result_%010d%s/index.html"><span class="glyphicon glyphicon-step-forward"></span> next</a>'%(navA, currentID+1, navB), file=mainFD)
-  print('                    <a class="btn btn-info btn-xs" href="..%s/result_current%s/index.html"><span class="glyphicon glyphicon-fast-forward"></span> newest</a>'%(navA, navB), file=mainFD)
+  print('  <dt>Navigate</dt><dd><a class="btn btn-info btn-xs" href="..%s/result_%010d%s/index.html"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%(navA, currentID-1, navB), file=mainFD)
+  print('                    <a class="btn btn-info btn-xs" href="..%s/result_%010d%s/index.html"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%(navA, currentID+1, navB), file=mainFD)
+  print('                    <a class="btn btn-info btn-xs" href="..%s/result_current%s/index.html"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%(navA, navB), file=mainFD)
   if args.currentID!=0:
     print(',                 <a href="../../index.html">parent</a>', file=mainFD)
   print('                    </dd>', file=mainFD)
   print('</dl>', file=mainFD)
-  print('<hr/><p><span class="glyphicon glyphicon-info-sign"></span> A example with grey text is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
   print('<form id="ACTION" action="" method="post">', file=mainFD)
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
@@ -453,7 +453,7 @@ def main():
 
   print('<div class="panel panel-info">', file=mainFD)
   print('  <div class="panel-heading"><a data-toggle="collapse" href="#collapseUpdateReferences">'+\
-          'Update references<span class="pull-right glyphicon glyphicon-collapse-down" style="font-size:125%"></span></a></div>', file=mainFD)
+          'Update references<span class="pull-right glyphicon glyphicon-collapse-down" style="font-size:125%"> </span></a></div>', file=mainFD)
   print('  <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">', file=mainFD)
   print('    <p>Update the references of the selected examples before next build</p>', file=mainFD)
 
@@ -463,7 +463,7 @@ def main():
   print('    </div>', file=mainFD)
   print('          <button id="SUBMIT" class="btn btn-default" type="submit" disabled="disabled">Submit</button>', file=mainFD)
   print('          <button id="CANCEL" class="btn btn-default" type="button" onclick="window.location.href=\'.\'" disabled="disabled">Cancel</button>', file=mainFD)
-  print('    <div id="PASSWORDMSG"></div>', file=mainFD)
+  print('    <div id="PASSWORDMSG"> </div>', file=mainFD)
   print('  </div>', file=mainFD)
   print('</div>', file=mainFD)
   print('</form>', file=mainFD)
@@ -638,7 +638,7 @@ def runExample(resultQueue, example):
     if not example[0] in willFail:
       resultStr+='<tr>'
     else:
-      resultStr+='<tr lass="text-muted">'
+      resultStr+='<tr class="text-muted">'
     resultStr+='<td>'+example[0]+'</td>'
     if args.disableRun:
       resultStr+='<td class="warning">not run</td>'
@@ -731,9 +731,9 @@ def runExample(resultQueue, example):
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:1em">', file=htmlOutputFD)
-      print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>', file=htmlOutputFD)
-      print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>', file=htmlOutputFD)
-      print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>', file=htmlOutputFD)
+      print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=htmlOutputFD)
+      print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=htmlOutputFD)
+      print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=htmlOutputFD)
       print('<script type="text/javascript">', file=htmlOutputFD)
       print('  $(document).ready(function() {', file=htmlOutputFD)
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': []});", file=htmlOutputFD)
@@ -750,13 +750,13 @@ def runExample(resultQueue, example):
       if args.currentID!=0:
         navA="/../.."
         navB="/runexamples_report/result_current"
-      print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"></span> previous</a>'%
+      print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
         (parDirs, navA, currentID-1, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
-      print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"></span> next</a>'%
+      print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
         (parDirs, navA, currentID+1, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
-      print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"></span> newest</a>'%
+      print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
         (parDirs, navA, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
-      print('                 <a class="btn btn-info btn-xs" href="%s%s%s/index.html"><span class="glyphicon glyphicon-eject"></span> parent</a></dd>'%
+      print('                 <a class="btn btn-info btn-xs" href="%s%s%s/index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
         (parDirs, navA, navB), file=htmlOutputFD)
       print('</dl>', file=htmlOutputFD)
       print('<hr/><table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=htmlOutputFD)
@@ -890,16 +890,16 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   if args.currentID!=0:
     navA="/../.."
     navB="/runexamples_report/result_current"
-  print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"></span> previous</a>'%
+  print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
     (parDirs, navA, currentID-1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
-  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"></span> next</a>'%
+  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
     (parDirs, navA, currentID+1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
-  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"></span> newest</a>'%
+  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
     (parDirs, navA, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
-  print('                 <a class="btn btn-info btn-xs" href="%s/%s%s%s/compare.html"><span class="glyphicon glyphicon-eject"></span> parent</a></dd>'%
+  print('                 <a class="btn btn-info btn-xs" href="%s/%s%s%s/compare.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
     (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</dl>', file=diffHTMLPlotFD)
-  print('<p><span class="glyphicon glyphicon-info-sign"></span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
+  print('<p><span class="glyphicon glyphicon-info-sign"> </span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" height="300%" width="100%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
   print('<hr/><small>Created using <a href="https://www.python.org">Python</a>, <a href="http://getbootstrap.com">Bootstrap</a> and'+\
         ' <a href="http://glyphicons.com">Glyphicons</a>.</small>', file=diffHTMLPlotFD)
@@ -1011,7 +1011,8 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       print('<tr>', file=compareFD)
       print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
       print('<td>'+datasetName+'</td>', file=compareFD)
-      print('<td colspan="2" class="danger">in ref. but not in cur.</td>', file=compareFD)
+      print('<td class="danger">in ref. but not in cur.</td>', file=compareFD)
+      print('<td class="danger">failed</td>', file=compareFD)
       print('</tr>', file=compareFD)
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1091,7 +1092,8 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       print('<tr>', file=compareFD)
       print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
       print('<td>'+datasetName+'</td>', file=compareFD)
-      print('<td colspan="2" class="danger">label '+label+' not in ref.</td>', file=compareFD)
+      print('<td class="danger">label '+label+' not in ref.</td>', file=compareFD)
+      print('<td class="danger">failed</td>', file=compareFD)
       print('</tr>', file=compareFD)
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1118,9 +1120,9 @@ def compareExample(example, compareFN):
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body style="margin:1em">', file=compareFD)
-  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>', file=compareFD)
-  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>', file=compareFD)
-  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>', file=compareFD)
+  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=compareFD)
+  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=compareFD)
+  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=compareFD)
   print('<script type="text/javascript">', file=compareFD)
   print('  $(document).ready(function() {', file=compareFD)
   print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': []});", file=compareFD)
@@ -1137,13 +1139,13 @@ def compareExample(example, compareFN):
   if args.currentID!=0:
     navA="/../.."
     navB="/runexamples_report/result_current"
-  print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"></span> previous</a>'%
+  print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
     (parDirs, navA, currentID-1, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
-  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"></span> next</a>'%
+  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
     (parDirs, navA, currentID+1, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
-  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"></span> newest</a>'%
+  print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
     (parDirs, navA, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
-  print('                 <a class="btn btn-info btn-xs" href="%s%s%s/index.html"><span class="glyphicon glyphicon-eject"></span> parent</a></dd>'%
+  print('                 <a class="btn btn-info btn-xs" href="%s%s%s/index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
     (parDirs, navA, navB), file=compareFD)
   print('</dl>', file=compareFD)
   print('<hr/><table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=compareFD)
@@ -1159,7 +1161,9 @@ def compareExample(example, compareFN):
     except IOError:
       print('<tr>', file=compareFD)
       print('<td>'+h5RefFile.filename[10:]+'</td>', file=compareFD)
-      print('<td colspan="3" class="danger">no such file in current solution</td>', file=compareFD)
+      print('<td class="danger">no such file in current solution</td>', file=compareFD)
+      print('<td class="danger">failed</td>', file=compareFD)
+      print('<td class="danger">failed</td>', file=compareFD)
       print('</tr>', file=compareFD)
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1176,7 +1180,8 @@ def compareExample(example, compareFN):
         print('<tr>', file=compareFD)
         print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
         print('<td>'+datasetName+'</td>', file=compareFD)
-        print('<td colspan="2" class="danger">not in ref. but in cur.</td>', file=compareFD)
+        print('<td class="danger">not in ref. but in cur.</td>', file=compareFD)
+        print('<td class="danger">failed</td>', file=compareFD)
         print('</tr>', file=compareFD)
         nrAll[0]+=1
         nrFailed[0]+=1
