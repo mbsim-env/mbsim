@@ -89,11 +89,15 @@ e=root.findall(".//*[@id='PASSWORDMSG']")[0]
 b=xml.etree.ElementTree.SubElement(e, "b")
 b.attrib["id"]="PASSWORDMSGANCHOR"
 if action==1:
-  e.attrib["style"]="color:red"
+  e.attrib["class"]="text-danger"
   b.text="WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry."
 if action==2:
-  e.attrib["style"]="color:green"
+  e.attrib["class"]="text-success"
   b.text="Your selection has been saved on the server."
+# and expand the password panel
+if action==1 or action==2:
+  e=root.findall(".//*[@id='collapseUpdateReferences']")[0]
+  e.attrib["class"]=e.attrib["class"]+" in"
 
 # remove the disabled attribute from all "EXAMPLE_*" checkbox inputs and set the checked
 # attribute if this examles should be updated
