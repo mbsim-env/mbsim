@@ -147,10 +147,12 @@ namespace MBSim {
     if (!searchAll) {
       MultiDimensionalNewtonMethod rf;
       rf.setFunction(func);
-      rf.setJacobianFunction(new NumericalNewtonJacobianFunction());
+      NumericalNewtonJacobianFunction numNewJaCFun;
+      rf.setJacobianFunction(&numNewJaCFun);
       std::map<Index, double> tolerances;
       tolerances.insert(std::pair<Index, double>(Index(0, 1), 1e-8));
-      rf.setCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
+      LocalResidualCriteriaFunction locredcritfun(tolerances);
+      rf.setCriteriaFunction(&locredcritfun);
 
       alphaC.at(0) = rf.solve(s0);
       if (rf.getInfo() == 0 && alphaC.at(nRoots)(0) >= nodesU(0) && alphaC.at(nRoots)(0) <= nodesU(nodesU.size() - 1) && alphaC.at(nRoots)(1) >= nodesV(0) && alphaC.at(nRoots)(1) <= nodesV(nodesV.size() - 1)) { // converged
@@ -164,10 +166,13 @@ namespace MBSim {
     if (searchAll) {
       MultiDimensionalNewtonMethod rf;
       rf.setFunction(func);
-      rf.setJacobianFunction(new NumericalNewtonJacobianFunction());
+      NumericalNewtonJacobianFunction numNewJaCFun;
+      rf.setJacobianFunction(&numNewJaCFun);
       std::map<Index, double> tolerances;
       tolerances.insert(std::pair<Index, double>(Index(0, 1), 1e-8));
-      rf.setCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
+      LocalResidualCriteriaFunction locredcritfun(tolerances);
+      rf.setCriteriaFunction(&locredcritfun);
+
 
       gbuf >> Vec(alphaC.size());  // TODO:: ??
       Vec startingValue(2, NONINIT);

@@ -37,7 +37,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
   
   FlexibleBodyLinearExternalFFR::FlexibleBodyLinearExternalFFR(const string &name, const bool &DEBUG_) :
-      FlexibleBodyContinuum<Vec>(name), nNodes(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_) {
+      FlexibleBodyContinuum<Vec>(name), nNodes(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_), fistIterFlag(0) {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++)
         S_kl_bar[i][j] = SqrMat();
@@ -45,6 +45,7 @@ namespace MBSimFlexibleBody {
   }
   
   FlexibleBodyLinearExternalFFR::~FlexibleBodyLinearExternalFFR() {
+	  delete FFR;
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage) {

@@ -53,6 +53,7 @@ namespace MBSimFlexibleBody {
         discretization[i] = NULL;
       }
     }
+    delete contourFrame;
   }
 
   void FlexibleBody::updateh(double t, int k) {
