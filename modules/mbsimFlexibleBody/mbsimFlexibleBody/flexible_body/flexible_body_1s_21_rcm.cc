@@ -42,7 +42,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) :
-      FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
+      FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
     contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
     addContour(contour1sFlexible);
   }

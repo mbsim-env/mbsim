@@ -32,7 +32,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   ContactKinematicsPointContour2s::~ContactKinematicsPointContour2s() {
-//    delete func;
+    delete func;
   }
 
   void ContactKinematicsPointContour2s::assignContours(const vector<Contour*> &contour) {
