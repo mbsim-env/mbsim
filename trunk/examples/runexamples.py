@@ -356,7 +356,7 @@ def main():
   print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=mainFD)
   print('<script type="text/javascript">', file=mainFD)
   print('  $(document).ready(function() {', file=mainFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': []});", file=mainFD)
+  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=mainFD)
   print('  } );', file=mainFD)
   print('</script>', file=mainFD)
 
@@ -383,7 +383,7 @@ def main():
   print('                    <a class="btn btn-info btn-xs" href="..%s/result_%010d%s/index.html"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%(navA, currentID+1, navB), file=mainFD)
   print('                    <a class="btn btn-info btn-xs" href="..%s/result_current%s/index.html"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%(navA, navB), file=mainFD)
   if args.currentID!=0:
-    print(',                 <a href="../../index.html">parent</a>', file=mainFD)
+    print('                  <a class="btn btn-info btn-xs" href="../../index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a>', file=mainFD)
   print('                    </dd>', file=mainFD)
   print('</dl>', file=mainFD)
   print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
@@ -439,8 +439,10 @@ def main():
 
   if len(failedExamples)>0:
     print('<div class="panel panel-info">', file=mainFD)
-    print('  <div class="panel-heading">Rerun all failed examples</div>', file=mainFD)
-    print('  <div class="panel-body">', file=mainFD)
+    print('  <div class="panel-heading"><a data-toggle="collapse" href="#collapseRerunFailedExamples">'+\
+            'Rerun all failed examples<span class="pull-right glyphicon glyphicon-collapse-down" style="font-size:125%"> </span>'+\
+            '</a></div>', file=mainFD)
+    print('  <div class="panel-body panel-collapse collapse" id="collapseRerunFailedExamples">', file=mainFD)
     print('<code>'+sys.argv[0], end=" ", file=mainFD)
     for arg in sys.argv[1:]:
       if not arg in set(args.directories):
@@ -456,7 +458,6 @@ def main():
           'Update references<span class="pull-right glyphicon glyphicon-collapse-down" style="font-size:125%"> </span></a></div>', file=mainFD)
   print('  <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">', file=mainFD)
   print('    <p>Update the references of the selected examples before next build</p>', file=mainFD)
-
   print('    <div class="form-group">', file=mainFD)
   print('      <label for="PASSWORD">Password</label>', file=mainFD)
   print('      <input type="password" name="PASSWORD" class="form-control" id="PASSWORD" disabled="disabled"/>', file=mainFD)
@@ -683,7 +684,7 @@ def runExample(resultQueue, example):
     # print result to resultStr
     if compareRet==-1:
       resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
-                 '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>' # MFMF sort by "not run"
+                 '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
     else:
       global dummyID
       dummyID=dummyID+1
@@ -691,16 +692,16 @@ def runExample(resultQueue, example):
         if nrAll==0:
           resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
                      '<div class="pull-right">[<input id="EXAMPLE_'+str(dummyID)+\
-                     '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>' # MFMF sort by "no reference"
+                     '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>'
         else:
           resultStr+='<td class="success"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
                      '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
-                     '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>' # MFMF sort by "all passed"
+                     '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
       else:
         resultStr+='<td class="danger"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
                    '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
                    '</span></a></div><div class="pull-right">[<input id="EXAMPLE_'+str(dummyID)+\
-                   '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>' # MFMF sort by "failed"
+                   '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
     if args.disableRun:
@@ -736,7 +737,7 @@ def runExample(resultQueue, example):
       print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=htmlOutputFD)
       print('<script type="text/javascript">', file=htmlOutputFD)
       print('  $(document).ready(function() {', file=htmlOutputFD)
-      print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': []});", file=htmlOutputFD)
+      print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
       print('  } );', file=htmlOutputFD)
       print('</script>', file=htmlOutputFD)
       print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
@@ -1125,7 +1126,7 @@ def compareExample(example, compareFN):
   print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=compareFD)
   print('<script type="text/javascript">', file=compareFD)
   print('  $(document).ready(function() {', file=compareFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': []});", file=compareFD)
+  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=compareFD)
   print('  } );', file=compareFD)
   print('</script>', file=compareFD)
   print('<h1>Compare Results</h1>', file=compareFD)
