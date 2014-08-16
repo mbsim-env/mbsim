@@ -275,23 +275,24 @@ def main():
     print('<html xmlns="http://www.w3.org/1999/xhtml">', file=docFD)
     print('<head>', file=docFD)
     print('  <title>MBSim, OpenMBV, ... Documentation</title>', file=docFD)
+    print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
     print('</head>', file=docFD)
-    print('<body>', file=docFD)
+    print('<body style="margin:1em">', file=docFD)
     print('<h1>MBSim, OpenMBV, ... Documentation</h1>', file=docFD)
     print('<p>Generated at: %s</p>'%(str(timeID)), file=docFD)
-    print('<h2>XML Documentation</h2>', file=docFD)
-    print('<p>', file=docFD)
-    print('  <ul>', file=docFD)
-    print('    <li><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xhtml"))+'">MBSimXML</a></li>', file=docFD)
+    print('<div class="panel panel-success">', file=docFD)
+    print('  <div class="panel-heading">XML Documentation</div>', file=docFD)
+    print('  <ul class="list-group">', file=docFD)
+    print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xhtml"))+'">MBSimXML</a></li>', file=docFD)
     print('  </ul>', file=docFD)
-    print('</p>', file=docFD)
-    print('<h2>Doxygen Documentation</h2>', file=docFD)
-    print('<p>', file=docFD)
-    print('  <ul>', file=docFD)
+    print('</div>', file=docFD)
+    print('<div class="panel panel-info">', file=docFD)
+    print('  <div class="panel-heading">Doxygen Documentation</div>', file=docFD)
+    print('  <ul class="list-group">', file=docFD)
     for d in sorted(list(toolDoxyDocCopyDir)):
-      print('    <li><a href="'+myurllib.pathname2url(pj("doc", d, "index.html"))+'">'+d+'</a></li>', file=docFD)
+      print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("doc", d, "index.html"))+'">'+d+'</a></li>', file=docFD)
     print('  </ul>', file=docFD)
-    print('</p>', file=docFD)
+    print('</div>', file=docFD)
     print('</body>', file=docFD)
     print('</html>', file=docFD)
     docFD.close()
@@ -339,39 +340,42 @@ def main():
   print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
   print('<head>', file=mainFD)
   print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
+  print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
+  print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
   print('  <link rel="alternate" type="application/rss+xml" title="MBSim, OpenMBV, ... Build Results" href="../result.rss.xml"/>', file=mainFD)
-  print('  <style type="text/css">', file=mainFD)
-  print('    table.sortable th {', file=mainFD)
-  print('      cursor: move;', file=mainFD)
-  print('      border-width: 2pt;', file=mainFD)
-  print('      border-color: #D0D0D0;', file=mainFD)
-  print('      border-style: outset;', file=mainFD)
-  print('      background-color: #E0E0E0;', file=mainFD)
-  print('      padding: 2px;', file=mainFD)
-  print('    }', file=mainFD)
-  print('  </style>', file=mainFD)
-  print('  <script src="https://mbsim-env.googlecode.com/svn/branches/user/friedrich/build-scripts/misc/javascript/sorttable.js"></script>', file=mainFD)
   print('</head>', file=mainFD)
-  print('<body>', file=mainFD)
+  print('<body style="margin:1em">', file=mainFD)
+  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
+  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=mainFD)
+  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=mainFD)
+  print('<script type="text/javascript">', file=mainFD)
+  print('  $(document).ready(function() {', file=mainFD)
+  print("    $.fn.dataTableExt.sErrMode = 'throw';", file=mainFD)
+  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});", file=mainFD)
+  print('  } );', file=mainFD)
+  print('</script>', file=mainFD)
 
   print('<h1>MBSim, OpenMBV, ... Build Results</h1>', file=mainFD)
-  print('<p>', file=mainFD)
-  print('<b>Called command:</b> <tt>', file=mainFD)
-  for argv in sys.argv: print(argv+' ', file=mainFD)
-  print('</tt><br/>', file=mainFD)
-  print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a><br/>', file=mainFD)
-  print('   <b>Time ID:</b> '+str(timeID)+'<br/>', file=mainFD)
-  print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
-  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
-  print('   <b>Navigate:</b> <a href="../result_%010d/index.html">previous result</a>,'%(currentID-1), file=mainFD)
-  print('                    <a href="../result_%010d/index.html">next result</a>,'%(currentID+1), file=mainFD)
-  print('                    <a href="../result_current/index.html">current result</a><br/>', file=mainFD)
-  print('</p>', file=mainFD)
 
-  print('<p>Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.</p>', file=mainFD)
-  print('<p>A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
-  print('<table border="1" class="sortable">', file=mainFD)
-  print('<tr>', file=mainFD)
+  print('<dl class="dl-horizontal">', file=mainFD)
+  print('  <dt>Called command</dt><dd><code>', file=mainFD)
+  for argv in sys.argv: print(argv+' ', file=mainFD)
+  print('  </code></dd>', file=mainFD)
+  print('  <dt>RSS Feed</dt><dd>Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
+  print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
+  print('  <dt>End time</dt><dd><span id="STILLRUNNINGORABORTED" class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
+  currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
+  print('  <dt>Navigate</dt><dd><a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%(currentID-1), file=mainFD)
+  print('                    <a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%(currentID+1), file=mainFD)
+  print('                    <a class="btn btn-info btn-xs" href="../result_current/index.html"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>', file=mainFD)
+  print('                    </dd>', file=mainFD)
+  print('</dl>', file=mainFD)
+
+  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
+  print('<span class="glyphicon glyphicon-info-sign"> </span> A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+
+  print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
+  print('<thead><tr>', file=mainFD)
   print('<th>Tool</th>', file=mainFD)
   print('<th>SVN Update</th>', file=mainFD)
   print('<th>Configure</th>', file=mainFD)
@@ -379,13 +383,13 @@ def main():
   print('<th>Check</th>', file=mainFD)
   print('<th>Doxygen Doc.</th>', file=mainFD)
   print('<th>XML Doc.</th>', file=mainFD)
-  print('</tr>', file=mainFD)
+  print('</tr></thead></tbody>', file=mainFD)
 
   # list tools which are not updated and must not be rebuild according dependencies
   for tool in set(toolDependencies)-set(orderedBuildTools):
     print('<tr>', file=mainFD)
     print('<td>'+tool+'</td>', file=mainFD)
-    print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">up to date, no rebuild required</span></a></td>', file=mainFD)
+    print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">up to date, no rebuild required</a></td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
@@ -405,7 +409,7 @@ def main():
       retRunExamples+=r2
     nr+=1
 
-  print('</table>', file=mainFD)
+  print('</tbody></table>', file=mainFD)
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
@@ -518,19 +522,19 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
   retRunExamples=0
 
   # print svn update
-  print('<tr>', file=mainFD)
   if toolDependencies[tool][0]==False:
-    print('<td>'+tool+'</td>', file=mainFD)
+    print('<tr>', file=mainFD)
   else:
-    print('<td><span style="color:gray">'+tool+'</span></td>', file=mainFD)
+    print('<tr class="text-muted">', file=mainFD)
+  print('<td>'+tool+'</td>', file=mainFD)
   if tool in updateFailed:
-    print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:red">failed</span></a></td>', file=mainFD)
+    print('<td class="danger"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">failed</a></td>', file=mainFD)
     ret+=1
   else:
     if tool in updatedTools:
-      print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">updated, rebuild required</span></a></td>', file=mainFD)
+      print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">updated, rebuild required</a></td>', file=mainFD)
     else:
-      print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">up to date, rebuild required</span></a></td>', file=mainFD)
+      print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">up to date, rebuild required</a></td>', file=mainFD)
   mainFD.flush()
 
   if tool==pj("mbsim", "examples"):
@@ -599,12 +603,11 @@ def configure(tool, mainFD):
     result="done"
   except RuntimeError as ex:
     result=str(ex)
-  print('<td>', file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'"><span style="color:'+
-                       ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+  print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+  print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'">'+result+'</a>', file=mainFD)
   if copyConfigLog:
     shutil.copyfile("config.log", pj(args.reportOutDir, tool, "config.log.txt"))
-    print('  <a href="'+myurllib.pathname2url(pj(tool, "config.log.txt"))+'"><span style="color:green">config.log</span></a>', file=mainFD)
+    print('  <a href="'+myurllib.pathname2url(pj(tool, "config.log.txt"))+'">config.log</a>', file=mainFD)
   print('</td>', file=mainFD)
   configureFD.close()
   mainFD.flush()
@@ -636,9 +639,8 @@ def make(tool, mainFD):
     result="done"
   except RuntimeError as ex:
     result=str(ex)
-  print('<td>', file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'"><span style="color:'+
-                       ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+  print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+  print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'">'+result+'</a>', file=mainFD)
   print('</td>', file=mainFD)
   makeFD.close()
   mainFD.flush()
@@ -671,12 +673,10 @@ def check(tool, mainFD):
       foundTestSuiteLog=True
   testSuiteLogFD.close()
   if not args.disableMakeCheck:
-    print('<td>', file=mainFD)
-    print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'"><span style="color:'+
-                         ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'">'+result+'</a>', file=mainFD)
     if foundTestSuiteLog:
-      print('  <a href="'+myurllib.pathname2url(pj(tool, "test-suite.log.txt"))+'"><span style="color:'+
-                           ('green' if result=="done" else 'red')+'">test-suite.log</span></a>', file=mainFD)
+      print('  <a href="'+myurllib.pathname2url(pj(tool, "test-suite.log.txt"))+'">test-suite.log</a>', file=mainFD)
     print('</td>', file=mainFD)
   else:
     print('<td>not run</td>', file=mainFD)
@@ -730,9 +730,8 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
     result=str(ex)
   finally:
     os.chdir(savedDir)
-  print('<td>', file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'"><span style="color:'+
-                       ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
+  print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+  print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
   print('</td>', file=mainFD)
   docFD.close()
   mainFD.flush()
@@ -745,7 +744,11 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
 
 def runexamples(mainFD):
   if args.disableRunExamples:
-    print('<td colspan="5">runexamples disabled</td>', file=mainFD)
+    print('<td>runexamples disabled</td>', file=mainFD)
+    print('<td>-</td>', file=mainFD)
+    print('<td>-</td>', file=mainFD)
+    print('<td>-</td>', file=mainFD)
+    print('<td>-</td>', file=mainFD)
     mainFD.flush()
     return 0
 
@@ -768,11 +771,15 @@ def runexamples(mainFD):
   ret=subprocess.call(command, stderr=subprocess.STDOUT)
 
   if ret==0:
-    print('<td colspan="5"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
-      '"><span style="color:green">all examples passed</span></a></td>', file=mainFD)
+    print('<td class="success"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
+      '">all examples passed</a></td>', file=mainFD)
   else:
-    print('<td colspan="5"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
-      '"><span style="color:red">examples failed</span></a></td>', file=mainFD)
+    print('<td class="danger"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
+      '">examples failed</a></td>', file=mainFD)
+  print('<td>-</td>', file=mainFD)
+  print('<td>-</td>', file=mainFD)
+  print('<td>-</td>', file=mainFD)
+  print('<td>-</td>', file=mainFD)
 
   mainFD.flush()
 
