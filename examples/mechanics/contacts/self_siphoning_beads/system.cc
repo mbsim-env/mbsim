@@ -221,7 +221,6 @@ void SelfSiphoningBeats::addEmptyLeader() {
   leader->setFrameForKinematics(leader->getFrameC());
   addObject(leader);
 
-  Joint* joint = new Joint("Joint");
   if (elements) {
     Joint* joint = new Joint("Joint");
     joint->setForceDirection(Mat3x3(EYE));
