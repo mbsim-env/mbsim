@@ -159,7 +159,7 @@ int main(){
     }
   }
 
-  surf.writePS("tnurbs_closed.ps",5,5,Point3Df(10,10,10),Point3Df(0,0,0),1) ;
+//  surf.writePS("tnurbs_closed.ps",5,5, Point3Df(10,10,10),Point3Df(0,0,0),1,1,10);
 
   return 0 ;
 }
