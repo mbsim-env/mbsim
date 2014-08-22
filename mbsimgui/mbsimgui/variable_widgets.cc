@@ -763,13 +763,13 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(0, "ASCII files", file.mid(1,file.length()-2), "all files (*.*)");
+    file=QFileDialog::getOpenFileName(0, "ASCII files", file, "all files (*.*)");
     if(file!="")
-      setFile(QString("'")+mbsDir.relativeFilePath(file)+"'");
+      setFile(mbsDir.relativeFilePath(file));
   }
 
   QString FromFileWidget::getValue() const {
-    string file = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getFile().toStdString()));
+    string file = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getFile().toStdString(),0,false));
     return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load(" + file + ")")));
   }
 
