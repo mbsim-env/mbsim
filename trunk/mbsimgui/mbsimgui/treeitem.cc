@@ -25,8 +25,6 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  QPalette TreeItem::palette;
-
   TreeItem::~TreeItem() {
     qDeleteAll(childItems);
   }

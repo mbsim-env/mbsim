@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QVariant>
 #include <QVector>
+#include <QApplication>
 #include "element_context_menu.h"
 
 namespace MBSimGUI {
@@ -97,7 +98,9 @@ namespace MBSimGUI {
   class TreeItem {
     public:
 
-      TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0, int ID_ = 1, const QBrush &brush=palette.brush(QPalette::Active, QPalette::Text)) : itemData(itemData), parentItem(parent), ID(ID_), foreground(brush) {
+      TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0, int ID_ = 1,
+          const QBrush &brush=QApplication::palette().brush(QPalette::Active, QPalette::Text)) :
+          itemData(itemData), parentItem(parent), ID(ID_), foreground(brush) {
         getData_[0] = &TreeItem::getData0;
         getData_[1] = &TreeItem::getData1;
         getData_[2] = &TreeItem::getData2;
@@ -132,7 +135,9 @@ namespace MBSimGUI {
       int getID() const {return ID;}
       QBrush getForeground() { return foreground; }
       void setForeground(const QBrush &brush) { foreground=brush; }
-      bool getEnabled() { return foreground==palette.brush(QPalette::Active, QPalette::Text); }
+      bool getEnabled() {
+        return foreground==QApplication::palette().brush(QPalette::Active, QPalette::Text);
+      }
 
     protected:
       QList<TreeItem*> childItems;
@@ -140,7 +145,6 @@ namespace MBSimGUI {
       TreeItem *parentItem;
       int ID;
       QBrush foreground;
-      static QPalette palette;
   };
 
 }
