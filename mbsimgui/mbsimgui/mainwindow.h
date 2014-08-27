@@ -113,7 +113,6 @@ namespace MBSimGUI {
       void loadProject();
       void saveProjectAs();
       void saveProject(const QString &filename="");
-      void newMBS();
       void selectIntegrator();
       void selectDOPRI5Integrator();
       void selectRADAU5Integrator();
