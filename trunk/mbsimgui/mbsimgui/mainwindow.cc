@@ -451,10 +451,32 @@ namespace MBSimGUI {
     if(ask) 
       ret = QMessageBox::warning(this, "New Project", "Current project will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
     if(ret == QMessageBox::Ok) {
-      newMBS();
-      selectDOPRI5Integrator();
+      mbsDir = QDir::current();
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionSaveDataAs->setDisabled(true);
+      actionSaveMBSimH5DataAs->setDisabled(true);
+      actionSaveOpenMBVDataAs->setDisabled(true);
+      actionSaveStateVectorAs->setDisabled(true);
+      actionSaveEigenanalysisAs->setDisabled(true);
+
+      EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
+      QModelIndex index = pmodel->index(0,0);
+      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+      index = model->index(0,0);
+      if(model->rowCount(index))
+        delete model->getItem(index)->getItemData();
+      model->removeRow(index.row(), index.parent());
+      DynamicSystemSolver *dss = new DynamicSystemSolver("MBS",0);
+      model->createGroupItem(dss,QModelIndex());
+
+      elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+      solverView->setSolver(new DOPRI5Integrator);
       actionSaveProject->setDisabled(true);
       fileProject="";
+      mbsimxml(1);
     }
     setWindowTitle("MBS.mbsimprj.xml");
   }
@@ -600,33 +622,6 @@ namespace MBSimGUI {
     if(ele0)
       DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
   }
-
- void MainWindow::newMBS() {
-   mbsDir = QDir::current();
-   actionOpenMBV->setDisabled(true);
-   actionH5plotserie->setDisabled(true);
-   actionSaveDataAs->setDisabled(true);
-   actionSaveMBSimH5DataAs->setDisabled(true);
-   actionSaveOpenMBVDataAs->setDisabled(true);
-   actionSaveStateVectorAs->setDisabled(true);
-   actionSaveEigenanalysisAs->setDisabled(true);
-
-   EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
-   QModelIndex index = pmodel->index(0,0);
-   pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-
-   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-   index = model->index(0,0);
-   if(model->rowCount(index))
-     delete model->getItem(index)->getItemData();
-   model->removeRow(index.row(), index.parent());
-   DynamicSystemSolver *dss = new DynamicSystemSolver("MBS",0);
-   model->createGroupItem(dss,QModelIndex());
-
-   elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
-
-   mbsimxml(1);
- }
 
   void MainWindow::selectIntegrator() {
     QMenu *menu = solverView->createContextMenu();
