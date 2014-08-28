@@ -23,6 +23,7 @@ mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \
   signal_.h\
   extern_signal_source.h\
+  extern_signal_sink.h\
   sensor.h\
   object_sensors.h\
   frame_sensors.h\

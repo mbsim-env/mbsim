@@ -17,30 +17,29 @@
  * Contact: friedrich.at.gc@googlemail.com
  */
 
-#ifndef _EXTERNSIGNALSOURCE_H_
-#define _EXTERNSIGNALSOURCE_H_
+#ifndef _EXTERNSIGNALSINK_H_
+#define _EXTERNSIGNALSINK_H_
 
 #include "mbsimControl/signal_.h"
 
 namespace MBSimControl {
 
-  /** Signal which value if given by a external resource. E.g. Cosimulation */
-  class ExternSignalSource : public Signal {
+  /** Signal which value is given by an external resource. E.g. Cosimulation **/
+  class ExternSignalSink : public Signal {
     protected:
-      fmatvec::Vec source;
-      int sourceSize;
+      fmatvec::Vec sink;
+      int sinkSize;
     public:
-      ExternSignalSource(const std::string &name="") : Signal(name), sourceSize(0) {}
-      void setSourceSize(int size) { sourceSize=size; source.resize(sourceSize); }
-      std::string getType() const { return "ExternSignalSource"; }
-      fmatvec::Vec getSignal() { return source; }
-      void setSignal(const fmatvec::Vec& s) { assert(s.size()==source.size()); source=s; }
+      ExternSignalSink(const std::string &name="") : Signal(name), sinkSize(0) {}
+      void setSinkSize(int size) { sinkSize=size; sink.resize(sinkSize); }
+      std::string getType() const { return "ExternSignalSink"; }
+      fmatvec::Vec getSignal() { return sink; }
       void initializeUsingXML(xercesc::DOMElement *element) {
         Signal::initializeUsingXML(element);
-        setSourceSize(getInt(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sourceSize")));
+        setSinkSize(getInt(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sinkSize")));
       }
   };
 
 }
 
-#endif /* _SENSOR_H_ */
+#endif /* _EXTERNSIGNALSINK_H_ */
