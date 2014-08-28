@@ -15,7 +15,7 @@
 LATEX		= latex
 BIBTEX		= bibtex
 # Sourcen
-MAIN            = tutorial
+MAIN            = main
 DVI		= $(MAIN).dvi
 PS		= $(MAIN).ps
 PDF		= $(MAIN).pdf
@@ -62,7 +62,7 @@ ${PS}  : ${DVI}
 
 ${PDF} : ${PS}
 # running ps2pdf
-	#ps2pdf ${PS} $@ 
+	ps2pdf ${PS} $@ 
 
 cleanall: clean
 	rm -f $(DVI) ${PS} ${PDF}
