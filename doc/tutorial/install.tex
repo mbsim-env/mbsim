@@ -347,6 +347,17 @@ and \textsc{install} to install the XML module which contains an executable to i
 \end{verbatim}
 invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
 
+%---------------MBSimFMI---------------
+For mbsimfmi proceed as follows:
+\begin{verbatim}
+  cd $HOME/MBSim/mbsim/mbsimfmi
+\end{verbatim}
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+  --prefix=$HOME/MBSim/Install
+\end{verbatim}
+and \textsc{install} to install the FMI module for model exchange.
+
 %---------------MBSimGUI---------------
 mbsimgui can be installed, if you have proceeded so far and if you also have installed the visualization framework.
 \begin{verbatim}
@@ -407,7 +418,7 @@ For the installation of a static visualisation using always the newest source fi
 \item SoQt with version 1.4.1 or newer 
 \item Qwt with version 5
 \end{itemize}
-is installed in a 32 bit version.\par
+is installed.\par
 With
 \begin{verbatim}
   cd $HOME/OpenMBV/OpenMBV/openmbv
