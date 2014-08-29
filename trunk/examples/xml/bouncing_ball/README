@@ -1,0 +1,4 @@
+Procedure:
+(1) generate MBS.mbsimprj.xml with GUI
+(2) use mbsimxml (mbxmlutilspp) to generate schema and .pp-file
+(3) rename .pp-file; it is the MBS.mbsimprj.flat.xml
