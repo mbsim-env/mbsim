@@ -161,6 +161,7 @@ void ModelInstance::setupS() {
 void ModelInstance::setupE() {
   eventFlags.resize(getN(ne));
   eventIndicators[0].resize(getN(ne));
+  eventIndicators[1].resize(getN(ne));
   system->getsv(z,eventIndicators[0],time);
 }
 
@@ -215,7 +216,7 @@ void ModelInstance::eventUpdate(fmiReal t) {
   //updateSV(t);
   system->getsv(z,eventIndicators[0],t);
     for(int i= 0 ; i < getN(ne); i++) {
-      if(eventIndicators[0](i)*eventIndicators[1](i)<0)
+      if((((eventIndicators[0])(i))*((eventIndicators[1])(i)))<0.)
 	eventFlags(i)=fmiTrue;
     }
   this->getFunctions().logger(this, this->getName(), fmiOK, "log","SHIFT");
