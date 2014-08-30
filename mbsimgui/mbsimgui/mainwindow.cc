@@ -65,7 +65,7 @@ namespace MBSimGUI {
   vector<boost::filesystem::path> dependencies;
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), projectChanged(false), autoExportDir("./") {
 
     mw = this;
 
@@ -329,6 +329,10 @@ namespace MBSimGUI {
     bfs::remove("./.MBS.mbsimprj.xml");
   }
 
+  void MainWindow::setProjectChanged(bool changed) { 
+    projectChanged = changed; 
+  }
+
   void MainWindow::changeWorkingDir() {
     QString dir = QFileDialog::getExistingDirectory (0, "Working directory", ".");
     if(not(dir.isEmpty())) {
@@ -364,21 +368,25 @@ namespace MBSimGUI {
   }
 
   void MainWindow::closeEvent(QCloseEvent *event) {
-    QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
-        tr("MBS, parameter list or integrator may have been modified.\n"
-          "Do you want to save your changes?"),
-        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    if(ret == QMessageBox::Save) {
-      if(actionSaveProject->isEnabled())
-        saveProject();
-      else
-        saveProjectAs();
+    if(projectChanged) {
+      QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
+          tr("Project has been modified.\n"
+            "Do you want to save your changes?"),
+          QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+      if(ret == QMessageBox::Save) {
+        if(actionSaveProject->isEnabled())
+          saveProject();
+        else
+          saveProjectAs();
+        event->accept();
+      } 
+      else if(ret == QMessageBox::Discard) 
+        event->accept();
+      else if(ret == QMessageBox::Cancel) 
+        event->ignore();
+    }
+    else
       event->accept();
-    } 
-    else if(ret == QMessageBox::Discard) 
-      event->accept();
-    else if(ret == QMessageBox::Cancel) 
-      event->ignore();
   }
 
   void MainWindow::highlightObject(const string &ID) {
@@ -448,9 +456,10 @@ namespace MBSimGUI {
 
   void MainWindow::newProject(bool ask) {
     QMessageBox::StandardButton ret = QMessageBox::Ok;
-    if(ask) 
-      ret = QMessageBox::warning(this, "New Project", "Current project will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
+    if(ask && projectChanged) 
+      ret = QMessageBox::warning(this, "New Project", "Project has been modified.\n Do you want to proceed?", QMessageBox::Ok | QMessageBox::Cancel);
     if(ret == QMessageBox::Ok) {
+      setProjectChanged(false);
       mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
@@ -483,6 +492,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject(const QString &file) {
     if(not(file.isEmpty())) {
+      setProjectChanged(false);
       mbsDir = QFileInfo(file).absolutePath();
       QDir::setCurrent(QFileInfo(file).absolutePath());
       fileProject=QDir::current().relativeFilePath(file);
@@ -562,9 +572,14 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadProject() {
-    QString file=QFileDialog::getOpenFileName(0, "XML project files", ".", "XML files (*.mbsimprj.xml)");
-    if(file!="")
-      loadProject(file);
+    QMessageBox::StandardButton ret = QMessageBox::Ok;
+    if(projectChanged) 
+      ret = QMessageBox::warning(this, "Load Project", "Project has been modified.\nDo you want to proceed?", QMessageBox::Ok | QMessageBox::Cancel);
+    if(ret == QMessageBox::Ok) {
+      QString file=QFileDialog::getOpenFileName(0, "XML project files", ".", "XML files (*.mbsimprj.xml)");
+      if(file!="")
+        loadProject(file);
+    }
   }
 
   void MainWindow::saveProjectAs() {
@@ -616,7 +631,8 @@ namespace MBSimGUI {
     return 0;
   }
 
- void MainWindow::saveProject(const QString &fileName) {
+  void MainWindow::saveProject(const QString &fileName) {
+    setProjectChanged(false);
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
     if(ele0)
@@ -630,34 +646,42 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectDOPRI5Integrator() {
+    setProjectChanged(true);
     solverView->setSolver(0);
   }
 
   void MainWindow::selectRADAU5Integrator() {
+    setProjectChanged(true);
     solverView->setSolver(1);
   }
 
   void MainWindow::selectLSODEIntegrator() {
+    setProjectChanged(true);
     solverView->setSolver(2);
   }
 
   void MainWindow::selectLSODARIntegrator() {
+    setProjectChanged(true);
     solverView->setSolver(3);
   }
 
   void MainWindow::selectTimeSteppingIntegrator() {
+    setProjectChanged(true);
     solverView->setSolver(4);
   }
 
   void MainWindow::selectEulerExplicitIntegrator() {
+    setProjectChanged(true);
     solverView->setSolver(5);
   }
 
   void MainWindow::selectRKSuiteIntegrator() {
+    setProjectChanged(true);
     solverView->setSolver(6);
   }
 
   void MainWindow::selectEigenanalyser() {
+    setProjectChanged(true);
     solverView->setSolver(7);
   }
 
@@ -936,6 +960,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addFrame(Frame *frame) {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = index.data().toString()=="frames"?index:index.child(0,0); 
@@ -948,6 +973,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addContour(Contour *contour) {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
@@ -960,6 +986,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addGroup(Group *group) {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
@@ -972,6 +999,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addObject(Object *object) {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(3,0):index;
@@ -984,6 +1012,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addLink(Link *link) {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
@@ -996,6 +1025,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addObserver(Observer *observer) {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
@@ -1008,6 +1038,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addParameter(Parameter *parameter) {
+    setProjectChanged(true);
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
@@ -1020,6 +1051,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter() {
+    setProjectChanged(true);
     QModelIndex index = elementList->selectionModel()->currentIndex();
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
@@ -1048,9 +1080,14 @@ namespace MBSimGUI {
   }
 
   void MainWindow::openRecentProjectFile() {
-    QAction *action = qobject_cast<QAction *>(sender());
-    if (action)
-      loadProject(action->data().toString());
+    QMessageBox::StandardButton ret = QMessageBox::Ok;
+    if(projectChanged) 
+      ret = QMessageBox::warning(this, "Load Project", "Project has been modified.\nDo you want to proceed?", QMessageBox::Ok | QMessageBox::Cancel);
+    if(ret == QMessageBox::Ok) {
+      QAction *action = qobject_cast<QAction *>(sender());
+      if (action)
+        loadProject(action->data().toString());
+    }
   }
 
   void MainWindow::setCurrentProjectFile(const QString &fileName) {

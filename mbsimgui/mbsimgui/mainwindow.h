@@ -83,7 +83,7 @@ namespace MBSimGUI {
       QAction *recentProjectFileActs[maxRecentFiles];
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
-      bool autoSave, autoExport, saveFinalStateVector;
+      bool autoSave, autoExport, saveFinalStateVector, projectChanged;
       int autoSaveInterval;
       QString autoExportDir;
 
@@ -106,6 +106,7 @@ namespace MBSimGUI {
       const std::string& getHighlightedObject() const {return currentID;}
       void loadProject(const QString &file);
       ElementView* getElementList() { return elementList; }
+      void setProjectChanged(bool changed=true);
     public slots:
       void elementListClicked();
       void parameterListClicked();

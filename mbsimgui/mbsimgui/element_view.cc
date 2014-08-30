@@ -56,15 +56,16 @@ namespace MBSimGUI {
   }
 
   void ElementView::dialogFinished(int result) {
-    if(result != 0) {
-      mw->mbsimxml(1);
-    }
+    if(result != 0)
+      mw->setProjectChanged(true);
+    mw->mbsimxml(1);
     editor = 0;
     element = 0;
   }
 
   void ElementView::apply() {
     update(index);
+    mw->setProjectChanged(true);
     mw->mbsimxml(1);
   }
 
