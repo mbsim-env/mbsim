@@ -75,6 +75,7 @@ namespace MBSimGUI {
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event);
       void dropEvent(QDropEvent *event);
+      bool maybeSave();
       boost::filesystem::path uniqueTempDir;
       QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
       QTimer *autoSaveTimer;
@@ -83,7 +84,7 @@ namespace MBSimGUI {
       QAction *recentProjectFileActs[maxRecentFiles];
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
-      bool autoSave, autoExport, saveFinalStateVector, projectChanged;
+      bool autoSave, autoExport, saveFinalStateVector;
       int autoSaveInterval;
       QString autoExportDir;
 
@@ -112,8 +113,8 @@ namespace MBSimGUI {
       void parameterListClicked();
       void newProject(bool ask=true);
       void loadProject();
-      void saveProjectAs();
-      void saveProject(const QString &filename="");
+      bool saveProjectAs();
+      bool saveProject(const QString &filename="");
       void selectIntegrator();
       void selectDOPRI5Integrator();
       void selectRADAU5Integrator();

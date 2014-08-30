@@ -65,7 +65,7 @@ namespace MBSimGUI {
   vector<boost::filesystem::path> dependencies;
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), projectChanged(false), autoExportDir("./") {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
 
     mw = this;
 
@@ -330,7 +330,25 @@ namespace MBSimGUI {
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
-    projectChanged = changed; 
+    setWindowModified(changed);
+  }
+  
+  bool MainWindow::maybeSave() {
+    if(isWindowModified()) {
+      QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
+          tr("Project has been modified.\n"
+            "Do you want to save your changes?"),
+          QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+      if(ret == QMessageBox::Save) {
+        if(actionSaveProject->isEnabled())
+          return saveProject();
+        else
+          return saveProjectAs();
+      } 
+      else if(ret == QMessageBox::Cancel) 
+        return false;
+    }
+    return true;
   }
 
   void MainWindow::changeWorkingDir() {
@@ -368,25 +386,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::closeEvent(QCloseEvent *event) {
-    if(projectChanged) {
-      QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
-          tr("Project has been modified.\n"
-            "Do you want to save your changes?"),
-          QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-      if(ret == QMessageBox::Save) {
-        if(actionSaveProject->isEnabled())
-          saveProject();
-        else
-          saveProjectAs();
-        event->accept();
-      } 
-      else if(ret == QMessageBox::Discard) 
-        event->accept();
-      else if(ret == QMessageBox::Cancel) 
-        event->ignore();
-    }
-    else
+    if(maybeSave())
       event->accept();
+    else
+      event->ignore();
   }
 
   void MainWindow::highlightObject(const string &ID) {
@@ -455,10 +458,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::newProject(bool ask) {
-    QMessageBox::StandardButton ret = QMessageBox::Ok;
-    if(ask && projectChanged) 
-      ret = QMessageBox::warning(this, "New Project", "Project has been modified.\n Do you want to proceed?", QMessageBox::Ok | QMessageBox::Cancel);
-    if(ret == QMessageBox::Ok) {
+    if(maybeSave()) {
       setProjectChanged(false);
       mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
@@ -486,8 +486,8 @@ namespace MBSimGUI {
       actionSaveProject->setDisabled(true);
       fileProject="";
       mbsimxml(1);
+      setWindowTitle("MBS.mbsimprj.xml[*]");
     }
-    setWindowTitle("MBS.mbsimprj.xml");
   }
 
   void MainWindow::loadProject(const QString &file) {
@@ -526,7 +526,7 @@ namespace MBSimGUI {
       DOMElement *e=doc->getDocumentElement();
       DOMElement *ele0=doc->getDocumentElement();
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
-      setWindowTitle(fileProject);
+      setWindowTitle(fileProject+"[*]");
 
       DOMElement *ele1 = ele0->getFirstElementChild();
       DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
@@ -572,17 +572,14 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadProject() {
-    QMessageBox::StandardButton ret = QMessageBox::Ok;
-    if(projectChanged) 
-      ret = QMessageBox::warning(this, "Load Project", "Project has been modified.\nDo you want to proceed?", QMessageBox::Ok | QMessageBox::Cancel);
-    if(ret == QMessageBox::Ok) {
+    if(maybeSave()) {
       QString file=QFileDialog::getOpenFileName(0, "XML project files", ".", "XML files (*.mbsimprj.xml)");
       if(file!="")
         loadProject(file);
     }
   }
 
-  void MainWindow::saveProjectAs() {
+  bool MainWindow::saveProjectAs() {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     QString file=QFileDialog::getSaveFileName(0, "XML project files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsimprj.xml", "XML files (*.mbsimprj.xml)");
@@ -592,10 +589,11 @@ namespace MBSimGUI {
       QDir::setCurrent(QFileInfo(file).absolutePath());
       fileProject=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
-      setWindowTitle(fileProject);
+      setWindowTitle(fileProject+"[*]");
       actionSaveProject->setDisabled(false);
-      saveProject();
+      return saveProject();
     }
+    return false;
   }
 
   DOMElement* MainWindow::writeProject(shared_ptr<xercesc::DOMDocument> &doc) {
@@ -631,12 +629,15 @@ namespace MBSimGUI {
     return 0;
   }
 
-  void MainWindow::saveProject(const QString &fileName) {
+  bool MainWindow::saveProject(const QString &fileName) {
     setProjectChanged(false);
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
-    if(ele0)
+    if(ele0) {
       DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
+      return true;
+    }
+    return false;
   }
 
   void MainWindow::selectIntegrator() {
@@ -1080,10 +1081,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::openRecentProjectFile() {
-    QMessageBox::StandardButton ret = QMessageBox::Ok;
-    if(projectChanged) 
-      ret = QMessageBox::warning(this, "Load Project", "Project has been modified.\nDo you want to proceed?", QMessageBox::Ok | QMessageBox::Cancel);
-    if(ret == QMessageBox::Ok) {
+    if(maybeSave()) {
       QAction *action = qobject_cast<QAction *>(sender());
       if (action)
         loadProject(action->data().toString());
