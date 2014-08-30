@@ -68,12 +68,14 @@ namespace MBSimGUI {
 
   void EmbeddingView::dialogFinished(int result) {
     if(result != 0) {
+      mw->setProjectChanged(true);
       mw->mbsimxml(1);
     }
     editor = 0;
   }
 
   void EmbeddingView::apply() {
+    mw->setProjectChanged(true);
     update(index);
     update(index.sibling(index.row(),1));
     mw->mbsimxml(1);

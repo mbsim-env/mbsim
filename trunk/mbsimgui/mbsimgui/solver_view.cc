@@ -129,9 +129,12 @@ namespace MBSimGUI {
 
   void IntegratorMouseEvent::dialogFinished(int result) {
     editor = 0;
+    if(result != 0)
+      mw->setProjectChanged(true);
   }
 
   void IntegratorMouseEvent::apply() {
+    mw->setProjectChanged(true);
   }
 
 }
