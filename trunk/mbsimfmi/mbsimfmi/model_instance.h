@@ -88,7 +88,7 @@ private:
 #include <fmatvec/atom.h>
 #include <mbsim/mbsim_event.h>
 /**
- * \brief Allow to display msg only through callbak logger
+ * \brief Allow to display msg only through callback logger
  * \author F.Péan
  * \date 2014-07-23 Adding doxygen comments (F.Péan)
  */
@@ -114,7 +114,6 @@ class LoggerBuffer : public std::stringbuf {
  * \brief Contains the model from MBSim and allows interaction with it from FMI
  * \author F.Péan
  * \date 2014-03-28 Adding doxygen comments (F.Péan)
- * \todo dealing more efficiently with Integers/Bools/Strings inputs TODO
  */
 class ModelInstance {
 public:
@@ -219,12 +218,12 @@ private:
   ScalarVariable<fmiInteger> i;
   ScalarVariable<fmiBoolean> b;
   ScalarVariable<std::string> s;
-public:
-  //should correspond to jsv in MBSim
+  
+  //corresponds to jsv in MBSim: result of event indication
   fmatvec::Vector<fmatvec::Ref, fmiInteger> eventFlags;
-  //contains values of event indicators at t and t+1
+  //contains values of event indicators at t and t+1 used to decide if there is an event
   fmatvec::Vector<fmatvec::Ref, fmiReal> eventIndicators[2];
-private:
+  
   //state vector
   fmatvec::Vector<fmatvec::Ref, fmiReal> z;
   //state names
@@ -241,7 +240,6 @@ private:
   LoggerBuffer infoBuffer;
   LoggerBuffer warnBuffer;
 
-private:
   /* Template functions */
   /**
    * \brief checks if the call for index i in scalar variable sv is authorized for current state of the model
