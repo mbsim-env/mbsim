@@ -23,82 +23,93 @@
     <objects><?LineNr 24?>
       <RigidBody name="RigidBody1"><?LineNr 25?>
         <initialGeneralizedPosition><?LineNr 26?>[0 ; 0.2]</initialGeneralizedPosition>
-        <frameOfReference ref="../Frame[I]"><?LineNr 27?></frameOfReference>
-        <frameForKinematics ref="Frame[C]"><?LineNr 28?></frameForKinematics>
-        <mass unit="kg"><?LineNr 29?>1</mass>
-        <inertiaTensor unit="kg*m^2"><?LineNr 30?>
+        <initialGeneralizedVelocity><?LineNr 27?>[0.5 ; 0]</initialGeneralizedVelocity>
+        <frameOfReference ref="../Frame[I]"><?LineNr 28?></frameOfReference>
+        <frameForKinematics ref="Frame[C]"><?LineNr 29?></frameForKinematics>
+        <mass unit="kg"><?LineNr 30?>1</mass>
+        <inertiaTensor unit="kg*m^2"><?LineNr 31?>
           
         [0.01,0,0 ; 0,0.01,0 ; 0,0,0.01]</inertiaTensor>
-        <stateDependentTranslation><?LineNr 49?>
-          <TranslationAlongAxesXY><?LineNr 50?></TranslationAlongAxesXY>
+        <stateDependentTranslation><?LineNr 50?>
+          <TranslationAlongAxesXY><?LineNr 51?></TranslationAlongAxesXY>
         </stateDependentTranslation>
-        <frames><?LineNr 52?>
-          <FixedRelativeFrame name="P1"><?LineNr 53?>
-            <enableOpenMBV><?LineNr 54?>
+        <frames><?LineNr 53?>
+          <FixedRelativeFrame name="P1"><?LineNr 54?>
+            <enableOpenMBV><?LineNr 55?>
               <?OPENMBV_ID 8?>
             </enableOpenMBV>
-            <relativePosition unit="m"><?LineNr 57?>
+            <relativePosition unit="m"><?LineNr 58?>
               
             [0 ; -0.1 ; 0]</relativePosition>
           </FixedRelativeFrame>
         </frames>
-        <contours><?LineNr 66?>
-          <Point name="Point1"><?LineNr 67?>
-            <frameOfReference ref="../Frame[P1]"><?LineNr 68?></frameOfReference>
-            <enableOpenMBV><?LineNr 69?>
+        <contours><?LineNr 67?>
+          <Point name="Point1"><?LineNr 68?>
+            <frameOfReference ref="../Frame[P1]"><?LineNr 69?></frameOfReference>
+            <enableOpenMBV><?LineNr 70?>
               <?OPENMBV_ID 9?>
             </enableOpenMBV>
           </Point>
         </contours>
-        <openMBVRigidBody><?LineNr 74?>
-          <Sphere xmlns="http://openmbv.berlios.de/OpenMBV" boundingBox="0" dragger="0" drawMethod="filled" enable="1" localFrame="0" name="Body1" outLine="1" path="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 75?>
+        <openMBVRigidBody><?LineNr 75?>
+          <Sphere xmlns="http://openmbv.berlios.de/OpenMBV" boundingBox="0" dragger="0" drawMethod="filled" enable="1" localFrame="0" name="Body1" outLine="1" path="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 76?>
             <?OPENMBV_ID 6?>
-            <transparency unit="-"><?LineNr 77?>0.3</transparency>
-            <initialTranslation unit="m"><?LineNr 78?>
+            <transparency unit="-"><?LineNr 78?>0.3</transparency>
+            <initialTranslation unit="m"><?LineNr 79?>
               
             [0 ; 0 ; 0]</initialTranslation>
-            <initialRotation unit="rad"><?LineNr 85?>
+            <initialRotation unit="rad"><?LineNr 86?>
               
             [0 ; 0 ; 0]</initialRotation>
-            <scaleFactor unit="-"><?LineNr 92?>1</scaleFactor>
-            <radius unit="m"><?LineNr 93?>0.1</radius>
+            <scaleFactor unit="-"><?LineNr 93?>1</scaleFactor>
+            <radius unit="m"><?LineNr 94?>0.1</radius>
           </Sphere>
         </openMBVRigidBody>
-        <enableOpenMBVFrameC><?LineNr 96?>
+        <enableOpenMBVFrameC><?LineNr 97?>
           <?OPENMBV_ID 7?>
         </enableOpenMBVFrameC>
       </RigidBody>
     </objects>
-    <links><?LineNr 101?>
-      <Contact name="Contact1"><?LineNr 102?>
-        <normalForceLaw><?LineNr 103?>
-          <UnilateralConstraint><?LineNr 104?></UnilateralConstraint>
+    <links><?LineNr 102?>
+      <Contact name="Contact1"><?LineNr 103?>
+        <normalForceLaw><?LineNr 104?>
+          <UnilateralConstraint><?LineNr 105?></UnilateralConstraint>
         </normalForceLaw>
-        <normalImpactLaw><?LineNr 106?>
-          <UnilateralNewtonImpact><?LineNr 107?>
-            <restitutionCoefficient unit="-"><?LineNr 108?>1</restitutionCoefficient>
+        <normalImpactLaw><?LineNr 107?>
+          <UnilateralNewtonImpact><?LineNr 108?>
+            <restitutionCoefficient unit="-"><?LineNr 109?>0.5</restitutionCoefficient>
           </UnilateralNewtonImpact>
         </normalImpactLaw>
-        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"><?LineNr 111?></connect>
+        <tangentialForceLaw><?LineNr 112?>
+          <PlanarCoulombFriction><?LineNr 113?>
+            <frictionCoefficient unit="-"><?LineNr 114?>0.1</frictionCoefficient>
+          </PlanarCoulombFriction>
+        </tangentialForceLaw>
+        <tangentialImpactLaw><?LineNr 117?>
+          <PlanarCoulombImpact><?LineNr 118?>
+            <frictionCoefficient unit="-"><?LineNr 119?>0.1</frictionCoefficient>
+          </PlanarCoulombImpact>
+        </tangentialImpactLaw>
+        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"><?LineNr 122?></connect>
       </Contact>
     </links>
-    <enableOpenMBVFrameI><?LineNr 114?>
+    <enableOpenMBVFrameI><?LineNr 125?>
       <?OPENMBV_ID 3?>
     </enableOpenMBVFrameI>
-    <environments><?LineNr 117?>
-      <MBSimEnvironment><?LineNr 118?>
-        <accelerationOfGravity unit="m/s^2"><?LineNr 119?>
+    <environments><?LineNr 128?>
+      <MBSimEnvironment><?LineNr 129?>
+        <accelerationOfGravity unit="m/s^2"><?LineNr 130?>
           
         [0 ; -9.81 ; 0]</accelerationOfGravity>
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
 
-  <TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator"><?LineNr 130?>
-    <startTime unit="s"><?LineNr 131?>0</startTime>
-    <endTime unit="s"><?LineNr 132?>1</endTime>
-    <plotStepSize unit="s"><?LineNr 133?>0.01</plotStepSize>
-    <stepSize unit="s"><?LineNr 134?>0.001</stepSize>
+  <TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator"><?LineNr 141?>
+    <startTime unit="s"><?LineNr 142?>0</startTime>
+    <endTime unit="s"><?LineNr 143?>1</endTime>
+    <plotStepSize unit="s"><?LineNr 144?>0.01</plotStepSize>
+    <stepSize unit="s"><?LineNr 145?>0.001</stepSize>
   </TimeSteppingIntegrator>
 
 </MBSimProject>
