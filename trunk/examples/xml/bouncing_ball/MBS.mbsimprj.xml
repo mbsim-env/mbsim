@@ -24,6 +24,7 @@
     <objects>
       <RigidBody name="RigidBody1">
         <initialGeneralizedPosition>[0;0.2]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0.5;0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass unit="kg">1</mass>
@@ -105,9 +106,19 @@
         </normalForceLaw>
         <normalImpactLaw>
           <UnilateralNewtonImpact>
-            <restitutionCoefficient unit="-">1</restitutionCoefficient>
+            <restitutionCoefficient unit="-">0.5</restitutionCoefficient>
           </UnilateralNewtonImpact>
         </normalImpactLaw>
+        <tangentialForceLaw>
+          <PlanarCoulombFriction>
+            <frictionCoefficient unit="-">0.1</frictionCoefficient>
+          </PlanarCoulombFriction>
+        </tangentialForceLaw>
+        <tangentialImpactLaw>
+          <PlanarCoulombImpact>
+            <frictionCoefficient unit="-">0.1</frictionCoefficient>
+          </PlanarCoulombImpact>
+        </tangentialImpactLaw>
         <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
       </Contact>
     </links>
