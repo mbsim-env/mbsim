@@ -22,10 +22,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.3.1, mbsimflatxml mbsimControl)
-requires="mbsim"
-requires="mbsimflatxml"
-requires="mbsimControl"
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.3.1 mbsimxml mbsimControl)
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
@@ -95,8 +92,6 @@ AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
-
-AC_SUBST([requires])
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
