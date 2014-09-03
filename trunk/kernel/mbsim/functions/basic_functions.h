@@ -334,6 +334,48 @@ namespace MBSim {
 
   template<typename Sig> class VectorValuedFunction; 
 
+  // VectorValuedFunction with a double as argument (including 2nd derivative)
+  template<typename Ret>
+    class VectorValuedFunction<Ret(double)> : public Function<Ret(double)> {
+      public:
+        VectorValuedFunction() { }
+        VectorValuedFunction(const std::vector<Function<double(double)> *> &component_) : component(component_) { }
+        ~VectorValuedFunction() { 
+          for (unsigned int i=1; i<component.size(); i++)
+            delete component[i]; 
+        }
+        void addComponent(Function<double(double)> *function) { component.push_back(function); }
+        Ret operator()(const double &x) {
+          Ret y(component.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++)
+            y(i)=(*component[i])(x);
+          return y;
+        }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+          typename fmatvec::Der<Ret, double>::type y(component.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++)
+            y(i)=component[i]->parDer(x);
+          return y;
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(component.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++)
+            y(i)=component[i]->parDerParDer(x);
+          return y;
+        }
+
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
+          while (e) {
+            addComponent(ObjectFactory::createAndInit<Function<double(double)> >(e));
+            e=e->getNextElementSibling();
+          }
+        }
+      private:
+        std::vector<Function<double(double)> *> component;
+    };
+
+  // VectorValuedFunction with a vector as argument (no 2nd derivative defined)
   template<typename Ret, typename Arg>
     class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
@@ -351,15 +393,12 @@ namespace MBSim {
           return y;
         }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {  
-          typename fmatvec::Der<Ret, Arg>::type y(component.size(),fmatvec::NONINIT);
-          for (unsigned int i=0; i<component.size(); i++)
-            y(i)=component[i]->parDer(x);
-          return y;
-        }
-        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
-          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(component.size(),fmatvec::NONINIT);
-          for (unsigned int i=0; i<component.size(); i++)
-            y(i)=component[i]->parDerParDer(x);
+          typename fmatvec::Der<Ret, Arg>::type y(component.size(),x.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<component.size(); i++) {
+            typename fmatvec::Der<double, Arg>::type row=component[i]->parDer(x);
+            for (unsigned int j=0; j<x.size(); j++)
+              y(i,j)=row(j);
+          }
           return y;
         }
 
@@ -376,25 +415,86 @@ namespace MBSim {
 
   template<typename Sig> class NestedFunction; 
 
+  // NestedFunction with a double as inner argument (including 2nd derivative)
+  template<typename Ret, typename Argo> 
+    class NestedFunction<Ret(Argo(double))> : public Function<Ret(double)> {
+      public:
+       NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) { }
+        ~NestedFunction() {
+          delete fo;
+          delete fi;
+        }
+        typename fmatvec::Size<double>::type getArgSize() const {
+          return fi->getArgSize();
+        }
+        Ret operator()(const double &arg) {
+          return (*fo)((*fi)(arg));
+        }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &arg) {
+          return fo->parDer((*fi)(arg))*fi->parDer(arg);
+        }
+        typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) {
+          return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) {
+          return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg);
+        }
+        void setOuterFunction(Function<Ret(Argo)> *fo_) {
+          fo = fo_;
+        }
+        void setInnerFunction(Function<Argo(double)> *fi_) {
+          fi = fi_;
+        }
+        void initializeUsingXML(xercesc::DOMElement *element) {
+          xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
+          fo=ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild());
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
+          fi=ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild());
+        }
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
+          return 0;
+        } 
+      private:
+        Function<Ret(Argo)> *fo;
+        Function<Argo(double)> *fi;
+    };
+
+  // VectorValuedFunction with a vector as inner argument (no 2nd derivative defined)
   template<typename Ret, typename Argo, typename Argi> 
     class NestedFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
       public:
        NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
-        ~NestedFunction() { delete fo; delete fi; }
-        typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
-        Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
-        typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
-        typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
-        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
-        void setOuterFunction(Function<Ret(Argo)> *fo_) { fo = fo_; }
-        void setInnerFunction(Function<Argo(Argi)> *fi_) { fi = fi_; }
+        ~NestedFunction() {
+          delete fo;
+          delete fi;
+        }
+        typename fmatvec::Size<Argi>::type getArgSize() const {
+          return fi->getArgSize();
+        }
+        Ret operator()(const Argi &arg) {
+          return (*fo)((*fi)(arg));
+        }
+        typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) {
+          return fo->parDer((*fi)(arg))*fi->parDer(arg);
+        }
+        typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) {
+          return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
+        }
+        void setOuterFunction(Function<Ret(Argo)> *fo_) {
+          fo = fo_;
+        }
+        void setInnerFunction(Function<Argo(Argi)> *fi_) {
+          fi = fi_;
+        }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
           fo=ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild());
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
           fi=ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild());
         }
-        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
+          return 0;
+        } 
       private:
         Function<Ret(Argo)> *fo;
         Function<Argo(Argi)> *fi;
