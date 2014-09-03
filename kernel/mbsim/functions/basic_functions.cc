@@ -84,13 +84,13 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(double)>, MBSIM%"VectorValuedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<Vec3(double)>, MBSIM%"VectorValuedFunction")
-  // MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(VecV)>, MBSIM%"VectorValuedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(VecV)>, MBSIM%"VectorValuedFunction")
 
   // The following functions are created using ...create<Function<Vec3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  // MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<Vec3   (double(VecV  ))>, MBSIM%"NestedFunction")
-  // MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<Vec3   (VecV  (VecV  ))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<Vec3   (double(VecV  ))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<Vec3   (VecV  (VecV  ))>, MBSIM%"NestedFunction")
   // The following functions are created using ...create<Function<Vec3(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
@@ -99,8 +99,8 @@ namespace MBSim {
   // The following functions are created using ...create<Function<RotMat3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  // MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<RotMat3(double(VecV  ))>, MBSIM%"NestedFunction")
-  // MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<RotMat3(VecV  (VecV  ))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<RotMat3(double(VecV  ))>, MBSIM%"NestedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<RotMat3(VecV  (VecV  ))>, MBSIM%"NestedFunction")
   // The following functions are created using ...create<Function<RotMat3(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
