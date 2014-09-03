@@ -37,7 +37,7 @@ double mR = 10;
 double g0 = 9.81;
 double mu = 1.07;
 
-class Fahrwiderstand : public fmatvec::Function<fmatvec::VecV(double)> {
+class Fahrwiderstand : public MBSim::Function<fmatvec::VecV(double)> {
   private:
     RigidBody *body;
   public:
@@ -62,7 +62,7 @@ class Fahrwiderstand : public fmatvec::Function<fmatvec::VecV(double)> {
     };
 };
 
-class Moment : public fmatvec::Function<fmatvec::VecV(double)> {
+class Moment : public MBSim::Function<fmatvec::VecV(double)> {
     RigidBody *shaft,*fzg;
     double P, M_max, Om_eck, Om_max, t0;
     double i, M_An, M_Ab, Om_Ab, Om_An, v_Fzg;

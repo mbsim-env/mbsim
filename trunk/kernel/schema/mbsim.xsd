@@ -2365,6 +2365,7 @@
                   Als Kontaktkontur wird die Ausfläche des Kegelstumpfes gewählt.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
             <xs:element name="hollow">
               <xs:annotation>
@@ -2372,6 +2373,7 @@
                   Als Kontaktkontur wird die Innenfläche des Kegelstumpfes gewählt.
                 </xs:documentation>
               </xs:annotation>
+              <xs:complexType/>
             </xs:element>
           </xs:choice>
           <xs:element name="enableOpenMBV" minOccurs="0">

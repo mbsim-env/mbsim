@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
 
   class ControlvalveAreaSignal : public Signal {
     public:
-      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, boost::shared_ptr<Function<double(double)> > relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
+      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
       }
 
       Vec getSignal() {
@@ -52,7 +52,7 @@ namespace MBSimHydraulics {
     private:
       double factor, offset;
       Signal * position;
-      boost::shared_ptr<Function<double(double)> > relAlphaPA;
+      boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
       Vec signal;
   };
 
@@ -212,7 +212,7 @@ namespace MBSimHydraulics {
       aT=getDouble(e);
     setAlpha(a, aT);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativeAlphaPA");
-    Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()); 
+    MBSim::Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()); 
     setPARelativeAlphaFunction(relAlphaPA_);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalRelativeAlpha");
     setMinimalRelativeAlpha(getDouble(e));

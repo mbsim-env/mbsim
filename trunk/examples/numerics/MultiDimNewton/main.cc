@@ -10,7 +10,7 @@ using namespace MBSim;
 using namespace std;
 
 
-class TestFunction : public Function<fmatvec::Vec(fmatvec::Vec)> {
+class TestFunction : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
 
   public:
     /**

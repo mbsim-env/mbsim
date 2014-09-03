@@ -11,7 +11,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyPos : public Function<Vec3(double)> {
+class MyPos : public MBSim::Function<Vec3(double)> {
   public:
     int getArgSize() const {return 0;}
     Vec3 operator()(const double &t) {

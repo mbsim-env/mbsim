@@ -20,7 +20,7 @@
 #ifndef _KINEMATIC_FUNCTIONS_H_
 #define _KINEMATIC_FUNCTIONS_H_
 
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
@@ -28,7 +28,7 @@
 namespace MBSim {
 
   template<typename Arg>
-    class TranslationAlongXAxis : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongXAxis : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r, a;
       public:
@@ -44,7 +44,7 @@ namespace MBSim {
     };
 
   template<typename Arg>
-    class TranslationAlongYAxis : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongYAxis : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r, a;
       public:
@@ -60,7 +60,7 @@ namespace MBSim {
     };
 
   template<typename Arg>
-    class TranslationAlongZAxis : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongZAxis : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r, a;
       public:
@@ -76,7 +76,7 @@ namespace MBSim {
     };
 
   template<typename Arg>
-    class TranslationAlongAxesXY : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongAxesXY : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r;
         fmatvec::Mat3xV A;
@@ -94,7 +94,7 @@ namespace MBSim {
     };
 
   template<typename Arg>
-    class TranslationAlongAxesYZ : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongAxesYZ : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r;
         fmatvec::Mat3xV A;
@@ -112,7 +112,7 @@ namespace MBSim {
     };
 
   template<typename Arg>
-    class TranslationAlongAxesXZ : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongAxesXZ : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r;
         fmatvec::Mat3xV A;
@@ -130,7 +130,7 @@ namespace MBSim {
     };
 
   template<typename Arg>
-    class TranslationAlongAxesXYZ : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongAxesXYZ : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 r;
         fmatvec::Mat3xV A;
@@ -149,7 +149,7 @@ namespace MBSim {
     };
 
   template<class Arg>
-    class TranslationAlongFixedAxis : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class TranslationAlongFixedAxis : public Function<fmatvec::Vec3(Arg)> {
       private:
         fmatvec::Vec3 a;
         fmatvec::Vec3 zeros(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &x) { return fmatvec::Vec3(x.rows()); }
@@ -173,7 +173,7 @@ namespace MBSim {
   inline fmatvec::Vec3 TranslationAlongFixedAxis<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
   template<class Arg>
-    class LinearTranslation : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+    class LinearTranslation : public Function<fmatvec::Vec3(Arg)> {
       private:
         typename fmatvec::Der<fmatvec::Vec3, Arg>::type A;
         fmatvec::Vec3 b;
@@ -205,7 +205,7 @@ namespace MBSim {
     inline fmatvec::Vec3 LinearTranslation<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
   template<class Arg> 
-    class RotationAboutXAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutXAxis : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
@@ -228,7 +228,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutYAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutYAxis : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
@@ -251,7 +251,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutZAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutZAxis : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
@@ -274,7 +274,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutFixedAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutFixedAxis : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
@@ -318,7 +318,7 @@ namespace MBSim {
   inline fmatvec::Vec3 RotationAboutFixedAxis<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
   template<class Arg> 
-    class RotationAboutAxesXY : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesXY : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -359,7 +359,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesYZ : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -400,7 +400,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesXZ : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -445,7 +445,7 @@ namespace MBSim {
    * \brief rotation class for rotation about all three axis using the cardan description
    */
   template<class Arg> 
-    class RotationAboutAxesXYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesXYZ : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -513,7 +513,7 @@ namespace MBSim {
     };
 
     template<class Arg> 
-    class RotationAboutAxesXYZ2 : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesXYZ2 : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -574,7 +574,7 @@ namespace MBSim {
     };
   
   template<class Arg> 
-    class RotationAboutAxesZXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesZXZ : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -631,7 +631,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesZYX : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesZYX : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -695,7 +695,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesXYZMapping : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesXYZMapping : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -720,7 +720,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesXYZMapping2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesXYZMapping2 : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -745,7 +745,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesZXZMapping : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesZXZMapping : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -772,7 +772,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesZXZMapping2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesZXZMapping2 : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -799,7 +799,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class RotationAboutAxesZYXMapping : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class RotationAboutAxesZYXMapping : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:

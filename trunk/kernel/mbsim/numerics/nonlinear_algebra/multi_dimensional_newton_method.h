@@ -61,7 +61,7 @@ namespace MBSim {
       void setMaximumNumberOfIterations(int itmax_) {
         itermax = itmax_;
       }
-      void setFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *function_) {
+      void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> *function_) {
         function = function_;
       }
       void setJacobianFunction(NewtonJacobianFunction * jacobian_) {
@@ -89,7 +89,7 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> *function;
+      Function<fmatvec::Vec(fmatvec::Vec)> *function;
 
       /**
        * \brief Jacobian matrix

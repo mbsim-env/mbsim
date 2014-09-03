@@ -25,7 +25,7 @@
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/contour.h>
 #include <mbsim/contact.h>
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 #include <fmatvec/atom.h>
 
 namespace MBSim {
@@ -45,7 +45,7 @@ namespace MBSim {
        */
       GeneralizedForceLaw() : Atom(), forceFunc(NULL) {};
 
-      GeneralizedForceLaw(fmatvec::Function<double(double,double)> *forceFunc_) : Atom(), forceFunc(forceFunc_) {};
+      GeneralizedForceLaw(Function<double(double,double)> *forceFunc_) : Atom(), forceFunc(forceFunc_) {};
 
       /**
        * \brief destructor
@@ -112,13 +112,13 @@ namespace MBSim {
        * The second input parameter to the force function is gd.
        * The return value is the force.
        */
-      void setForceFunction(fmatvec::Function<double(double,double)> *forceFunc_) { forceFunc=forceFunc_; }
+      void setForceFunction(Function<double(double,double)> *forceFunc_) { forceFunc=forceFunc_; }
 
     protected:
       /*!
        * \brief force function for a regularized contact law
        */
-      fmatvec::Function<double(double,double)> *forceFunc;
+      Function<double(double,double)> *forceFunc;
   };
 
   /**
@@ -297,7 +297,7 @@ namespace MBSim {
        */
       FrictionForceLaw() : Atom(), frictionForceFunc(NULL) {};
 
-      FrictionForceLaw(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : frictionForceFunc(frictionForceFunc_) {};
+      FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : frictionForceFunc(frictionForceFunc_) {};
 
       /**
        * \brief destructor
@@ -330,10 +330,10 @@ namespace MBSim {
        * The second input parameter to the friction force function is laN.
        * The return value is the force vector.
        */
-      void setFrictionForceFunction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) { frictionForceFunc=frictionForceFunc_; }
+      void setFrictionForceFunction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) { frictionForceFunc=frictionForceFunc_; }
 
     protected:
-      fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc;
+      Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc;
   };
 
   /**
@@ -438,7 +438,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      PlanarStribeckFriction(fmatvec::Function<double(double)> *fmu_) : fmu(fmu_) {};
+      PlanarStribeckFriction(Function<double(double)> *fmu_) : fmu(fmu_) {};
 
       /**
        * \brief destructor
@@ -461,7 +461,7 @@ namespace MBSim {
       /**
        * friction coefficient function
        */
-      fmatvec::Function<double(double)> *fmu;
+      Function<double(double)> *fmu;
   };
 
   /**
@@ -480,7 +480,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialStribeckFriction(fmatvec::Function<double(double)> *fmu_) : fmu(fmu_) {};
+      SpatialStribeckFriction(Function<double(double)> *fmu_) : fmu(fmu_) {};
 
       /**
        * \brief destructor
@@ -503,7 +503,7 @@ namespace MBSim {
       /**
        * friction coefficient function
        */
-      fmatvec::Function<double(double)> *fmu;
+      Function<double(double)> *fmu;
   };
 
   /**
@@ -638,7 +638,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      PlanarStribeckImpact(fmatvec::Function<double(double)> *fmu_) : fmu(fmu_) {};
+      PlanarStribeckImpact(Function<double(double)> *fmu_) : fmu(fmu_) {};
 
       /**
        * \brief destructor
@@ -660,7 +660,7 @@ namespace MBSim {
       /**
        * friction coefficient function
        */
-      fmatvec::Function<double(double)> *fmu;
+      Function<double(double)> *fmu;
   };
 
   /**
@@ -679,7 +679,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialStribeckImpact(fmatvec::Function<double(double)> *fmu_) : fmu(fmu_) {};
+      SpatialStribeckImpact(Function<double(double)> *fmu_) : fmu(fmu_) {};
 
       /**
        * \brief destructor
@@ -701,7 +701,7 @@ namespace MBSim {
       /**
        * friction coefficient function
        */
-      fmatvec::Function<double(double)> *fmu;
+      Function<double(double)> *fmu;
   };
 
   /**
@@ -716,7 +716,7 @@ namespace MBSim {
        */
       RegularizedUnilateralConstraint() {};
 
-      RegularizedUnilateralConstraint(fmatvec::Function<double(double,double)> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
+      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
 
       /**
        * \brief destructor
@@ -910,7 +910,7 @@ namespace MBSim {
        */
       RegularizedBilateralConstraint() {};
 
-      RegularizedBilateralConstraint(fmatvec::Function<double(double,double)> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
+      RegularizedBilateralConstraint(Function<double(double,double)> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
 
       /**
        * \brief destructor
@@ -932,7 +932,7 @@ namespace MBSim {
   class RegularizedPlanarFriction : public FrictionForceLaw {
     public:
       RegularizedPlanarFriction() {};
-      RegularizedPlanarFriction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
+      RegularizedPlanarFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
       virtual ~RegularizedPlanarFriction() {}
       int getFrictionDirections() { return 1; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
@@ -943,7 +943,7 @@ namespace MBSim {
   class RegularizedSpatialFriction : public FrictionForceLaw {
     public:
       RegularizedSpatialFriction() {};
-      RegularizedSpatialFriction(fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
+      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
       virtual ~RegularizedSpatialFriction() {}
       int getFrictionDirections() { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }

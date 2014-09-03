@@ -33,7 +33,7 @@ class initLink : public Link {
     bool gActiveChanged() {return false; }
     void init(InitStage stage) {
       if (stage==calculateLocalInitialValues) {
-        class CamRockerDistance : public fmatvec::Function<double(double)> {
+        class CamRockerDistance : public MBSim::Function<double(double)> {
           public:
             CamRockerDistance(RigidBody * rocker_, Contact * contactCamRocker_) : rocker(rocker_), contactCamRocker(contactCamRocker_) {}
             double operator()(const double &phi) {
@@ -66,7 +66,7 @@ class initLink : public Link {
           contactCamRocker->updateg(0);
           nltol++;
         }
-        class CamRockerVelocity : public fmatvec::Function<double(double)> {
+        class CamRockerVelocity : public MBSim::Function<double(double)> {
           public:
             CamRockerVelocity(RigidBody * rocker_, Contact * contactCamRocker_) : rocker(rocker_), contactCamRocker(contactCamRocker_) {}
             double operator()(const double &omega) {

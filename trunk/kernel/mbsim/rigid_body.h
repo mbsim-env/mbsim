@@ -135,46 +135,46 @@ namespace MBSim {
        * \brief set Kinematic for genral translational motion
        * \param fPrPK translational kinematic description
        */
-      void setGeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) {
+      void setGeneralTranslation(Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) {
         fPrPK = fPrPK_;
       }
       /*!
        * \brief set Kinematic for only time dependent translational motion
        * \param fPrPK translational kinematic description
        */
-      void setTimeDependentTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fPrPK_) {
+      void setTimeDependentTranslation(Function<fmatvec::Vec3(double)> *fPrPK_) {
         setGeneralTranslation(new TimeDependentFunction<fmatvec::Vec3>(fPrPK_));
       }
       /*!
        * \brief set Kinematic for only state dependent translational motion
        * \param fPrPK translational kinematic description
        */
-      void setStateDependentTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fPrPK_) {
+      void setStateDependentTranslation(Function<fmatvec::Vec3(fmatvec::VecV)> *fPrPK_) {
         setGeneralTranslation(new StateDependentFunction<fmatvec::Vec3>(fPrPK_));
       }
-      void setTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) { setGeneralTranslation(fPrPK_); }
-      void setTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fPrPK_) { setTimeDependentTranslation(fPrPK_); }
-      void setTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fPrPK_) { setStateDependentTranslation(fPrPK_); }
+      void setTranslation(Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) { setGeneralTranslation(fPrPK_); }
+      void setTranslation(Function<fmatvec::Vec3(double)> *fPrPK_) { setTimeDependentTranslation(fPrPK_); }
+      void setTranslation(Function<fmatvec::Vec3(fmatvec::VecV)> *fPrPK_) { setStateDependentTranslation(fPrPK_); }
 
       // NOTE: we can not use a overloaded setRotation here due to restrictions in XML but define them for convinience in c++
       /*!
        * \brief set Kinematic for general rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setGeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { fAPK = fAPK_; }
+      void setGeneralRotation(Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { fAPK = fAPK_; }
       /*!
        * \brief set Kinematic for only time dependent rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setTimeDependentRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_) { setGeneralRotation(new TimeDependentFunction<fmatvec::RotMat3>(fAPK_)); }
+      void setTimeDependentRotation(Function<fmatvec::RotMat3(double)>* fAPK_) { setGeneralRotation(new TimeDependentFunction<fmatvec::RotMat3>(fAPK_)); }
       /*!
        * \brief set Kinematic for only state dependent rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setStateDependentRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setGeneralRotation(new StateDependentFunction<fmatvec::RotMat3>(fAPK_)); }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { setGeneralRotation(fAPK_); }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_) { setTimeDependentRotation(fAPK_); }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setStateDependentRotation(fAPK_); }
+      void setStateDependentRotation(Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setGeneralRotation(new StateDependentFunction<fmatvec::RotMat3>(fAPK_)); }
+      void setRotation(Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) { setGeneralRotation(fAPK_); }
+      void setRotation(Function<fmatvec::RotMat3(double)>* fAPK_) { setTimeDependentRotation(fAPK_); }
+      void setRotation(Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setStateDependentRotation(fAPK_); }
 
       void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
       void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
@@ -183,12 +183,12 @@ namespace MBSim {
        * \brief get Kinematic for translational motion
        * \return translational kinematic description
        */
-      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)>* getTranslation() { return fPrPK; }
+      Function<fmatvec::Vec3(fmatvec::VecV, double)>* getTranslation() { return fPrPK; }
       /*!
        * \brief get Kinematic for rotational motion
        * \return rotational kinematic description
        */
-      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
+      Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
 
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
@@ -307,17 +307,17 @@ namespace MBSim {
        */
       fmatvec::Vec3 WvPKrel, WomPK;
 
-      fmatvec::Function<fmatvec::MatV(fmatvec::VecV)> *fTR;
+      Function<fmatvec::MatV(fmatvec::VecV)> *fTR;
 
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
-      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK;
+      Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK;
 
       /**
        * \brief rotation from kinematic Frame to parent Frame
        */
-      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK;
+      Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK;
 
       /**
        * \brief function pointer to update mass matrix

@@ -21,7 +21,7 @@
 
 #include "mbsim/link_mechanics.h"
 #include <mbsim/frame.h>
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -40,7 +40,7 @@ namespace MBSim {
     protected:
       double dist;
       fmatvec::Vec3 n;
-      fmatvec::Function<double(double,double)> *func;
+      Function<double(double,double)> *func;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
@@ -67,7 +67,7 @@ namespace MBSim {
        * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
        * The return value of that function is used as the force of the SpringDamper.
        */
-      void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -97,7 +97,7 @@ namespace MBSim {
   class DirectionalSpringDamper : public LinkMechanics {
     protected:
       double dist;
-      fmatvec::Function<double(double,double)> *func;
+      Function<double(double,double)> *func;
       Frame *refFrame;
       fmatvec::Vec3 forceDir, WforceDir, WrP0P1;
       Frame C;
@@ -127,7 +127,7 @@ namespace MBSim {
        * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
        * The return value of that function is used as the force of the SpringDamper.
        */
-      void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
 
       /**
        * \param local force direction represented in first frame
@@ -156,7 +156,7 @@ namespace MBSim {
 
   class GeneralizedSpringDamper : public LinkMechanics {
     protected:
-      fmatvec::Function<double(double,double)> *func;
+      Function<double(double,double)> *func;
       std::vector<RigidBody*> body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
@@ -175,7 +175,7 @@ namespace MBSim {
       void init(InitStage stage);
 
       /** \brief Set the function for the generalized force. */
-      void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }

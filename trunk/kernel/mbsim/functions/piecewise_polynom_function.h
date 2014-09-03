@@ -21,7 +21,7 @@
 #define PIECEWISE_POLYNOM
 
 #include "fmatvec/fmatvec.h"
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
@@ -61,7 +61,7 @@ namespace MBSim {
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
   template<typename Ret, typename Arg>
-  class PiecewisePolynomFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class PiecewisePolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
 
     public:
       enum InterpolationMethod {

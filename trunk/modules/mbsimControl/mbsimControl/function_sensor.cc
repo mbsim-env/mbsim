@@ -30,11 +30,11 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionSensor, MBSIMCONTROL%"FunctionSensor")
       
-  FunctionSensor::FunctionSensor(const std::string &name, fmatvec::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
+  FunctionSensor::FunctionSensor(const std::string &name, MBSim::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
     y=(*function)(0);
   }
 
-  void FunctionSensor::setFunction(fmatvec::Function<fmatvec::VecV(double)>* function_) {
+  void FunctionSensor::setFunction(MBSim::Function<fmatvec::VecV(double)>* function_) {
     function=function_; 
     y=(*function)(0); 
   }
@@ -47,7 +47,7 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    function=MBSim::ObjectFactory::createAndInit<fmatvec::Function<VecV(double)> >(e->getFirstElementChild()); 
+    function=MBSim::ObjectFactory::createAndInit<MBSim::Function<VecV(double)> >(e->getFirstElementChild()); 
     y=(*function)(0);
   }
 
@@ -58,7 +58,7 @@ namespace MBSimControl {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     signalString = E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    fun=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double)> >(e->getFirstElementChild()); 
+    fun=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()); 
   }
 
   void Function_SSEvaluation::init(InitStage stage) {
@@ -88,7 +88,7 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondInputSignal");
     signal2String = E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    fun=MBSim::ObjectFactory::createAndInit<fmatvec::Function<double(double,double)> >(e->getFirstElementChild()); 
+    fun=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double,double)> >(e->getFirstElementChild()); 
   }
 
   void Function_SSSEvaluation::init(InitStage stage) {

@@ -24,7 +24,7 @@
 
 namespace MBSim {
 
-  class DampingFunction : public fmatvec::Function<double(fmatvec::Vec,fmatvec::Vec)> {
+  class DampingFunction : public Function<double(fmatvec::Vec,fmatvec::Vec)> {
     public:
     /**
      * \brief constructor

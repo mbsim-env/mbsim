@@ -22,7 +22,7 @@
 
 #include <mbsim/link_mechanics.h>
 #include <mbsim/frame.h>
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -85,10 +85,10 @@ namespace MBSim {
        * forceDir*func(t) is the applied force vector in space.
        * This force vector is given in the frame set by setFrameOfReference.
        */
-      void setForceFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
+      void setForceFunction(Function<fmatvec::VecV(double)> *func);
 
       /** \brief see setForce */
-      void setMomentFunction(fmatvec::Function<fmatvec::VecV(double)> *func);
+      void setMomentFunction(Function<fmatvec::VecV(double)> *func);
 
       /** \brief The frame of reference ID for the force/moment direction vectors.
        * If ID=0 the first frame, if ID=1 (default) the second frame is used.
@@ -141,7 +141,7 @@ namespace MBSim {
       /**
        * \brief portions of the force / moment in the specific directions
        */
-      fmatvec::Function<fmatvec::VecV(double)> *F, *M;
+      Function<fmatvec::VecV(double)> *F, *M;
 
       /**
        * \brief own frame located in second partner with same orientation as first partner 

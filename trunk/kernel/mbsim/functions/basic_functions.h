@@ -20,7 +20,7 @@
 #ifndef _FUNCTION_LIBRARY_H_
 #define _FUNCTION_LIBRARY_H_
 
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/eps.h"
@@ -31,7 +31,7 @@ namespace MBSim {
   template<typename Sig> class ConstantFunction; 
 
   template<typename Ret, typename Arg>
-    class ConstantFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class ConstantFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       protected:
         double a0;
       public:
@@ -50,7 +50,7 @@ namespace MBSim {
   template<typename Sig> class LinearFunction; 
 
   template<typename Ret, typename Arg>
-    class LinearFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class LinearFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       private:
         double a0, a1;
       public:
@@ -74,7 +74,7 @@ namespace MBSim {
   template<typename Sig> class QuadraticFunction; 
 
   template<typename Ret, typename Arg>
-    class QuadraticFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class QuadraticFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       private:
         double a0, a1, a2;
       public:
@@ -105,7 +105,7 @@ namespace MBSim {
   template<typename Sig> class PolynomFunction; 
 
   template<typename Ret, typename Arg>
-  class PolynomFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class PolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       PolynomFunction() { }
       PolynomFunction(const std::vector<double> &a_) : a(a_) { init(); }
@@ -157,7 +157,7 @@ namespace MBSim {
   template<typename Sig> class SinusoidalFunction; 
 
   template<typename Ret, typename Arg>
-  class SinusoidalFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class SinusoidalFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     protected:
       double A, f, phi0, y0;
     public:
@@ -184,7 +184,7 @@ namespace MBSim {
         if(e) y0=Element::getDouble(e);
       }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
-        xercesc::DOMElement *ele0 = fmatvec::Function<Ret(Arg)>::writeXMLFile(parent);
+        xercesc::DOMElement *ele0 = Function<Ret(Arg)>::writeXMLFile(parent);
         addElementText(ele0,MBSIM%"amplitude",A);
         addElementText(ele0,MBSIM%"frequency",f);
         addElementText(ele0,MBSIM%"phase",phi0);
@@ -196,7 +196,7 @@ namespace MBSim {
   template<typename Sig> class StepFunction; 
 
   template<typename Ret, typename Arg>
-  class StepFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class StepFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     private:
       double stepTime, stepSize;
     public:
@@ -216,7 +216,7 @@ namespace MBSim {
   template<typename Sig> class AbsoluteValueFunction; 
 
   template<typename Ret, typename Arg>
-  class AbsoluteValueFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class AbsoluteValueFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
@@ -227,7 +227,7 @@ namespace MBSim {
   template<typename Sig> class ModuloFunction;
 
   template<typename Ret, typename Arg>
-    class ModuloFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class ModuloFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       private:
         double denom;
       public:
@@ -245,7 +245,7 @@ namespace MBSim {
   template<typename Sig> class SignumFunction; 
 
   template<typename Ret, typename Arg>
-  class SignumFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class SignumFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
@@ -256,7 +256,7 @@ namespace MBSim {
   template<typename Sig> class PositiveValueFunction; 
 
   template<typename Ret, typename Arg>
-  class PositiveValueFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class PositiveValueFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
@@ -267,12 +267,12 @@ namespace MBSim {
   template<typename Sig> class AdditionFunction; 
 
   template<typename Ret, typename Arg>
-    class AdditionFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class AdditionFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
         AdditionFunction() : f1(0), f2(0) { }
         ~AdditionFunction() { delete f1; delete f2; }
-        void setFirstSummand(fmatvec::Function<Ret(Arg)> *function) { f1 = function; }
-        void setSecondSummand(fmatvec::Function<Ret(Arg)> *function) { f2 = function; }
+        void setFirstSummand(Function<Ret(Arg)> *function) { f1 = function; }
+        void setSecondSummand(Function<Ret(Arg)> *function) { f2 = function; }
         Ret operator()(const Arg &x) {
           return (*(f1))(x)+(*(f2))(x);
         }
@@ -284,23 +284,23 @@ namespace MBSim {
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstSummand");
-          f1=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+          f1=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondSummand");
-          f2=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+          f2=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
         }
       private:
-        fmatvec::Function<Ret(Arg)> *f1, *f2;
+        Function<Ret(Arg)> *f1, *f2;
     };
 
   template<typename Sig> class MultiplicationFunction; 
 
   template<typename Ret, typename Arg>
-    class MultiplicationFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class MultiplicationFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
         MultiplicationFunction() : f1(0), f2(0) { }
         ~MultiplicationFunction() { delete f1; delete f2; }
-        void setFirstFactor(fmatvec::Function<Ret(Arg)> *function) { f1 = function; }
-        void setSecondFactor(fmatvec::Function<Ret(Arg)> *function) { f2 = function; }
+        void setFirstFactor(Function<Ret(Arg)> *function) { f1 = function; }
+        void setSecondFactor(Function<Ret(Arg)> *function) { f2 = function; }
         Ret operator()(const Arg &x) {
           double a1 = ToDouble<Ret>::cast((*f1)(x));
           double a2 = ToDouble<Ret>::cast((*f2)(x));
@@ -324,34 +324,34 @@ namespace MBSim {
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstFactor");
-          f1=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+          f1=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondFactor");
-          f2=ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(e->getFirstElementChild());
+          f2=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
         }
       private:
-        fmatvec::Function<Ret(Arg)> *f1, *f2;
+        Function<Ret(Arg)> *f1, *f2;
     };
 
   template<typename Sig> class VectorValuedFunction; 
 
   template<typename Ret, typename Arg>
-    class VectorValuedFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
         VectorValuedFunction() { }
-        VectorValuedFunction(const std::vector<fmatvec::Function<double(Arg)> *> &component_) : component(component_) { }
+        VectorValuedFunction(const std::vector<Function<double(Arg)> *> &component_) : component(component_) { }
         ~VectorValuedFunction() { 
           for (unsigned int i=1; i<component.size(); i++)
             delete component[i]; 
         }
-        void addComponent(fmatvec::Function<double(Arg)> *function) { component.push_back(function); }
+        void addComponent(Function<double(Arg)> *function) { component.push_back(function); }
         Ret operator()(const Arg &x) {
           Ret y(component.size(),fmatvec::NONINIT);
           for (unsigned int i=0; i<component.size(); i++)
             y(i)=(*component[i])(x);
           return y;
         }
-        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
-          typename fmatvec::Der<Ret, double>::type y(component.size(),fmatvec::NONINIT);
+        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {  
+          typename fmatvec::Der<Ret, Arg>::type y(component.size(),fmatvec::NONINIT);
           for (unsigned int i=0; i<component.size(); i++)
             y(i)=component[i]->parDer(x);
           return y;
@@ -366,53 +366,53 @@ namespace MBSim {
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
           while (e) {
-            addComponent(ObjectFactory::createAndInit<fmatvec::Function<double(Arg)> >(e));
+            addComponent(ObjectFactory::createAndInit<Function<double(Arg)> >(e));
             e=e->getNextElementSibling();
           }
         }
       private:
-        std::vector<fmatvec::Function<double(Arg)> *> component;
+        std::vector<Function<double(Arg)> *> component;
     };
 
   template<typename Sig> class NestedFunction; 
 
   template<typename Ret, typename Argo, typename Argi> 
-    class NestedFunction<Ret(Argo(Argi))> : public fmatvec::Function<Ret(Argi)> {
+    class NestedFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
       public:
-       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_=0, fmatvec::Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
+       NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
         ~NestedFunction() { delete fo; delete fi; }
         typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
         typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
-        void setOuterFunction(fmatvec::Function<Ret(Argo)> *fo_) { fo = fo_; }
-        void setInnerFunction(fmatvec::Function<Argo(Argi)> *fi_) { fi = fi_; }
+        void setOuterFunction(Function<Ret(Argo)> *fo_) { fo = fo_; }
+        void setInnerFunction(Function<Argo(Argi)> *fi_) { fi = fi_; }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-          fo=ObjectFactory::createAndInit<fmatvec::Function<Ret(Argo)> >(e->getFirstElementChild());
+          fo=ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild());
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-          fi=ObjectFactory::createAndInit<fmatvec::Function<Argo(Argi)> >(e->getFirstElementChild());
+          fi=ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild());
         }
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
       private:
-        fmatvec::Function<Ret(Argo)> *fo;
-        fmatvec::Function<Argo(Argi)> *fi;
+        Function<Ret(Argo)> *fo;
+        Function<Argo(Argi)> *fi;
     };
 
   template<typename Sig> class LimitedFunction; 
 
   template <typename Ret, typename Arg>
   struct LimitedFunction<Ret(Arg)> {
-    LimitedFunction(fmatvec::Function<Ret(Arg)> *function_, double limit_) : function(function_), limit(limit_) { }
-    fmatvec::Function<Ret(Arg)> *function;
+    LimitedFunction(Function<Ret(Arg)> *function_, double limit_) : function(function_), limit(limit_) { }
+    Function<Ret(Arg)> *function;
     double limit;
   };
 
   template<typename Sig> class PiecewiseDefinedFunction; 
 
   template<typename Ret, typename Arg>
-    class PiecewiseDefinedFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+    class PiecewiseDefinedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
         PiecewiseDefinedFunction() : contDiff(0) { a.push_back(0); }
         ~PiecewiseDefinedFunction() { 
@@ -464,7 +464,7 @@ namespace MBSim {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
           xercesc::DOMElement *ee=e->getFirstElementChild();
           while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-            function.push_back(ObjectFactory::createAndInit<fmatvec::Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()));
+            function.push_back(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()));
             a.push_back(Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit")));
             ee=ee->getNextElementSibling();
           }
@@ -473,7 +473,7 @@ namespace MBSim {
           init();
         }
       private:
-        std::vector<fmatvec::Function<Ret(Arg)> *> function;
+        std::vector<Function<Ret(Arg)> *> function;
         std::vector<double> a;
         int contDiff;
         Ret yEnd, ysEnd, yssEnd;

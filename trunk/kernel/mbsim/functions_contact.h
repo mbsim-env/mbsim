@@ -39,7 +39,7 @@
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/mbsim_event.h"
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -51,7 +51,7 @@ namespace MBSim {
    * \date 2009-04-21 some comments (Thorsten Schindler)
    */
   template <typename Ret, typename Arg>
-  class DistanceFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class DistanceFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       virtual ~DistanceFunction() {
       }
@@ -423,7 +423,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class JacobianPairConeSectionCircle : public fmatvec::Function<double(double)> {
+  class JacobianPairConeSectionCircle : public Function<double(double)> {
     public:
       /*! 
        * \brief constructor
@@ -645,7 +645,7 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      Contact1sSearch(DistanceFunction<double(double)> *func_, fmatvec::Function<double(double)> *jac_) :
+      Contact1sSearch(DistanceFunction<double(double)> *func_, Function<double(double)> *jac_) :
           func(func_), jac(jac_), s0(0.), searchAll(false) {
       }
 
@@ -654,7 +654,7 @@ namespace MBSim {
         func = func_;
       }
 
-      void setJacobianFunction(fmatvec::Function<double(double)> *jac_) {
+      void setJacobianFunction(Function<double(double)> *jac_) {
         jac = jac_;
       }
 
@@ -697,7 +697,7 @@ namespace MBSim {
       /** 
        * \brief Jacobian of root function part of distance function
        */
-      fmatvec::Function<double(double)> *jac;
+      Function<double(double)> *jac;
 
       /**
        * \brief initial value for Newton method 
@@ -741,7 +741,7 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      Contact2sSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_, fmatvec::Function<fmatvec::Mat(fmatvec::Mat)> *jac_) :
+      Contact2sSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_, Function<fmatvec::Mat(fmatvec::Mat)> *jac_) :
           func(func_), jac(jac_), s0(2), searchAll(false) {
       }
 
@@ -796,7 +796,7 @@ namespace MBSim {
       /**
        * \brief Jacobian of root function part of distance function
        */
-      fmatvec::Function<fmatvec::Mat(fmatvec::Mat)> *jac;  // TODO::check the template type
+      Function<fmatvec::Mat(fmatvec::Mat)> *jac;  // TODO::check the template type
 
       /**
        * \brief initial value for Newton method

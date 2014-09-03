@@ -587,7 +587,7 @@ namespace MBSimControl {
     signalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      fmatvec::Function<Vec(Vec)> *f=ObjectFactory::createAndInit<fmatvec::Function<Vec(Vec)> >(e->getFirstElementChild());
+      MBSim::Function<Vec(Vec)> *f=ObjectFactory::createAndInit<MBSim::Function<Vec(Vec)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
@@ -617,7 +617,7 @@ namespace MBSimControl {
     signal2String=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      fmatvec::Function<Vec(Vec,Vec)> *f=ObjectFactory::createAndInit<fmatvec::Function<Vec(Vec,Vec)> >(e->getFirstElementChild());
+      MBSim::Function<Vec(Vec,Vec)> *f=ObjectFactory::createAndInit<MBSim::Function<Vec(Vec,Vec)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }

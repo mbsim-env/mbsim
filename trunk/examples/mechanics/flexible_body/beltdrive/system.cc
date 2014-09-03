@@ -31,7 +31,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class Moment : public Function<VecV(double)> {
+class Moment : public MBSim::Function<VecV(double)> {
   double M0;
   double M1;
   double omegaM;
@@ -44,7 +44,7 @@ class Moment : public Function<VecV(double)> {
     };
 };
 
-class tpSin : public Function<Vec(double)> {
+class tpSin : public MBSim::Function<Vec(double)> {
    protected:
       Vec    J;
       double a, b, c, d;
@@ -56,7 +56,7 @@ class tpSin : public Function<Vec(double)> {
          return J*om;
       }
 };
-class tpCos : public Function<Vec(double)> {
+class tpCos : public MBSim::Function<Vec(double)> {
    protected:
       Vec    J;
       double a, b, c, d;
@@ -68,14 +68,14 @@ class tpCos : public Function<Vec(double)> {
          return J*omp;
       }
 };
-class SinusExcitedOnConstVelocity : public Function<double(double)> {
+class SinusExcitedOnConstVelocity : public MBSim::Function<double(double)> {
    protected:
       Vec    JR;
       double omega0, phi0;
       double omegaExcitation, amplitudeExcitation;
-      Function<Vec(double)>* position;
-      Function<Vec(double)>* velocity;
-      Function<Vec(double)>* acceleration;
+      MBSim::Function<Vec(double)>* position;
+      MBSim::Function<Vec(double)>* velocity;
+      MBSim::Function<Vec(double)>* acceleration;
    public:
       SinusExcitedOnConstVelocity(Vec &JR_, double phi0_, double omega0_, double amplitudeExcitation_, double omegaExcitation_): JR(JR_), omega0(omega0_), phi0(phi0_), omegaExcitation(omegaExcitation_), amplitudeExcitation(amplitudeExcitation_) {
             position     = new tpCos(JR,   phi0, omega0,omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0, omegaExcitation);
@@ -93,12 +93,12 @@ class SinusExcitedOnConstVelocity : public Function<double(double)> {
          return ( omegaExcitation>epsroot()?-amplitudeExcitation/omegaExcitation:0.0 ) * cos(omegaExcitation*t) * omegaExcitation * omegaExcitation;
       }
 
-      const Function<Vec(double)>& getPositionFunction    () const {return *position    ;}
-      const Function<Vec(double)>& getVelocityFunction    () const {return *velocity    ;}
-      const Function<Vec(double)>& getAccelerationFunction() const {return *acceleration;}
-            Function<Vec(double)>& getPositionFunction    ()       {return *position    ;}
-            Function<Vec(double)>& getVelocityFunction    ()       {return *velocity    ;}
-            Function<Vec(double)>& getAccelerationFunction()       {return *acceleration;}
+      const MBSim::Function<Vec(double)>& getPositionFunction    () const {return *position    ;}
+      const MBSim::Function<Vec(double)>& getVelocityFunction    () const {return *velocity    ;}
+      const MBSim::Function<Vec(double)>& getAccelerationFunction() const {return *acceleration;}
+      MBSim::Function<Vec(double)>& getPositionFunction    ()       {return *position    ;}
+      MBSim::Function<Vec(double)>& getVelocityFunction    ()       {return *velocity    ;}
+      MBSim::Function<Vec(double)>& getAccelerationFunction()       {return *acceleration;}
 };
 
 

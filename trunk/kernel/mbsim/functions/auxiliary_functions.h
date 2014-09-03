@@ -20,17 +20,17 @@
 #ifndef AUXILIARY_FUNCTIONS_H_
 #define AUXILIARY_FUNCTIONS_H_
 
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
   template <class Ret>
-    class StateDependentFunction : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
+    class StateDependentFunction : public Function<Ret(fmatvec::VecV,double)> {
       private:
-        fmatvec::Function<Ret(fmatvec::VecV)> *f;
+        Function<Ret(fmatvec::VecV)> *f;
         int n;
       public:
-        StateDependentFunction(fmatvec::Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_), n(0) { 
+        StateDependentFunction(Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_), n(0) { 
           if(f) n = (*f)(fmatvec::VecV(getArg1Size())).rows();
         }
         ~StateDependentFunction() { delete f; }
@@ -45,16 +45,16 @@ namespace MBSim {
         typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
         bool constParDer1() const { return f->constParDer(); }
         bool constParDer2() const { return true; }
-        fmatvec::Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
+        Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
     };
 
    template <class Ret>
-    class TimeDependentFunction : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
+    class TimeDependentFunction : public Function<Ret(fmatvec::VecV,double)> {
       private:
-        fmatvec::Function<Ret(double)> *f;
+        Function<Ret(double)> *f;
         int n;
       public:
-        TimeDependentFunction(fmatvec::Function<Ret(double)> *f_=NULL) : f(f_), n(0) { 
+        TimeDependentFunction(Function<Ret(double)> *f_=NULL) : f(f_), n(0) { 
           if(f) n = (*f)(0).rows();
         }
         ~TimeDependentFunction() { delete f; }

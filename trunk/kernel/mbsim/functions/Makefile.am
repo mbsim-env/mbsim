@@ -11,7 +11,8 @@ functionincludedir = $(includedir)/mbsim/functions
 libfunction_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
-functioninclude_HEADERS = basic_functions.h \
+functioninclude_HEADERS = function.h \
+			  basic_functions.h \
 			  tabular_functions.h \
 			  symbolic_functions.h \
 			  kinematic_functions.h \

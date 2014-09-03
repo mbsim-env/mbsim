@@ -102,7 +102,7 @@ namespace MBSimHydraulics {
   void Checkvalve::setLineSetValued(bool setValued) {line->setBilateral(setValued); }
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
   void Checkvalve::setBallInitialPosition(double x0) {ball->setInitialGeneralizedPosition(x0); }
-  void Checkvalve::setSpringForceFunction(Function<double(double,double)> *func) {spring->setForceFunction(func); }
+  void Checkvalve::setSpringForceFunction(MBSim::Function<double(double,double)> *func) {spring->setForceFunction(func); }
   void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setNormalImpactLaw(GIL); }
   void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setNormalForceLaw(GFL); }
   void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setNormalImpactLaw(GIL); }
@@ -240,7 +240,7 @@ namespace MBSimHydraulics {
       setBallInitialPosition(getDouble(ee));
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"Spring");
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"forceFunction");
-    Function<double(double,double)> *f=MBSim::ObjectFactory::createAndInit<Function<double(double,double)> >(ee->getFirstElementChild());
+    MBSim::Function<double(double,double)> *f=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double,double)> >(ee->getFirstElementChild());
     setSpringForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"SeatContact");
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"contactForceLaw");

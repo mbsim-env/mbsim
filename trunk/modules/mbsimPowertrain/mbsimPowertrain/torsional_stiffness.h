@@ -21,7 +21,7 @@
 
 #include "mbsim/link_mechanics.h"
 #include <mbsim/frame.h>
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -38,7 +38,7 @@ namespace MBSimPowertrain {
 
   class TorsionalStiffness : public MBSim::LinkMechanics {
     protected:
-      fmatvec::Function<double(double,double)> *func;
+      MBSim::Function<double(double,double)> *func;
       std::vector<MBSim::RigidBody*> body;
       MBSim::Frame C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -64,7 +64,7 @@ namespace MBSimPowertrain {
        * The second input parameter to that function is the relative rotational velocity gd between frame2 and frame1.
        * The return value of that function is used as the torque of the RelativeRotationalSpringDamper.
        */
-      void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(MBSim::Function<double(double,double)> *func_) { func=func_; }
 
       /** \brief Set a projection direction for the resulting torque
        * If this function is not set, or frame is NULL, than torque calculated by setForceFunction

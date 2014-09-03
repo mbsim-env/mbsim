@@ -18,7 +18,7 @@
 
 using namespace fmatvec;
 
-class Angle : public Function<double(double)> {
+class Angle : public MBSim::Function<double(double)> {
   public:
     double operator()(const double& t) {
       double al;

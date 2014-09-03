@@ -21,7 +21,7 @@
 #define _EIGENANALYSER_H_
 
 #include "fmatvec/fmatvec.h"
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/solver.h"
 
 namespace MBSimAnalyser {
@@ -34,7 +34,7 @@ namespace MBSimAnalyser {
    */
   class Eigenanalyser : public MBSim::Solver {
 
-    class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
+    class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
         Residuum(MBSim::DynamicSystemSolver *sys_, double t_);
         fmatvec::Vec operator()(const fmatvec::Vec &z);

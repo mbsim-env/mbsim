@@ -33,7 +33,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class Moment : public Function<fmatvec::VecV(double)> {
+class Moment : public MBSim::Function<fmatvec::VecV(double)> {
   public:
     fmatvec::VecV operator()(const double& t) {
       double t0 = 0.05;

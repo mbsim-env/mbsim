@@ -8,7 +8,7 @@ using namespace MBSim;
 using namespace MBSimElectronics;
 //using namespace MBSimControl;
 // Just a test voltage signal
-class Signal : public Function<fmatvec::VecV(double)> {
+class Signal : public MBSim::Function<fmatvec::VecV(double)> {
   public:
     fmatvec::VecV operator()(const double &t) {
       fmatvec::VecV U(1);
