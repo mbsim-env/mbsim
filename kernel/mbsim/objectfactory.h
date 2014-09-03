@@ -278,4 +278,18 @@ class ObjectFactoryRegisterXMLNameHelperAsSingleton {
   static MBSim::ObjectFactoryRegisterXMLNameHelperAsSingleton<ThisType> \
     MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(name);
 
+/** Same as MBSIM_OBJECTFACTORY_REGISTERXMLNAME but also explicitly instantiates the template class ThisType.
+ * Please note that template member functions of ThisType must be explicitly instantated by hand. */
+#define MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(ThisType, name) \
+  template class ThisType; \
+  static MBSim::ObjectFactoryRegisterXMLNameHelper<ThisType> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(name);
+
+/** Same as MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON but also explicitly instantiates the template class ThisType.
+ * Please note that template member functions of ThisType must be explicitly instantated by hand. */
+#define MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON_AND_INSTANTIATE(ThisType, name) \
+  template class ThisType; \
+  static MBSim::ObjectFactoryRegisterXMLNameHelperAsSingleton<ThisType> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(name);
+
 #endif

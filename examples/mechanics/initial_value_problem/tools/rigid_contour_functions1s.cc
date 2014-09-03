@@ -142,7 +142,7 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
   a.push_back(0);
   while(a.back()<2.*M_PI) {
     Vec p1=operator()(a.back());
-    class PointDistance : public fmatvec::Function<double(double)> {
+    class PointDistance : public MBSim::Function<double(double)> {
       public:
         PointDistance(Vec p1_, FuncCrPC * f_, double d_) : p1(p1_), f(f_), d(d_) {}
         double operator()(const double &alpha) {

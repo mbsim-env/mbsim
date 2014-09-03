@@ -21,7 +21,7 @@
 #define  _CHECKVALVE_H_
 
 #include "mbsim/group.h"
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
   class Frame;
@@ -54,7 +54,7 @@ namespace MBSimHydraulics {
       void setLineSetValued(bool setValued=true);
       void setBallMass(double mBall_);
       void setBallInitialPosition(double x0Ball_);
-      void setSpringForceFunction(fmatvec::Function<double(double,double)> *func);
+      void setSpringForceFunction(MBSim::Function<double(double,double)> *func);
       void setSeatContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
       void setSeatContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
       void setMaximalOpening(double hMax_) {hMax=hMax_; }

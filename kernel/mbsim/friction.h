@@ -21,7 +21,7 @@
 
 #include "mbsim/link_mechanics.h"
 #include <mbsim/frame.h>
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -35,7 +35,7 @@ namespace MBSim {
 
   class GeneralizedFriction : public LinkMechanics {
     protected:
-      //fmatvec::Function<double(double,double)> *func;
+      //Function<double(double,double)> *func;
       FrictionForceLaw *func;
       double laN;
       std::vector<RigidBody*> body;
@@ -53,7 +53,7 @@ namespace MBSim {
       void init(InitStage stage);
 
       /** \brief Set the function for the torque calculation. */
-      //void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      //void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
       void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_) { func = func_; }
       void setGeneralizedNormalForce(double laN_) { laN = laN_; }
 

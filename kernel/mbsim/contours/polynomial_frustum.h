@@ -24,7 +24,7 @@
 #include <mbsim/contours/rectangle.h>
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
 #endif
@@ -240,7 +240,7 @@ namespace MBSim {
    * \param para: coefficient vector of the left side
    */
 
-  class ContactPolyfun : public fmatvec::Function<double(double)> {
+  class ContactPolyfun : public Function<double(double)> {
     public:
       /*!
        * \brief Constructor

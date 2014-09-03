@@ -36,7 +36,7 @@ namespace MBSim {
   /*!
    * \brief class that copies the nurbs++-library using the fmatvec as a basis-math-library
    *
-   * \todo: could/should be derived by fmatvec::function<Vec3(double)>
+   * \todo: could/should be derived by function<Vec3(double)>
    */
   class NurbsCurve {
     public:

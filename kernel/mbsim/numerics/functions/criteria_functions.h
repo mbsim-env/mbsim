@@ -21,7 +21,7 @@
 #define NUMERICSCRITERIAFUNCTIONS_H_
 
 #include <fmatvec/fmatvec.h>
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 #include <map>
 
@@ -30,7 +30,7 @@ namespace MBSim {
   /*!
    * \brief Mother class for different criterias that are fulfilled or not
    */
-  class CriteriaFunction : public fmatvec::Function<int(fmatvec::Vec)> {
+  class CriteriaFunction : public Function<int(fmatvec::Vec)> {
 
     public:
       /**

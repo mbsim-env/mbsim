@@ -21,7 +21,7 @@
 #define  _HNODE_H_
 
 #include "mbsim/link.h"
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
@@ -122,7 +122,7 @@ namespace MBSimHydraulics {
       ~ConstrainedNode() { delete pFun; }
       virtual std::string getType() const { return "ConstrainedNode"; }
 
-      void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
       void init(InitStage stage);
@@ -130,7 +130,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      fmatvec::Function<double(double)> * pFun;
+      MBSim::Function<double(double)> * pFun;
   };
 
 

@@ -21,7 +21,7 @@
 #define  _HNODE_MEC_H_
 
 #include "hnode.h"
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
   class Frame;
@@ -114,7 +114,7 @@ namespace MBSimHydraulics {
       ~ConstrainedNodeMec() { delete pFun; }
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
-      void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -124,7 +124,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      fmatvec::Function<double(double)> * pFun;
+      MBSim::Function<double(double)> * pFun;
   };
 
 

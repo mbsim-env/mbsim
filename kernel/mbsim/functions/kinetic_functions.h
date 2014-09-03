@@ -20,7 +20,7 @@
 #ifndef _KINETIC_FUNCTIONS_H_
 #define _KINETIC_FUNCTIONS_H_
 
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/eps.h"
 
@@ -32,7 +32,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearSpringDamperForce : public fmatvec::Function<double(double,double)> {
+  class LinearSpringDamperForce : public Function<double(double,double)> {
     public:
       /** 
        * \brief constructor
@@ -69,7 +69,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo delete function pointers
    */
-  class NonlinearSpringDamperForce : public fmatvec::Function<double(double,double)> {
+  class NonlinearSpringDamperForce : public Function<double(double,double)> {
     public:
       /** 
        * \brief constructor
@@ -112,7 +112,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedUnilateralConstraint: public fmatvec::Function<double(double,double)> {
+  class LinearRegularizedUnilateralConstraint: public Function<double(double,double)> {
     public:
       /**
        * \brief constructor
@@ -155,7 +155,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedBilateralConstraint: public fmatvec::Function<double(double,double)> {
+  class LinearRegularizedBilateralConstraint: public Function<double(double,double)> {
     public:
       /**
        * \brief constructor
@@ -197,7 +197,7 @@ namespace MBSim {
    * \date 2010-01-09 beauty correction (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedCoulombFriction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> {
+  class LinearRegularizedCoulombFriction : public Function<fmatvec::Vec(fmatvec::Vec,double)> {
     public:
       /**
        * \brief constructor
@@ -235,7 +235,7 @@ namespace MBSim {
    * \date 2010-01-09 beauty correction (Thorsten Schindler)
    * \todo delete function pointer
    */
-  class LinearRegularizedStribeckFriction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> {
+  class LinearRegularizedStribeckFriction : public Function<fmatvec::Vec(fmatvec::Vec,double)> {
     public:
       /**
        * \brief constructor
@@ -247,7 +247,7 @@ namespace MBSim {
        * \param function for friction coefficient depending on norm of relative velocity
        * \param border with respect to the relative velocity for the linear regularized increase of the friction force
        */
-      LinearRegularizedStribeckFriction(fmatvec::Function<double(double)> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {}
+      LinearRegularizedStribeckFriction(Function<double(double)> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
@@ -255,7 +255,7 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setFrictionFunction(fmatvec::Function<double(double)> *fmu_) { fmu=fmu_; }
+      void setFrictionFunction(Function<double(double)> *fmu_) { fmu=fmu_; }
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
 
@@ -274,7 +274,7 @@ namespace MBSim {
   /**
    * \brief function describing the influence between the deformations on a body
    */
-  class InfluenceFunction : public fmatvec::Function<double(fmatvec::Vec2,fmatvec::Vec2)> {
+  class InfluenceFunction : public Function<double(fmatvec::Vec2,fmatvec::Vec2)> {
     public:
       InfluenceFunction(){}
       /* INHERITED INTERFACE OF FUNCTION2 */

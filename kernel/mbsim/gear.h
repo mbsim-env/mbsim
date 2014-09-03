@@ -34,7 +34,7 @@ namespace MBSim {
 
   class Gear : public LinkMechanics {
     protected:
-      fmatvec::Function<double(double,double)> *func;
+      Function<double(double,double)> *func;
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
       std::vector<Frame> C;
@@ -63,7 +63,7 @@ namespace MBSim {
       virtual void calcgSize(int j);
       virtual void calcgdSize(int j);
 
-      void setGeneralizedForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
 

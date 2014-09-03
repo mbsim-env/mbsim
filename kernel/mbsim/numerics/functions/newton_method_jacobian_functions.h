@@ -21,14 +21,14 @@
 #define NUMERICSNEWTONMEHTODFUNCTION_H_
 
 #include <fmatvec/fmatvec.h>
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
   /*!
    * \brief base class for square Jacobians used for the newton method
    */
-  class NewtonJacobianFunction : public fmatvec::Function<fmatvec::SqrMat(fmatvec::Vec)> {
+  class NewtonJacobianFunction : public Function<fmatvec::SqrMat(fmatvec::Vec)> {
     public:
     /**
      * \brief constructor

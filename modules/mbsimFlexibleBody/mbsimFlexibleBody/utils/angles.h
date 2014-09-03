@@ -20,7 +20,7 @@
 #ifndef ANGLES_H_
 #define ANGLES_H_
 
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSimFlexibleBody {
 
@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
    * \date 2012-03-20 added T matrix (Schindler / Cebulla)
    * \todo unify with Rotation TODO
    */
-  class Angles : public fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> {
+  class Angles : public MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)> {
     public:
       /**
        * \brief constructor

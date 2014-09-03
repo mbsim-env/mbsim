@@ -54,7 +54,7 @@ class SwitchSignal : public MBSimControl::Signal {
     }
 };
 
-class Signal : public Function<fmatvec::VecV(double)> {
+class Signal : public MBSim::Function<fmatvec::VecV(double)> {
   public:
     fmatvec::VecV operator()(const double &t) {
       fmatvec::VecV U(1);

@@ -10,7 +10,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyPos : public Function<Vec3(VecV)> {
+class MyPos : public MBSim::Function<Vec3(VecV)> {
   public:
     int getArgSize() const {return 1;}
     Vec3 operator()(const VecV &q) {

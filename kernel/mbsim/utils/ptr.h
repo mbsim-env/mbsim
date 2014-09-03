@@ -20,7 +20,7 @@
 #ifndef _MBSIM_PTR_H_
 #define _MBSIM_PTR_H_
 
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 #include <mbsim/functions/basic_functions.h>
 
 namespace MBSim {
@@ -79,12 +79,12 @@ class Ptr {
 };
 
 /*! explizit spezialisation of the convert pointer assignment from
- * S=fmatvec::Function<double(double)> to T=fmatvec::Function<fmatvec::VecV(double)> using
+ * S=Function<double(double)> to T=Function<fmatvec::VecV(double)> using
  * the helper class VectorValuedFunction.
  */
 template<>
 template<>
-Ptr<fmatvec::Function<fmatvec::VecV(double)> >& Ptr<fmatvec::Function<fmatvec::VecV(double)> >::operator=(fmatvec::Function<double(double)> *src) {
+Ptr<Function<fmatvec::VecV(double)> >& Ptr<Function<fmatvec::VecV(double)> >::operator=(Function<double(double)> *src) {
    VectorValuedFunction<fmatvec::VecV> *vvf=new VectorValuedFunction<fmatvec::VecV>();
    vvf->addComponent(src);
    p=vvf;

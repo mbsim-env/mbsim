@@ -21,7 +21,7 @@
 #define _FUNCTION_SENSOR_H_
 
 #include "mbsimControl/sensor.h"
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSimControl {
 
@@ -32,15 +32,15 @@ namespace MBSimControl {
   class FunctionSensor : public Sensor {
     public:
       FunctionSensor(const std::string &name="") : Sensor(name), function(NULL), y() {}
-      FunctionSensor(const std::string &name, fmatvec::Function<fmatvec::VecV(double)>* function_);
+      FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       ~FunctionSensor() { delete function; }
       std::string getType() const { return "FunctionSensor"; }
-      void setFunction(fmatvec::Function<fmatvec::VecV(double)>* function_);
+      void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
       fmatvec::Vec getSignal() {return y.copy(); }
       void updateg(double t);
       void initializeUsingXML(xercesc::DOMElement *element);
     private:
-      fmatvec::Function<fmatvec::VecV(double)> * function;
+      MBSim::Function<fmatvec::VecV(double)> * function;
       fmatvec::Vec y;
   };
 
@@ -55,11 +55,11 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setSignal(Signal * s) {signal=s; }
-      void setFunction(fmatvec::Function<double(double)>* fun_) {fun=fun_; }
+      void setFunction(MBSim::Function<double(double)>* fun_) {fun=fun_; }
       fmatvec::Vec getSignal();
     private:
       Signal * signal;
-      fmatvec::Function<double(double)>* fun;
+      MBSim::Function<double(double)>* fun;
       std::string signalString;
   };
 
@@ -74,12 +74,12 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
-      void setFunction(fmatvec::Function<double(double,double)>* fun_) {fun=fun_; }
+      void setFunction(MBSim::Function<double(double,double)>* fun_) {fun=fun_; }
       fmatvec::Vec getSignal();
     private:
       Signal * signal1;
       Signal * signal2;
-      fmatvec::Function<double(double,double)>* fun;
+      MBSim::Function<double(double,double)>* fun;
       std::string signal1String;
       std::string signal2String;
   };

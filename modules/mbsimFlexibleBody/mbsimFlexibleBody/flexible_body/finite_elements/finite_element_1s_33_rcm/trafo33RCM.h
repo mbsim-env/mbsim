@@ -20,7 +20,7 @@
 #ifndef TRAFO33RCM_H_
 #define TRAFO33RCM_H_
 
-#include <fmatvec/function.h>
+#include <mbsim/functions/function.h>
 #include "mbsimFlexibleBody/pointer.h"
 
 namespace MBSimFlexibleBody {
@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2009-04-24 initial commit (Thorsten Schindler)
    */
-  class PositionFunction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {    
+  class PositionFunction : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {    
     public:
       /**
        * \brief constructor
@@ -84,7 +84,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2009-04-24 initial commit (Thorsten Schindler)
    */
-  class PositionJacobian : public fmatvec::Function<fmatvec::SqrMat(fmatvec::Vec)> {
+  class PositionJacobian : public MBSim::Function<fmatvec::SqrMat(fmatvec::Vec)> {
     public:
       /**
        * \brief constructor

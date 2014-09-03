@@ -28,7 +28,7 @@ namespace MBSim {
 
   class Gearing : public LinkMechanics {
     protected:
-      fmatvec::Function<double(double,double)> *func;
+      Function<double(double,double)> *func;
       double r0, r1;
       bool reverse;
       Frame Z0, Z1;
@@ -59,7 +59,7 @@ namespace MBSim {
       virtual void calcgSize(int j);
       virtual void calcgdSize(int j);
 
-      void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
       void setReverse(bool reverse_) { reverse = reverse_; }
 
       void plot(double t, double dt=1);

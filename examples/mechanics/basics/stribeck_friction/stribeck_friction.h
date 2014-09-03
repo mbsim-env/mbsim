@@ -1,9 +1,9 @@
 #ifndef _STRIBECK_FRICTION_H
 #define _STRIBECK_FRICTION_H
 
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 
-class Friction : public fmatvec::Function<double(double)> {
+class Friction : public MBSim::Function<double(double)> {
   public:
     /*! 
      * \brief constructor

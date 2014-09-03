@@ -21,7 +21,7 @@
 #define _TABULAR_FUNCTIONS_H_
 
 #include <iostream>
-#include "fmatvec/function.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
@@ -31,7 +31,7 @@ namespace MBSim {
   template<typename Sig> class TabularFunction; 
 
   template<typename Ret, typename Arg>
-  class TabularFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  class TabularFunction<Ret(Arg)> : public Function<Ret(Arg)> {
 
     public:
       TabularFunction() :
@@ -102,7 +102,7 @@ namespace MBSim {
       PeriodicTabularFunction() {
       }
       PeriodicTabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) :
-          TabularFunction<Ret>(x_, y_) {
+          TabularFunction<Ret(Arg)>(x_, y_) {
         init();
       }
       Ret operator()(const Arg& x) {
@@ -129,7 +129,7 @@ namespace MBSim {
   template<typename Sig> class TwoDimensionalTabularFunction; 
 
   template<typename Ret, typename Arg1, typename Arg2>
-  class TwoDimensionalTabularFunction<Ret(Arg1,Arg2)> : public fmatvec::Function<Ret(Arg1, Arg2)> {
+  class TwoDimensionalTabularFunction<Ret(Arg1,Arg2)> : public Function<Ret(Arg1, Arg2)> {
     public:
       TwoDimensionalTabularFunction() :
           xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(1, fmatvec::INIT, 0), xy(4, fmatvec::INIT, 1), XYval(4, fmatvec::INIT, 0), XYfac(4, 4, fmatvec::INIT, 0) {
