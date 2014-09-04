@@ -31,7 +31,7 @@ namespace MBSim {
   //================================================================================================================================
   /** userFunction for Contours: Contourpoint and trihedral (T,N,B) *
    * Parent class */
-  class  ContourFunction1s : public fmatvec::Atom {
+  class  ContourFunction1s : virtual public fmatvec::Atom {
     public:
       ContourFunction1s() : Atom() {};
       virtual ~ContourFunction1s() {};

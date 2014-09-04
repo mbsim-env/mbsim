@@ -67,7 +67,10 @@ namespace MBSim {
        * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
        * The return value of that function is used as the force of the SpringDamper.
        */
-      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) {
+        func=func_;
+        func->setParent(this);
+      }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);

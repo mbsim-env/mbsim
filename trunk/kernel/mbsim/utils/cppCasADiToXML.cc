@@ -1,3 +1,4 @@
+#include <config.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include <casadi/symbolic/sx/sx_tools.hpp>
 #include <mbxmlutilshelper/casadiXML.h>

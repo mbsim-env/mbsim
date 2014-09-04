@@ -17,6 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
+#include <config.h>
 #ifdef _WIN32
 #  include <Windows.h>
 #else

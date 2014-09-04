@@ -17,6 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
+#include <config.h>
 #include <map>
 #include <string>
 #include <sstream>

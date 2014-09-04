@@ -443,6 +443,31 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SignalFunction" substitutionGroup="mbsim:Function" type="SignalFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Funktion dessen Rückgabewert von einem Signal stammt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalFunctionType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FunctionType" >
+        <xs:sequence>
+          <xs:element name="returnSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Signal von welchem der Rückgabewert entnommen wird.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="SignalProcessingSystemSensor" substitutionGroup="Sensor" type="SignalProcessingSystemSensorType">
     <xs:annotation>

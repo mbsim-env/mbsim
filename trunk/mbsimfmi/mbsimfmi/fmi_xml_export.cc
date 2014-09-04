@@ -17,6 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
+#include <config.h>
 #include "fmi_xml_export.h"
 #include "model_instance.h"
 #include "fmi_utils.h"

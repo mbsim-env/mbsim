@@ -17,6 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
+#include <config.h>
 #include "fmi_scalar_variable_container.h"
 
 namespace fmi {

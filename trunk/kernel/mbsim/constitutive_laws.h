@@ -38,7 +38,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedForceLaw : public fmatvec::Atom {
+  class GeneralizedForceLaw : virtual public fmatvec::Atom {
     public:
       /**
        * \brief constructor
@@ -190,7 +190,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedImpactLaw : public fmatvec::Atom {
+  class GeneralizedImpactLaw : virtual public fmatvec::Atom {
     public:
       /**
        * \brief constructor
@@ -290,7 +290,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionForceLaw : public fmatvec::Atom {
+  class FrictionForceLaw : virtual public fmatvec::Atom {
     public:
       /**
        * \brief constructor
@@ -511,7 +511,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionImpactLaw : public fmatvec::Atom {
+  class FrictionImpactLaw : virtual public fmatvec::Atom {
     public:
       /**
        * \brief constructor

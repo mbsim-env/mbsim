@@ -18,6 +18,7 @@
 #ifndef _MBSIM_FUNCTION_H_
 #define _MBSIM_FUNCTION_H_
 
+#include "mbsim/element.h"
 #include "fmatvec/function.h"
 #include <string>
 #include <xercesc/util/XercesDefs.hpp>
@@ -32,11 +33,25 @@ namespace MBSim {
   /*! Base Function object for MBSim.
    * Adds just some XML functionallity to the base fmatvec::Function. */
   template<typename Sig>
-  class Function : public fmatvec::Function<Sig> {
+  class Function : public fmatvec::Function<Sig>, public Element {
     public:
-      virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-      virtual xercesc::DOMElement *writeXMLFile(xercesc::DOMNode *parent) { return NULL; }
+      //! Function have no name hence use "dummy" for Element ctor
+      Function() : fmatvec::Function<Sig>(), Element("dummy") {}
+      Element *getByPathSearch(std::string path);
   };
+
+  template<typename Sig>
+  Element *Function<Sig>::getByPathSearch(std::string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(parent)
+        return parent->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else // local path
+      throw MBSimError("Internal error: local path");
+  }
 
 }
 

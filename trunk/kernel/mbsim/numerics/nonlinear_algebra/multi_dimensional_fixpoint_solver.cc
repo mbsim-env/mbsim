@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "multi_dimensional_fixpoint_solver.h"
 #include <iostream>
 

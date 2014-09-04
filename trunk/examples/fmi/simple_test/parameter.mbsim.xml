@@ -1,0 +1,6 @@
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <scalarParameter name="fmi">1</scalarParameter>
+
+  <stringParameter name="extern">if fmi==0; ret='extern_nofmi.xml'; else ret='extern_fmi.xml'; end</stringParameter>
+  <scalarParameter name="m">0.1</scalarParameter>
+</Parameter>

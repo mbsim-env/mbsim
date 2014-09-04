@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -13,13 +13,13 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
- *
- * Contact: thorsten.schindler@mytum.de
  */
 
 #include <config.h>
-#include "fmi_scalar_variable.h"
+#include "mbsimControl/signal_function.h"
 
-namespace fmi {
+namespace MBSimControl {
 
-} // end namespace fmi
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SignalFunction<double(double,double)>, MBSIMCONTROL%"SignalFunction")
+
+}

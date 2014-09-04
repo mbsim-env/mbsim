@@ -17,6 +17,7 @@
  * Contact: friedrich.at.gc@googlemail.com
  */
 
+#include <config.h>
 #include <mbsim/objectfactory.h>
 
 using namespace fmatvec;

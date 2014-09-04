@@ -16,6 +16,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "ansatz_functions.h"
 
 using namespace fmatvec;
