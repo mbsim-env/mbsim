@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "criteria_functions.h"
 
 #include <iostream>

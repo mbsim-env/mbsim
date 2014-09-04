@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="System" xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:control="http://mbsim.berlios.de/MBSimControl"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <frames>
+    <FixedRelativeFrame name="SpringMount">
+      <enableOpenMBV/>
+      <relativePosition>[-0.5;0;0]</relativePosition>
+    </FixedRelativeFrame>
+  </frames>
+  <contours>
+    <Plane name="Plane">
+      <enableOpenMBV>
+        <length>[1.0;1.0]</length>
+      </enableOpenMBV>
+    </Plane>
+  </contours>
+  <groups/>
+  <objects>
+    <RigidBody name="Ball">
+      <initialGeneralizedPosition>[0.2;0.25;0.35]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+      <mass>m</mass>
+      <inertiaTensor>eye(3)</inertiaTensor>
+      <stateDependentTranslation>
+        <TranslationAlongAxesXYZ/>
+      </stateDependentTranslation>
+      <frames/>
+      <contours>
+        <Sphere name="Ball">
+          <radius>0.05</radius>
+          <enableOpenMBV/>
+        </Sphere>
+      </contours>
+    </RigidBody>
+  </objects>
+  <links>
+    <Contact name="Contact">
+      <normalForceLaw>
+        <UnilateralConstraint/>
+      </normalForceLaw>
+      <normalImpactLaw>
+        <UnilateralNewtonImpact>
+          <restitutionCoefficient>0.9</restitutionCoefficient>
+        </UnilateralNewtonImpact>
+      </normalImpactLaw>
+      <connect ref1="../Contour[Plane]" ref2="../Object[Ball]/Contour[Ball]"/>
+      <enableOpenMBVContactPoints/>
+      <enableOpenMBVNormalForce>
+        <scaleLength>0.3</scaleLength>
+        <scaleSize>0.15</scaleSize>
+      </enableOpenMBVNormalForce>
+    </Contact>
+    <control:ExternSignalSource name="ExternForce"> <!-- only used in FMI case -->
+      <control:sourceSize>1</control:sourceSize>
+    </control:ExternSignalSource>
+    <pv:Embed href="{extern}"/>
+  </links>
+  <environments/>
+</DynamicSystemSolver>

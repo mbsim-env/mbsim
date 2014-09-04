@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "damping_functions.h"
 
 using namespace fmatvec;

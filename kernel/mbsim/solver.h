@@ -35,7 +35,7 @@ namespace MBSim {
    * \brief solver-interface for dynamic systems
    * \author Martin Foerg
    */
-  class Solver : public fmatvec::Atom {
+  class Solver : virtual public fmatvec::Atom {
     public:
       /**
        * \brief constructor 

@@ -44,7 +44,7 @@ namespace MBSim {
    * \date 2009-04-02 velocity part deleted (Thorsten Schindler)
    * \date 2009-07-28 updates are pure virtual (Thorsten Schindler)
    */
-  class ContactKinematics : public fmatvec::Atom {
+  class ContactKinematics : virtual public fmatvec::Atom {
     public:
       /**
        * \brief constructor

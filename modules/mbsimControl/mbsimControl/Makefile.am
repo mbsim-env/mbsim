@@ -13,7 +13,8 @@ libmbsimControl_la_SOURCES = \
   signal_processing_system_sensor.cc\
   linear_transfer_system.cc\
   massless_spring_damper.cc\
-  actuator.cc
+  actuator.cc\
+  signal_function.cc
 
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
@@ -34,4 +35,5 @@ mbsimControlinclude_HEADERS = \
   signal_processing_system_sensor.h\
   linear_transfer_system.h\
   massless_spring_damper.h\
-  actuator.h
+  actuator.h\
+  signal_function.h

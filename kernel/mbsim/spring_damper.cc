@@ -84,6 +84,7 @@ namespace MBSim {
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not(frame.size()))
         throw MBSimError("ERROR in "+getName()+": no connection given!");
+      func->init(stage);
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {

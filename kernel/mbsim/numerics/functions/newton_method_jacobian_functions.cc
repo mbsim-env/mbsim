@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "newton_method_jacobian_functions.h"
 
 #include <mbsim/utils/eps.h>

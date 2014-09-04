@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "lcp_reformulation_functions.h"
 
 #include <mbsim/utils/nonsmooth_algebra.h>

@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class LemkeAlgorithm : public fmatvec::Atom {
+  class LemkeAlgorithm : virtual public fmatvec::Atom {
     public:
       LemkeAlgorithm(const bool & DEBUGLEVEL_ = 0) :
           M(), q(), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {

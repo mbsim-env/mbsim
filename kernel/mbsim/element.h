@@ -55,7 +55,7 @@ namespace MBSim {
    * \date 2009-03-24 plot feature energy (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
-  class Element : public fmatvec::Atom {
+  class Element : virtual public fmatvec::Atom {
     public:
       /** \brief Plot feature status */
       enum PlotFeatureStatus {

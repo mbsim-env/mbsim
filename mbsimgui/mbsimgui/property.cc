@@ -1,3 +1,4 @@
+#include <config.h>
 #include <mbsimgui/property.h>
 
 MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");

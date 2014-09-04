@@ -33,7 +33,7 @@ namespace MBSim {
    * \author Markus Friedrich
    * \date 2009-07-28 some comments (Thorsten Schindler)
    */
-  class Environment : public fmatvec::Atom {
+  class Environment : virtual public fmatvec::Atom {
     public:
       /* INTERFACE FOR DERIVED CLASSES */
       /**

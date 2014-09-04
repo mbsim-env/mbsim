@@ -17,6 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
+#include <config.h>
 #include "system.h"
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"

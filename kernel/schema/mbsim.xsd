@@ -3003,6 +3003,7 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="FunctionType"/>
+  <!-- MISSING: Function should derive from Element but this will require the name attribute to be optional -->
 
   <xs:element name="TranslationAlongXAxis" substitutionGroup="Function" type="TranslationAlongXAxisType">
     <xs:annotation>
