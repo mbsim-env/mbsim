@@ -301,19 +301,6 @@ namespace MBSim {
     return Element::writeXMLFile(parent);
   }
 
-  Element * Object::getByPathSearch(string path) {
-    if (path.substr(0, 1) == "/") // absolut path
-      if (parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3) == "../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else { // local path
-      throw MBSimError("Unknown identifier of container");
-    }
-  }
-
   int Object::computeLevel() {
     int lOld = 0;
     for (unsigned int i = 0; i < dependency.size(); i++) {

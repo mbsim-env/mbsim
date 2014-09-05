@@ -705,7 +705,7 @@ namespace MBSim {
       /** Return frame "I" */
       FixedRelativeFrame *getFrameI() { return I; }
 
-      virtual Element *getByPathSearch(std::string path);
+      virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name);
 
       virtual void updatecorr(int j);
       void updatecorrRef(const fmatvec::Vec &ref);

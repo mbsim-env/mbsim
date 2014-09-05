@@ -1443,46 +1443,19 @@ namespace MBSim {
     obj->setParent(this);
   }
 
-  Element * DynamicSystem::getByPathSearch(string path) {
-    if (path.substr(0, 1) == "/") { // absolut path
-      if (parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    }
-    else if (path.substr(0, 3) == "../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else { // local path
-      size_t pos0 = path.find_first_of("[");
-      string container = path.substr(0, pos0);
-      size_t pos1 = path.find_first_of("]", pos0);
-      string searched_name = path.substr(pos0 + 1, pos1 - pos0 - 1);
-      if (path.length() > pos1 + 1) { // weiter absteigen
-        string rest = path.substr(pos1 + 2);
-        if (container == "Object")
-          return getObject(searched_name)->getByPathSearch(rest);
-        else if (container == "Link")
-          return getLink(searched_name)->getByPathSearch(rest);
-        else if (container == "Group")
-          return getGroup(searched_name)->getByPathSearch(rest);
-        else
-          throw MBSimError("Unknown name of container");
-      }
-      else {
-        if (container == "Object")
-          return getObject(searched_name);
-        else if (container == "Link")
-          return getLink(searched_name);
-        else if (container == "Group")
-          return getGroup(searched_name);
-        else if (container == "Frame")
-          return getFrame(searched_name);
-        else if (container == "Contour")
-          return getContour(searched_name);
-        else
-          throw MBSimError("Unknown name of container");
-      }
-    }
+  Element * DynamicSystem::getChildByContainerAndName(const std::string &container, const std::string &name) {
+    if (container == "Object")
+      return getObject(name);
+    else if (container == "Link")
+      return getLink(name);
+    else if (container == "Group")
+      return getGroup(name);
+    else if (container == "Frame")
+      return getFrame(name);
+    else if (container == "Contour")
+      return getContour(name);
+    else
+      throw MBSimError("Unknown container "+container+" in DynamicSystem.");
   }
 
   Observer* DynamicSystem::getObserver(const string &name, bool check) {

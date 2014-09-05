@@ -58,14 +58,4 @@ namespace MBSim {
     Element::plot(t,dt);
   }
 
-  Element * Observer::getByPathSearch(string path) {
-    if (path.substr(0, 3)=="../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else // absolut path
-      if(parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-  }
-
 }

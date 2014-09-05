@@ -124,8 +124,6 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       /***************************************************/
 
-      virtual Element * getByPathSearch(std::string path);
-
     protected:
       ///**
       // * \brief parent object for plot invocation

@@ -300,8 +300,6 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual Element* getByPathSearch(std::string path);
-
     protected:
       /**
        * \brief size of object positions

@@ -170,19 +170,6 @@ namespace MBSim {
     return ele0;
   }
 
-  Element *Frame::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") // absolut path
-      if(parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3)=="../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else { // local path
-      throw MBSimError("Internal error: local path");
-    }
-  }
-
   void FixedRelativeFrame::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")

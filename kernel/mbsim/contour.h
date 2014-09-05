@@ -209,8 +209,6 @@ namespace MBSim {
 //      void setParent(ObjectInterface* parent_) { parent = parent_; }
       /***************************************************/
 
-      virtual Element * getByPathSearch(std::string path);
-
       void setFrameOfReference(Frame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
