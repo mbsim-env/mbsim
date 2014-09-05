@@ -197,16 +197,6 @@ namespace MBSim {
         rFactor(i) *= 0.9;
   }
 
-  Element * Link::getByPathSearch(string path) {
-    if (path.substr(0, 3)=="../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else // absolut path
-      if(parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-  }
-
   void Link::updatecorrRef(const fmatvec::Vec &ref) {
     corr >> ref(corrInd,corrInd+corrSize-1);
   }

@@ -383,11 +383,6 @@ namespace MBSim {
       void decreaserFactors();
 
       /**
-       * \return a general element access
-       */
-      virtual Element* getByPathSearch(std::string path);
-
-      /**
        * \brief get gap distance and calculate gap velocity of unilateral links to estimate impacts within the next step
        * \param gInActive gap distance of inactive links (return)
        * \param gdInActive gap velocities of inactive links (return)

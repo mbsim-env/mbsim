@@ -139,7 +139,7 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual Element * getByPathSearch(std::string path);
+      virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name);
 
     protected:
       /**

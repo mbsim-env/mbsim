@@ -239,19 +239,14 @@ namespace MBSim {
       /**
        * \brief a general element access
        */
-      template<class T>
-        T* getByPath(std::string path) {
-          Element * e = getByPathSearch(path);
-          if (dynamic_cast<T*>(e))
-            return (T*)(e);
-          else
-            throw MBSimError("ERROR in "+getName()+" (Element::getByPath): Element \""+path+"\" not found or not of wanted type!");
-        }
+      template<class T> T* getByPath(const std::string &path);
 
       /**
        * \brief a general element search by path
        */
-      virtual Element* getByPathSearch(std::string path) {return 0; }
+      virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) {
+        throw MBSimError("This element has no containers with childs.");
+      }
 
       // some convenience function for XML
       static double getDouble(xercesc::DOMElement *e);
@@ -322,6 +317,42 @@ namespace MBSim {
        */
       PlotFeatureStatus plotFeature[LASTPLOTFEATURE], plotFeatureForChildren[LASTPLOTFEATURE];
   };
+
+  template<class T>
+  T* Element::getByPath(const std::string &path) {
+    if(path.substr(0, 1) == "/") { // if absolute path ...
+      if(parent) // .. and a parent exists ...
+        return parent->getByPath<T>(path); // ... than call getByPath of the parent (walk to the top)
+      else // .. and no parent exits ...
+        return getByPath<T>(path.substr(1)); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
+    }
+    else if (path.substr(0, 3) == "../") // if relative path to parent ...
+      return parent->getByPath<T>(path.substr(3)); // ... call getByPath of the parent with the leading "../" removed
+    else { // if relative path to a child ...
+      // extract the first path and all other paths (rest)
+      size_t idx=path.find('/');
+      std::string first=path.substr(0, idx);
+      std::string rest;
+      if(idx!=std::string::npos)
+        rest=path.substr(idx+1);
+      // get the object of the first child path by calling the virtual function getChildByContainerAndName
+      size_t pos0=path.find('[');
+      std::string container=path.substr(0, pos0);
+      size_t pos1=path.find(']', pos0);
+      std::string name=path.substr(pos0+1, pos1-pos0-1);
+      Element *e=getChildByContainerAndName(container, name);
+      // if their are other sub paths call getByPath of e for this
+      if(!rest.empty())
+        return e->getByPath<T>(rest);
+      // this is the last path -> check type and return
+      T *t=dynamic_cast<T*>(e);
+      if(t)
+        return t;
+      else
+        throw MBSimError("Cannot resolve XML path "+path+" in "+getName()+".");//MFMF print error with original path
+    }
+  }
+
 
 }
 
