@@ -224,6 +224,7 @@ namespace MBSimHydraulics {
     }
     else
       HLine::init(stage);
+    QFun->init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")

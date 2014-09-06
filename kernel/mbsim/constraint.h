@@ -140,9 +140,12 @@ namespace MBSim {
       GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
       ~GeneralizedPositionConstraint() { delete f; }
 
-      void init(InitStage stage);
+      void init(Element::InitStage stage);
 
-      void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) { f = f_; }
+      void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
+        f = f_;
+        f->setParent(this);
+      }
 
       void setUpInverseKinetics();
 

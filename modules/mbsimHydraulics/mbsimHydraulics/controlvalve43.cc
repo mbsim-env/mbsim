@@ -193,6 +193,7 @@ namespace MBSimHydraulics {
     }
     else
       Group::init(stage);
+    relAlphaPA->init(stage);
   }
 
   void Controlvalve43::initializeUsingXML(DOMElement * element) {

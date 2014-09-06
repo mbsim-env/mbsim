@@ -114,7 +114,10 @@ namespace MBSimHydraulics {
       ~ConstrainedNodeMec() { delete pFun; }
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
-      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function<double(double)> * pFun_) {
+        pFun=pFun_;
+        pFun->setParent(this);
+      }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);

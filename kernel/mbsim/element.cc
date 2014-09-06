@@ -200,7 +200,8 @@ namespace MBSim {
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
-    setName(E(element)->getAttribute("name"));
+    if(E(element)->hasAttribute("name")) // their are element with no name e.g. Function's
+      setName(E(element)->getAttribute("name"));
     DOMElement *e;
     e=element->getFirstElementChild();
     while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||

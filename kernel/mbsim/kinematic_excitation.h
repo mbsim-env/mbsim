@@ -53,7 +53,10 @@ namespace MBSim {
       void calcgSize(int j);
       void calcgdSize(int j);
 
-      void setForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) { func=func_; }
+      void setForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
+        func=func_;
+        func->setParent(this);
+      }
 
       void plot(double t, double dt=1);
 
@@ -95,7 +98,14 @@ namespace MBSim {
 
       std::string getType() const { return "GeneralizedPositionExcitation"; }
 
-      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { f = f_;}
+      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) {
+        f = f_;
+        f->setParent(this);
+      }
+      void init(Element::InitStage stage) {
+        KinematicExcitation::init(stage);
+        f->init(stage);
+      }
   };
 
   class GeneralizedVelocityExcitation : public KinematicExcitation {

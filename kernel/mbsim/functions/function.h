@@ -28,6 +28,14 @@ namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
 }
 
+namespace {
+  std::string uniqeDummyName(void *p) {
+    std::stringstream str;
+    str<<"Function_"<<p;
+    return str.str();
+  }
+}
+
 namespace MBSim {
 
   /*! Base Function object for MBSim.
@@ -35,8 +43,11 @@ namespace MBSim {
   template<typename Sig>
   class Function : public fmatvec::Function<Sig>, public Element {
     public:
-      //! Function have no name hence use "dummy" for Element ctor
-      Function() : fmatvec::Function<Sig>(), Element("dummy") {}
+      //! Most Function's have no name hence use a unique dummy name for Element ctor
+      Function() : fmatvec::Function<Sig>(), Element(uniqeDummyName(this)) {}
+
+      //! ctor variante with name
+      Function(const std::string &name_) : fmatvec::Function<Sig>(), Element(name_) {}
   };
 
 }

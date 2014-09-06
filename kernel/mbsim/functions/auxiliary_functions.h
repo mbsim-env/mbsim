@@ -31,7 +31,10 @@ namespace MBSim {
         int n;
       public:
         StateDependentFunction(Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_), n(0) { 
-          if(f) n = (*f)(fmatvec::VecV(getArg1Size())).rows();
+          if(f) {
+            n = (*f)(fmatvec::VecV(getArg1Size())).rows();
+            f->setParent(this);
+          }
         }
         ~StateDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
@@ -46,6 +49,11 @@ namespace MBSim {
         bool constParDer1() const { return f->constParDer(); }
         bool constParDer2() const { return true; }
         Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
+        void init(Element::InitStage stage) {
+          Function<Ret(fmatvec::VecV,double)>::init(stage);
+          if(f)
+            f->init(stage);
+        }
     };
 
    template <class Ret>
@@ -55,7 +63,10 @@ namespace MBSim {
         int n;
       public:
         TimeDependentFunction(Function<Ret(double)> *f_=NULL) : f(f_), n(0) { 
-          if(f) n = (*f)(0).rows();
+          if(f) {
+            n = (*f)(0).rows();
+            f->setParent(this);
+          }
         }
         ~TimeDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
@@ -69,6 +80,11 @@ namespace MBSim {
         typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return typename fmatvec::Der<Ret, fmatvec::VecV>::type(n,getArg1Size()); }
         bool constParDer1() const { return true; }
         bool constParDer2() const { return f->constParDer(); }
+        void init(Element::InitStage stage) {
+          Function<Ret(fmatvec::VecV,double)>::init(stage);
+          if(f)
+            f->init(stage);
+        }
     };
 
 }

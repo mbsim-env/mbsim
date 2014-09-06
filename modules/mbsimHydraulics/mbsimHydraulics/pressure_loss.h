@@ -151,9 +151,13 @@ namespace MBSimHydraulics {
     public:
       TabularLinePressureLoss() : LinePressureLoss(), zetaTabular(NULL) {};
       ~TabularLinePressureLoss() { delete zetaTabular; }
-      void setZetaTabular(MBSim::Function<double(double)> * zetaTabular_) {zetaTabular=zetaTabular_; }
+      void setZetaTabular(MBSim::Function<double(double)> * zetaTabular_) {
+        zetaTabular=zetaTabular_;
+        zetaTabular->setParent(this);
+      }
       double operator()(const double& Q);
       void initializeUsingXML(xercesc::DOMElement *element);
+      void init(MBSim::Element::InitStage stage);
     private:
       MBSim::Function<double(double)> * zetaTabular;
   };
