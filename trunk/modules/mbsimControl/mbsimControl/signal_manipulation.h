@@ -248,7 +248,10 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setSignal(Signal *signal_) {s=signal_; }
-      void setFunction(MBSim::Function<fmatvec::Vec(fmatvec::Vec)> *f_) {f=f_; };
+      void setFunction(MBSim::Function<fmatvec::Vec(fmatvec::Vec)> *f_) {
+        f=f_;
+        f->setParent(this);
+      };
       fmatvec::Vec getSignal();
     private:
       Signal *s;
@@ -267,7 +270,10 @@ namespace MBSimControl {
       void init(InitStage stage);
       void setSignal1(Signal *signal_) {s1=signal_; }
       void setSignal2(Signal *signal_) {s2=signal_; }
-      void setFunction(MBSim::Function<fmatvec::Vec(fmatvec::Vec,fmatvec::Vec)> *f_) {f=f_; };
+      void setFunction(MBSim::Function<fmatvec::Vec(fmatvec::Vec,fmatvec::Vec)> *f_) {
+        f=f_;
+        f->setParent(this);
+      };
       fmatvec::Vec getSignal();
     private:
       Signal *s1, *s2;

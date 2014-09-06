@@ -63,7 +63,10 @@ namespace MBSim {
       virtual void calcgSize(int j);
       virtual void calcgdSize(int j);
 
-      void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
+        func=func_;
+        func->setParent(this);
+      }
 
       void plot(double t, double dt=1);
 

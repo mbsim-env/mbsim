@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), body(0) {
+  KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), func(0), body(0) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow = 0;
@@ -144,6 +144,7 @@ namespace MBSim {
     else {
       LinkMechanics::init(stage);
     }
+    if(func) func->init(stage);
   }
 
   void KinematicExcitation::plot(double t,double dt) {

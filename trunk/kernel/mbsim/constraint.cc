@@ -217,6 +217,7 @@ namespace MBSim {
       KinematicConstraint::init(stage);
     else
       KinematicConstraint::init(stage);
+    f->init(stage);
   }
 
   void GeneralizedPositionConstraint::updateStateDependentVariables(double t) {

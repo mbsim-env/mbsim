@@ -75,6 +75,8 @@ namespace MBSim {
     }
     else
       LinkMechanics::init(stage);
+    if(F) F->init(stage);
+    if(M) M->init(stage);
   }
 
   void KineticExcitation::connect(Frame *frame0, Frame* frame1) {
@@ -146,10 +148,12 @@ namespace MBSim {
 
   void KineticExcitation::setForceFunction(Function<VecV(double)> *func) {
     F=func;
+    F->setParent(this);
   }
 
   void KineticExcitation::setMomentFunction(Function<VecV(double)> *func) {
     M=func;
+    M->setParent(this);
   }
 
   void KineticExcitation::initializeUsingXML(DOMElement *element) {

@@ -252,6 +252,7 @@ namespace MBSim {
     else {
       LinkMechanics::init(stage);
     }
+    func->init(stage);
   }
 
   void Gearing::plot(double t,double dt) {

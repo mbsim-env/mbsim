@@ -122,7 +122,10 @@ namespace MBSimHydraulics {
       ~ConstrainedNode() { delete pFun; }
       virtual std::string getType() const { return "ConstrainedNode"; }
 
-      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function<double(double)> * pFun_) {
+        pFun=pFun_;
+        pFun->setParent(this);
+      }
 
       void updateg(double t);
       void init(InitStage stage);

@@ -287,6 +287,7 @@ namespace MBSimHydraulics {
     }
     else
       HNode::init(stage);
+    pFun->init(stage);
   }
 
   void ConstrainedNode::updateg(double t) {
@@ -297,7 +298,7 @@ namespace MBSimHydraulics {
   void ConstrainedNode::initializeUsingXML(DOMElement *element) {
     HNode::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
-    pFun=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()); 
+    setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild())); 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNode, MBSIMHYDRAULICS%"EnvironmentNode")

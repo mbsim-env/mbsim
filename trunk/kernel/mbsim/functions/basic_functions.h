@@ -271,8 +271,14 @@ namespace MBSim {
       public:
         AdditionFunction() : f1(0), f2(0) { }
         ~AdditionFunction() { delete f1; delete f2; }
-        void setFirstSummand(Function<Ret(Arg)> *function) { f1 = function; }
-        void setSecondSummand(Function<Ret(Arg)> *function) { f2 = function; }
+        void setFirstSummand(Function<Ret(Arg)> *function) {
+          f1 = function;
+          f1->setParent(this);
+        }
+        void setSecondSummand(Function<Ret(Arg)> *function) {
+          f2 = function;
+          f2->setParent(this);
+        }
         Ret operator()(const Arg &x) {
           return (*(f1))(x)+(*(f2))(x);
         }
@@ -284,9 +290,14 @@ namespace MBSim {
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstSummand");
-          f1=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
+          setFirstSummand(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondSummand");
-          f2=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
+          setSecondSummand(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
+        }
+        void init(Element::InitStage stage) {
+          Function<Ret(Arg)>::init(stage);
+          f1->init(stage);
+          f2->init(stage);
         }
       private:
         Function<Ret(Arg)> *f1, *f2;
@@ -299,8 +310,14 @@ namespace MBSim {
       public:
         MultiplicationFunction() : f1(0), f2(0) { }
         ~MultiplicationFunction() { delete f1; delete f2; }
-        void setFirstFactor(Function<Ret(Arg)> *function) { f1 = function; }
-        void setSecondFactor(Function<Ret(Arg)> *function) { f2 = function; }
+        void setFirstFactor(Function<Ret(Arg)> *function) {
+          f1 = function;
+          f1->setParent(this);
+        }
+        void setSecondFactor(Function<Ret(Arg)> *function) {
+          f2 = function;
+          f2->setParent(this);
+        }
         Ret operator()(const Arg &x) {
           double a1 = ToDouble<Ret>::cast((*f1)(x));
           double a2 = ToDouble<Ret>::cast((*f2)(x));
@@ -324,9 +341,14 @@ namespace MBSim {
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstFactor");
-          f1=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
+          setFirstFactor(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondFactor");
-          f2=ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild());
+          setSecondFactor(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
+        }
+        void init(Element::InitStage stage) {
+          Function<Ret(Arg)>::init(stage);
+          f1->init(stage);
+          f2->init(stage);
         }
       private:
         Function<Ret(Arg)> *f1, *f2;
@@ -339,12 +361,18 @@ namespace MBSim {
     class VectorValuedFunction<Ret(double)> : public Function<Ret(double)> {
       public:
         VectorValuedFunction() { }
-        VectorValuedFunction(const std::vector<Function<double(double)> *> &component_) : component(component_) { }
+        VectorValuedFunction(const std::vector<Function<double(double)> *> &component_) : component(component_) {
+          for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
+            (*it)->setParent(this);
+        }
         ~VectorValuedFunction() { 
           for (unsigned int i=1; i<component.size(); i++)
             delete component[i]; 
         }
-        void addComponent(Function<double(double)> *function) { component.push_back(function); }
+        void addComponent(Function<double(double)> *function) {
+          component.push_back(function);
+          function->setParent(this);
+        }
         Ret operator()(const double &x) {
           Ret y(component.size(),fmatvec::NONINIT);
           for (unsigned int i=0; i<component.size(); i++)
@@ -371,6 +399,11 @@ namespace MBSim {
             e=e->getNextElementSibling();
           }
         }
+        void init(Element::InitStage stage) {
+          Function<Ret(double)>::init(stage);
+          for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
+            (*it)->init(stage);
+        }
       private:
         std::vector<Function<double(double)> *> component;
     };
@@ -380,12 +413,18 @@ namespace MBSim {
     class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
         VectorValuedFunction() { }
-        VectorValuedFunction(const std::vector<Function<double(Arg)> *> &component_) : component(component_) { }
+        VectorValuedFunction(const std::vector<Function<double(Arg)> *> &component_) : component(component_) {
+          for(typename std::vector<Function<double(Arg)>*>::iterator it=component.begin(); it!=component.end(); ++it)
+            (*it)->setParent(this);
+        }
         ~VectorValuedFunction() { 
           for (unsigned int i=1; i<component.size(); i++)
             delete component[i]; 
         }
-        void addComponent(Function<double(Arg)> *function) { component.push_back(function); }
+        void addComponent(Function<double(Arg)> *function) {
+          component.push_back(function);
+          function->setParent(this);
+        }
         Ret operator()(const Arg &x) {
           Ret y(component.size(),fmatvec::NONINIT);
           for (unsigned int i=0; i<component.size(); i++)
@@ -409,6 +448,11 @@ namespace MBSim {
             e=e->getNextElementSibling();
           }
         }
+        void init(Element::InitStage stage) {
+          Function<Ret(Arg)>::init(stage);
+          for(typename std::vector<Function<double(Arg)> *>::iterator it=component.begin(); it!=component.end(); ++it)
+            (*it)->init(stage);
+        }
       private:
         std::vector<Function<double(Arg)> *> component;
     };
@@ -419,7 +463,12 @@ namespace MBSim {
   template<typename Ret, typename Argo> 
     class NestedFunction<Ret(Argo(double))> : public Function<Ret(double)> {
       public:
-       NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) { }
+        NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) {
+          if(fo)
+            fo->setParent(this);
+          if(fi)
+            fi->setParent(this);
+        }
         ~NestedFunction() {
           delete fo;
           delete fi;
@@ -441,15 +490,22 @@ namespace MBSim {
         }
         void setOuterFunction(Function<Ret(Argo)> *fo_) {
           fo = fo_;
+          fo->setParent(this);
         }
         void setInnerFunction(Function<Argo(double)> *fi_) {
           fi = fi_;
+          fi->setParent(this);
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-          fo=ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild());
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-          fi=ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild());
+          setInnerFunction(ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild()));
+        }
+        void init(Element::InitStage stage) {
+          Function<Ret(double)>::init(stage);
+          fo->init(stage);
+          fi->init(stage);
         }
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
@@ -463,7 +519,12 @@ namespace MBSim {
   template<typename Ret, typename Argo, typename Argi> 
     class NestedFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
       public:
-       NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
+        NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) {
+          if(fo)
+            fo->setParent(this);
+          if(fi)
+            fi->setParent(this);
+        }
         ~NestedFunction() {
           delete fo;
           delete fi;
@@ -482,15 +543,22 @@ namespace MBSim {
         }
         void setOuterFunction(Function<Ret(Argo)> *fo_) {
           fo = fo_;
+          fo->setParent(this);
         }
         void setInnerFunction(Function<Argo(Argi)> *fi_) {
           fi = fi_;
+          fi->setParent(this);
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-          fo=ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild());
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-          fi=ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild());
+          setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
+        }
+        void init(Element::InitStage stage) {
+          Function<Ret(Argi)>::init(stage);
+          fo->init(stage);
+          fi->init(stage);
         }
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
@@ -521,8 +589,8 @@ namespace MBSim {
         }
         void addLimitedFunction(const LimitedFunction<Ret(Arg)> &limitedFunction) { 
           function.push_back(limitedFunction.function); 
+          limitedFunction.function->setParent(this);
           a.push_back(limitedFunction.limit); 
-          init();
         }
         void setContinouslyDifferentiable(Arg contDiff_) { contDiff = contDiff_; }
         Ret zeros(const Ret &x) { return Ret(x.size()); }
@@ -570,21 +638,25 @@ namespace MBSim {
           }
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continouslyDifferentiable");
           if(e) contDiff=Element::getDouble(e);
-          init();
+        }
+        void init(Element::InitStage stage) {
+          Function<Ret(Arg)>::init(stage);
+          for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
+            (*it)->init(stage);
+          if(stage==Element::preInit) {
+            yEnd = (*function[function.size()-1])(a[a.size()-1]-a[a.size()-2]); 
+            if(contDiff>0) {
+              ysEnd = function[function.size()-1]->parDer(a[a.size()-1]-a[a.size()-2]); 
+              if(contDiff>1)
+                yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-a[a.size()-2]); 
+            }
+          }
         }
       private:
         std::vector<Function<Ret(Arg)> *> function;
         std::vector<double> a;
         int contDiff;
         Ret yEnd, ysEnd, yssEnd;
-        void init() {
-          yEnd = (*function[function.size()-1])(a[a.size()-1]-a[a.size()-2]); 
-          if(contDiff>0) {
-            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]-a[a.size()-2]); 
-            if(contDiff>1)
-              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-a[a.size()-2]); 
-          }
-        }
     };
 
   template<>

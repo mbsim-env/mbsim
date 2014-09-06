@@ -166,6 +166,7 @@ namespace MBSimHydraulics {
         addLink(new colorLink("BallColorLink", ballVisu, line));
 
         spring->enableOpenMBVCoilSpring(_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
+        // MISSING: spring->init(...) must be called somewere!!!???
       }
       if (openMBVArrows) {
         ((CircleSolid*)ball->getContour("ContourBall"))->enableOpenMBV(true);

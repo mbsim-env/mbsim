@@ -45,7 +45,10 @@ namespace MBSimHydraulics {
       void setLength(double l_);
       void setDiameter(double d_);
       void setAlpha(double alpha_, double alphaBack_=0);
-      void setPARelativeAlphaFunction(MBSim::Function<double(double)> * relAlphaPA_) {relAlphaPA=boost::shared_ptr<MBSim::Function<double(double)> >(relAlphaPA_); } 
+      void setPARelativeAlphaFunction(MBSim::Function<double(double)> * relAlphaPA_) {
+        relAlphaPA=boost::shared_ptr<MBSim::Function<double(double)> >(relAlphaPA_);
+        relAlphaPA->setParent(this);
+      } 
       void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }
       void setRelativePositionSignal(MBSimControl::Signal * s) {position = s; }

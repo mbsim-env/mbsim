@@ -600,6 +600,7 @@ namespace MBSimControl {
     }
     else
       Signal::init(stage);
+    f->init(stage);
   }
 
   Vec UnarySignalOperation::getSignal() { 
@@ -632,6 +633,7 @@ namespace MBSimControl {
     }
     else
       Signal::init(stage);
+    f->init(stage);
   }
 
   Vec BinarySignalOperation::getSignal() { 

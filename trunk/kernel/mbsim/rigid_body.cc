@@ -236,6 +236,7 @@ namespace MBSim {
       StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
         fTR = new RotationAboutAxesXYZMapping<VecV>;
+        fTR->setParent(this);
         constJR = true;
         constjR = true;
         PJRR = SqrMat3(EYE);
@@ -245,6 +246,7 @@ namespace MBSim {
         cb = true;
         if(coordinateTransformation) {
           fTR = new RotationAboutAxesXYZMapping2<VecV>;
+          fTR->setParent(this);
           constJR = true;
           constjR = true;
           PJRR = SqrMat3(EYE);
@@ -253,6 +255,7 @@ namespace MBSim {
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZXZ<VecV>*>(Atmp->getFunction())) {
         fTR = new RotationAboutAxesZXZMapping<VecV>;
+        fTR->setParent(this);
         constJR = true;
         constjR = true;
         PJRR = SqrMat3(EYE);
@@ -260,6 +263,7 @@ namespace MBSim {
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
         fTR = new RotationAboutAxesZYXMapping<VecV>;
+        fTR->setParent(this);
         constJR = true;
         constjR = true;
         PJRR = SqrMat3(EYE);
@@ -339,6 +343,9 @@ namespace MBSim {
     }
     else
       Body::init(stage);
+    if(fTR) fTR->init(stage);
+    if(fPrPK) fPrPK->init(stage);
+    if(fAPK) fAPK->init(stage);
   }
 
   void RigidBody::initz() {

@@ -81,17 +81,31 @@ namespace MBSim {
        * \param distance depending force function
        * \param relative velocity depending force function
        */
-      NonlinearSpringDamperForce(Function<double(double)> * gForceFun_, Function<double(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
+      NonlinearSpringDamperForce(Function<double(double)> * gForceFun_, Function<double(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {
+        gForceFun->setParent(this);
+        gdForceFun->setParent(this);
+      }
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g) + (*gdForceFun)(gd); }
       void initializeUsingXML(xercesc::DOMElement *element);
+      void init(Element::InitStage stage) {
+        Function<double(double,double)>::init(stage);
+        gForceFun->init(stage);
+        gdForceFun->init(stage);
+      }
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setDistanceFunction(Function<double(double)> * gForceFun_) { gForceFun=gForceFun_; }
+      void setDistanceFunction(Function<double(double)> * gForceFun_) {
+        gForceFun=gForceFun_;
+        gForceFun->setParent(this);
+      }
 
-      void setVelocityFunction(Function<double(double)> * gdForceFun_) { gdForceFun=gdForceFun_; }
+      void setVelocityFunction(Function<double(double)> * gdForceFun_) {
+        gdForceFun=gdForceFun_;
+        gdForceFun->setParent(this);
+      }
       /***************************************************/
 
     protected:
@@ -247,15 +261,24 @@ namespace MBSim {
        * \param function for friction coefficient depending on norm of relative velocity
        * \param border with respect to the relative velocity for the linear regularized increase of the friction force
        */
-      LinearRegularizedStribeckFriction(Function<double(double)> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {}
+      LinearRegularizedStribeckFriction(Function<double(double)> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {
+        fmu->setParent(this);
+      }
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual void init(Element::InitStage stage) {
+        Function<fmatvec::Vec(fmatvec::Vec,double)>::init(stage);
+        fmu->init(stage);
+      }
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setFrictionFunction(Function<double(double)> *fmu_) { fmu=fmu_; }
+      void setFrictionFunction(Function<double(double)> *fmu_) {
+        fmu=fmu_;
+        fmu->setParent(this);
+      }
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
 

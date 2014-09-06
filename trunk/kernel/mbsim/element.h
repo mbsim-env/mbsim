@@ -336,20 +336,23 @@ namespace MBSim {
       if(idx!=std::string::npos)
         rest=path.substr(idx+1);
       // get the object of the first child path by calling the virtual function getChildByContainerAndName
-      size_t pos0=path.find('[');
-      std::string container=path.substr(0, pos0);
-      size_t pos1=path.find(']', pos0);
-      std::string name=path.substr(pos0+1, pos1-pos0-1);
+      size_t pos0=first.find('[');
+      if(pos0==std::string::npos)
+        throw MBSimError("Syntax error in "+first+": no [ found.");
+      std::string container=first.substr(0, pos0);
+      if(first[first.size()-1]!=']')
+        throw MBSimError("Syntax error in "+first+": does not end with ].");
+      std::string name=first.substr(pos0+1, first.size()-pos0-2);
       Element *e=getChildByContainerAndName(container, name);
-      // if their are other sub paths call getByPath of e for this
+      // if their are other child paths call getByPath of e for this
       if(!rest.empty())
         return e->getByPath<T>(rest);
-      // this is the last path -> check type and return
+      // this is the last relative path -> check type and return
       T *t=dynamic_cast<T*>(e);
       if(t)
         return t;
       else
-        throw MBSimError("Cannot resolve XML path "+path+" in "+getName()+".");//MFMF print error with original path
+        throw MBSimError("Type error in "+first+": Cannot cast this element to type "+container+".");
     }
   }
 

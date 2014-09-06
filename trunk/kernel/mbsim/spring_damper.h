@@ -130,7 +130,10 @@ namespace MBSim {
        * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
        * The return value of that function is used as the force of the SpringDamper.
        */
-      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) {
+        func=func_;
+        func->setParent(this);
+      }
 
       /**
        * \param local force direction represented in first frame
@@ -178,7 +181,10 @@ namespace MBSim {
       void init(InitStage stage);
 
       /** \brief Set the function for the generalized force. */
-      void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
+      void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
+        func=func_;
+        func->setParent(this);
+      }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }

@@ -84,7 +84,6 @@ namespace MBSim {
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not(frame.size()))
         throw MBSimError("ERROR in "+getName()+": no connection given!");
-      func->init(stage);
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -109,6 +108,7 @@ namespace MBSim {
     }
     else
       LinkMechanics::init(stage);
+    func->init(stage);
   }
 
   void SpringDamper::plot(double t,double dt) {
@@ -248,6 +248,7 @@ namespace MBSim {
     }
     else
       LinkMechanics::init(stage);
+    func->init(stage);
   }
 
   void DirectionalSpringDamper::plot(double t,double dt) {
@@ -404,6 +405,7 @@ namespace MBSim {
     }
     else
       LinkMechanics::init(stage);
+    func->init(stage);
   }
 
   void GeneralizedSpringDamper::plot(double t,double dt) {
