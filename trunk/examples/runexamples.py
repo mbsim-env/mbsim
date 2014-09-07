@@ -865,7 +865,7 @@ def executeFlatXMLExample(executeFD):
 
 
 
-def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, label, dataArrayRef, dataArrayCur):
+def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, label, dataArrayRef, dataArrayCur, gnuplotProcess):
   import numpy
 
   diffDir=os.path.dirname(diffHTMLFileName)
@@ -912,6 +912,9 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
 
+  if gnuplotProcess==None:
+    return
+
   # fix if all values are nan to prevent a gnuplot warning
   if numpy.all(numpy.isnan(dataArrayRef[:,0])) or numpy.all(numpy.isnan(dataArrayRef[:,1])) or \
      numpy.all(numpy.isnan(dataArrayCur[:,0])) or numpy.all(numpy.isnan(dataArrayCur[:,1])):
@@ -934,39 +937,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   xmax=xmax+dx
   ymax=ymax+dy
 
-  # create gnuplot file
-  diffGPFileName=pj(diffDir, "diffplot.gnuplot")
-  SVGFileName=pj(diffDir, "plot.svg")
-  dataFileName=pj(diffDir, "data.dat")
-  diffGPFD=codecs.open(diffGPFileName, "w", encoding="utf-8")
-  print("set terminal svg size 900, 1400", file=diffGPFD)
-  print("set output '"+SVGFileName+"'", file=diffGPFD)
-  print("set multiplot layout 3, 1", file=diffGPFD)
-  print("set title 'Compare'", file=diffGPFD)
-  print("set xlabel 'Time'", file=diffGPFD)
-  print("set ylabel 'Value'", file=diffGPFD)
-  print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, ymin,ymax), file=diffGPFD)
-  print("  '"+dataFileName+"' u ($1):($2) binary format='%double%double%double%double' title 'ref' w l lw 2, \\", file=diffGPFD)
-  print("  '"+dataFileName+"' u ($3):($4) binary format='%double%double%double%double' title 'cur' w l", file=diffGPFD)
-  if dataArrayRef.shape==dataArrayCur.shape:
-    print("set title 'Absolute Tolerance'", file=diffGPFD)
-    print("set xlabel 'Time'", file=diffGPFD)
-    print("set ylabel 'cur-ref'", file=diffGPFD)
-    print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, -3*args.atol, 3*args.atol), file=diffGPFD)
-    print("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\", file=diffGPFD)
-    print("  %g title 'atol' lt 2 lw 1, \\"%(args.atol), file=diffGPFD)
-    print("  %g notitle lt 2 lw 1"%(-args.atol), file=diffGPFD)
-    print("set title 'Relative Tolerance'", file=diffGPFD)
-    print("set xlabel 'Time'", file=diffGPFD)
-    print("set ylabel '(cur-ref)/ref'", file=diffGPFD)
-    print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, -3*args.rtol, 3*args.rtol), file=diffGPFD)
-    # prevent division by zero: use 1e-30 instead
-    print("  '"+dataFileName+"' u ($1):(($4-$2)/($2==0?1e-30:$2)) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
-    print("  %g title 'rtol' lt 2 lw 1, \\"%(args.rtol), file=diffGPFD)
-    print("  %g notitle lt 2 lw 1"%(-args.rtol), file=diffGPFD)
-  diffGPFD.close()
-
   # create datafile
+  dataFileName=pj(diffDir, "data.dat")
   nradd=dataArrayRef.shape[0]-dataArrayCur.shape[0]
   add=numpy.empty([abs(nradd), 2])
   add[:]=float("NaN")
@@ -977,15 +949,31 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   dataArrayRefCur=numpy.concatenate((dataArrayRef, dataArrayCur), axis=1)
   dataArrayRefCur.tofile(dataFileName)
 
-  # run gnuplot
-  try:
-    subprocessCall(["gnuplot", diffGPFileName], sys.stdout)
-  except OSError:
-    print("gnuplot not found. Hence no compare plot will be generated. Add gnuplot to PATH to enable.")
-
-  # cleanup
-  os.remove(diffGPFileName)
-  os.remove(dataFileName)
+  # create gnuplot file
+  SVGFileName=pj(diffDir, "plot.svg")
+  gnuplotProcess.stdin.write(("set output '"+SVGFileName+"'\n").encode("utf-8"))
+  gnuplotProcess.stdin.write(("set multiplot layout 3, 1\n").encode("utf-8"))
+  gnuplotProcess.stdin.write(("set title 'Compare'\n").encode("utf-8"))
+  gnuplotProcess.stdin.write(("set ylabel 'Value'\n").encode("utf-8"))
+  gnuplotProcess.stdin.write(("plot [%g:%g] [%g:%g] \\\n"%(xmin,xmax, ymin,ymax)).encode("utf-8"))
+  gnuplotProcess.stdin.write(("  '"+dataFileName+"' u ($1):($2) binary format='%double%double%double%double' title 'ref' w l lw 2, \\\n").encode("utf-8"))
+  gnuplotProcess.stdin.write(("  '"+dataFileName+"' u ($3):($4) binary format='%double%double%double%double' title 'cur' w l\n").encode("utf-8"))
+  if dataArrayRef.shape==dataArrayCur.shape:
+    gnuplotProcess.stdin.write(("set title 'Absolute Tolerance'\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("set ylabel 'cur-ref'\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("plot [%g:%g] [%g:%g] \\\n"%(xmin,xmax, -3*args.atol, 3*args.atol)).encode("utf-8"))
+    gnuplotProcess.stdin.write(("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("  %g title 'atol' lt 2 lw 1, \\\n"%(args.atol)).encode("utf-8"))
+    gnuplotProcess.stdin.write(("  %g notitle lt 2 lw 1\n"%(-args.atol)).encode("utf-8"))
+    gnuplotProcess.stdin.write(("set title 'Relative Tolerance'\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("set ylabel '(cur-ref)/ref'\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("plot [%g:%g] [%g:%g] \\\n"%(xmin,xmax, -3*args.rtol, 3*args.rtol)).encode("utf-8"))
+    # prevent division by zero: use 1e-30 instead
+    gnuplotProcess.stdin.write(("  '"+dataFileName+"' u ($1):(($4-$2)/($2==0?1e-30:$2)) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("  %g title 'rtol' lt 2 lw 1, \\\n"%(args.rtol)).encode("utf-8"))
+    gnuplotProcess.stdin.write(("  %g notitle lt 2 lw 1\n"%(-args.rtol)).encode("utf-8"))
+  gnuplotProcess.stdin.write(("unset multiplot\n").encode("utf-8"))
+  # dataFileName it not removed since gnuplot is running asynchronously
 
 # return column col from arr as a column Vector if asColumnVector == True or as a row vector
 # arr may be of shape vector or a matrix
@@ -1002,7 +990,7 @@ def getColumn(arr, col, asColumnVector=True):
       return arr[:][:,None]
   else:
     raise IndexError("Only HDF5 datasets of shape vector and matrix can be handled.")
-def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames, datasetName, refObj):
+def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames, gnuplotProcess, datasetName, refObj):
   import numpy
   import h5py
 
@@ -1085,7 +1073,7 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
           dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
           createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
-                         column, refLabels[column][0], dataArrayRef, dataArrayCur)
+                         column, refLabels[column][0], dataArrayRef, dataArrayCur, gnuplotProcess)
         # everything OK
         else:
           print('<td class="success">passed</td>', file=compareFD)
@@ -1158,6 +1146,13 @@ def compareExample(example, compareFN):
 
   nrAll=[0]
   nrFailed=[0]
+  try:
+    gnuplotProcess=subprocess.Popen(["gnuplot"], stdin=subprocess.PIPE)
+    gnuplotProcess.stdin.write(("set terminal svg size 900, 1400\n").encode("utf-8"))
+    gnuplotProcess.stdin.write(("set xlabel 'Time'\n").encode("utf-8"))
+  except OSError:
+    gnuplotProcess=None
+    print("gnuplot not found. Hence no compare plot will be generated. Add gnuplot to PATH to enable.")
   for h5RefFileName in glob.glob(pj("reference", "*.h5")):
     # open h5 files
     h5RefFile=h5py.File(h5RefFileName, "r")
@@ -1176,7 +1171,8 @@ def compareExample(example, compareFN):
       # process h5 file
       refMemberNames=set()
       # bind arguments h5CurFile, compareFD, example, nrAll, nrFailed in order (nrAll, nrFailed as lists to pass by reference)
-      dummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames)
+      dummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll,
+                                      nrFailed, refMemberNames, gnuplotProcess)
       h5RefFile.visititems(dummyFctPtr) # visit all dataset
       # check for datasets in current but not in reference
       curMemberNames=set()
@@ -1193,6 +1189,9 @@ def compareExample(example, compareFN):
       # close h5 files
       h5RefFile.close()
       h5CurFile.close()
+  if gnuplotProcess!=None:
+    gnuplotProcess.stdin.close()
+    gnuplotProcess.wait()
   # files in current but not in reference
   refFiles=glob.glob(pj("reference", "*.h5"))
   for curFile in glob.glob("*.h5"):
