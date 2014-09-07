@@ -62,7 +62,7 @@ namespace MBSimHydraulics {
         setGapLengthSignal(getByPath<Signal>(glPath));
     }
     else if (stage==modelBuildup) {
-      ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LeakagePressureLoss", this, lpl, false, false));
+      ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LeakagePressureLoss", this, lpl, false, false));//MFMF change to _
       RigidHLine::init(stage);
     }
     else

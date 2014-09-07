@@ -154,13 +154,13 @@ namespace MBSim {
     obj[level].push_back(object);
   }
 
-  void Graph::co() {
-    cout << name << endl;
+  void Graph::printGraph() {
+    msg(Debug) << "Content of graph "<< name << ":" << endl;
     for(unsigned int i=0; i<obj.size(); i++) {
-      for(unsigned int j=0; j<obj[i].size(); j++) {
-	cout << obj[i][j]->getName()<<"(" <<obj[i][j]->getuSize()<<","<< obj[i][j]->gethSize()<<"," << obj[i][j]->getuInd()<<"," << obj[i][j]->gethInd()<< ") ";
-      }
-      cout << endl;
+      msg(Debug) << "  Objects in level "<< i << ":"<< endl;
+      for(unsigned int j=0; j<obj[i].size(); j++)
+	msg(Debug) << "    "<< obj[i][j]->getPath()<<" (uSize=" <<obj[i][j]->getuSize()<<", hSize="<< obj[i][j]->gethSize()<<
+                                           ", uInd=" << obj[i][j]->getuInd()<<", hInd=" << obj[i][j]->gethInd()<< ")"<<endl;
     }
   }
 

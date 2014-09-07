@@ -808,7 +808,7 @@ namespace MBSim {
       influenceFunctions[Pair] = fct;
     }
     else {
-      msg(Warn) << "Function existed for contour-pair: \"" << contour1->getName() << "\" + \"" << contour2->getName() << "\".\n" <<
+      msg(Warn) << "Function existed for contour-pair: \"" << contour1->getPath() << "\" + \"" << contour2->getPath() << "\".\n" <<
                    "No Function has been added." << endl;
     }
 
@@ -930,7 +930,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
         Vec2 lagrangeParameter = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
         if (DEBUGLEVEL >= 3) {
-          cout << "LagrangeParameter of contour \"" << contour->getShortName() << "\" is:" << lagrangeParameter << endl;
+          cout << "LagrangeParameter of contour \"" << contour->getPath() << "\" is:" << lagrangeParameter << endl;
         }
 
         FactorC += (*fct)(lagrangeParameter, lagrangeParameter);
@@ -938,7 +938,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
 
     if (fabs(FactorC) <= macheps()) {
-      throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contacts[contactIndex.first][contactIndex.second].getContour()[0]->getShortName() + "\n  -" + contacts[contactIndex.first][contactIndex.second].getContour()[0]->getShortName() + "\nThat is not an option!");
+      throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contacts[contactIndex.first][contactIndex.second].getContour()[0]->getPath() + "\n  -" + contacts[contactIndex.first][contactIndex.second].getContour()[0]->getPath() + "\nThat is not an option!");
     }
 
     return FactorC;
@@ -966,8 +966,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
           Vec2 secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
 
           if (DEBUGLEVEL >= 3) {
-            cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
-            cout << "Second LagrangeParameter contour \"" << contour2->getShortName() << "\" is:" << secondLagrangeParameter << endl;
+            cout << "First LagrangeParameter of contour \"" << contour1->getPath() << "\" is:" << firstLagrangeParameter << endl;
+            cout << "Second LagrangeParameter contour \"" << contour2->getPath() << "\" is:" << secondLagrangeParameter << endl;
           }
 
           FactorC += (*fct)(firstLagrangeParameter, secondLagrangeParameter);

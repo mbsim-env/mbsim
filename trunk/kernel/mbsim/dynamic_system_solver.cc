@@ -38,6 +38,7 @@
 #include <hdf5serie/simpledataset.h>
 #include <unistd.h>
 #include <limits>
+#include <boost/lexical_cast.hpp>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
@@ -135,7 +136,6 @@ namespace MBSim {
 
       vector<ModellingInterface*> modellList;
       buildListOfModels(modellList);
-
       if (modellList.size())
         do {
           modellList[0]->processModellList(modellList, objList, lnkList);
@@ -151,54 +151,30 @@ namespace MBSim {
 
       clearElementLists();
 
-      /* rename system structure */
-      msg(Info) << "object List:" << endl;
-      for (unsigned int i = 0; i < objList.size(); i++) {
-        stringstream str;
-        str << objList[i]->getPath('/');
-        msg(Info) << str.str() << endl;
-        objList[i]->setName(str.str());
-      }
-      msg(Info) << "frame List:" << endl;
+      /****** reorganize ******/
+
       for (unsigned int i = 0; i < frmList.size(); i++) {
-        stringstream str;
-        str << frmList[i]->getParent()->getPath('/') << "/" << frmList[i]->getName();
-        msg(Info) << str.str() << endl;
-        frmList[i]->setName(str.str());
+        frmList[i]->setName("Frame_"+lexical_cast<string>(i)); // just a unique local name
         addFrame((FixedRelativeFrame*) frmList[i]);
       }
-      msg(Info) << "contour List:" << endl;
       for (unsigned int i = 0; i < cntList.size(); i++) {
-        stringstream str;
-        str << cntList[i]->getParent()->getPath('/') << "/" << cntList[i]->getName();
-        msg(Info) << str.str() << endl;
-        cntList[i]->setName(str.str());
+        cntList[i]->setName("Contour_"+lexical_cast<string>(i)); // just a unique local name
         addContour(cntList[i]);
       }
-      msg(Info) << "link List:" << endl;
       for (unsigned int i = 0; i < lnkList.size(); i++) {
-        stringstream str;
-        str << lnkList[i]->getParent()->getPath('/') << "/" << lnkList[i]->getName();
-        msg(Info) << str.str() << endl;
-        lnkList[i]->setName(str.str());
+        lnkList[i]->setName("Link_"+lexical_cast<string>(i)); // just a unique local name
         addLink(lnkList[i]);
       }
-      msg(Info) << "inverse kinetics link List:" << endl;
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
-        stringstream str;
-        str << iKlnkList[i]->getParent()->getPath('/') << "/" << iKlnkList[i]->getName();
-        msg(Info) << str.str() << endl;
-        iKlnkList[i]->setName(str.str());
+        iKlnkList[i]->setName("InverseKinematic_"+lexical_cast<string>(i)); // just a unique local name
         addInverseKineticsLink(iKlnkList[i]);
       }
-      msg(Info) << "observer List:" << endl;
       for (unsigned int i = 0; i < obsrvList.size(); i++) {
-        stringstream str;
-        str << obsrvList[i]->getParent()->getPath('/') << "/" << obsrvList[i]->getName();
-        msg(Info) << str.str() << endl;
-        obsrvList[i]->setName(str.str());
+        obsrvList[i]->setName("Observer_"+lexical_cast<string>(i)); // just a unique local name
         addObserver(obsrvList[i]);
       }
+
+      /* now objects: these are much more complex since we must build a graph */
 
       /* matrix of body dependencies */
       SqrMat A(objList.size(), INIT, 0.);
@@ -229,15 +205,15 @@ namespace MBSim {
       for (int i = 0; i < A.size(); i++) {
         double a = max(A.T().col(i));
         if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
-          stringstream str;
-          str << "InvisibleGraph" << nt++;
-          Graph *graph = new Graph(str.str());
+          Graph *graph = new Graph("InvisibleGraph_"+lexical_cast<string>(nt++));
           addToGraph(graph, A, i, objList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
-        else if (fabs(a) < epsroot()) // absolut kinematics
+        else if (fabs(a) < epsroot()) { // absolut kinematics
+          objList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
           addObject(objList[i]);
+        }
       }
       // msg(Info) << "A = " << A << endl;
 
@@ -251,7 +227,7 @@ namespace MBSim {
       init(resize);
       for (unsigned int i = 0; i < dynamicsystem.size(); i++)
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
-          static_cast<Graph*>(dynamicsystem[i])->co();
+          static_cast<Graph*>(dynamicsystem[i])->printGraph();
     }
     else if (stage == resize) {
       calcqSize();
@@ -1557,6 +1533,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
+    objList[i]->setName("Object_graph_"+lexical_cast<string>(i)); // just a unique local name
     graph->addObject(objList[i]->computeLevel(), objList[i]);
     A(i, i) = -1;
 

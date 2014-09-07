@@ -110,92 +110,51 @@ namespace MBSim {
     }
   }
 
-  string Element::getPath(char pathDelim) {
-    return parent?parent->getPath()+pathDelim+name:name;
-  }
+  string Element::getPath(const Element *relTo, string sep) const {
+    // compose a absolute path
+    if(!relTo) {
+      // after init stage reorganizeHierarchy just return the store path since the hierarchy is changed now
+      if(!path.empty())
+        return path;
 
-  string Element::getXMLPath(MBSim::Element *ref, bool rel) {
-    if(rel) {
-      vector<Element*> e0, e1;
-      Element* element = ref;
-      e0.push_back(element);
-      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
-        element = element->getParent();
-        e0.push_back(element);
+      // before the init stage reorganizeHierarchy compose the path dynamically
+      if(parent) {
+        string container;
+        if     (dynamic_cast<const Frame*>             (this)) container="Frame";
+        else if(dynamic_cast<const Contour*>           (this)) container="Contour";
+        else if(dynamic_cast<const Object*>            (this)) container="Object";
+        else if(dynamic_cast<const Link*>              (this)) container="Link";
+        else if(dynamic_cast<const Group*>             (this)) container="Group";
+        else if(dynamic_cast<const Observer*>          (this)) container="Observer";
+        else throw MBSimError("Internal error: Unknown object type.");
+        string parantPath=parent->getPath(NULL, sep);
+        return parantPath+(parantPath==sep?"":sep)+container+"["+getName()+"]";
       }
-      element = getParent();
-      e1.push_back(element);
-      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
-        element = element->getParent();
-        e1.push_back(element);
-      }
-      int imatch=0;
-      for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
-        if(*i0 == *i1) imatch++;
-      string type;
-      if(dynamic_cast<Frame*>(this))
-        type = "Frame";
-      else if(dynamic_cast<Contour*>(this))
-        type = "Contour";
-      else if(dynamic_cast<Group*>(this))
-        type = "Group";
-      else if(dynamic_cast<Object*>(this))
-        type = "Object";
-      else if(dynamic_cast<Link*>(this))
-        type = "Link";
-      else if(dynamic_cast<Observer*>(this))
-        type = "Observer";
-      else 
-        type = getType();
-      string str = type + "[" + getName() + "]";
-      for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
-        if(dynamic_cast<Group*>(*i1))
-          str = string("Group[") + (*i1)->getName() + "]/" + str;
-        else if(dynamic_cast<Object*>(*i1))
-          str = string("Object[") + (*i1)->getName() + "]/" + str;
-        else if(dynamic_cast<Link*>(*i1))
-          str = string("Link[") + (*i1)->getName() + "]/" + str;
-        else if(dynamic_cast<Observer*>(*i1))
-          str = string("Observer[") + (*i1)->getName() + "]/" + str;
+      return sep;
+    }
+    // compose a relative path
+    else {
+      // get absolute path of this object and relTo (get it relative to the top level (remove the leading /))
+      string thisPath=getPath(NULL, sep).substr(1);
+      string relToPath=relTo->getPath(NULL, sep).substr(1)+sep;
+      // remove sub path which are equal in both
+      while(1) {
+        size_t thisIdx=thisPath.find(sep);
+        size_t relToIdx=relToPath.find(sep);
+        if(thisPath.substr(0, thisIdx)==relToPath.substr(0, relToIdx)) {
+          thisPath=thisPath.substr(thisIdx+1);
+          relToPath=relToPath.substr(relToIdx+1);
+        }
         else
-          str = "";
+          break;
       }
-      for(int i=0; i<int(e0.size())-imatch; i++)
-        str = "../" + str;
-      return str;
-    } else {
-      string type;
-      if(dynamic_cast<Frame*>(this))
-        type = "Frame";
-      else if(dynamic_cast<Contour*>(this))
-        type = "Contour";
-      else if(dynamic_cast<Group*>(this))
-        type = "Group";
-      else if(dynamic_cast<Object*>(this))
-        type = "Object";
-      else if(dynamic_cast<Link*>(this))
-        type = "Link";
-      else if(dynamic_cast<Observer*>(this))
-        type = "Observer";
-      else 
-        type = getType();
-      string str = type + "[" + getName() + "]";
-      Element* element = parent;
-      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
-        if(dynamic_cast<Group*>(element))
-          str = string("Group[") + element->getName() + "]/" + str;
-        else if(dynamic_cast<Object*>(element))
-          str = string("Object[") + element->getName() + "]/" + str;
-        else if(dynamic_cast<Link*>(element))
-          str = string("Link[") + element->getName() + "]/" + str;
-        else if(dynamic_cast<Observer*>(element))
-          str = string("Observer[") + element->getName() + "]/" + str;
-        else
-          str = "";
-        element = element->getParent();
-      }
-      str = "/" + str;
-      return str;
+      // replace all sub path in relToPath with ".."
+      string dotPath;
+      size_t relToIdx=0;
+      while((relToIdx=relToPath.find(sep, relToIdx+1))!=string::npos)
+        dotPath+=".."+sep;
+      // return the relative path
+      return dotPath+thisPath;
     }
   }
 

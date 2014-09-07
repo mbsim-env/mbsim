@@ -672,9 +672,12 @@ def runExample(resultQueue, example):
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
     if not args.disableCompare and canCompare:
-      # compare the result with the reference
-      compareRet, nrFailed, nrAll=compareExample(example[0], compareFN)
-      if compareRet!=0: runExampleRet=1
+      if os.path.isdir("reference"):
+        # compare the result with the reference
+        compareRet, nrFailed, nrAll=compareExample(example[0], compareFN)
+        if compareRet!=0: runExampleRet=1
+      else:
+        compareRet=-2
 
     # write time to time.dat for possible later copying it to the reference
     if not args.disableRun:
@@ -682,21 +685,22 @@ def runExample(resultQueue, example):
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
+    global dummyID
+    dummyID=dummyID+1
     if compareRet==-1:
       resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
                  '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
+    elif compareRet==-2:
+      resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
+                 '<div class="pull-right">[<input id="EXAMPLE_'+str(dummyID)+\
+                 '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>'
+      nrAll=0
+      nrFailed=0
     else:
-      global dummyID
-      dummyID=dummyID+1
       if nrFailed==0:
-        if nrAll==0:
-          resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
-                     '<div class="pull-right">[<input id="EXAMPLE_'+str(dummyID)+\
-                     '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>'
-        else:
-          resultStr+='<td class="success"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
-                     '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
-                     '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
+        resultStr+='<td class="success"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
+                   '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
+                   '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
       else:
         resultStr+='<td class="danger"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
                    '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
@@ -1189,6 +1193,18 @@ def compareExample(example, compareFN):
       # close h5 files
       h5RefFile.close()
       h5CurFile.close()
+  # files in current but not in reference
+  refFiles=glob.glob(pj("reference", "*.h5"))
+  for curFile in glob.glob("*.h5"):
+    if pj("reference", curFile) not in refFiles:
+      print('<tr>', file=compareFD)
+      print('<td>'+curFile+'</td>', file=compareFD)
+      print('<td class="danger">no such file in reference solution</td>', file=compareFD)
+      print('<td class="danger">failed</td>', file=compareFD)
+      print('<td class="danger">failed</td>', file=compareFD)
+      print('</tr>', file=compareFD)
+      nrAll[0]+=1
+      nrFailed[0]+=1
 
   # print html footer
   print('</tbody></table>', file=compareFD)
