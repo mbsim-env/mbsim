@@ -89,7 +89,7 @@ namespace MBSim {
        */
       void addObject(int level, Object* object); 
 
-      void co();
+      void printGraph();
 
     protected:
       /**

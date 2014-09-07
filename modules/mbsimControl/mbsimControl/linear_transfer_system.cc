@@ -132,11 +132,11 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::showABCD() {
-    cout  <<  "State space modell of Object \"" << name << "\":" << endl;
-    cout  <<  "A Matrix:" << A << endl;
-    cout  <<  "B Matrix:" << B << endl;
-    cout  <<  "C Matrix:" << C << endl;
-    cout  <<  "D Matrix:" << D << endl;
+    msg(Info)  <<  "State space modell of Object \"" << getPath() << "\":" << endl;
+    msg(Info)  <<  "A Matrix:" << A << endl;
+    msg(Info)  <<  "B Matrix:" << B << endl;
+    msg(Info)  <<  "C Matrix:" << C << endl;
+    msg(Info)  <<  "D Matrix:" << D << endl;
   }
 
   void LinearTransferSystem::setPID(double PP, double II, double DD) {

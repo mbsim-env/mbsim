@@ -537,7 +537,7 @@ namespace MBSim {
 
           if (openMBVContactFrame[0]) {
             for (unsigned int i = 0; i < 2; i++) { // frames
-              string name = string((i == 0 ? "A" : "B")) + string("_") + string(contour[i]->getShortName());
+              string name = string((i == 0 ? "A" : "B")) + string("_") + string(contour[i]->getName());
               openMBVContactFrame[i]->setName(name);
               openMBVContactGrp->addObject(openMBVContactFrame[i]);
             }

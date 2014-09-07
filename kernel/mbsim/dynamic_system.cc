@@ -495,11 +495,20 @@ namespace MBSim {
 
       if (getPlotFeature(plotRecursive) == enabled) {
         if (getPlotFeature(separateFilePerGroup) == enabled) {
+          // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
+          // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
+          // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
+          string fileName="mbsim.h5";
+          const DynamicSystem *ds=this;
+          while(ds) {
+            fileName=ds->getName()+"."+fileName;
+            ds=static_cast<const DynamicSystem*>(ds->getParent());
+          }
           // create symbolic link in parent plot file if exist
           if (parent)
-            parent->getPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(getPath() + ".mbsim.h5"), string("/")));
+            parent->getPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(fileName), string("/")));
           // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
-          hdf5File = boost::make_shared<H5::File>(getPath() + ".mbsim.h5", H5::File::write);
+          hdf5File = boost::make_shared<H5::File>(fileName, H5::File::write);
           plotGroup = hdf5File.get();
         }
         else
@@ -983,22 +992,28 @@ namespace MBSim {
   }
 
   void DynamicSystem::buildListOfDynamicSystems(vector<DynamicSystem*> &sys) {
-    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++) {
       sys.push_back(dynamicsystem[i]);
+      dynamicsystem[i]->setPath(dynamicsystem[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfDynamicSystems(sys);
   }
 
   void DynamicSystem::buildListOfObjects(vector<Object*> &obj) {
-    for (unsigned int i = 0; i < object.size(); i++)
+    for (unsigned int i = 0; i < object.size(); i++) {
       obj.push_back(object[i]);
+      object[i]->setPath(object[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfObjects(obj);
   }
 
   void DynamicSystem::buildListOfLinks(vector<Link*> &lnk) {
-    for (unsigned int i = 0; i < link.size(); i++)
+    for (unsigned int i = 0; i < link.size(); i++) {
       lnk.push_back(link[i]);
+      link[i]->setPath(link[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfLinks(lnk);
   }
@@ -1012,36 +1027,46 @@ namespace MBSim {
   }
 
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm) {
-    for (unsigned int i = 0; i < frame.size(); i++)
+    for (unsigned int i = 0; i < frame.size(); i++) {
       frm.push_back(frame[i]);
+      frame[i]->setPath(frame[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfFrames(frm);
   }
 
   void DynamicSystem::buildListOfContours(vector<Contour*> &cnt) {
-    for (unsigned int i = 0; i < contour.size(); i++)
+    for (unsigned int i = 0; i < contour.size(); i++) {
       cnt.push_back(contour[i]);
+      contour[i]->setPath(contour[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfContours(cnt);
   }
 
   void DynamicSystem::buildListOfModels(std::vector<ModellingInterface*> &modelList) {
-    for (unsigned int i = 0; i < model.size(); i++)
+    for (unsigned int i = 0; i < model.size(); i++) {
       modelList.push_back(model[i]);
+      // Note! setPath is (and must be) done in processModellList
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfModels(modelList);
   }
 
   void DynamicSystem::buildListOfInverseKineticsLinks(vector<Link*> &iklnk) {
-    for (unsigned int i = 0; i < inverseKineticsLink.size(); i++)
+    for (unsigned int i = 0; i < inverseKineticsLink.size(); i++) {
       iklnk.push_back(inverseKineticsLink[i]);
+      inverseKineticsLink[i]->setPath(inverseKineticsLink[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfInverseKineticsLinks(iklnk);
   }
 
   void DynamicSystem::buildListOfObservers(vector<Observer*> &obsrv) {
-    for (unsigned int i = 0; i < observer.size(); i++)
+    for (unsigned int i = 0; i < observer.size(); i++) {
       obsrv.push_back(observer[i]);
+      observer[i]->setPath(observer[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->buildListOfObservers(obsrv);
   }
@@ -1454,6 +1479,8 @@ namespace MBSim {
       return getFrame(name);
     else if (container == "Contour")
       return getContour(name);
+    else if (container == "Observer")
+      return getObserver(name);
     else
       throw MBSimError("Unknown container "+container+" in DynamicSystem.");
   }

@@ -161,24 +161,12 @@ namespace MBSim {
       const std::string& getName() const { return name; }
 
       /**
-       * \return the short name of the element (without hierarchical structure)
-       */
-      const std::string getShortName() const {
-        size_t i = name.length() - 1;
-
-        while ((name[i-1] != '/') and (i > 1)) {
-          i--;
-        }
-        if(i == 1)
-          i--;
-
-        return name.substr(i, name.length() - i);
-      }
-
-      /**
        * \param element name
        */
       void setName(const std::string &str) { name = str; }
+
+      // internal function do not use
+      void setPath(const std::string &str) { path=str; }
 
       /**
        * \return dynamic system solver
@@ -237,12 +225,18 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       /**
-       * \brief a general element access
+       * \brief Get the object of type T represented by the path path.
        */
       template<class T> T* getByPath(const std::string &path);
 
       /**
-       * \brief a general element search by path
+       * \brief Return the path of this object.
+       * If relativeTo is not NULL return a relative path to relativeTo.
+       */
+      std::string getPath(const Element *relTo=NULL, std::string sep="/") const;
+
+      /**
+       * \brief Get the Element named name in the container named container.
        */
       virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) {
         throw MBSimError("This element has no containers with childs.");
@@ -268,13 +262,6 @@ namespace MBSim {
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}
-      /**
-       * \return full path of the object
-       * \param delimiter of the path
-       */
-      std::string getPath(char pathDelim='.');
-
-      std::string getXMLPath(MBSim::Element *ref=0, bool rel=false);
 
     protected:
       Element *parent;
@@ -283,6 +270,13 @@ namespace MBSim {
        * \brief name of element
        */
       std::string name;
+
+      /**
+       * \brief The path of this object.
+       *  Is set during the init stage reorganizeHierarchy. Before this the path is calculated
+       *  dynamically using getPath() after this stage getPath just returns this value.
+       */
+      std::string path;
 
       /**
        * \brief dynamic system

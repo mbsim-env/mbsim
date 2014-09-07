@@ -509,7 +509,7 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
       if (fabs(p0)<epsroot()) {
-        cerr << "WARNING ElasticNodeMec \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
+        msg(Warn) << "ElasticNodeMec \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
       la(0)=p0;
@@ -626,11 +626,11 @@ namespace MBSimHydraulics {
     HNodeMec::updategd(t);
     if (t<epsroot()) {
       if (fabs(QHyd)>epsroot())
-        cerr << "WARNING: RigidNodeMec \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
+        msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
       if (fabs(QMecTrans)>epsroot())
-        cerr << "WARNING: RigidNodeMec \"" << name << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
+        msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
       if (fabs(QMecRot)>epsroot())
-        cerr << "WARNING: RigidNodeMec \"" << name << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
+        msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
     }
   }
 

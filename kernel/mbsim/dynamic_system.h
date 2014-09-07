@@ -107,11 +107,6 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp();
 #endif
-      /** 
-       * Return the full path of the object.
-       * \param pathDelim The delimiter of the path
-       */
-      std::string getPath(char pathDelim='.') { return parent?parent->getPath()+pathDelim+name:name; }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */

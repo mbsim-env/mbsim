@@ -55,7 +55,7 @@ namespace MBSim {
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (openMBVRigidBody) {
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setIvFileName((this->name + ".iv").c_str());
+          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setIvFileName((getPath(NULL, ".").substr(1) + ".iv").c_str());
           static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setBoundaryEdges(true);
           static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialTranslation(0., 0., 0.);
           static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialRotation(0., 0., 0.);
@@ -251,7 +251,7 @@ namespace MBSim {
 
     std::ofstream ivFile;
 
-    ivFile.open((this->name + ".iv").c_str());
+    ivFile.open((getPath(NULL, ".").substr(1) + ".iv").c_str());
 
     /*HEAD*/
     ivFile << "#Inventor V2.1 ascii" << endl << endl;
