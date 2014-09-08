@@ -24,6 +24,7 @@
 #include <mbsim/object.h>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <string>
 #include <algorithm>
@@ -31,6 +32,7 @@
 using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 using std::string;
 
 namespace fmi {
@@ -333,9 +335,7 @@ void FmiXmlExport::addStates(DOMElement* e) {
 
   const std::vector<MBSim::Object*> objList = dss->getObjects();
   for (unsigned int i = 0; i < objList.size(); i++) {
-    std::stringstream str;
-    str << objList[i]->getPath('.');
-    objList[i]->setName(str.str());
+    objList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name;
   }
   int qSize=0,uSize=0;
   for(uint i = 0; i < objList.size();i++){
