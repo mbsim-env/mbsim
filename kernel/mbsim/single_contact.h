@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -295,12 +295,17 @@ namespace MBSim {
       fmatvec::Index iT;
 
       /**
-       * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
+       * \brief new gap velocity after an impact for event driven scheme
        */
-      fmatvec::Vec gdnN, gdnT, gddN, gddT;
+      fmatvec::Vec gdnN, gdnT;
+      
+      /**
+       * \brief gap acceleration for event driven scheme on acceleration level
+       */
+      fmatvec::Vec gddN, gddT;
 
       /*!
-       * \brief buffer for contact acceleration
+       * \brief gap acceleration buffer
        */
       fmatvec::Vec gddNBuf, gddTBuf;
 
@@ -322,8 +327,12 @@ namespace MBSim {
 #endif
 
       /**
-       * \brief type of detected root.
-       * */
+       * \brief type of detected root
+       *
+       * 1 = close-open transition / stick-slip transition
+       * 2 = slip-stick transition
+       * 3 = open-close transition, i.e., impact
+       */
       int rootID;
 
     private:
