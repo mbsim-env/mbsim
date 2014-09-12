@@ -112,7 +112,7 @@ namespace MBSim {
   void SingleContact::updateV(double t, int j) {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
-        if (gdActive[0] and not gdActive[1]) {
+        if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
           for (unsigned int i = 0; i < 2; i++) { //TODO: only two contours are interacting at one time?
             V[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(), iT) * fdf->dlaTdlaN(gdT, laN(0));
           }

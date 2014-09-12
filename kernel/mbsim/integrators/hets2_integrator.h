@@ -78,6 +78,12 @@ namespace MBSimIntegrator {
     
     private:
       /**
+       *  \brief evaluates the dynamical system given the state of the stage until the Jacobian matrices
+       *  \param dynamical system to be integrated
+       */
+      void evaluateStage(MBSim::DynamicSystemSolver& system);
+
+      /**
        * \brief step size
        */
       double dt;

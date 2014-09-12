@@ -239,6 +239,7 @@ namespace MBSim {
       const fmatvec::Mat& getT() const { return T; };
       const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
       const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
+      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
       const fmatvec::Vec& geth(int j=0) const { return h[j]; };
       const fmatvec::Vec& getf() const { return f; };
       fmatvec::Vec& getf() { return f; };
