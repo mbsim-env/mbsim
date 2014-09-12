@@ -17,7 +17,7 @@ int main (int argc, char* argv[]) {
 
   /* Integration */
   // define the integration
-  TimeSteppingIntegrator integrator;
+  HETS2Integrator integrator;
   // set step size
   integrator.setStepSize(1e-4);
   // set end-time of integration
