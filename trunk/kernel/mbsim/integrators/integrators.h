@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -31,7 +31,7 @@
 #include "time_stepping_integrator.h"
 #include "time_stepping_ssc_integrator.h"
 #include "auto_time_stepping_ssc_integrator.h"
-#include "time_stepping_d1minuslinear_integrator.h"
+#include "hets2_integrator.h"
 #include "theta_time_stepping_integrator.h"
 #include "euler_explicit_integrator.h"
 //#include "daspk_integrator.h"

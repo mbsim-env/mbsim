@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2010 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -79,13 +79,13 @@ namespace MBSim {
       virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       virtual void updateStateDependentVariables(double t) { 
-	updateKinematicsForSelectedFrame(t); 
-	updateKinematicsForRemainingFramesAndContours(t); 
+        updateKinematicsForSelectedFrame(t); 
+        updateKinematicsForRemainingFramesAndContours(t); 
       }
       virtual void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
       void updateJacobians0(double t) { 
-	updateJacobiansForSelectedFrame0(t); 
-	updateJacobiansForRemainingFramesAndContours(t,0); 
+        updateJacobiansForSelectedFrame0(t); 
+        updateJacobiansForRemainingFramesAndContours(t,0); 
       }
       void updateJacobians1(double t) { 
         updateJacobiansForRemainingFramesAndContours1(t); 

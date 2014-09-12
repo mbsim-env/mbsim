@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,39 +14,57 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thschindler@users.berlios.de
+ * Contact: thorsten.schindler@mytum.de
  */
 
-#ifndef _D1MINUSLINEAR_H_ 
-#define _D1MINUSLINEAR_H_
+#ifndef _HETS2_INTEGRATOR_H_ 
+#define _HETS2_INTEGRATOR_H_
 
 #include "integrator.h"
 
 namespace MBSimIntegrator {
 
   /** 
-   * \brief time-integrator for dynamical systems using D1MinusLinear ansatz
+   * \brief time integration scheme on velocity level for nonsmooth dynamical systems using half-explicit trapezoidal rule
    * \author Thorsten Schindler
-   * \date 2011-10-11 initial commit (Thorsten Schindler)
+   * \date 2014-09-12 initial commit (Thorsten Schindler)
    *
-   * Discontinuous Galerkin method with piecewise linear ansatz functions for velocity based on
+   * time discontinuous Galerkin method on velocity level using half-explicit trapezoidal rule
+   *
+   * T. Schindler, S. Rezaei, J. Kursawe, V. Acary : Half-explicit timestepping schemes 
+   * on velocity level based on time-discontinuous Galerkin methods
+   *
    * T. Schindler, V. Acary : Timestepping Schemes for Nonsmooth Dynamics Based
    * on Discontinuous Galerkin Methods: Definition and Outlook
    */
-  class TimeSteppingD1MinusLinearIntegrator : public Integrator { 
+  class HETS2Integrator : public Integrator { 
     public:
       /**
        * \brief constructor
        */
-      TimeSteppingD1MinusLinearIntegrator();
+      HETS2Integrator();
       
       /**
        * \brief destructor
        */
-      virtual ~TimeSteppingD1MinusLinearIntegrator() {}
+      virtual ~HETS2Integrator() {}
 
+      /**
+       * \brief initializes the integration
+       * \param dynamical system to be integrated
+       */
       void preIntegrate(MBSim::DynamicSystemSolver& system);
+      
+      /**
+       * \brief does the integration
+       * \param dynamical system to be integrated
+       */
       void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
+      
+      /**
+       * \brief closes the integration
+       * \param dynamical system to be integrated
+       */
       void postIntegrate(MBSim::DynamicSystemSolver& system);
 
       /* INHERITED INTERFACE OF INTEGRATOR */
@@ -93,12 +111,9 @@ namespace MBSimIntegrator {
        * \brief file stream for integration information
        */
       std::ofstream integPlot;
-
-      TimeSteppingD1MinusLinearIntegrator(const TimeSteppingD1MinusLinearIntegrator&); // copy constructor
-      TimeSteppingD1MinusLinearIntegrator& operator=(const TimeSteppingD1MinusLinearIntegrator&); // assignment operator
   };
 
 }
 
-#endif /* _TIME_STEPPING_INTEGRATOR_H_ */
+#endif /* _HETS2_INTEGRATOR_H_ */
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -924,7 +924,6 @@ namespace MBSim {
     checkActive(1);
     updategd(0);
     checkActive(2);
-    //setUpActiveLinks();
     updateJacobians(0);
     calclaSize(3);
     calcrFactorSize(3);
@@ -1011,11 +1010,10 @@ namespace MBSim {
     updateStateDependentVariables(t);
     updateg(t);
     checkActive(1);
-    //setUpActiveLinks();
     if (gActiveChanged() || options == 1) {
-      calcgdSize(2); // IB
-      calclaSize(2); // IB
-      calcrFactorSize(2); // IB
+      calcgdSize(2); // contacts which stay closed
+      calclaSize(2); // contacts which stay closed
+      calcrFactorSize(2); // contacts which stay closed
 
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
@@ -1272,7 +1270,7 @@ namespace MBSim {
     contactDrop << "generalized force vector h" << endl << h[0] << endl << endl;
     contactDrop << "generalized force directions W" << endl << W[0] << endl << endl;
     contactDrop << "generalized force directions V" << endl << V[0] << endl << endl;
-    contactDrop << "Delassus matrix G" << endl << G << endl << endl;
+    contactDrop << "mass action matrix G" << endl << G << endl << endl;
     contactDrop << "vector wb" << endl << wb << endl << endl;
     contactDrop << endl;
     contactDrop << "constraint velocities gp" << endl << gd << endl << endl;

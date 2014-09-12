@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -66,7 +66,7 @@ namespace MBSim {
        */
       virtual ~DynamicSystem();
 
-      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      /* INTERFACE FOR DERIVED CLASSES */
       virtual void updateT(double t); 
       virtual void updateh(double t, int i=0); 
       virtual void updateh0Fromh1(double t); 
@@ -107,9 +107,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp();
 #endif
-      /*****************************************************/
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t, int j=0); 
       virtual void updateW(double t, int j=0); 
       virtual void updateV(double t, int j=0); 
@@ -125,9 +123,7 @@ namespace MBSim {
       virtual void updatehInverseKinetics(double t, int j=0); 
       virtual void updateJacobiansInverseKinetics(double t, int j=0); 
       virtual void updatebInverseKinetics(double t); 
-      /*****************************************************/
 
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void updatedx(double t, double dt); 
       virtual void updatexd(double t);
       virtual void calcxSize();
@@ -579,7 +575,14 @@ namespace MBSim {
       void calcgSize(int j);
 
       /**
-       * \brief calculates size of relative velocities
+       * \brief calculates size of gap velocities
+       * \param flag to decide which contacts are included in the calculation
+       * 0 = all contacts
+       * 1 = closed contacts
+       * 2 = contacts which stay closed
+       * 3 = sticking contacts
+       *
+       * see SingleContact for the implementation
        */
       void calcgdSize(int j);
 
@@ -594,7 +597,18 @@ namespace MBSim {
       void setUpActiveLinks();
 
       /**
-       * \brief check if set-valued contacts are active 
+       * \brief check if set-valued contacts are active and set corresponding attributes
+       * \param flag to decide which criteria are used to define 'activity'
+       * 1 = position level activity (gActive = normal gap not larger than tolerance)
+       * 2 = velocity level activity (if gActive, gdActive[0] = normal gap velocity not larger than tolerance ; if gdActive[0], gdActive[1] = tangential gap velocity not larger than tolerance, i.e., sticking)
+       * 3 = velocity level activity (if gActive, gdActive[0] = new normal gap velocity AFTER impact not larger than tolerance ; if gdActive[0], gdActive[1] = new tangential gap velocity AFTER impact not larger than tolerance, i.e., sticking)
+       * 4 = acceleration level activity (if gActive and gdActive[0], gddActive[0] = normal gap acceleration not larger than tolerance ; if gddActive[0] and gdActive[1], gddActive[1] = tangential gap acceleration not larger than tolerance, i.e., stay sticking)
+       * 5 = activity clean-up: if there is no activity on acceleration or velocity level, also more basic levels are set to non-active
+       * 6 = closing sets all activities
+       * 7 = slip-stick transition sets tangential velocity and acceleration activity
+       * 8 = opening and stick-slip transition set corresponding acceleration activity to non-active
+       *
+       * see SingleContact for the implementation
        */
       void checkActive(int i);
 

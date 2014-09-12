@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  * 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -342,28 +342,29 @@ namespace MBSim {
   }
 
   void SingleContact::calcgdSize(int j) {
+    // TODO: avoid code duplication for maintenance
     LinkMechanics::calcgdSize(j);
-    if (j == 0) { // IA
-      //Add 1 to gd size if normal force law is setValued
+    if (j == 0) { // all contacts
+      // add 1 to gdSize if normal force law is setValued
       if (fcl->isSetValued())
         gdSize = 1;
       else
         gdSize = 0;
 
-      //Add number of friction directions to gd size if friction force law is setValued
+      // add number of friction directions to gdSize if friction force law is setValued
       if (fdf)
         if (fdf->isSetValued())
           gdSize += getFrictionDirections();
 
     }
-    else if (j == 1) { // IG
-      //Add 1 to gd size if normal force law is setValued
+    else if (j == 1) { // closed contacts
+      // add 1 to gdSize if normal force law is setValued
       if (fcl->isSetValued())
         gdSize = 1;
       else
         gdSize = 0;
 
-      //Add number of friction directions to gd size if friction force law is setValued
+      // add number of friction directions to gdSize if friction force law is setValued
       if (fdf)
         if (fdf->isSetValued())
           gdSize += getFrictionDirections();
@@ -371,14 +372,14 @@ namespace MBSim {
       gdSize *= gActive;
 
     }
-    else if (j == 2) { // IB
-      //Add 1 to gd size if normal force law is setValued
+    else if (j == 2) { // contacts which stay closed
+      // add 1 to gdSize if normal force law is setValued
       if (fcl->isSetValued())
         gdSize = 1;
       else
         gdSize = 0;
 
-      //Add number of friction directions to gd size if friction force law is setValued
+      // add number of friction directions to gdSize if friction force law is setValued
       if (fdf)
         if (fdf->isSetValued())
           gdSize += getFrictionDirections();
@@ -386,14 +387,14 @@ namespace MBSim {
       gdSize *= gActive * gdActive[0];
 
     }
-    else if (j == 3) { // IH
-      //Add 1 to gd size if normal force law is setValued
+    else if (j == 3) { // sticking contacts
+      // add 1 to gdSize if normal force law is setValued
       if (fcl->isSetValued())
         gdSize = 1;
       else
         gdSize = 0;
 
-      //Add number of friction directions to gd size if friction force law is setValued
+      // add number of friction directions to gdSize if friction force law is setValued
       if (fdf)
         if (fdf->isSetValued())
           gdSize += gdActive[1] * getFrictionDirections();
@@ -1211,9 +1212,9 @@ namespace MBSim {
       gddActive[0] = gdActive[0];
       gddActive[1] = gdActive[1];
     }
-    else if (j == 3) { // formerly checkActivegdn()
-      if (gActive) { // Contact was closed
-        if (gdnN(0) <= gdTol) { // Contact stays closed // TODO bilateral contact
+    else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
+      if (gActive) { // contact is closed
+        if (gdnN(0) <= gdTol) { // contact stays closed // TODO bilateral contact
           gdActive[0] = true;
           gddActive[0] = true;
           if (getFrictionDirections()) {
@@ -1227,7 +1228,7 @@ namespace MBSim {
             }
           }
         }
-        else { // Contact will open
+        else { // contact will open
           gdActive[0] = false;
           gdActive[1] = false;
           gddActive[0] = false;
@@ -1238,7 +1239,7 @@ namespace MBSim {
     else if (j == 4) { // formerly checkActivegdd()
       if (gActive) {
         if (gdActive[0]) {
-          if (gddN(0) <= gddTol) { // Contact stays closed
+          if (gddN(0) <= gddTol) { // contact stays closed on velocity level
             gddActive[0] = true;
             if (getFrictionDirections()) {
               if (gdActive[1]) {
@@ -1250,14 +1251,14 @@ namespace MBSim {
               }
             }
           }
-          else { // Contact will open
+          else { // contact will open on velocity level
             gddActive[0] = false;
             gddActive[1] = false;
           }
         }
       }
     }
-    else if (j == 5) {
+    else if (j == 5) { // activity clean-up, if there is no activity on acceleration or velocity level, also more basic levels are set to non-active
       if (gActive) {
         if (gdActive[0]) {
           if (gdActive[1]) {
@@ -1275,7 +1276,7 @@ namespace MBSim {
           gActive = false;
       }
     }
-    else if (j == 6) { // nur nach schließenden Kontakten schauen
+    else if (j == 6) { // just observe closing contact
       if (rootID == 3) {
         gActive = true;
         gdActive[0] = true;
@@ -1284,7 +1285,7 @@ namespace MBSim {
         gddActive[1] = true;
       }
     }
-    else if (j == 7) { // nur nach Gleit-Haft-Übergängen schauen
+    else if (j == 7) { // just observe slip-stick transitions
       if (getFrictionDirections()) {
         if (rootID == 2) {
           gdActive[1] = true;
@@ -1292,13 +1293,13 @@ namespace MBSim {
         }
       }
     }
-    else if (j == 8) { // nur nach öffnenden Kontakten und Haft-Gleit-Übergängen schauen
-      if (jsv(0) && rootID == 1) { // Kontakt öffnet
+    else if (j == 8) { // just observe opening contacts and stick-slip transitions
+      if (jsv(0) && rootID == 1) { // opening contact
         gddActive[0] = false;
         gddActive[1] = false;
       }
       if (getFrictionDirections()) {
-        if (jsv(1) && rootID == 1) { // Haft-Gleitübergang
+        if (jsv(1) && rootID == 1) { // stick-slip transition
           gddActive[1] = false;
         }
       }
@@ -1513,19 +1514,19 @@ namespace MBSim {
     rootID = 0;
     if (jsv(0)) {
       if (gActive)
-        rootID = 1; // Contact was closed -> opening
+        rootID = 1; // contact was closed -> opening
       else
-        rootID = 3; // Contact was open -> impact
+        rootID = 3; // contact was open -> impact
     }
     if (getFrictionDirections()) {
       if (jsv(1)) {
         if (gdActive[1])
-          rootID = 1; // Contact was sticking -> sliding
+          rootID = 1; // contact was sticking -> sliding
         else {
           if (getFrictionDirections() == 1)
-            rootID = 2; // Contact was sliding -> sticking
+            rootID = 2; // contact was sliding -> sticking
           else if (nrm2(gdT) <= gdTol)
-            rootID = 2; // Contact was sliding -> sticking
+            rootID = 2; // contact was sliding -> sticking
         }
       }
     }

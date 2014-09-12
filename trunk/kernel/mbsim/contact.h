@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -123,16 +123,26 @@ namespace MBSim {
       virtual void checkImpactsForTermination(double dt);
       using LinkMechanics::connect;
       virtual void checkActive(int j);
-      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
-      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
-
-      //Getter Setter
       virtual void setlaTol(double tol);
       virtual void setLaTol(double tol);
       virtual void setgTol(double tol);
       virtual void setgdTol(double tol);
       virtual void setgddTol(double tol);
       virtual void setrMax(double rMax_);
+      virtual void setLinkStatusInd(int LinkStatusInd_);
+      virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
+      virtual void setlaInd(int laInd_);
+      virtual void setgInd(int gInd_);
+      virtual void setgdInd(int gdInd_);
+      virtual void setrFactorInd(int rFactorInd_);
+      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
+      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
+      virtual void updatecorrRef(const fmatvec::Vec& ref);
+      virtual void updatecorr(int j);
+      virtual void calccorrSize(int j);
+      virtual void setcorrInd(int corrInd_);
+      virtual void checkRoot();
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Frame* getOpenMBVFrame() { return openMBVFrame; }
       OpenMBV::Arrow* getOpenMBVNormalForceArrow() { return contactArrow; }
@@ -184,13 +194,6 @@ namespace MBSim {
 #endif
 
       /* GETTER / SETTER */
-      virtual void setgInd(int gInd_);
-      virtual void setgdInd(int gdInd_);
-      virtual void setlaInd(int laInd_);
-      virtual void setrFactorInd(int rFactorInd_);
-      virtual void setcorrInd(int corrInd_);
-      virtual void setLinkStatusInd(int LinkStatusInd_);
-      virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
 
       void setNormalForceLaw(GeneralizedForceLaw *fcl_) {
         fcl = fcl_;
@@ -241,12 +244,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-
-      void calccorrSize(int j);
-      void updatecorr(int j);
-      void updatecorrRef(const fmatvec::Vec& ref);
-
-      void checkRoot();
 
     protected:
       /**

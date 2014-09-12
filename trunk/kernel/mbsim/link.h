@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  * 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -21,8 +21,6 @@
 #define _LINK_H_
 
 #include "mbsim/element.h"
-//#include "mbsim/link_interface.h"
-//#include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 
 namespace H5 {
@@ -189,7 +187,10 @@ namespace MBSim {
       virtual void calcgSize(int j) { gSize = 0; }
 
       /**
-       * \brief calculates size of relative velocities
+       * \brief calculates size of gap velocities
+       * \param flag to decide which contacts are included in the calculation
+       *
+       * see SingleContact for the implementation and DynamicSystem for explanation
        */
       virtual void calcgdSize(int j) { gdSize = 0; }
 
@@ -305,8 +306,10 @@ namespace MBSim {
       virtual void checkConstraintsForTermination() { throw MBSimError("ERROR in "+getName()+" (Link::checkConstraintsForTermination): Not implemented."); }
 
       /**
-       * \brief sets the state of a set-valued link, e.g. contact stays closed
-       * or contact will slide
+       * \brief check if set-valued contacts are active and set corresponding attributes
+       * \param flag to decide which criteria are used to define 'activity'
+       *
+       * see SingleContact for the implementation and DynamicSystem for explanation
        */
       virtual void checkActive(int j) {}
 
@@ -315,13 +318,37 @@ namespace MBSim {
        */
       virtual double computePotentialEnergy() { return 0; }
 
-      /* GETTER / SETTER */
       virtual void setlaTol(double tol) { laTol = tol; }
       virtual void setLaTol(double tol) { LaTol = tol; }
       virtual void setgTol(double tol) { gTol = tol; }
       virtual void setgdTol(double tol) { gdTol = tol; }
       virtual void setgddTol(double tol) { gddTol = tol; }
       virtual void setrMax(double rMax_) { rMax = rMax_; }
+      virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
+      virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
+      virtual void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); }
+      virtual void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::Index(gInd,gInd+gSize-1); }
+      virtual void setgdInd(int gdInd_) { gdInd = gdInd_; }
+      virtual void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; }
+      /**
+       * \brief get gap distance and calculate gap velocity of unilateral links to estimate impacts within the next step
+       * \param gInActive gap distance of inactive links (return)
+       * \param gdInActive gap velocities of inactive links (return)
+       * \param IndInActive index for gInActive/gdInActive; incremented with size after storage (return and input)
+       * \param gAct gap distance of active links (return)
+       * \param IndActive index for gActive; incremented with size after storage (return and input)
+      */
+      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_){};
+      
+      /**
+       * \brief calculates the number of active and inactive unilateral constraints and increments sizeActive/sizeInActive
+       */
+      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
+      virtual void updatecorr(int j) { corr.init(0); }
+      virtual void updatecorrRef(const fmatvec::Vec &ref);
+      virtual void calccorrSize(int j) { corrSize = 0; }
+      virtual void setcorrInd(int corrInd_) { corrInd = corrInd_; }
+      virtual void checkRoot() {};
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -335,15 +362,12 @@ namespace MBSim {
       void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
 
-      virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       int getLinkStatusSize() const { return LinkStatusSize; }
 
-      virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
       int getLinkStatusRegSize() const { return LinkStatusRegSize; }
 
       const fmatvec::Vec& getla() const { return la; }
       fmatvec::Vec& getla() { return la; }
-      virtual void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); }
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
       int getbSize() const { return bSize; }
@@ -351,18 +375,15 @@ namespace MBSim {
 
       const fmatvec::Vec& getg() const { return g; }
       fmatvec::Vec& getg() { return g; }
-      virtual void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::Index(gInd,gInd+gSize-1); }
       const fmatvec::Vec& getgd() const { return gd; }
       fmatvec::Vec& getgd() { return gd; }
       const fmatvec::Vec& getwb() const { return wb; }
       fmatvec::Vec& getwb() { return wb; }
-      virtual void setgdInd(int gdInd_) { gdInd = gdInd_; }
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 
       int getgdSize() const { return gdSize; } 
       const fmatvec::Index& getgIndex() const { return Ig; }
       
-      virtual void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; }
       int getrFactorSize() const { return rFactorSize; } 
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
@@ -382,27 +403,8 @@ namespace MBSim {
        */
       void decreaserFactors();
 
-      /**
-       * \brief get gap distance and calculate gap velocity of unilateral links to estimate impacts within the next step
-       * \param gInActive gap distance of inactive links (return)
-       * \param gdInActive gap velocities of inactive links (return)
-       * \param IndInActive index for gInActive/gdInActive; incremented with size after storage (return and input)
-       * \param gAct gap distance of active links (return)
-       * \param IndActive index for gActive; incremented with size after storage (return and input)
-      */
-      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_){};
       
-      /**
-       * \brief calculates the number of active and inactive unilateral constraints and increments sizeActive/sizeInActive
-       */
-      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
-
-      virtual void updatecorr(int j) { corr.init(0); }
-      virtual void updatecorrRef(const fmatvec::Vec &ref);
-      virtual void calccorrSize(int j) { corrSize = 0; }
-      virtual void setcorrInd(int corrInd_) { corrInd = corrInd_; }
       int getcorrSize() const { return corrSize; } 
-      virtual void checkRoot() {};
 
     protected:
       /** 
