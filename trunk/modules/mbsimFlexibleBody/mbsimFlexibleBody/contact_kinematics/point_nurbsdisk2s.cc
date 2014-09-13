@@ -28,7 +28,7 @@ namespace MBSimFlexibleBody {
 
   ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s() : ipoint(0), inurbsdisk(0), point(0), nurbsdisk(0) {
 #ifndef HAVE_NURBS
-    THROW_MBSIMERROR("(ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s): External NURBS library not implemented!");
+    throw MBSimError("(ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s): External NURBS library not implemented!");
 #endif        
   }
 
