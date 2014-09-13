@@ -102,9 +102,9 @@ namespace MBSimHydraulics {
     if (alphaBack<epsroot())
       alphaBack=alpha;
     if ((alpha<0)||(alpha>1))
-      throw MBSimError("Error in \""+name+"\": alpha must be in the range of 0..1!");
+      THROW_MBSIMERROR("alpha must be in the range of 0..1!");
     if ((alphaBack<0)||(alphaBack>1))
-      throw MBSimError("Error in \""+name+"\": alphaBack must be in the range of 0..1!");
+      THROW_MBSIMERROR("alphaBack must be in the range of 0..1!");
     RelativeAlphaClosablePressureLoss * plPA = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plPB = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plAT = new RelativeAlphaClosablePressureLoss();

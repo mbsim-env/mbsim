@@ -439,7 +439,7 @@ namespace MBSim {
   }
 
   Vec SpatialCoulombFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    throw MBSimError("ERROR (SpatialCoulombFriction::solve): Not implemented!");
+    throw MBSimError("(SpatialCoulombFriction::solve): Not implemented!");
   }
 
   bool SpatialCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
@@ -533,7 +533,7 @@ namespace MBSim {
   }
 
   Vec SpatialStribeckFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    throw MBSimError("ERROR (SpatialStribeckFriction::solve): Not implemented!");
+    throw MBSimError("(SpatialStribeckFriction::solve): Not implemented!");
   }
 
   bool SpatialStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
@@ -643,7 +643,7 @@ namespace MBSim {
   }
 
   Vec SpatialCoulombImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    throw MBSimError("ERROR (SpatialCoulombImpact::solve): Not implemented!");
+    throw MBSimError("(SpatialCoulombImpact::solve): Not implemented!");
   }
 
   bool SpatialCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
@@ -743,7 +743,7 @@ namespace MBSim {
   }
 
   Vec SpatialStribeckImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    throw MBSimError("ERROR (SpatialStribeckImpact::solve): Not implemented!");
+    throw MBSimError("(SpatialStribeckImpact::solve): Not implemented!");
   }
 
   bool SpatialStribeckImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {

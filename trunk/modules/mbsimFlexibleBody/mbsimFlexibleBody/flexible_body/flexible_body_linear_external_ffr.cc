@@ -558,7 +558,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyLinearExternalFFR::updateFFRFrame() {
     if (nrm2(R->getVelocity()) > epsroot()) {
-      throw MBSimError("Only absolute description of FFR-bodies possible (right now)!");
+      THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
     }
 
     // Update kinematics part
@@ -585,7 +585,7 @@ namespace MBSimFlexibleBody {
   //TODO: should we add updateAGbarGbardot() before updateKinematics and updateJacobian.
   void FlexibleBodyLinearExternalFFR::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
 
-    throw MBSimError("ERROR(FlexibleBodyLinearExternalFFR::updateKinematicsForFrame): has to be avoided");
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateKinematicsForFrame): has to be avoided");
 
     if (frame != 0) { // frame should be linked to contour point data     // TODO:  is ff is not full feature, how to update these four values?
       frame->setPosition(cp.getFrameOfReference().getPosition());

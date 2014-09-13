@@ -143,7 +143,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       dh = -r_muller / cos(delta) - l_axis;
       ground->setOutCont(false);
     }
-    else throw MBSimError("Bad Configuration!");
+    else THROW_MBSIMERROR("Bad Configuration!");
   }
   else {
     if(abs(delta)<M_PI/2.) {
@@ -161,7 +161,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       dh = -r_muller / cos(delta) - l_axis + h;
       ground->setOutCont(true);
     }
-    else throw MBSimError("Bad Configuration!");
+    else THROW_MBSIMERROR("Bad Configuration!");
   }
 
   WrOK(0) = 0., WrOK(1) = -dh;

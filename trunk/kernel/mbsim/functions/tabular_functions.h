@@ -191,7 +191,7 @@ namespace MBSim {
 
         for (int i = 1; i < xVec.size(); i++)
           if (xVec(i - 1) >= xVec(i))
-            throw MBSimError("xVec must be strictly monotonic increasing!");
+            THROW_MBSIMERROR("xVec must be strictly monotonic increasing!");
         xSize = xVec.size();
       }
       void setYValues(const fmatvec::Vec &yVec_) {
@@ -200,7 +200,7 @@ namespace MBSim {
 
         for (int i = 1; i < yVec.size(); i++)
           if (yVec(i - 1) >= yVec(i))
-            throw MBSimError("yVec must be strictly monotonic increasing!");
+            THROW_MBSIMERROR("yVec must be strictly monotonic increasing!");
       }
       void setXYMat(const fmatvec::Mat &XY_) {
         XY << XY_;
@@ -211,9 +211,9 @@ namespace MBSim {
           fmatvec::Atom::msg(fmatvec::Atom::Warn) << "It is strongly recommended to set y file first! Continuing anyway." << std::endl;
         else {
           if (XY.cols() != xSize)
-            throw MBSimError("Dimension missmatch in xSize");
+            THROW_MBSIMERROR("Dimension missmatch in xSize");
           else if (XY.rows() != ySize)
-            throw MBSimError("Dimension missmatch in ySize");
+            THROW_MBSIMERROR("Dimension missmatch in ySize");
         }
       }
 

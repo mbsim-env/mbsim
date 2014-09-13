@@ -157,7 +157,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * angle->computeOmega(Phi, Phit));
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33RCM::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+      THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -203,7 +203,7 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian(0, 0, qSize - 1, 2).T());
     cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian(0, 3, qSize - 1, 5).T());
@@ -352,7 +352,7 @@ namespace MBSimFlexibleBody {
       if (q0Tmp.size() == q0.size())
         q0 = q0Tmp.copy();
       else
-        throw MBSimError("Error in dimension of q0 of FlexibleBody1s33RCM \"" + name + "\"!");
+        THROW_MBSIMERROR("Dimension of q0 wrong!");
     }
 
     uSize[0] = qSize;
@@ -365,7 +365,7 @@ namespace MBSimFlexibleBody {
       if (u0Tmp.size() == u0.size())
         u0 = u0Tmp.copy();
       else
-        throw MBSimError("Error in dimension of u0 of FlexibleBody1s33RCM \"" + name + "\"!");
+        THROW_MBSIMERROR("Dimension of u0 wrong!");
     }
   }
 
@@ -531,7 +531,7 @@ namespace MBSimFlexibleBody {
       }
     }
 #else
-    throw MBSimError("No Nurbs-Library installed ...");
+    THROW_MBSIMERROR("No Nurbs-Library installed ...");
 #endif
   }
 
@@ -671,7 +671,7 @@ namespace MBSimFlexibleBody {
     }
 
 #else
-    throw MBSimError("No Nurbs-Library installed ...");
+    THROW_MBSIMERROR("No Nurbs-Library installed ...");
 #endif
   }
 }

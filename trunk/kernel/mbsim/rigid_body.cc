@@ -824,7 +824,7 @@ namespace MBSim {
 //
 //    addElementText(ele0,MBSIM%"mass",getMass());
 //    if(frameForInertiaTensor)
-//      throw MBSimError("Inertia tensor with respect to frame " + frameForInertiaTensor->getName() + " not supported in XML. Provide inertia tensor with respect to frame C.");
+//      THROW_MBSIMERROR("Inertia tensor with respect to frame " + frameForInertiaTensor->getPath() + " not supported in XML. Provide inertia tensor with respect to frame C.");
 //    addElementText(ele0,MBSIM%"inertiaTensor",getInertiaTensor());
 //
 //    ele1 = new DOMElement( MBSIM%"translation" );

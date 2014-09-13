@@ -345,7 +345,7 @@ namespace MBSimHydraulics {
   }
 
   void HNodeMec::updater(double t, int j) {
-    throw MBSimError("HNodeMec \"" + name + "\": updater(): not implemented."); 
+    THROW_MBSIMERROR("updater(): not implemented."); 
   }
 
   void HNodeMec::updatexd(double t) {

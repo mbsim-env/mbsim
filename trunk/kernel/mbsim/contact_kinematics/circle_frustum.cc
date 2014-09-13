@@ -97,7 +97,7 @@ namespace MBSim {
     }
 
     if (!outCont_F && !outCont_C) // inner circle, inner frustum
-      throw MBSimError("ERROR (ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
+      throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
 
     double max = r_F(0) > r_F(1) ? r_F(0) : r_F(1); // too far away? -> HitSphere-Concept
     double min = r_F(0) < r_F(1) ? r_F(0) : r_F(1);
@@ -134,7 +134,7 @@ namespace MBSim {
           if (g(0) < eps) {
             if (outCont_F && !outCont_C) { // inner circle, outer frustum
               if (fabs(c_CF_nrm2) < epsroot())
-                throw MBSimError("ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
+                throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
               else {
                 cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2;
                 cpData[icircle].getFrameOfReference().getOrientation().set(0, sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
@@ -145,7 +145,7 @@ namespace MBSim {
             else if (!outCont_F && outCont_C) { // outer circle, inner frustum
               if (g(0) < eps) {
                 if (fabs(c_CF_nrm2) < epsroot())
-                  throw MBSimError("ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
+                  throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
                 else {
                   cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C * c_CF / c_CF_nrm2;
                   cpData[icircle].getFrameOfReference().getOrientation().set(0, -sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
@@ -177,7 +177,7 @@ namespace MBSim {
 
         else if (fabs(phi_F) < epsroot()) { // special case: frustum=cylinder (circle-ellipse)
           if (fabs(al_CF - M_PI / 2.) < epsroot()) {
-            throw MBSimError("ERROR (ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
+            throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!");
           }
           double cE1_star_nrm2 = r_F(0) / t_CF;
           Vec3 cE1 = t_CF * eF1 + sin(al_CF) * Wa_F; // semi-major axis

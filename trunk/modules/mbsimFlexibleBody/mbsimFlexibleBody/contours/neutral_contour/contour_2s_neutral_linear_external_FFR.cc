@@ -241,7 +241,7 @@ namespace MBSimFlexibleBody {
   void Contour2sNeutralLinearExternalFFR::readTransNodes(string file) {
     ifstream contourfile((file).c_str());
     if (!contourfile.is_open()) {
-      throw MBSimError("Can not open file " + file);
+      THROW_MBSIMERROR("Can not open file " + file);
     }
     string s;
     getline(contourfile, s);

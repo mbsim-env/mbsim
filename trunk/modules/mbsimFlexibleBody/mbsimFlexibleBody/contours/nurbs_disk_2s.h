@@ -64,10 +64,10 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */

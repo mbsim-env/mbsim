@@ -159,7 +159,7 @@ namespace MBSim {
 
   void SingleContact::updateStopVector(double t) {
     if (gActive != gdActive[0])
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
     if (gActive) {
       sv(0) = gddN(0) > gddTol ? -1 : 1;
       if (gdActive[1]) {
@@ -323,7 +323,7 @@ namespace MBSim {
       laSize = gActive * gdActive[0];
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
   }
 
   void SingleContact::calcgSize(int j) {
@@ -338,7 +338,7 @@ namespace MBSim {
       gSize = gActive * gdActive[0];
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
   }
 
   void SingleContact::calcgdSize(int j) {
@@ -403,7 +403,7 @@ namespace MBSim {
 
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
   }
 
   void SingleContact::calcrFactorSize(int j) {
@@ -455,7 +455,7 @@ namespace MBSim {
       if (saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
       if(not(contour.size()))
-        throw MBSimError("ERROR in "+getName()+": no connection given!");
+        THROW_MBSIMERROR("no connection given!");
       LinkMechanics::init(stage);
     }
     else if (stage == resize) {
@@ -576,7 +576,7 @@ namespace MBSim {
     }
     else if(stage == LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
-        throw new MBSimError("ERROR: Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
+        throw new MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     else {
       LinkMechanics::init(stage);
@@ -1305,7 +1305,7 @@ namespace MBSim {
       }
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
   }
 
   int SingleContact::getFrictionDirections() {
@@ -1336,7 +1336,7 @@ namespace MBSim {
     if (contactKinematics == 0)
       contactKinematics = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
     if (contactKinematics == 0)
-      throw MBSimError("ERROR in " + getName() + " (Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
+      THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
 
   }
 
@@ -1485,7 +1485,7 @@ namespace MBSim {
       }
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
   }
 
   void SingleContact::calccorrSize(int j) {
@@ -1507,7 +1507,7 @@ namespace MBSim {
       corrSize += gActive * gdActive[0] * (1 + gdActive[1] * getFrictionDirections());
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
   }
 
   void SingleContact::checkRoot() {

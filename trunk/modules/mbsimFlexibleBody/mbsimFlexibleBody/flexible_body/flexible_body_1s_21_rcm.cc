@@ -189,7 +189,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s21RCM::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -221,7 +221,7 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T());
     cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation()(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T());
@@ -368,7 +368,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {
     if (!initialized) {
       if (Elements == 0)
-        throw(new MBSimError("ERROR (FlexibleBody1s21RCM::initRelaxed): Set number of finite elements!"));
+        throw(new MBSimError("(FlexibleBody1s21RCM::initRelaxed): Set number of finite elements!"));
       Vec q0Dummy(q0.size(), INIT, 0.);
       if (openStructure) {
         Vec direction(2);
@@ -474,7 +474,7 @@ namespace MBSimFlexibleBody {
       }
     }
 #else
-    throw MBSimError("No Nurbs-Library installed ...");
+    THROW_MBSIMERROR("No Nurbs-Library installed ...");
 #endif
   }
 
@@ -557,7 +557,7 @@ namespace MBSimFlexibleBody {
       cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
     }
 #else
-    throw MBSimError("No Nurbs-Library installed ...");
+    THROW_MBSIMERROR("No Nurbs-Library installed ...");
 #endif
   }
 

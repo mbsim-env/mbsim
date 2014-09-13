@@ -58,7 +58,7 @@ namespace MBSim {
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeRadius): Not implemented."); return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeRadius): Not implemented."); return 0; } 
 
         /* GETTER / SETTER */
         void setAlphaStart(AT as_) { as = as_; }

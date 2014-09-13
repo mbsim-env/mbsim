@@ -284,7 +284,7 @@ namespace MBSim {
         }
       }
       else {
-        throw MBSimError("ERROR MaxwellContact::solveLCP(): No Solution found for this LCP");
+        throw MBSimError("MaxwellContact::solveLCP(): No Solution found for this LCP");
       }
     }
 

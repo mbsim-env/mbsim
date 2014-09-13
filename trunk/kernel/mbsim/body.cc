@@ -141,7 +141,7 @@ namespace MBSim {
 
   void Body::addContour(Contour* contour_) {
     if(getContour(contour_->getName(),false)) { //Contourname exists already
-      throw MBSimError("ERROR in "+getName()+" (Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
+      THROW_MBSIMERROR("(Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
       assert(getContour(contour_->getName(),false)==NULL);
     }
     contour.push_back(contour_);
@@ -150,7 +150,7 @@ namespace MBSim {
 
   void Body::addFrame(Frame* frame_) {
     if(getFrame(frame_->getName(),false)) { //Contourname exists already
-      throw MBSimError("ERROR in "+getName()+" (Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
+      THROW_MBSIMERROR("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
       assert(getFrame(frame_->getName(),false)==NULL);
     }
     frame.push_back(frame_);
@@ -165,7 +165,7 @@ namespace MBSim {
     }
     if(check) {
       if(!(i<contour.size()))
-        throw MBSimError("ERROR in "+getName()+" (Body::getContour): The body comprises no contour \""+name_+"\"!"); 
+        THROW_MBSIMERROR("(Body::getContour): The body comprises no contour \""+name_+"\"!"); 
       assert(i<contour.size());
     }
     return NULL;
@@ -179,7 +179,7 @@ namespace MBSim {
     }             
     if(check) {
       if(!(i<frame.size()))
-        throw MBSimError("ERROR in "+getName()+": (Body::getFrame): The body comprises no frame \""+name_+"\"!"); 
+        THROW_MBSIMERROR("(Body::getFrame): The body comprises no frame \""+name_+"\"!"); 
       assert(i<frame.size());
     }
     return NULL;
@@ -230,7 +230,7 @@ namespace MBSim {
     else if (container=="Contour")
       return getContour(name);
     else
-      throw MBSimError("Unknown container "+container+" in Body.");
+      THROW_MBSIMERROR("Unknown container "+container+" in Body.");
   }
 
 }

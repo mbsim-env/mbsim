@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
     J.push_back(J_);
     KrP.push_back(KrP_);
     if(J.size()!=KrP.size()) {
-      throw MBSimError("ERROR in memory management for SuperElementLinearExternal interfaces");
+      throw MBSimError("In memory management for SuperElementLinearExternal interfaces");
     }
     MBSim::ContourPointData CP;
     CP.getContourParameterType() = ContourPointData::node;

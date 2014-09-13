@@ -46,7 +46,7 @@ namespace MBSim {
       else if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not(frame.size()))
-        throw MBSimError("ERROR in "+getName()+": no connection given!");
+        THROW_MBSIMERROR("no connection given!");
       if(frame.size()==1) {
         Frame *buf = frame[0];
         connect(buf);

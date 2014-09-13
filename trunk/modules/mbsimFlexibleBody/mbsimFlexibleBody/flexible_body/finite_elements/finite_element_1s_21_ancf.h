@@ -75,10 +75,10 @@ namespace MBSimFlexibleBody {
       virtual int getuSize() const { return 8; }
       virtual void computeM(const fmatvec::Vec& qElement);
       virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computedhdz): not implemented!"); }
-      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeKineticEnergy): not implemented!"); }
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!"); }
-      virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("ERROR (FiniteElement1s21ANCF::computeElasticEnergy): not implemented!"); }
+      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("(FiniteElement1s21ANCF::computedhdz): not implemented!"); }
+      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) { throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeKineticEnergy): not implemented!"); }
+      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!"); }
+      virtual double computeElasticEnergy(const fmatvec::Vec& qElement) { throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeElasticEnergy): not implemented!"); }
       virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
       virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp);
       virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp);
@@ -220,7 +220,7 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat Dhqp;
   };
 
-  inline void  FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s21ANCF::computeM): Not implemented"); }
+  inline void  FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeM): Not implemented"); }
 }
 
 #endif /* _FINITE_ELEMENT_1S_21_ANCF_H_ */

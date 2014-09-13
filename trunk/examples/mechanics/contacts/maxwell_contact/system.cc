@@ -251,7 +251,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     }
     break;
     default:
-      throw MBSimError("No valid contactType chosen.");
+      THROW_MBSIMERROR("No valid contactType chosen.");
 
   }
 

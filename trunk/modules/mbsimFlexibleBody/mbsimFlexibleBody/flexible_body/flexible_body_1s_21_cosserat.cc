@@ -210,10 +210,10 @@ namespace MBSimFlexibleBody {
 //    }
 //    else if (cp.getContourParameterType() == STAGGEREDNODE) {
 //      //TODO
-//      MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType 'STAGGEREDNODE' not implemented");
+//      MBSimError("(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType 'STAGGEREDNODE' not implemented");
 //    }
 //    else
-    throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): shouldn't be called anymore --> use the neutral contour instead");
+    THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateKinematicsForFrame): shouldn't be called anymore --> use the neutral contour instead");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -237,7 +237,7 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
     }
     else
-      throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'ROTNODE'");
+      THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'ROTNODE'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -500,12 +500,12 @@ namespace MBSimFlexibleBody {
     int info = svd(Snapshots, SVD, POM, POV, 1); //TODO: what is last parameter of svd for?
 
     if (info != 0) {
-      throw MBSimError("FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, bool reduceEnergy): Single-Value-Decomposition was not succesfull");
+      THROW_MBSIMERROR("FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, bool reduceEnergy): Single-Value-Decomposition was not succesfull");
     }
 
     if (reduceMode == 1) {
       if (POMSize <= 0)
-        throw MBSimError("FlexibleBody1s21Cosserat::enablePOD(): No valid POMSize chosen -> Has to be positive!");
+        THROW_MBSIMERROR("FlexibleBody1s21Cosserat::enablePOD(): No valid POMSize chosen -> Has to be positive!");
     }
     else {
       // k: Reduce Total Energy
@@ -643,7 +643,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-    throw MBSimError("To be adapted to new interface...");
+    THROW_MBSIMERROR("To be adapted to new interface...");
 //
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -708,7 +708,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-    throw MBSimError("To be adapted to new interface...");
+    THROW_MBSIMERROR("To be adapted to new interface...");
 //
 //    int DEBUGLEVEL = 0;
 //

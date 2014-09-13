@@ -239,7 +239,7 @@ namespace MBSim {
        * \brief Get the Element named name in the container named container.
        */
       virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) {
-        throw MBSimError("This element has no containers with childs.");
+        THROW_MBSIMERROR("This element has no containers with childs.");
       }
 
       // some convenience function for XML
@@ -332,10 +332,10 @@ namespace MBSim {
       // get the object of the first child path by calling the virtual function getChildByContainerAndName
       size_t pos0=first.find('[');
       if(pos0==std::string::npos)
-        throw MBSimError("Syntax error in "+first+": no [ found.");
+        THROW_MBSIMERROR("Syntax error in "+first+": no [ found.");
       std::string container=first.substr(0, pos0);
       if(first[first.size()-1]!=']')
-        throw MBSimError("Syntax error in "+first+": does not end with ].");
+        THROW_MBSIMERROR("Syntax error in "+first+": does not end with ].");
       std::string name=first.substr(pos0+1, first.size()-pos0-2);
       Element *e=getChildByContainerAndName(container, name);
       // if their are other child paths call getByPath of e for this
@@ -346,7 +346,7 @@ namespace MBSim {
       if(t)
         return t;
       else
-        throw MBSimError("Type error in "+first+": Cannot cast this element to type "+container+".");
+        THROW_MBSIMERROR("Type error in "+first+": Cannot cast this element to type "+container+".");
     }
   }
 

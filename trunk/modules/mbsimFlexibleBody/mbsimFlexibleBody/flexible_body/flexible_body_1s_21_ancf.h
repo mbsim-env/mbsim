@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
 
   inline void FlexibleBody1s21ANCF::setEulerPerspective(bool Euler_, double v0_) { 
     if(openStructure) {
-      throw(new MBSim::MBSimError("ERROR (FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!"));
+      throw(new MBSim::MBSimError("(FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!"));
     }
     else {
       Euler = Euler_; 

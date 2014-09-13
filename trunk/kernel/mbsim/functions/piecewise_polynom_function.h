@@ -100,7 +100,7 @@ namespace MBSim {
         else if(method == piecewiseLinear) {
           calculatePLinear(x,f);
         }
-        else throw MBSimError("(PiecewisePolynomFunction::setXF): No valid method to calculate pp-form");
+        else THROW_MBSIMERROR("(PiecewisePolynomFunction::setXF): No valid method to calculate pp-form");
 
         index = 0;
         nPoly = x.size()-1;
@@ -252,7 +252,7 @@ namespace MBSim {
   void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f) {
     double hi, hii;
     int N = x.size();
-    if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw MBSimError("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
+    if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) THROW_MBSIMERROR("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
     fmatvec::SqrMat C(N-1,fmatvec::INIT,0.0);
     fmatvec::Mat rs(N-1,f.cols(),fmatvec::INIT,0.0);
 

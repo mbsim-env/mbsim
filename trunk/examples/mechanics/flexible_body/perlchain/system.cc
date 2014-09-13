@@ -181,7 +181,7 @@ cs * Perlchain::compressWToCsparse(int j) {
       }
 
       else {
-        throw MBSimError("Not implemented!");
+        THROW_MBSIMERROR("Not implemented!");
       }
     }
   }
@@ -344,7 +344,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
       }
 
       else {
-        throw MBSimError("Not implemented!");
+        THROW_MBSIMERROR("Not implemented!");
       }
     }
   }

@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
       virtual void updateg(fmatvec::Vec& g, MBSim::ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("ERROR (ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }   
+      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("(ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }   
       /***************************************************/
 
     protected:
