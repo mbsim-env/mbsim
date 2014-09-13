@@ -533,14 +533,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       virtual double operator()(const double &s) {
-        throw MBSimError("ERROR (FuncPairContour1sLine::operator): Not implemented!");
+        THROW_MBSIMERROR("(FuncPairContour1sLine::operator): Not implemented!");
         //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
         //fmatvec::Vec WnL = line->computeWn();
         //return trans(WtC)*WnL;
       }
 
       virtual fmatvec::Vec3 computeWrD(const double &s) {
-        throw MBSimError("ERROR (FuncPairContour1sLine::computeWrD): Not implemented!");
+        THROW_MBSIMERROR("(FuncPairContour1sLine::computeWrD): Not implemented!");
         //fmatvec::Vec WrOCContour =  contour->computeWrOC(s);
         //fmatvec::Vec Wn = contour->computeWn(s);
         //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition()); 

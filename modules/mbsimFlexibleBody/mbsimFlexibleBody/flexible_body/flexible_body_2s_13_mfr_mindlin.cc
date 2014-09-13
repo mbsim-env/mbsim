@@ -126,7 +126,7 @@ namespace MBSimFlexibleBody {
 
       /* EIGENFREQUENCIES */
       if (eigval(M[k](Ipart))(0) < 0)
-        throw MBSimError("TEST");
+        THROW_MBSIMERROR("TEST");
 
       //with MAPLE
       stringstream filename;
@@ -210,9 +210,9 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * r_ref); //at last step: transformation into world frame
       }
 
-      if(ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if(ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if(ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
 
       if(ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
         Vec u_ref_1(3, NONINIT);
@@ -244,7 +244,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -372,7 +372,7 @@ namespace MBSimFlexibleBody {
 
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

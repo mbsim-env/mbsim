@@ -219,7 +219,7 @@ namespace MBSimFlexibleBody {
      cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0), cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
      }
      else*/
-    throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'TRANSNODE' or 'ROTNODE'");
+    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'TRANSNODE' or 'ROTNODE'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -235,7 +235,7 @@ namespace MBSimFlexibleBody {
 //    }
 //    else
 
-    throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'ROTNODE' or 'CONTINUUM'");
+    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'ROTNODE' or 'CONTINUUM'");
 
 // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
 // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -455,7 +455,7 @@ namespace MBSimFlexibleBody {
       if (q0Tmp.size() == q0.size())
         q0 = q0Tmp.copy();
       else
-        throw MBSimError("Error in dimension of q0 of FlexibleBody1s33Cosserat \"" + name + "\"!");
+        THROW_MBSIMERROR("Dimension of q0 wrong!");
     }
 
     uSize[0] = qSize;
@@ -468,7 +468,7 @@ namespace MBSimFlexibleBody {
       if (u0Tmp.size() == u0.size())
         u0 = u0Tmp.copy();
       else
-        throw MBSimError("Error in dimension of u0 of FlexibleBody1s33Cosserat \"" + name + "\"!");
+        THROW_MBSIMERROR("Dimension of u0 wrong !");
     }
   }
 
@@ -615,7 +615,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-    throw MBSimError("To be adapted to new internal nurbs ...");
+    THROW_MBSIMERROR("To be adapted to new internal nurbs ...");
 
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -680,7 +680,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-    throw MBSimError("To be adapted to new internal nurbs ...");
+    THROW_MBSIMERROR("To be adapted to new internal nurbs ...");
 
 //    int DEBUGLEVEL = 0;
 //

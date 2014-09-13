@@ -41,7 +41,7 @@ namespace MBSimHydraulics {
 
   void ElasticLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
     if (l<=1e-4)
-      throw MBSimError("set length first");
+      THROW_MBSIMERROR("set length first");
     switch (method_) {
       case BSplineOrd4:
         ansatz = new ansatz_function_BSplineOrd4(nAnsatz_, l);
@@ -95,7 +95,7 @@ namespace MBSimHydraulics {
         Jacobian(i, i)=1.;
       
       if (eigvec(K, MFac, phi, lambda))
-        throw MBSimError(name+": Fehler bei Eigenvektorberechnung!");
+        THROW_MBSIMERROR("Fehler bei Eigenvektorberechnung!");
       Omega.resize(mdim, INIT, 0);
       for (int i=1; i<mdim; i++) // analytische Loesung unabhaengig vom Ansatztyp --> omega(0)=0
         Omega(i,i)=sqrt(lambda(i));

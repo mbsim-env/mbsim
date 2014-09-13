@@ -285,26 +285,26 @@ namespace MBSimFlexibleBody {
   };
   
   inline void FlexibleBodyLinearExternalFFR::BuildElements() {
-//    throw MBSim::MBSimError("Error(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
+//    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
   }
   
   inline void FlexibleBodyLinearExternalFFR::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
-    throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::GlobalVectorContribution(): Not implemented!");
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalVectorContribution(): Not implemented!");
   }
 
   inline void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
-    throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
   }
 
   inline void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
-    throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
   }
   
   inline int FlexibleBodyLinearExternalFFR::getNumberElements() const {
     return nNodes;
   }
   inline double FlexibleBodyLinearExternalFFR::getLength() const {
-    throw MBSim::MBSimError("ERROR(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
   }
   inline bool FlexibleBodyLinearExternalFFR::isOpenStructure() const {
     return openStructure;

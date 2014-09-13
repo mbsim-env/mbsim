@@ -58,16 +58,16 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
       virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
-        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
+        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
       }
       virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
-        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
+        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
       }
       virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
-        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
+        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
       }
       virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
-        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
+        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
       }
       /***************************************************/
 
@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) {
-        throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!");
+        THROW_MBSIMERROR("(NurbsCurve1s::findContactPairingWith): Not implemented!");
       }
       /***************************************************/
 

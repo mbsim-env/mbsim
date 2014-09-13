@@ -156,7 +156,7 @@ namespace MBSim {
       J(0, dim / 2, dim / 2 - 1, dim - 1) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
     }
     else
-      throw MBSimError("Not implemented"); //TODO: use error message
+      THROW_MBSIMERROR("Not implemented"); //TODO: use error message
   }
 
   SqrMat LinearComplementarityJacobianFunction::operator ()(const Vec &x) {

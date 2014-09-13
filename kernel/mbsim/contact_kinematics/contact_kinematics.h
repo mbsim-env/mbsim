@@ -107,7 +107,7 @@ namespace MBSim {
        * \return compute the radii in contact points
        */
 //      virtual void computeCurvatures(std::vector<fmatvec::Vec>::iterator ir, std::vector<ContourPointData*>::iterator icpData) { if((*ir).size()) computeRadii(*ir, *icpData); }
-      virtual void computeCurvatures(fmatvec::Vec &r, ContourPointData *cpData) {throw MBSimError("ERROR (ContactKinematics::computeCurvatures): Not implemented.");}
+      virtual void computeCurvatures(fmatvec::Vec &r, ContourPointData *cpData) {throw MBSimError("(ContactKinematics::computeCurvatures): Not implemented.");}
 
     protected:
       /**

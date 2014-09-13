@@ -105,9 +105,9 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
 
-      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
+      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
 
       if (ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
         tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     if (frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -210,7 +210,7 @@ namespace MBSimFlexibleBody {
       Wext(Index(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
     }
     else
-      throw MBSimError("ERROR(FlexibleBody2s13Disk::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
     // condensation
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);

@@ -120,7 +120,7 @@ namespace MBSimFlexibleBody {
       }
 
       virtual int getNumberOfElementDOF() const {
-        throw MBSim::MBSimError("ERROR(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");
+        THROW_MBSIMERROR("(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");
       }
       virtual int getNumberElements() const {
         return Elements;

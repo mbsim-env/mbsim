@@ -26,6 +26,7 @@
 #include <mbsim/object.h>
 #include <mbsim/link.h>
 #include <mbsim/observer.h>
+#include <mbsim/functions/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include <hdf5serie/simpleattribute.h>
@@ -110,6 +111,19 @@ namespace MBSim {
     }
   }
 
+  namespace {
+    string containerName(const Element *e) {
+      if(dynamic_cast<const Frame*>       (e)) return "Frame";
+      if(dynamic_cast<const Contour*>     (e)) return "Contour";
+      if(dynamic_cast<const Object*>      (e)) return "Object";
+      if(dynamic_cast<const Link*>        (e)) return "Link";
+      if(dynamic_cast<const Group*>       (e)) return "Group";
+      if(dynamic_cast<const Observer*>    (e)) return "Observer";
+      if(dynamic_cast<const FunctionBase*>(e)) return "Function";
+      throw MBSimError(e, "Internal error: Unknown object type.");
+    }
+  }
+
   string Element::getPath(const Element *relTo, string sep) const {
     // compose a absolute path
     if(!relTo) {
@@ -118,25 +132,29 @@ namespace MBSim {
         return path;
 
       // before the init stage reorganizeHierarchy compose the path dynamically
+
+      // a parent exists -> return parent path + this elements sub path
       if(parent) {
-        string container;
-        if     (dynamic_cast<const Frame*>             (this)) container="Frame";
-        else if(dynamic_cast<const Contour*>           (this)) container="Contour";
-        else if(dynamic_cast<const Object*>            (this)) container="Object";
-        else if(dynamic_cast<const Link*>              (this)) container="Link";
-        else if(dynamic_cast<const Group*>             (this)) container="Group";
-        else if(dynamic_cast<const Observer*>          (this)) container="Observer";
-        else throw MBSimError("Internal error: Unknown object type.");
-        string parantPath=parent->getPath(NULL, sep);
-        return parantPath+(parantPath==sep?"":sep)+container+"["+getName()+"]";
+        string parentPath=parent->getPath(NULL, sep);
+        return parentPath+(parentPath==sep?"":sep)+containerName(this)+"["+getName()+"]";
       }
-      return sep;
+      // no parent exits and its a DynamicSystemSolver (we can generate a absolute path)
+      if(dynamic_cast<const DynamicSystemSolver*>(this))
+        return sep; // return the root separator
+      // no parent exits and its not a DynamicSystemSolver (we can not generate a absolute path ->
+      // append address to local name to have a unique local name!)
+      stringstream str;
+      str<<containerName(this)<<"["<<getName()<<"<with_ID_"<<this<<">]";
+      return str.str();
     }
     // compose a relative path
     else {
       // get absolute path of this object and relTo (get it relative to the top level (remove the leading /))
       string thisPath=getPath(NULL, sep).substr(1);
       string relToPath=relTo->getPath(NULL, sep).substr(1)+sep;
+      // check for "real" absolute path (see above)
+      if(thisPath.substr(0, sep.length())!=sep || relToPath.substr(0, sep.length())!=sep)
+        THROW_MBSIMERROR("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
       // remove sub path which are equal in both
       while(1) {
         size_t thisIdx=thisPath.find(sep);

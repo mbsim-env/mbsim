@@ -58,12 +58,12 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage) { new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::init): Not implemented!"); }
+      virtual void init(InitStage stage) { new MBSim::MBSimError("(FlexibleBodyLinearExternal::init): Not implemented!"); }
       virtual void facLLM() {}
       /***************************************************/
       
       /* INHERITED INTERFACE OF FLEXIBLEBODY */
-      virtual void BuildElements() { new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::BuildElements): Not implemented!"); } 
+      virtual void BuildElements() { new MBSim::MBSimError("(FlexibleBodyLinearExternal::BuildElements): Not implemented!"); } 
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);

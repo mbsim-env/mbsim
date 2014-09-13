@@ -60,7 +60,7 @@ namespace MBSim {
         minRadius=(radius<minRadius)?radius:minRadius;
       }
       if (circle->getRadius()>minRadius)
-        throw MBSimError("Error! Just one contact point is allowed in Contactpairing Contour1s-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour1s is to small.\n minimal radius of Contour1sAnalytical="+numtostr(minRadius)+"\n Radius of CircleSolid="+numtostr(circle->getRadius()));
+        throw MBSimError("Just one contact point is allowed in Contactpairing Contour1s-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour1s is to small.\n minimal radius of Contour1sAnalytical="+numtostr(minRadius)+"\n Radius of CircleSolid="+numtostr(circle->getRadius()));
     }
 
   }

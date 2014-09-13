@@ -29,7 +29,7 @@ namespace XERCES_CPP_NAMESPACE {
 }
 
 namespace {
-  std::string uniqeDummyName(void *p) {
+  std::string uniqueDummyName(void *p) {
     std::stringstream str;
     str<<"Function_"<<p;
     return str.str();
@@ -38,16 +38,27 @@ namespace {
 
 namespace MBSim {
 
-  /*! Base Function object for MBSim.
-   * Adds just some XML functionallity to the base fmatvec::Function. */
-  template<typename Sig>
-  class Function : public fmatvec::Function<Sig>, public Element {
+  /*! This class is just to have a none template base class for all MBSim function classed. */
+  class FunctionBase : public Element {
     public:
       //! Most Function's have no name hence use a unique dummy name for Element ctor
-      Function() : fmatvec::Function<Sig>(), Element(uniqeDummyName(this)) {}
+      FunctionBase() : Element(uniqueDummyName(this)) {}
 
       //! ctor variante with name
-      Function(const std::string &name_) : fmatvec::Function<Sig>(), Element(name_) {}
+      FunctionBase(const std::string &name_) : Element(name_) {}
+  };
+
+  /*! Base Function object for MBSim.
+   * Adds just some XML functionallity to the fmatvec::Function.
+   * Also derives from FunctionBase (to have a none templated base for all functions) which is itself derived from Element. */
+  template<typename Sig>
+  class Function : public fmatvec::Function<Sig>, public FunctionBase {
+    public:
+      //! Most Function's have no name hence use a unique dummy name for Element ctor
+      Function() : fmatvec::Function<Sig>(), FunctionBase() {}
+
+      //! ctor variante with name
+      Function(const std::string &name_) : fmatvec::Function<Sig>(), FunctionBase(name_) {}
   };
 
 }

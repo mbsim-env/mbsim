@@ -366,7 +366,7 @@ namespace MBSim {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
       }
       else
-        throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
+        THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
       msg(Info) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
@@ -383,7 +383,7 @@ namespace MBSim {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
       }
       else
-        throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
+        THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
     }
     else if (stage == modelBuildup) {
       msg(Info) << "  initialising modelBuildup ..." << endl;
@@ -569,7 +569,7 @@ namespace MBSim {
       else if (linAlg == PseudoInverse)
         dx >> slvLS(Jprox, res0);
       else
-        throw MBSimError("Internal error");
+        THROW_MBSIMERROR("Internal error");
 
       Vec La_old = la.copy();
       double alpha = 1;
@@ -645,7 +645,7 @@ namespace MBSim {
       else if (linAlg == PseudoInverse)
         dx >> slvLS(Jprox, res0);
       else
-        throw MBSimError("Internal error");
+        THROW_MBSIMERROR("Internal error");
 
       Vec La_old = la.copy();
       double alpha = 1.;
@@ -793,11 +793,11 @@ namespace MBSim {
   }
 
   Mat DynamicSystemSolver::dhdx(double t) {
-    throw MBSimError("Internal error");
+    THROW_MBSIMERROR("Internal error");
   }
 
   Vec DynamicSystemSolver::dhdt(double t) {
-    throw MBSimError("Internal error");
+    THROW_MBSIMERROR("Internal error");
   }
 
   void DynamicSystemSolver::updateM(double t, int i) {
@@ -867,7 +867,7 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        throw MBSimError("Maximal Number of Iterations reached");
+        THROW_MBSIMERROR("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
@@ -904,7 +904,7 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        throw MBSimError("Maximal Number of Iterations reached");
+        THROW_MBSIMERROR("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
@@ -1079,7 +1079,7 @@ namespace MBSim {
       corrID = 2;
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
 
     calcgSize(gID);
     calccorrSize(corrID);
@@ -1134,7 +1134,7 @@ namespace MBSim {
       corrID = 4; // IH
     }
     else
-      throw MBSimError("Internal error");
+      THROW_MBSIMERROR("Internal error");
     calccorrSize(corrID); // IH
     if (corrSize) {
       calcgdSize(gdID); // IH
@@ -1190,7 +1190,7 @@ namespace MBSim {
     else if (link_)
       addLink(link_);
     else {
-      throw MBSimError("ERROR (DynamicSystemSolver: addElement()): No such type of Element to add!");
+      THROW_MBSIMERROR("(DynamicSystemSolver: addElement()): No such type of Element to add!");
     }
   }
 
@@ -1364,12 +1364,12 @@ namespace MBSim {
       //     }
       //     rFactor.init(rFac);
 
-      throw MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Global r-Factor strategy not currently not available.");
+      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy not currently not available.");
     }
     else if (strategy == local)
       Group::updaterFactors();
     else
-      throw MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Unknown strategy.");
+      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Unknown strategy.");
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {

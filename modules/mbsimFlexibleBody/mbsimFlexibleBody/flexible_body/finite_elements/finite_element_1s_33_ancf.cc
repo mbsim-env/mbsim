@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s33ANCF::setMaterialDamping(double depsilons) {
-    throw MBSim::MBSimError("Error(FiniteElement1s33ANCF::setMaterialDamping): Not implemented");
+    throw MBSimError("(FiniteElement1s33ANCF::setMaterialDamping): Not implemented");
     //  depsilon  += depsilons;
     //  Damp(3,3) += -depsilon;
   }

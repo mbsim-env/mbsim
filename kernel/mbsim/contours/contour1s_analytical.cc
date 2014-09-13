@@ -183,7 +183,7 @@ namespace MBSim {
     else if (order==2)
       return funcCrPC->computed2RdAlpha2(s);
     else {
-      throw MBSimError("ERROR (Contour1sAnalytical::computeDistance): Not implemented.");
+      THROW_MBSIMERROR("(Contour1sAnalytical::computeDistance): Not implemented.");
       return 0.;
     }
   }

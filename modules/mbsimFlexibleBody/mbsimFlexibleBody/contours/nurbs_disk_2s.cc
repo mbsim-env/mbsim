@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
 
   NurbsDisk2s::NurbsDisk2s(const string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
 #ifndef HAVE_NURBS
-    throw MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
+    THROW_MBSIMERROR("(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
 #else
     uvec=0;
     uVec=0;
@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
         break;
         default:
-        throw MBSimError("ERROR(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
+        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
       }
     }
     else { // somewhere else
@@ -111,7 +111,7 @@ namespace MBSimFlexibleBody {
       }
 
       // if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-      //   throw MBSimError("ERROR(FlexibleBody2s13::updateKinematicsForFrame::angularVelocity): Not implemented!");
+      //   THROW_MBSIMERROR("(FlexibleBody2s13::updateKinematicsForFrame::angularVelocity): Not implemented!");
       // }
     }
 #endif

@@ -26,6 +26,8 @@
 
 namespace MBSim {
 
+  class Element;
+
   /**
    * \brief basic error class for mbsim
    * \author Thorsten Schindler
@@ -37,15 +39,24 @@ namespace MBSim {
       /**
        * \brief constructor
        * \param message to be written
+       * \param context_ the conext MBSim::Element where the error occured
+       */
+      MBSimError(const Element *context_, const std::string &mbsim_error_message_) throw(); 
+
+      /**
+       * \brief constructor
+       * ctor variant without a context
        */
       MBSimError(const std::string &mbsim_error_message_) throw(); 
       
       virtual ~MBSimError() throw() {}
 
-      virtual const char* what() const throw();
+      /* \brief set the context of the error
+       * Use this function to set the context in a catch(...) block if the context is not known
+       * at the original throw statement. */
+      void setContext(const Element *context_);
 
-    protected:
-      void setMessage(const std::string &msg) { mbsim_error_message = msg; }
+      virtual const char* what() const throw();
 
     private:
       /**
@@ -53,7 +64,13 @@ namespace MBSim {
        */
       std::string mbsim_error_message;
 
+      // just a string to store the memory which is returned by the what() function
+      std::string whatMsg;
   };
+
+  // Helper to throw a error with this as the context of the error
+  #define THROW_MBSIMERROR(msg) \
+    throw MBSim::MBSimError(this, msg)
 }
 
 #endif /* _MBSIM_EVENT_H */

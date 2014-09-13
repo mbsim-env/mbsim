@@ -94,7 +94,7 @@ namespace MBSimAnalyser {
         newton.setLinearAlgebra(1);
         zEq = newton.solve(zEq);
         if(newton.getInfo() != 0)
-          throw MBSimError("ERROR in Eigenanalysis: computation of equilibrium state failed!");
+          throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
       }
 
       double delta = epsroot();
@@ -116,7 +116,7 @@ namespace MBSimAnalyser {
   void Eigenanalyser::computeEigenmodes() {
     if(autoUpdate) computeEigenvalues();
     else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
-      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
+      throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
     Vector<Ref, complex<double> > wbuf;
@@ -146,9 +146,9 @@ namespace MBSimAnalyser {
   void Eigenanalyser::computeEigenmode() {
     if(autoUpdate) computeEigenvalues();
     else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
-      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
+      throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
     if(n<1 or n>f.size())
-      throw MBSimError("ERROR in Eigenanalysis: frequency number out of range!");
+      throw MBSimError("In Eigenanalysis: frequency number out of range!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
     Vector<Ref, complex<double> > wbuf;
@@ -172,7 +172,7 @@ namespace MBSimAnalyser {
   void Eigenanalyser::computeEigenmotion() {
     if(autoUpdate) computeEigenvalues();
     else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
-      throw MBSimError("ERROR in Eigenanalysis: eigenanalysis not yet performed!");
+      throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
     Vec z;

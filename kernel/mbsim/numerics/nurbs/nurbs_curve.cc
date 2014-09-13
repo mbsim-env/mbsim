@@ -267,7 +267,7 @@ namespace MBSim {
 
 //  if(Uc.n() != U.n())  // TODO:: check this!
     if (Uc.rows() != U.rows())
-      throw MBSimError("Error(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
+      throw MBSimError("(NurbsCurve::globalInterpH: The length of knot vectors are not equal !)");
 
     U = Uc;
 
@@ -341,7 +341,7 @@ namespace MBSim {
 
     SqrMat A(iN, INIT, 0.);
     if (Uc.rows() != U.rows())
-      throw MBSimError("Error(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
+      throw MBSimError("(NurbsCurve::globalInterpClosedH: The length of knot vectors are not equal !)");
 
     U = Uc;
     // Initialize the basis matrix A

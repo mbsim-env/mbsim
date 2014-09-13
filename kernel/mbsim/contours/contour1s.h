@@ -75,7 +75,7 @@ namespace MBSim {
        * \param contour position
        */
       virtual double computeCurvature(ContourPointData &cp) {
-        throw MBSimError("ERROR (Contour::computeCurvature): Not implemented.");
+        THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented.");
         return 0;
       }
 
@@ -85,7 +85,7 @@ namespace MBSim {
        * \param orderOfDerivative
        */
       virtual double computeDistance(const double s, const int order = 0) {
-        throw MBSimError("ERROR (Contour::computeDistance): Not implemented.");
+        THROW_MBSIMERROR("(Contour::computeDistance): Not implemented.");
         return 0;
       }
 

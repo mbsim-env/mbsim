@@ -83,7 +83,7 @@ namespace MBSim {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not(frame.size()))
-        throw MBSimError("ERROR in "+getName()+": no connection given!");
+        THROW_MBSIMERROR("No connection given!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -215,7 +215,7 @@ namespace MBSim {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not(frame.size()))
-        throw MBSimError("ERROR in "+getName()+": no connection given!");
+        THROW_MBSIMERROR("No connection given!");
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {
@@ -372,7 +372,7 @@ namespace MBSim {
       if(saved_body2!="")
         setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
       if(body[1]==NULL)
-        throw MBSim::MBSimError("ERROR in "+getName()+": rigid body on second side must be given!");
+        THROW_MBSIMERROR("rigid body on second side must be given!");
       if(body[0]) LinkMechanics::connect(body[0]->getFrameForKinematics());
       LinkMechanics::connect(body[1]->getFrameForKinematics());
       LinkMechanics::init(stage);
@@ -398,9 +398,9 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       if(body[0] and body[0]->getuRelSize()!=1)
-        throw MBSim::MBSimError("ERROR in "+getName()+": rigid body on first side to must have of 1 dof!");
+        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
       if(body[1]->getuRelSize()!=1)
-        throw MBSim::MBSimError("ERROR in "+getName()+": rigid body on second side must have 1 dof!");
+        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
       LinkMechanics::init(stage);
     }
     else

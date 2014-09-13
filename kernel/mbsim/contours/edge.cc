@@ -65,7 +65,7 @@ namespace MBSim {
     }
 
     if (ff!= Frame::position and ff != Frame::firstTangent and ff != Frame::velocity && ff != Frame::angularVelocity && ff != Frame::velocities)
-      throw MBSimError("ERROR (RigidContour::updateKinematicsForFrame): Frame::Feature not implemented!");
+      THROW_MBSIMERROR("(RigidContour::updateKinematicsForFrame): Frame::Feature not implemented!");
 
   }
 

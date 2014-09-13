@@ -338,7 +338,7 @@ namespace MBSim {
         //TODO: add option to specifiy contact_kinematics
       }
       if(not(contour.size()))
-        throw MBSimError("ERROR in "+getName()+": no connection given!");
+        THROW_MBSIMERROR("no connection given!");
 
       //initialize all contour couplings if generalized force law is of maxwell-type
       if (dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
@@ -704,7 +704,7 @@ namespace MBSim {
     if (contactKinematics[cK] == 0)
       contactKinematics[cK] = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
     if (contactKinematics[cK] == 0)
-      throw MBSimError("ERROR in " + getName() + " (Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour \"" + contour1->getType() + "\"!");
+      THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour \"" + contour1->getType() + "\"!");
 
     //Create a single contact(with all the information) for every sub contact of each contact kinematics that is part of the multiple contact
     if (name_ == "")
@@ -715,7 +715,7 @@ namespace MBSim {
   }
 
   void Contact::computeCurvatures(Vec & r, int contactKinematicsIndex) const {
-    throw MBSimError("Not implemented");
+    THROW_MBSIMERROR("Not implemented");
     //TODO
   }
 
