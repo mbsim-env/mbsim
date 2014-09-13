@@ -36,7 +36,8 @@ All unknown options are passed to runexamples.py.
 )
 
 mainOpts=argparser.add_argument_group('Main Options')
-mainOpts.add_argument("--sourceDir", type=str, required=True, help="The base source directory")
+mainOpts.add_argument("--sourceDir", type=str, required=True,
+  help="The base source/build directory (see --srcSuffix/--buildSuffix for VPATH builds")
 configOpts=mainOpts.add_mutually_exclusive_group(required=True)
 configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
 configOpts.add_argument("--recheck", action="store_true",
@@ -56,6 +57,8 @@ cfgOpts.add_argument("--disableMakeCheck", action="store_true", help="Do not 'ma
 cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
 cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
 cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
+cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
+cfgOpts.add_argument("--buildSuffix", default="", help='base tool name suffix for the build dir in --sourceDir (default: "" = no VPATH build)')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -201,7 +204,8 @@ def main():
       ])],
     pj('mbsim', 'mbsimgui'): [False, set([ # depends on
         pj('openmbv', 'openmbv'),
-        pj('openmbv', 'mbxmlutils')
+        pj('openmbv', 'mbxmlutils'),
+        pj('mbsim', 'mbsimxml')
       ])],
     pj('mbsim', 'examples'): [False, set([ # depends on
         pj('mbsim', 'mbsimxml'),
@@ -245,7 +249,7 @@ def main():
   # set docDir
   global docDir
   if args.prefix==None:
-    output=subprocess.check_output([pj(args.sourceDir, "openmbv", "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
+    output=subprocess.check_output([pj(args.sourceDir, "openmbv"+args.buildSuffix, "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
     for opt in output.split():
       match=re.search("'?--prefix[= ]([^']*)'?", opt)
       if match!=None:
@@ -474,9 +478,18 @@ def sortBuildTools(buildTools, orderedBuildTools):
 
 
 
+def srcTool(tool):
+  t=tool.split(os.path.sep)
+  t[0]=t[0]+args.srcSuffix
+  return os.path.sep.join(t)
+def buildTool(tool):
+  t=tool.split(os.path.sep)
+  t[0]=t[0]+args.buildSuffix
+  return os.path.sep.join(t)
+
 def update(nr, tool, buildTools):
   savedDir=os.getcwd()
-  os.chdir(pj(args.sourceDir, tool))
+  os.chdir(pj(args.sourceDir, srcTool(tool)))
 
   # write svn output to report dir
   if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
@@ -515,9 +528,6 @@ def update(nr, tool, buildTools):
 def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
   print("Building "+str(nr)+"/"+str(nrAll)+": "+tool+": ", end=""); sys.stdout.flush()
 
-  savedDir=os.getcwd()
-  os.chdir(pj(args.sourceDir, tool))
-
   ret=0
   retRunExamples=0
 
@@ -537,13 +547,19 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
       print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">up to date, rebuild required</a></td>', file=mainFD)
   mainFD.flush()
 
+  savedDir=os.getcwd()
   if tool==pj("mbsim", "examples"):
-    print("runexamples.py", end=""); sys.stdout.flush()
-    retRunExamples+=runexamples(mainFD)
+    print("MFMF")
+    #MFMF print("runexamples.py", end=""); sys.stdout.flush()
+    #MFMF retRunExamples+=runexamples(mainFD)
   else:
     # configure
     print("configure", end=""); sys.stdout.flush()
     ret+=configure(tool, mainFD)
+
+    # cd to build dir
+    os.chdir(savedDir)
+    os.chdir(pj(args.sourceDir, buildTool(tool)))
 
     # make
     print(", make", end=""); sys.stdout.flush()
@@ -560,12 +576,12 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
     # xmldoc
     print(", xml-doc", end=""); sys.stdout.flush()
     ret+=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+  os.chdir(savedDir)
 
   print("")
   print('</tr>', file=mainFD)
   mainFD.flush()
 
-  os.chdir(savedDir)
   return ret, retRunExamples
 
 
@@ -573,9 +589,11 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
 def configure(tool, mainFD):
   configureFD=open(pj(args.reportOutDir, tool, "configure.txt"), "w")
   copyConfigLog=False
+  savedDir=os.getcwd()
   try:
     if not args.disableConfigure:
       # pre configure
+      os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
       if subprocess.call(["aclocal"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
@@ -589,12 +607,14 @@ def configure(tool, mainFD):
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
       if subprocess.call(["autoreconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
       # configure
+      os.chdir(savedDir)
+      os.chdir(pj(args.sourceDir, buildTool(tool)))
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
         if subprocess.call(["./config.status", "--recheck"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
       else:
-        command=["./configure", "--prefix", args.prefix]
+        command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
         if subprocess.call(command, stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
     else:
@@ -611,6 +631,7 @@ def configure(tool, mainFD):
   print('</td>', file=mainFD)
   configureFD.close()
   mainFD.flush()
+  os.chdir(savedDir)
 
   if result!="done":
     return 1
