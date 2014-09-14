@@ -59,6 +59,7 @@ namespace MBSimControl {
       void setFunction(MBSim::Function<double(double)>* fun_) {
         fun=fun_;
         fun->setParent(this);
+        fun->setName("Function");
       }
       fmatvec::Vec getSignal();
     private:
@@ -81,6 +82,7 @@ namespace MBSimControl {
       void setFunction(MBSim::Function<double(double,double)>* fun_) {
         fun=fun_;
         fun->setParent(this);
+        fun->setName("Function");
       }
       fmatvec::Vec getSignal();
     private:

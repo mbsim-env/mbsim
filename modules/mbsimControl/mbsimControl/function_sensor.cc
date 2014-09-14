@@ -38,6 +38,7 @@ namespace MBSimControl {
   void FunctionSensor::setFunction(MBSim::Function<fmatvec::VecV(double)>* function_) {
     function=function_; 
     function->setParent(this);
+    function->setName("Function");
     y=(*function)(0); 
   }
 

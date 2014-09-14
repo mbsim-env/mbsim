@@ -62,6 +62,7 @@ namespace MBSim {
       void setForceFunction(Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
+        func->setName("Force");
       }
       void setReverse(bool reverse_) { reverse = reverse_; }
 

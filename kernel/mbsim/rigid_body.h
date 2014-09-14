@@ -138,6 +138,7 @@ namespace MBSim {
       void setGeneralTranslation(Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) {
         fPrPK = fPrPK_;
         fPrPK->setParent(this);
+        fPrPK->setName("GeneralTranslation");
       }
       /*!
        * \brief set Kinematic for only time dependent translational motion
@@ -165,6 +166,7 @@ namespace MBSim {
       void setGeneralRotation(Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_) {
         fAPK = fAPK_;
         fAPK->setParent(this);
+        fAPK->setName("GeneralRotation");
       }
       /*!
        * \brief set Kinematic for only time dependent rotational motion

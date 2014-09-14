@@ -128,6 +128,7 @@ namespace MBSimHydraulics {
       void setQFunction(MBSim::Function<double(double)> * QFun_) {
         QFun=QFun_;
         QFun->setParent(this);
+        QFun->setName("Q");
       }
 
       virtual fmatvec::Vec getQIn() {return Q; }

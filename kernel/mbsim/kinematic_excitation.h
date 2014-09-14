@@ -56,6 +56,7 @@ namespace MBSim {
       void setForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
         func=func_;
         func->setParent(this);
+        func->setName("Force");
       }
 
       void plot(double t, double dt=1);
@@ -101,6 +102,7 @@ namespace MBSim {
       void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) {
         f = f_;
         f->setParent(this);
+        f->setName("Excitation");
       }
       void init(Element::InitStage stage) {
         KinematicExcitation::init(stage);

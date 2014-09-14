@@ -70,6 +70,7 @@ namespace MBSimPowertrain {
       void setGeneralizedForceFunction(MBSim::Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
+        func->setName("GeneralizedForce");
       }
 
       /** \brief Set a projection direction for the resulting torque

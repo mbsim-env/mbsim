@@ -149,11 +149,13 @@ namespace MBSim {
   void KineticExcitation::setForceFunction(Function<VecV(double)> *func) {
     F=func;
     F->setParent(this);
+    F->setName("Force");
   }
 
   void KineticExcitation::setMomentFunction(Function<VecV(double)> *func) {
     M=func;
     M->setParent(this);
+    M->setName("Moment");
   }
 
   void KineticExcitation::initializeUsingXML(DOMElement *element) {

@@ -70,6 +70,7 @@ namespace MBSim {
       void setForceFunction(Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
+        func->setName("Force");
       }
 
       void plot(double t, double dt=1);
@@ -133,6 +134,7 @@ namespace MBSim {
       void setForceFunction(Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
+        func->setName("Force");
       }
 
       /**
@@ -184,6 +186,7 @@ namespace MBSim {
       void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
+        func->setName("GeneralizedFoce");
       }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
