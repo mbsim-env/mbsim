@@ -21,12 +21,7 @@
 #include "mbsim/element.h"
 #include "fmatvec/function.h"
 #include <string>
-#include <xercesc/util/XercesDefs.hpp>
-
-namespace XERCES_CPP_NAMESPACE {
-  class DOMNode;
-  class DOMElement;
-}
+#include <xercesc/dom/DOMElement.hpp>
 
 namespace {
   std::string uniqueDummyName(void *p) {
@@ -55,7 +50,15 @@ namespace MBSim {
       //! Most Function's have no name hence use a unique dummy name for Element ctor
       //! See also FunctionBase::FunctionBase.
       Function() : fmatvec::Function<Sig>(), FunctionBase() {}
+
+      void initializeUsingXML(xercesc::DOMElement *element);
   };
+
+  template<typename Sig>
+  void Function<Sig>::initializeUsingXML(xercesc::DOMElement *element) {
+    if(MBXMLUtils::E(element)->hasAttribute("name"))
+      THROW_MBSIMERROR("No 'name' attribute allowed for Function's.");
+  }
 
 }
 
