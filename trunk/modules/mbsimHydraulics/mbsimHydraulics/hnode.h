@@ -125,6 +125,7 @@ namespace MBSimHydraulics {
       void setpFunction(MBSim::Function<double(double)> * pFun_) {
         pFun=pFun_;
         pFun->setParent(this);
+        pFun->setName("p");
       }
 
       void updateg(double t);

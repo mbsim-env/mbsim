@@ -145,6 +145,7 @@ namespace MBSim {
       void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
         f = f_;
         f->setParent(this);
+        f->setName("Constraint");
       }
 
       void setUpInverseKinetics();

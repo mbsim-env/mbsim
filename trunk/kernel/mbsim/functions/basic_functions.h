@@ -274,10 +274,12 @@ namespace MBSim {
         void setFirstSummand(Function<Ret(Arg)> *function) {
           f1 = function;
           f1->setParent(this);
+          f1->setName("FirstSummand");
         }
         void setSecondSummand(Function<Ret(Arg)> *function) {
           f2 = function;
           f2->setParent(this);
+          f2->setName("SecondSummand");
         }
         Ret operator()(const Arg &x) {
           return (*(f1))(x)+(*(f2))(x);
@@ -313,10 +315,12 @@ namespace MBSim {
         void setFirstFactor(Function<Ret(Arg)> *function) {
           f1 = function;
           f1->setParent(this);
+          f1->setName("FirstFactor");
         }
         void setSecondFactor(Function<Ret(Arg)> *function) {
           f2 = function;
           f2->setParent(this);
+          f2->setName("SecondFactor");
         }
         Ret operator()(const Arg &x) {
           double a1 = ToDouble<Ret>::cast((*f1)(x));
@@ -491,10 +495,12 @@ namespace MBSim {
         void setOuterFunction(Function<Ret(Argo)> *fo_) {
           fo = fo_;
           fo->setParent(this);
+          fo->setName("Outer");
         }
         void setInnerFunction(Function<Argo(double)> *fi_) {
           fi = fi_;
           fi->setParent(this);
+          fi->setName("Inner");
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
@@ -544,10 +550,12 @@ namespace MBSim {
         void setOuterFunction(Function<Ret(Argo)> *fo_) {
           fo = fo_;
           fo->setParent(this);
+          fo->setName("Outer");
         }
         void setInnerFunction(Function<Argo(Argi)> *fi_) {
           fi = fi_;
           fi->setParent(this);
+          fi->setName("Inner");
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");

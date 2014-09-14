@@ -154,6 +154,7 @@ namespace MBSimHydraulics {
       void setZetaTabular(MBSim::Function<double(double)> * zetaTabular_) {
         zetaTabular=zetaTabular_;
         zetaTabular->setParent(this);
+        zetaTabular->setName("Zeta");
       }
       double operator()(const double& Q);
       void initializeUsingXML(xercesc::DOMElement *element);

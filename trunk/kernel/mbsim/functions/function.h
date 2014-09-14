@@ -38,14 +38,12 @@ namespace {
 
 namespace MBSim {
 
-  /*! This class is just to have a none template base class for all MBSim function classed. */
+  /*! This class is just to have a none template base class for all MBSim function classes. */
   class FunctionBase : public Element {
     public:
-      //! Most Function's have no name hence use a unique dummy name for Element ctor
+      //! Function's have no name hence use a unique dummy name for Element ctor.
+      //! The function name is normally changed later by the corresponding setter methode which added the Function a another object.
       FunctionBase() : Element(uniqueDummyName(this)) {}
-
-      //! ctor variante with name
-      FunctionBase(const std::string &name_) : Element(name_) {}
   };
 
   /*! Base Function object for MBSim.
@@ -55,10 +53,8 @@ namespace MBSim {
   class Function : public fmatvec::Function<Sig>, public FunctionBase {
     public:
       //! Most Function's have no name hence use a unique dummy name for Element ctor
+      //! See also FunctionBase::FunctionBase.
       Function() : fmatvec::Function<Sig>(), FunctionBase() {}
-
-      //! ctor variante with name
-      Function(const std::string &name_) : fmatvec::Function<Sig>(), FunctionBase(name_) {}
   };
 
 }

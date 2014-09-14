@@ -48,6 +48,7 @@ namespace MBSimHydraulics {
       void setPARelativeAlphaFunction(MBSim::Function<double(double)> * relAlphaPA_) {
         relAlphaPA=boost::shared_ptr<MBSim::Function<double(double)> >(relAlphaPA_);
         relAlphaPA->setParent(this);
+        relAlphaPA->setName("PARealtvieAlpha");
       } 
       void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }

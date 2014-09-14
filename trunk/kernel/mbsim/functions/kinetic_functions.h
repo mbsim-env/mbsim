@@ -100,11 +100,13 @@ namespace MBSim {
       void setDistanceFunction(Function<double(double)> * gForceFun_) {
         gForceFun=gForceFun_;
         gForceFun->setParent(this);
+        gForceFun->setName("Distance");
       }
 
       void setVelocityFunction(Function<double(double)> * gdForceFun_) {
         gdForceFun=gdForceFun_;
         gdForceFun->setParent(this);
+        gdForceFun->setName("Velocity");
       }
       /***************************************************/
 
@@ -278,6 +280,7 @@ namespace MBSim {
       void setFrictionFunction(Function<double(double)> *fmu_) {
         fmu=fmu_;
         fmu->setParent(this);
+        fmu->setName("Friction");
       }
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
