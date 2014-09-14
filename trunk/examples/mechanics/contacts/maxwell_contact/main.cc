@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
           MBSName << "Unilateral";
           break;
         default:
-          THROW_MBSIMERROR("No valid contactType chosen");
+          throw MBSimError("No valid contactType chosen");
       }
 
       MBSName << "_" << contactNums << "Contacts";
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
           shift(2) = 0.4;
           break;
         default:
-          THROW_MBSIMERROR("No valid contactType chosen");
+          throw MBSimError("No valid contactType chosen");
       }
 
       sys = new System(MBSName.str(), contactType, 0, contactNums, shift);
