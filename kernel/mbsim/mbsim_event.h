@@ -56,6 +56,9 @@ namespace MBSim {
        * at the original throw statement. */
       void setContext(const Element *context_);
 
+      const Element *getContext() { return context; }
+      std::string getErrorMessage() const { return mbsim_error_message; }
+
       virtual const char* what() const throw();
 
     private:
@@ -63,6 +66,8 @@ namespace MBSim {
        * \brief error message
        */
       std::string mbsim_error_message;
+
+      const Element *context;
 
       // just a string to store the memory which is returned by the what() function
       std::string whatMsg;

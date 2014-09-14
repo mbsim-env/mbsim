@@ -124,55 +124,64 @@ namespace MBSim {
     }
   }
 
-  string Element::getPath(const Element *relTo, string sep) const {
-    // compose a absolute path
-    if(!relTo) {
-      // after init stage reorganizeHierarchy just return the store path since the hierarchy is changed now
-      if(!path.empty())
-        return path;
+  string Element::getPath(const Element *relTo, string sep, bool initialCaller) const {
+    try {
+      // compose a absolute path
+      if(!relTo) {
+        // after init stage reorganizeHierarchy just return the store path since the hierarchy is changed now
+        if(!path.empty())
+          return path;
 
-      // before the init stage reorganizeHierarchy compose the path dynamically
+        // before the init stage reorganizeHierarchy compose the path dynamically
 
-      // a parent exists -> return parent path + this elements sub path
-      if(parent) {
-        string parentPath=parent->getPath(NULL, sep);
-        return parentPath+(parentPath==sep?"":sep)+containerName(this)+"["+getName()+"]";
-      }
-      // no parent exits and its a DynamicSystemSolver (we can generate a absolute path)
-      if(dynamic_cast<const DynamicSystemSolver*>(this))
-        return sep; // return the root separator
-      // no parent exits and its not a DynamicSystemSolver (we can not generate a absolute path ->
-      // append address to local name to have a unique local name!)
-      stringstream str;
-      str<<containerName(this)<<"["<<getName()<<"<with_ID_"<<this<<">]";
-      return str.str();
-    }
-    // compose a relative path
-    else {
-      // get absolute path of this object and relTo (get it relative to the top level (remove the leading /))
-      string thisPath=getPath(NULL, sep).substr(1);
-      string relToPath=relTo->getPath(NULL, sep).substr(1)+sep;
-      // check for "real" absolute path (see above)
-      if(thisPath.substr(0, sep.length())!=sep || relToPath.substr(0, sep.length())!=sep)
-        THROW_MBSIMERROR("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
-      // remove sub path which are equal in both
-      while(1) {
-        size_t thisIdx=thisPath.find(sep);
-        size_t relToIdx=relToPath.find(sep);
-        if(thisPath.substr(0, thisIdx)==relToPath.substr(0, relToIdx)) {
-          thisPath=thisPath.substr(thisIdx+1);
-          relToPath=relToPath.substr(relToIdx+1);
+        // a parent exists -> return parent path + this elements sub path
+        if(parent) {
+          string parentPath=parent->getPath(NULL, sep, false);
+          return parentPath+(parentPath==sep?"":sep)+containerName(this)+"["+getName()+"]";
         }
-        else
-          break;
+        // no parent exits and its a DynamicSystemSolver (we can generate a absolute path)
+        if(dynamic_cast<const DynamicSystemSolver*>(this))
+          return sep; // return the root separator
+        // no parent exits and its not a DynamicSystemSolver (we can not generate a absolute path ->
+        // append address to local name to have a unique local name!)
+        stringstream str;
+        str<<containerName(this)<<"["<<getName()<<"<with_ID_"<<this<<">]";
+        return str.str();
       }
-      // replace all sub path in relToPath with ".."
-      string dotPath;
-      size_t relToIdx=0;
-      while((relToIdx=relToPath.find(sep, relToIdx+1))!=string::npos)
-        dotPath+=".."+sep;
-      // return the relative path
-      return dotPath+thisPath;
+      // compose a relative path
+      else {
+        // get absolute path of this object and relTo (get it relative to the top level (remove the leading /))
+        string thisPath=getPath(NULL, sep, false).substr(1);
+        string relToPath=relTo->getPath(NULL, sep, false).substr(1)+sep;
+        // check for "real" absolute path (see above)
+        if(thisPath.substr(0, sep.length())!=sep || relToPath.substr(0, sep.length())!=sep)
+          THROW_MBSIMERROR("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
+        // remove sub path which are equal in both
+        while(1) {
+          size_t thisIdx=thisPath.find(sep);
+          size_t relToIdx=relToPath.find(sep);
+          if(thisPath.substr(0, thisIdx)==relToPath.substr(0, relToIdx)) {
+            thisPath=thisPath.substr(thisIdx+1);
+            relToPath=relToPath.substr(relToIdx+1);
+          }
+          else
+            break;
+        }
+        // replace all sub path in relToPath with ".."
+        string dotPath;
+        size_t relToIdx=0;
+        while((relToIdx=relToPath.find(sep, relToIdx+1))!=string::npos)
+          dotPath+=".."+sep;
+        // return the relative path
+        return dotPath+thisPath;
+      }
+    }
+    catch(MBSimError &ex) {
+      if(initialCaller)
+        THROW_MBSIMERROR("During getting the element path: Message from "+
+          ex.getContext()->getPath()+": "+ex.getErrorMessage());
+      else
+        throw ex;
     }
   }
 

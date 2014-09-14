@@ -213,14 +213,14 @@ namespace MBSim {
        * \param check for existence of frame
        * \return frame
        */
-      virtual Frame* getFrame(const std::string &name, bool check=true);
+      virtual Frame* getFrame(const std::string &name, bool check=true) const;
 
       /**
        * \param name of the contour
        * \param check for existence of contour
        * \return contour
        */
-      virtual Contour* getContour(const std::string &name, bool check=true);
+      virtual Contour* getContour(const std::string &name, bool check=true) const;
       /*****************************************************/
 
       /* GETTER / SETTER */
@@ -666,7 +666,7 @@ namespace MBSim {
        * \param check for existence of dynamic system
        * \return dynamic system
        */
-      DynamicSystem* getGroup(const std::string &name,bool check=true);
+      DynamicSystem* getGroup(const std::string &name,bool check=true) const;
 
       /**
        * \param object to add
@@ -678,7 +678,7 @@ namespace MBSim {
        * \param check for existence of object
        * \return object
        */
-      Object* getObject(const std::string &name,bool check=true);
+      Object* getObject(const std::string &name,bool check=true) const;
 
       /**
        * \param link to add
@@ -690,7 +690,7 @@ namespace MBSim {
        */
       void addInverseKineticsLink(Link *link);
 
-      Observer* getObserver(const std::string &name,bool check=true);
+      Observer* getObserver(const std::string &name,bool check=true) const;
       void addObserver(Observer *element);
 
       /**
@@ -698,7 +698,7 @@ namespace MBSim {
        * \param check for existence of link
        * \return link
        */
-      Link* getLink(const std::string &name,bool check=true);
+      Link* getLink(const std::string &name,bool check=true) const;
 
       /**
        * \param modell to add
@@ -710,12 +710,12 @@ namespace MBSim {
        * \param check for existence of model
        * \return modelling interface
        */
-      ModellingInterface* getModel(const std::string &name, bool check=true);
+      ModellingInterface* getModel(const std::string &name, bool check=true) const;
 
       /** Return frame "I" */
       FixedRelativeFrame *getFrameI() { return I; }
 
-      virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name);
+      virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
 
       virtual void updatecorr(int j);
       void updatecorrRef(const fmatvec::Vec &ref);
