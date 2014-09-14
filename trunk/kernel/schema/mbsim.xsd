@@ -256,7 +256,7 @@
         </xs:complexType> 
       </xs:element>  
     </xs:choice> 
-    <xs:attribute name="name" type="pv:stringPartialOctEval" use="required"/>
+    <xs:attribute name="name" type="pv:stringPartialOctEval"/> <!-- is not required here since Function has not name attribute -->
   </xs:complexType> 
 
   <xs:element name="EmptyGroup" abstract="true" substitutionGroup="Element" type="EmptyGroupType"/>
@@ -2995,15 +2995,18 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function" abstract="true" type="FunctionType">
+  <xs:element name="Function" abstract="true" substitutionGroup="Element" type="FunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von skalarwertigen Funktionen mit einem Parameter <object class="inlineeqn">y=f(x)</object>.
+        Abstrakte Klasse von Funktionen mit beliebig vielen Parametern.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="FunctionType"/>
-  <!-- MISSING: Function should derive from Element but this will require the name attribute to be optional -->
+  <xs:complexType name="FunctionType">
+    <xs:complexContent>
+      <xs:extension base="ElementType"/>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="TranslationAlongXAxis" substitutionGroup="Function" type="TranslationAlongXAxisType">
     <xs:annotation>
@@ -3290,9 +3293,16 @@
   </xs:complexType>   
 
   <xs:element name="SymbolicFunction" substitutionGroup="Function" type="SymbolicFunctionType"/>
+  <!-- This type is just a hack to enable the mixed="true" attribute in SymbolicFunctionType.
+       Maybe this work only due to a bug in xerces-c ???!!! but it works here   :-O   :-(   :-)   -->
+  <xs:complexType name="FunctionMixedType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="FunctionType"/>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="SymbolicFunctionType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="FunctionType">
+      <xs:extension base="FunctionMixedType">
         <xs:group ref="pv:symbolicFunctionXMLElement" minOccurs="0"/>
         <!-- A symbolic function has at least one parameter => arg1 is required.
              argXDim is optional since this is interpreted as "1" (scalar) if missing.
@@ -3663,7 +3673,7 @@
   </xs:complexType>   
 
   <xs:element name="NestedFunction" substitutionGroup="Function" type="NestedFunctionType"/>
-  <xs:complexType name="NestedFunctionType" mixed="true">
+  <xs:complexType name="NestedFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
