@@ -549,9 +549,9 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
 
   savedDir=os.getcwd()
   if tool==pj("mbsim", "examples"):
-    print("MFMF")
-    #MFMF print("runexamples.py", end=""); sys.stdout.flush()
-    #MFMF retRunExamples+=runexamples(mainFD)
+    os.chdir(pj(args.sourceDir, srcTool(tool)))
+    print("runexamples.py", end=""); sys.stdout.flush()
+    retRunExamples+=runexamples(mainFD)
   else:
     # configure
     print("configure", end=""); sys.stdout.flush()
