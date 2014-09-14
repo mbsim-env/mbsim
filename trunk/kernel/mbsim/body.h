@@ -90,14 +90,14 @@ namespace MBSim {
        * \param flag for checking existence
        * \return contour
        */
-      virtual Contour* getContour(const std::string &name, bool check=true);
+      virtual Contour* getContour(const std::string &name, bool check=true) const;
 
       /**
        * \param name of the frame
        * \param flag for checking existence
        * \return frame
        */
-      virtual Frame* getFrame(const std::string &name, bool check=true);
+      virtual Frame* getFrame(const std::string &name, bool check=true) const;
 
       /**
        * \return frame of reference
@@ -139,7 +139,7 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name);
+      virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
 
     protected:
       /**

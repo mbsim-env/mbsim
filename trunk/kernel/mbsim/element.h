@@ -226,19 +226,21 @@ namespace MBSim {
 
       /**
        * \brief Get the object of type T represented by the path path.
+       * Do not set any argurment other than path!
        */
-      template<class T> T* getByPath(const std::string &path);
+      template<class T> T* getByPath(const std::string &path, bool initialCaller=true) const;
 
       /**
        * \brief Return the path of this object.
        * If relativeTo is not NULL return a relative path to relativeTo.
+       * Do not set any argurment other than relTo and sep!
        */
-      std::string getPath(const Element *relTo=NULL, std::string sep="/") const;
+      std::string getPath(const Element *relTo=NULL, std::string sep="/", bool initialCaller=true) const;
 
       /**
        * \brief Get the Element named name in the container named container.
        */
-      virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) {
+      virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const {
         THROW_MBSIMERROR("This element has no containers with childs.");
       }
 
@@ -313,40 +315,49 @@ namespace MBSim {
   };
 
   template<class T>
-  T* Element::getByPath(const std::string &path) {
-    if(path.substr(0, 1) == "/") { // if absolute path ...
-      if(parent) // .. and a parent exists ...
-        return parent->getByPath<T>(path); // ... than call getByPath of the parent (walk to the top)
-      else // .. and no parent exits ...
-        return getByPath<T>(path.substr(1)); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
+  T* Element::getByPath(const std::string &path, bool initialCaller) const {
+    try {
+      if(path.substr(0, 1) == "/") { // if absolute path ...
+        if(parent) // .. and a parent exists ...
+          return parent->getByPath<T>(path, false); // ... than call getByPath of the parent (walk to the top)
+        else // .. and no parent exits ...
+          return getByPath<T>(path.substr(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
+      }
+      else if (path.substr(0, 3) == "../") // if relative path to parent ...
+        return parent->getByPath<T>(path.substr(3), false); // ... call getByPath of the parent with the leading "../" removed
+      else { // if relative path to a child ...
+        // extract the first path and all other paths (rest)
+        size_t idx=path.find('/');
+        std::string first=path.substr(0, idx);
+        std::string rest;
+        if(idx!=std::string::npos)
+          rest=path.substr(idx+1);
+        // get the object of the first child path by calling the virtual function getChildByContainerAndName
+        size_t pos0=first.find('[');
+        if(pos0==std::string::npos)
+          THROW_MBSIMERROR("Syntax error in subreference '"+first+"': no [ found.");
+        std::string container=first.substr(0, pos0);
+        if(first[first.size()-1]!=']')
+          THROW_MBSIMERROR("Syntax error in subreference '"+first+"': not ending with ].");
+        std::string name=first.substr(pos0+1, first.size()-pos0-2);
+        Element *e=getChildByContainerAndName(container, name);
+        // if their are other child paths call getByPath of e for this
+        if(!rest.empty())
+          return e->getByPath<T>(rest, false);
+        // this is the last relative path -> check type and return
+        T *t=dynamic_cast<T*>(e);
+        if(t)
+          return t;
+        else
+          THROW_MBSIMERROR("Cannot cast this element to type "+container+".");
+      }
     }
-    else if (path.substr(0, 3) == "../") // if relative path to parent ...
-      return parent->getByPath<T>(path.substr(3)); // ... call getByPath of the parent with the leading "../" removed
-    else { // if relative path to a child ...
-      // extract the first path and all other paths (rest)
-      size_t idx=path.find('/');
-      std::string first=path.substr(0, idx);
-      std::string rest;
-      if(idx!=std::string::npos)
-        rest=path.substr(idx+1);
-      // get the object of the first child path by calling the virtual function getChildByContainerAndName
-      size_t pos0=first.find('[');
-      if(pos0==std::string::npos)
-        THROW_MBSIMERROR("Syntax error in "+first+": no [ found.");
-      std::string container=first.substr(0, pos0);
-      if(first[first.size()-1]!=']')
-        THROW_MBSIMERROR("Syntax error in "+first+": does not end with ].");
-      std::string name=first.substr(pos0+1, first.size()-pos0-2);
-      Element *e=getChildByContainerAndName(container, name);
-      // if their are other child paths call getByPath of e for this
-      if(!rest.empty())
-        return e->getByPath<T>(rest);
-      // this is the last relative path -> check type and return
-      T *t=dynamic_cast<T*>(e);
-      if(t)
-        return t;
+    catch(MBSimError &ex) {
+      if(initialCaller)
+        THROW_MBSIMERROR("During evaluation of refernece '"+path+"': Message from "+
+          ex.getContext()->getPath()+": "+ex.getErrorMessage());
       else
-        THROW_MBSIMERROR("Type error in "+first+": Cannot cast this element to type "+container+".");
+        throw ex;
     }
   }
 

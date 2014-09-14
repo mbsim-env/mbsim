@@ -27,17 +27,18 @@ using namespace xercesc;
 
 namespace MBSim {
   
-  MBSimError::MBSimError(const Element *context, const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_) {
+  MBSimError::MBSimError(const Element *context_, const std::string &mbsim_error_message_) throw() : exception(),
+    mbsim_error_message(mbsim_error_message_), context(context_) {
     whatMsg="In element "+context->getPath()+": "+mbsim_error_message;
   }
 
   MBSimError::MBSimError(const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_) {
+    mbsim_error_message(mbsim_error_message_), context(NULL) {
     whatMsg=mbsim_error_message;
   }
 
-  void MBSimError::setContext(const Element *context) {
+  void MBSimError::setContext(const Element *context_) {
+    context=context_;
     whatMsg="In element "+context->getPath()+": "+mbsim_error_message;
   }
 

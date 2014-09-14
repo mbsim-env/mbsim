@@ -633,7 +633,7 @@ namespace MBSim {
       (**i).updaterFactors();
   }
 
-  Frame* DynamicSystem::getFrame(const string &name, bool check) {
+  Frame* DynamicSystem::getFrame(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < frame.size(); i++) {
       if (frame[i]->getName() == name)
@@ -647,7 +647,7 @@ namespace MBSim {
     return NULL;
   }
 
-  Contour* DynamicSystem::getContour(const string &name, bool check) {
+  Contour* DynamicSystem::getContour(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < contour.size(); i++) {
       if (contour[i]->getName() == name)
@@ -1366,7 +1366,7 @@ namespace MBSim {
     return -1;
   }
 
-  DynamicSystem* DynamicSystem::getGroup(const string &name, bool check) {
+  DynamicSystem* DynamicSystem::getGroup(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < dynamicsystem.size(); i++) {
       if (dynamicsystem[i]->getName() == name)
@@ -1380,7 +1380,7 @@ namespace MBSim {
     return NULL;
   }
 
-  Object* DynamicSystem::getObject(const string &name, bool check) {
+  Object* DynamicSystem::getObject(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < object.size(); i++) {
       if (object[i]->getName() == name)
@@ -1413,7 +1413,7 @@ namespace MBSim {
     lnk->setParent(this);
   }
 
-  Link* DynamicSystem::getLink(const string &name, bool check) {
+  Link* DynamicSystem::getLink(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < link.size(); i++) {
       if (link[i]->getName() == name)
@@ -1436,7 +1436,7 @@ namespace MBSim {
     model_->setParent(this);
   }
 
-  ModellingInterface* DynamicSystem::getModel(const string &name, bool check) {
+  ModellingInterface* DynamicSystem::getModel(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < model.size(); i++) {
       if (model[i]->getName() == name)
@@ -1468,7 +1468,7 @@ namespace MBSim {
     obj->setParent(this);
   }
 
-  Element * DynamicSystem::getChildByContainerAndName(const std::string &container, const std::string &name) {
+  Element * DynamicSystem::getChildByContainerAndName(const std::string &container, const std::string &name) const {
     if (container == "Object")
       return getObject(name);
     else if (container == "Link")
@@ -1482,10 +1482,10 @@ namespace MBSim {
     else if (container == "Observer")
       return getObserver(name);
     else
-      THROW_MBSIMERROR("Unknown container "+container+" in DynamicSystem.");
+      THROW_MBSIMERROR("Unknown container '"+container+"'.");
   }
 
-  Observer* DynamicSystem::getObserver(const string &name, bool check) {
+  Observer* DynamicSystem::getObserver(const string &name, bool check) const {
     unsigned int i;
     for (i = 0; i < observer.size(); i++) {
       if (observer[i]->getName() == name)
