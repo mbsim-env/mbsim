@@ -289,7 +289,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsIndex1FixpointSingle() {
+  void Joint::solveConstraintsIndex1FixpointSingle(double dt) {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -337,7 +337,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsIndex1GaussSeidel() {
+  void Joint::solveConstraintsIndex1GaussSeidel(double dt) {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -385,7 +385,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsIndex1RootFinding() {
+  void Joint::solveConstraintsIndex1RootFinding(double dt) {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();

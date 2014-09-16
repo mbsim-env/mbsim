@@ -135,11 +135,11 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual int solveConstraintsIndex1FixpointSingle();
+      virtual int solveConstraintsIndex1FixpointSingle(double dt = 0);
       virtual int solveImpactsFixpointSingle(double dt = 0);
-      virtual int solveConstraintsIndex1GaussSeidel();
+      virtual int solveConstraintsIndex1GaussSeidel(double dt = 0);
       virtual int solveImpactsGaussSeidel(double dt = 0);
-      virtual int solveConstraintsIndex1RootFinding();
+      virtual int solveConstraintsIndex1RootFinding(double dt = 0);
       virtual int solveImpactsRootFinding(double dt = 0);
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double dt = 0);
@@ -183,13 +183,16 @@ namespace MBSim {
 
       /* INHERITED INTERFACE FOR DERIVED CLASS */
       /**
-       * \brief solves prox-functions on acceleration level using sparsity structure but not decoupled
-       * \return
+       * \brief solves prox-functions for contact forces on acceleration level using sparsity structure
+       * \param time step-size
+       * \return iterations of solver
        */
-      virtual int solveConstraints();
+      virtual int solveConstraints(double dt = 0);
 
       /**
-       * \brief solves prox-functions on velocity level using sparsity structure but not decoupled
+       * \brief solves prox-functions for impacts on velocity level using sparsity structure
+       * \param time step-size
+       * \return iterations of solver
        */
       virtual int solveImpacts(double dt = 0);
       /***************************************************/
@@ -270,24 +273,39 @@ namespace MBSim {
       virtual void initz(fmatvec::Vec& z0);
 
       /**
-       * \return successful flag for function pointer for election of prox-solver on acceleration level
+       * \function pointer for election of prox-solver for contact equations on acceleration level
+       * \param time step-size
+       * \return iterations of solver
        */
-      int (DynamicSystemSolver::*solveConstraints_)();
+      int (DynamicSystemSolver::*solveConstraints_)(double dt);
 
       /**
-       * \return successful flag for function pointer for election of prox-solver on velocity level
+       * \brief function pointer for election of prox-solver for impact equations on velocity level
        * \param time step
+       * \return iterations of solver
        */
       int (DynamicSystemSolver::*solveImpacts_)(double dt);
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on acceleration level
+       * \param time step-size
+       * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
-      int solveConstraintsIndex1LinearEquations();
+      int solveConstraintsIndex1LinearEquations(double dt = 0);
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on velocity level
+       * \param time step-size
+       * \return iterations of solver
+       * \todo put in dynamic system? TODO
+       */
+      int solveConstraintsIndex2LinearEquations(double dt = 0);
+
+      /**
+       * \return successful solution of contact equations with Cholesky decomposition on velocity level
+       * \param time step-size, if 0 non-impulsive contributions vanish
+       * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
       int solveImpactsLinearEquations(double dt = 0);

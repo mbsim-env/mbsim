@@ -107,46 +107,52 @@ namespace MBSimIntegrator {
       // update mass matrix and compute LU factorization
       system.updateM(t);
       system.facLLM();      
+      
+      // save values
+      Vec qOld = system.getq().copy();
+      Mat TOld = system.getT().copy();
+      SymMat LLMOld = system.getLLM().copy();
+      Vec hOld = system.geth().copy();
+      Vec gdOld = system.getgd().copy();
       /*****************************************/
 
       /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL */
-      Vec qOld = system.getq().copy();
-      SymMat LLMOld = system.getLLM().copy();
-      Vec hOld = system.geth().copy();
-      Mat WOld = system.getW().copy();
-      Vec gdOld = system.getgd().copy();
-
-      q += system.getT()*u*dt; // prediction stage
+      q += system.getT()*u*dt; // prediction stage (position and time, no velocity)
       t += dt;
       evaluateStage(system); // TODO: this also updates the activ set?
 
       // update matrix of generalized constraint directions
       system.updateW(t);
+      Mat WOld = system.getW().copy();
 
       // update matrix of generalized constraint directions with the possibility to project sliding contacts
       system.updateV(t);
 
       // update mass action matrix of constraint equation system
-      system.getLLM() << LLMOld.copy();
+      system.getLLM() = LLMOld.copy();
       system.updateG(t); // TODO: normally G is set up as a mixture
-      system.getG() *= dt;
       
       // update right hand side of constraint equation system
-      system.getb() << gdOld + system.getW().T()*slvLLFac(LLMOld,hOld)*dt; // TODO: normally we have not gdOld here
+      system.geth() = hOld.copy();
+      //system.getb() << gdOld + system.getW().T()*slvLLFac(LLMOld,hOld)*dt; // TODO: normally we have not gdOld here
       
-      // solve the constraint equation system 
+      // solve the constraint equation system
+      if (system.getla().size() not_eq 0)
+        iter = system.solveConstraintsIndex2LinearEquations(dt);
       //iter = system.solveImpacts(dt);
 
-      //if(iter>maxIter) maxIter = iter;
-      //sumIter += iter;
+      if(iter>maxIter)
+        maxIter = iter;
+      sumIter += iter;
+      
+      // save values
+      Vec uOld = system.getu().copy();
+      Vec laOld = system.getla().copy();
       /*****************************************/
 
       /* CALCULATE SECOND STAGE */
-      Vec uOld = system.getu().copy();
-      Vec laOld = system.getla().copy();
-
-      u += slvLLFac(system.getLLM(),system.geth()+WOld*laOld)*dt;
-      q = qOld + system.getT()*(u+uOld)*dt*0.5; // TODO: T-matrix for new stage is implicitely defined!
+      u += slvLLFac(LLMOld,hOld+WOld*laOld)*dt;
+      q = qOld + TOld*(u+uOld)*dt*0.5; // TODO: T-matrix for new stage is implicitely defined!
       /*****************************************/
 
       /* RIGHT INTERVAL END EVALUATIONS = SECOND STAGE EVALUATIONS */

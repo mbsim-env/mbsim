@@ -155,31 +155,43 @@ namespace MBSim {
 
       /**
        * \brief solve contact equations with single step fixed point scheme on acceleration level 
+       * \param time step-size
+       * \return iterations of solver
        */
-      virtual int solveConstraintsIndex1FixpointSingle();
+      virtual int solveConstraintsIndex1FixpointSingle(double dt);
 
       /**
-       * \brief solve contact equations with single step fixed point scheme on velocity level 
+       * \brief solve impact equations with single step fixed point scheme on velocity level 
+       * \param time step-size
+       * \return iterations of solver
        */
       virtual int solveImpactsFixpointSingle(double dt);
 
       /**
        * \brief solve contact equations with Gauss-Seidel scheme on acceleration level 
+       * \param time step-size
+       * \return iterations of solver
        */
-      virtual int solveConstraintsIndex1GaussSeidel();
+      virtual int solveConstraintsIndex1GaussSeidel(double dt);
 
       /**
-       * \brief solve contact equations with Gauss-Seidel scheme on velocity level 
+       * \brief solve impact equations with Gauss-Seidel scheme on velocity level 
+       * \param time step-size
+       * \return iterations of solver
        */
       virtual int solveImpactsGaussSeidel(double dt);
 
       /**
        * \brief solve contact equations with Newton scheme on acceleration level 
+       * \param time step-size
+       * \return iterations of solver
        */
-      virtual int solveConstraintsIndex1RootFinding();
+      virtual int solveConstraintsIndex1RootFinding(double dt);
 
       /**
-       * \brief solve contact equations with Newton scheme on velocity level 
+       * \brief solve impact equations with Newton scheme on velocity level 
+       * \param time step-size
+       * \return iterations of solver
        */
       virtual int solveImpactsRootFinding(double dt);
 
@@ -241,6 +253,7 @@ namespace MBSim {
       const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
       fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
       const fmatvec::Vec& geth(int j=0) const { return h[j]; };
+      fmatvec::Vec& geth(int j=0) { return h[j]; };
       const fmatvec::Vec& getf() const { return f; };
       fmatvec::Vec& getf() { return f; };
 
