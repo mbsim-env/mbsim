@@ -604,10 +604,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveConstraintsFixpointSingle() {
+  void Contact::solveConstraintsIndex1FixpointSingle() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsFixpointSingle();
+        jter->solveConstraintsIndex1FixpointSingle();
     }
   }
 
@@ -618,10 +618,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveConstraintsGaussSeidel() {
+  void Contact::solveConstraintsIndex1GaussSeidel() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsGaussSeidel();
+        jter->solveConstraintsIndex1GaussSeidel();
     }
   }
 
@@ -632,10 +632,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveConstraintsRootFinding() {
+  void Contact::solveConstraintsIndex1RootFinding() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsRootFinding();
+        jter->solveConstraintsIndex1RootFinding();
     }
   }
 

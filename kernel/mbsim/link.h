@@ -45,7 +45,7 @@ namespace MBSim {
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
    * \date 2012-05-08 added LinkStatusReg for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
-   * 
+   * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler) 
    */
   //class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
   class Link : public Element {
@@ -258,7 +258,7 @@ namespace MBSim {
       /**
        * solve contact equations of motion with single step fixed point scheme on acceleration level
        */
-      virtual void solveConstraintsFixpointSingle() { THROW_MBSIMERROR("(Link::solveConstraintsFixpointSingle): Not implemented."); }
+      virtual void solveConstraintsIndex1FixpointSingle() { THROW_MBSIMERROR("(Link::solveConstraintsIndex1FixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on velocity level
@@ -268,7 +268,7 @@ namespace MBSim {
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on acceleration level
        */
-      virtual void solveConstraintsGaussSeidel() { THROW_MBSIMERROR("(Link::solveConstraintsGaussSeidel): Not implemented."); }
+      virtual void solveConstraintsIndex1GaussSeidel() { THROW_MBSIMERROR("(Link::solveConstraintsIndex1GaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme on velocity level
@@ -278,7 +278,7 @@ namespace MBSim {
       /**
        * solve contact equations of motion with Newton scheme on acceleration level
        */
-      virtual void solveConstraintsRootFinding() { THROW_MBSIMERROR("(Link::solveConstraintsRootFinding): Not implemented."); }
+      virtual void solveConstraintsIndex1RootFinding() { THROW_MBSIMERROR("(Link::solveConstraintsIndex1RootFinding): Not implemented."); }
 
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on acceleration level

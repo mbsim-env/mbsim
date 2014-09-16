@@ -98,7 +98,7 @@ namespace MBSimIntegrator {
       }
 
       /* LEFT INTERVAL END EVALUATIONS = FIRST STAGE EVALUATIONS */
-      // update until the Jacobian matrices
+      // update until the Jacobian matrices, especially also the active set
       evaluateStage(system);
 
       // update forces
@@ -118,7 +118,7 @@ namespace MBSimIntegrator {
 
       q += system.getT()*u*dt; // prediction stage
       t += dt;
-      evaluateStage(system);
+      evaluateStage(system); // TODO: this also updates the activ set?
 
       // update matrix of generalized constraint directions
       system.updateW(t);
@@ -134,7 +134,7 @@ namespace MBSimIntegrator {
       // update right hand side of constraint equation system
       system.getb() << gdOld + system.getW().T()*slvLLFac(LLMOld,hOld)*dt; // TODO: normally we have not gdOld here
       
-      // solve the constraint equation system // TODO: perhaps it is better to change the activity rule here?
+      // solve the constraint equation system 
       //iter = system.solveImpacts(dt);
 
       //if(iter>maxIter) maxIter = iter;

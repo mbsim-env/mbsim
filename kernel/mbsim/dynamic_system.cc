@@ -551,10 +551,10 @@ namespace MBSim {
       observer[i]->init(stage);
   }
 
-  int DynamicSystem::solveConstraintsFixpointSingle() {
+  int DynamicSystem::solveConstraintsIndex1FixpointSingle() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->solveConstraintsFixpointSingle();
+      (*i)->solveConstraintsIndex1FixpointSingle();
 
     return 0;
   }
@@ -567,10 +567,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveConstraintsGaussSeidel() {
+  int DynamicSystem::solveConstraintsIndex1GaussSeidel() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->solveConstraintsGaussSeidel();
+      (*i)->solveConstraintsIndex1GaussSeidel();
 
     return 0;
   }
@@ -583,10 +583,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveConstraintsRootFinding() {
+  int DynamicSystem::solveConstraintsIndex1RootFinding() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->solveConstraintsRootFinding();
+      (*i)->solveConstraintsIndex1RootFinding();
 
     return 0;
   }

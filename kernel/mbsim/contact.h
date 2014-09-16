@@ -44,6 +44,7 @@ namespace MBSim {
    * \date 2009-08-03 contacts can now visualize their ContactPointFrames (Markus Schneider)
    * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
    * \date 2012-05-08 added LinkStatusReg for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
+   * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    *
    * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
    * 
@@ -111,11 +112,11 @@ namespace MBSim {
       virtual bool isActive() const;
       virtual bool gActiveChanged();
       virtual void solveImpactsFixpointSingle(double dt);
-      virtual void solveConstraintsFixpointSingle();
+      virtual void solveConstraintsIndex1FixpointSingle();
       virtual void solveImpactsGaussSeidel(double dt);
-      virtual void solveConstraintsGaussSeidel();
+      virtual void solveConstraintsIndex1GaussSeidel();
       virtual void solveImpactsRootFinding(double dt);
-      virtual void solveConstraintsRootFinding();
+      virtual void solveConstraintsIndex1RootFinding();
       virtual void jacobianConstraints();
       virtual void jacobianImpacts();
       virtual void updaterFactors();

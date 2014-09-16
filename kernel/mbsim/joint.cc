@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -289,7 +289,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsFixpointSingle() {
+  void Joint::solveConstraintsIndex1FixpointSingle() {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -337,7 +337,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsGaussSeidel() {
+  void Joint::solveConstraintsIndex1GaussSeidel() {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -385,7 +385,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsRootFinding() {
+  void Joint::solveConstraintsIndex1RootFinding() {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
