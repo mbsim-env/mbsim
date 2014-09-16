@@ -133,8 +133,7 @@ namespace MBSimIntegrator {
       system.updateG(t); // TODO: normally G is set up as a mixture
       
       // update right hand side of constraint equation system
-      system.geth() = hOld.copy();
-      //system.getb() << gdOld + system.getW().T()*slvLLFac(LLMOld,hOld)*dt; // TODO: normally we have not gdOld here
+      system.getb() << gdOld/dt + system.getW().T()*slvLLFac(LLMOld,hOld); // TODO: normally we have not gdOld here
       
       // solve the constraint equation system
       if (system.getla().size() not_eq 0)
@@ -152,7 +151,7 @@ namespace MBSimIntegrator {
 
       /* CALCULATE SECOND STAGE */
       u += slvLLFac(LLMOld,hOld+WOld*laOld)*dt;
-      q = qOld + TOld*(u+uOld)*dt*0.5; // TODO: T-matrix for new stage is implicitely defined!
+      q = qOld + (system.getT()*u+TOld*uOld)*dt*0.5; // TODO: T-matrix for new stage is implicitely defined!
       /*****************************************/
 
       /* RIGHT INTERVAL END EVALUATIONS = SECOND STAGE EVALUATIONS */
@@ -178,10 +177,17 @@ namespace MBSimIntegrator {
       if(true) {
       /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL */
       /*****************************************/
-      system.getG() *= dt;
-      
-      // update right hand side of constraint equation system
-      system.getb() << gdOld + system.getW().T()*slvLLFac(LLMOld,hOld+WOld*laOld)*dt*0.5; // TODO: normally we have not gdOld here
+        // update right hand side of constraint equation system
+        system.getb() << gdOld/dt + system.getW().T()*(slvLLFac(LLMOld,hOld+WOld*laOld)+slvLLFac(system.getLLM(),system.geth()))*0.5; // TODO: normally we have not gdOld here
+
+        // solve the constraint equation system
+        if (system.getla().size() not_eq 0)
+          iter = system.solveConstraintsIndex2LinearEquations(dt);
+        //iter = system.solveImpacts(dt);
+
+        if(iter>maxIter)
+          maxIter = iter;
+        sumIter += iter;
       } 
       else {
       /* CALCULATE IMPULSIVE FORCES ON VELOCITY LEVEL */
@@ -189,9 +195,8 @@ namespace MBSimIntegrator {
       }
 
       /* CALCULATE OUTPUT STAGE */
-      u = uOld + slvLLFac(LLMOld,hOld)*dt*0.5 + slvLLFac(system.getLLM(),system.geth())*dt*0.5;
+      u = uOld + slvLLFac(LLMOld,hOld+WOld*laOld)*dt*0.5 + slvLLFac(system.getLLM(),system.geth()+system.getW()*system.getla())*dt*0.5;
       /*****************************************/
-
 
       //x += system.deltax(z,t,dt);
     }

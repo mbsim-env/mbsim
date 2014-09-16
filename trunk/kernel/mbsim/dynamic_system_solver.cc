@@ -979,7 +979,7 @@ namespace MBSim {
 
   int DynamicSystemSolver::solveConstraintsIndex2LinearEquations(double dt) {
     assert(dt > 0);
-    la = slvLS(G, -(gd/dt + W[0].T() * slvLLFac(LLM[0], h[0])));
+    la = slvLS(G, -b);
     return 1;
   }
 
