@@ -5,31 +5,17 @@ using namespace MBSim;
 using namespace MBSimIntegrator;
 using namespace std;
 
-bool rigidJoints;
-
 int main (int argc, char* argv[]) {
-
-  char dummy[10000];
-  double tEnd, dtPlot;
-
-  // Beginn input
-  ifstream is("input.asc");
-  is >> rigidJoints;
-  is.getline(dummy,10000);
-  is >> tEnd;
-  is.getline(dummy,10000);
-  is >> dtPlot;
-  is.getline(dummy,10000);
-  is.close();
 
   System *sys = new System("MBS");
 
   sys->initialize();
 
-  DOPRI5Integrator integrator;
+  HETS2Integrator integrator;
 
-  integrator.setEndTime(tEnd);
-  integrator.setPlotStepSize(dtPlot);
+  integrator.setStepSize(1e-3);
+  integrator.setEndTime(10.1);
+  integrator.setPlotStepSize(1e-2);
 
   integrator.integrate(*sys);
 

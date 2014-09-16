@@ -14,8 +14,6 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-extern bool rigidJoints;
-
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
@@ -101,14 +99,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint2->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint2->connect(box1->getFrame("PunktU"),box2->getFrame("Punkt"));
 
-  if(rigidJoints) {
-    joint1->setForceLaw(new BilateralConstraint);
-    joint2->setForceLaw(new BilateralConstraint);
-  } 
-  else {
-    joint1->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));
-    joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));
-  }
+  joint1->setForceLaw(new BilateralConstraint);
+  joint2->setForceLaw(new BilateralConstraint);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;

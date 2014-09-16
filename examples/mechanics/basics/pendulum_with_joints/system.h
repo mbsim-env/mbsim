@@ -1,5 +1,5 @@
-#ifndef _WERKZEUGMASCHINE_H
-#define _WERKZEUGMASCHINE_H
+#ifndef _PENDULUM_WITH_JOINTS_H
+#define _PENDULUM_WITH_JOINTS_H
 
 #include "mbsim/dynamic_system_solver.h"
 #include <string>
@@ -9,5 +9,5 @@ class System : public MBSim::DynamicSystemSolver {
     System(const std::string &projectName); 
 };
 
-#endif
+#endif /* _PENDULUM_WITH_JOINTS_H */
 
