@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -42,6 +42,7 @@ namespace MBSim {
    * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-08-21 one force direction (Thorsten Schindler)
+   * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    * \todo hSize Frame C
    */
   class Joint : public LinkMechanics {
@@ -87,11 +88,11 @@ namespace MBSim {
         return false;
       }
       virtual void solveImpactsFixpointSingle(double dt);
-      virtual void solveConstraintsFixpointSingle();
+      virtual void solveConstraintsIndex1FixpointSingle();
       virtual void solveImpactsGaussSeidel(double dt);
-      virtual void solveConstraintsGaussSeidel();
+      virtual void solveConstraintsIndex1GaussSeidel();
       virtual void solveImpactsRootFinding(double dt);
-      virtual void solveConstraintsRootFinding();
+      virtual void solveConstraintsIndex1RootFinding();
       virtual void jacobianConstraints();
       virtual void jacobianImpacts();
       virtual void updaterFactors();

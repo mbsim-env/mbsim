@@ -52,7 +52,7 @@ namespace MBSim {
    * \date 2012-05-08 OpenMP completely removed; will be inserted again soon (Jan Clauberg)
    * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
    * \date 2013-06-23 removed extra dynamics (Martin Foerg)
-   *
+   * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    */
   class DynamicSystem : public Element {
     public:
@@ -156,7 +156,7 @@ namespace MBSim {
       /**
        * \brief solve contact equations with single step fixed point scheme on acceleration level 
        */
-      virtual int solveConstraintsFixpointSingle();
+      virtual int solveConstraintsIndex1FixpointSingle();
 
       /**
        * \brief solve contact equations with single step fixed point scheme on velocity level 
@@ -166,7 +166,7 @@ namespace MBSim {
       /**
        * \brief solve contact equations with Gauss-Seidel scheme on acceleration level 
        */
-      virtual int solveConstraintsGaussSeidel();
+      virtual int solveConstraintsIndex1GaussSeidel();
 
       /**
        * \brief solve contact equations with Gauss-Seidel scheme on velocity level 
@@ -176,7 +176,7 @@ namespace MBSim {
       /**
        * \brief solve contact equations with Newton scheme on acceleration level 
        */
-      virtual int solveConstraintsRootFinding();
+      virtual int solveConstraintsIndex1RootFinding();
 
       /**
        * \brief solve contact equations with Newton scheme on velocity level 

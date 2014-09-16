@@ -41,6 +41,7 @@ namespace MBSim {
    * \date 2010-07-06 modifications for timestepper ssc - e.g LinkStatus (Robert Huber)
    * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
    * \date 2012-05-08 dhdq and dhdu with lower and upper bound (Jan Clauberg)
+   * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    *
    * \todo projectGeneralizedPositions seems to be buggy with at least TimeSteppingIntegrator (see SliderCrank)
    * \todo RootFinding seems to be buggy (see EdgeMill)
@@ -134,11 +135,11 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual int solveConstraintsFixpointSingle();
+      virtual int solveConstraintsIndex1FixpointSingle();
       virtual int solveImpactsFixpointSingle(double dt = 0);
-      virtual int solveConstraintsGaussSeidel();
+      virtual int solveConstraintsIndex1GaussSeidel();
       virtual int solveImpactsGaussSeidel(double dt = 0);
-      virtual int solveConstraintsRootFinding();
+      virtual int solveConstraintsIndex1RootFinding();
       virtual int solveImpactsRootFinding(double dt = 0);
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double dt = 0);
@@ -283,7 +284,7 @@ namespace MBSim {
        * \return successful solution of contact equations with Cholesky decomposition on acceleration level
        * \todo put in dynamic system? TODO
        */
-      int solveConstraintsLinearEquations();
+      int solveConstraintsIndex1LinearEquations();
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on velocity level
