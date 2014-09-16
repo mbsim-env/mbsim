@@ -97,11 +97,11 @@ namespace MBSim {
       virtual bool isActive() const;
       virtual bool gActiveChanged();
       virtual void solveImpactsFixpointSingle(double dt);
-      virtual void solveConstraintsIndex1FixpointSingle();
+      virtual void solveConstraintsIndex1FixpointSingle(double dt);
       virtual void solveImpactsGaussSeidel(double dt);
-      virtual void solveConstraintsIndex1GaussSeidel();
+      virtual void solveConstraintsIndex1GaussSeidel(double dt);
       virtual void solveImpactsRootFinding(double dt);
-      virtual void solveConstraintsIndex1RootFinding();
+      virtual void solveConstraintsIndex1RootFinding(double dt);
       virtual void jacobianConstraints();
       virtual void jacobianImpacts();
       virtual void updaterFactors();

@@ -251,34 +251,40 @@ namespace MBSim {
       virtual bool gActiveChanged() = 0;
 
       /**
-       * solve contact equations of motion with single step fixed point scheme on velocity level
+       * solve impact equations of motion with single step fixed point scheme on velocity level
+       * \param time step-size
        */
       virtual void solveImpactsFixpointSingle(double dt) { THROW_MBSIMERROR("(Link::solveImpactsFixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with single step fixed point scheme on acceleration level
+       * \param time step-size
        */
-      virtual void solveConstraintsIndex1FixpointSingle() { THROW_MBSIMERROR("(Link::solveConstraintsIndex1FixpointSingle): Not implemented."); }
+      virtual void solveConstraintsIndex1FixpointSingle(double dt) { THROW_MBSIMERROR("(Link::solveConstraintsIndex1FixpointSingle): Not implemented."); }
 
       /**
-       * solve contact equations of motion with Gauss-Seidel scheme on velocity level
+       * solve impact equations of motion with Gauss-Seidel scheme on velocity level
+       * \param time step-size
        */
       virtual void solveImpactsGaussSeidel(double dt) { THROW_MBSIMERROR("(Link::solveImpactsGaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on acceleration level
+       * \param time step-size
        */
-      virtual void solveConstraintsIndex1GaussSeidel() { THROW_MBSIMERROR("(Link::solveConstraintsIndex1GaussSeidel): Not implemented."); }
+      virtual void solveConstraintsIndex1GaussSeidel(double dt) { THROW_MBSIMERROR("(Link::solveConstraintsIndex1GaussSeidel): Not implemented."); }
 
       /**
-       * solve contact equations of motion with Newton scheme on velocity level
+       * solve impact equations of motion with Newton scheme on velocity level
+       * \param time step-size
        */
       virtual void solveImpactsRootFinding(double dt) { THROW_MBSIMERROR("(Link::solveImpactsRootFinding): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme on acceleration level
+       * \param time step-size
        */
-      virtual void solveConstraintsIndex1RootFinding() { THROW_MBSIMERROR("(Link::solveConstraintsIndex1RootFinding): Not implemented."); }
+      virtual void solveConstraintsIndex1RootFinding(double dt) { THROW_MBSIMERROR("(Link::solveConstraintsIndex1RootFinding): Not implemented."); }
 
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on acceleration level

@@ -416,7 +416,7 @@ namespace MBSim {
       Group::init(stage);
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1FixpointSingle() {
+  int DynamicSystemSolver::solveConstraintsIndex1FixpointSingle(double dt) {
     updaterFactors();
 
     checkConstraintsForTermination();
@@ -436,7 +436,7 @@ namespace MBSim {
           msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
-      Group::solveConstraintsIndex1FixpointSingle();
+      Group::solveConstraintsIndex1FixpointSingle(dt);
 
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
@@ -480,7 +480,7 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1GaussSeidel() {
+  int DynamicSystemSolver::solveConstraintsIndex1GaussSeidel(double dt) {
     checkConstraintsForTermination();
     if (term)
       return 0;
@@ -489,7 +489,7 @@ namespace MBSim {
     int checkTermLevel = 0;
 
     for (iter = 1; iter <= maxIter; iter++) {
-      Group::solveConstraintsIndex1GaussSeidel();
+      Group::solveConstraintsIndex1GaussSeidel(dt);
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
         checkConstraintsForTermination();
@@ -520,14 +520,14 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1RootFinding() {
+  int DynamicSystemSolver::solveConstraintsIndex1RootFinding(double dt) {
     updaterFactors();
 
     int iter;
     int checkTermLevel = 0;
 
     updateresRef(resParent(0, laSize - 1));
-    Group::solveConstraintsIndex1RootFinding();
+    Group::solveConstraintsIndex1RootFinding(dt);
 
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
@@ -552,7 +552,7 @@ namespace MBSim {
           while (fabs(xj + dx - la(j)) < epsroot());
 
           la(j) += dx;
-          Group::solveConstraintsIndex1RootFinding();
+          Group::solveConstraintsIndex1RootFinding(dt);
           la(j) = xj;
           Jprox.col(j) = (res - res0) / dx;
         }
@@ -576,7 +576,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
         la = La_old - alpha * dx;
-        Group::solveConstraintsIndex1RootFinding();
+        Group::solveConstraintsIndex1RootFinding(dt);
         nrmf = nrm2(res);
         if (nrmf < nrmf0)
           break;
@@ -847,7 +847,7 @@ namespace MBSim {
     }
   }
 
-  int DynamicSystemSolver::solveConstraints() {
+  int DynamicSystemSolver::solveConstraints(double dt) {
     if (la.size() == 0)
       return 0;
 
@@ -859,7 +859,7 @@ namespace MBSim {
     int iter;
     Vec laOld;
     laOld << la;
-    iter = (this->*solveConstraints_)(); // solver election
+    iter = (this->*solveConstraints_)(dt); // solver election
     if (iter >= maxIter) {
       msg(Warn) << "\n";
       msg(Warn) << "Iterations: " << iter << "\n";
@@ -972,8 +972,14 @@ namespace MBSim {
       Group::initz();
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1LinearEquations() {
+  int DynamicSystemSolver::solveConstraintsIndex1LinearEquations(double dt) {
     la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
+    return 1;
+  }
+
+  int DynamicSystemSolver::solveConstraintsIndex2LinearEquations(double dt) {
+    assert(dt > 0);
+    la = slvLS(G, -(gd/dt + W[0].T() * slvLLFac(LLM[0], h[0])));
     return 1;
   }
 
