@@ -786,7 +786,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsIndex1FixpointSingle(double dt) {
+  void SingleContact::solveConstraintsFixpointSingle() {
     if (gdActive[0]) {
 
       const double *a = ds->getGs()();
@@ -853,7 +853,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsIndex1GaussSeidel(double dt) {
+  void SingleContact::solveConstraintsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     if (gdActive[0]) {
@@ -923,7 +923,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsIndex1RootFinding(double dt) {
+  void SingleContact::solveConstraintsRootFinding() {
     if (gdActive[0]) {
 
       const double *a = ds->getGs()();

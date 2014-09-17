@@ -257,10 +257,9 @@ namespace MBSim {
       virtual void solveImpactsFixpointSingle(double dt) { THROW_MBSIMERROR("(Link::solveImpactsFixpointSingle): Not implemented."); }
 
       /**
-       * solve contact equations of motion with single step fixed point scheme on acceleration level
-       * \param time step-size
+       * solve contact equations of motion with single step fixed point scheme
        */
-      virtual void solveConstraintsIndex1FixpointSingle(double dt) { THROW_MBSIMERROR("(Link::solveConstraintsIndex1FixpointSingle): Not implemented."); }
+      virtual void solveConstraintsFixpointSingle() { THROW_MBSIMERROR("(Link::solveConstraintsFixpointSingle): Not implemented."); }
 
       /**
        * solve impact equations of motion with Gauss-Seidel scheme on velocity level
@@ -269,10 +268,9 @@ namespace MBSim {
       virtual void solveImpactsGaussSeidel(double dt) { THROW_MBSIMERROR("(Link::solveImpactsGaussSeidel): Not implemented."); }
 
       /**
-       * solve contact equations of motion with Gauss-Seidel scheme on acceleration level
-       * \param time step-size
+       * solve contact equations of motion with Gauss-Seidel scheme
        */
-      virtual void solveConstraintsIndex1GaussSeidel(double dt) { THROW_MBSIMERROR("(Link::solveConstraintsIndex1GaussSeidel): Not implemented."); }
+      virtual void solveConstraintsGaussSeidel() { THROW_MBSIMERROR("(Link::solveConstraintsGaussSeidel): Not implemented."); }
 
       /**
        * solve impact equations of motion with Newton scheme on velocity level
@@ -281,13 +279,12 @@ namespace MBSim {
       virtual void solveImpactsRootFinding(double dt) { THROW_MBSIMERROR("(Link::solveImpactsRootFinding): Not implemented."); }
 
       /**
-       * solve contact equations of motion with Newton scheme on acceleration level
-       * \param time step-size
+       * solve contact equations of motion with Newton scheme
        */
-      virtual void solveConstraintsIndex1RootFinding(double dt) { THROW_MBSIMERROR("(Link::solveConstraintsIndex1RootFinding): Not implemented."); }
+      virtual void solveConstraintsRootFinding() { THROW_MBSIMERROR("(Link::solveConstraintsRootFinding): Not implemented."); }
 
       /**
-       * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on acceleration level
+       * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations
        */
       virtual void jacobianConstraints() { THROW_MBSIMERROR("(Link::jacobianConstraints): Not implemented."); }
 
@@ -297,7 +294,7 @@ namespace MBSim {
       virtual void jacobianImpacts() { THROW_MBSIMERROR("(Link::jacobianImpacts): Not implemented."); }
 
       /**
-       * \brief updates rfactor relaxation for contact equations
+       * \brief update relaxation factors for contact equations
        */
       virtual void updaterFactors() { THROW_MBSIMERROR("(Link::updaterFactors): Not implemented."); }
 
@@ -307,7 +304,7 @@ namespace MBSim {
       virtual void checkImpactsForTermination(double dt) { THROW_MBSIMERROR("(Link::checkImpactsForTermination): Not implemented."); }
       
       /**
-       * \brief verify underlying force laws on acceleration level concerning given tolerances
+       * \brief verify underlying force laws concerning given tolerances
        */
       virtual void checkConstraintsForTermination() { THROW_MBSIMERROR("(Link::checkConstraintsForTermination): Not implemented."); }
 

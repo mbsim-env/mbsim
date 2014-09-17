@@ -52,15 +52,18 @@ namespace MBSimIntegrator {
   integPlot() {}
 
   void HETS2Integrator::preIntegrate(DynamicSystemSolver& system) {
+    
+    // set the time
     assert(dtPlot >= dt);
-
     t = tStart;
 
-    int nq = system.getqSize(); // size of positions, velocities, state
+    // size of positions, velocities, state
+    int nq = system.getqSize();
     int nu = system.getuSize();
     int nx = system.getxSize();
     int n = nq + nu + nx;
 
+    // referencing the dynamic system
     Index Iq(0,nq-1);
     Index Iu(nq,nq+nu-1);
     Index Ix(nq+nu,n-1);
@@ -69,33 +72,28 @@ namespace MBSimIntegrator {
     u>>z(Iu);
     x>>z(Ix);
 
-    if(z0.size()) z = z0; // define initial state
+    // define initial state
+    if(z0.size()) z = z0;
     else system.initz(z);
 
+    // prepare plotting
     integPlot.open((name + ".plt").c_str());
+    integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
     cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
+    // start timing
     s0 = clock();
   }
 
   void HETS2Integrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+    
     while(t<tStop) { // time loop
 
+      // increase integration step counter
       integrationSteps++;
-
-      if((step*stepPlot - integrationSteps) < 0) {
-        step++;
-        system.plot2(z,t,dt);
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
-        integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-        tPlot += dtPlot;
-      }
 
       /* LEFT INTERVAL END EVALUATIONS = ZERO STAGE EVALUATIONS */
       // update until the Jacobian matrices, especially also the active set
@@ -121,6 +119,18 @@ namespace MBSimIntegrator {
       SymMat LLMStage0 = system.getLLM().copy();
       Vec hStage0 = system.geth().copy();
       Mat VStage0 = system.getV().copy();
+
+      // plot
+      if((step*stepPlot - integrationSteps) < 0) {
+        step++;
+        system.plot(t,dt);
+        double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot << t << " " << dt << " " <<  iter << " " << time << " "<< system.getlaSize() << endl;
+        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        tPlot += dtPlot;
+      }
       /*****************************************/
 
       /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND FIRST STAGE */
@@ -136,15 +146,13 @@ namespace MBSimIntegrator {
 
       // update mass action matrix of constraint equation system
       system.updateG(t); // G=WStage1^T*MStage0^{-1}*VStage0
-      system.getG() *= dt;
 
       // update right hand side of constraint equation system
-      system.getb() << system.getgd() + system.getW().T()*slvLLFac(LLMStage0,hStage0)*dt;
+      system.getb() << system.getgd()/dt + system.getW().T()*slvLLFac(LLMStage0,hStage0);
 
       // solve the constraint equation system
       if (system.getla().size() not_eq 0) {
-        iter = system.solveConstraintsIndex2LinearEquations(dt);
-        //iter = system.solveImpacts(dt);
+        iter = system.solveConstraints();
       }
 
       if(iter>maxIter) {
@@ -189,15 +197,13 @@ namespace MBSimIntegrator {
 
       // update mass action matrix of constraint equation system
       system.updateG(t);
-      system.getG() *= dt;
 
       // update right hand side of constraint equation system
-      system.getb() << gdStage0CurrentProjection + system.getW().T()*(slvLLFac(LLMStage0,hStage0+VStage0*laStage0)+slvLLFac(system.getLLM(),system.geth()))*0.5*dt;
+      system.getb() << gdStage0CurrentProjection/dt + system.getW().T()*(slvLLFac(LLMStage0,hStage0+VStage0*laStage0)+slvLLFac(system.getLLM(),system.geth()))*0.5;
 
       // solve the constraint equation system
       if (system.getla().size() not_eq 0) {
-        iter = system.solveConstraintsIndex2LinearEquations(dt);
-        //iter = system.solveImpacts(dt);
+        iter = system.solveConstraints();
       }
 
       if(iter>maxIter) {
@@ -205,6 +211,7 @@ namespace MBSimIntegrator {
       }
       sumIter += iter;
 
+      // output stage velocity update
       u = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.getLLM(),system.geth()+system.getW()*system.getla()))*dt*0.5;
       /*****************************************/
 
@@ -261,9 +268,7 @@ namespace MBSimIntegrator {
       system.updateVRef(system.getVParent(0)(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
       system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
       system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));
-      //if (impactSolver == RootFinding)
-      //  updateresRef(resParent(0, laSize - 1));
-      //updaterFactorRef(rFactorParent(0, rFactorSize - 1));
+      system.updaterFactorRef(system.getrFactorParent()(0, system.getrFactorSize() - 1));
     }
 
     // update gap velocities

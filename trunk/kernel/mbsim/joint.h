@@ -88,11 +88,11 @@ namespace MBSim {
         return false;
       }
       virtual void solveImpactsFixpointSingle(double dt);
-      virtual void solveConstraintsIndex1FixpointSingle(double dt);
+      virtual void solveConstraintsFixpointSingle();
       virtual void solveImpactsGaussSeidel(double dt);
-      virtual void solveConstraintsIndex1GaussSeidel(double dt);
+      virtual void solveConstraintsGaussSeidel();
       virtual void solveImpactsRootFinding(double dt);
-      virtual void solveConstraintsIndex1RootFinding(double dt);
+      virtual void solveConstraintsRootFinding();
       virtual void jacobianConstraints();
       virtual void jacobianImpacts();
       virtual void updaterFactors();
