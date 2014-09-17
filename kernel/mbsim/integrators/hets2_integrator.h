@@ -28,6 +28,7 @@ namespace MBSimIntegrator {
    * \brief time integration scheme on velocity level for nonsmooth dynamical systems using half-explicit trapezoidal rule
    * \author Thorsten Schindler
    * \date 2014-09-12 initial commit (Thorsten Schindler)
+   * \date 2014-09-17 notation of Brasey1994a (Thorsten Schindler)
    *
    * time discontinuous Galerkin method on velocity level using half-explicit trapezoidal rule
    *
