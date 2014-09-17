@@ -208,13 +208,13 @@ namespace MBSim {
       if (getPlotFeature(plotRecursive) == enabled) {
         if (getPlotFeature(generalizedLinkForce) == enabled) {
           for (int j = 0; j < la.size(); ++j)
-            plotColumns.push_back("la(" + numtostr(j) + ")");
+            plotColumns.push_back("la_joint(" + numtostr(j) + ")");
         }
         if (getPlotFeature(linkKinematics) == enabled) {
           for (int j = 0; j < g.size(); ++j)
-            plotColumns.push_back("g(" + numtostr(j) + ")");
+            plotColumns.push_back("g_joint(" + numtostr(j) + ")");
           for (int j = 0; j < gd.size(); ++j)
-            plotColumns.push_back("gd(" + numtostr(j) + ")");
+            plotColumns.push_back("gd_joint(" + numtostr(j) + ")");
         }
         LinkMechanics::init(stage);
       }
@@ -289,7 +289,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsIndex1FixpointSingle(double dt) {
+  void Joint::solveConstraintsFixpointSingle() {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -337,7 +337,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsIndex1GaussSeidel(double dt) {
+  void Joint::solveConstraintsGaussSeidel() {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -385,7 +385,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsIndex1RootFinding(double dt) {
+  void Joint::solveConstraintsRootFinding() {
 
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
@@ -578,7 +578,7 @@ namespace MBSim {
 #endif
       if (getPlotFeature(generalizedLinkForce) == enabled) {
         for (int j = 0; j < la.size(); j++)
-          plotVector.push_back(la(j) / (isSetValued() ? dt : 1.));
+          plotVector.push_back(la(j) / (isSetValued() ? dt : 1.)); // TODO (TS, 2014-09-17) why is there dt in the denominator? does this contradict the link implementation?
       }
       if (getPlotFeature(linkKinematics) == enabled) {
         for (int j = 0; j < g.size(); j++)

@@ -154,11 +154,10 @@ namespace MBSim {
       virtual void facLLM(int i=0) = 0;
 
       /**
-       * \brief solve contact equations with single step fixed point scheme on acceleration level 
-       * \param time step-size
+       * \brief solve contact equations with single step fixed point scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsIndex1FixpointSingle(double dt);
+      virtual int solveConstraintsFixpointSingle();
 
       /**
        * \brief solve impact equations with single step fixed point scheme on velocity level 
@@ -168,11 +167,10 @@ namespace MBSim {
       virtual int solveImpactsFixpointSingle(double dt);
 
       /**
-       * \brief solve contact equations with Gauss-Seidel scheme on acceleration level 
-       * \param time step-size
+       * \brief solve contact equations with Gauss-Seidel scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsIndex1GaussSeidel(double dt);
+      virtual int solveConstraintsGaussSeidel();
 
       /**
        * \brief solve impact equations with Gauss-Seidel scheme on velocity level 
@@ -182,11 +180,10 @@ namespace MBSim {
       virtual int solveImpactsGaussSeidel(double dt);
 
       /**
-       * \brief solve contact equations with Newton scheme on acceleration level 
-       * \param time step-size
+       * \brief solve contact equations with Newton scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsIndex1RootFinding(double dt);
+      virtual int solveConstraintsRootFinding();
 
       /**
        * \brief solve impact equations with Newton scheme on velocity level 
@@ -196,7 +193,7 @@ namespace MBSim {
       virtual int solveImpactsRootFinding(double dt);
 
       /**
-       * \brief compute JACOBIAN of contact equations on acceleration level 
+       * \brief compute JACOBIAN of contact equations
        */
       virtual int jacobianConstraints();
 
@@ -206,7 +203,7 @@ namespace MBSim {
       virtual int jacobianImpacts();
 
       /**
-       * \brief validate force laws concerning given tolerances on acceleration level
+       * \brief validate force laws concerning given tolerances
        */
       virtual void checkConstraintsForTermination();
 

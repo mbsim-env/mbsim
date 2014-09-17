@@ -54,12 +54,22 @@ namespace MBSim {
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
-       * \param relative distance
+       * \brief decides, if force law is active
+       * \param gap distance
        * \param tolerance
        * \return flag, if force law is active
        */
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
+
+      /**
+       * \brief prox function evaluation
+       * \param kinetic variable
+       * \param kinematic variable
+       * \param relaxation factor
+       * \param minimal threshold for kinetic variable
+       * \return result of prox function evaluation
+       */
       virtual double project(double la, double gdn, double r, double laMin=0) { return 0; }
       virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) { return fmatvec::Vec(2, fmatvec::INIT, 0); }
       virtual double solve(double G, double gdn) { return 0; }

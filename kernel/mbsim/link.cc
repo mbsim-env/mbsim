@@ -46,15 +46,15 @@ namespace MBSim {
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
+      if(getPlotFeature(generalizedLinkForce)==enabled) {
+        for(int i=0; i<la.size(); ++i)
+          plotVector.push_back(la(i));
+      }
       if(getPlotFeature(linkKinematics)==enabled) {
         for(int i=0; i<g.size(); ++i)
           plotVector.push_back(g(i));
         for(int i=0; i<gd.size(); ++i)
           plotVector.push_back(gd(i));
-      }
-      if(getPlotFeature(generalizedLinkForce)==enabled) {
-        for(int i=0; i<la.size(); ++i)
-          plotVector.push_back(la(i));
       }
       if(getPlotFeature(stopVector)==enabled)
         for(int i=0; i<sv.size(); ++i)
@@ -145,15 +145,15 @@ namespace MBSim {
         if(getPlotFeature(stateDerivative)==enabled)
           for(int i=0; i<xSize; ++i)
             plotColumns.push_back("xd("+numtostr(i)+")");
-        if(getPlotFeature(linkKinematics)==enabled) {
-          for(int i=0; i<g.size(); ++i)
-            plotColumns.push_back("g("+numtostr(i)+")");
-          for(int i=0; i<gd.size(); ++i)
-            plotColumns.push_back("gd("+numtostr(i)+")");
-        }
         if(getPlotFeature(generalizedLinkForce)==enabled) {
           for(int i=0; i<la.size(); ++i)
-            plotColumns.push_back("la("+numtostr(i)+")");
+            plotColumns.push_back("la_link("+numtostr(i)+")");
+        }
+        if(getPlotFeature(linkKinematics)==enabled) {
+          for(int i=0; i<g.size(); ++i)
+            plotColumns.push_back("g_link("+numtostr(i)+")");
+          for(int i=0; i<gd.size(); ++i)
+            plotColumns.push_back("gd_link("+numtostr(i)+")");
         }
         if(getPlotFeature(stopVector)==enabled)
           for(int i=0; i<svSize; ++i)

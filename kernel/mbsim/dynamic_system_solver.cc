@@ -354,16 +354,16 @@ namespace MBSim {
       // contact solver specific settings
       msg(Info) << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
       if (contactSolver == GaussSeidel)
-        solveConstraints_ = &DynamicSystemSolver::solveConstraintsIndex1GaussSeidel;
+        solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel;
       else if (contactSolver == LinearEquations) {
-        solveConstraints_ = &DynamicSystemSolver::solveConstraintsIndex1LinearEquations;
+        solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
         msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if (contactSolver == FixedPointSingle)
-        solveConstraints_ = &DynamicSystemSolver::solveConstraintsIndex1FixpointSingle;
+        solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
       else if (contactSolver == RootFinding) {
         msg(Warn) << "RootFinding solver is BUGGY at least if there is friction!" << endl;
-        solveConstraints_ = &DynamicSystemSolver::solveConstraintsIndex1RootFinding;
+        solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
       }
       else
         THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown contact solver");
@@ -416,7 +416,7 @@ namespace MBSim {
       Group::init(stage);
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1FixpointSingle(double dt) {
+  int DynamicSystemSolver::solveConstraintsFixpointSingle() {
     updaterFactors();
 
     checkConstraintsForTermination();
@@ -436,7 +436,7 @@ namespace MBSim {
           msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
-      Group::solveConstraintsIndex1FixpointSingle(dt);
+      Group::solveConstraintsFixpointSingle();
 
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
@@ -480,7 +480,7 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1GaussSeidel(double dt) {
+  int DynamicSystemSolver::solveConstraintsGaussSeidel() {
     checkConstraintsForTermination();
     if (term)
       return 0;
@@ -489,7 +489,7 @@ namespace MBSim {
     int checkTermLevel = 0;
 
     for (iter = 1; iter <= maxIter; iter++) {
-      Group::solveConstraintsIndex1GaussSeidel(dt);
+      Group::solveConstraintsGaussSeidel();
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
         checkConstraintsForTermination();
@@ -520,14 +520,14 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1RootFinding(double dt) {
+  int DynamicSystemSolver::solveConstraintsRootFinding() {
     updaterFactors();
 
     int iter;
     int checkTermLevel = 0;
 
     updateresRef(resParent(0, laSize - 1));
-    Group::solveConstraintsIndex1RootFinding(dt);
+    Group::solveConstraintsRootFinding();
 
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
@@ -552,7 +552,7 @@ namespace MBSim {
           while (fabs(xj + dx - la(j)) < epsroot());
 
           la(j) += dx;
-          Group::solveConstraintsIndex1RootFinding(dt);
+          Group::solveConstraintsRootFinding();
           la(j) = xj;
           Jprox.col(j) = (res - res0) / dx;
         }
@@ -576,7 +576,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
         la = La_old - alpha * dx;
-        Group::solveConstraintsIndex1RootFinding(dt);
+        Group::solveConstraintsRootFinding();
         nrmf = nrm2(res);
         if (nrmf < nrmf0)
           break;
@@ -676,8 +676,9 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (**i).checkConstraintsForTermination();
-      if (term == false)
+      if (term == false) {
         return;
+      }
     }
   }
 
@@ -847,7 +848,7 @@ namespace MBSim {
     }
   }
 
-  int DynamicSystemSolver::solveConstraints(double dt) {
+  int DynamicSystemSolver::solveConstraints() {
     if (la.size() == 0)
       return 0;
 
@@ -859,7 +860,7 @@ namespace MBSim {
     int iter;
     Vec laOld;
     laOld << la;
-    iter = (this->*solveConstraints_)(dt); // solver election
+    iter = (this->*solveConstraints_)(); // solver election
     if (iter >= maxIter) {
       msg(Warn) << "\n";
       msg(Warn) << "Iterations: " << iter << "\n";
@@ -972,14 +973,9 @@ namespace MBSim {
       Group::initz();
   }
 
-  int DynamicSystemSolver::solveConstraintsIndex1LinearEquations(double dt) {
-    la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
-    return 1;
-  }
-
-  int DynamicSystemSolver::solveConstraintsIndex2LinearEquations(double dt) {
-    assert(dt > 0);
+  int DynamicSystemSolver::solveConstraintsLinearEquations() {
     la = slvLS(G, -b);
+    //la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
     return 1;
   }
 
@@ -1370,7 +1366,7 @@ namespace MBSim {
       //     }
       //     rFactor.init(rFac);
 
-      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy not currently not available.");
+      THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy currently not not available.");
     }
     else if (strategy == local)
       Group::updaterFactors();
