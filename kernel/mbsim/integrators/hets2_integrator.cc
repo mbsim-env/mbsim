@@ -22,10 +22,16 @@
 #include "hets2_integrator.h"
 
 #include <time.h>
+#include <boost/iostreams/tee.hpp>
+#include <boost/iostreams/stream.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
+
+namespace bio = boost::iostreams;
+using bio::tee_device;
+using bio::stream;
 
 using namespace fmatvec;
 using namespace MBSim;
@@ -40,6 +46,8 @@ namespace MBSimIntegrator {
   iter(0), 
   step(0), 
   integrationSteps(0), 
+  integrationStepsConstraint(0), 
+  integrationStepsImpact(0), 
   maxIter(0), 
   sumIter(0), 
   s0(0.), 
@@ -75,6 +83,7 @@ namespace MBSimIntegrator {
     // define initial state
     if(z0.size()) z = z0;
     else system.initz(z);
+    system.setUseOldla(false);
 
     // prepare plotting
     integPlot.open((name + ".plt").c_str());
@@ -143,6 +152,10 @@ namespace MBSimIntegrator {
 
       /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND FIRST STAGE */
       if (not impact) {
+
+        // increase integration step counter for constraints
+        integrationStepsConstraint++;
+
         // update matrix of generalized constraint directions
         system.updateW(t);
 
@@ -213,11 +226,18 @@ namespace MBSimIntegrator {
 
         // output stage velocity update
         u += slvLLFac(system.getLLM(),system.getV()*system.getla())*dt*0.5;
+
+        // scaling to impulse level
+        system.getla() *= dt;
       }
       /*****************************************/
 
       /* CALCULATE IMPACTS ON VELOCITY LEVEL AND OUTPUT STAGE */
       else {
+        
+        // increase integration step counter for impacts
+        integrationStepsImpact++;
+
         // first stage velocity update
         u += slvLLFac(LLMStage0,hStage0)*dt;
 
@@ -246,7 +266,7 @@ namespace MBSimIntegrator {
         // output stage velocity update without impact
         u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.getLLM(),system.geth()))*dt*0.5;
 
-        //// update until the Jacobian matrices, especially also the active set
+        // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
 
         // update right hand side of impact equation system
@@ -254,7 +274,6 @@ namespace MBSimIntegrator {
 
         // solve the impact equation system
         if (system.getla().size() not_eq 0) {
-          system.getla() = system.getla().copy()*dt;
           iter = system.solveImpacts();
         }
 
@@ -265,24 +284,31 @@ namespace MBSimIntegrator {
 
         // output stage velocity update
         u += slvLLFac(system.getLLM(),system.getV()*system.getla());
-
-        system.getla() /= dt; 
       }
       /*****************************************/
-
-      //x += system.deltax(z,t,dt);
     }
   }
 
   void HETS2Integrator::postIntegrate(DynamicSystemSolver& system) {
     integPlot.close();
 
+    typedef tee_device<ostream, ofstream> TeeDevice;
+    typedef stream<TeeDevice> TeeStream;
     ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum << "Maximum number of iterations: " << maxIter << endl;
-    integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-    integSum.close();
+    TeeDevice hets2_tee(cout, integSum); 
+    TeeStream hets2_split(hets2_tee);
+    
+    hets2_split << endl << endl << "******************************" << endl;
+    hets2_split << "INTEGRATION SUMMARY: " << endl;
+    hets2_split << "End time: " << tEnd << endl;
+    hets2_split << "Integration time: " << time << endl;
+    hets2_split << "Integration steps: " << integrationSteps << endl;
+    hets2_split << "Fraction of impulsive integration steps: " << double(integrationStepsImpact)/integrationSteps << endl;
+    hets2_split << "Maximum number of iterations: " << maxIter << endl;
+    hets2_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+    hets2_split << "******************************" << endl;
+    hets2_split.flush();
+    hets2_split.close();
 
     cout.unsetf(ios::scientific);
     cout << endl;

@@ -29,6 +29,7 @@ namespace MBSimIntegrator {
    * \author Thorsten Schindler
    * \date 2014-09-12 initial commit (Thorsten Schindler)
    * \date 2014-09-17 notation of Brasey1994a (Thorsten Schindler)
+   * \date 2014-09-18 first final status with contact and impact with the slider-crank mechanism (Thorsten Schindler)
    *
    * time discontinuous Galerkin method on velocity level using half-explicit trapezoidal rule
    *
@@ -96,9 +97,9 @@ namespace MBSimIntegrator {
       double t, tPlot;
 
       /**
-       * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
+       * \brief iteration counter for constraints, plots, integration, non-impulsive integration, impulsive integration, maximum constraints, cummulation constraint
        */
-      int iter, step, integrationSteps, maxIter, sumIter;
+      int iter, step, integrationSteps, integrationStepsConstraint, integrationStepsImpact, maxIter, sumIter;
 
       /**
        * \brief computing time counter
@@ -111,7 +112,7 @@ namespace MBSimIntegrator {
       int stepPlot;
 
       /**
-       * \brief state, position, velocity, order coordinate of dynamical system
+       * \brief state, position, velocity, first order coordinate of dynamical system
        */
       fmatvec::Vec z, q, u, x;
 
