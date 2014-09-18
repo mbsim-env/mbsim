@@ -45,7 +45,7 @@ namespace MBSimIntegrator {
        * \brief constructor
        */
       HETS2Integrator();
-      
+
       /**
        * \brief destructor
        */
@@ -56,13 +56,13 @@ namespace MBSimIntegrator {
        * \param dynamical system to be integrated
        */
       void preIntegrate(MBSim::DynamicSystemSolver& system);
-      
+
       /**
        * \brief does the integration
        * \param dynamical system to be integrated
        */
       void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
-      
+
       /**
        * \brief closes the integration
        * \param dynamical system to be integrated
@@ -77,7 +77,7 @@ namespace MBSimIntegrator {
       /* GETTER / SETTER */
       void setStepSize(double dt_) { dt = dt_; }
       /***************************************************/
-    
+
     private:
       /**
        *  \brief evaluates the dynamical system given the state of the stage until the Jacobian matrices

@@ -234,7 +234,7 @@ namespace MBSimIntegrator {
 
       /* CALCULATE IMPACTS ON VELOCITY LEVEL AND OUTPUT STAGE */
       else {
-        
+
         // increase integration step counter for impacts
         integrationStepsImpact++;
 
@@ -297,11 +297,11 @@ namespace MBSimIntegrator {
     ofstream integSum((name + ".sum").c_str());
     TeeDevice hets2_tee(cout, integSum); 
     TeeStream hets2_split(hets2_tee);
-    
+
     hets2_split << endl << endl << "******************************" << endl;
     hets2_split << "INTEGRATION SUMMARY: " << endl;
-    hets2_split << "End time: " << tEnd << endl;
-    hets2_split << "Integration time: " << time << endl;
+    hets2_split << "End time [s]: " << tEnd << endl;
+    hets2_split << "Integration time [s]: " << time << endl;
     hets2_split << "Integration steps: " << integrationSteps << endl;
     hets2_split << "Fraction of impulsive integration steps: " << double(integrationStepsImpact)/integrationSteps << endl;
     hets2_split << "Maximum number of iterations: " << maxIter << endl;
