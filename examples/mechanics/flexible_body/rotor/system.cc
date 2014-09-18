@@ -1,23 +1,25 @@
 #include "system.h"
+#include "mbsim/environment.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
-#include "mbsim/environment.h"
 #include "mbsim/joint.h"
+#include "mbsim/kinetic_excitation.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #endif
 
 using namespace MBSimFlexibleBody;
-using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
+using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
@@ -33,6 +35,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* Parameter Lager B */
   double StiffnessLagerB = 6e6;
   double DampingLagerB = 10;
+  double AntriebsmomentLagerB = 1e2; // wird nach 0.05s auf 0 gesetzt
 
   // Parameter Gleitlager
   double m_GL = 2.3;              	    // Masse Gleitlager
@@ -40,7 +43,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ThetaGL(0,0) = 0.007;                 // ACHTUNG DUMMYWERT
   ThetaGL(1,1) = 1.e-4;                 // ACHTUNG DUMMYWERT
   ThetaGL(2,2) = 1.e-4;                 // ACHTUNG DUMMYWERT
-  double R_GL = 1.01e-2; 			    // Gleitlagerinnendurchmesser    
+  double R_GL = 1.01e-2; 			          // Gleitlagerinnendurchmesser    
   double mu = 0.01;               	    // Reibkoeffizient
 
   /* Parameter Welle */
@@ -52,7 +55,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double G = 0.81e11;             	    // Schubmodul
 
   /* Parameter Schwungrad  */ 
-  double PosScheibeS = 1.8e-1;   	    // Position Schwungrad auf Welle
+  double PosScheibeS = 1.8e-1;   	      // Position Schwungrad auf Welle
   double mScheibeS = 4.6+0.38;
   SymMat ThetaScheibeS(3,INIT,0.);
   ThetaScheibeS(0,0) = 0.01;
@@ -65,7 +68,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ThetaScheibeGLS(0,0) = 1.e-6;         // ACHTUNG DUMMYWERT
   ThetaScheibeGLS(1,1) = 1.e-6;         // ACHTUNG DUMMYWERT
   ThetaScheibeGLS(2,2) = 1.e-6;         // ACHTUNG DUMMYWERT
-  double R_GLS = 1e-2;       		    // Durchmesser Scheibe Gleitlager
+  double R_GLS = 1e-2;       		        // Durchmesser Scheibe Gleitlager
   double b_GLS = 19.e-3;           	    // Halbe Breite Scheibe Gleitlager
 
   /* Definition MKS */
@@ -193,6 +196,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   blager->connect(this->getFrame("Lager_B_Frame"),welle->getFrame("Ende"));
   this->addLink(blager);
 
+  /* Antrieb am Lager B */
+  KineticExcitation *bantrieb = new KineticExcitation("Lager_B_Antrieb");
+  bantrieb->setMomentFunction(new StepFunction<VecV(double)>(0.05,0.,AntriebsmomentLagerB));
+  bantrieb->setMomentDirection("[0;1;0]");
+  bantrieb->connect(welle->getFrame("Ende"));
+  this->addLink(bantrieb);
+
   /* Verbindung Schwungrad - Welle */
   Joint *VerbScheibeS = new Joint("Verbindung_Schwungrad_Welle");
   VerbScheibeS->setForceDirection(Mat(3,3,EYE));
@@ -202,7 +212,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VerbScheibeS->connect(ScheibeS->getFrame("C"),welle->getFrame("PosScheibeS"));
   this->addLink(VerbScheibeS);
 
-  /* Verbindung Scheibe Gleitlager - Welle */
+  /* Verbindung Scheibe Gleitlagerscheibe - Welle */
   Joint *VerbScheibeGLS = new Joint("Verbindung_ScheibeGLS_Welle");
   VerbScheibeGLS->setForceDirection(Mat(3,3,EYE));
   VerbScheibeGLS->setMomentDirection(Mat(3,3,EYE));
