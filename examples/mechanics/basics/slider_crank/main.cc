@@ -10,26 +10,15 @@ using namespace MBSimIntegrator;
 int main (int argc, char* argv[])
 {
   System *sys = new System("TS");
-
-  sys->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
-  sys->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
-  sys->setStrategy(DynamicSystemSolver::local);
-  sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 
-  TimeSteppingD1MinusLinearIntegrator integrator;
-
-  integrator.setEndTime(0.25);
-  integrator.setStepSize(1e-5);
+  HETS2Integrator integrator;
+  integrator.setEndTime(0.1);
+  integrator.setStepSize(1e-4);
   integrator.setPlotStepSize(1e-4);
 
-  boost::timer timer;
-  timer.restart();
   integrator.integrate(*sys);
-  double calctime = timer.elapsed();
   sys->closePlot();
-
-  cout << "finished after calculation time [s] : " << calctime << endl;
 
   delete sys;
 
