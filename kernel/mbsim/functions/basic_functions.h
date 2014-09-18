@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2014 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -198,17 +198,19 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   class StepFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     private:
-      double stepTime, stepSize;
+      double stepTime, stepSize, stepInit;
     public:
       StepFunction() {}
-      StepFunction(double stepTime_, double stepSize_) : stepTime(stepTime_), stepSize(stepSize_) { }
+      StepFunction(double stepTime_, double stepSize_, double stepInit_=0.) : stepTime(stepTime_), stepSize(stepSize_), stepInit(stepInit_) { }
       Ret operator()(const Arg &x) {
-        return FromDouble<Ret>::cast((ToDouble<Arg>::cast(x)>=stepTime)?stepSize:0);
+        return FromDouble<Ret>::cast((ToDouble<Arg>::cast(x)>=stepTime)?stepSize:stepInit);
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"time");
         stepTime=Element::getDouble(e);
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"size");
+        stepSize=Element::getDouble(e);
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"init");
         stepSize=Element::getDouble(e);
       }
   };
