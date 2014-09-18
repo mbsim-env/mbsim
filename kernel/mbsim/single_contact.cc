@@ -633,6 +633,10 @@ namespace MBSim {
     return changed;
   }
 
+  bool SingleContact::detectImpact() {
+    return gActive0 < gActive ? true : false;
+  }
+
   void SingleContact::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

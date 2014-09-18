@@ -208,13 +208,13 @@ namespace MBSim {
       if (getPlotFeature(plotRecursive) == enabled) {
         if (getPlotFeature(generalizedLinkForce) == enabled) {
           for (int j = 0; j < la.size(); ++j)
-            plotColumns.push_back("la_joint(" + numtostr(j) + ")");
+            plotColumns.push_back("la(" + numtostr(j) + ")");
         }
         if (getPlotFeature(linkKinematics) == enabled) {
           for (int j = 0; j < g.size(); ++j)
-            plotColumns.push_back("g_joint(" + numtostr(j) + ")");
+            plotColumns.push_back("g(" + numtostr(j) + ")");
           for (int j = 0; j < gd.size(); ++j)
-            plotColumns.push_back("gd_joint(" + numtostr(j) + ")");
+            plotColumns.push_back("gd(" + numtostr(j) + ")");
         }
         LinkMechanics::init(stage);
       }

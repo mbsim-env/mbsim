@@ -249,6 +249,11 @@ namespace MBSim {
        * \return has the relative distance vector changed?
        */
       virtual bool gActiveChanged() = 0;
+      
+      /**
+       * \return has an impact occured?
+       */
+      virtual bool detectImpact() { return false; }
 
       /**
        * solve impact equations of motion with single step fixed point scheme on velocity level

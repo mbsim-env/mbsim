@@ -503,6 +503,16 @@ namespace MBSim {
     return changed;
   }
 
+  bool Contact::detectImpact() {
+    bool impact = false;
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        if (jter->detectImpact())
+          impact = true;
+    }
+    return impact;
+  }
+
   void Contact::plot(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
