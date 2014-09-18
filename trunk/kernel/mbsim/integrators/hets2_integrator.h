@@ -81,8 +81,9 @@ namespace MBSimIntegrator {
       /**
        *  \brief evaluates the dynamical system given the state of the stage until the Jacobian matrices
        *  \param dynamical system to be integrated
+       *  return flag for occuring impact
        */
-      void evaluateStage(MBSim::DynamicSystemSolver& system);
+      bool evaluateStage(MBSim::DynamicSystemSolver& system);
 
       /**
        * \brief step size

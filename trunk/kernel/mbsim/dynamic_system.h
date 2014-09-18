@@ -551,6 +551,11 @@ namespace MBSim {
       bool gActiveChangedReg();
       
       /**
+       * \return flag, if an impact occured in the system
+       */
+      bool detectImpact();
+
+      /**
        * \brief calculates size of stop vector
        */
       void calcsvSize();

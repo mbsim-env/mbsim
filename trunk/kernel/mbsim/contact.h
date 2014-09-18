@@ -111,6 +111,7 @@ namespace MBSim {
       virtual void updateLinkStatusReg(double dt);
       virtual bool isActive() const;
       virtual bool gActiveChanged();
+      virtual bool detectImpact();
       virtual void solveImpactsFixpointSingle(double dt);
       virtual void solveConstraintsFixpointSingle();
       virtual void solveImpactsGaussSeidel(double dt);

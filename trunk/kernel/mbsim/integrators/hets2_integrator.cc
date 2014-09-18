@@ -36,7 +36,7 @@ namespace MBSimIntegrator {
 
   HETS2Integrator::HETS2Integrator() : dt(1e-3), 
   t(0.), 
-  tPlot(0.), 
+  tPlot(0.),
   iter(0), 
   step(0), 
   integrationSteps(0), 
@@ -52,7 +52,7 @@ namespace MBSimIntegrator {
   integPlot() {}
 
   void HETS2Integrator::preIntegrate(DynamicSystemSolver& system) {
-    
+
     // set the time
     assert(dtPlot >= dt);
     t = tStart;
@@ -89,7 +89,7 @@ namespace MBSimIntegrator {
   }
 
   void HETS2Integrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    
+
     while(t<tStop) { // time loop
 
       // increase integration step counter
@@ -133,86 +133,141 @@ namespace MBSimIntegrator {
       }
       /*****************************************/
 
-      /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND FIRST STAGE */
-      // first stage position and time update (velocity is unknown and has to be calculated with constraint forces)
+      /* CHECK IMPACTS */
+      // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
       q += system.getT()*u*dt;
       t += dt;
 
       // update until the Jacobian matrices, especially also the active set
-      evaluateStage(system); // TODO: this also updates the active set!
+      bool impact = evaluateStage(system); // TODO: this also updates the active set!
 
-      // update matrix of generalized constraint directions
-      system.updateW(t);
+      /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND FIRST STAGE */
+      if (not impact) {
+        // update matrix of generalized constraint directions
+        system.updateW(t);
 
-      // update mass action matrix of constraint equation system
-      system.updateG(t); // G=WStage1^T*MStage0^{-1}*VStage0
+        // update mass action matrix of constraint equation system
+        system.updateG(t); // G=WStage1^T*MStage0^{-1}*VStage0
 
-      // update right hand side of constraint equation system
-      system.getb() << system.getgd()/dt + system.getW().T()*slvLLFac(LLMStage0,hStage0);
+        // update right hand side of constraint equation system
+        system.getb() << system.getgd()/dt + system.getW().T()*slvLLFac(LLMStage0,hStage0);
 
-      // solve the constraint equation system
-      if (system.getla().size() not_eq 0) {
-        iter = system.solveConstraints();
+        // solve the constraint equation system
+        if (system.getla().size() not_eq 0) {
+          iter = system.solveConstraints();
+        }
+
+        if(iter>maxIter) {
+          maxIter = iter;
+        }
+        sumIter += iter;
+
+        // save values
+        Vec laStage0 = system.getla().copy();
+
+        // first stage velocity update
+        u += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
+        /*****************************************/
+
+        /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND OUTPUT STAGE */
+        // output stage position update
+        q = qStage0 + (system.getT()*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
+
+        // update until the Jacobian matrices, especially also the active set
+        evaluateStage(system);
+
+        // update forces
+        system.updateh(t);
+
+        // update mass matrix and compute LU factorization
+        system.updateM(t);
+        system.facLLM();
+
+        // update matrix of generalized constraint directions
+        system.updateW(t);
+
+        // update matrix of generalized constraint directions with the possibility to project sliding contacts
+        system.updateV(t);
+
+        // update mass action matrix of constraint equation system
+        system.updateG(t);
+
+        // output stage velocity update without constraint force
+        u = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.getLLM(),system.geth()))*dt*0.5;
+
+        // update until the Jacobian matrices, especially also the active set
+        evaluateStage(system);
+
+        // update right hand side of constraint equation system
+        system.getb() << 2.*system.getgd()/dt;
+
+        // solve the constraint equation system
+        if (system.getla().size() not_eq 0) {
+          iter = system.solveConstraints();
+        }
+
+        if(iter>maxIter) {
+          maxIter = iter;
+        }
+        sumIter += iter;
+
+        // output stage velocity update
+        u += slvLLFac(system.getLLM(),system.getV()*system.getla())*dt*0.5;
       }
-
-      if(iter>maxIter) {
-        maxIter = iter;
-      }
-      sumIter += iter;
-
-      // save values
-      Vec laStage0 = system.getla().copy();
-
-      // first stage velocity update
-      u += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
       /*****************************************/
 
-      /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND OUTPUT STAGE */
-      // output stage position update
-      q = qStage0 + (system.getT()*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
+      /* CALCULATE IMPACTS ON VELOCITY LEVEL AND OUTPUT STAGE */
+      else {
+        // first stage velocity update
+        u += slvLLFac(LLMStage0,hStage0)*dt;
 
-      // calculate correctly projected local velocity of left interval end 
-      u = uStage0;
-      evaluateStage(system);
-      Vec gdStage0CurrentProjection = system.getgd().copy();
+        // output stage position update
+        q = qStage0 + (system.getT()*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts 
 
-      // first stage velocity update
-      u += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
+        // update until the Jacobian matrices, especially also the active set
+        evaluateStage(system);
 
-      // update until the Jacobian matrices, especially also the active set
-      evaluateStage(system);
+        // update forces
+        system.updateh(t);
 
-      // update forces
-      system.updateh(t);
+        // update mass matrix and compute LU factorization
+        system.updateM(t);
+        system.facLLM();
 
-      // update mass matrix and compute LU factorization
-      system.updateM(t);
-      system.facLLM();
+        // update matrix of generalized constraint directions
+        system.updateW(t);
 
-      // update matrix of generalized constraint directions
-      system.updateW(t);
+        // update matrix of generalized constraint directions with the possibility to project sliding contacts
+        system.updateV(t);
 
-      // update matrix of generalized constraint directions with the possibility to project sliding contacts
-      system.updateV(t);
+        // update mass action matrix of constraint equation system
+        system.updateG(t);
 
-      // update mass action matrix of constraint equation system
-      system.updateG(t);
+        // output stage velocity update without impact
+        u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.getLLM(),system.geth()))*dt*0.5;
 
-      // update right hand side of constraint equation system
-      system.getb() << gdStage0CurrentProjection/dt + system.getW().T()*(slvLLFac(LLMStage0,hStage0+VStage0*laStage0)+slvLLFac(system.getLLM(),system.geth()))*0.5;
+        //// update until the Jacobian matrices, especially also the active set
+        evaluateStage(system);
 
-      // solve the constraint equation system
-      if (system.getla().size() not_eq 0) {
-        iter = system.solveConstraints();
+        // update right hand side of impact equation system
+        system.getb() << system.getgd();
+
+        // solve the impact equation system
+        if (system.getla().size() not_eq 0) {
+          system.getla() = system.getla().copy()*dt;
+          iter = system.solveImpacts();
+        }
+
+        if(iter>maxIter) {
+          maxIter = iter;
+        }
+        sumIter += iter;
+
+        // output stage velocity update
+        u += slvLLFac(system.getLLM(),system.getV()*system.getla());
+
+        system.getla() /= dt; 
       }
-
-      if(iter>maxIter) {
-        maxIter = iter;
-      }
-      sumIter += iter;
-
-      // output stage velocity update
-      u = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.getLLM(),system.geth()+system.getW()*system.getla()))*dt*0.5;
       /*****************************************/
 
       //x += system.deltax(z,t,dt);
@@ -247,7 +302,7 @@ namespace MBSimIntegrator {
     setStepSize(Element::getDouble(e));
   }
 
-  void HETS2Integrator::evaluateStage(DynamicSystemSolver& system) {
+  bool HETS2Integrator::evaluateStage(DynamicSystemSolver& system) {
     if (system.getq()() != z())
       system.updatezRef(z);
 
@@ -257,6 +312,8 @@ namespace MBSimIntegrator {
     // update gaps and observe their activity
     system.updateg(t);
     system.checkActive(1);
+
+    bool impact = system.detectImpact();
 
     // adapt size of constraint system on velocity level
     if (system.gActiveChanged()) {
@@ -278,7 +335,9 @@ namespace MBSimIntegrator {
     system.updateT(t);
 
     // update Jacobians for projection of Cartesian contact couplings in the direction of generalized velocities
-    system.updateJacobians(t);  
+    system.updateJacobians(t);
+
+    return impact; 
   }
 
 }

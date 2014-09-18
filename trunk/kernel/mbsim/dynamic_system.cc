@@ -1133,6 +1133,20 @@ namespace MBSim {
     return changed;
   }
 
+  bool DynamicSystem::detectImpact() {
+    bool impact = false;
+
+    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      if ((*i)->detectImpact())
+        impact = true;
+
+    for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      if ((*i)->detectImpact())
+        impact = true;
+
+    return impact;
+  }
+
   void DynamicSystem::calcxSize() {
     xSize = 0;
 
