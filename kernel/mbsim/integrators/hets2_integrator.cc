@@ -84,6 +84,8 @@ namespace MBSimIntegrator {
     if(z0.size()) z = z0;
     else system.initz(z);
     system.setUseOldla(false);
+    system.setlaTol(1e-8);
+    system.setgddTol(1e-8);
 
     // prepare plotting
     integPlot.open((name + ".plt").c_str());
