@@ -104,6 +104,10 @@ namespace MBSim {
         return criteriaResults;
       }
 
+      void setTolerance(double tol) {
+        tolerance = tol;
+      }
+
     protected:
       /*INHERITED INTERFACE*/
       virtual double computeResults(const fmatvec::Vec & x) = 0;

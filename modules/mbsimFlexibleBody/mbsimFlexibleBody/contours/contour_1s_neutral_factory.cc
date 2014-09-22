@@ -15,16 +15,10 @@ namespace MBSimFlexibleBody {
 
   Contour1sNeutralFactory::Contour1sNeutralFactory(const std::string &name) :
       MBSim::Contour1s(name), uMin(0.), uMax(1.), degU(3), openStructure(false)
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//          , openMBVSpineExtrusion(0)
-//#endif
   {
   }
 
   Contour1sNeutralFactory::~Contour1sNeutralFactory() {
-    /* TODO: delete of spine-extrusion not possible!
-     if(openMBVSpineExtrusion)
-     delete openMBVSpineExtrusion;*/
   }
 
 

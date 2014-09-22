@@ -783,6 +783,9 @@ namespace MBSim {
       void setLCPSolvingStrategy(LinearComplementarityProblem::LCPSolvingStrategy strategy) {
         LCP.setStrategy(strategy);
       }
+      void setLCPJacobianType(LinearComplementarityProblem::JacobianType type) {
+        LCP.setJacobianType(type);
+      }
       /*****************/
 
       /**

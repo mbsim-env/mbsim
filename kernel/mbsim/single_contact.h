@@ -202,7 +202,7 @@ namespace MBSim {
        * \param t time of the integration
        * \param j position in h-vector (0 or 1)
        */
-      void applyh(int t, int j);
+      void applyh(double t, int j);
 
       void computeCurvatures(fmatvec::Vec & r) const;
 
