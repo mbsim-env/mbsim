@@ -57,8 +57,8 @@ namespace MBSim {
     else if (stage == unknownStage) {
       if (nodes.size() == 0) {
         int n = 10; //using ten nodes
-        double uMin = 0.;
-        double uMax = 1.;
+        double uMin = as;
+        double uMax = ae;
         setAlphaStart(uMin);
         setAlphaEnd(uMax);
 
@@ -77,18 +77,16 @@ namespace MBSim {
 
       vector<double> data;
       data.push_back(t);
-      double uMin = nodes[0];
-      double uMax = nodes[nodes.size() - 1];
-      double s = uMin;
-      double ds = (uMax - uMin) / (openMBVSpineExtrusion->getNumberOfSpinePoints() - 1);
+      double s = as;
+      double ds = (ae - as) / (openMBVSpineExtrusion->getNumberOfSpinePoints() - 1);
 
       // TODO: for open structure one could think of using one more element to print the closure a littel prettier...
 //      if (not openStructure)
 //        ds = (uMax - uMin) / (openMBVBody->getNumberOfSpinePoints() - 2);
-      for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints(); i++) {
+      for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints() - 1; i++) {
         ContourPointData cp(s);
         updateKinematicsForFrame(cp, Frame::position);
-        Vec pos = cp.getFrameOfReference().getPosition();
+        Vec3 pos = cp.getFrameOfReference().getPosition();
         data.push_back(pos(0)); // global x-position
         data.push_back(pos(1)); // global y-position
         data.push_back(pos(2)); // global z-position
@@ -96,6 +94,16 @@ namespace MBSim {
 
         s += ds;
       }
+      // Avoid s-parameters to be longer than ae!
+      ContourPointData cp(ae);
+      updateKinematicsForFrame(cp, Frame::position);
+      Vec3 pos = cp.getFrameOfReference().getPosition();
+      data.push_back(pos(0)); // global x-position
+      data.push_back(pos(1)); // global y-position
+      data.push_back(pos(2)); // global z-position
+      data.push_back(0.); // local twist
+
+      s += ds;
 
       openMBVSpineExtrusion->append(data);
     }

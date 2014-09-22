@@ -1344,7 +1344,7 @@ namespace MBSim {
 
   }
 
-  void SingleContact::applyh(int t, int j) {
+  void SingleContact::applyh(double t, int j) {
     WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
 
     if (fdf)

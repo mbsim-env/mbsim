@@ -855,6 +855,7 @@ namespace MBSim {
       cds.at(k) = nrm2(Q(0, l) - Q(k - 1, l));
       total += cds.at(k);
 
+      //TODO: in uk there is two times the one...
       for (k = n - degU + 1; k < n; k++)
         cds.at(k) = nrm2(Q(k - Q.rows(), l) - Q(k -Q.rows() - 1, l));
 

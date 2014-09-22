@@ -67,7 +67,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      StandardDampingFunction(unsigned int kmax_ = 300);
+      StandardDampingFunction(unsigned int kmax_ = 10);
 
       /*
        * \brief destructor
@@ -76,6 +76,10 @@ namespace MBSim {
       }
 
       virtual double operator ()(const fmatvec::Vec &x, const fmatvec::Vec &dx);
+
+      void setMaximalDampingSteps(unsigned int k_) {
+        kmax = k_;
+      }
 
     protected:
       /**
