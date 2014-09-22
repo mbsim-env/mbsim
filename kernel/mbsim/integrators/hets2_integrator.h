@@ -30,6 +30,7 @@ namespace MBSimIntegrator {
    * \date 2014-09-12 initial commit (Thorsten Schindler)
    * \date 2014-09-17 notation of Brasey1994a (Thorsten Schindler)
    * \date 2014-09-18 first final status with contact and impact with the slider-crank mechanism (Thorsten Schindler)
+   * \date 2014-09-22 naive step-size adaptation according experience with the error constants, not square root relationship (Thorsten Schindler)
    *
    * time discontinuous Galerkin method on velocity level using half-explicit trapezoidal rule
    *
@@ -75,7 +76,7 @@ namespace MBSimIntegrator {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setStepSize(double dt_) { dt = dt_; }
+      void setStepSize(double dt_) { dt = dt_; dtImpulsive = dt*1e-1, dtInfo = dt; }
       /***************************************************/
 
     private:
@@ -87,9 +88,9 @@ namespace MBSimIntegrator {
       bool evaluateStage(MBSim::DynamicSystemSolver& system);
 
       /**
-       * \brief step size
+       * \brief step size for non-impulsive periods, and impulsive periods, and last used
        */
-      double dt;
+      double dt, dtImpulsive, dtInfo;
 
       /**
        * \brief time and plot time
@@ -97,19 +98,14 @@ namespace MBSimIntegrator {
       double t, tPlot;
 
       /**
-       * \brief iteration counter for constraints, plots, integration, non-impulsive integration, impulsive integration, maximum constraints, cummulation constraint
+       * \brief iteration counter for constraints, integration, non-impulsive integration, impulsive integration, maximum constraints, cummulation constraint
        */
-      int iter, step, integrationSteps, integrationStepsConstraint, integrationStepsImpact, maxIter, sumIter;
+      int iter, integrationSteps, integrationStepsConstraint, integrationStepsImpact, maxIter, sumIter;
 
       /**
        * \brief computing time counter
        */
       double s0, time;
-
-      /**
-       * \brief plot step difference
-       */
-      int stepPlot;
 
       /**
        * \brief state, position, velocity, first order coordinate of dynamical system

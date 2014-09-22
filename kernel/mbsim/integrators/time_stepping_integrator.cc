@@ -20,11 +20,18 @@
 #include<config.h>
 #include<mbsim/dynamic_system_solver.h>
 #include "time_stepping_integrator.h"
+
 #include <time.h>
+#include <boost/iostreams/tee.hpp>
+#include <boost/iostreams/stream.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
+
+namespace bio = boost::iostreams;
+using bio::tee_device;
+using bio::stream;
 
 using namespace fmatvec;
 using namespace MBSim;
@@ -105,12 +112,22 @@ namespace MBSimIntegrator {
   void TimeSteppingIntegrator::postIntegrate(DynamicSystemSolver& system) {
     integPlot.close();
 
+    typedef tee_device<ostream, ofstream> TeeDevice;
+    typedef stream<TeeDevice> TeeStream;
     ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum << "Maximum number of iterations: " << maxIter << endl;
-    integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-    integSum.close();
+    TeeDevice ts_tee(cout, integSum); 
+    TeeStream ts_split(ts_tee);
+    
+    ts_split << endl << endl << "******************************" << endl;
+    ts_split << "INTEGRATION SUMMARY: " << endl;
+    ts_split << "End time [s]: " << tEnd << endl;
+    ts_split << "Integration time [s]: " << time << endl;
+    ts_split << "Integration steps: " << integrationSteps << endl;
+    ts_split << "Maximum number of iterations: " << maxIter << endl;
+    ts_split << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+    ts_split << "******************************" << endl;
+    ts_split.flush();
+    ts_split.close();
 
     cout.unsetf(ios::scientific);
     cout << endl;

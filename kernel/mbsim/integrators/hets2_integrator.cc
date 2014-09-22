@@ -40,11 +40,12 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  HETS2Integrator::HETS2Integrator() : dt(1e-3), 
+  HETS2Integrator::HETS2Integrator() : dt(1e-3),
+  dtImpulsive(1e-4), 
+  dtInfo(1e-3), 
   t(0.), 
   tPlot(0.),
   iter(0), 
-  step(0), 
   integrationSteps(0), 
   integrationStepsConstraint(0), 
   integrationStepsImpact(0), 
@@ -52,7 +53,6 @@ namespace MBSimIntegrator {
   sumIter(0), 
   s0(0.), 
   time(0.), 
-  stepPlot(0),
   z(),
   q(),
   u(),
@@ -84,16 +84,15 @@ namespace MBSimIntegrator {
     if(z0.size()) z = z0;
     else system.initz(z);
     system.setUseOldla(false);
-    system.setlaTol(1e-8);
-    system.setgddTol(1e-8);
+    system.setlaTol(1e-10/dt);
+    system.setgddTol(1e-10);
 
     // prepare plotting
     integPlot.open((name + ".plt").c_str());
     integPlot << "time" << " " << "time step-size" << " " <<  "constraint iterations" << " " << "calculation time" << " " << "size of constraint system" << endl;
     cout.setf(ios::scientific, ios::floatfield);
 
-    stepPlot =(int) (dtPlot/dt + 0.5);
-    assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
+    assert(fabs(((int) (dtPlot/dt + 0.5))*dt - dtPlot) < dt*dt);
 
     // start timing
     s0 = clock();
@@ -132,14 +131,13 @@ namespace MBSimIntegrator {
       Mat VStage0 = system.getV().copy();
 
       // plot
-      if((step*stepPlot - integrationSteps) < 0) {
-        step++;
-        system.plot(t,dt);
+      if(t >= tPlot) {
+        system.plot(t,dtInfo);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot << t << " " << dt << " " <<  iter << " " << time << " "<< system.getlaSize() << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        integPlot << t << " " << dtInfo << " " <<  iter << " " << time << " "<< system.getlaSize() << endl;
+        if(output) cout << "   t = " <<  t << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
         tPlot += dtPlot;
       }
       /*****************************************/
@@ -157,6 +155,9 @@ namespace MBSimIntegrator {
 
         // increase integration step counter for constraints
         integrationStepsConstraint++;
+
+        // adapt last time step-size
+        dtInfo = dt;
 
         // update matrix of generalized constraint directions
         system.updateW(t);
@@ -240,11 +241,18 @@ namespace MBSimIntegrator {
         // increase integration step counter for impacts
         integrationStepsImpact++;
 
+        // adapt last time step-size
+        dtInfo = dtImpulsive;
+
+        // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
+        q = qStage0 + system.getT()*u*dtImpulsive;
+        t += dtImpulsive-dt;
+
         // first stage velocity update
-        u += slvLLFac(LLMStage0,hStage0)*dt;
+        u += slvLLFac(LLMStage0,hStage0)*dtImpulsive;
 
         // output stage position update
-        q = qStage0 + (system.getT()*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts 
+        q = qStage0 + (system.getT()*u+TStage0*uStage0)*dtImpulsive*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts 
 
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
@@ -266,7 +274,7 @@ namespace MBSimIntegrator {
         system.updateG(t);
 
         // output stage velocity update without impact
-        u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.getLLM(),system.geth()))*dt*0.5;
+        u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.getLLM(),system.geth()))*dtImpulsive*0.5;
 
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
