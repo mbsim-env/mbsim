@@ -36,6 +36,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double StiffnessLagerB = 6e6;
   double DampingLagerB = 10;
   double AntriebsmomentLagerB = 1e2; // wird nach 0.05s auf 0 gesetzt
+  double SchlagLagerB = 1e1;
 
   // Parameter Gleitlager
   double m_GL = 2.3;              	    // Masse Gleitlager
@@ -107,7 +108,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* Schwungrad */
   RigidBody *ScheibeS = new RigidBody("Schwungrad");
-  Vec Wr0_S(3,INIT,0.); Wr0_S(0) = PosScheibeS;
+  Vec Wr0_S(3,INIT,0.); Wr0_S(0) = PosScheibeS; 
   this->addFrame(new FixedRelativeFrame("ScheibeS",Wr0_S,SqrMat(3,EYE)));
   ScheibeS->setFrameForKinematics(ScheibeS->getFrame("C"));
   ScheibeS->setFrameOfReference(this->getFrame("ScheibeS")); 
@@ -202,6 +203,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   bantrieb->setMomentDirection("[0;1;0]");
   bantrieb->connect(welle->getFrame("Ende"));
   this->addLink(bantrieb);
+
+  KineticExcitation *bSchlag = new KineticExcitation("Lager_B_Schlag");
+  bSchlag->setMomentFunction(new ConstantFunction<VecV(double)>(SchlagLagerB));
+  bSchlag->setMomentDirection("[0;0;1]");
+  bSchlag->connect(welle->getFrame("Ende"));
+  this->addLink(bSchlag);
 
   /* Verbindung Schwungrad - Welle */
   Joint *VerbScheibeS = new Joint("Verbindung_Schwungrad_Welle");
