@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
 
   HETS2Integrator integrator;
   integrator.setEndTime(0.5);
-  integrator.setStepSize(1e-5);
+  integrator.setStepSize(5e-6);
   integrator.setPlotStepSize(1e-3);
 
   integrator.integrate(*sys);
