@@ -120,11 +120,13 @@ namespace MBSim {
       if(dynamic_cast<const Group*>       (e)) return "Group";
       if(dynamic_cast<const Observer*>    (e)) return "Observer";
       if(dynamic_cast<const FunctionBase*>(e)) return "Function";
-      throw MBSimError(e, "Internal error: Unknown object type.");
+      // note we can not throw a MBSimError here since containerName and getPath is used in MBSimError itself
+      // -> endless recursive call (however this error is a internal one)
+      throw runtime_error("Internal error: Unknown object type.");
     }
   }
 
-  string Element::getPath(const Element *relTo, string sep, bool initialCaller) const {
+  string Element::getPath(const Element *relTo, string sep) const {
     try {
       // compose a absolute path
       if(!relTo) {
@@ -136,7 +138,7 @@ namespace MBSim {
 
         // a parent exists -> return parent path + this elements sub path
         if(parent) {
-          string parentPath=parent->getPath(NULL, sep, false);
+          string parentPath=parent->getPath(NULL, sep);
           return parentPath+(parentPath==sep?"":sep)+containerName(this)+"["+getName()+"]";
         }
         // no parent exits and its a DynamicSystemSolver (we can generate a absolute path)
@@ -151,8 +153,8 @@ namespace MBSim {
       // compose a relative path
       else {
         // get absolute path of this object and relTo (get it relative to the top level (remove the leading /))
-        string thisPath=getPath(NULL, sep, false).substr(1);
-        string relToPath=relTo->getPath(NULL, sep, false).substr(1)+sep;
+        string thisPath=getPath(NULL, sep).substr(1);
+        string relToPath=relTo->getPath(NULL, sep).substr(1)+sep;
         // check for "real" absolute path (see above)
         if(thisPath.substr(0, sep.length())!=sep || relToPath.substr(0, sep.length())!=sep)
           THROW_MBSIMERROR("Can not generate a relative path: at least one element is not part of a DynamicSystemSolver");
@@ -177,11 +179,10 @@ namespace MBSim {
       }
     }
     catch(MBSimError &ex) {
-      if(initialCaller)
-        THROW_MBSIMERROR("During getting the element path: Message from "+
-          ex.getContext()->getPath()+": "+ex.getErrorMessage());
-      else
-        throw ex;
+      // we convert every possible MBSimError exception here to a runtime_error since
+      // we can not throw a MBSimError here since containerName and getPath is used in MBSimError itself
+      // -> endless recursive call (however the code above should not throw any exception)
+      throw runtime_error(ex.what());
     }
   }
 
@@ -199,7 +200,7 @@ namespace MBSim {
       else {
         ostringstream str;
         str<<"Plot feature must start with '+' or '-' but is "<<E(e)->getAttribute("feature");
-        throw DOMEvalException(str.str(), e);
+        throw DOMEvalException(str.str(), e, e->getAttributeNode(X()%"feature"));
       }
       PlotFeature feature=plotRecursive;
       if     (E(e)->getAttribute("feature").substr(1)=="plotRecursive") feature=plotRecursive;
@@ -220,7 +221,7 @@ namespace MBSim {
       else {
         ostringstream str;
         str<<"Unknown plot feature: "<<E(e)->getAttribute("feature");
-        throw DOMEvalException(str.str(), e);
+        throw DOMEvalException(str.str(), e, e->getAttributeNode(X()%"feature"));
       }
       if(E(e)->getTagName()==MBSIM%"plotFeature") setPlotFeature(feature, status);
       else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);

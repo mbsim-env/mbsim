@@ -235,7 +235,7 @@ namespace MBSim {
        * If relativeTo is not NULL return a relative path to relativeTo.
        * Do not set any argurment other than relTo and sep!
        */
-      std::string getPath(const Element *relTo=NULL, std::string sep="/", bool initialCaller=true) const;
+      std::string getPath(const Element *relTo=NULL, std::string sep="/") const;
 
       /**
        * \brief Get the Element named name in the container named container.
@@ -354,8 +354,8 @@ namespace MBSim {
     }
     catch(MBSimError &ex) {
       if(initialCaller)
-        THROW_MBSIMERROR("During evaluation of refernece '"+path+"': Message from "+
-          ex.getContext()->getPath()+": "+ex.getErrorMessage());
+        THROW_MBSIMERROR("Evaluation of refernece '"+path+"' failed: Message from "+
+          ex.getPath()+": "+ex.getErrorMessage());
       else
         throw ex;
     }

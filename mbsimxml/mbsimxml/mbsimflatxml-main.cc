@@ -43,16 +43,9 @@ int main(int argc, char *argv[]) {
 
     MBSimXML::postMain(argc, argv, solver, dss);
   }
-  catch(const MBSimError &e) {
-    cerr<<"MBSim exception: "<<e.what()<<endl;
-    return 1;
-  }
-  catch(const H5::Exception &e) {
-    cerr<<"HDF5 exception: "<<e.what()<<endl;
-    return 1;
-  }
   catch(const exception &e) {
-    cerr<<"Exception: "<<e.what()<<endl;
+    cerr<<"Exception:"<<endl
+        <<e.what()<<endl;
     return 1;
   }
   catch(...) {

@@ -721,11 +721,8 @@ namespace MBSimGUI {
       // add parameter
       octEval->addParamSet(doc->getDocumentElement());
     }
-    catch(DOMEvalExceptionList error) {
-      message = string("An exception occurred in updateOctaveParameters: ") + error.what();
-    }
     catch(runtime_error error) {
-      message = string("An unknown exception occurred in updateOctaveParameters: ") + error.what();
+      message = string("An exception occurred in updateOctaveParameters: ") + error.what();
     }
     catch(...) {
       message = "An unknown exception occurred in updateOctaveParameters.";

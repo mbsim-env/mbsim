@@ -39,9 +39,9 @@ namespace MBSim {
       /**
        * \brief constructor
        * \param message to be written
-       * \param context_ the conext MBSim::Element where the error occured
+       * \param context the conext MBSim::Element where the error occured
        */
-      MBSimError(const Element *context_, const std::string &mbsim_error_message_) throw(); 
+      MBSimError(const Element *context, const std::string &mbsim_error_message_) throw(); 
 
       /**
        * \brief constructor
@@ -54,10 +54,11 @@ namespace MBSim {
       /* \brief set the context of the error
        * Use this function to set the context in a catch(...) block if the context is not known
        * at the original throw statement. */
-      void setContext(const Element *context_);
+      void setContext(const Element *context);
 
-      const Element *getContext() { return context; }
       std::string getErrorMessage() const { return mbsim_error_message; }
+
+      std::string getPath() const { return path; }
 
       virtual const char* what() const throw();
 
@@ -67,10 +68,10 @@ namespace MBSim {
        */
       std::string mbsim_error_message;
 
-      const Element *context;
+      std::string path;
 
       // just a string to store the memory which is returned by the what() function
-      std::string whatMsg;
+      mutable std::string whatMsg;
   };
 
   // Helper to throw a error with this as the context of the error
