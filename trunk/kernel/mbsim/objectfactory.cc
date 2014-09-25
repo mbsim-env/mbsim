@@ -19,36 +19,119 @@
 
 #include <config.h>
 #include <mbsim/objectfactory.h>
+#include <boost/algorithm/string.hpp>
 
+using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
 
 namespace MBSim {
+
+void DOMEvalExceptionStack::add(const string &type, const boost::shared_ptr<DOMEvalException> &ex) {
+  exVec.push_back(make_pair(type, ex));
+}
+
+namespace {
+  size_t calculateMaxDepth(const vector<pair<string, boost::shared_ptr<DOMEvalException> > > &exVec, size_t depth=0) {
+    size_t maxDepth=depth;
+    for(vector<pair<string, boost::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it) {
+      boost::shared_ptr<DOMEvalExceptionStack> stack=boost::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+      if(stack) {
+        size_t d=calculateMaxDepth(stack->getExceptionVector(), depth+1);
+        if(d>maxDepth)
+          maxDepth=d;
+      }
+    }
+    return maxDepth;
+  }
+
+  void printLocation(const string &indent, stringstream &str, const std::vector<EmbedDOMLocator> &locStack) {
+    if(!locStack.empty()) {
+      vector<EmbedDOMLocator>::const_iterator it=locStack.begin();
+      str<<indent<<"At "<<X()%it->getURI()<<":"<<it->getLineNumber()<<endl;
+      for(it++; it!=locStack.end(); it++)
+        str<<indent<<"included by "<<X()%it->getURI()<<":"<<it->getLineNumber()<<it->getEmbedCount()<<endl;
+    }
+  }
+
+  string possibleType(int nr, int size, const string &type) {
+    stringstream str;
+    str<<nr<<(nr==1?"st":nr==2?"nd":nr==3?"rd":"th")<<" ("<<type<<") of "<<size<<" possible objects:";
+    return str.str();
+  }
+}
+
+vector<pair<string, boost::shared_ptr<DOMEvalException> > > &DOMEvalExceptionStack::getExceptionVector() {
+  return exVec;
+}
+
+const char* DOMEvalExceptionStack::what() const throw() {
+  stringstream str;
+  generateWhat(str, string(2*calculateMaxDepth(exVec), ' '));
+  whatStr=str.str();
+  if(whatStr.length()>0)
+    whatStr.resize(whatStr.length()-1); // remote the trailing line feed
+  return whatStr.c_str();
+}
+
+void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::string &indent) const {
+  int nr=1;
+  for(vector<pair<string, boost::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
+    boost::shared_ptr<DOMEvalExceptionStack> stack=boost::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+    if(stack) {
+      stack->generateWhat(str, indent.substr(0, indent.length()-2));
+      str<<indent<<"+++ Created by "<<possibleType(nr, exVec.size(), it->first)<<endl;
+      printLocation(indent, str, stack->getLocationStack());
+    }
+  }
+  nr=1;
+  bool printNotCastableObjects=getenv("MBSIM_PRINT_NOT_CASTABLE")?true:false;
+  int notPrintedWrongTypeErrors=0;
+  for(vector<pair<string, boost::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
+    boost::shared_ptr<DOMEvalExceptionStack> stack=boost::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+    if(!stack) {
+      boost::shared_ptr<DOMEvalExceptionWrongType> wrongType=boost::dynamic_pointer_cast<DOMEvalExceptionWrongType>(it->second);
+      if(!wrongType || printNotCastableObjects)
+        str<<indent<<"*** Error from "<<possibleType(nr, exVec.size(), it->first)<<endl;
+      if(wrongType) {
+        if(printNotCastableObjects)
+          str<<indent<<"Not castable to type "<<it->second->getMessage()<<endl;
+        else
+          notPrintedWrongTypeErrors++;
+      }
+      else
+        str<<it->second->getMessage()<<endl;
+      if(!wrongType || printNotCastableObjects)
+        printLocation(indent, str, it->second->getLocationStack());
+    }
+  }
+  if(notPrintedWrongTypeErrors>0)
+    str<<indent<<"*** Not shown are "<<notPrintedWrongTypeErrors<<" of "<<exVec.size()<<" objects which are not castable."
+       <<" Set envvar MBSIM_PRINT_NOT_CASTABLE to show these."<<endl;
+}
 
 ObjectFactory& ObjectFactory::instance() {
   static ObjectFactory of;
   return of;
 }
 
-void ObjectFactory::registerXMLName(const MBXMLUtils::FQN &name, AllocateFkt alloc, DeallocateFkt dealloc) {
-  // check if name was already registred with the same &allocate<CreateType>: if yes return and do not add it twice
-  for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
-    // skip type with wrong key value get<0>()
-    if(it->get<0>()!=name) continue;
-
-    if(it->get<1>()==alloc)
-      return;
-  }
-  // name is not registred with &allocate<CreateType>: register it
-  instance().registeredType.push_back(VectorContent(name, alloc, dealloc));
+void ObjectFactory::registerXMLName(const FQN &name, AllocateFkt alloc, DeallocateFkt dealloc) {
+  AllocDeallocVector &allocDealloc=instance().registeredType.insert(make_pair(name, AllocDeallocVector())).first->second;
+  if(find(allocDealloc.begin(), allocDealloc.end(), make_pair(alloc, dealloc))==allocDealloc.end())
+    allocDealloc.push_back(make_pair(alloc, dealloc));
 }
 
-void ObjectFactory::deregisterXMLName(const MBXMLUtils::FQN &name, AllocateFkt alloc) {
-  // dereg the element which as a name of 'name' AND a alloc function of 'alloc'
-  for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++)
-    if(it->get<0>()==name && it->get<1>()==alloc) {
-      instance().registeredType.erase(it);
-      return;
-    }
+void ObjectFactory::deregisterXMLName(const FQN &name, AllocateFkt alloc) {
+  NameMapIt nameIt=instance().registeredType.find(name);
+  if(nameIt==instance().registeredType.end())
+    return;
+  AllocDeallocVectorIt allocDeallocIt=nameIt->second.begin();
+  while(allocDeallocIt!=nameIt->second.end() && allocDeallocIt->first!=alloc)
+    ++allocDeallocIt;
+  if(allocDeallocIt!=nameIt->second.end())
+    nameIt->second.erase(allocDeallocIt);
+  if(nameIt->second.empty())
+    instance().registeredType.erase(nameIt);
 }
 
 }

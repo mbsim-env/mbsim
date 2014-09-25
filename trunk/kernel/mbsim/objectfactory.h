@@ -20,7 +20,6 @@
 #ifndef _MBSIM_OBJECTFACTORY_H_
 #define _MBSIM_OBJECTFACTORY_H_
 
-#include <boost/tuple/tuple_io.hpp>
 #include <vector>
 #include <stdexcept>
 #include <typeinfo>
@@ -37,13 +36,30 @@
 
 namespace MBSim {
 
-class ObjectFactoryNoObject : public MBXMLUtils::DOMEvalException {
+/* A tree of DOMEvalException's which store the tree of failed objects
+ * creations of the object factory */
+class DOMEvalExceptionStack : public MBXMLUtils::DOMEvalException {
   public:
-    ObjectFactoryNoObject(const xercesc::DOMElement *e_, const std::type_info &cppType_) throw() :
-      MBXMLUtils::DOMEvalException("Unable to create an object with name <"+MBXMLUtils::X()%e_->getTagName()+"> which is of the requested type "+
-        MBXMLUtils::demangleSymbolName(cppType_.name())+".", e_) {
-    }
-    virtual ~ObjectFactoryNoObject() throw() {}
+    DOMEvalExceptionStack(const xercesc::DOMElement *element) : MBXMLUtils::DOMEvalException("", element) {}
+    DOMEvalExceptionStack(const DOMEvalExceptionStack &src) : MBXMLUtils::DOMEvalException(src), exVec(src.exVec) {}
+    ~DOMEvalExceptionStack() throw() {}
+    void add(const std::string &type, const boost::shared_ptr<MBXMLUtils::DOMEvalException> &ex);
+    const char* what() const throw();
+    std::vector<std::pair<std::string, boost::shared_ptr<MBXMLUtils::DOMEvalException> > > &getExceptionVector();
+  protected:
+    std::vector<std::pair<std::string, boost::shared_ptr<MBXMLUtils::DOMEvalException> > > exVec;
+    mutable std::string whatStr;
+    void generateWhat(std::stringstream &str, const std::string &indent) const;
+};
+
+/* Just to distinguish a wrong type (not castable) error of the object factory
+ * from others */
+class DOMEvalExceptionWrongType : public MBXMLUtils::DOMEvalException {
+  public:
+    DOMEvalExceptionWrongType(const std::string &type, const xercesc::DOMElement *element) :
+      MBXMLUtils::DOMEvalException(type, element) {}
+    DOMEvalExceptionWrongType(const DOMEvalExceptionWrongType &src) : MBXMLUtils::DOMEvalException(src) {}
+    ~DOMEvalExceptionWrongType() throw() {}
 };
 
 /** A object factory.
@@ -90,40 +106,57 @@ class ObjectFactory {
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
     template<class ContainerType>
     static ContainerType* createAndInit(const xercesc::DOMElement *element) {
-      size_t useMatchNr=1;
-      std::vector<std::string> error;
-      do {
-        std::pair<ContainerType*, DeallocateFkt> p=std::pair<ContainerType*, DeallocateFkt>(NULL, &deallocateSingleton);
+#ifdef HAVE_BOOST_TYPE_TRAITS_HPP
+      // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error if boost is avaliable
+      // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
+      BOOST_STATIC_ASSERT_MSG((boost::is_convertible<ContainerType*, fmatvec::Atom*>::value),
+        "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
+#endif
+      // throw error if NULL is supplied as element
+      if(element==NULL)
+        throw MBSimError("Internal error: NULL argument specified.");
+      // get all allocate functions for the given name
+      MBXMLUtils::FQN fqn=MBXMLUtils::E(element)->getTagName();
+      NameMapIt nameIt=instance().registeredType.find(fqn);
+      if(nameIt==instance().registeredType.end())
+        throw MBXMLUtils::DOMEvalException("Internal error: No objects of name {"+fqn.first+"}"+fqn.second+" registred", element);
+      DOMEvalExceptionStack allErrors(static_cast<xercesc::DOMElement*>(element->getParentNode()));
+      // try to create and init a object which each of the allocate function
+      for(AllocDeallocVectorIt allocDeallocIt=nameIt->second.begin(); allocDeallocIt!=nameIt->second.end(); ++allocDeallocIt) {
+        // create element
+        fmatvec::Atom *ele=allocDeallocIt->first();
+        // try to cast the element to ContainerType
+        ContainerType *ret=dynamic_cast<ContainerType*>(ele);
+        if(!ret) {
+          // cast not possible -> deallocate again and try next
+          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()),
+                        boost::make_shared<DOMEvalExceptionWrongType>(
+                        MBXMLUtils::demangleSymbolName(typeid(ContainerType).name()), element));
+          allocDeallocIt->second(ele); 
+          continue;
+        }
         try {
-          p=create<ContainerType>(element, useMatchNr++);
-          p.first->initializeUsingXML(const_cast<xercesc::DOMElement*>(element));
-          return p.first;
+          ret->initializeUsingXML(const_cast<xercesc::DOMElement*>(element));
+          return ret;
         }
-        catch(const ObjectFactoryNoObject &ex) {
-          // delete the created object using the provided deallocater (calls delete or nothing for singletons)
-          p.second(p.first);
-          // save exception, only if this is the first exception during this run (this error has a very low priority)
-          if(error.size()==0)
-            error.push_back(ex.what());
-          // break if useMatchNr number is larger then the factory size: nothing found which can be initialized.
-          if(useMatchNr>instance().registeredType.size()) {
-            std::string message;
-            // collect the message of all previous errors and throw them all!
-            for(std::vector<std::string>::iterator it=error.begin(); it!=error.end(); it++) {
-              std::vector<std::string>::iterator it2=it; it2++;
-              message+=*it+(it2!=error.end()?"\n":"");
-            }
-            throw MBSimError(message);
-          }
+        catch(DOMEvalExceptionStack &ex) {
+          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()), boost::make_shared<DOMEvalExceptionStack>(ex));
         }
-        catch(const MBSimError &ex) {
-          // delete the created object using the provided deallocater (calls delete or nothing for singletons)
-          p.second(p.first);
-          // save exception: it is rethrow (including others) alter if everything fails
-          error.push_back(ex.what());
+        catch(MBXMLUtils::DOMEvalException &ex) {
+          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()), boost::make_shared<MBXMLUtils::DOMEvalException>(ex));
         }
+        catch(std::exception &ex) { // handles also MBSimError
+          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()),
+                        boost::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
+        }
+        catch(...) {
+          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()),
+                        boost::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
+        }
+        allocDeallocIt->second(ele);
       }
-      while(true); // loop until we are able to create and init a object without errors
+      // if all failed -> return errors of all trys
+      throw allErrors;
     }
 
   private:
@@ -133,46 +166,11 @@ class ObjectFactory {
     // a pointer to a function deallocating an object
     typedef void (*DeallocateFkt)(fmatvec::Atom *obj);
 
-    /** Create an object corresponding to the XML element element and return a pointer of type ContainerType.
-     * Throws if the created object is not of type ContainerType.
-     * This function returns a new object or a singleton object dependent on the registration of the created object. */
-    template<class ContainerType>
-    static std::pair<ContainerType*, DeallocateFkt> create(const xercesc::DOMElement *element, size_t useMatchNr=1) {
-#ifdef HAVE_BOOST_TYPE_TRAITS_HPP
-      // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error if boost is avaliable
-      // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
-      BOOST_STATIC_ASSERT_MSG((boost::is_convertible<ContainerType*, fmatvec::Atom*>::value),
-        "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
-#endif
-      // throw error if NULL is supplied as element
-      if(element==NULL) throw MBSimError("Internal error: NULL argument specified.");
-      // loop over all all registred types corresponding to element->ValueStr()
-      size_t matchNr=1;
-      for(VectorIt it=instance().registeredType.begin(); it!=instance().registeredType.end(); it++) {
-        // skip type with wrong key value get<0>()
-        
-        if(it->template get<0>()!=MBXMLUtils::E(element)->getTagName()) continue;
-
-        // allocate a new object OR get singleton object using the allocate function pointer
-        fmatvec::Atom *ele=it->template get<1>()();
-        // try to cast ele up to ContainerType
-        ContainerType *ret=dynamic_cast<ContainerType*>(ele);
-        // if possible (and it is the useMatchNr'st element, return it
-        if(ret && (matchNr++)==useMatchNr)
-          return std::pair<ContainerType*, DeallocateFkt>(ret, it->template get<2>());
-        // if not possible, deallocate newly created (wrong) object OR do nothing for
-        // singleton objects (is maybe reused later) and continue searching
-        else
-          it->template get<2>()(ele);
-      }
-      // no matching element found: throw error
-      throw ObjectFactoryNoObject(element, typeid(ContainerType));
-    }
-
     // convinence typedefs
-    typedef boost::tuple<MBXMLUtils::FQN, AllocateFkt, DeallocateFkt> VectorContent;
-    typedef std::vector<VectorContent> Vector;
-    typedef typename Vector::iterator VectorIt;
+    typedef std::vector<std::pair<AllocateFkt, DeallocateFkt> > AllocDeallocVector;
+    typedef AllocDeallocVector::iterator AllocDeallocVectorIt;
+    typedef std::map<MBXMLUtils::FQN, AllocDeallocVector> NameMap;
+    typedef NameMap::iterator NameMapIt;
 
     // private ctor
     ObjectFactory() {}
@@ -186,7 +184,7 @@ class ObjectFactory {
     static ObjectFactory& instance();
 
     // a vector of all registered types
-    Vector registeredType;
+    NameMap registeredType;
 
     // a wrapper to allocate an object of type CreateType
     template<class CreateType>

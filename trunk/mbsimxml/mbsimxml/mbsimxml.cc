@@ -295,7 +295,8 @@ int main(int argc, char *argv[]) {
     return ret;
   }
   catch(const exception &e) {
-    cerr<<"Exception: "<<e.what()<<endl;
+    cerr<<"Exception:"<<endl
+        <<e.what()<<endl;
     return 1;
   }
   catch(...) {

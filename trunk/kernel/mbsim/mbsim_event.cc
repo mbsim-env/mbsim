@@ -27,22 +27,23 @@ using namespace xercesc;
 
 namespace MBSim {
   
-  MBSimError::MBSimError(const Element *context_, const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_), context(context_) {
-    whatMsg="In element "+context->getPath()+": "+mbsim_error_message;
+  MBSimError::MBSimError(const Element *context, const std::string &mbsim_error_message_) throw() : exception(),
+    mbsim_error_message(mbsim_error_message_), path(context->getPath()) {
   }
 
   MBSimError::MBSimError(const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_), context(NULL) {
-    whatMsg=mbsim_error_message;
+    mbsim_error_message(mbsim_error_message_), path() {
   }
 
-  void MBSimError::setContext(const Element *context_) {
-    context=context_;
-    whatMsg="In element "+context->getPath()+": "+mbsim_error_message;
+  void MBSimError::setContext(const Element *context) {
+    path=context->getPath();
   }
 
   const char* MBSimError::what() const throw() {
+    if(path.empty())
+      whatMsg=mbsim_error_message;
+    else
+      whatMsg="In element "+path+": "+mbsim_error_message;
     return whatMsg.c_str();
   }
 

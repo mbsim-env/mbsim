@@ -112,7 +112,8 @@ namespace MBSimInterface {
       mbsimServer->start();
     }
     catch (std::exception& e) {
-      std::cerr << "Exception: " << e.what() << "\n";
+      std::cerr << "Exception:" << endl
+                << e.what()<<endl;
     }
 
     integPlot.close();
