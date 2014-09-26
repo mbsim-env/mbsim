@@ -37,7 +37,7 @@ All unknown options are passed to runexamples.py.
 
 mainOpts=argparser.add_argument_group('Main Options')
 mainOpts.add_argument("--sourceDir", type=str, required=True,
-  help="The base source/build directory (see --srcSuffix/--buildSuffix for VPATH builds")
+  help="The base source/build directory (see --srcSuffix/--binSuffix for VPATH builds")
 configOpts=mainOpts.add_mutually_exclusive_group(required=True)
 configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
 configOpts.add_argument("--recheck", action="store_true",
@@ -58,7 +58,7 @@ cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build
 cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
 cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
 cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
-cfgOpts.add_argument("--buildSuffix", default="", help='base tool name suffix for the build dir in --sourceDir (default: "" = no VPATH build)')
+cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -249,7 +249,7 @@ def main():
   # set docDir
   global docDir
   if args.prefix==None:
-    output=subprocess.check_output([pj(args.sourceDir, "openmbv"+args.buildSuffix, "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
+    output=subprocess.check_output([pj(args.sourceDir, "openmbv"+args.binSuffix, "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
     for opt in output.split():
       match=re.search("'?--prefix[= ]([^']*)'?", opt)
       if match!=None:
@@ -484,7 +484,7 @@ def srcTool(tool):
   return os.path.sep.join(t)
 def buildTool(tool):
   t=tool.split(os.path.sep)
-  t[0]=t[0]+args.buildSuffix
+  t[0]=t[0]+args.binSuffix
   return os.path.sep.join(t)
 
 def update(nr, tool, buildTools):
