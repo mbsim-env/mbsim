@@ -697,11 +697,11 @@ namespace MBSimGUI {
     independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", independentBody);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependendent bodies first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies first side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
     addToTab("General",dependentBodiesFirstSide);
     connect(dependentBodiesFirstSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    dependentBodiesSecondSide = new ExtWidget("Dependendent bodies second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies second side",new ListWidget(new RigidBodyOfReferenceWidgetFactory(constraint,this),"Body"));
     addToTab("General",dependentBodiesSecondSide);
     connect(dependentBodiesSecondSide->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
