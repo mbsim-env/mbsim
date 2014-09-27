@@ -66,6 +66,8 @@ namespace MBSimGUI {
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
+    // use html output of MBXMLUtils
+    setenv("MBXMLUTILS_HTMLOUTPUT", "1", 1);
 
     mw = this;
 
@@ -233,9 +235,6 @@ namespace MBSimGUI {
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
-    QProcessEnvironment env=QProcessEnvironment::systemEnvironment();
-    env.insert("MBXMLUTILS_XMLOUTPUT", "1");
-    mbsim->getProcess()->setProcessEnvironment(env);
     mbsimDW->setWidget(mbsim); 
     connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int,QProcess::ExitStatus)));
 
@@ -505,9 +504,6 @@ namespace MBSimGUI {
       }
       catch(const std::exception &ex) {
         message = ex.what();
-      }
-      catch(const DOMException &ex) {
-        message = "DOM exception: " + X()%ex.getMessage();
       }
       catch(...) {
         message = "Unknown exception.";
