@@ -93,9 +93,8 @@ namespace MBSimGUI {
     static QRegExp carriageReturn("(^|\x0A)[^\x0A]*\x0D([^\x0A\x0D]*\x0D)");
     text.replace(carriageReturn, "\\1\\2");
 
-    // replace <FILE ...> to html reference
-    static QRegExp fileRE("<FILE path=\"([^\"]+)\" line=\"([0-9]+)\">([^<]+)</FILE>");
-    text.replace(fileRE, "<a href=\"\\1?line=\\2\">\\3</a>");
+    // make some replace on text here
+    // (currently nothing since MBXMLUtils can now directly print html style output)
 
     // the following operations modify only the QString return value
     QString ret=text;
@@ -178,8 +177,13 @@ namespace MBSimGUI {
       DOMElement *mainxmlele=doc->getDocumentElement();
       Preprocess::preprocess(parser, octEval, dependencies, mainxmlele);
     }
+    catch(exception &ex) {
+      errText = ex.what();
+      emit resultReady(1);
+      return;
+    }
     catch(...) {
-      errText = "error in preprocess";
+      errText = "Unknown exception in preprocess";
       emit resultReady(1);
       return;
     }

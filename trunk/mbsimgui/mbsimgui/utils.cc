@@ -67,7 +67,7 @@ namespace MBSimGUI {
       char ns[1024], prefix[1024], line[2048];
       while(1) {
         if(fgets(line, 2048, f)==NULL) break;
-        int nrRead=sscanf(line, "%s %s", &ns, &prefix);
+        int nrRead=sscanf(line, "%s %s", ns, prefix);
         if(nrRead<2)
           strcpy(prefix, "");
         nsprefix[ns]=prefix;
