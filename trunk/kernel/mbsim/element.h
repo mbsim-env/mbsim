@@ -224,6 +224,8 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
+      const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
+
       /**
        * \brief Get the object of type T represented by the path path.
        * Do not set any argurment other than path!
@@ -279,6 +281,8 @@ namespace MBSim {
        *  dynamically using getPath() after this stage getPath just returns this value.
        */
       std::string path;
+
+      std::vector<MBXMLUtils::EmbedDOMLocator> locationStack;
 
       /**
        * \brief dynamic system

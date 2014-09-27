@@ -20,9 +20,10 @@
 #ifndef _MBSIM_EVENT_H_
 #define _MBSIM_EVENT_H_
 
-#include<string>
-#include<exception>
+#include <string>
+#include <exception>
 #include <xercesc/dom/DOMElement.hpp>
+#include <mbxmlutilshelper/dom.h>
 
 namespace MBSim {
 
@@ -56,9 +57,11 @@ namespace MBSim {
        * at the original throw statement. */
       void setContext(const Element *context);
 
-      std::string getErrorMessage() const { return mbsim_error_message; }
+      const std::string& getErrorMessage() const { return mbsim_error_message; }
 
-      std::string getPath() const { return path; }
+      const std::string& getPath() const { return path; }
+
+      const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
 
       virtual const char* what() const throw();
 
@@ -69,6 +72,8 @@ namespace MBSim {
       std::string mbsim_error_message;
 
       std::string path;
+
+      std::vector<MBXMLUtils::EmbedDOMLocator> locationStack;
 
       // just a string to store the memory which is returned by the what() function
       mutable std::string whatMsg;

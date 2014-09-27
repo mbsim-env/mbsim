@@ -28,7 +28,7 @@ using namespace xercesc;
 namespace MBSim {
   
   MBSimError::MBSimError(const Element *context, const std::string &mbsim_error_message_) throw() : exception(),
-    mbsim_error_message(mbsim_error_message_), path(context->getPath()) {
+    mbsim_error_message(mbsim_error_message_), path(context->getPath()), locationStack(context->getLocationStack()) {
   }
 
   MBSimError::MBSimError(const std::string &mbsim_error_message_) throw() : exception(),
@@ -40,10 +40,14 @@ namespace MBSim {
   }
 
   const char* MBSimError::what() const throw() {
-    if(path.empty())
-      whatMsg=mbsim_error_message;
-    else
-      whatMsg="In element "+path+": "+mbsim_error_message;
+    stringstream str;
+    str<<mbsim_error_message<<endl;
+    if(!path.empty())
+      str<<"At element "<<path<<"."<<endl;
+    if(!locationStack.empty())
+      MBXMLUtils::DOMEvalException::locationStack2Stream("", locationStack, "", str);
+    whatMsg=str.str();
+    whatMsg.resize(whatMsg.length()-1); // remote the trailing line feed
     return whatMsg.c_str();
   }
 
