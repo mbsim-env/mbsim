@@ -15,9 +15,9 @@ cat << EOF > $OUTDIR/report_distribute/result.rss.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Windows Release Build: Release Distribution</title>
+    <title>Daily Windows Release Build</title>
     <link>$URL/report_distribute/distribute.out</link>
-    <description>Windows Release Build: Result RSS feed of the MBSim Windows shared build/distribution</description>
+    <description>Daily Windows Release Build: Result RSS feed of the daily MBSim Windows build/distribution</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="$URL/report_distribute/result.rss.xml" rel="self" type="application/rss+xml"/>
@@ -25,7 +25,7 @@ EOF
 if [ $1 -eq 1 ]; then
 cat << EOF >> $OUTDIR/report_distribute/result.rss.xml
     <item>
-      <title>Windows Release Build: creating distribution failed</title>
+      <title>Daily Windows Release Build: creating distribution failed</title>
       <link>$URL/report_distribute/distribute.out</link>
       <guid isPermaLink="false">$URL/report_distribute/rss_id_$DATE1</guid>
       <pubDate>$DATE2</pubDate>
