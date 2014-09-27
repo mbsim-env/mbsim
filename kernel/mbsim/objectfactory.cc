@@ -45,15 +45,6 @@ namespace {
     return maxDepth;
   }
 
-  void printLocation(const string &indent, stringstream &str, const std::vector<EmbedDOMLocator> &locStack) {
-    if(!locStack.empty()) {
-      vector<EmbedDOMLocator>::const_iterator it=locStack.begin();
-      str<<indent<<"At "<<X()%it->getURI()<<":"<<it->getLineNumber()<<endl;
-      for(it++; it!=locStack.end(); it++)
-        str<<indent<<"included by "<<X()%it->getURI()<<":"<<it->getLineNumber()<<it->getEmbedCount()<<endl;
-    }
-  }
-
   string possibleType(int nr, int size, const string &type) {
     stringstream str;
     str<<nr<<(nr==1?"st":nr==2?"nd":nr==3?"rd":"th")<<" ("<<type<<") of "<<size<<" possible objects:";
@@ -81,7 +72,7 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
     if(stack) {
       stack->generateWhat(str, indent.substr(0, indent.length()-2));
       str<<indent<<"+++ Created by "<<possibleType(nr, exVec.size(), it->first)<<endl;
-      printLocation(indent, str, stack->getLocationStack());
+      DOMEvalException::locationStack2Stream(indent, stack->getLocationStack(), "", str);
     }
   }
   nr=1;
@@ -102,7 +93,7 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
       else
         str<<it->second->getMessage()<<endl;
       if(!wrongType || printNotCastableObjects)
-        printLocation(indent, str, it->second->getLocationStack());
+        DOMEvalException::locationStack2Stream(indent, it->second->getLocationStack(), "", str);
     }
   }
   if(notPrintedWrongTypeErrors>0)
