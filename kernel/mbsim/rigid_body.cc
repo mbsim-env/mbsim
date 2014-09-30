@@ -599,13 +599,12 @@ namespace MBSim {
 
     K->setPosition(WrPK + R->getPosition());
 
-    if(K != C) {
+    if(K!=C) {
       C->updateOrientation();
       C->updatePosition();
-      K->updateRelativePosition();
     }
 
-    if(P!=C && P!=K) {
+    if(P!=C) {
       ((FixedRelativeFrame*)P)->updateOrientation();
       ((FixedRelativeFrame*)P)->updatePosition();
     }
@@ -640,13 +639,13 @@ namespace MBSim {
     K->setVelocity(R->getOrientation()*PjhT+R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPK));
     K->setAngularVelocity(frameForJacobianOfRotation->getOrientation()*PjhR + R->getAngularVelocity());
 
-    if(K != C) {
+    if(K!=C) {
       C->updateAngularVelocity();
       C->updateVelocity();
-      WJTrel += tilde(K->getWrRP())*WJRrel;
+      WJTrel -= tilde(C->getWrRP())*WJRrel;
     }
 
-    if(P!=C && P!=K) {
+    if(P!=C) {
       ((FixedRelativeFrame*)P)->updateAngularVelocity();
       ((FixedRelativeFrame*)P)->updateVelocity();
       WJTrel -= tilde(((FixedRelativeFrame*)P)->getWrRP())*WJRrel;
@@ -694,19 +693,23 @@ namespace MBSim {
     K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
     K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
 
-   if(K != C) C->updateJacobians();
-   if(P!=C && P!=K)
+   if(K!=C)
+     C->updateJacobians();
+
+   if(P!=C) 
      ((FixedRelativeFrame*)P)->updateJacobians();
   }
 
   void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3xV &WJTrel0, Mat3xV &WJRrel0) {
 
-    if(K != C) {
-      WJTrel0 += tilde(K->getWrRP())*WJRrel0;
+    WJTrel0 -= tilde(WrPK)*WJRrel0;
+
+    if(K!=C) {
+      WJTrel0 -= tilde(C->getWrRP())*WJRrel0;
     }
 
     // TODO: Zusammenfassen
-    if(P!=C && P!=K)
+    if(P!=C)
       WJTrel0 -= tilde(((FixedRelativeFrame*)P)->getWrRP())*WJRrel0;
   }
 
