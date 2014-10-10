@@ -14,7 +14,7 @@ all: mbsimxml.xhtml
 xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml
 	echo "$(XSDFILES)" | tr ' ' '\n' > xsdfiles.txt
 	for F in $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml; do \
-	  @XALAN@ $$F getPluginLocation.xsl >> xsdfiles.txt; \
+	  @XALAN@ $$F $(srcdir)/getPluginLocation.xsl >> xsdfiles.txt; \
 	done
 
 # XML representation of all xsd files
@@ -26,13 +26,13 @@ files.xml: xsdfiles.txt
 
 # generate combined schema (root element xs:dummyRoot)
 .DELETE_ON_ERROR: combindedSchema.xsd
-combindedSchema.xsd: genCombindedSchema.xsl files.xml
-	@XALAN@ -o combindedSchema.xsd files.xml genCombindedSchema.xsl
+combindedSchema.xsd: $(srcdir)/genCombindedSchema.xsl files.xml
+	@XALAN@ -o combindedSchema.xsd files.xml $(srcdir)/genCombindedSchema.xsl
 
 # generate the documentation
 .DELETE_ON_ERROR: mbsimxml.xhtml
-mbsimxml.xhtml: genContent.xsl combindedSchema.xsd
-	@XALAN@ -o mbsimxml.xhtml -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" combindedSchema.xsd genContent.xsl
+mbsimxml.xhtml: $(srcdir)/genContent.xsl combindedSchema.xsd
+	@XALAN@ -o mbsimxml.xhtml -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" -p ABS_BUILDDIR "'$(abs_builddir)'" combindedSchema.xsd $(srcdir)/genContent.xsl
 # note we convert abs path here to rel ones to avoid xalan/xerces to interprete a abs path as rel when using wine
 	@MBXMLUTILSVALIDATE@ $$(pwd | sed -re "s|/[^/]+|/..|g;s|^/||")$(MBXMLUTILSSCHEMA)/http___www_w3_org/xhtml1-transitional.xsd mbsimxml.xhtml
 

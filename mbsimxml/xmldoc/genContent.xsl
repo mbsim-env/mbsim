@@ -6,6 +6,7 @@
 
   <xsl:param name="DATETIME"/>
   <xsl:param name="MBSIMXMLVERSION"/>
+  <xsl:param name="ABS_BUILDDIR"/>
 
   <!-- output method -->
   <xsl:output method="xml"
@@ -64,10 +65,10 @@
     <h1>MBSimXML - XML Documentation</h1>
     <p>This is the entry point for the documentation of MBSimXML. Below is a list of all relevant documentations for MBSimXML.</p>
     <ul>
-      <xsl:for-each select="document('files.xml')/files/file">
+      <xsl:for-each select="document(concat($ABS_BUILDDIR, '/', 'files.xml'))/files/file">
         <xsl:sort select="@base"/>
         <li><a class="namespace" href="../{@base}/index.xhtml">
-          <xsl:value-of select="document(concat(document('files.xml')/files/@base, '/', @base, '/', @name))/xs:schema/@targetNamespace"/>
+          <xsl:value-of select="document(concat(document(concat($ABS_BUILDDIR, '/', 'files.xml'))/files/@base, '/', @base, '/', @name))/xs:schema/@targetNamespace"/>
         </a></li>
       </xsl:for-each>
     </ul>
