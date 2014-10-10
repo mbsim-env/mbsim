@@ -1,9 +1,9 @@
 all: .mbsimflexiblebody.done
 
-xml/index.xml: ../schema/mbsimflexiblebody.xsd ../mbsimFlexibleBody/*.h
-	doxygen
+xml/index.xml: $(top_srcdir)/schema/mbsimflexiblebody.xsd $(top_srcdir)/mbsimFlexibleBody/*.h
+	doxygen $(srcdir)/Doxyfile
 
-.mbsimflexiblebody.done: xml/index.xml ../schema/mbsimflexiblebody.xsd ../mbsimFlexibleBody/*.h
+.mbsimflexiblebody.done: xml/index.xml $(top_srcdir)/schema/mbsimflexiblebody.xsd $(top_srcdir)/mbsimFlexibleBody/*.h
 	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd xml figures:../doc MBSimFlexibleBody MBSim::
 
 

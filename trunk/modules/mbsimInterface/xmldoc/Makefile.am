@@ -1,9 +1,9 @@
 all: .mbsiminterface.done
 
-xml/index.xml: ../schema/mbsiminterface.xsd ../mbsimInterface/*.h
-	doxygen
+xml/index.xml: $(top_srcdir)/schema/mbsiminterface.xsd $(top_srcdir)/mbsimInterface/*.h
+	doxygen $(srcdir)/Doxyfile
 
-.mbsiminterface.done: xml/index.xml ../schema/mbsiminterface.xsd ../mbsimInterface/*.h 
+.mbsiminterface.done: xml/index.xml $(top_srcdir)/schema/mbsiminterface.xsd $(top_srcdir)/mbsimInterface/*.h 
 	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimInterface/mbsiminterface.xsd xml figures:../doc MBSimInterface MBSim::
 
 
