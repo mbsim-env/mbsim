@@ -48,10 +48,10 @@ dnl    fi
 dnl    test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
 dnl    AC_SUBST([MKOCTFILE],[$mkoctfile])
     AS_ECHO("==== create interface_messages.cc ====")
-    sed -e '/#define\ _SI_/!d; s/#define\ //g; s/\ .*//g; s/^.*$/case \0:\n  rIS << "\0";\n  break;/g' ./mbsimInterface/interface_messages.h > ./mbsimInterface/interface_messages.cc
+    sed -e '/#define\ _SI_/!d; s/#define\ //g; s/\ .*//g; s/^.*$/case \0:\n  rIS << "\0";\n  break;/g' $srcdir/mbsimInterface/interface_messages.h > ./mbsimInterface/interface_messages.cc
     AS_ECHO("==== create interface_messages.m ====")
     echo "clear('IPC');" > ./mbsimInterface/interface_messages.m
-    sed -e '/#define\ _SI_/!d; s/#define\ /IPC\./g; s/\ /=/g; s/$/;/g' ./mbsimInterface/interface_messages.h >> ./mbsimInterface/interface_messages.m
+    sed -e '/#define\ _SI_/!d; s/#define\ /IPC\./g; s/\ /=/g; s/$/;/g' $srcdir/mbsimInterface/interface_messages.h >> ./mbsimInterface/interface_messages.m
     ], 
     [ ]
 )
