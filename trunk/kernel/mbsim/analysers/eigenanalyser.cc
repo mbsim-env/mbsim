@@ -270,11 +270,11 @@ namespace MBSimAnalyser {
   void Eigenanalyser::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"startTime");
-    setStartTime(Element::getDouble(e));
+    if(e) setStartTime(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"endTime");
-    setEndTime(Element::getDouble(e));
+    if(e) setEndTime(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"plotStepSize");
-    setPlotStepSize(Element::getDouble(e));
+    if(e) setPlotStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"initialState");
     if(e) setInitialState(Element::getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"task");

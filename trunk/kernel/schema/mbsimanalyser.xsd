@@ -26,17 +26,17 @@
     <xs:complexContent>
       <xs:extension base="mbsim:SolverType">
         <xs:sequence>
-          <xs:element name="startTime" type="pv:timeScalar">
+          <xs:element name="startTime" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Startzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="endTime" type="pv:timeScalar">
+          <xs:element name="endTime" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Endzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="plotStepSize" type="pv:timeScalar">  
+          <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Schrittweite zur Ausgabe von Plotdaten.<br/>
                 Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
