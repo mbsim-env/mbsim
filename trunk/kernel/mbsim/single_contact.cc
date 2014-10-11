@@ -1495,20 +1495,20 @@ namespace MBSim {
   void SingleContact::calccorrSize(int j) {
     LinkMechanics::calccorrSize(j);
     if (j == 1) { // IG
-      corrSize += gActive;
+      corrSize = gActive;
     }
     else if (j == 2) { // IB
-      corrSize += gActive * gdActive[0];
+      corrSize = gActive * gdActive[0];
     }
     //    else if(j==3) { // IG
     //      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
     //        corrIndk = corrSize;
     //        corrSizek = gActive[i]*(1+getFrictionDirections());
-    //        corrSize += corrSizek;
+    //        corrSize = corrSizek;
     //      }
     //    }
     else if (j == 4) { // IH
-      corrSize += gActive * gdActive[0] * (1 + gdActive[1] * getFrictionDirections());
+      corrSize = gActive * gdActive[0] * (1 + gdActive[1] * getFrictionDirections());
     }
     else
       THROW_MBSIMERROR("Internal error");

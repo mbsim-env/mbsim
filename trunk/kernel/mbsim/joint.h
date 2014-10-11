@@ -79,6 +79,7 @@ namespace MBSim {
       virtual void calcgSize(int j);
       virtual void calcgdSize(int j);
       virtual void calcrFactorSize(int j);
+      virtual void calccorrSize(int j);
       virtual bool isSetValued() const;
       virtual bool isSingleValued() const;
       virtual bool isActive() const {

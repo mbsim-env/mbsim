@@ -66,14 +66,9 @@ namespace MBSim {
 
       /**
        * \brief constructor
-       */
-      DynamicSystemSolver();
-
-      /**
-       * \brief constructor
        * \param name of dynamic system
        */
-      DynamicSystemSolver(const std::string &projectName);
+      DynamicSystemSolver(const std::string &name="");
 
       /**
        * \brief destructor
@@ -367,7 +362,7 @@ namespace MBSim {
        * \brief drift projection for positions
        * \param time
        */
-      void projectGeneralizedPositions(double t, int mode);
+      void projectGeneralizedPositions(double t, int mode, bool fullUpdate=false);
 
       /**
        * \brief drift projection for positions
@@ -509,6 +504,8 @@ namespace MBSim {
       void setAlwaysConsiderContact(bool alwaysConsiderContact_) {alwaysConsiderContact = alwaysConsiderContact_;}
 
       void setInverseKinetics(bool inverseKinetics_) {inverseKinetics = inverseKinetics_;}
+
+      void setInitialProjection(bool initialProjection_) {initialProjection = initialProjection_;}
 
       fmatvec::Mat dhdq(double t, int lb=0, int ub=0);
       fmatvec::Mat dhdu(double t, int lb=0, int ub=0);
@@ -774,6 +771,7 @@ namespace MBSim {
 
       bool alwaysConsiderContact;
       bool inverseKinetics;
+      bool initialProjection;
 
       fmatvec::Vec corrParent;
 
