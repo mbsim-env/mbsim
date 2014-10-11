@@ -88,7 +88,6 @@ namespace MBSim {
 
     public:
       RelativeKinematicsObserver(const std::string &name="");
-      void setFrames(Frame *frame0, Frame *frame1) { frame = frame0; refFrame = frame1; } 
       void setFrameOfReference(Frame *frame_) { refFrame = frame_; }
 
       void init(InitStage stage);
