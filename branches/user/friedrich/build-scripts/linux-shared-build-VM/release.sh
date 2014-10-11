@@ -48,7 +48,7 @@ rss 0
 
 rm -rf $SRCDIR/local/share/mbxmlutils
 
-$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --rotate 30 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --passToRunexamples --disableCompare --disableValidate
+$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --passToRunexamples --disableCompare --disableValidate
 
 RET=0
 
