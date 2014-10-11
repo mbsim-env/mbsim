@@ -26,10 +26,8 @@ if len(sys.argv)>1:
   print(encPassword)
   sys.exit(0);
 
-# enable cgi error handling and print header
+# enable cgi error handling
 cgitb.enable()
-print("Content-Type: text/html")
-print("")
 
 # process provided form data
 form=cgi.FieldStorage()
@@ -45,15 +43,30 @@ if len(form)>0: # if form elements are provided using the http push methode
     encPasswordUser=hashlib.sha256(form["PASSWORD"].value.encode("utf-8")).hexdigest()
     if encPasswordUser==encPasswordStored:
       codecs.open(pj(configDir, "updateList"), "w", encoding="utf-8").writelines(list(map(lambda x: x+'\n', updateList))) # newlines must be added
-      action=2 # right password -> changes stored on server
-    else: # wrong password -> do not save anything
-      action=1 # wrong password -> nothing changed
+      # right password -> changes stored on server -> return success json
+      print('Content-type: application/json')
+      print('')
+      print('{ "success": true }')
+      sys.exit(0);
+    else: # wrong password -> do not save anything -> return failed json
+      # wrong password -> nothing changed
+      print('Content-type: application/json')
+      print('')
+      print('{ "success": false }')
+      sys.exit(0);
   else:
-    action=1 # no password -> nothing changed
+    # no password -> nothing changed -> return failed json
+    print('Content-type: application/json')
+    print('')
+    print('{ "success": false }')
+    sys.exit(0);
 else: # no form elements provided -> just read updateLists from server
   updateList=codecs.open(pj(configDir, "updateList"), "r", encoding="utf-8").readlines()
   updateList=list(map(lambda x: x.rstrip(), updateList)) # newlines must be removed
-  action=0 # only results are shown
+
+# print header
+print("Content-Type: text/html")
+print("")
 
 # read output file
 xml.etree.ElementTree.register_namespace('',"http://www.w3.org/1999/xhtml")
@@ -75,7 +88,7 @@ if 'SERVER_NAME' in os.environ and 'SERVER_PORT' in os.environ and 'SCRIPT_NAME'
   thisURL='http://'+os.environ['SERVER_NAME']+':'+os.environ['SERVER_PORT']+os.environ['SCRIPT_NAME']
 else: # just to be able to run the script output a web server
   thisURL='dummy'
-root.findall(".//*[@id='ACTION']")[0].attrib["action"]=thisURL+'#PASSWORDMSGANCHOR'
+root.findall(".//*[@id='CONFIG']")[0].text="var submituri = \""+thisURL+"\";"
 root.findall(".//*[@id='CANCEL']")[0].attrib["onclick"]="window.location.href='"+thisURL+"'"
 
 # remove the disabled attribute from the password input
@@ -84,20 +97,6 @@ del root.findall(".//*[@id='PASSWORD']")[0].attrib["disabled"]
 del root.findall(".//*[@id='SUBMIT']")[0].attrib["disabled"]
 # remove the disabled attribute from the cancel input
 del root.findall(".//*[@id='CANCEL']")[0].attrib["disabled"]
-# add the password result text
-e=root.findall(".//*[@id='PASSWORDMSG']")[0]
-b=xml.etree.ElementTree.SubElement(e, "b")
-b.attrib["id"]="PASSWORDMSGANCHOR"
-if action==1:
-  e.attrib["class"]="text-danger"
-  b.text="WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry."
-if action==2:
-  e.attrib["class"]="text-success"
-  b.text="Your selection has been saved on the server."
-# and expand the password panel
-if action==1 or action==2:
-  e=root.findall(".//*[@id='collapseUpdateReferences']")[0]
-  e.attrib["class"]=e.attrib["class"]+" in"
 
 # remove the disabled attribute from all "EXAMPLE_*" checkbox inputs and set the checked
 # attribute if this examles should be updated
