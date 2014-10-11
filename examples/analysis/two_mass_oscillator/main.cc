@@ -18,6 +18,7 @@ int main (int argc, char* argv[]) {
   Vec z0(sys->getzSize());
   z0(0) = 0.02;
   analyser.setInitialDeviation(z0);
+  analyser.setAutoUpdate(true);
   analyser.setDetermineEquilibriumState(true);
   analyser.setAmplitude(0.5);
   analyser.setMode(2);
