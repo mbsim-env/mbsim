@@ -66,13 +66,8 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
-  DynamicSystemSolver::DynamicSystemSolver() :
-      Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
-    constructor();
-  }
-
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) :
-      Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) :
+      Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
@@ -964,13 +959,20 @@ namespace MBSim {
 
   void DynamicSystemSolver::initz(Vec& z) {
     updatezRef(z);
-//    if (READZ0) {
-//      q = q0;
-//      u = u0;
-//      x = x0;
-//    }
-//    else
-      Group::initz();
+    Group::initz();
+
+    // Perform a projection of generalized positions and velocities at time t=0
+    if(initialProjection) { 
+      updateStateDependentVariables(0); 
+      updateT(0);
+      updateJacobians(0);
+      updateM(0);
+      facLLM();
+      projectGeneralizedPositions(0, 1, true);
+      updateStateDependentVariables(0);
+      updateJacobians(0);
+      projectGeneralizedVelocities(0, 1);
+    }
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
@@ -1061,7 +1063,7 @@ namespace MBSim {
     updateLinkStatusReg(t);
   }
 
-  void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode) {
+  void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode, bool fullUpdate) {
     int gID = 0;
     int laID = 0;
     int corrID = 0;
@@ -1093,27 +1095,27 @@ namespace MBSim {
     calclaSize(laID);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
     updateW(t);
-    //Vec corr;
-    //corr = g;
-    //corr.init(tolProj);
     SqrMat Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
-    // TODO: Wv*T check
     int iter = 0;
     while (nrmInf(g - corr) >= tolProj) {
-      if (++iter > 500 && min(g) > 0) {
-        msg(Info) << "---------------------- breche ab ------------------" << endl;
+      if (++iter > 500) {
+        msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed!" << endl;
         break;
       }
       Vec mu = slvLS(Gv, -g + W[0].T() * nu + corr);
       Vec dnu = slvLLFac(LLM[0], W[0] * mu) - nu;
       nu += dnu;
       q += T * dnu;
-      //Vec mu = slvLS(Gv,corr-g);
-      //Vec dq = slvLLFac(LLM[0],W[0]*mu);
-      //q += dq;
       updateStateDependentVariables(t);
       updateg(t);
-    }
+      if(fullUpdate) {
+        updateJacobians(t);
+        updateM(t);
+        facLLM();
+        updateW(t);
+        Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
+      }
+   }
     calclaSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
     calcgSize(0);
@@ -1453,6 +1455,9 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"inverseKinetics");
     if (e)
       setInverseKinetics(Element::getBool(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"initialProjection");
+    if (e)
+      setInitialProjection(Element::getBool(e));
   }
 
   DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {

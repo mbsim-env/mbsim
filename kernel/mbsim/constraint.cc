@@ -500,7 +500,7 @@ namespace MBSim {
     Residuum f(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
-    assert(newton.getInfo()==0);
+    msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
 
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->updateRelativeJacobians(t,if1[i]);

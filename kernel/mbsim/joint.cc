@@ -243,6 +243,11 @@ namespace MBSim {
     rFactorSize = isSetValued() ? forceDir.cols() + momentDir.cols() : 0;
   }
 
+  void Joint::calccorrSize(int j) {
+    LinkMechanics::calccorrSize(j);
+    corrSize = forceDir.cols() + momentDir.cols();
+  }
+
   bool Joint::isSetValued() const {
     bool flag = false;
     if (ffl)
