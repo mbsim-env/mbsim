@@ -45,6 +45,9 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#ifdef WIN32
+# define putenv _putenv
+#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -67,7 +70,7 @@ namespace MBSimGUI {
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
-    setenv("MBXMLUTILS_HTMLOUTPUT", "1", 1);
+    putenv("MBXMLUTILS_HTMLOUTPUT=1");
 
     mw = this;
 
