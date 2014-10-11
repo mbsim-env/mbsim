@@ -340,25 +340,43 @@ def main():
   writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
-  print('<?xml version="1.0" encoding="UTF-8"?>', file=mainFD)
-  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=mainFD)
-  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
-  print('<head>', file=mainFD)
-  print('  <title>MBSim runexamples Results</title>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
-  print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>', file=mainFD)
-  print('  <base id="BASE" href="." target="_self"/>', file=mainFD)
-  print('</head>', file=mainFD)
-  print('<body style="margin:1em">', file=mainFD)
-  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript">', file=mainFD)
-  print('  $(document).ready(function() {', file=mainFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=mainFD)
-  print('  } );', file=mainFD)
-  print('</script>', file=mainFD)
+  print('''<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>MBSim runexamples Results</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
+    <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>
+    <base id="BASE" href="." target="_self"/>
+  </head>
+  <body style="margin:1em">
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+  <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
+  <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
+  <script type="text/javascript" id="CONFIG">var submituri="dummy";</script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});
+    } );
+    function submitButton() {
+      var formEles = $("#SortThisTable").DataTable().$("input"); // all checkboxes of the table
+      formEles = formEles.add($("#PASSWORD")); // the password input
+      $.post(submituri, formEles.serialize(), function(data) {
+        var msg = $("#PASSWORDMSG");
+        var d = new Date();
+        var dstr = '('+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+')';
+        if(data.success) {
+          msg.addClass("text-success");
+          msg.text("Your selection has been saved on the server. "+dstr);
+        }
+        else {
+          msg.addClass("text-danger");
+          msg.text("WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry. "+dstr);
+        }
+      } );
+    }
+  </script>''', file=mainFD)
 
   print('<h1>MBSim runexamples Results</h1>', file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
@@ -388,7 +406,6 @@ def main():
   print('</dl>', file=mainFD)
   print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
-  print('<form id="ACTION" action="" method="post">', file=mainFD)
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th>Example</th>', file=mainFD)
@@ -462,12 +479,11 @@ def main():
   print('      <label for="PASSWORD">Password</label>', file=mainFD)
   print('      <input type="password" name="PASSWORD" class="form-control" id="PASSWORD" disabled="disabled"/>', file=mainFD)
   print('    </div>', file=mainFD)
-  print('          <button id="SUBMIT" class="btn btn-default" type="submit" disabled="disabled">Submit</button>', file=mainFD)
+  print('          <button id="SUBMIT" class="btn btn-default" type="button" onclick="submitButton()" disabled="disabled">Submit</button>', file=mainFD)
   print('          <button id="CANCEL" class="btn btn-default" type="button" onclick="window.location.href=\'.\'" disabled="disabled">Cancel</button>', file=mainFD)
   print('    <div id="PASSWORDMSG"> </div>', file=mainFD)
   print('  </div>', file=mainFD)
   print('</div>', file=mainFD)
-  print('</form>', file=mainFD)
 
   print('<hr/><small>Created using <a href="https://www.python.org">Python</a>, <a href="http://getbootstrap.com">Bootstrap</a> and'+\
         ' <a href="http://glyphicons.com">Glyphicons</a>.</small>', file=mainFD)

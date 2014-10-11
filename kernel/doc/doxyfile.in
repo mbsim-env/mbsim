@@ -295,7 +295,7 @@ PAPER_TYPE           = a4wide
 # packages that should be included in the LaTeX output.
 # !!! Geaendert !!!
 
-EXTRA_PACKAGES       = @srcdir@/macros, hyperref
+EXTRA_PACKAGES       = @abs_srcdir@/macros, hyperref
 
 # The LATEX_HEADER tag can be used to specify a personal LaTeX header for 
 # the generated latex document. The header should contain everything until
