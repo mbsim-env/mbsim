@@ -92,6 +92,11 @@
           <h4 class="text-danger"><xsl:value-of select="auxwhat/text()"/></h4>
           <xsl:apply-templates select="auxwhat/following-sibling::stack[position()=1]"/>
         </xsl:if>
+        <!-- location stack of the valgrind "xwhat" message, if existing -->
+        <xsl:if test="xwhat">
+          <h4 class="text-danger"><xsl:value-of select="xwhat/text/text()"/></h4>
+          <xsl:apply-templates select="xwhat/following-sibling::stack[position()=1]"/>
+        </xsl:if>
       </td>
     </tr>
   </xsl:template>

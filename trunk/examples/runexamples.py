@@ -9,6 +9,7 @@ if sys.version_info[0]==2 and sys.version_info[1]<=6 or sys.version_info[0]==3 a
 import argparse
 import fnmatch
 import os
+import stat
 from os.path import join as pj
 import subprocess
 import datetime
@@ -846,13 +847,17 @@ def getOutFiles(example):
     outFiles=glob.glob(pj(args.reportOutDir, example[0], "valgrind.output.*.xml"))
     ret=[]
     for outFile in outFiles:
+      # generate return value (basenames)
       ret.append(os.path.basename(outFile))
+      # add xml-stylesheet procession instruction
       with open(outFile, "r") as f: data=f.read().splitlines(True)
       with open(outFile, "w") as f:
         f.writelines(data[0])
         parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+2))))
         f.write('<?xml-stylesheet type="text/xsl" href="'+parDirs+'/valgrindXMLToHTML.xsl"?>')
         f.writelines(data[1:])
+      # fix file permission
+      os.chmod(outFile, stat.S_IROTH)
     return ret
   return []
 
