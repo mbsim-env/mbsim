@@ -103,6 +103,8 @@ cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout,
 cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
+cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
+  help="VALGRIND: add special arguments and handling for valgrind")
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 
@@ -338,6 +340,8 @@ def main():
 
   # write empty RSS feed
   writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
+  # write other common files to args.reportOutDir
+  shutil.copy(pj(os.path.dirname(os.path.realpath(__file__)), 'valgrindXMLToHTML.xsl'), pj(args.reportOutDir, os.pardir))
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('''<?xml version="1.0" encoding="UTF-8"?>
@@ -638,15 +642,16 @@ def runExample(resultQueue, example):
       executeFD=MultiFile(codecs.open(pj(args.reportOutDir, executeFN), "w", encoding="utf-8"), args.printToConsole)
       dt=0
       if os.path.isfile("Makefile"):
-        executeRet, dt=executeSrcExample(executeFD)
+        executeRet, dt, outfiles=executeSrcExample(executeFD, example)
       elif os.path.isfile("MBS.mbsimprj.xml"):
-        executeRet, dt=executeXMLExample(executeFD)
+        executeRet, dt, outfiles=executeXMLExample(executeFD, example)
       elif os.path.isfile("MBS.mbsimprj.flat.xml"):
-        executeRet, dt=executeFlatXMLExample(executeFD)
+        executeRet, dt, outfiles=executeFlatXMLExample(executeFD, example)
       else:
         print("Unknown example type in directory "+example[0]+" found.", file=executeFD)
         executeRet=1
         dt=0
+        outfiles=[]
       executeFD.close()
     if executeRet==None or executeRet!=0: runExampleRet=1
     # get reference time
@@ -670,7 +675,11 @@ def runExample(resultQueue, example):
         resultStr+='failed'
       else:
         resultStr+='passed'
-      resultStr+='</a></td>'
+      resultStr+='</a>'
+      # add all additional output files
+      for outfile in outfiles:
+        resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
+      resultStr+='</td>'
     if args.disableRun:
       resultStr+='<td class="warning">not run</td>'
     else:
@@ -820,14 +829,43 @@ def runExample(resultQueue, example):
 
 
 
+# prefix the simultion with this parameter.
+# this is normaly just args.prefixSimulation but may be extended by keywords of args.prefixSimulationKeyword.
+def prefixSimulation(example):
+  # handle VALGRIND
+  if args.prefixSimulationKeyword=='VALGRIND':
+    return args.prefixSimulation+['--xml=yes', '--xml-file='+pj(args.reportOutDir, example[0], 'valgrind.output.%p.xml')]
+  return args.prefixSimulation
+
+# get additional output files of simulations.
+# these are all dependent on the keyword of args.prefixSimulationKeyword.
+# additional output files must be placed in the args.reportOutDir and here only the basename must be returned.
+def getOutFiles(example):
+  # handle VALGRIND
+  if args.prefixSimulationKeyword=='VALGRIND':
+    outFiles=glob.glob(pj(args.reportOutDir, example[0], "valgrind.output.*.xml"))
+    ret=[]
+    for outFile in outFiles:
+      ret.append(os.path.basename(outFile))
+      with open(outFile, "r") as f: data=f.read().splitlines(True)
+      with open(outFile, "w") as f:
+        f.writelines(data[0])
+        parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+2))))
+        f.write('<?xml-stylesheet type="text/xsl" href="'+parDirs+'/valgrindXMLToHTML.xsl"?>')
+        f.writelines(data[1:])
+    return ret
+  return []
+
+
+
 # execute the source code example in the current directory (write everything to fd executeFD)
-def executeSrcExample(executeFD):
+def executeSrcExample(executeFD, example):
   print("Running commands:", file=executeFD)
   print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0
-  if subprocessCall(["make"], executeFD)!=0: return 1, 0
+  if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
+  if subprocessCall(["make"], executeFD)!=0: return 1, 0, []
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
     NAME="LD_LIBRARY_PATH"
@@ -843,41 +881,41 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+  ret=subprocessCall(prefixSimulation(example)+[pj(os.curdir, "main"+args.exeExt)], executeFD,
                      env=mainEnv, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt
+  return ret, dt, getOutFiles(example)
 
 
 
 # execute the soruce code example in the current directory (write everything to fd executeFD)
-def executeXMLExample(executeFD):
+def executeXMLExample(executeFD, example):
   print("Running command:", file=executeFD)
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+["MBS.mbsimprj.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
                      ["MBS.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt
+  return ret, dt, getOutFiles(example)
 
 
 
 # execute the soruce code example in the current directory (write everything to fd executeFD)
-def executeFlatXMLExample(executeFD):
+def executeFlatXMLExample(executeFD, example):
   print("Running command:", file=executeFD)
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsimprj.flat.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
                      executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt
+  return ret, dt, getOutFiles(example)
 
 
 
