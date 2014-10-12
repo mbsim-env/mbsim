@@ -7,8 +7,6 @@
       <head>
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
-      </head>
-      <body style="margin:1em">
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
         <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
         <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
@@ -16,8 +14,8 @@
           $(document).ready(function() {
             // initialize the error table
             $("#ErrorTable").dataTable({
-              'lengthMenu': [ [10, 20, 50, 100, -1], [10, 20, 50, 100, 'All'] ],
-              'pageLength': -1,
+              'lengthMenu': [ [10, 20, 50, 100, 200, 500, -1], [10, 20, 50, 100, 200, 500, 'All'] ],
+              'pageLength': 50,
               'aaSorting': [],
               'stateSave': true
             });
@@ -33,6 +31,8 @@
             });
           });
         </script>
+      </head>
+      <body style="margin:1em">
         <h1>Valgrind Report: <xsl:value-of select="tool/text()"/></h1>
         <h2>Call Information</h2>
         <dl class="dl-horizontal">
@@ -68,37 +68,40 @@
 
   <!-- one row of the error table -->
   <xsl:template match="error">
-    <tr>
-      <!-- error type -->
-      <td class="danger">
-        <h3><xsl:value-of select="kind/text()"/></h3>
-        <!-- suppression raw text, if existing -->
-        <xsl:if test="suppression/rawtext">
-          <div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-              Show suppression <span class="caret"></span>
-            </button>
-            <pre class="dropdown-menu" role="menu"><xsl:value-of select="suppression/rawtext/text()"/></pre>
-          </div>
-        </xsl:if>
-      </td>
-      <!-- error details -->
-      <td>
-        <!-- location stack of the valgrind "what" message -->
-        <h4 class="text-danger"><xsl:value-of select="what/text()"/></h4>
-        <xsl:apply-templates select="what/following-sibling::stack[position()=1]"/>
-        <!-- location stack of the valgrind "auxwhat" message, if existing -->
-        <xsl:if test="auxwhat">
-          <h4 class="text-danger"><xsl:value-of select="auxwhat/text()"/></h4>
-          <xsl:apply-templates select="auxwhat/following-sibling::stack[position()=1]"/>
-        </xsl:if>
-        <!-- location stack of the valgrind "xwhat" message, if existing -->
-        <xsl:if test="xwhat">
-          <h4 class="text-danger"><xsl:value-of select="xwhat/text/text()"/></h4>
-          <xsl:apply-templates select="xwhat/following-sibling::stack[position()=1]"/>
-        </xsl:if>
-      </td>
-    </tr>
+    <!-- Leak_StillReachable is not an error -> don't show it -->
+    <xsl:if test="kind/text()!='Leak_StillReachable'">
+      <tr>
+        <!-- error type -->
+        <td class="danger">
+          <h3><xsl:value-of select="kind/text()"/></h3>
+          <!-- suppression raw text, if existing -->
+          <xsl:if test="suppression/rawtext">
+            <div class="btn-group btn-group-sm">
+              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                Show suppression <span class="caret"></span>
+              </button>
+              <pre class="dropdown-menu" role="menu"><xsl:value-of select="suppression/rawtext/text()"/></pre>
+            </div>
+          </xsl:if>
+        </td>
+        <!-- error details -->
+        <td>
+          <!-- location stack of the valgrind "what" message -->
+          <h4 class="text-danger"><xsl:value-of select="what/text()"/></h4>
+          <xsl:apply-templates select="what/following-sibling::stack[position()=1]"/>
+          <!-- location stack of the valgrind "auxwhat" message, if existing -->
+          <xsl:if test="auxwhat">
+            <h4 class="text-danger"><xsl:value-of select="auxwhat/text()"/></h4>
+            <xsl:apply-templates select="auxwhat/following-sibling::stack[position()=1]"/>
+          </xsl:if>
+          <!-- location stack of the valgrind "xwhat" message, if existing -->
+          <xsl:if test="xwhat">
+            <h4 class="text-danger"><xsl:value-of select="xwhat/text/text()"/></h4>
+            <xsl:apply-templates select="xwhat/following-sibling::stack[position()=1]"/>
+          </xsl:if>
+        </td>
+      </tr>
+    </xsl:if>
   </xsl:template>
 
   <!-- a table for the location stack -->
