@@ -106,7 +106,7 @@ fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimInterface/Makefile doc/doxyfile doc/Makefile mbsimInterface.pc schema/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsimInterface/Makefile doc/doxyfile doc/Makefile mbsimInterface.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile])
 
 AC_OUTPUT
 
