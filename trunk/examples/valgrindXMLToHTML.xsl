@@ -106,7 +106,7 @@
 
   <!-- a table for the location stack -->
   <xsl:template match="stack">
-    <table class="ErrorStackTable table table-striped table-hover table-bordered compact">
+    <table class="ErrorStackTable table table-striped table-hover table-bordered table-condensed">
       <thead><tr><th>File:Line</th><th>Function Name</th><th>Library</th></tr></thead>
       <tbody>
         <!-- each stack entry is a table row -->
