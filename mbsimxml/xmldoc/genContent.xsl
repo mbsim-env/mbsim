@@ -37,6 +37,7 @@
         *.namespace { font-style:italic }
         *.namespaceSmall { font-style:italic;font-size:0.6em }
         ul.content { padding-left:3ex;list-style-type:none }
+        li.displaynone { display:none }
         h2 { margin-top:8ex }
         p.footer { text-align:right;font-size:0.7em }
         img.w3cvalid { border:0;vertical-align:top }
@@ -109,16 +110,26 @@
         <xsl:attribute name="href"><xsl:apply-templates mode="GENLINK" select="@name"/></xsl:attribute>
         &lt;<xsl:value-of select="$NAME_NAME"/>&gt;</a>
       <xsl:text> </xsl:text><span class="namespaceSmall"><xsl:value-of select="$NS_NAME"/></span>
-      <xsl:if test="/xs:dummyRoot/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS_NAME,'}',$NAME_NAME)]">
-        <!-- this if is equal to test="/xs:dummyRoot/xs:schema/xs:element[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
-        <ul class="content">
-          <xsl:apply-templates mode="CONTENT" select="/xs:dummyRoot/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS_NAME,'}',$NAME_NAME)]">
-            <!-- this apply-templates is equal to select="/xs:dummyRoot/xs:schema/xs:element[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
-            <xsl:sort select="@name"/>
-          </xsl:apply-templates>
-        </ul>
-      </xsl:if>
+      <ul class="content">
+        <li class="displaynone"/><!-- dummy li element just to honor the xhtml XML schema which requires at least 1 li inside a ul -->
+        <!-- this apply-templates (includeing the CONTENT_WITHATTRFQN template) is equal to select="...[@substitutionGroup=current()/@name]" with namespace aware attributes values -->
+        <xsl:apply-templates mode="CONTENT_WITHATTRFQN" select="/xs:dummyRoot/xs:schema/xs:element">
+          <xsl:with-param name="FQN" select="concat('{',$NS_NAME,'}',$NAME_NAME)"/>
+          <xsl:with-param name="ATTRNAME" select="'substitutionGroup'"/>
+          <xsl:sort select="@name"/>
+        </xsl:apply-templates>
+      </ul>
     </li>
+  </xsl:template>
+  <!-- just required to workaround the issue that many xslt processors (e.g. Xalan) does not provide the correct parent element for
+  a namespace node -->
+  <xsl:template match="*" mode="CONTENT_WITHATTRFQN">
+    <xsl:param name="FQN"/>
+    <xsl:param name="ATTRNAME"/>
+    <xsl:param name="ATTR" select="@*[name()=$ATTRNAME]"/>
+    <xsl:if test="concat('{',namespace::*[name()=substring-before($ATTR,':')],'}',translate(substring($ATTR,string-length(substring-before($ATTR,':'))+1),':',''))=$FQN">
+      <xsl:apply-templates select="." mode="CONTENT"/>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template mode="CONTENT" match="/xs:dummyRoot/xs:schema/xs:simpleType">
