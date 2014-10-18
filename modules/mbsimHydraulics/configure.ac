@@ -73,7 +73,7 @@ fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile doc/doxyfile doc/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile doc/doxyfile doc/Makefile xmldoc/Makefile xmldoc/Doxyfile])
 
 AC_OUTPUT
 
