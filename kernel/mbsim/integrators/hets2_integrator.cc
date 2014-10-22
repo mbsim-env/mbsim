@@ -84,8 +84,8 @@ namespace MBSimIntegrator {
     if(z0.size()) z = z0;
     else system.initz(z);
     system.setUseOldla(false);
-    system.setlaTol(1e-10/dt);
-    system.setgddTol(1e-10);
+    system.setlaTol(1e-10/dt); // adaptation from impulse
+    system.setgddTol(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
 
     // prepare plotting
     integPlot.open((name + ".plt").c_str());
