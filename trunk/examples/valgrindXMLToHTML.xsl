@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+  <!-- output method -->
+  <xsl:output method="html" encoding="UTF-8"/>
+
   <!-- The html header -->
   <xsl:template match="/valgrindoutput">
-    <html>
+    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html>
+</xsl:text>
+    <html lang="en">
       <head>
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>

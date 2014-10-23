@@ -118,8 +118,6 @@ outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results 
 debugOpts=argparser.add_argument_group('Debugging and other Options')
 debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
-debugOpts.add_argument("--debugValidateHTMLOutput", action="store_true",
-  help="validate all generated html output files at the end")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 
@@ -345,9 +343,8 @@ def main():
   shutil.copy(pj(os.path.dirname(os.path.realpath(__file__)), 'valgrindXMLToHTML.xsl'), pj(args.reportOutDir, os.pardir))
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
-  print('''<?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-  <html xmlns="http://www.w3.org/1999/xhtml">
+  print('''<!DOCTYPE html>
+  <html lang="en">
   <head>
     <title>MBSim runexamples Results</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
@@ -363,24 +360,27 @@ def main():
   <script type="text/javascript">
     $(document).ready(function() {
       $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});
-    } );
-    function submitButton() {
-      var formEles = $("#SortThisTable").DataTable().$("input"); // all checkboxes of the table
-      formEles = formEles.add($("#PASSWORD")); // the password input
-      $.post(submituri, formEles.serialize(), function(data) {
-        var msg = $("#PASSWORDMSG");
-        var d = new Date();
-        var dstr = '('+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+')';
-        if(data.success) {
-          msg.addClass("text-success");
-          msg.text("Your selection has been saved on the server. "+dstr);
-        }
-        else {
-          msg.addClass("text-danger");
-          msg.text("WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry. "+dstr);
-        }
-      } );
-    }
+      $("#SUBMIT).click(function() {
+        var formEles = $("#SortThisTable").DataTable().$("input"); // all checkboxes of the table
+        formEles = formEles.add($("#PASSWORD")); // the password input
+        $.post(submituri, formEles.serialize(), function(data) {
+          var msg = $("#PASSWORDMSG");
+          var d = new Date();
+          var dstr = '('+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+')';
+          if(data.success) {
+            msg.addClass("text-success");
+            msg.text("Your selection has been saved on the server. "+dstr);
+          }
+          else {
+            msg.addClass("text-danger");
+            msg.text("WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry. "+dstr);
+          }
+        });
+      });
+      $("#CANCEL).click(function() {
+        window.location.href='.';
+      });
+    });
   </script>''', file=mainFD)
 
   print('<h1>MBSim runexamples Results</h1>', file=mainFD)
@@ -484,8 +484,8 @@ def main():
   print('      <label for="PASSWORD">Password</label>', file=mainFD)
   print('      <input type="password" name="PASSWORD" class="form-control" id="PASSWORD" disabled="disabled"/>', file=mainFD)
   print('    </div>', file=mainFD)
-  print('          <button id="SUBMIT" class="btn btn-default" type="button" onclick="submitButton()" disabled="disabled">Submit</button>', file=mainFD)
-  print('          <button id="CANCEL" class="btn btn-default" type="button" onclick="window.location.href=\'.\'" disabled="disabled">Cancel</button>', file=mainFD)
+  print('          <button id="SUBMIT" class="btn btn-default" type="button" disabled="disabled">Submit</button>', file=mainFD)
+  print('          <button id="CANCEL" class="btn btn-default" type="button" disabled="disabled">Cancel</button>', file=mainFD)
   print('    <div id="PASSWORDMSG"> </div>', file=mainFD)
   print('  </div>', file=mainFD)
   print('</div>', file=mainFD)
@@ -511,9 +511,6 @@ def main():
     print('\n'+str(len(failedExamples))+' examples have failed.')
   else:
     print('\nAll examples have passed.')
-
-  if args.debugValidateHTMLOutput:
-    validateHTMLOutput()
 
   return mainRet
 
@@ -753,9 +750,8 @@ def runExample(resultQueue, example):
       htmlOutputFN=pj(example[0], "validateXML.html")
       htmlOutputFD=codecs.open(pj(args.reportOutDir, htmlOutputFN), "w", encoding="utf-8")
       # write header
-      print('<?xml version="1.0" encoding="UTF-8"?>', file=htmlOutputFD)
-      print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=htmlOutputFD)
-      print('<html xmlns="http://www.w3.org/1999/xhtml">', file=htmlOutputFD)
+      print('<!DOCTYPE html>', file=htmlOutputFD)
+      print('<html lang="en">', file=htmlOutputFD)
       print('<head>', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
@@ -932,9 +928,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
 
   # create html page
   diffHTMLPlotFD=codecs.open(diffHTMLFileName, "w", encoding="utf-8")
-  print('<?xml version="1.0" encoding="UTF-8"?>', file=diffHTMLPlotFD)
-  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=diffHTMLPlotFD)
-  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=diffHTMLPlotFD)
+  print('<!DOCTYPE html>', file=diffHTMLPlotFD)
+  print('<html lang="en">', file=diffHTMLPlotFD)
   print('<head>', file=diffHTMLPlotFD)
   print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
@@ -1163,9 +1158,8 @@ def compareExample(example, compareFN):
   compareFD=codecs.open(pj(args.reportOutDir, compareFN), "w", encoding="utf-8")
 
   # print html header
-  print('<?xml version="1.0" encoding="UTF-8"?>', file=compareFD)
-  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=compareFD)
-  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=compareFD)
+  print('<!DOCTYPE html>', file=compareFD)
+  print('<html lang="en">', file=compareFD)
   print('<head>', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
@@ -1410,15 +1404,6 @@ def writeRSSFeed(nrFailed, nrTotal):
   </channel>
 </rss>'''%(args.buildType, args.url, args.url), file=rssFD)
   rssFD.close()
-
-
-
-def validateHTMLOutput():
-  schema=pj(pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"]), "http___www_w3_org", "xhtml1-transitional.xsd")
-  for root, _, filenames in os.walk(args.reportOutDir):
-    for filename in filenames:
-      if os.path.splitext(filename)[1]==".html":
-        subprocessCall([mbxmlutilsvalidate, schema, pj(root, filename)], sys.stdout)
 
 
 

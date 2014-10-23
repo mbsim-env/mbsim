@@ -18,7 +18,7 @@
 
 
   <xs:element name="Eigenanalyser" substitutionGroup="mbsim:Solver" type="EigenanalyserType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -27,48 +27,48 @@
       <xs:extension base="mbsim:SolverType">
         <xs:sequence>
           <xs:element name="startTime" type="pv:timeScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Startzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="endTime" type="pv:timeScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Endzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">  
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Schrittweite zur Ausgabe von Plotdaten.<br/>
                 Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"> 
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Anfangszustand der Differentialinklusion.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="task" type="pv:stringFullOctEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="amplitude" type="pv:unknownScalar" minOccurs="0">  
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="mode" type="pv:integerFullOctEval" minOccurs="0">  
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="determineEquilibriumState" type="pv:booleanFullOctEval" minOccurs="0">  
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="autoUpdate" type="pv:booleanFullOctEval" minOccurs="0">  
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
