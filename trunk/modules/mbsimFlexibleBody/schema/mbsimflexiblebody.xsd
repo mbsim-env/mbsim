@@ -19,7 +19,7 @@
 
   
   <xs:annotation>
-    <xs:documentation lang="de" xmlns="">
+    <xs:documentation xml:lang="de" xmlns="">
       MBSIMFlexibleBody ist ein Modul mit elastischen Elementen.<br/>
       Hierzu zählen Wellen, Achsen und Platten. Zur Zeit sind 2 Elemente mittels dem XML Interface verwendbar: <br/>
       - FlexibleBody1s23BTA, eine Biege-Torsions-Welle <br/>
@@ -30,7 +30,7 @@
 
   <xs:element name="FlexibleBody" substitutionGroup="mbsim:Body" abstract="true" type="FlexibleBodyType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         TODO
       </xs:documentation>
     </xs:annotation>
@@ -41,7 +41,7 @@
         <xs:sequence>
           <xs:element name="massProportionalDamping" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Koeffizient der massenproportionalen Dämpfung.
               </xs:documentation>
             </xs:annotation>
@@ -53,7 +53,7 @@
 
   <xs:element name="frameOnFlexibleBody1s" type="frameOnFlexibleBody1sType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Lokale Gruppe eines Koordinatensystems.
       </xs:documentation>
     </xs:annotation>
@@ -63,7 +63,7 @@
       <xs:element ref="mbsim:Frame"/>
       <xs:element name="position" type="pv:lengthScalar">
         <xs:annotation>
-          <xs:documentation lang="de" xmlns="">
+          <xs:documentation xml:lang="de" xmlns="">
             Lage des körperfesten Koordinatensystems, angegeben durch 1 Längenangebe. Diese definiert eindeutig die Lage auf dem in 1 Dimension erstreckten Körper.
           </xs:documentation>
         </xs:annotation>
@@ -73,7 +73,7 @@
 
   <xs:element name="FlexibleBody1s23BTA" substitutionGroup="FlexibleBody" type="FlexibleBody1s23BTAType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Definition des flexiblen 1-dimensional erstreckten Körpers FlexibleBody1s23BTA.        
       </xs:documentation>
     </xs:annotation>
@@ -84,7 +84,7 @@
         <xs:sequence>
           <xs:element name="frames">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Kontainer für lokale Koordinatensysteme dieses Körpers.
               </xs:documentation>
             </xs:annotation>
@@ -96,70 +96,70 @@
           </xs:element>
           <xs:element name="numberOfElements" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Anzahl der Basiselemente des flexible Körpers.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Länge des flexiben Körpers
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="youngsModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 E-Modul
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shearModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Schubmodul
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="density" type="pv:densityScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Dichte des flexiblen Körpers.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="crossSectionArea" type="pv:areaScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Querschnittsfläche des flexiblen Körpers.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="momentOfInertia" type="pv:inertiaVector">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Angabe der Trägheitsheitsmoment. Der Vektor setzt sich aus (IB, IB, 2*IB) zusammen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="radiusOfContour" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Radius der äußeren Kontur (Kreisquerschnitt) des flexiblen Körpers.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="torsionalDamping" type="pv:dampingScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Koeffizient der Torsionsdämpfung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="openMBVBody" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
               </xs:documentation>
             </xs:annotation>
@@ -176,7 +176,7 @@
 
   <xs:element name="FlexibleBody1s33RCMCantilever" substitutionGroup="FlexibleBody" type="FlexibleBody1s33RCMType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Definition des flexiblen 1-dimensional erstreckten Körpers FlexibleBody1s33RCM als Kragbalken.
       </xs:documentation>
     </xs:annotation>
@@ -184,7 +184,7 @@
   
   <xs:element name="FlexibleBody1s33RCMRing" substitutionGroup="FlexibleBody" type="FlexibleBody1s33RCMType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Definition des flexiblen 1-dimensional erstreckten Körpers FlexibleBody1s33RCM als Ring.
       </xs:documentation>
     </xs:annotation>
@@ -196,7 +196,7 @@
         <xs:sequence>
           <xs:element name="frames">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Kontainer für lokale Koordinatensysteme dieses Körpers.
               </xs:documentation>
             </xs:annotation>
@@ -208,63 +208,63 @@
           </xs:element>
           <xs:element name="numberOfElements" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Anzahl der Basiselemente des flexible Körpers.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Länge des flexiben Körpers
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="youngsModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 E-Modul
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shearModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Schubmodul
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="density" type="pv:densityScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Materialdichte.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="crossSectionArea" type="pv:areaScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Querschnittsfläche des flexiblen Körpers.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="momentOfInertia" type="pv:inertiaVector">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Vector of the moments of momentOfInertia.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="radiusOfContourCylinder" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Radius des Kontur-Zylinders
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingOfMaterial">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Werte der Materialdämpfung
               </xs:documentation>
             </xs:annotation>
@@ -272,14 +272,14 @@
               <xs:sequence>
                 <xs:element name="prolongational" type="pv:dampingScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Dämpfung in Verlängerungsrichtung<object class="inlineeqn">\vartheta_{\varepsilon}</object>
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="torsional" type="pv:dampingScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Dämpfung in Torsionsrichtung<object class="inlineeqn">\vartheta_{\kappa_0}</object>
                     </xs:documentation>
                   </xs:annotation>
@@ -289,7 +289,7 @@
           </xs:element>
           <xs:element name="openMBVBody" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
               </xs:documentation>
             </xs:annotation>
