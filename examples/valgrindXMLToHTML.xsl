@@ -39,13 +39,21 @@
           <dt>Analysed Program</dt>
           <dd><code>
             <!-- the program being run including its arguments -->
-            <xsl:value-of select="args/argv/exe/text()"/>
+            <xsl:call-template name="replace-string"><!-- add possible word breaks after each / character -->
+              <xsl:with-param name="text" select="args/argv/exe/text()"/>
+              <xsl:with-param name="replace" select="'/'" />
+              <xsl:with-param name="with" select="'/&#8203;'"/>
+            </xsl:call-template>
             <xsl:apply-templates select="args/argv/arg"/>
           </code></dd>
           <dt>Valgrind</dt>
           <dd><code>
             <!-- the program being run including its arguments -->
-            <xsl:value-of select="args/vargv/exe/text()"/>
+            <xsl:call-template name="replace-string"><!-- add possible word breaks after each / character -->
+              <xsl:with-param name="text" select="args/vargv/exe/text()"/>
+              <xsl:with-param name="replace" select="'/'" />
+              <xsl:with-param name="with" select="'/&#8203;'"/>
+            </xsl:call-template>
             <xsl:apply-templates select="args/vargv/arg"/>
           </code></dd>
         </dl>
@@ -63,7 +71,11 @@
 
   <!-- argument of the program being run, seperated by spaces -->
   <xsl:template match="arg">
-    <xsl:text> </xsl:text><xsl:value-of select="text()"/>
+    <xsl:call-template name="replace-string"><!-- add possible word breaks after each / character -->
+      <xsl:with-param name="text" select="text()"/>
+      <xsl:with-param name="replace" select="'/'" />
+      <xsl:with-param name="with" select="'/&#8203;'"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- one row of the error table -->
@@ -125,8 +137,8 @@
             <xsl:attribute name="href">
               <xsl:value-of select="dir/text()"/>/<xsl:value-of select="file/text()"/>
             </xsl:attribute>
-            <!-- directory of the file of the stack location (add possible word breaks after each / character) -->
-            <xsl:call-template name="replace-string">
+            <!-- directory of the file of the stack location -->
+            <xsl:call-template name="replace-string"><!-- add possible word breaks after each / character -->
               <xsl:with-param name="text" select="dir/text()"/>
               <xsl:with-param name="replace" select="'/'" />
               <xsl:with-param name="with" select="'/&#8203;'"/>
@@ -137,17 +149,17 @@
           </a>
           <xsl:if test="line">:<xsl:value-of select="line/text()"/></xsl:if>
         </td>
-        <!-- function name of the stack location (add possible word breaks after each :: character) -->
+        <!-- function name of the stack location -->
         <td>
-          <xsl:call-template name="replace-string">
+          <xsl:call-template name="replace-string"><!-- add possible word breaks after each :: character -->
             <xsl:with-param name="text" select="fn/text()"/>
             <xsl:with-param name="replace" select="'::'" />
             <xsl:with-param name="with" select="'::&#8203;'"/>
           </xsl:call-template>
         </td>
-        <!-- library of the stack location (add possible word breaks at each / character) -->
+        <!-- library of the stack location -->
         <td>
-          <xsl:call-template name="replace-string">
+          <xsl:call-template name="replace-string"><!-- add possible word breaks after each / character -->
             <xsl:with-param name="text" select="obj/text()"/>
             <xsl:with-param name="replace" select="'/'" />
             <xsl:with-param name="with" select="'/&#8203;'"/>
