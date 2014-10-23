@@ -1,13 +1,14 @@
 docdir = $(MBXMLUTILSDOCDIR)/http___mbsim_berlios_de_MBSimXML
-doc_DATA = mbsimxml.xhtml
+doc_DATA = mbsimxml.html
 
 # none mbsim modules xsd files
 XSDFILES = http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd\
   http___mbsim_berlios_de_MBSim/mbsim.xsd\
   http___mbsim_berlios_de_MBSimIntegrator/mbsimintegrator.xsd\
+  http___mbsim_berlios_de_MBSimXML/mbsimproject.xsd\
   http___openmbv_berlios_de_OpenMBV/openmbv.xsd
 
-all: mbsimxml.xhtml
+all: mbsimxml.html http___mbsim_berlios_de_MBSimXML/index.html
 
 # list of all xsd files: variables XSDFILES and all modules (plugins)
 .DELETE_ON_ERROR: xsdfiles.txt
@@ -30,10 +31,21 @@ combindedSchema.xsd: $(srcdir)/genCombindedSchema.xsl files.xml
 	@XALAN@ -o combindedSchema.xsd files.xml $(srcdir)/genCombindedSchema.xsl
 
 # generate the documentation
-.DELETE_ON_ERROR: mbsimxml.xhtml
-mbsimxml.xhtml: $(srcdir)/genContent.xsl combindedSchema.xsd
-	@XALAN@ -o mbsimxml.xhtml -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" -p ABS_BUILDDIR "'$(abs_builddir)'" combindedSchema.xsd $(srcdir)/genContent.xsl
-# note we convert abs path here to rel ones to avoid xalan/xerces to interprete a abs path as rel when using wine
-	@MBXMLUTILSVALIDATE@ $$(pwd | sed -re "s|/[^/]+|/..|g;s|^/||")$(MBXMLUTILSSCHEMA)/http___www_w3_org/xhtml1-transitional.xsd mbsimxml.xhtml
+.DELETE_ON_ERROR: mbsimxml.html
+mbsimxml.html: $(srcdir)/genContent.xsl combindedSchema.xsd
+	@XALAN@ -o mbsimxml.html -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" -p ABS_BUILDDIR "'$(abs_builddir)'" combindedSchema.xsd $(srcdir)/genContent.xsl | exit 1; \
+	sed -re "s/ xmlns:[^ ]+ *= *\"[^\"]+\"//g" mbsimxml.html > mbsimxml.html_ || exit 1; \
+	mv -f mbsimxml.html_ mbsimxml.html || exit 1
+# above line: Remove all namespace declaration from the html output using sed (maybe a bug in Xalan)
 
-CLEANFILES=mbsimxml.xhtml combindedSchema.xsd files.xml xsdfiles.txt
+
+
+http___mbsim_berlios_de_MBSimXML/index.html: @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML/mbsimproject.xsd
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML/mbsimproject.xsd none none MBSimXML MBSimXML::
+
+install-data-local:
+	cp -r http___* @MBXMLUTILSDOCDIR@
+
+
+
+CLEANFILES=mbsimxml.html combindedSchema.xsd files.xml xsdfiles.txt http___mbsim_berlios_de_MBSimXML/index.html

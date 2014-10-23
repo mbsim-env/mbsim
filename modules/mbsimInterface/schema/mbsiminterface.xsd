@@ -10,7 +10,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:annotation>
-    <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:documentation lang="de" xmlns="">
       TODO mbsimInterface-Dokumentation
     </xs:documentation>
   </xs:annotation>
@@ -48,7 +48,7 @@
 
   <xs:element name="InterfaceIntegrator" substitutionGroup="integrator:Integrator" type="InterfaceIntegratorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      <xs:documentation lang="de" xmlns="">
         Der InterfaceIntegrator stellt eine Schnittstelle zur MKS-Berechnung von MBSim dar.
       </xs:documentation>
     </xs:annotation>
@@ -58,14 +58,14 @@
       <xs:extension base="integrator:IntegratorType">
         <xs:sequence>
           <xs:element name="outputSignals">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Sensorwerte, die mittels der IPC an das angeschlossene Programm weitergereicht werden.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="signal">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    <xs:documentation lang="de" xmlns="">
                       Signal.
                     </xs:documentation>
                   </xs:annotation>
@@ -77,14 +77,14 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="inputSignals">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Sensorwerte, die vom angeschlossenen Programm mittels der IPC als Eingangswerte in der MBSim-Berechnung dienen.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="signal">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    <xs:documentation lang="de" xmlns="">
                       Signal.
                     </xs:documentation>
                   </xs:annotation>
@@ -96,13 +96,13 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="methodForIPC">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Auswahl einer Methode zur Interprozesskommunikation.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="MBSimServer">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <xs:annotation><xs:documentation lang="de" xmlns="">
                       Auswahl einer Methode zur Interprozesskommunikation.
                   </xs:documentation></xs:annotation>
                 </xs:element>
@@ -115,14 +115,14 @@
   </xs:complexType>
 
   <xs:element name="MBSimServer" abstract="true" type="MBSimServerType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation lang="de" xmlns="">
         Schnittstelle zur Kommunikation mit dem Interface-Integrator.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="MBSimServerType"/>
 
   <xs:element name="MBSimTcpServer" substitutionGroup="MBSimServer" type="MBSimTcpServerType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation lang="de" xmlns="">
         TcpServer.
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -131,12 +131,12 @@
       <xs:extension base="MBSimServerType">
         <xs:sequence>
           <xs:element name="port" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Port, auf dem der TCP-Server auf eingehende Verbindung wartet.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="outputPrecision" minOccurs="0" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:annotation><xs:documentation lang="de" xmlns="">
                 Anzahl der gültigen Stellen, mit dem der ascii-Output an den Port geschrieben wird.
             </xs:documentation></xs:annotation>
           </xs:element>

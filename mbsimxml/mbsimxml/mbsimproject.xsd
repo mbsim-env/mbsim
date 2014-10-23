@@ -23,7 +23,7 @@
 
   <xs:element name="MBSimProject" type="MBSimProjectType">
     <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      <xs:documentation lang="de" xmlns="">
         Klasse für MBSim-Projekte
       </xs:documentation>
     </xs:annotation>
@@ -33,14 +33,14 @@
       <xs:choice>
         <xs:element ref="mbsim:DynamicSystemSolver">
           <xs:annotation>
-            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:documentation lang="de" xmlns="">
               Modell.
             </xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element ref="pv:Embed">
           <xs:annotation>
-            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:documentation lang="de" xmlns="">
               Definition in externer Datei.
             </xs:documentation>
           </xs:annotation>
@@ -49,14 +49,14 @@
       <xs:choice>
         <xs:element ref="mbsim:Solver">
           <xs:annotation>
-            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:documentation lang="de" xmlns="">
               Integrator.
             </xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element ref="pv:Embed">
           <xs:annotation>
-            <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            <xs:documentation lang="de" xmlns="">
               Definition in externer Datei.
             </xs:documentation>
           </xs:annotation>

@@ -4,10 +4,10 @@ xml/index.xml: $(top_srcdir)/schema/mbsimflexiblebody.xsd $(top_srcdir)/mbsimFle
 	doxygen Doxyfile
 
 .mbsimflexiblebody.done: xml/index.xml $(top_srcdir)/schema/mbsimflexiblebody.xsd $(top_srcdir)/mbsimFlexibleBody/*.h
-	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd xml figures:../doc MBSimFlexibleBody MBSim::
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd xml $(srcdir)/figures:$(srcdir)/../doc MBSimFlexibleBody MBSim::
 
 
-install:
+install-data-local:
 	cp -r http___* @MBXMLUTILSDOCDIR@
 
 

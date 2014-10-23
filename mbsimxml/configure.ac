@@ -60,8 +60,6 @@ AC_ARG_WITH([xalan],
 test -x $xalan || AC_MSG_ERROR([xalan not found])
 AC_SUBST([XALAN],[$xalan])
 
-AC_SUBST([MBXMLUTILSVALIDATE],[$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutilsvalidate$EXEEXT])
-
 dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
