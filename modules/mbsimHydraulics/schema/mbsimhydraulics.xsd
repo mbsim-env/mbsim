@@ -32,7 +32,7 @@
 
   <xs:element name="HydraulicEnvironment" substitutionGroup="mbsim:Environment" type="HydraulicEnvironmentType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Definition der Hydraulischen Umbegumgsvariablen
       </xs:documentation>
     </xs:annotation>
@@ -43,14 +43,14 @@
         <xs:sequence>
           <xs:element name="environmentPressure" type="pv:pressureScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Umgebungsdruck
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="specificMass">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Dichte des Fluids in Abhängigkeit der Fluidtemperatur
               </xs:documentation>
             </xs:annotation>
@@ -58,14 +58,14 @@
               <xs:choice>
                 <xs:element name="constantSpecificMass" type="pv:densityScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       konstante Dichte
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="volumeDependingOnTemperature">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Ermittlung der Dichte über eine temperaturabhängige Volumenänderung. Die Dichte berechnet sich gemäß
                       <object class="eqn">
                         <![CDATA[\rho = \rho_0 \, \frac{1}{1+\frac{\text{d}V}{\text{d}T}\, \left( T-T_0\right)} \text{.}]]>
@@ -76,7 +76,7 @@
                     <xs:sequence>
                       <xs:element name="dVdT" type="pv:unknownScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">\frac{\text{d}V}{\text{d}T}</object>
                           </xs:documentation>
@@ -84,7 +84,7 @@
                       </xs:element>
                       <xs:element name="basicSpecificMass" type="pv:densityScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">\rho_0</object>
                           </xs:documentation>
@@ -92,7 +92,7 @@
                       </xs:element>
                       <xs:element name="basicTemperature" type="pv:temperatureScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">T_0</object>
                           </xs:documentation>
@@ -103,7 +103,7 @@
                 </xs:element>
                 <xs:element name="specificMassDependingOnTemperature">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Ermittlung der Dichte über eine temperaturabhängige Dichteänderung
                       <object class="eqn">
                         <![CDATA[\rho = \rho_0 + \frac{\text{d}\rho}{\text{d}T} \, \left( T-T_0\right) \text{.}]]>
@@ -114,7 +114,7 @@
                     <xs:sequence>
                       <xs:element name="dRhodT" type="pv:unknownScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">\frac{\text{d}\rho}{\text{d}T}</object>
                           </xs:documentation>
@@ -122,7 +122,7 @@
                       </xs:element>
                       <xs:element name="basicSpecificMass" type="pv:densityScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">\rho_0</object>
                           </xs:documentation>
@@ -130,7 +130,7 @@
                       </xs:element>
                       <xs:element name="basicTemperature" type="pv:temperatureScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">T_0</object>
                           </xs:documentation>
@@ -144,7 +144,7 @@
           </xs:element>
           <xs:element name="kinematicViscosity">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Bestimmung der temperaturabhängigen kinematischen Viskosität 
                 <object class="inlineeqn">\nu</object>.
               </xs:documentation>
@@ -153,14 +153,14 @@
               <xs:choice>
                 <xs:element name="constantKinematicViscosity" type="pv:kinematicViscosityScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Konsanter Wert.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="walterUbbeohdeKinematicViscosity">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Bestimmung der Viskosität nach der Formel von <i>Walter-Ubbelohde</i>
                       <object class="eqn">
                         <![CDATA[\nu = \left(10^{10^{W_x}}-0.8\right) \, 10^{-6}]]>
@@ -185,7 +185,7 @@
                     <xs:sequence>
                       <xs:element name="temperature1" type="pv:temperatureScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">T_1</object>
                           </xs:documentation>
@@ -193,7 +193,7 @@
                       </xs:element>
                       <xs:element name="kinematicViscosity1" type="pv:kinematicViscosityScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">\nu_1</object>
                           </xs:documentation>
@@ -201,7 +201,7 @@
                       </xs:element>
                       <xs:element name="temperature2" type="pv:temperatureScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">T_2</object>
                           </xs:documentation>
@@ -209,7 +209,7 @@
                       </xs:element>
                       <xs:element name="kinematicViscosity2" type="pv:kinematicViscosityScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Faktor 
                             <object class="inlineeqn">\nu_2</object>
                           </xs:documentation>
@@ -223,7 +223,7 @@
           </xs:element>
           <xs:element name="basicBulkModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Kompressionsmodul des (luftfreien) Fluids
                 <object class="inlineeqn">E_{Fluid}</object>.<br/>
                 In Abhängigkeit des Luftanteils in Öl <object class="inlineeqn">\chi</object> berechnet sich das Kompressionsmodul des Öl-Luft-Gemisches nach <i>Backe-Murrenhoff</i> bei einer isentropen Zustandsänderung zu
@@ -235,7 +235,7 @@
           </xs:element>
           <xs:element name="kappa" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Isentropenexponent der Luft. 
                 <object class="inlineeqn">\kappa \approx 1.4</object>
               </xs:documentation>
@@ -243,7 +243,7 @@
           </xs:element>
           <xs:element name="fluidTemperature" type="pv:temperatureScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Temperatur des Fluids zur Bestimmung der Fluideigenschaften.
               </xs:documentation>
             </xs:annotation>
@@ -255,7 +255,7 @@
 
   <xs:element name="PressureLoss" abstract="true" substitutionGroup="mbsim:Function" type="PressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von Druckverlusten
       </xs:documentation>
     </xs:annotation>
@@ -268,7 +268,7 @@
 
   <xs:element name="LinePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="LinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von Druckverlusten von 1-dimensionalen hydraulischen Leitungen.
       </xs:documentation>
     </xs:annotation>
@@ -281,7 +281,7 @@
 
   <xs:element name="SerialResistanceLinePressureLoss" substitutionGroup="LinePressureLoss" type="SerialResistanceLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Serielle Aneinanderreihung verschiedener Druckveruste. <br/>
         Die einzelnen Druckverluste werden dabei als hydraulische Widerstände betrachtet. Demzufolge berechnet sich der Gesamtdruckverlust zu
         <object class="eqn">p_V=\sum_{i=1}^n p_{V,i} \text{.}</object>
@@ -300,7 +300,7 @@
 
   <xs:element name="ParallelResistanceLinePressureLoss" substitutionGroup="LinePressureLoss" type="ParallelResistanceLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Parallelschaltung identischer hydraulischer Widerstände.<br/>
         Die einzelnen Druckverluste werden dabei als hydraulische Widerstände betrachtet. Demzufolge berechnet sich der Gesamtdruckverlust zu
         <object class="eqn">
@@ -315,7 +315,7 @@
         <xs:sequence>
           <xs:element name="number" type="pv:integerFullOctEval">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Anzahl der parallel geschalteten hydraulischen Widerstände.
               </xs:documentation>
             </xs:annotation>
@@ -329,7 +329,7 @@
 
   <xs:element name="ZetaLinePressureLoss" substitutionGroup="LinePressureLoss" type="ZetaLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste.<br/>
         Die Berechnung erfolgt gemäß
         <object class="eqn">\Delta p = \frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{A^2}</object>
@@ -342,7 +342,7 @@
         <xs:sequence>
           <xs:element name="zeta" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\zeta</object>
               </xs:documentation>
             </xs:annotation>
@@ -354,7 +354,7 @@
 
   <xs:element name="ZetaPosNegLinePressureLoss" substitutionGroup="LinePressureLoss" type="ZetaPosNegLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste mit Berücksichtigung der Flussrichtung. Mit diesem Element können unilaterale Element wie etwa Rückflusssperrventile angenähert werden.<br/>
         Die Berechnung erfolgt gemäß
         <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q\textless 0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
@@ -367,14 +367,14 @@
         <xs:sequence>
           <xs:element name="zetaPos" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\zeta_{Pos}</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="zetaNeg" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\zeta_{Neg}</object>
               </xs:documentation>
             </xs:annotation>
@@ -386,7 +386,7 @@
 
   <xs:element name="LaminarTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="LaminarTubeFlowLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Druckverluste aufgrund laminarer Rohrströmung.<br/>
         Die Berechnung erfolgt gemäß
         <object class="eqn">\Delta p = 32 \, \eta \, \frac{l}{d^2} \, \frac{Q}{A}</object>
@@ -401,7 +401,7 @@
 
   <xs:element name="TurbulentTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="TurbulentTubeFlowLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Druckverluste aufgrund einer turbulenten Rohrströmung.
         <br/>
         Der Druckverlust berechnet sich zu
@@ -432,28 +432,28 @@
         <xs:sequence>
           <xs:element name="referenceDiameter" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Referenzduchmesser zur Bestimmung der Strömungsgeschwindigket <object class="inlineeqn">d_{ref}</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="hydraulicDiameter" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 hydraulischer Duchmesser zur Bestimmung der Reynoldszahl <object class="inlineeqn">d_{hyd}</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="negativeHydraulicDiameter" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 hydraulischer Duchmesser zur Bestimmung der Reynoldszahl bei negativem Fluss <object class="inlineeqn">d_{hyd, neg}</object>. Wenn der Wert nicht explizit gesetzt, wird hier <object class="inlineeqn">d_{hyd}</object> verwendet.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="surfaceRoughness" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Rohrrauhigkeit <object class="inlineeqn">k</object><br/>
                 Anhaltswerte:<br/>
                 Stahl, nahtlos, neu: <object class="inlineeqn">k=0.02 \ldots 0.1 \, \text{mm}</object><br/>
@@ -469,7 +469,7 @@
 
   <xs:element name="CurveFittedLinePressureLoss" substitutionGroup="LinePressureLoss" type="CurveFittedLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -496,7 +496,7 @@
 
   <xs:element name="TabularLinePressureLoss" substitutionGroup="LinePressureLoss" type="TabularLinePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Der auftretende Druckverlust wird direkt aus einer Tabelle abgelesen: <object class="inlineeqn">\Delta p=f \left( Q \right)</object>.
       </xs:documentation>
     </xs:annotation>
@@ -510,7 +510,7 @@
               <xs:sequence>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Angabe der Druckverlustwerte.
                     </xs:documentation>
                   </xs:annotation>
@@ -525,7 +525,7 @@
 
   <xs:element name="ClosablePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="ClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von Druckverlusten mit veränderlichen Koeffizienten und einer Sperrmöglichkeit.
         Bei der Integration des Systems mit herkömmlichen Integratoren wird die Kennlinie des Ventils regularisiert, d.h. es wird aus nummerischen Gründen immer ein Restfluss durch das Ventil zugelassen.
         Bei der Verwendung eines <i>Time-Stepping-Integrators</i> kann durch eine entsprechende Angabe der Fluidfluss durch das Ventil im geschlossenen Zustand <object class="inlineeqn">Q=0</object>  gesetzt werden.
@@ -541,7 +541,7 @@
 
   <xs:element name="RelativeAreaZetaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAreaZetaClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes durch eine Veränderung der relativen Öffnungsfläche:
         <object class="eqn">
           <![CDATA[p_V=\frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{\left(A_{rel} \, A\right)^2}]]>
@@ -556,14 +556,14 @@
         <xs:sequence>
           <xs:element name="zeta" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\zeta</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="zetaNegative" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\zeta_{negative}</object>
                 Falls dieser Wert gesetzt wird, erfolgt bei der Berechnung des Druckverlustes eine Unterscheidung gemäß der Strömungsrichtung des Fluids.
               </xs:documentation>
@@ -576,7 +576,7 @@
 
   <xs:element name="GapHeightClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="GapHeightClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes mittels einer laminaren Spaltströmung mit veränderlicher Höhe.
         <object class="eqn">
           <![CDATA[p_V=\frac{12 \, \eta \l}{b \, h^3} \, Q]]>
@@ -591,14 +591,14 @@
         <xs:sequence>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Länge des Spalts <object class="inlineeqn">l</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="width" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Breite des Spalts <object class="inlineeqn">b</object>
               </xs:documentation>
             </xs:annotation>
@@ -610,7 +610,7 @@
 
   <xs:element name="ReynoldsClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="ReynoldsClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes in einem Ventil mit verstellbarem Durchmesser mittels der <object class="inlineeqn">Re</object>-Zahl.<br/>
         Der Druckverlust bestimmt sich zu
         <object class="eqn">
@@ -636,7 +636,7 @@
 
   <xs:element name="RelativeAlphaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAlphaClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes durch eine Veränderung des Verlustkoeffizienten
         <object class="eqn">
           <![CDATA[p_V=\frac{\rho}{2} \, \left( \frac{1}{\left(\alpha_{rel} \, \alpha \right)^2} -1\right) \, \frac{Q \, |Q|}{A^2}]]>
@@ -651,7 +651,7 @@
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\alpha</object>
               </xs:documentation>
             </xs:annotation>
@@ -663,7 +663,7 @@
 
   <xs:element name="CheckvalveClosablePressureLoss" abstract="true" substitutionGroup="ClosablePressureLoss" type="CheckvalveClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung des Druckverlustes in Rückschlagventilen.
       </xs:documentation>
     </xs:annotation>
@@ -676,7 +676,7 @@
 
   <xs:element name="BallCheckvalveClosablePressureLoss" abstract="true" substitutionGroup="CheckvalveClosablePressureLoss" type="BallCheckvalveClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung des Druckverlustes in Rückschlagventilen mit Kugelgeometrie.
         Falls nicht anders angegeben, wird die Kraft auf die Ventilkugel gemäß
         <object class="eqn">
@@ -692,7 +692,7 @@
         <xs:sequence>
           <xs:element name="ballRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Radius des Ventilkugel <object class="inlineeqn">r_{Ball}</object>
               </xs:documentation>
             </xs:annotation>
@@ -704,7 +704,7 @@
 
   <xs:element name="GammaCheckvalveClosablePressureLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="GammaCheckvalveClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes in Rückschlagventilen mit Kugelgeometrie und einem Einlaufwinkel <object class="inlineeqn">\gamma</object>.
         Die Kraft auf die Ventilkugel wird gemäß
         <object class="eqn">
@@ -724,14 +724,14 @@
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="gamma" type="pv:angleScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Einlaufwinkel <object class="inlineeqn">\gamma</object>
               </xs:documentation>
             </xs:annotation>
@@ -743,7 +743,7 @@
 
   <xs:element name="IdelchickCheckvalveClosablePressureLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="IdelchickCheckvalveClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes in Rückschlagventilen  nach <i>Idelchick, Diagramm 9.26</i>
         Der Druckverlust berechnet sich in Abhängigkeit der Ventilöffungshöhe <object class="inlineeqn">x</object> zu
         <object class="eqn">
@@ -767,7 +767,7 @@
 
   <xs:element name="ConeCheckvalveClosablePressureLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="ConeCheckvalveClosablePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Berechnung des Druckverlustes in Rückschlagventilen  mit konischer Geometrie.
         Der Druckverlust berechnet sich in Abhängigkeit der Ventilöffungshöhe <object class="inlineeqn">x</object> zu
         <object class="eqn">
@@ -782,7 +782,7 @@
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
               </xs:documentation>
             </xs:annotation>
@@ -794,7 +794,7 @@
 
   <xs:element name="LeakagePressureLoss" substitutionGroup="PressureLoss" abstract="true" type="LeakagePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von Druckverlusten in Leckagespalten.
         In Abhängigkeit von der Modellerierung des zugehörigen Leitungsmodells wird entweder die Flussgleichung oder die Druckverlustgleichung ausgewertet.
       </xs:documentation>
@@ -808,7 +808,7 @@
 
   <xs:element name="PlaneLeakagePressureLoss" substitutionGroup="LeakagePressureLoss" type="PlaneLeakagePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Modell eines ebenen Leckagespaltes.
         Der Druckverlust berechnet sich zu
         <object class="eqn">p_V = \frac{12 \, \eta \, |l|}{b \, h^3} \left[ Q + \frac{h \, b}{2} \, \left(v_1 + v_2\right) \right]</object>
@@ -826,7 +826,7 @@
 
   <xs:element name="CircularLeakagePressureLoss" abstract="true" substitutionGroup="LeakagePressureLoss" type="CircularLeakagePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse von kreisförmigen Leckagespalten.
       </xs:documentation>
     </xs:annotation>
@@ -839,7 +839,7 @@
 
   <xs:element name="EccentricCircularLeakagePressureLoss" substitutionGroup="CircularLeakagePressureLoss" type="EccentricCircularLeakagePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Strömung durch einen kreisförmigen Leckagespalt.
         Der Druckverlust berechnet sich zu
         <object class="eqn">p_V = \frac{|l|}{\alpha \, A} \, Q - \frac{|l|}{2 \, \alpha} \, \left(\dot x_i + \dot x_a \right)</object>
@@ -856,7 +856,7 @@
         <xs:sequence>
           <xs:element name="eccentricity" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Exzentrizität <object class="inlineeqn">\epsilon</object>
               </xs:documentation>
             </xs:annotation>
@@ -868,7 +868,7 @@
 
   <xs:element name="RealCircularLeakagePressureLoss" substitutionGroup="CircularLeakagePressureLoss" type="RealCircularLeakagePressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Reale Strömung durch einen kreisförmigen Leckagespalt. Der Druckverlust berechnet sich zu 
         <object class="eqn">p_V = \frac{\left( Q - c_O\, v_0 - c_I\, v_I\right) \, |l|}{c_{dp}}</object>
         mit 
@@ -886,7 +886,7 @@
 
   <xs:element name="UnidirectionalPressureLoss" abstract="true" substitutionGroup="PressureLoss" type="UnidirectionalPressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         TODO
       </xs:documentation>
     </xs:annotation>
@@ -899,7 +899,7 @@
 
   <xs:element name="UnidirectionalZetaPressureLoss" substitutionGroup="UnidirectionalPressureLoss" type="UnidirectionalZetaPressureLossType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         TODO
       </xs:documentation>
     </xs:annotation>
@@ -910,7 +910,7 @@
         <xs:sequence>
           <xs:element name="zeta" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Druckverlustzahl <object class="inlineeqn">\zeta</object>
               </xs:documentation>
             </xs:annotation>
@@ -923,7 +923,7 @@
 
   <xs:element name="HLine" abstract="true" substitutionGroup="mbsim:Object" type="HLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse hydraulischer Leitungen.
         <object class="figure" standby="4cm" data="hline" title="Orientierung und Referenzierung eines hydraulischen Leitungsobjekts"></object>
       </xs:documentation>
@@ -935,7 +935,7 @@
         <xs:sequence minOccurs="0">
           <xs:element name="frameOfReference">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Definiert das KOS bezüglich dessen die Richtung der Schwerkraft definiert wird.
               </xs:documentation>
             </xs:annotation>
@@ -945,7 +945,7 @@
           </xs:element>
           <xs:element name="direction" type="pv:nounitVector">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Richtungsvektor der Leitung zur Bestimmung der Druckverluste aufgrund der Schwerkraft.
               </xs:documentation>
             </xs:annotation>
@@ -957,7 +957,7 @@
 
   <xs:element name="RigidHLine" abstract="true" substitutionGroup="HLine" type="RigidHLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Hydraulische Leitung mit Berücksichtigung der Fluidmasse und Vernachlässigung der Fluidkompressibilität.
       </xs:documentation>
     </xs:annotation>
@@ -980,7 +980,7 @@
           </xs:choice>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Länge der Leitung
               </xs:documentation>
             </xs:annotation>
@@ -992,7 +992,7 @@
 
   <xs:element name="RigidLine" substitutionGroup="RigidHLine" type="RigidLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Hydraulische Leitung ohne Fluidkompressibilität.
         <object class="eqn">\frac{\rho \, l}{A} \dot Q = p_1- p_2 -p_V \text{.}</object>
         Berücksichtigung der Schwerkraft.
@@ -1005,7 +1005,7 @@
         <xs:sequence>
           <xs:element name="diameter" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Durchmesser der Leitung.
               </xs:documentation>
             </xs:annotation>
@@ -1015,7 +1015,7 @@
               <xs:sequence>
                 <xs:element ref="LinePressureLoss">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Druckverlust der Leitung.
                     </xs:documentation>
                   </xs:annotation>
@@ -1030,7 +1030,7 @@
   
   <xs:element name="ConstrainedLine" substitutionGroup="HLine" type="ConstrainedLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Vorgabe von hydraulischen Flussrandbedingungen.
       </xs:documentation>
     </xs:annotation>
@@ -1044,7 +1044,7 @@
               <xs:sequence>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Funktion der Flussrandbedingung
                     </xs:documentation>
                   </xs:annotation>
@@ -1059,7 +1059,7 @@
   
   <xs:element name="FluidPump" substitutionGroup="HLine" type="FluidPumpType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Vorgabe eines Volumenstroms.
       </xs:documentation>
     </xs:annotation>
@@ -1080,7 +1080,7 @@
   
   <xs:element name="StatelessOrifice" substitutionGroup="HLine" type="StatelessOrificeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Dummymodell zur Berechnung einer zustandslosen Blende.
       </xs:documentation>
     </xs:annotation>
@@ -1106,21 +1106,21 @@
           </xs:element>
           <xs:element name="diameter" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 d=dF*dSignal
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="alpha" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 alpha
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="areaModus" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Berechnung der Öffnungsfläche; <br/>
                 0: wie GammaCheckvalveClosablePressureLoss <br/>
                 1: Zylinderfläche
@@ -1134,7 +1134,7 @@
 
   <xs:element name="ClosableRigidLine" substitutionGroup="RigidLine" type="ClosableRigidLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Hydraulische Leitung mit veränderbarem Druckverlust.
         Die Größe des Druckverlustes wird über das Kontroll-Signal festgelegt, wobei ein minimaler Wert für eine Regularisierung anzugeben ist.
         Bei der Verwendung eines Time-Stepping-Algorithmuses kann zudem festgelegt werden, dass keine Regularisierung erfolgt, sondern dass bei der Unterschreitung des eingestellten Grenzwertes eine Sperrung des Durchflusses erfolgt.
@@ -1151,7 +1151,7 @@
                 <xs:element ref="ClosablePressureLoss"/>
                 <xs:element name="checksizeSignal">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Stellgröße zur Bestimmung der Eigenschaften der zugeordneten Druckverlustberechnung.
                     </xs:documentation>
                   </xs:annotation>
@@ -1161,14 +1161,14 @@
                 </xs:element>
                 <xs:element name="minimalChecksizeValue" type="pv:nounitScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Minimaler Wert. Wird dieser unterschritten, so wird der zugeordnete Druckverlust entweder regularisiert, oder es erfolgt eine Sperrung des Durchflusses durch numerische Nebenbedingungen (nur bei Time-Stepping-Verfahren):
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="setValued" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Wenn gesetzt, so erfolgt eine Sperrung des Durchflusses durch numerische Nebenbedingungen.
                     </xs:documentation>
                   </xs:annotation>
@@ -1185,7 +1185,7 @@
 
   <xs:element name="UnidirectionalRigidLine" substitutionGroup="RigidLine" type="UnidirectionalRigidLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         TODO
       </xs:documentation>
     </xs:annotation>
@@ -1199,14 +1199,14 @@
               <xs:sequence>
                 <xs:element ref="UnidirectionalPressureLoss" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Wenn gesetzt, so erfolgt eine Regularisierung des Druckverlustes. Andernfalls mengenwertig --> TimeStepping oder Ereignisbasiert.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="minimalPressureDrop" type="pv:pressureScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Minimaler Druckverlust. Solange dieser Wert nicht erreicht wird, wird kein Druckverlust in das Modell eingebracht.
                     </xs:documentation>
                   </xs:annotation>
@@ -1221,7 +1221,7 @@
 
   <xs:element name="LeakageLine" substitutionGroup="RigidHLine" abstract="true" type="LeakageLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von Leckageverlusten. Dabei wird die Masse des Fluidvolumens im Leckagespalt mitberücksichtigt.
       </xs:documentation>
     </xs:annotation>
@@ -1232,7 +1232,7 @@
         <xs:sequence>
           <xs:element name="firstSurfaceVelocity" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, so erfolgt eine Berücksichtigung der Grenzflächenbewegung der ersten Grenzfläche. Andernfalls wird die Grenzflächenbewegung nicht berücksichtigt.
               </xs:documentation>
             </xs:annotation>
@@ -1242,7 +1242,7 @@
           </xs:element>
           <xs:element name="secondSurfaceVelocity" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, so erfolgt eine Berücksichtigung der Grenzflächenbewegung der zweiten Grenzfläche. Andernfalls wird die Grenzflächenbewegung nicht berücksichtigt.
               </xs:documentation>
             </xs:annotation>
@@ -1252,7 +1252,7 @@
           </xs:element>
           <xs:element name="gapLength" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, so erfolgt eine Berücksichtigung der variablen Länge des Leckagespaltes. Andernfalls wird die Länge des Leckspaltes als Konstant angenommen.
               </xs:documentation>
             </xs:annotation>
@@ -1267,7 +1267,7 @@
 
   <xs:element name="PlaneLeakageLine" substitutionGroup="LeakageLine" type="PlaneLeakageLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Ebener Leckagespalt.
       </xs:documentation>
     </xs:annotation>
@@ -1278,14 +1278,14 @@
         <xs:sequence>
           <xs:element name="width" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Breite
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Höhe
               </xs:documentation>
             </xs:annotation>
@@ -1304,7 +1304,7 @@
 
   <xs:element name="CircularLeakageLine" substitutionGroup="LeakageLine" type="CircularLeakageLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Kreisförmiger Leckagespalt
       </xs:documentation>
     </xs:annotation>
@@ -1315,14 +1315,14 @@
         <xs:sequence>
           <xs:element name="innerRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Innerer Radius
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Spalthöhe
               </xs:documentation>
             </xs:annotation>
@@ -1341,7 +1341,7 @@
 
   <xs:element name="DimensionlessLine" abstract="true" substitutionGroup="HLine" type="DimensionlessLineType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von hydraulischen Flüssen ohne die Berücksichtigung der Fluidmasse. Aufgrund der mathematischen Formulierung kann ein derartiges Element nicht an starre Knoten angeschlossen werden.
       </xs:documentation>
     </xs:annotation>
@@ -1352,7 +1352,7 @@
         <xs:sequence>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Länge der Blende
               </xs:documentation>
             </xs:annotation>
@@ -1364,7 +1364,7 @@
 
   <xs:element name="Leakage0DOF" abstract="true" substitutionGroup="DimensionlessLine" type="Leakage0DOFType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse zur Berechnung von Leckageverlusten. Dabei wird die Masse des Fluidvolumens im Leckagespalt vernachlässigt.
       </xs:documentation>
     </xs:annotation>
@@ -1375,7 +1375,7 @@
         <xs:sequence>
           <xs:element name="firstSurfaceVelocity" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, so erfolgt eine Berücksichtigung der Grenzflächenbewegung der ersten Grenzfläche. Andernfalls wird die Grenzflächenbewegung nicht berücksichtigt.
               </xs:documentation>
             </xs:annotation>
@@ -1385,7 +1385,7 @@
           </xs:element>
           <xs:element name="secondSurfaceVelocity" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, so erfolgt eine Berücksichtigung der Grenzflächenbewegung der zweiten Grenzfläche. Andernfalls wird die Grenzflächenbewegung nicht berücksichtigt.
               </xs:documentation>
             </xs:annotation>
@@ -1395,7 +1395,7 @@
           </xs:element>
           <xs:element name="gapLength" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, so erfolgt eine Berücksichtigung der variablen Länge des Leckagespaltes. Andernfalls wird die Länge des Leckspaltes als Konstant angenommen.
               </xs:documentation>
             </xs:annotation>
@@ -1410,7 +1410,7 @@
 
   <xs:element name="PlaneLeakage0DOF" substitutionGroup="Leakage0DOF" type="PlaneLeakage0DOFType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Ebener Leckagespalt.
       </xs:documentation>
     </xs:annotation>
@@ -1421,14 +1421,14 @@
         <xs:sequence>
           <xs:element name="width" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Breite
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Höhe
               </xs:documentation>
             </xs:annotation>
@@ -1447,7 +1447,7 @@
 
   <xs:element name="CircularLeakage0DOF" substitutionGroup="Leakage0DOF" type="CircularLeakage0DOFType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Kreisförmiger Leckagespalt
       </xs:documentation>
     </xs:annotation>
@@ -1458,14 +1458,14 @@
         <xs:sequence>
           <xs:element name="innerRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Innerer Radius
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Spalthöhe
               </xs:documentation>
             </xs:annotation>
@@ -1484,7 +1484,7 @@
 
   <xs:element name="ElasticLineGalerkin" substitutionGroup="HLine" type="ElasticLineGalerkinType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Hydraulische Leitung mit Berücksichtigung der Fluidmasse und der Fluidkompressibilität.
       </xs:documentation>
     </xs:annotation>
@@ -1521,7 +1521,7 @@
 
   <xs:element name="ElasticLineVariational" substitutionGroup="HLine" type="ElasticLineVariationalType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Hydraulische Leitung mit Berücksichtigung der Fluidmasse und der Fluidkompressibilität.
       </xs:documentation>
     </xs:annotation>
@@ -1551,7 +1551,7 @@
 
   <xs:element name="HNode" abstract="true" substitutionGroup="mbsim:Link" type="HNodeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstakte Klasse hydraulischer Knoten.
         Es können mehrere hydraulische Leitungen angeschlossen werden.
       </xs:documentation>
@@ -1575,7 +1575,7 @@
           </xs:choice>
           <xs:element name="enableOpenMBVSphere" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Knotendrücke in OpenMBV durch Druckknoten
               </xs:documentation>
             </xs:annotation>
@@ -1583,28 +1583,28 @@
               <xs:sequence>
                 <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Größe des Druckknotens
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="minimalPressure" type="pv:pressureScalar" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       minimaler Druckwert für die Farbgebung des Knotens (entspricht blau)
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="maximalPressure" type="pv:pressureScalar" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       maximaler Druckwert für die Farbgebung des Knotens (entspricht rot)
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="position" type="pv:lengthVector" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Position des Druckknotens.<br/>
                       Bei der Verwendung von hydraulisch-mechanischen Grenzflächen wird dieser Wert nicht berücksichtigt. Stattdessen wird die Kugelposition dynamisch als Mittelwert der Positionen der angeschlossenen Koordinatensysteme berechnet.
                     </xs:documentation>
@@ -1620,7 +1620,7 @@
 
   <xs:element name="ConstrainedNode" substitutionGroup="HNode" type="ConstrainedNodeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Vorgabe von Druckrandbedingungen.
       </xs:documentation>
     </xs:annotation>
@@ -1634,7 +1634,7 @@
               <xs:sequence>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Funktion der Druckrandbedingung
                     </xs:documentation>
                   </xs:annotation>
@@ -1649,7 +1649,7 @@
 
   <xs:element name="EnvironmentNode" substitutionGroup="HNode" type="EnvironmentNodeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Ähnlich wie <a class="link" href="mbsimhydraulics:ConstrainedNode">&lt;ConstrainedNode&gt;</a>, jedoch wird als Randbedingung der eingestellte Umgebungsdruck vorgegeben.
       </xs:documentation>
     </xs:annotation>
@@ -1662,7 +1662,7 @@
 
   <xs:element name="ElasticNode" substitutionGroup="HNode" type="ElasticNodeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Hydraulischer Knoten, der die Elastizität des Fluids mitberücksichtigt.<br/>
         Die Berechnung des Knotendrucks erfolgt gemäß
         <object class="eqn">
@@ -1678,21 +1678,21 @@
         <xs:sequence>
           <xs:element name="volume" type="pv:volumeScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Volumen des Knotens.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="initialPressure" type="pv:pressureScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Anfangsdruck
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="fracAir" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Luftanteil im Öl.
               </xs:documentation>
             </xs:annotation>
@@ -1704,7 +1704,7 @@
 
   <xs:element name="RigidNode" substitutionGroup="HNode" type="RigidNodeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Starrer hydraulischer Knoten.<br/>
         Die Berechnung des Knotendrucks erfolgt gemäß der Nebenbedingung
         <object class="eqn">
@@ -1721,7 +1721,7 @@
 
   <xs:element name="RigidCavitationNode" substitutionGroup="HNode" type="RigidCavitationNodeType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Starrer hydraulischer Knoten mit Berücksichtigung der Kavitation.
       </xs:documentation>
     </xs:annotation>
@@ -1732,7 +1732,7 @@
         <xs:sequence>
           <xs:element name="cavitationPressure" type="pv:pressureScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Minimaler Druck bei dessen Unterschreitung sich im Knoten Kavitationsblasen ausbilden.
               </xs:documentation>
             </xs:annotation>
@@ -1744,7 +1744,7 @@
   
   <xs:element name="PressurePump" substitutionGroup="HNode" type="PressurePumpType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Vorgabe einer Druckrandbedingung.
       </xs:documentation>
     </xs:annotation>
@@ -1765,7 +1765,7 @@
 
   <xs:element name="HNodeMec" abstract="true" substitutionGroup="HNode" type="HNodeMecType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Abstrakte Klasse hydraulischer Knoten mit mechanischen Grenzflächen.<br/>
         Dem Knoten können neben hydraulischen Anschlüssen auch eine beliebige Zahl hydraulisch-mechanischer Grenzflächen zugewiesen werden.
         Die Druckkraft des Knotens wirkt immer in die Richtung der angegebenen Normalen.
@@ -1778,7 +1778,7 @@
         <xs:sequence>
           <xs:element name="initialVolume" type="pv:volumeScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 inertiales Volumen des Knotens.
               </xs:documentation>
             </xs:annotation>
@@ -1789,7 +1789,7 @@
                 <xs:sequence>
                   <xs:element name="frameOfReference">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Referenzkoordinatensystem, auf welches die Druckkräfte des Knotens aufgebracht werden. Das Koordinatensystem sollte sich dabei immer im Flächenschwerpunkt der hydraulisch-mechanischen Grenzfläche befinden.
                       </xs:documentation>
                     </xs:annotation>
@@ -1799,21 +1799,21 @@
                   </xs:element>
                   <xs:element name="normal" type="pv:nounitVector">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Richtungsnormale der Grenzfläche
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
                   <xs:element name="area" type="pv:areaScalar">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Größe der Grenzfläche
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
                   <xs:element name="noVolumeChange" minOccurs="0">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Wenn gesetzt, so wird die Bewegung der Grenzfläche für die Bestimmung des Knotenvolumens nicht berücksichtigt.
                       </xs:documentation>
                     </xs:annotation>
@@ -1826,7 +1826,7 @@
                 <xs:sequence>
                   <xs:element name="frameOfReference">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Referenzkoordinatensystem, auf welches die Druckkräfte des Knotens aufgebracht werden. Das Koordinatensystem sollte sich dabei immer im Flächenschwerpunkt der hydraulisch-mechanischen Grenzfläche befinden.
                       </xs:documentation>
                     </xs:annotation>
@@ -1836,21 +1836,21 @@
                   </xs:element>
                   <xs:element name="normal" type="pv:nounitVector">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Richtungsnormale der Grenzfläche
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
                   <xs:element name="area" type="pv:areaScalar">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Größe der Grenzfläche
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
                   <xs:element name="frameOfRotationCenter">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Koordinatensystem, um welches sich des Referenzkoordinatensystem einen Drehfreiheitsgrad besitzt.
                       </xs:documentation>
                     </xs:annotation>
@@ -1860,7 +1860,7 @@
                   </xs:element>
                   <xs:element name="noVolumeChange" minOccurs="0">
                     <xs:annotation>
-                      <xs:documentation lang="de" xmlns="">
+                      <xs:documentation xml:lang="de" xmlns="">
                         Wenn gesetzt, so wird die Bewegung der Grenzfläche für die Bestimmung des Knotenvolumens nicht berücksichtigt.
                       </xs:documentation>
                     </xs:annotation>
@@ -1871,7 +1871,7 @@
           </xs:choice>
           <xs:element name="enableOpenMBVArrows" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Kräfte in OpenMBV.
               </xs:documentation>
             </xs:annotation>
@@ -1889,7 +1889,7 @@
 
   <xs:element name="ConstrainedNodeMec" substitutionGroup="HNodeMec" type="ConstrainedNodeMecType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Vorgabe von Druckrandbedingungen mit hydraulisch-mechanischen Wechselwirkungen.
       </xs:documentation>
     </xs:annotation>
@@ -1903,7 +1903,7 @@
               <xs:sequence>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Funktion der Druckrandbedingung
                     </xs:documentation>
                   </xs:annotation>
@@ -1918,7 +1918,7 @@
 
   <xs:element name="EnvironmentNodeMec" substitutionGroup="HNodeMec" type="EnvironmentNodeMecType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Ähnlich wie <a class="link" href="mbsimhydraulics:ConstrainedNodeMec">&lt;ConstrainedNodeMec&gt;</a>, jedoch wird als Randbedingung der eingestellte Umgebungsdruck vorgegeben.
       </xs:documentation>
     </xs:annotation>
@@ -1931,7 +1931,7 @@
 
   <xs:element name="ElasticNodeMec" substitutionGroup="HNodeMec" type="ElasticNodeMecType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Analog zu <a class="link" href="mbsimhydraulics:ElasticNode">&lt;ElasticNode&gt;</a>, jedoch wird zur Bestimmung des Knotenvolumens zusätzlich die Bewegung der hydraulisch-mechanischen Grenzflächen berücksichtigt.
       </xs:documentation>
     </xs:annotation>
@@ -1942,14 +1942,14 @@
         <xs:sequence>
           <xs:element name="initialPressure" type="pv:pressureScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 inertialer Knotendruck.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="fracAir" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Anteil der im Öl gelösten Luft.
               </xs:documentation>
             </xs:annotation>
@@ -1961,7 +1961,7 @@
 
   <xs:element name="RigidNodeMec" substitutionGroup="HNodeMec" type="RigidNodeMecType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Analog zu <a class="link" href="mbsimhydraulics:RigidNode">&lt;RigidNode&gt;</a>, jedoch wird die Nebenbedingung zu
         <object class="eqn">
           <![CDATA[ \sum Q_{hyd} + \sum Q_{mec} = 0 ]]>
@@ -1979,7 +1979,7 @@
 
   <xs:element name="Controlvalve43" substitutionGroup="mbsim:EmptyGroup" type="Controlvalve43Type">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         <object class="figure" standby="4cm" data="controlvalve43" title="Elemente eines 4/3-Wegeventils"></object>
         4/3-Wege Steuerventil. 
         Die Berechnung des Druckverlustes der einzelnen Leitungen erfolgt dabei gemäß
@@ -2011,21 +2011,21 @@
         <xs:sequence>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Länge der Ventilblende
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="diameter" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Durchmesser der Ventilblende
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="alpha" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Durchflusskoeffiziente der Ventilblende <object class="inlineeqn">\alpha</object>. ( Anhaltswert <object class="inlineeqn">\alpha \approx 0.7 </object>; vgl <i>Matthies, Renius: Einführung in die Ölhydraulik, Kap. "Druckabfall in Wegeventilen"</i> )
 
               </xs:documentation>
@@ -2033,14 +2033,14 @@
           </xs:element>
           <xs:element name="alphaBackflow" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Durchflusskoeffiziente der Ventilblende in Rücklaufrichtung <object class="inlineeqn">\alpha_T</object> (<object class="inlineeqn">Q_{AT}</object> und <object class="inlineeqn">Q_{BT}</object>). Wird dieser Wert nicht gesetzt, so wird der Wert <object class="inlineeqn">\alpha</object> verwendet.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="relativeAlphaPA">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Funktion des relativen Durchflusskoeffizienten durch die Ventilblende in Abhängigkeit des angelegten Steuersignals.
               </xs:documentation>
             </xs:annotation>
@@ -2053,14 +2053,14 @@
           </xs:element>
           <xs:element name="minimalRelativeAlpha" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 minimaler Wert
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="bilateralConstrained" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, wird der Fluss über die Steuerkante des Ventils bei einem relativen alpha-Wert unter der gesetzten Schranke durch eine Nebenbedingung gesperrt. (nur Time-Stepping Integratoren)
               </xs:documentation>
             </xs:annotation>
@@ -2068,14 +2068,14 @@
           </xs:element>
           <xs:element name="offset" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Versatz der relativen Ventilöffnungsfläche der Rückflüsse AT und BT
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="relativePosition">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Signal zur Steuerung der relativen Ventilöffnungsfläche
               </xs:documentation>
             </xs:annotation>
@@ -2085,7 +2085,7 @@
           </xs:element>
           <xs:element name="inflowP">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Zuleitung
               </xs:documentation>
             </xs:annotation>
@@ -2095,7 +2095,7 @@
           </xs:element>
           <xs:element name="outflowA">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Ableitung A
               </xs:documentation>
             </xs:annotation>
@@ -2105,7 +2105,7 @@
           </xs:element>
           <xs:element name="outflowB">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Ableitung B
               </xs:documentation>
             </xs:annotation>
@@ -2115,7 +2115,7 @@
           </xs:element>
           <xs:element name="outflowT">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Rückfluss
               </xs:documentation>
             </xs:annotation>
@@ -2125,7 +2125,7 @@
           </xs:element>
           <xs:element name="printRelativeAlphaCharacteristikCurve" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Durch das Setzen dieser Anweisung werden die relativen Ventilöffnungsflächen der 4 Flussrichtungen ausgegeben.
               </xs:documentation>
             </xs:annotation>
@@ -2137,7 +2137,7 @@
 
   <xs:element name="Checkvalve" substitutionGroup="mbsim:EmptyGroup" type="CheckvalveType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
         Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <a class="link" href="mbsimhydraulics:NodeMec">&lt;NodeMec&gt;</a> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
         <p>Die hydraulische Leitung des Rückschlagventils ist mit <i>Line</i> benannt und kann durch <i>XXX/Group[name]/Object[Line]</i> an Knoten angeschlossen werden.</p>
@@ -2151,7 +2151,7 @@
         <xs:sequence>
           <xs:element name="basisFrame">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Koordinatensystem, in dem das Rückschlagventil berechnet wird.
               </xs:documentation>
             </xs:annotation>
@@ -2161,7 +2161,7 @@
           </xs:element>
           <xs:element name="RigidLine">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Daten der Blende
               </xs:documentation>
             </xs:annotation>
@@ -2169,14 +2169,14 @@
               <xs:sequence>
                 <xs:element name="length" type="pv:lengthScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Länge der Blende
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="diameter" type="pv:lengthScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Durchmesser der Blende
                     </xs:documentation>
                   </xs:annotation>
@@ -2186,21 +2186,21 @@
                     <xs:sequence>
                       <xs:element ref="CheckvalveClosablePressureLoss">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Druckverlust des Rückschlagventils.
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
                       <xs:element name="minimalXOpen" type="pv:lengthScalar">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Numerische Schranke für die minimale Öffnungshöhe des Kugelventils.
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
                       <xs:element name="setValued" minOccurs="0">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Berechnung des Rückschlagventils mit einem Eckengesetz.
                           </xs:documentation>
                         </xs:annotation>
@@ -2214,7 +2214,7 @@
           </xs:element>
           <xs:element name="Ball">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Daten der Ventilkugel
               </xs:documentation>
             </xs:annotation>
@@ -2222,7 +2222,7 @@
               <xs:sequence>
                 <xs:element name="mass" type="pv:massScalar">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Masse der Ventilkugel. <br/>
                       Die Massenträgheit der Ventilkugel wird gemäß  <object class="inlineeqn">\Theta_{Ball}=\frac{2}{5} \, m_{Ball} \, r_{Ball}^2</object>. berechnet.
                     </xs:documentation>
@@ -2230,7 +2230,7 @@
                 </xs:element>
                 <xs:element name="initialPosition" type="pv:lengthScalar" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Inertiale Öffnungshöhe des Rückschlagventils.
                     </xs:documentation>
                   </xs:annotation>
@@ -2240,7 +2240,7 @@
           </xs:element>
           <xs:element name="Spring">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Ventilfeder
               </xs:documentation>
             </xs:annotation>
@@ -2248,7 +2248,7 @@
               <xs:sequence>
                 <xs:element name="forceFunction">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Kraftgesetz der Feder. Die Einbaulänge der Feder entspricht der maximalen Ventilöffnungshöhe.
                     </xs:documentation>
                   </xs:annotation>
@@ -2263,7 +2263,7 @@
           </xs:element>
           <xs:element name="SeatContact">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Modellierung des Kontaktes zwischen Kugel und Ventilsitz.
               </xs:documentation>
             </xs:annotation>
@@ -2271,7 +2271,7 @@
               <xs:sequence>
                 <xs:element name="contactForceLaw">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Kraftgesetz
                     </xs:documentation>
                   </xs:annotation>
@@ -2283,7 +2283,7 @@
                 </xs:element>
                 <xs:element name="contactImpactLaw">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Kraftgesetz zur Lösung der Nebenbedingungen auf Impulsebene.
                     </xs:documentation>
                   </xs:annotation>
@@ -2298,7 +2298,7 @@
           </xs:element>
           <xs:element name="maximalOpening" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Maximale Öffnungshöhe der Ventilkugel
               </xs:documentation>
             </xs:annotation>
@@ -2308,7 +2308,7 @@
               <xs:sequence>
                 <xs:element name="contactForceLaw">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Kraftgesetz
                     </xs:documentation>
                   </xs:annotation>
@@ -2320,7 +2320,7 @@
                 </xs:element>
                 <xs:element name="contactImpactLaw">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Kraftgesetz zur Lösung der Nebenbedingungen auf Impulsebene.
                     </xs:documentation>
                   </xs:annotation>
@@ -2335,7 +2335,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVBodies" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Körper des Rückschlagventils
               </xs:documentation>
             </xs:annotation>
@@ -2343,7 +2343,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVFrames" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der internen Koordinatensyteme des Rückschlagventils
               </xs:documentation>
             </xs:annotation>
@@ -2351,7 +2351,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVArrows" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Kräfte des Rückschlagventils
               </xs:documentation>
             </xs:annotation>
@@ -2364,7 +2364,7 @@
 
   <xs:element name="FlowSensor" substitutionGroup="mbsimcontrol:Sensor" type="FlowSensorType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Sensor zur Ermittlung hydraulischer Volumenströme.
       </xs:documentation>
     </xs:annotation>
@@ -2385,7 +2385,7 @@
 
   <xs:element name="PressureSensor" substitutionGroup="mbsimcontrol:Sensor" type="PressureSensorType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Sensor zur Ermittlung des Drucks.
       </xs:documentation>
     </xs:annotation>
@@ -2406,7 +2406,7 @@
 
   <xs:element name="TemperatureSensor" substitutionGroup="mbsimcontrol:Sensor" type="TemperatureSensorType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Sensor zur Ermittlung der Fluidtemperatur.
       </xs:documentation>
     </xs:annotation>
@@ -2419,7 +2419,7 @@
 
   <xs:element name="KinematicViscositySensor" substitutionGroup="mbsimcontrol:Sensor" type="KinematicViscositySensorType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Sensor zur Ermittlung der kinematischen Viskosität des Fluids.
       </xs:documentation>
     </xs:annotation>

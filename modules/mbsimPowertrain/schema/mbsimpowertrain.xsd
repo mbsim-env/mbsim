@@ -9,7 +9,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:annotation>
-    <xs:documentation lang="de" xmlns="">
+    <xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation>
   </xs:annotation>
@@ -25,7 +25,7 @@
 
   <xs:element name="Dummy" abstract="true" substitutionGroup="mbsim:Link" type="DummyType">
     <xs:annotation>
-      <xs:documentation lang="de" xmlns="">
+      <xs:documentation xml:lang="de" xmlns="">
         Dummy
       </xs:documentation>
     </xs:annotation>

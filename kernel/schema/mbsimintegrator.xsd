@@ -11,14 +11,8 @@
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
 
-  <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-    schemaLocation="../http___www_w3_org/xml.xsd"/>
-
-
-
   <xs:element name="Integrator" abstract="true" substitutionGroup="mbsim:Solver" type="IntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse für Zeitintegratoren.
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -27,23 +21,23 @@
       <xs:extension base="mbsim:SolverType">
         <xs:sequence>
           <xs:element name="startTime" type="pv:timeScalar">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Startzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="endTime" type="pv:timeScalar">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Endzeitpunkt der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="plotStepSize" type="pv:timeScalar">  
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweite zur Ausgabe von Plotdaten.<br/>
                 Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Anfangszustand der Differentialinklusion.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -53,7 +47,7 @@
   </xs:complexType> 
 
   <xs:element name="DOPRI5Integrator" substitutionGroup="Integrator" type="DOPRI5IntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Explizites Runge-Kutta Verfahren der Ordnung 5(4) mit 'dense output' der Ordnung 4.<br/>
         Das Verfahren ist nur für nicht-steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
     </xs:documentation></xs:annotation>
@@ -64,40 +58,40 @@
         <xs:sequence>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"> 
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:choice>
             <xs:element name="relativeTolerance" type="pv:nounitVector">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"> 
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalStepSize" type="pv:timeScalar">  
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalNumberOfSteps" type="pv:integerFullOctEval" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -107,7 +101,7 @@
   </xs:complexType>   
 
   <xs:element name="RADAU5Integrator" substitutionGroup="Integrator" type="RADAU5IntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Implizites Runge-Kutta Verfahren der Ordnung 5 (Radau IIA) mit 'dense output'.<br/>
         Das Verfahren ist für steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
     </xs:documentation></xs:annotation>
@@ -118,40 +112,40 @@
         <xs:sequence>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector">  
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:choice>
             <xs:element name="relativeTolerance" type="pv:nounitVector">  
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"> 
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalStepSize" type="pv:timeScalar">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalNumberOfSteps" type="pv:integerFullOctEval" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -161,7 +155,7 @@
   </xs:complexType>   
 
   <xs:element name="LSODEIntegrator" substitutionGroup="Integrator" type="LSODEIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Livermore Solver für Ordinary Differential Equations zur Lösung von Anfangswertproblemen für steife gewöhnliche Differentialgleichungssysteme. Das Verfahren basiert auf den BDF-Verfahren der Ordnung 1-5 enthält aber auch das Adams-Moulton Verfahren der Ordnung 1-12 für nicht-steife Probleme. Die Schrittweite wird dynamisch angepasst. 
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -171,43 +165,43 @@
         <xs:sequence>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector"> 
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialStepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalStepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="minimalStepSize" type="pv:timeScalar">  
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="numberOfMaximalSteps" type="pv:integerFullOctEval">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="stiffModus" minOccurs="0">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob steifes oder nicht-steifes Problem vorliegt.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -217,7 +211,7 @@
   </xs:complexType>   
 
   <xs:element name="LSODARIntegrator" substitutionGroup="Integrator" type="LSODARIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Livermore Solver für Differential Algebraic Problems mit Rootfinding zur Lösung von Anfangswertproblemen für Differentiell-Algebraische Gleichungen ist eine Erweiterung von LSODE. Zum einen entscheidet das Verfahren dynamisch, ob ein steifes oder nicht-steifes System vorliegt, zum anderen enthält es einen Mechanismus, um Nullstellen von Indikatorfunktionen zu finden. Die Schrittweite wird dynamisch angepasst. 
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -227,38 +221,38 @@
         <xs:sequence>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">  
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialStepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="minimalStepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalStepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="plotOnRoot" type="pv:booleanFullOctEval">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -268,7 +262,7 @@
   </xs:complexType>   
 
   <xs:element name="TimeSteppingIntegrator" substitutionGroup="Integrator" type="TimeSteppingIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Halb-Explizite Timestepping Integration für Maßdifferentialinklusionen.
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -277,7 +271,7 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:element name="stepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Integrationsschrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -287,7 +281,7 @@
   </xs:complexType>   
 
   <xs:element name="TimeSteppingSSCIntegrator" substitutionGroup="Integrator" type="TimeSteppingSSCIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
        Halb-Explizite Timestepping Integration für Maßdifferentialinklusionen mit Schrittweitensteuerung und höherer Ordnung.
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -296,62 +290,62 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Anfangsschrittweite (default: 1e-6)
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximalStepSize" type="pv:timeScalar" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 maximale Zeitschrittweite (default: 1e-4)
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="minimalStepSize" type="pv:timeScalar" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 minimale Zeitschrittweite (default: sqrt(eps))
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="outputInterpolation" type="pv:booleanFullOctEval" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 flag zur Steuerung, ob für die Plotausgabe die vom Integrator angefahrenen Zeitpunkte verwendet werden oder ob auf die vorgegebenen Plotzeitpunkte interpoliert werden soll (default: false)
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="gapControl" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Zeitschrittweite wird angepasst, so dass Stöße/Ereignisse am Ende des Zeitschritts auftreten <br/> Bei mehr als einem Ereignis pro Zeitschritt ist können verschiedene Methoden verwendet werden, auf welches Ereignis sich GapControl beziehen soll.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:choice>
                 <xs:element name="withoutGapControl">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       GapContol wird vollständig deaktiviert
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="biggestRoot">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Größte Nullstelle/Ereignis wird verwendet (maximaler Integrationsforschritt)
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="scooring">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Scoring Verfahren zur Auswahl der Nullstelle (Gewichtetes Mittel aus Eindringgeschwindigkeit und -zeit.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="smallestRoot">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Kleinste Nullstelle/Ereignis wird verwendet (am genauesten aber geringster Integrationsforschritt)
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="gapTollerance">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Zeitschrittweite werden so gewählt, dass Eindringtiefe gapTol nicht überschreitet
                     </xs:documentation>
                   </xs:annotation>
@@ -360,21 +354,21 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="maximalOrder" minOccurs="0">
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Auswahl der maximalen Integrationsordnung und der Methode zur Fehlerschätzung
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="order" type="pv:integerFullOctEval">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       maximale Integrationsordnung: default: 1; 1,2,3 bei Fehlerschätzung mittels Extrapolation; 1 ..4 bei embedded Verfahren 
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="method" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       methode, Stadardwert: extrapolation
                     </xs:documentation>
                   </xs:annotation>
@@ -382,7 +376,7 @@
                     <xs:choice>
                       <xs:element name="extrapolation">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Fehlerschätzung mittels Extrapolationsverfahren (default)
                           </xs:documentation>
                         </xs:annotation>
@@ -390,7 +384,7 @@
                       </xs:element>
                       <xs:element name="embedded">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Embedded Verfahren zur Fehlerschätzung: Fortsetzen der Integration mit niedrigerer Ordnung 
                           </xs:documentation>
                         </xs:annotation>
@@ -398,7 +392,7 @@
                       </xs:element>
                       <xs:element name="embeddedHigherOrder">
                         <xs:annotation>
-                          <xs:documentation lang="de" xmlns="">
+                          <xs:documentation xml:lang="de" xmlns="">
                             Embedded Verfahren zur Fehlerschätzung: Fortsetzen der Integration mit höherer Ordnung 
                           </xs:documentation>
                         </xs:annotation>
@@ -412,7 +406,7 @@
           </xs:element> 
           <xs:element name="errorTest" minOccurs="0">
             <xs:annotation>
-              <xs:documentation lang="de" xmlns="">
+              <xs:documentation xml:lang="de" xmlns="">
                 Wie werden Geschwindigkeiten bei der Fehlertestung behandelt.
               </xs:documentation>
             </xs:annotation>
@@ -420,21 +414,21 @@
               <xs:choice>
                 <xs:element name="scale">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Geschwindigkeiten werden mit Zeitschrittweite skaliert
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="all">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Geschwindigkeiten und Lagen werden gleich behandelt
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="exclude">
                   <xs:annotation>
-                    <xs:documentation lang="de" xmlns="">
+                    <xs:documentation xml:lang="de" xmlns="">
                       Fehlertest wird nur mit Lagen durchgeführt.
                     </xs:documentation>
                   </xs:annotation>
@@ -444,24 +438,24 @@
           </xs:element>
           <xs:choice>
             <xs:element name="absoluteTolerance" type="pv:unknownVector">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"> 
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
           </xs:choice>
           <xs:choice>
             <xs:element name="relativeTolerance" type="pv:nounitVector">
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"> 
-              <xs:annotation><xs:documentation lang="de" xmlns="">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
               </xs:documentation></xs:annotation>
             </xs:element>
@@ -470,22 +464,22 @@
             <xs:complexType>
               <xs:sequence>
                   <xs:element name="deactivateSSC" type="pv:booleanFullOctEval" minOccurs="0"> 
-                  <xs:annotation><xs:documentation lang="de" xmlns="">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                       Deaktivieren der Schrittweitenkontrolle und Umschalten auf konstante Zeitschrittweite
                   </xs:documentation></xs:annotation>
                 </xs:element>
               <xs:element name="gapTolerance" type="pv:nounitScalar" minOccurs="0"> 
-                  <xs:annotation><xs:documentation lang="de" xmlns="">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                       Toleranz für Eindringtiefe; nur in Verbindung mit richtiger GapControl Methode
                   </xs:documentation></xs:annotation>
                 </xs:element>
                 <xs:element name="maximalSSCGain" type="pv:nounitScalar" minOccurs="0"> 
-                  <xs:annotation><xs:documentation lang="de" xmlns="">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                       maximale Vergrößerung der Zeitschrittweite zwischen zwei Schritten (default 2.2)
                   </xs:documentation></xs:annotation>
                 </xs:element>
                 <xs:element name="safetyFactorSSC" type="pv:nounitScalar" minOccurs="0"> 
-                  <xs:annotation><xs:documentation lang="de" xmlns="">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                       Sicherheitsfaktor bei der Berechnung der neuen Zeitschrittweite (default 0.7)
                   </xs:documentation></xs:annotation>
                 </xs:element>
@@ -498,7 +492,7 @@
   </xs:complexType>   
 
   <xs:element name="ThetaTimeSteppingIntegrator" substitutionGroup="Integrator" type="ThetaTimeSteppingIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Timestepping Integration für Maßdifferentialinklusionen.
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -507,17 +501,17 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:element name="stepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Integrationsschrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="theta" type="pv:nounitScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gewichtungsfaktor des implizit ermittelten Systemzustandes. Wert zwischen 0 (voll explizit) und 1 (voll implizit).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="driftCompensation" type="pv:booleanFullOctEval"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Driftkompensation
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -527,7 +521,7 @@
   </xs:complexType>   
 
   <xs:element name="EulerExplicitIntegrator" substitutionGroup="Integrator" type="EulerExplicitIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Explizites Einschritt-Integrationsverfahren mit fester Schrittweite.
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -536,7 +530,7 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:element name="stepSize" type="pv:timeScalar"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Integrationsschrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
@@ -546,7 +540,7 @@
   </xs:complexType>   
 
   <xs:element name="RKSuiteIntegrator" substitutionGroup="Integrator" type="RKSuiteIntegratorType">
-    <xs:annotation><xs:documentation lang="de" xmlns="">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Runge-Kutta Integrationsverfahren
     </xs:documentation></xs:annotation>
   </xs:element>
@@ -560,17 +554,17 @@
             <xs:element name="method67"/>
           </xs:choice>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">  
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="thresholdScalar" type="pv:nounitScalar">  
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Grenzwert
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0"> 
-            <xs:annotation><xs:documentation lang="de" xmlns="">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Integrationsschrittweite. (t=0: automatische Detektion)
             </xs:documentation></xs:annotation>
           </xs:element>
