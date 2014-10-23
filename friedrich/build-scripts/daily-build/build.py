@@ -274,9 +274,8 @@ def main():
     if not os.path.isdir(pj(args.docOutDir, "doc")): os.makedirs(pj(args.docOutDir, "doc"))
     # create doc entry html
     docFD=open(pj(args.docOutDir, "index.html"), "w")
-    print('<?xml version="1.0" encoding="UTF-8"?>', file=docFD)
-    print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=docFD)
-    print('<html xmlns="http://www.w3.org/1999/xhtml">', file=docFD)
+    print('<!DOCTYPE html>', file=docFD)
+    print('<html lang="en">', file=docFD)
     print('<head>', file=docFD)
     print('  <title>MBSim, OpenMBV, ... Documentation</title>', file=docFD)
     print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
@@ -287,7 +286,7 @@ def main():
     print('<div class="panel panel-success">', file=docFD)
     print('  <div class="panel-heading">XML Documentation</div>', file=docFD)
     print('  <ul class="list-group">', file=docFD)
-    print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xhtml"))+'">MBSimXML</a></li>', file=docFD)
+    print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.html"))+'">MBSimXML</a></li>', file=docFD)
     print('  </ul>', file=docFD)
     print('</div>', file=docFD)
     print('<div class="panel panel-info">', file=docFD)
@@ -339,9 +338,8 @@ def main():
 
   # create index.html
   mainFD=open(pj(args.reportOutDir, "index.html"), "w")
-  print('<?xml version="1.0" encoding="UTF-8"?>', file=mainFD)
-  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=mainFD)
-  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
+  print('<!DOCTYPE html>', file=mainFD)
+  print('<html lang="en">', file=mainFD)
   print('<head>', file=mainFD)
   print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
