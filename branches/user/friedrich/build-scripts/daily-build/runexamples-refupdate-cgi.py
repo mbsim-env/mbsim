@@ -69,7 +69,6 @@ print("Content-Type: text/html")
 print("")
 
 # read output file
-xml.etree.ElementTree.register_namespace('',"http://www.w3.org/1999/xhtml")
 inputURI=codecs.open(pj(configDir, "inputURI"), "r", encoding="utf-8").readlines()
 content=codecs.open(inputURI[0].rstrip(), "r").read()
 try:
