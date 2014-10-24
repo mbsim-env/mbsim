@@ -346,6 +346,7 @@ def main():
   print('''<!DOCTYPE html>
   <html lang="en">
   <head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MBSim runexamples Results</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
@@ -490,8 +491,13 @@ def main():
   print('  </div>', file=mainFD)
   print('</div>', file=mainFD)
 
-  print('<hr/><small>Created using <a href="https://www.python.org">Python</a>, <a href="http://getbootstrap.com">Bootstrap</a> and'+\
-        ' <a href="http://glyphicons.com">Glyphicons</a>.</small>', file=mainFD)
+  print('<hr/>', file=mainFD)
+  print('<p class="text-right small">', file=mainFD)
+  print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
+  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
+  print('  </a>', file=mainFD)
+  print('  Generated on %s by runexamples.py'%(str(timeID)), file=mainFD)
+  print('</p>', file=mainFD)
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
@@ -753,6 +759,7 @@ def runExample(resultQueue, example):
       print('<!DOCTYPE html>', file=htmlOutputFD)
       print('<html lang="en">', file=htmlOutputFD)
       print('<head>', file=htmlOutputFD)
+      print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
@@ -799,8 +806,13 @@ def runExample(resultQueue, example):
         runExampleRet=1
       # write footer
       print('</tbody></table>', file=htmlOutputFD)
-      print('<hr/><small>Created using <a href="https://www.python.org">Python</a>, <a href="http://getbootstrap.com">Bootstrap</a> and'+\
-            ' <a href="http://glyphicons.com">Glyphicons</a>.</small>', file=htmlOutputFD)
+      print('<hr/>', file=htmlOutputFD)
+      print('<p class="text-right small">', file=htmlOutputFD)
+      print('  <a href="http://validator.w3.org/check?uri=referer">', file=htmlOutputFD)
+      print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=htmlOutputFD)
+      print('  </a>', file=htmlOutputFD)
+      print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
+      print('</p>', file=htmlOutputFD)
       print('</body>', file=htmlOutputFD)
       print('</html>', file=htmlOutputFD)
 
@@ -931,6 +943,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<!DOCTYPE html>', file=diffHTMLPlotFD)
   print('<html lang="en">', file=diffHTMLPlotFD)
   print('<head>', file=diffHTMLPlotFD)
+  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
   print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
@@ -960,8 +973,13 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('</dl>', file=diffHTMLPlotFD)
   print('<p><span class="glyphicon glyphicon-info-sign"> </span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" height="300%" width="100%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
-  print('<hr/><small>Created using <a href="https://www.python.org">Python</a>, <a href="http://getbootstrap.com">Bootstrap</a> and'+\
-        ' <a href="http://glyphicons.com">Glyphicons</a>.</small>', file=diffHTMLPlotFD)
+  print('<hr/>', file=diffHTMLPlotFD)
+  print('<p class="text-right small">', file=diffHTMLPlotFD)
+  print('  <a href="http://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
+  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
+  print('  </a>', file=diffHTMLPlotFD)
+  print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
+  print('</p>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
@@ -1161,6 +1179,7 @@ def compareExample(example, compareFN):
   print('<!DOCTYPE html>', file=compareFD)
   print('<html lang="en">', file=compareFD)
   print('<head>', file=compareFD)
+  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
@@ -1260,8 +1279,13 @@ def compareExample(example, compareFN):
 
   # print html footer
   print('</tbody></table>', file=compareFD)
-  print('<hr/><small>Created using <a href="https://www.python.org">Python</a>, <a href="http://getbootstrap.com">Bootstrap</a> and'+\
-        ' <a href="http://glyphicons.com">Glyphicons</a>.</small>', file=compareFD)
+  print('<hr/>', file=compareFD)
+  print('<p class="text-right small">', file=compareFD)
+  print('  <a href="http://validator.w3.org/check?uri=referer">', file=compareFD)
+  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
+  print('  </a>', file=compareFD)
+  print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
+  print('</p>', file=compareFD)
   print('</body>', file=compareFD)
   print('</html>', file=compareFD)
 
