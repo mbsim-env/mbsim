@@ -360,7 +360,7 @@ def main():
   <script type="text/javascript">
     $(document).ready(function() {
       $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});
-      $("#SUBMIT).click(function() {
+      $("#SUBMIT").click(function() {
         var formEles = $("#SortThisTable").DataTable().$("input"); // all checkboxes of the table
         formEles = formEles.add($("#PASSWORD")); // the password input
         $.post(submituri, formEles.serialize(), function(data) {
@@ -377,7 +377,7 @@ def main():
           }
         });
       });
-      $("#CANCEL).click(function() {
+      $("#CANCEL").click(function() {
         window.location.href='.';
       });
     });
