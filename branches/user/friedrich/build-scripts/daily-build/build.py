@@ -277,6 +277,7 @@ def main():
     print('<!DOCTYPE html>', file=docFD)
     print('<html lang="en">', file=docFD)
     print('<head>', file=docFD)
+    print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
     print('  <title>MBSim, OpenMBV, ... Documentation</title>', file=docFD)
     print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
     print('</head>', file=docFD)
@@ -300,7 +301,7 @@ def main():
     print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
     print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
     print('  </a>', file=docFD)
-    print('  Generated on %s'%(str(timeID)), file=docFS)
+    print('  Generated on %s'%(str(timeID)), file=docFD)
     print('</p>', file=docFD)
     print('</body>', file=docFD)
     print('</html>', file=docFD)
@@ -347,6 +348,7 @@ def main():
   print('<!DOCTYPE html>', file=mainFD)
   print('<html lang="en">', file=mainFD)
   print('<head>', file=mainFD)
+  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
   print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
@@ -391,7 +393,7 @@ def main():
   print('<th>Check</th>', file=mainFD)
   print('<th>Doxygen Doc.</th>', file=mainFD)
   print('<th>XML Doc.</th>', file=mainFD)
-  print('</tr></thead></tbody>', file=mainFD)
+  print('</tr></thead><tbody>', file=mainFD)
 
   # list tools which are not updated and must not be rebuild according dependencies
   for tool in set(toolDependencies)-set(orderedBuildTools):
@@ -418,6 +420,13 @@ def main():
     nr+=1
 
   print('</tbody></table>', file=mainFD)
+  print('<hr/>', file=mainFD)
+  print('<p class="text-right small">', file=mainFD)
+  print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
+  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
+  print('  </a>', file=mainFD)
+  print('  Generated on %s'%(str(timeID)), file=mainFD)
+  print('</p>', file=mainFD)
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
