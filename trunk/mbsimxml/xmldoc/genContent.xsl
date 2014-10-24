@@ -103,9 +103,6 @@
       <a href="http://validator.w3.org/check?uri=referer">
         <img src="http://www.w3.org/Icons/valid-xhtml10-blue" alt="Valid XHTML 1.0 Transitional"/>
       </a>
-      <a href="http://jigsaw.w3.org/css-validator/check/referer">
-        <img src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!"/>
-      </a>
       Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by <a href="http://mbsim.berlios.de">MBSimXML</a><xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
     </p>
     </body></html>
