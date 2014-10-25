@@ -41,7 +41,7 @@ namespace MBSimGUI {
   class DynamicSystemSolver : public Group {
     friend class DynamicSystemSolverPropertyDialog;
     protected:
-    ExtProperty environment, solverParameters, inverseKinetics;
+    ExtProperty environment, solverParameters, inverseKinetics, initialProjection;
     public:
     DynamicSystemSolver(const std::string &str, Element *parent);
     virtual Element* clone() const {return new DynamicSystemSolver(*this);}
