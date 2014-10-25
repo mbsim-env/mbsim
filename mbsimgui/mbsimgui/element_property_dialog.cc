@@ -325,6 +325,9 @@ namespace MBSimGUI {
 
     inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
     addToTab("Extra", inverseKinetics);
+
+    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    addToTab("Extra", initialProjection);
   }
 
   void DynamicSystemSolverPropertyDialog::toWidget(Element *element) {
@@ -332,6 +335,7 @@ namespace MBSimGUI {
     static_cast<DynamicSystemSolver*>(element)->environment.toWidget(environment);
     static_cast<DynamicSystemSolver*>(element)->solverParameters.toWidget(solverParameters);
     static_cast<DynamicSystemSolver*>(element)->inverseKinetics.toWidget(inverseKinetics);
+    static_cast<DynamicSystemSolver*>(element)->initialProjection.toWidget(initialProjection);
   }
 
   void DynamicSystemSolverPropertyDialog::fromWidget(Element *element) {
@@ -339,6 +343,7 @@ namespace MBSimGUI {
     static_cast<DynamicSystemSolver*>(element)->environment.fromWidget(environment);
     static_cast<DynamicSystemSolver*>(element)->solverParameters.fromWidget(solverParameters);
     static_cast<DynamicSystemSolver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
+    static_cast<DynamicSystemSolver*>(element)->initialProjection.fromWidget(initialProjection);
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
