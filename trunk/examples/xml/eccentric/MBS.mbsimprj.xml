@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://mbsim.berlios.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Parameter>
+      <scalarParameter name="m" unit="-">1</scalarParameter>
+      <scalarParameter name="c1" unit="-">100</scalarParameter>
+      <scalarParameter name="c2" unit="-">150</scalarParameter>
+      <scalarParameter name="d1" unit="-">c1/500</scalarParameter>
+      <scalarParameter name="d2" unit="-">c2/500</scalarParameter>
+      <scalarParameter name="r" unit="-">0.3</scalarParameter>
+      <scalarParameter name="e" unit="-">0.05</scalarParameter>
+      <scalarParameter name="l01" unit="-">0.5</scalarParameter>
+      <scalarParameter name="l02" unit="-">0.5</scalarParameter>
+      <scalarParameter name="a" unit="-">0.4</scalarParameter>
+      <scalarParameter name="Om" unit="-">sqrt((3*c1+3*c2-c2)/(3*m))</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS">
+      <frames>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <?OPENMBV_ID 2?>
+          </enableOpenMBV>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <ele>l01+a/2</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="P2">
+          <enableOpenMBV>
+            <?OPENMBV_ID 3?>
+          </enableOpenMBV>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <ele>l01+a+l02+r</ele>
+              <ele>-e</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="P3">
+          <enableOpenMBV>
+            <?OPENMBV_ID 4?>
+          </enableOpenMBV>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <ele>l01+a+l02</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>
+      <groups/>
+      <objects>
+        <RigidBody name="Mass">
+          <frameOfReference ref="../Frame[P1]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongXAxis/>
+          </stateDependentTranslation>
+          <frames>
+            <FixedRelativeFrame name="P1">
+              <enableOpenMBV>
+                <?OPENMBV_ID 7?>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>-a/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+            <FixedRelativeFrame name="P2">
+              <enableOpenMBV>
+                <?OPENMBV_ID 8?>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>a/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+          </frames>
+          <contours/>
+          <openMBVRigidBody>
+            <Cube xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 5?>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <length unit="m">a</length>
+            </Cube>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 6?>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+        <RigidBody name="Eccentric">
+          <frameOfReference ref="../Frame[P2]"/>
+          <frameForKinematics ref="Frame[P1]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <timeDependentRotation>
+            <NestedFunction>
+              <outerFunction>
+                <RotationAboutZAxis/>
+              </outerFunction>
+              <innerFunction>
+                <LinearFunction>
+                  <a1>Om</a1>
+                </LinearFunction>
+              </innerFunction>
+            </NestedFunction>
+          </timeDependentRotation>
+          <frames>
+            <FixedRelativeFrame name="P1">
+              <enableOpenMBV>
+                <?OPENMBV_ID 11?>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>-e</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+          </frames>
+          <contours>
+            <CircleSolid name="CircleSolid3">
+              <radius unit="m">r</radius>
+              <enableOpenMBV>
+                <?OPENMBV_ID 12?>
+              </enableOpenMBV>
+            </CircleSolid>
+          </contours>
+          <openMBVRigidBody>
+            <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 9?>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0.05</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <baseRadius unit="m">r</baseRadius>
+              <topRadius unit="m">r</topRadius>
+              <height unit="m">0.1</height>
+              <innerBaseRadius unit="m">0</innerBaseRadius>
+              <innerTopRadius unit="m">0</innerTopRadius>
+            </Frustum>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 10?>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+        <RigidBody name="RigidBody">
+          <frameOfReference ref="../Frame[P3]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongXAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours>
+            <Line name="Line3">
+              <enableOpenMBV>
+                <?OPENMBV_ID 15?>
+              </enableOpenMBV>
+            </Line>
+          </contours>
+          <openMBVRigidBody>
+            <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 13?>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <length unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0.01</ele>
+                  <ele>a</ele>
+                  <ele>0.01</ele>
+                </xmlVector>
+              </length>
+            </Cuboid>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 14?>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
+        <SpringDamper name="SpringDamper1">
+          <forceFunction>
+            <LinearSpringDamperForce>
+              <stiffnessCoefficient unit="N/m">c1</stiffnessCoefficient>
+              <dampingCoefficient unit="N*s/m">d1</dampingCoefficient>
+              <unloadedLength unit="m">l01</unloadedLength>
+            </LinearSpringDamperForce>
+          </forceFunction>
+          <connect ref1="../Frame[I]" ref2="../Object[Mass]/Frame[P1]"/>
+          <enableOpenMBVCoilSpring>
+            <?OPENMBV_ID 16?>
+            <numberOfCoils unit="-">5</numberOfCoils>
+            <springRadius unit="cm">5</springRadius>
+          </enableOpenMBVCoilSpring>
+        </SpringDamper>
+        <SpringDamper name="SpringDamper2">
+          <forceFunction>
+            <LinearSpringDamperForce>
+              <stiffnessCoefficient unit="N/m">c2</stiffnessCoefficient>
+              <dampingCoefficient unit="N*s/m">d2</dampingCoefficient>
+              <unloadedLength unit="m">l02</unloadedLength>
+            </LinearSpringDamperForce>
+          </forceFunction>
+          <connect ref1="../Object[Mass]/Frame[P2]" ref2="../Object[RigidBody]/Frame[C]"/>
+          <enableOpenMBVCoilSpring>
+            <?OPENMBV_ID 17?>
+            <numberOfCoils unit="-">5</numberOfCoils>
+            <springRadius unit="cm">5</springRadius>
+          </enableOpenMBVCoilSpring>
+        </SpringDamper>
+        <Contact name="Contact">
+          <normalForceLaw>
+            <BilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <BilateralImpact/>
+          </normalImpactLaw>
+          <connect ref1="../Object[RigidBody]/Contour[Line3]" ref2="../Object[Eccentric]/Contour[CircleSolid3]"/>
+        </Contact>
+      </links>
+      <enableOpenMBVFrameI>
+        <?OPENMBV_ID 1?>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+      <initialProjection>1</initialProjection>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">20</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
+    <initialStepSize unit="s">0</initialStepSize>
+    <maximalStepSize unit="s">0</maximalStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>
