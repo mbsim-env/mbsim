@@ -382,7 +382,7 @@ def main():
                 dataType: "json", type: "POST",
                 data: JSON.stringify({action: "getcheck"})}).done(function(response) {
           // "check" and enable these
-          $("._EXAMPLE").each(function() {
+          $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
             $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
             $(this).prop("disabled", false);
           });
@@ -410,7 +410,7 @@ def main():
                 dataType: "json", type: "POST",
                 data: JSON.stringify({action: "getcheck"})}).done(function(response) {
           // "check" these and "uncheck" all others
-          $("._EXAMPLE").each(function() {
+          $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
             $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
           });
           // set status message and reenable the submit/cancel button
