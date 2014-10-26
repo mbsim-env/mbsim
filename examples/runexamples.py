@@ -32,7 +32,6 @@ else:
   import urllib.request as myurllib
 
 # global variables
-dummyID=0
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -714,8 +713,7 @@ def runExample(resultQueue, example):
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
-    global dummyID
-    dummyID=dummyID+1
+    dummyID=hashlib.sha1(example[0].encode('utf8')).hexdigest()
     if compareRet==-1:
       resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
                  '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
@@ -972,7 +970,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
     (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</dl>', file=diffHTMLPlotFD)
   print('<p><span class="glyphicon glyphicon-info-sign"> </span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
-  print('<p><object data="plot.svg" height="300%" width="100%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
+  print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
   print('<p class="text-right small">', file=diffHTMLPlotFD)
   print('  <a href="http://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
