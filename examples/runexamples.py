@@ -350,35 +350,115 @@ def main():
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
     <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>
-    <base id="BASE" href="." target="_self"/>
   </head>
   <body style="margin:1em">
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
   <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
-  <script type="text/javascript" id="CONFIG">var submituri="dummy";</script>
   <script type="text/javascript">
     $(document).ready(function() {
-      $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});
-      $("#SUBMIT").click(function() {
-        var formEles = $("#SortThisTable").DataTable().$("input"); // all checkboxes of the table
-        formEles = formEles.add($("#PASSWORD")); // the password input
-        $.post(submituri, formEles.serialize(), function(data) {
-          var msg = $("#PASSWORDMSG");
-          var d = new Date();
-          var dstr = '('+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+')';
-          if(data.success) {
-            msg.addClass("text-success");
-            msg.text("Your selection has been saved on the server. "+dstr);
-          }
-          else {
-            msg.addClass("text-danger");
-            msg.text("WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry. "+dstr);
-          }
+      // init table
+      $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
+                                     'pageLength': 25, 'aaSorting': [], stateSave: true});
+
+      // get STATUS element (using in all below functions)
+      var status=$("#STATUS");
+
+      // if this is the current example table from the build server than enable the reference update
+      if($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") {
+        // show reference update and enabale password input and set status message
+        $("#UPDATEREFERENCES").css("display", "block");
+        $("#PASSWORD").prop("disabled", false);
+        // set status message
+        status.removeClass("text-success");
+        status.removeClass("text-danger");
+        status.addClass("text-warning");
+        status.text("Communicating with server.");
+        // get examples to "check" from server
+        $.ajax({url: "http://www4.amm.mw.tu-muenchen.de:8080/cgi-bin/runexamples-refupdate-cgi.py",
+                dataType: "json", type: "POST",
+                data: JSON.stringify({action: "getcheck"})}).done(function(response) {
+          // "check" and enable these
+          $("._EXAMPLE").each(function() {
+            $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
+            $(this).prop("disabled", false);
+          });
+          // set status message and enable the submit/cancel button now
+          status.addClass("text-success");
+          status.removeClass("text-danger");
+          status.removeClass("text-warning");
+          status.text("Loaded selection from server.");
+          $("#SUBMIT").prop("disabled", false);
+          $("#CANCEL").prop("disabled", false);
+        });
+      }
+
+      // if cancel is clicked than reset the selection to the selection from the server
+      $("#CANCEL").click(function() {
+        // disable submit/cancel button during communication and set status message
+        $("#CANCEL").prop("disabled", true);
+        $("#SUBMIT").prop("disabled", true);
+        status.removeClass("text-success");
+        status.removeClass("text-danger");
+        status.addClass("text-warning");
+        status.text("Communicating with server.");
+        // get examples to "check" from server
+        $.ajax({url: "http://www4.amm.mw.tu-muenchen.de:8080/cgi-bin/runexamples-refupdate-cgi.py",
+                dataType: "json", type: "POST",
+                data: JSON.stringify({action: "getcheck"})}).done(function(response) {
+          // "check" these and "uncheck" all others
+          $("._EXAMPLE").each(function() {
+            $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
+          });
+          // set status message and reenable the submit/cancel button
+          status.addClass("text-success");
+          status.removeClass("text-danger");
+          status.removeClass("text-warning");
+          status.text("Reset selection to server data.");
+          $("#CANCEL").prop("disabled", false);
+          $("#SUBMIT").prop("disabled", false);
         });
       });
-      $("#CANCEL").click(function() {
-        window.location.href='.';
+
+      // if submit is clicked than submit current selection to the server
+      $("#SUBMIT").click(function() {
+        // disable submit/cancel button during communication and set status message
+        $("#CANCEL").prop("disabled", true);
+        $("#SUBMIT").prop("disabled", true);
+        status.removeClass("text-success");
+        status.removeClass("text-danger");
+        status.addClass("text-warning");
+        status.text("Communicating with server.");
+        // collect all data to post to server
+        var updateList=[];
+        $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
+          if($(this).prop("checked")) {
+            updateList.push($(this).attr("name"));
+          }
+        });
+        $.ajax({url: "http://www4.amm.mw.tu-muenchen.de:8080/cgi-bin/runexamples-refupdate-cgi.py",
+                dataType: "json", type: "POST",
+                data: JSON.stringify({
+                  action: "setcheck",
+                  password: $("#PASSWORD").val(),
+                  checkedExamples: updateList
+                })}).done(function(response) {
+          // set status message (depdendent on server response) and reenable the submit/cancel button
+          if(response.success) {
+            status.addClass("text-success");
+            status.removeClass("text-danger");
+            status.removeClass("text-warning");
+            status.text("Your selection has been saved on the server.");
+          }
+          else {
+            status.removeClass("text-success");
+            status.addClass("text-danger");
+            status.removeClass("text-warning");
+            status.text("WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry.");
+          }
+          $("#CANCEL").prop("disabled", false);
+          $("#SUBMIT").prop("disabled", false);
+        });
       });
     });
   </script>''', file=mainFD)
@@ -475,7 +555,7 @@ def main():
     print('  </div>', file=mainFD)
     print('</div>', file=mainFD)
 
-  print('<div class="panel panel-info">', file=mainFD)
+  print('<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">', file=mainFD)
   print('  <div class="panel-heading"><a data-toggle="collapse" href="#collapseUpdateReferences">'+\
           'Update references<span class="caret"> </span></a></div>', file=mainFD)
   print('  <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">', file=mainFD)
@@ -486,7 +566,7 @@ def main():
   print('    </div>', file=mainFD)
   print('          <button id="SUBMIT" class="btn btn-default" type="button" disabled="disabled">Submit</button>', file=mainFD)
   print('          <button id="CANCEL" class="btn btn-default" type="button" disabled="disabled">Cancel</button>', file=mainFD)
-  print('    <div id="PASSWORDMSG"> </div>', file=mainFD)
+  print('    <p>Status: <span id="STATUS"> </span></p>', file=mainFD)
   print('  </div>', file=mainFD)
   print('</div>', file=mainFD)
 
@@ -713,14 +793,13 @@ def runExample(resultQueue, example):
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
-    dummyID=hashlib.sha1(example[0].encode('utf8')).hexdigest()
     if compareRet==-1:
       resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
                  '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
     elif compareRet==-2:
       resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
-                 '<div class="pull-right">[<input id="EXAMPLE_'+str(dummyID)+\
-                 '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>'
+                 '<div class="pull-right">[<input class="_EXAMPLE'+\
+                 '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
       nrAll=0
       nrFailed=0
     else:
@@ -731,8 +810,8 @@ def runExample(resultQueue, example):
       else:
         resultStr+='<td class="danger"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
                    '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
-                   '</span></a></div><div class="pull-right">[<input id="EXAMPLE_'+str(dummyID)+\
-                   '" type="checkbox" name="EXAMPLE:'+example[0]+'" disabled="disabled"/>]</div></td>'
+                   '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
+                   '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
     if args.disableRun:
