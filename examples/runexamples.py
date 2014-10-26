@@ -364,8 +364,10 @@ def main():
       // get STATUS element (using in all below functions)
       var status=$("#STATUS");
 
-      // if this is the current example table from the build server than enable the reference update
-      if($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") {
+      // if this is the current example table from the build server and is finished than enable the reference update
+      if(($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/" ||
+          $(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") &&
+          $("#FINISHED").length>0) {
         // show reference update and enabale password input and set password from localStorage
         $("#UPDATEREFERENCES").css("display", "block");
         $("#PASSWORD").prop("disabled", false);
@@ -580,6 +582,7 @@ def main():
   print('  </a>', file=mainFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=mainFD)
   print('</p>', file=mainFD)
+  print('<span id="FINISHED" style="display:none"> </span>', file=mainFD)
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
@@ -1192,7 +1195,7 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       nrAll[0]+=1
       # if if curObj[:,column] does not exitst
       if column>=curObjCols:
-        printLabel=('&lt;label '+printLabel+' not in cur.&gt;', 'danger')
+        printLabel=('&lt;label '+printLabel[0]+' not in cur.&gt;', 'danger')
         nrFailed[0]+=1
       else:
         # compare
