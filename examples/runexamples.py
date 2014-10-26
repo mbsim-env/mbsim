@@ -366,9 +366,10 @@ def main():
 
       // if this is the current example table from the build server than enable the reference update
       if($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") {
-        // show reference update and enabale password input and set status message
+        // show reference update and enabale password input and set password from localStorage
         $("#UPDATEREFERENCES").css("display", "block");
         $("#PASSWORD").prop("disabled", false);
+        $("#PASSWORD").val(localStorage["_PASSWORD_"+$(location).attr('href')]);
         // set status message
         status.removeClass("text-success");
         status.removeClass("text-danger");
@@ -445,12 +446,14 @@ def main():
                 })}).done(function(response) {
           // set status message (depdendent on server response) and reenable the submit/cancel button
           if(response.success) {
+            localStorage["_PASSWORD_"+$(location).attr('href')]=$("#PASSWORD").val(); // on success also save the password to localStorage
             status.addClass("text-success");
             status.removeClass("text-danger");
             status.removeClass("text-warning");
             status.text("Your selection has been saved on the server.");
           }
           else {
+            $("#PASSWORD").val()=""; // on failure remove password
             status.removeClass("text-success");
             status.addClass("text-danger");
             status.removeClass("text-warning");
