@@ -46,7 +46,7 @@ namespace MBSimHydraulics {
   void RigidLine::init(InitStage stage) {
     if (stage==modelBuildup) {
       if (pL)
-        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LinePressureLoss", this, pL, false,false));//MFMF change to _
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LinePressureLoss", this, pL, false,false));
       RigidHLine::init(stage);
     }
     else if (stage==plotting) {
@@ -105,9 +105,9 @@ namespace MBSimHydraulics {
     }
     else if (stage==modelBuildup) {
       if (cpLBilateral)
-         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/BilateralClosablePressureLoss", this, cpL, true, false));//MFMF change to _
+         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_BilateralClosablePressureLoss", this, cpL, true, false));
      else
-        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/ClosablePressureLoss", this, cpL, false,false));//MFMF change to _
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_ClosablePressureLoss", this, cpL, false,false));
 
       RigidLine::init(stage);
     }
@@ -135,9 +135,9 @@ namespace MBSimHydraulics {
   void UnidirectionalRigidLine::init(InitStage stage) {
     if (stage==modelBuildup) {
       if (upL)
-        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/RegularizedUnidirectionalPressureLoss", this, upL, false,false));//MFMF change to _
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_RegularizedUnidirectionalPressureLoss", this, upL, false,false));
       else
-        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/UnilateralUnidirectionalPressureLoss", this, NULL, false, true));//MFMF change to _
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_UnilateralUnidirectionalPressureLoss", this, NULL, false, true));
       RigidLine::init(stage);
     }
     else
