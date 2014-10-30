@@ -272,6 +272,8 @@ def main():
     args.prefixSimulation=args.prefixSimulation.split(' ')
   else:
     args.prefixSimulation=[]
+  global scriptDir
+  scriptDir=os.path.dirname(os.path.realpath(__file__))
 
   # rotate (modifies args.reportOutDir)
   rotateOutput()
@@ -338,8 +340,6 @@ def main():
 
   # write empty RSS feed
   writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
-  # write other common files to args.reportOutDir
-  shutil.copy(pj(os.path.dirname(os.path.realpath(__file__)), 'valgrindXMLToHTML.xsl'), pj(args.reportOutDir, os.pardir))
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('''<!DOCTYPE html>
@@ -926,7 +926,7 @@ def runExample(resultQueue, example):
 def prefixSimulation(example):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
-    return args.prefixSimulation+['--xml=yes', '--xml-file='+pj(args.reportOutDir, example[0], 'valgrind.output.%p.xml')]
+    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%p.xml']
   return args.prefixSimulation
 
 # get additional output files of simulations.
@@ -935,20 +935,16 @@ def prefixSimulation(example):
 def getOutFiles(example):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
-    outFiles=glob.glob(pj(args.reportOutDir, example[0], "valgrind.output.*.xml"))
+    xmlFiles=glob.glob("valgrind.*.xml")
     ret=[]
-    for outFile in outFiles:
-      # generate return value (basenames)
-      ret.append(os.path.basename(outFile))
-      # add xml-stylesheet procession instruction
-      with open(outFile, "r") as f: data=f.read().splitlines(True)
-      with open(outFile, "w") as f:
-        f.writelines(data[0])
-        parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+2))))
-        f.write('<?xml-stylesheet type="text/xsl" href="'+parDirs+'/valgrindXMLToHTML.xsl"?>')
-        f.writelines(data[1:])
-      # fix file permission
-      os.chmod(outFile, stat.S_IROTH)
+    for xmlFile in xmlFiles:
+      htmlFile=xmlFile[:-4]+".html"
+      ret.append(htmlFile)
+      # transform xml file to html file (in reportOutDir)
+      global scriptDir
+      subprocess.call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
+                       pj(scriptDir, 'valgrindXMLToHTML.xsl')])
+      os.remove(xmlFile)
     return ret
   return []
 
@@ -1210,20 +1206,20 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       if column<curObjCols and refLabels[column][0]==curLabels[column][0]:
         cell.append((printLabel[0],printLabel[1]))
       else:
-        cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;'),"danger")
+        cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;',"danger"))
         nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         #check for NaN/Inf # check for NaN and Inf
         #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
-        #check for NaN/Inf   cell.append(('cur. contains NaN or +/-Inf'),"danger")
+        #check for NaN/Inf   cell.append(('cur. contains NaN or +/-Inf',"danger"))
         #check for NaN/Inf   nrFailed[0]+=1
         #check for NaN/Inf elif numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
-        #check for NaN/Inf   cell.append(('ref. contains NaN or +/-Inf'),"danger")
+        #check for NaN/Inf   cell.append(('ref. contains NaN or +/-Inf',"danger"))
         #check for NaN/Inf   nrFailed[0]+=1
         #check for NaN/Inf use elif instead of if in next line
         # check for difference
         if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(getColumn(refObj,column)))):
-          cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>'),"danger")
+          cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"danger"))
           nrFailed[0]+=1
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
           dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
@@ -1233,7 +1229,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         else:
           cell.append(('passed',"success"))
       else: # not row in curObj or refObj
-        cell.append(('no data row in cur. or ref.'),"warning")
+        cell.append(('no data row in cur. or ref.',"warning"))
       data.append(cell)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
@@ -1386,8 +1382,8 @@ def compareExample(example, compareFN):
   for row in data:
     print('{', end="", file=compareFD)
     for i in range(0,len(row)):
-      print('"d%d":"%s",'%(i, row[i][0]), end="", file=compareFD) # d<colIndex> == data for column <colIndex>
-      print('"c%d":"%s",'%(i, row[i][1]), end="", file=compareFD) # c<colIndex> == class attribute for column <colIndex>
+      print("'d%d':'%s',"%(i, row[i][0].replace("'", "\\'")), end="", file=compareFD) # d<colIndex> == data for column <colIndex>
+      print("'c%d':'%s',"%(i, row[i][1]), end="", file=compareFD) # c<colIndex> == class attribute for column <colIndex>
     print('},', file=compareFD)
   print('];', file=compareFD)
   print('</script>', file=compareFD)
