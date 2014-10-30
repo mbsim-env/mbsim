@@ -1145,7 +1145,7 @@ def getColumn(arr, col, asColumnVector=True):
       return arr[:][:,None]
   else:
     raise IndexError("Only HDF5 datasets of shape vector and matrix can be handled.")
-def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames, gnuplotProcess, datasetName, refObj):
+def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNames, gnuplotProcess, datasetName, refObj):
   import numpy
   import h5py
 
@@ -1156,12 +1156,12 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
     try:
       curObj=h5CurFile[datasetName]
     except KeyError:
-      print('<tr>', file=compareFD)
-      print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
-      print('<td>'+datasetName+'</td>', file=compareFD)
-      print('<td class="danger">in ref. but not in cur.</td>', file=compareFD)
-      print('<td class="danger">failed</td>', file=compareFD)
-      print('</tr>', file=compareFD)
+      data.append([
+        (h5CurFile.filename,""),
+        (datasetName,""),
+        ('in ref. but not in cur.',"danger"),
+        ('failed',"danger")
+      ])
       nrAll[0]+=1
       nrFailed[0]+=1
       return
@@ -1204,26 +1204,26 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
             delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
           else:
             delta=float("inf") # very large => error
-      print('<tr>', file=compareFD)
-      print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
-      print('<td>'+datasetName+'</td>', file=compareFD)
+      cell=[]
+      cell.append((h5CurFile.filename,""))
+      cell.append((datasetName,""))
       if column<curObjCols and refLabels[column][0]==curLabels[column][0]:
-        print('<td class="%s">'%(printLabel[1])+printLabel[0]+'</td>', file=compareFD)
+        cell.append((printLabel[0],printLabel[1]))
       else:
-        print('<td class="danger">&lt;label for col. '+str(column+1)+' differ&gt;</td>', file=compareFD)
+        cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;'),"danger")
         nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         #check for NaN/Inf # check for NaN and Inf
         #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
-        #check for NaN/Inf   print('<td class="danger">cur. contains NaN or +/-Inf</td>', file=compareFD)
+        #check for NaN/Inf   cell.append(('cur. contains NaN or +/-Inf'),"danger")
         #check for NaN/Inf   nrFailed[0]+=1
         #check for NaN/Inf elif numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
-        #check for NaN/Inf   print('<td class="danger">ref. contains NaN or +/-Inf</td>', file=compareFD)
+        #check for NaN/Inf   cell.append(('ref. contains NaN or +/-Inf'),"danger")
         #check for NaN/Inf   nrFailed[0]+=1
         #check for NaN/Inf use elif instead of if in next line
         # check for difference
         if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(getColumn(refObj,column)))):
-          print('<td class="danger"><a href="'+myurllib.pathname2url(diffFilename)+'">failed</a></td>', file=compareFD)
+          cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>'),"danger")
           nrFailed[0]+=1
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
           dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
@@ -1231,18 +1231,18 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
                          column, refLabels[column][0], dataArrayRef, dataArrayCur, gnuplotProcess)
         # everything OK
         else:
-          print('<td class="success">passed</td>', file=compareFD)
+          cell.append(('passed',"success"))
       else: # not row in curObj or refObj
-        print('<td class="warning">no data row in cur. or ref.</td>', file=compareFD)
-      print('</tr>', file=compareFD)
+        cell.append(('no data row in cur. or ref.'),"warning")
+      data.append(cell)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
-      print('<tr>', file=compareFD)
-      print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
-      print('<td>'+datasetName+'</td>', file=compareFD)
-      print('<td class="danger">label '+label+' not in ref.</td>', file=compareFD)
-      print('<td class="danger">failed</td>', file=compareFD)
-      print('</tr>', file=compareFD)
+      data.append([
+        (h5CurFile.filename,""),
+        (datasetName,""),
+        ('label '+label+' not in ref.',"danger"),
+        ('failed',"danger")
+      ])
       nrAll[0]+=1
       nrFailed[0]+=1
 
@@ -1271,11 +1271,30 @@ def compareExample(example, compareFN):
   print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=compareFD)
   print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=compareFD)
   print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=compareFD)
-  print('<script type="text/javascript">', file=compareFD)
-  print('  $(document).ready(function() {', file=compareFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=compareFD)
-  print('  } );', file=compareFD)
-  print('</script>', file=compareFD)
+  print('''<script type="text/javascript">
+    $(document).ready(function() {
+      $('#SortThisTable').dataTable({
+        'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
+        'pageLength': 25,
+        'aaSorting': [],
+        'stateSave': true,
+        // we use javascript source for this table due to performance reasons
+        'data': SortThisTable_data,
+        'columns': [
+          { data: 'd0' },
+          { data: 'd1' },
+          { data: 'd2' },
+          { data: 'd3' }
+        ],
+        "rowCallback": function(row, data) {
+          $(row).children("td").eq(0).addClass(data["c0"]);
+          $(row).children("td").eq(1).addClass(data["c1"]);
+          $(row).children("td").eq(2).addClass(data["c2"]);
+          $(row).children("td").eq(3).addClass(data["c3"]);
+        }
+      });
+    });
+    </script>''', file=compareFD)
   print('<h1>Compare Results</h1>', file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=compareFD)
@@ -1308,37 +1327,38 @@ def compareExample(example, compareFN):
   except OSError:
     gnuplotProcess=None
     print("gnuplot not found. Hence no compare plot will be generated. Add gnuplot to PATH to enable.")
+  data=[]
   for h5RefFileName in glob.glob(pj("reference", "*.h5")):
     # open h5 files
     h5RefFile=h5py.File(h5RefFileName, "r")
     try:
       h5CurFile=h5py.File(h5RefFileName[10:], "r")
     except IOError:
-      print('<tr>', file=compareFD)
-      print('<td>'+h5RefFile.filename[10:]+'</td>', file=compareFD)
-      print('<td class="danger">no such file in current solution</td>', file=compareFD)
-      print('<td class="danger">failed</td>', file=compareFD)
-      print('<td class="danger">failed</td>', file=compareFD)
-      print('</tr>', file=compareFD)
+      data.append([
+        (h5RefFile.filename[10:],""),
+        ("no such file in current solution","danger"),
+        ("failed","danger"),
+        ("failed","danger")
+      ])
       nrAll[0]+=1
       nrFailed[0]+=1
     else:
       # process h5 file
       refMemberNames=set()
-      # bind arguments h5CurFile, compareFD, example, nrAll, nrFailed in order (nrAll, nrFailed as lists to pass by reference)
-      dummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll,
+      # bind arguments h5CurFile, data, example, nrAll, nrFailed in order (nrAll, nrFailed as lists to pass by reference)
+      dummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, data, example, nrAll,
                                       nrFailed, refMemberNames, gnuplotProcess)
       h5RefFile.visititems(dummyFctPtr) # visit all dataset
       # check for datasets in current but not in reference
       curMemberNames=set()
       h5CurFile.visititems(functools.partial(appendDatasetName, curMemberNames)) # get all dataset names in cur
       for datasetName in curMemberNames-refMemberNames:
-        print('<tr>', file=compareFD)
-        print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
-        print('<td>'+datasetName+'</td>', file=compareFD)
-        print('<td class="danger">not in ref. but in cur.</td>', file=compareFD)
-        print('<td class="danger">failed</td>', file=compareFD)
-        print('</tr>', file=compareFD)
+        data.append([
+          (h5CurFile.filename,""),
+          (datasetName,""),
+          ('not in ref. but in cur.',"danger"),
+          ('failed',"danger")
+        ])
         nrAll[0]+=1
         nrFailed[0]+=1
       # close h5 files
@@ -1351,14 +1371,26 @@ def compareExample(example, compareFN):
   refFiles=glob.glob(pj("reference", "*.h5"))
   for curFile in glob.glob("*.h5"):
     if pj("reference", curFile) not in refFiles:
-      print('<tr>', file=compareFD)
-      print('<td>'+curFile+'</td>', file=compareFD)
-      print('<td class="danger">no such file in reference solution</td>', file=compareFD)
-      print('<td class="danger">failed</td>', file=compareFD)
-      print('<td class="danger">failed</td>', file=compareFD)
-      print('</tr>', file=compareFD)
+      data.append([
+        (curFile,""),
+        ('no such file in reference solution',"danger"),
+        ('failed',"danger"),
+        ('failed',"danger")
+      ])
       nrAll[0]+=1
       nrFailed[0]+=1
+
+  # all table data is now collected in data: print it now as javascript code using by DataTables in the browser
+  print('<script type="text/javascript">', file=compareFD)
+  print('var SortThisTable_data=[', file=compareFD)
+  for row in data:
+    print('{', end="", file=compareFD)
+    for i in range(0,len(row)):
+      print('"d%d":"%s",'%(i, row[i][0]), end="", file=compareFD) # d<colIndex> == data for column <colIndex>
+      print('"c%d":"%s",'%(i, row[i][1]), end="", file=compareFD) # c<colIndex> == class attribute for column <colIndex>
+    print('},', file=compareFD)
+  print('];', file=compareFD)
+  print('</script>', file=compareFD)
 
   # print html footer
   print('</tbody></table>', file=compareFD)
