@@ -455,7 +455,7 @@ def main():
             status.text("Your selection has been saved on the server.");
           }
           else {
-            $("#PASSWORD").val()=""; // on failure remove password
+            $("#PASSWORD").val(""); // on failure remove password
             status.removeClass("text-success");
             status.addClass("text-danger");
             status.removeClass("text-warning");
