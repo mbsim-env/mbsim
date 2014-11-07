@@ -471,7 +471,7 @@ def main():
   print('<h1>MBSim runexamples Results</h1>', file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
   print('  <dt>Called command</dt><dd><code>', file=mainFD)
-  for argv in sys.argv: print(argv.replace('/', '/\u200B')+' ', file=mainFD)
+  for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('  </code></dd>', file=mainFD)
   print('  <dt>RSS Feed</dt><dd>Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   global timeID
@@ -550,12 +550,12 @@ def main():
             'Rerun all failed examples<span class="caret"> </span>'+\
             '</a></div>', file=mainFD)
     print('  <div class="panel-body panel-collapse collapse" id="collapseRerunFailedExamples">', file=mainFD)
-    print('<code>'+sys.argv[0].replace('/', '/\u200B'), end=" ", file=mainFD)
+    print('<code>'+sys.argv[0].replace('/', u'/\u200B'), end=" ", file=mainFD)
     for arg in sys.argv[1:]:
       if not arg in set(args.directories):
-        print(arg.replace('/', '/\u200B'), end=" ", file=mainFD)
+        print(arg.replace('/', u'/\u200B'), end=" ", file=mainFD)
     for failedEx in failedExamples:
-      print(failedEx.replace('/', '/\u200B'), end=" ", file=mainFD)
+      print(failedEx.replace('/', u'/\u200B'), end=" ", file=mainFD)
     print('</code>', file=mainFD)
     print('  </div>', file=mainFD)
     print('</div>', file=mainFD)
