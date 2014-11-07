@@ -369,7 +369,7 @@ def main():
 
   print('<dl class="dl-horizontal">', file=mainFD)
   print('  <dt>Called command</dt><dd><code>', file=mainFD)
-  for argv in sys.argv: print(argv+' ', file=mainFD)
+  for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('  </code></dd>', file=mainFD)
   print('  <dt>RSS Feed</dt><dd>Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
