@@ -1289,6 +1289,7 @@ def compareExample(example, compareFN):
           $(row).children("td").eq(3).addClass(data["c3"]);
         }
       });
+      $('#SortThisTable').DataTable().columns.adjust().draw();
     });
     </script>''', file=compareFD)
   print('<h1>Compare Results</h1>', file=compareFD)

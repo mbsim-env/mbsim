@@ -46,6 +46,8 @@
               'bSort' : false,
               'stateSave': true
             });
+            $('#ErrorTable').DataTable().columns.adjust().draw();
+            $('.ErrorStackTable').DataTable().columns.adjust().draw();
           });
         </script>
       </head>
