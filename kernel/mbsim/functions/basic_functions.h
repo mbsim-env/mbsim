@@ -642,8 +642,7 @@ namespace MBSim {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
           xercesc::DOMElement *ee=e->getFirstElementChild();
           while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-            function.push_back(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()));
-            a.push_back(Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit")));
+            addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
             ee=ee->getNextElementSibling();
           }
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continouslyDifferentiable");
