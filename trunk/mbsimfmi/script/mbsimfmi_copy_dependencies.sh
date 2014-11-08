@@ -4,6 +4,8 @@
 # License : GNU GPLv3
 #
 
+set -e
+
 function useage()
 {
     cat << EOU

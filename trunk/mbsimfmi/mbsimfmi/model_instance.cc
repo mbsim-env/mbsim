@@ -38,7 +38,6 @@ namespace fmi {
   using std::string;
 
   FmuParameters::FmuParameters():
-    mbsimflatxmlfile((getSharedLibDir().parent_path().parent_path()/"ressources"/"MBS.mbsimprj.flat.xml").string()),
     model_guid(MODEL_GUID),
     n_of_reals(0),
     n_of_integers(0),
@@ -63,7 +62,7 @@ namespace fmi {
     return 0;
   }
 
-  ModelInstance::ModelInstance(MBSim::DynamicSystemSolver *s_,FmuParameters *p_,fmiString instanceName_, fmiCallbackFunctions functions_, fmiBoolean loggingOn_):
+  ModelInstance::ModelInstance(MBSim::DynamicSystemSolver *s_,FmuParameters *p_,fmiString instanceName_, fmiCallbackFunctions functions_, fmiBoolean loggingOn_, const string &mbsimflatxmlfile):
     system(s_),
     params(p_),
     r(),
@@ -87,7 +86,7 @@ namespace fmi {
       //adoptMessageStreams(); //note: no arg means adopt the current (static) message streams (set above)
 
       if(!system)
-        initDssWithXml(xmlpath(),&system);
+        initDssWithXml(mbsimflatxmlfile,&system);
       system->setPlotFeatureRecursive(DynamicSystemSolver::plotRecursive,DynamicSystemSolver::disabled);//(loggingOn?enabled:disabled));
       //system->setInformationOutput(loggingOn);
       //system->setConstraintSolver(MBSim::RootFinding);

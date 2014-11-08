@@ -62,6 +62,8 @@ argparser = argparse.ArgumentParser(
   - If a file named 'Makefile' exists, than it is treated as a SRC example.
   - If a file named 'MBS.mbsimprj.flat.xml' exists, then it is treated as a FLATXML example.
   - If a file named 'MBS.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
+  - If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
+    Beside running the file by mbsimxml also mbsimfmi is run to export the model as a FMU.
   If more then one of these files exist the behaviour is undefined.
   The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
   '''
@@ -83,10 +85,11 @@ mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in 
 mainOpts.add_argument("--filter", default="True", type=str,
   help='''Filter the specifed directories using the given Python code. A directory is processed if the provided
           Python code evaluates to True where the following variables are defined:
-          src: is True if the directory is a source code examples;
-          flatxml: is True if the directory is a xml flat examples;
-          ppxml: is True if the directory is a preprocessing xml examples;
-          xml: is True if the directory is a flat or preprocessing xml examples;
+          src: is True if the directory is a source code example;
+          flatxml: is True if the directory is a xml flat example;
+          ppxml: is True if the directory is a preprocessing xml example;
+          xml: is True if the directory is a flat or preprocessing xml example;
+          fmi: is True if the directory is a FMI export preprocessing xml example;
           mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
                     mbsimXXX='''+str(mbsimModules)+''';
           Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
@@ -680,11 +683,12 @@ def addExamplesByFilter(baseDir, directoriesSet):
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
+    fmi=os.path.isfile(pj(root, "FMI.mbsimprj.xml"))
     # skip none examples directires
-    if(not ppxml and not flatxml and not src):
+    if(not ppxml and not flatxml and not src and not fmi):
       continue
     dirs=[]
-    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src}
+    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi}
     for m in mbsimModules:
       d[m]=False
     # check for MBSim modules in src examples
@@ -736,6 +740,8 @@ def runExample(resultQueue, example):
         executeRet, dt, outfiles=executeXMLExample(executeFD, example)
       elif os.path.isfile("MBS.mbsimprj.flat.xml"):
         executeRet, dt, outfiles=executeFlatXMLExample(executeFD, example)
+      elif os.path.isfile("FMI.mbsimprj.xml"):
+        executeRet, dt, outfiles=executeFMIExample(executeFD, example)
       else:
         print("Unknown example type in directory "+example[0]+" found.", file=executeFD)
         executeRet=1
@@ -983,13 +989,16 @@ def executeSrcExample(executeFD, example):
 
 # execute the soruce code example in the current directory (write everything to fd executeFD)
 def executeXMLExample(executeFD, example):
+  # we handle MBS.mbsimprj.xml and FMI.mbsimprj.xml files here
+  prjFile=glob.glob("*.mbsimprj.xml")[0]
+
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+["MBS.mbsimprj.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+[prjFile]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
   ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                     ["MBS.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime)
+                     [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return ret, dt, getOutFiles(example)
@@ -1008,6 +1017,38 @@ def executeFlatXMLExample(executeFD, example):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return ret, dt, getOutFiles(example)
+
+
+
+# execute the soruce code example in the current directory (write everything to fd executeFD)
+def executeFMIExample(executeFD, example):
+  # first simple run the example as a preprocessing xml example
+  ret, dt, outFiles=executeXMLExample(executeFD, example)
+  if ret!=0:
+    return ret, 0, outFiles
+
+  # run mbsimfmi.sh MISSING: should be a executable to work on windows. If so also enable --prefixSimulation
+  print("\n\n\n", file=executeFD)
+  print("Running command:", file=executeFD)
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimfmi.sh")]+[".pp.FMI.mbsimprj.xml"]))
+  print("\n", file=executeFD)
+  executeFD.flush()
+  ret=subprocessCall([pj(mbsimBinDir, "mbsimfmi.sh")]+
+                     [".pp.FMI.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime/5)
+  if ret!=0:
+    return ret, 0, outFiles
+
+  # run fmuChecker
+  print("\n\n\n", file=executeFD)
+  print("Running command:", file=executeFD)
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "fmuCheck.linux64")]+["mbsim.fmu"]))
+  print("\n", file=executeFD)
+  t0=datetime.datetime.now()
+  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "fmuCheck.linux64")]+
+                     ["mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
+  t1=datetime.datetime.now()
+  dt=(t1-t0).total_seconds()
+  return ret, dt, outFiles+getOutFiles(example)
 
 
 
