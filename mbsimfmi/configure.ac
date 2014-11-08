@@ -22,6 +22,10 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
+# FMI platform name
+FMIPLATFORM=linux$(getconf LONG_BIT)
+AC_SUBST([FMIPLATFORM])
+
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.3.1 mbsimxml mbsimControl)
 
 if test "_$host_os" = "_mingw32" ; then
@@ -95,7 +99,7 @@ fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimfmi/Makefile mbsimfmi.pc mbsimfmi/env.h])
+AC_CONFIG_FILES([Makefile mbsimfmi/Makefile script/Makefile extern/Makefile mbsimfmi.pc mbsimfmi/env.h])
 
 AC_OUTPUT
 

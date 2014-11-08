@@ -54,6 +54,12 @@
     <control:ExternSignalSource name="ExternForce"> <!-- only used in FMI case -->
       <control:sourceSize>1</control:sourceSize>
     </control:ExternSignalSource>
+    <control:LinkDistanceSensor name="SpringDistance"> <!-- only used in FMI case -->
+      <control:link ref="../Link[EXTERN]"/>
+    </control:LinkDistanceSensor>
+    <control:ExternSignalSink name="SpringDistanceSink"> <!-- only used in FMI case -->
+      <control:inputSignal ref="../Link[SpringDistance]"/>
+    </control:ExternSignalSink>
     <pv:Embed href="{extern}"/>
   </links>
   <environments/>

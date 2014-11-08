@@ -101,6 +101,7 @@
 
   <!-- argument of the program being run, seperated by spaces -->
   <xsl:template match="arg">
+    <xsl:text> </xsl:text>
     <xsl:call-template name="replace-string"><!-- add possible word breaks after each / character -->
       <xsl:with-param name="text" select="text()"/>
       <xsl:with-param name="replace" select="'/'" />

@@ -46,7 +46,6 @@ public:
   virtual ~FmuParameters(){};
 
   fmiString guid() { return model_guid; }
-  fmiString xmlpath() {return mbsimflatxmlfile.c_str(); }
   fmiInteger& get(paramChoice c) {
     switch(c){
     case nr : return n_of_reals;
@@ -71,7 +70,6 @@ public:
   }
 
 private:
-  std::string mbsimflatxmlfile;
   fmiString model_guid;
   fmiInteger n_of_reals;
   fmiInteger n_of_integers;
@@ -117,7 +115,7 @@ class LoggerBuffer : public std::stringbuf {
  */
 class ModelInstance {
 public:
-  ModelInstance(MBSim::DynamicSystemSolver *s_,FmuParameters *p_, fmiString instanceName_, fmiCallbackFunctions functions_, fmiBoolean loggingOn_);
+  ModelInstance(MBSim::DynamicSystemSolver *s_,FmuParameters *p_, fmiString instanceName_, fmiCallbackFunctions functions_, fmiBoolean loggingOn_, const std::string &mbsimflatxmlfile);
   virtual ~ModelInstance();
 
   /**
@@ -201,8 +199,6 @@ public:
   /* FMU parameters GETTERS / SETTERS */
   const fmiInteger& getN(const paramChoice c) const { return params->get(c); }
   void setN(const paramChoice c, fmiInteger n) { params->get(c)=n; }
-  /* xml-path GETTER */
-  fmiString xmlpath() { return params->xmlpath(); }
   /*****************************************************/
 
   // helper function to print exceptions message texts via the FMI logger
@@ -212,6 +208,7 @@ public:
 
 private:
   MBSim::DynamicSystemSolver *system;
+  std::string mbsimflatxmlfile;
   FmuParameters *params;
 
   ScalarVariable<fmiReal> r;

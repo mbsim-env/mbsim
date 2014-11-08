@@ -32,6 +32,9 @@ extern "C" {
 #include <string>
 #include <boost/filesystem.hpp>
 #include <mbsim/mbsim_event.h>
+#include <fmi_utils.h>
+
+using namespace std;
 
 #define n_of_reals comp->getN(nr)
 #define n_of_integers comp->getN(ni)
@@ -42,10 +45,10 @@ extern "C" {
 
 #define CATCH_PRINT_AND_RETURN(value) \
  catch(const MBSim::MBSimError &ex) { \
-   comp->printErrorMessage(std::string("MBSim exception: ")+ex.what()); \
+   comp->printErrorMessage(string("MBSim exception: ")+ex.what()); \
  } \
- catch(const std::runtime_error &ex) { \
-   comp->printErrorMessage(std::string("Exception: ")+ex.what()); \
+ catch(const runtime_error &ex) { \
+   comp->printErrorMessage(string("Exception: ")+ex.what()); \
  } \
  catch(...) { \
    comp->printErrorMessage("Unknown exception"); \
@@ -158,15 +161,30 @@ fmiComponent fmiInstantiateModel (fmiString            instanceName,
   }
   /*****************************************************/
 
+  // search the mbsimprj xml file in resources
+  string mbsimflatxmlfile;
+  boost::filesystem::path resources=getSharedLibDir().parent_path().parent_path()/"resources";
+  for(boost::filesystem::directory_iterator it(resources); it!=boost::filesystem::directory_iterator(); ++it) {
+    string name=it->path().filename().string();
+    if(name.substr(name.length()-string(".mbsimprj.flat.xml").length())==".mbsimprj.flat.xml") {
+      mbsimflatxmlfile=it->path().string();
+      break;
+    }
+    if(name.substr(name.length()-string(".mbsimprj.xml").length())==".mbsimprj.xml" && name.substr(0, 4)==".pp.") {
+      mbsimflatxmlfile=it->path().string();
+      break;
+    }
+  }
+
   System* sys = 0;
-  if(!boost::filesystem::exists(fmuParams->xmlpath())){
+  if(!boost::filesystem::exists(mbsimflatxmlfile)){
     functions.logger(NULL, instanceName, fmiWarning, "log",
             "No mbsim xml flat input file, creates system with compile-time system implemented.");
     sys = new System(instanceName);
   }
 
   comp = (ModelInstance*)functions.allocateMemory(1, sizeof(ModelInstance));
-  new(comp) ModelInstance(sys,fmuParams, instanceName, functions, loggingOn);
+  new(comp) ModelInstance(sys,fmuParams, instanceName, functions, loggingOn, mbsimflatxmlfile);
 
   if( !comp ) {
     comp->getFunctions().logger(NULL, instanceName, fmiError, "error",
@@ -238,7 +256,7 @@ fmiStatus fmiSetContinuousStates    (fmiComponent c, const fmiReal x[], size_t n
          return fmiError;
     /*****************************************************/
     fmiReal* z=comp->Z();
-    std::memcpy(z,x,nx*sizeof(fmiReal));
+    memcpy(z,x,nx*sizeof(fmiReal));
     if (comp->getLog())
       for(int i=0; i<(int)nx;i++) {
         // LOG
@@ -443,7 +461,7 @@ fmiStatus fmiGetDerivatives    (fmiComponent c, fmiReal derivatives[]    , size_
   /*****************************************************/
   // UPDATE
   const fmiReal* zdot = c_comp->Zdot();
-  std::memcpy(derivatives,zdot,nx*sizeof(fmiReal));
+  memcpy(derivatives,zdot,nx*sizeof(fmiReal));
   // LOG
   if (comp->getLog())
     for(int i=0;i<n_of_states;i++) {
@@ -467,7 +485,7 @@ fmiStatus fmiGetEventIndicators(fmiComponent c, fmiReal eventIndicators[], size_
     // UPDATE
     if(n_of_event_indicators > 0){
       comp->updateSV(comp->getTime());
-      std::memcpy(eventIndicators,c_comp->E(),ni*sizeof(fmiReal));
+      memcpy(eventIndicators,c_comp->E(),ni*sizeof(fmiReal));
       // LOG
       for (int i=0; i< (int)ni; i++) {
           if (comp->getLog()) comp->getFunctions().logger(c, comp->getName(), fmiOK, "log",
@@ -578,7 +596,7 @@ fmiStatus fmiGetString (fmiComponent c, const fmiValueReference vr[], size_t nvr
       if(vrOutOfRange(comp, "fmiGetString", vr[i], n_of_strings))
         return fmiError;
       // UPDATE
-      std::strcpy(const_cast<char*>(value[i]), c_comp->S(vr[i]));
+      strcpy(const_cast<char*>(value[i]), c_comp->S(vr[i]));
       // LOG
       if(comp->getLog()) comp->getFunctions().logger(c, comp->getName(), fmiOK, "log",
             "fmiGetString: #s%u# = '%s'", vr[i], value[i]);
@@ -639,7 +657,7 @@ fmiStatus fmiGetContinuousStates (fmiComponent c, fmiReal states[], size_t nx){
     /*****************************************************/
     // UPDATE
     const fmiReal* z = c_comp->Z();
-    std::memcpy(states,z,nx*sizeof(fmiReal));
+    memcpy(states,z,nx*sizeof(fmiReal));
     // LOG
     if (comp->getLog())
       for(int i=0;i<(int)nx;i++) {
