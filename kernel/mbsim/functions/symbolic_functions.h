@@ -111,16 +111,15 @@ template<typename Ret, typename Arg>
     CasADi::SXFunction f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
-      init();
-    }
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
 //    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
 //      f.init();
 //      pd = CasADi::SXFunction(f.inputExpr(),f.jac(0));
 //      pd.init();
 //    }
 
-    void init() {
+    void init(Element::InitStage stage) {
+      Function<Ret(Arg)>::init(stage);
       // check function: number in inputs and outputs
       if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
@@ -204,7 +203,6 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
-      init();
     }
   };
 
@@ -214,9 +212,7 @@ template<typename Ret, typename Arg1, typename Arg2>
     CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
-      init();
-    }
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
 //    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
 //      f.init();
 //      pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
@@ -225,7 +221,8 @@ template<typename Ret, typename Arg1, typename Arg2>
 //      pd2.init();
 //    }
 
-    void init() {
+    void init(Element::InitStage stage) {
+      Function<Ret(Arg1, Arg2)>::init(stage);
       // check function: number in inputs and outputs
       if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
@@ -346,7 +343,6 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
-      init();
     }
   };
 

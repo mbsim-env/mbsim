@@ -108,8 +108,9 @@ namespace MBSim {
   class PolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       PolynomFunction() { }
-      PolynomFunction(const fmatvec::VecV &a_) : a(a_) { init(); }
-      void init() {
+      PolynomFunction(const fmatvec::VecV &a_) : a(a_) { }
+      void init(Element::InitStage stage) {
+        Function<Ret(Arg)>::init(stage);
         ad.resize(a.size()-1);
         add.resize(ad.size()-1);
         for(unsigned int i=1; i<a.size(); i++)
@@ -117,7 +118,6 @@ namespace MBSim {
         for(unsigned int i=1; i<ad.size(); i++)
           add.e(i-1) = double(i)*ad(i);
       }
-
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
         double value=a(a.size()-1);
@@ -141,7 +141,6 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) {
         a = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"));
-        init();
       }
 
     private:

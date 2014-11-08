@@ -34,13 +34,8 @@ namespace MBSim {
   class TabularFunction<Ret(Arg)> : public Function<Ret(Arg)> {
 
     public:
-      TabularFunction() :
-          xIndexOld(0) {
-      }
-      TabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) :
-          x(x_), y(y_), xIndexOld(0) {
-        init();
-      }
+      TabularFunction() : xIndexOld(0) { }
+      TabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : x(x_), y(y_), xIndexOld(0) { }
       Ret operator()(const Arg& xVal_) {
         double xVal = ToDouble<Arg>::cast(xVal_);
         int i = xIndexOld;
@@ -79,19 +74,19 @@ namespace MBSim {
           x = xy.col(0);
           y = xy(fmatvec::Range<fmatvec::Var, fmatvec::Var>(0, xy.rows() - 1), fmatvec::Range<fmatvec::Var, fmatvec::Var>(1, xy.cols() - 1));
         }
-        init();
+      }
+      void init(Element::InitStage stage) {
+        Function<Ret(Arg)>::init(stage);
+        for (int i = 1; i < x.size(); i++)
+          assert(x(i) > x(i - 1));
+        assert(x.size() == y.rows());
+        xSize = x.size();
       }
     protected:
       fmatvec::VecV x;
       fmatvec::MatV y;
     private:
       int xIndexOld, xSize;
-      void init() {
-        for (int i = 1; i < x.size(); i++)
-          assert(x(i) > x(i - 1));
-        assert(x.size() == y.rows());
-        xSize = x.size();
-      }
   };
 
   template<typename Sig> class PeriodicTabularFunction; 
@@ -99,12 +94,8 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   class PeriodicTabularFunction<Ret(Arg)> : public TabularFunction<Ret(Arg)> {
     public:
-      PeriodicTabularFunction() {
-      }
-      PeriodicTabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) :
-          TabularFunction<Ret(Arg)>(x_, y_) {
-        init();
-      }
+      PeriodicTabularFunction() { }
+      PeriodicTabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : TabularFunction<Ret(Arg)>(x_, y_) { }
       Ret operator()(const Arg& x) {
         double xValTmp = ToDouble<Arg>::cast(x);
         while (xValTmp < xMin)
@@ -115,15 +106,15 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) {
         TabularFunction<Ret(Arg)>::initializeUsingXML(element);
-        init();
       }
-    private:
-      double xMin, xMax, xDelta;
-      void init() {
+      void init(Element::InitStage stage) {
+        Function<Ret(Arg)>::init(stage);
         xMin = TabularFunction<Ret(Arg)>::x(0);
         xMax = this->x(TabularFunction<Ret(Arg)>::x.size() - 1);
         xDelta = xMax - xMin;
       }
+    private:
+      double xMin, xMax, xDelta;
   };
 
   template<typename Sig> class TwoDimensionalTabularFunction; 
