@@ -3420,17 +3420,12 @@
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="coefficients">
+          <xs:element name="coefficients" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Koeffizienten des Polynoms.
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType>
-              <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="coefficient" type="pv:unknownScalar"/>
-              </xs:sequence>
-            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
