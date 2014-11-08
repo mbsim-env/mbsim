@@ -14,11 +14,11 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _FUNCTION_LIBRARY_H_
-#define _FUNCTION_LIBRARY_H_
+#ifndef _BASIC_FUNCTIONS_H_
+#define _BASIC_FUNCTIONS_H_
 
 #include "mbsim/functions/function.h"
 #include "mbsim/objectfactory.h"
@@ -108,50 +108,44 @@ namespace MBSim {
   class PolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       PolynomFunction() { }
-      PolynomFunction(const std::vector<double> &a_) : a(a_) { init(); }
+      PolynomFunction(const fmatvec::VecV &a_) : a(a_) { init(); }
       void init() {
+        ad.resize(a.size()-1);
+        add.resize(ad.size()-1);
         for(unsigned int i=1; i<a.size(); i++)
-          ad.push_back(double(i)*a[i]);
+          ad.e(i-1) = double(i)*a.e(i);
         for(unsigned int i=1; i<ad.size(); i++)
-          add.push_back(double(i)*ad[i]);
+          add.e(i-1) = double(i)*ad(i);
       }
 
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
-        double value=a[a.size()-1];
+        double value=a(a.size()-1);
         for (int i=int(a.size())-2; i>-1; i--)
-          value=value*x+a[i];
+          value=value*x+a.e(i);
         return FromDouble<Ret>::cast(value);
       }
       typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x_) {  
         double x = ToDouble<Arg>::cast(x_);
-        double value=ad[ad.size()-1];
+        double value=ad(ad.size()-1);
         for (int i=int(ad.size())-2; i>-1; i--)
-          value=value*x+ad[i];
+          value=value*x+ad.e(i);
         return FromDouble<Ret>::cast(value);
       }
       typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
-        double value=add[add.size()-1];
+        double value=add(add.size()-1);
         for (int i=int(add.size())-2; i>-1; i--)
-          value=value*x+add[i];
+          value=value*x+add.e(i);
         return FromDouble<Ret>::cast(value);
       }
 
-      void addCoefficient(double c) {
-        a.push_back(c);
-      }
-
       void initializeUsingXML(xercesc::DOMElement *element) {
-        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients")->getFirstElementChild();
-        while (e) {
-          addCoefficient(Element::getDouble(e));
-          e=e->getNextElementSibling();
-        }
+        a = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"));
         init();
       }
 
     private:
-      std::vector<double> a, ad, add;
+      fmatvec::VecV a, ad, add;
   };
 
   template<typename Sig> class SinusoidalFunction; 

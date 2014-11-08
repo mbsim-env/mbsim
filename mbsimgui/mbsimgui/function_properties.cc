@@ -192,8 +192,7 @@ namespace MBSimGUI {
   }
 
   PolynomFunctionProperty::PolynomFunctionProperty(int m) {
-    a.setProperty(new ListProperty(new CoefficientPropertyFactory,MBSIM%"coefficient"));
-    a.setXMLName(MBSIM%"coefficients");
+    a.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"coefficients",vector<string>(3,"")),"",4));
   }
 
   DOMElement* PolynomFunctionProperty::initializeUsingXML(DOMElement *element) {

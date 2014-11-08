@@ -159,7 +159,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a = new ExtWidget("Coefficients",new ListWidget(new CoefficientWidgetFactory,"Coefficient",m,1));
+    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
     layout->addWidget(a);
   }
 
