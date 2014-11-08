@@ -12,6 +12,7 @@ import sys
 import datetime
 import fileinput
 import shutil
+import codecs
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -278,7 +279,7 @@ def main():
     if not os.path.isdir(pj(args.docOutDir, "xmldoc")): os.makedirs(pj(args.docOutDir, "xmldoc"))
     if not os.path.isdir(pj(args.docOutDir, "doc")): os.makedirs(pj(args.docOutDir, "doc"))
     # create doc entry html
-    docFD=open(pj(args.docOutDir, "index.html"), "w")
+    docFD=codecs.open(pj(args.docOutDir, "index.html"), "w", encoding="utf-8")
     print('<!DOCTYPE html>', file=docFD)
     print('<html lang="en">', file=docFD)
     print('<head>', file=docFD)
@@ -349,7 +350,7 @@ def main():
   writeRSSFeed(0) # nrFailed == 0 => write empty RSS feed
 
   # create index.html
-  mainFD=open(pj(args.reportOutDir, "index.html"), "w")
+  mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('<!DOCTYPE html>', file=mainFD)
   print('<html lang="en">', file=mainFD)
   print('<head>', file=mainFD)
@@ -516,7 +517,7 @@ def update(nr, tool, buildTools):
 
   # write svn output to report dir
   if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
-  svnFD=open(pj(args.reportOutDir, tool, "svn.txt"), "w")
+  svnFD=codecs.open(pj(args.reportOutDir, tool, "svn.txt"), "w", encoding="utf-8")
   print("stderr output:", file=svnFD)
   print("", file=svnFD)
 
@@ -610,7 +611,7 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
 
 
 def configure(tool, mainFD):
-  configureFD=open(pj(args.reportOutDir, tool, "configure.txt"), "w")
+  configureFD=codecs.open(pj(args.reportOutDir, tool, "configure.txt"), "w", encoding="utf-8")
   copyConfigLog=False
   savedDir=os.getcwd()
   try:
@@ -663,7 +664,7 @@ def configure(tool, mainFD):
 
 
 def make(tool, mainFD):
-  makeFD=open(pj(args.reportOutDir, tool, "make.txt"), "w")
+  makeFD=codecs.open(pj(args.reportOutDir, tool, "make.txt"), "w", encoding="utf-8")
   try:
     if not args.disableMake:
       # make
@@ -696,7 +697,7 @@ def make(tool, mainFD):
 
 
 def check(tool, mainFD):
-  checkFD=open(pj(args.reportOutDir, tool, "check.txt"), "w")
+  checkFD=codecs.open(pj(args.reportOutDir, tool, "check.txt"), "w", encoding="utf-8")
   if not args.disableMakeCheck:
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
@@ -709,7 +710,7 @@ def check(tool, mainFD):
     result="done"
 
   foundTestSuiteLog=False
-  testSuiteLogFD=open(pj(args.reportOutDir, tool, "test-suite.log.txt"), "w")
+  testSuiteLogFD=codecs.open(pj(args.reportOutDir, tool, "test-suite.log.txt"), "w", encoding="utf-8")
   for rootDir,_,files in os.walk('.'): # append all test-suite.log files
     if "test-suite.log" in files:
       testSuiteLogFD.write('\n\n')
@@ -739,7 +740,7 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
     mainFD.flush()
     return 0
 
-  docFD=open(pj(args.reportOutDir, tool, docDirName+".txt"), "w")
+  docFD=codecs.open(pj(args.reportOutDir, tool, docDirName+".txt"), "w", encoding="utf-8")
   savedDir=os.getcwd()
   os.chdir(docDirName)
   try:
@@ -833,7 +834,7 @@ def runexamples(mainFD):
 
 def writeRSSFeed(nrFailed):
   rssFN="result.rss.xml"
-  rssFD=open(pj(args.reportOutDir, os.pardir, rssFN), "w")
+  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
