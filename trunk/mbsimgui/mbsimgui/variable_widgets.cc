@@ -214,20 +214,23 @@ namespace MBSimGUI {
 
   void VecWidget::resize_(int size) {
     if(box.size()!=size) {
+      vector<QString> buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         layout()->removeWidget(box[i]);
+        buf[i] = box[i]->text();
         delete box[i];
       }
       box.resize(size);
       for(int i=0; i<size; i++) {
         box[i] = new QLineEdit(this);
         box[i]->setPlaceholderText("0");
-        //      box[i]->setText("0");
         if(transpose) 
           static_cast<QGridLayout*>(layout())->addWidget(box[i], 0, i);
         else
           static_cast<QGridLayout*>(layout())->addWidget(box[i], i, 0);
       }
+      for(int i=0; i<min((int)buf.size(),size); i++)
+        box[i]->setText(buf[i]);
     }
   }
 
@@ -279,9 +282,12 @@ namespace MBSimGUI {
 
   void MatWidget::resize_(int rows, int cols) {
     if(box.size()!=rows or (box.size() and box[0].size()!=cols)) {
+      vector<vector<QString> > buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
+        buf[i].resize(box[i].size());
         for(unsigned int j=0; j<box[i].size(); j++) {
           layout()->removeWidget(box[i][j]);
+          buf[i][j] = box[i][j]->text();
           delete box[i][j];
         }
       }
@@ -295,6 +301,9 @@ namespace MBSimGUI {
           static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
         }
       }
+      for(int i=0; i<min((int)buf.size(),rows); i++)
+        for(int j=0; j<min((int)buf[i].size(),cols); j++)
+          box[i][j]->setText(buf[i][j]);
     }
   }
 
@@ -352,9 +361,11 @@ namespace MBSimGUI {
 
   void SymMatWidget::resize_(int rows) {
     if(box.size()!=rows) {
+      vector<vector<QString> > buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         for(unsigned int j=0; j<box[i].size(); j++) {
           layout()->removeWidget(box[i][j]);
+          buf[i][j] = box[i][j]->text();
           delete box[i][j];
         }
       }
@@ -371,6 +382,9 @@ namespace MBSimGUI {
         for(unsigned int j=0; j<box.size(); j++)
           if(i!=j) 
             connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
+      for(int i=0; i<min((int)buf.size(),rows); i++)
+        for(int j=0; j<min((int)buf[i].size(),rows); j++)
+          box[i][j]->setText(buf[i][j]);
     }
   }
 
