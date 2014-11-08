@@ -207,6 +207,11 @@ def main():
         pj('openmbv', 'mbxmlutils'),
         pj('mbsim', 'mbsimxml')
       ])],
+    pj('mbsim', 'mbsimfmi'): [False, set([ # depends on
+        pj('mbsim', 'kernel'),
+        pj('mbsim', 'mbsimxml'),
+        pj('mbsim', 'modules', 'mbsimControl')
+      ])],
     pj('mbsim', 'examples'): [False, set([ # depends on
         pj('mbsim', 'mbsimxml'),
         pj('mbsim', 'kernel'),
@@ -440,6 +445,11 @@ def main():
 
   # write RSS feed
   writeRSSFeed(ret)
+
+  if ret>0:
+    print("\nERROR: At least one build failed!!!!!");
+  if retRunExamples>0:
+    print("\nERROR: runexamples failed!!!!!");
 
   return ret+retRunExamples
 
