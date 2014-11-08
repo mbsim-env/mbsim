@@ -14,7 +14,8 @@ libmbsimControl_la_SOURCES = \
   linear_transfer_system.cc\
   massless_spring_damper.cc\
   actuator.cc\
-  signal_function.cc
+  signal_function.cc\
+  extern_signal_sink.cc
 
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)

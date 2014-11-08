@@ -162,7 +162,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   io2->setSourceSize(2);
   addLink(io2);  
   MBSimControl::ExternSignalSink *io3=new MBSimControl::ExternSignalSink("ExternSink1");
-  io3->setSinkSize(2);
   addLink(io3);
 
   // ----------------------- Define initial states of the bodies -------------------

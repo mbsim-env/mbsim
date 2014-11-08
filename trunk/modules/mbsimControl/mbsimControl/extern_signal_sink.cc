@@ -17,29 +17,25 @@
  * Contact: friedrich.at.gc@googlemail.com
  */
 
-#ifndef _EXTERNSIGNALSINK_H_
-#define _EXTERNSIGNALSINK_H_
+#include "mbsimControl/extern_signal_sink.h"
 
-#include "mbsimControl/signal_.h"
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimControl {
 
-  /** A dummy Signal class which just feeds a signal throught.
-   * The aim of this class is just to mark a signal for external use.
-   * Hence e.g. the FMI export or co-simulation searches for all classes of this type
-   * and use all these elements as signal outputs of the system. */
-  class ExternSignalSink : public Signal {
-    protected:
-      Signal *signal;
-      std::string signalString;
-    public:
-      ExternSignalSink(const std::string &name="") : Signal(name), signal(NULL) {}
-      fmatvec::Vec getSignal() { return signal->getSignal(); }
-      void setSignal(Signal *sig) { signal=sig; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-  };
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternSignalSink, MBSIMCONTROL%"ExternSignalSink")
+
+  void ExternSignalSink::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    signalString=E(e)->getAttribute("ref");
+  }
+
+  void ExternSignalSink::init(InitStage stage) {
+    if(stage==resolveXMLPath)
+      setSignal(getByPath<Signal>(signalString));
+    Signal::init(stage);
+  }
 
 }
-
-#endif /* _EXTERNSIGNALSINK_H_ */

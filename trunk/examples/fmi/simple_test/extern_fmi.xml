@@ -3,7 +3,7 @@
   xmlns:control="http://mbsim.berlios.de/MBSimControl">
   <forceFunction>
     <control:SignalFunction>
-      <control:returnSignal ref="../Link[ExternForce]"/>
+      <control:returnSignal ref="../../Link[ExternForce]"/>
     </control:SignalFunction>
   </forceFunction>
   <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>

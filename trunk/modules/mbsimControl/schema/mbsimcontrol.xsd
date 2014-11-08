@@ -85,6 +85,35 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ExternSignalSink" substitutionGroup="Signal" type="ExternSignalSinkType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Dummy Signal welches ein Signal einfach weiterleitet.
+        Der Sinn dieses Signals ist lediglich die Markierung von Signalen als externe Signale.
+        Z.b. der FMI export oder Co-Simulation suche alle Signale diese Types und
+        verwendet all diese als Signal Ausgänge des Systems.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExternSignalSinkType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Sensor" abstract="true" substitutionGroup="Signal" type="SensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
