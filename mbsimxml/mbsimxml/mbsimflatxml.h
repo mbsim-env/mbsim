@@ -28,6 +28,7 @@ namespace MBSim {
       static void plotInitialState(Solver*& solver, DynamicSystemSolver*& dss);
       static void main(Solver *&solver, DynamicSystemSolver *&dss);
       static void postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss);
+      static void loadPlugins();
   };
 
 }
