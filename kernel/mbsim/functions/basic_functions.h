@@ -111,12 +111,14 @@ namespace MBSim {
       PolynomFunction(const fmatvec::VecV &a_) : a(a_) { }
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);
-        ad.resize(a.size()-1);
-        add.resize(ad.size()-1);
-        for(unsigned int i=1; i<a.size(); i++)
-          ad.e(i-1) = double(i)*a.e(i);
-        for(unsigned int i=1; i<ad.size(); i++)
-          add.e(i-1) = double(i)*ad(i);
+        if(stage == Element::preInit) {
+          ad.resize(a.size()-1);
+          add.resize(ad.size()-1);
+          for(unsigned int i=1; i<a.size(); i++)
+            ad.e(i-1) = double(i)*a.e(i);
+          for(unsigned int i=1; i<ad.size(); i++)
+            add.e(i-1) = double(i)*ad(i);
+        }
       }
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
