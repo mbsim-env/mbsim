@@ -57,10 +57,10 @@ public:
   void setVariability(Variability variability_) {variability.push_back(variability_);}
   void setCausality(Causality causality_) {causality.push_back(causality_);}
 
-  int inputSize() { int count=0;for(uint i =0;i<causality.size();i++) isInput(i)?count++:count; return count;};
-  int outputSize(){ int count=0;for(uint i =0;i<causality.size();i++) isOutput(i)?count++:count; return count;};
-  int internalSize() { int count=0;for(uint i =0;i<causality.size();i++) isInternal(i)?count++:count; return count;};
-  int noneSize()  { int count=0;for(uint i =0;i<causality.size();i++) isNone(i)?count++:count; return count;};
+  int inputSize() { int count=0;for(size_t i =0;i<causality.size();i++) isInput(i)?count++:count; return count;};
+  int outputSize(){ int count=0;for(size_t i =0;i<causality.size();i++) isOutput(i)?count++:count; return count;};
+  int internalSize() { int count=0;for(size_t i =0;i<causality.size();i++) isInternal(i)?count++:count; return count;};
+  int noneSize()  { int count=0;for(size_t i =0;i<causality.size();i++) isNone(i)?count++:count; return count;};
 
   const fmiBoolean hasStartBool(fmiInteger i) { return hasStartValue[i]?fmiTrue:fmiFalse; }
   void setStartBool(fmiBoolean b) {hasStartValue.push_back(b); }
