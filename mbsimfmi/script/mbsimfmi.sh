@@ -51,8 +51,6 @@ cp $lib_path/$lib_name "binaries/linux$linux_version/mbsim.so"
 #mv "binaries/linux$linux_version/$lib_name" "binaries/linux$linux_version/mbsim.so"
 #ln -s "libmbsimfmi.so" "binaries/linux$linux_version/mbsim.so"
 #rm "binaries/linux$linux_version/libmbsimfmi"*
-mkdir documentation
-mkdir sources
 # if xml file then copy it into resources
 if [ "$1" != "" ]; then
 mkdir resources

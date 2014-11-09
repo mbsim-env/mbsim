@@ -366,8 +366,8 @@ void FmiXmlExport::addParameters(xercesc::DOMElement* e) {
   XMLString::transcode("Output directory",tempStr,99);
   XMLString::transcode("",tempStr2,99);
   DOMElement *sv;
-  sv=addSV(e,"OutputDir", "0","Output directory for plots","parameter","input");
-  addV(sv,"String","","./" );
+  sv=addSV(e,"OutputDir", "0","Output directory for plots","parameter","internal");
+  addV(sv,"String","","." );
 }
 
 void FmiXmlExport::setAttribute(xercesc::DOMElement* e, const char* name, const char* value) {
