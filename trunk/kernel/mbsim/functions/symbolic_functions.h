@@ -111,15 +111,16 @@ template<typename Ret, typename Arg>
     CasADi::SXFunction f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
+      init();
+    }
 //    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
 //      f.init();
 //      pd = CasADi::SXFunction(f.inputExpr(),f.jac(0));
 //      pd.init();
 //    }
 
-    void init(Element::InitStage stage) {
-      Function<Ret(Arg)>::init(stage);
+    void init() {
       // check function: number in inputs and outputs
       if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
@@ -167,8 +168,6 @@ template<typename Ret, typename Arg>
       return f.inputExpr(0).size();
     }
 
-    std::string getType() const { return "SymbolicFunction2"; }
-
     Ret operator()(const Arg& x) {
       f.setInput(ToCasadi<Arg>::cast(x),0);
       f.evaluate();
@@ -203,6 +202,7 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
+      init();
     }
   };
 
@@ -212,7 +212,9 @@ template<typename Ret, typename Arg1, typename Arg2>
     CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
+      init();
+    }
 //    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
 //      f.init();
 //      pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
@@ -221,8 +223,7 @@ template<typename Ret, typename Arg1, typename Arg2>
 //      pd2.init();
 //    }
 
-    void init(Element::InitStage stage) {
-      Function<Ret(Arg1, Arg2)>::init(stage);
+    void init() {
       // check function: number in inputs and outputs
       if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
@@ -288,8 +289,6 @@ template<typename Ret, typename Arg1, typename Arg2>
       return f.inputExpr(1).size();
     }
 
-    std::string getType() const { return "SymbolicFunction2"; }
-
     Ret operator()(const Arg1& x1, const Arg2& x2) {
       f.setInput(ToCasadi<Arg1>::cast(x1),0);
       f.setInput(ToCasadi<Arg2>::cast(x2),1);
@@ -343,22 +342,21 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
+      init();
     }
   };
 
   template <class Ret, class Arg1, class Arg2, class Arg3>
-  class SymbolicFunction3 : public Function<Ret(Arg1,Arg2,Arg3)> {
+  class SymbolicFunction<Ret(Arg1, Arg2, Arg3)> : public Function<Ret(Arg1, Arg2, Arg3)> {
     CasADi::SXFunction f;
     public:
-    SymbolicFunction3(const CasADi::SXFunction &f_) : f(f_) {
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
       f.init();
     }
-    SymbolicFunction3(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
       f.init();
     }
     CasADi::SXFunction& getSXFunction() {return f;} 
-
-    std::string getType() const { return "SymbolicFunction3"; }
 
     Ret operator()(const Arg1& x1, const Arg2& x2, const Arg3& x3, const void * =NULL) {
       f.setInput(ToCasadi<Arg1>::cast(x1),0);
