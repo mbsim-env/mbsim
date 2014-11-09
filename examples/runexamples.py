@@ -1038,13 +1038,18 @@ def executeFMIExample(executeFD, example):
   if ret!=0:
     return ret, 0, outFiles
 
+  # get fmuChecker executable
+  fmuCheck=glob.glob(pj(mbsimBinDir, "fmuCheck.*"))
+  if len(fmuCheck)!=1:
+    raise RuntimeError("None or more than one fmuCheck.* executlabe found.")
+  fmuCheck=fmuCheck[0]
   # run fmuChecker
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "fmuCheck.linux64")]+["mbsim.fmu"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck)]+["mbsim.fmu"]))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "fmuCheck.linux64")]+
+  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck)]+
                      ["mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
