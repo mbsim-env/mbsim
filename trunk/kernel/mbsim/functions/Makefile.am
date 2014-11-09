@@ -4,7 +4,8 @@ libfunction_la_SOURCES = basic_functions.cc \
 			 symbolic_functions.cc \
 			 kinematic_functions.cc \
 			 kinetic_functions.cc \
-			 piecewise_polynom_function.cc
+			 piecewise_polynom_function.cc \
+			 fourier_function.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
@@ -18,4 +19,5 @@ functioninclude_HEADERS = function.h \
 			  kinematic_functions.h \
 			  kinetic_functions.h \
 			  auxiliary_functions.h \
-			  piecewise_polynom_function.h
+			  piecewise_polynom_function.h \
+			  fourier_function.h

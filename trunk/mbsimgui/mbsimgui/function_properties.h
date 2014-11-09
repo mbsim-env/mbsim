@@ -260,6 +260,21 @@ namespace MBSimGUI {
       ExtProperty method;
   };
 
+  class FourierFunctionProperty : public FunctionProperty {
+    public:
+      FourierFunctionProperty();
+      virtual Property* clone() const {return new FourierFunctionProperty(*this);}
+      inline std::string getType() const { return "FourierFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty f,a0,amplitudePhaseAngleForm;
+      ChoiceProperty2 choice;
+  };
+
   class LinearSpringDamperForceProperty : public FunctionProperty {
     public:
       LinearSpringDamperForceProperty();

@@ -165,6 +165,16 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> name;
   };
 
+  class FourierFunctionPropertyFactory : public PropertyFactory {
+    public:
+      FourierFunctionPropertyFactory();
+      Property* createProperty(int i=0);
+      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<MBXMLUtils::FQN> name;
+  };
+
   class ConstraintPropertyFactory : public PropertyFactory {
     public:
       ConstraintPropertyFactory();

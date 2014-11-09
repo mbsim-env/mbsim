@@ -247,6 +247,19 @@ namespace MBSimGUI {
     ExtWidget *method;
   };
 
+  class FourierFunctionWidget : public FunctionWidget {
+
+    friend class FourierFunctionProperty;
+
+    public:
+    FourierFunctionWidget(int n);
+    void resize_(int m, int n);
+
+    protected:
+    ExtWidget *f, *a0, *amplitudePhaseAngleForm;
+    ChoiceWidget2* choice;
+  };
+
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
     friend class LinearSpringDamperForceProperty;

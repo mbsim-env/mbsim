@@ -597,6 +597,48 @@ namespace MBSimGUI {
     method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
+  FourierFunctionProperty::FourierFunctionProperty() : a0(0,false), choice(new FourierFunctionPropertyFactory,"",3), amplitudePhaseAngleForm(0,false) {
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"frequency"));
+    f.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
+    a0.setProperty(new ExtPhysicalVarProperty(input));
+    amplitudePhaseAngleForm.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"amplitudePhaseAngleForm",vector<string>(2,"")),"",4));
+  }
+
+  DOMElement* FourierFunctionProperty::initializeUsingXML(DOMElement *element) {
+    f.initializeUsingXML(element);
+    a0.initializeUsingXML(element);
+    choice.initializeUsingXML(element);
+    amplitudePhaseAngleForm.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FourierFunctionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+    f.writeXMLFile(ele0);
+    a0.writeXMLFile(ele0);
+    choice.writeXMLFile(ele0);
+    amplitudePhaseAngleForm.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void FourierFunctionProperty::fromWidget(QWidget *widget) {
+    f.fromWidget(static_cast<FourierFunctionWidget*>(widget)->f);
+    a0.fromWidget(static_cast<FourierFunctionWidget*>(widget)->a0);
+    choice.fromWidget(static_cast<FourierFunctionWidget*>(widget)->choice);
+    amplitudePhaseAngleForm.fromWidget(static_cast<FourierFunctionWidget*>(widget)->amplitudePhaseAngleForm);
+  }
+
+  void FourierFunctionProperty::toWidget(QWidget *widget) {
+    f.toWidget(static_cast<FourierFunctionWidget*>(widget)->f);
+    a0.toWidget(static_cast<FourierFunctionWidget*>(widget)->a0);
+    choice.toWidget(static_cast<FourierFunctionWidget*>(widget)->choice);
+    amplitudePhaseAngleForm.toWidget(static_cast<FourierFunctionWidget*>(widget)->amplitudePhaseAngleForm);
+  }
+
   LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
 
     vector<PhysicalVariableProperty> input;

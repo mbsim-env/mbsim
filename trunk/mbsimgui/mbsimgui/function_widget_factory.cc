@@ -61,6 +61,8 @@ namespace MBSimGUI {
       return new AdditionFunctionWidget(1);
     if(i==14)
       return new MultiplicationFunctionWidget(1);
+    if(i==15)
+      return new FourierFunctionWidget(1);
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -80,6 +82,7 @@ namespace MBSimGUI {
     name.push_back("Signum function");
     name.push_back("Addition function");
     name.push_back("Multiplication function");
+    name.push_back("Fourier function");
     return name;
   }
 
@@ -274,12 +277,29 @@ namespace MBSimGUI {
   QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       ContainerWidget *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("X",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
-      widgetContainer->addWidget(new ExtWidget("Y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
       return widgetContainer;
     }
     if(i==1) {
-      return new ExtWidget("XY",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+    }
+  }
+
+  FourierFunctionWidgetFactory::FourierFunctionWidgetFactory() {
+    name.push_back("a and b");
+    name.push_back("ab");
+  }
+
+  QWidget* FourierFunctionWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      ContainerWidget *widgetContainer = new ContainerWidget;
+      widgetContainer->addWidget(new ExtWidget("a",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+      widgetContainer->addWidget(new ExtWidget("b",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+      return widgetContainer;
+    }
+    if(i==1) {
+      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
   }
 
