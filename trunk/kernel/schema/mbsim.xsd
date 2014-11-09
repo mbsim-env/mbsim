@@ -3423,7 +3423,7 @@
           <xs:element name="coefficients" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Koeffizienten des Polynoms.
+                Vektor mit den Koeffizienten <object class="inlineeqn">a_i</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -3446,28 +3446,28 @@
           <xs:element name="amplitude" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Amplitudenvektor <object class="inlineeqn">\boldsymbol{A}</object>.
+                Amplitude <object class="inlineeqn">A</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Frequenzvektor <object class="inlineeqn">\boldsymbol{f}</object>.
+                Frequenz <object class="inlineeqn">f</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:angleScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Phasenversatzvektor <object class="inlineeqn">\boldsymbol{\varphi}</object>.
+                Phasenwinkel <object class="inlineeqn">\varphi</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="offset" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Offsetvektor <object class="inlineeqn">\boldsymbol{o}</object>.
+                Offset <object class="inlineeqn">o</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -3793,19 +3793,6 @@
           </xs:choice>
         </xs:sequence> 
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="PeriodicTabularFunction" substitutionGroup="TabularFunction" type="PeriodicTabularFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction"><span class="_element">&lt;TabularFunction_V&gt;</span></a>.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="PeriodicTabularFunctionType">
-    <xs:complexContent>
-      <xs:extension base="TabularFunctionType"/>
     </xs:complexContent>
   </xs:complexType>   
 

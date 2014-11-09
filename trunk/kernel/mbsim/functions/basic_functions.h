@@ -229,8 +229,9 @@ namespace MBSim {
         double denom;
       public:
         void setDenominator(double denom_) { denom = denom_; }
-        Ret operator()(const Arg &x) {
-          return FromDouble<Ret>::cast(fmod(ToDouble<Arg>::cast(x),denom));
+        Ret operator()(const Arg &x_) {
+          double x = ToDouble<Arg>::cast(x_);
+          return FromDouble<Ret>::cast(x-denom*floor(x/denom));
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e;

@@ -93,36 +93,6 @@ namespace MBSim {
       int xIndexOld;
   };
 
-  template<typename Sig> class PeriodicTabularFunction; 
-
-  template<typename Ret, typename Arg>
-  class PeriodicTabularFunction<Ret(Arg)> : public TabularFunction<Ret(Arg)> {
-    public:
-      PeriodicTabularFunction() { }
-      PeriodicTabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : TabularFunction<Ret(Arg)>(x_, y_) { }
-      Ret operator()(const Arg& x) {
-        double xValTmp = ToDouble<Arg>::cast(x);
-        while (xValTmp < xMin)
-          xValTmp += xDelta;
-        while (xValTmp > xMax)
-          xValTmp -= xDelta;
-        return TabularFunction<Ret(Arg)>::operator()(xValTmp);
-      }
-      void initializeUsingXML(xercesc::DOMElement *element) {
-        TabularFunction<Ret(Arg)>::initializeUsingXML(element);
-      }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
-        if(stage==Element::preInit) {
-          xMin = TabularFunction<Ret(Arg)>::x(0);
-          xMax = this->x(TabularFunction<Ret(Arg)>::x.size() - 1);
-          xDelta = xMax - xMin;
-        }
-      }
-    private:
-      double xMin, xMax, xDelta;
-  };
-
   template<typename Sig> class TwoDimensionalTabularFunction; 
 
   template<typename Ret, typename Arg1, typename Arg2>
