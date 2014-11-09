@@ -87,10 +87,14 @@ boost::filesystem::path relLibName(const string &base) {
 #endif
 }
 
+}
+
+namespace MBSim {
+
 // load all MBSim module plugins:
 // If a module plugin (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
-void loadPlugins() {
+void MBSimXML::loadPlugins() {
   static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
@@ -123,10 +127,6 @@ void loadPlugins() {
   for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
     loadedPlugin.insert(SharedLibrary(*it));
 }
-
-}
-
-namespace MBSim {
 
 int PrefixedStringBuf::sync() {
   // split current buffer into lines
