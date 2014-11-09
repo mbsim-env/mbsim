@@ -1,10 +1,14 @@
-lib_LTLIBRARIES = libmbsimflatxml.la
+lib_LTLIBRARIES = libmbsimflatxml.la libmbsimxml.la
 libmbsimflatxml_la_SOURCES = mbsimflatxml.cc
 libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS)
 libmbsimflatxml_la_LDFLAGS = 
 libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) -l@BOOST_TIMER_LIB@ -l@BOOST_CHRONO_LIB@ -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
 mbsimxmlincludedir = $(includedir)/mbsimxml
 mbsimxmlinclude_HEADERS = mbsimflatxml.h
+
+libmbsimxml_la_SOURCES = mbsimxml.cc
+libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS)
+libmbsimxml_la_LIBADD = $(DEPS_LIBS)
 
 
 bin_PROGRAMS = mbsimflatxml mbsimxml
@@ -17,8 +21,8 @@ mbsimflatxml_SOURCES = mbsimflatxml-main.cc
 
 mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
 mbsimxml_LDFLAGS = -Wl,-rpath -Wl,\$$ORIGIN/../lib
-mbsimxml_LDADD = $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
-mbsimxml_SOURCES = mbsimxml.cc
+mbsimxml_LDADD = ./libmbsimxml.la $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
+mbsimxml_SOURCES = mbsimxml-main.cc
 
 schemadir = @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML
 dist_schema_DATA = mbsimproject.xsd
