@@ -3887,6 +3887,66 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="FourierFunction" substitutionGroup="Function" type="FourierFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Fourierreihe <object class="inlineeqn">y=\frac{a_0}{2}+\sum_{i=1}^n a_i\,\cos(i*2*pi*f*t)+b_i\,\sin(i*2*pi*f*t)</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FourierFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="frequency" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Grundfrequenz <object class="inlineeqn">f</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="a0" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Koeffizient <object class="inlineeqn">a_0</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice>
+            <xs:sequence>
+              <xs:element name="a" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="">
+                    Vektor mit den Koeffizienten <object class="inlineeqn">a_i</object>.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="b" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="">
+                    Vektor mit den Koeffizienten <object class="inlineeqn">b_i</object>.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="ab" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                    Matrix mit den Koeffizienten <object class="inlineeqn">a_i</object> und <object class="inlineeqn">b_i</object>.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="amplitudePhaseAngleForm" minOccurs="0" type="pv:booleanFullOctEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Koeffizienten <object class="inlineeqn">a_i</object> und <object class="inlineeqn">b_i</object> als Amplitude <object class="inlineeqn">A_i</object> und Phasenwinkel <object class="inlineeqn">\varphi_i</object> interpretiert werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="LinearSpringDamperForce" substitutionGroup="Function" type="LinearSpringDamperForceType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

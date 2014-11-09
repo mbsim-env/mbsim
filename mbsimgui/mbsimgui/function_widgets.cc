@@ -410,6 +410,41 @@ namespace MBSimGUI {
     }
   }
 
+  FourierFunctionWidget::FourierFunctionWidget(int n) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+    f = new ExtWidget("Frequency",new ExtPhysicalVarWidget(input));
+    layout->addWidget(f);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+    a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(a0);
+
+    choice = new ChoiceWidget2(new FourierFunctionWidgetFactory);
+    layout->addWidget(choice);
+
+    amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    layout->addWidget(amplitudePhaseAngleForm);
+  }
+
+  void FourierFunctionWidget::resize_(int m, int n) {
+    if(choice->getIndex()==0) {
+      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      if(choice_->getIndex()==0)
+        choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+    }
+    else {
+      ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      if(choice_->getIndex()==0)
+        choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+    }
+  }
+
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

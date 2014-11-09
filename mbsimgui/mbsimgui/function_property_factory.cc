@@ -72,6 +72,8 @@ namespace MBSimGUI {
       return new AdditionFunctionProperty;
     if(i==14)
       return new MultiplicationFunctionProperty;
+    if(i==15)
+      return new FourierFunctionProperty;
   }
 
   vector<FQN> FunctionPropertyFactory2::getNames() {
@@ -91,6 +93,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"SignumFunction");
     name.push_back(MBSIM%"AdditionFunction");
     name.push_back(MBSIM%"MultiplicationFunction");
+    name.push_back(MBSIM%"FourierFunction");
     return name;
   }
 
@@ -307,6 +310,27 @@ namespace MBSimGUI {
       //input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIM%"xy"));
       //return new ExtProperty(new ExtPhysicalVarProperty(input));
       return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0"),MBSIM%"xy",vector<string>(3,"")),"",4));
+    }
+  }
+
+  FourierFunctionPropertyFactory::FourierFunctionPropertyFactory() {
+    name.push_back(MBSIM%"a");
+    name.push_back(MBSIM%"ab");
+  }
+
+  Property* FourierFunctionPropertyFactory::createProperty(int i) {
+    if(i==0) {
+      ContainerProperty *propertyContainer = new ContainerProperty;
+      vector<Property*> choiceProperty;
+
+      propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"a",vector<string>(3,"")),"",4)));
+
+      propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"b",vector<string>(3,"")),"",4)));
+
+      return propertyContainer;
+    }
+    if(i==1) {
+      return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0"),MBSIM%"ab",vector<string>(3,"")),"",4));
     }
   }
 
