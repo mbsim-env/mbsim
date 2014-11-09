@@ -77,10 +77,12 @@ namespace MBSim {
       }
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);
-        for (int i = 1; i < x.size(); i++)
-          assert(x(i) > x(i - 1));
-        assert(x.size() == y.rows());
-        xSize = x.size();
+        if(stage==Element::preInit) {
+          for (int i = 1; i < x.size(); i++)
+            assert(x(i) > x(i - 1));
+          assert(x.size() == y.rows());
+          xSize = x.size();
+        }
       }
     protected:
       fmatvec::VecV x;
@@ -109,9 +111,11 @@ namespace MBSim {
       }
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);
-        xMin = TabularFunction<Ret(Arg)>::x(0);
-        xMax = this->x(TabularFunction<Ret(Arg)>::x.size() - 1);
-        xDelta = xMax - xMin;
+        if(stage==Element::preInit) {
+          xMin = TabularFunction<Ret(Arg)>::x(0);
+          xMax = this->x(TabularFunction<Ret(Arg)>::x.size() - 1);
+          xDelta = xMax - xMin;
+        }
       }
     private:
       double xMin, xMax, xDelta;
