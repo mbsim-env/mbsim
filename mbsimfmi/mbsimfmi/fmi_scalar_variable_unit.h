@@ -94,6 +94,6 @@ namespace fmi {
 
 } /* namespace fmi */
 
-#include "fmi_scalar_variable_unit.inl"
+#include "fmi_scalar_variable_unit_impl.h"
 
 #endif /* FMISCALARVARIABLEUNIT_H_ */

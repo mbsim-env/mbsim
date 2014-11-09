@@ -73,6 +73,6 @@ template<> template<>
 void ScalarVariableContainer<fmiReal>::add<MBSim::Link*>(MBSim::Link* in);
 } //end namespace fmi
 
-#include "fmi_scalar_variable_container.inl"
+#include "fmi_scalar_variable_container_impl.h"
 
 #endif //FMISCALARVARIABLECONTAINER_H

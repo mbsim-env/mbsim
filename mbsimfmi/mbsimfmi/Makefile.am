@@ -21,9 +21,9 @@ mbsimfmiinclude_HEADERS = \
   fmi_utils.h \
   fmi_scalar_variable.h \
   fmi_scalar_variable_container.h \
-  fmi_scalar_variable_container.inl \
+  fmi_scalar_variable_container_impl.h \
   fmi_scalar_variable_unit.h \
-  fmi_scalar_variable_unit.inl \
+  fmi_scalar_variable_unit_impl.h \
   fmi_enum.h
   
   
