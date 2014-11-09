@@ -63,8 +63,8 @@ void ScalarVariableContainer<T>::rem() {
 
 template<class T>
 void ScalarVariableContainer<T>::pull(std::vector<T>& vOut) {
-  if(vOut.size() != (uint)this->size()) vOut.resize(this->size());
-  for(uint i=0; i<mapping.size()-1;i++){
+  if(vOut.size() != this->size()) vOut.resize(this->size());
+  for(size_t i=0; i<mapping.size()-1;i++){
     int j=mapping[i];
     while(j<mapping[i+1]) {
       int local_index = j-mapping[i];
@@ -76,7 +76,7 @@ void ScalarVariableContainer<T>::pull(std::vector<T>& vOut) {
 
 template<class T>
 void ScalarVariableContainer<T>::push(const std::vector<T>& vIn) {
-  for(uint i=0; i<mapping.size()-1;i++){
+  for(size_t i=0; i<mapping.size()-1;i++){
     int j=mapping[i];
     while(j<mapping[i+1]) {
       int local_index = j-mapping[i];
@@ -90,7 +90,7 @@ template<class T>
 std::vector<Variability> ScalarVariableContainer<T>::getVariability(){
     std::vector<Variability> out;
     std::vector<Variability> in;
-    for(uint i=0; i<svUnits.size();i++){
+    for(size_t i=0; i<svUnits.size();i++){
       in=svUnits[i]->getVariability();
       out.insert(out.end(),in.begin(),in.end());
     }
@@ -101,7 +101,7 @@ template<class T>
 std::vector<Causality> ScalarVariableContainer<T>::getCausality(){
     std::vector<Causality> out;
     std::vector<Causality> in;
-    for(uint i=0; i<svUnits.size();i++){
+    for(size_t i=0; i<svUnits.size();i++){
       in=svUnits[i]->getCausality();
       out.insert(out.end(),in.begin(),in.end());
     }

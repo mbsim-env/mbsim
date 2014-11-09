@@ -131,15 +131,15 @@ namespace fmi {
     std::vector<MBSim::Link*> links;
     system->buildListOfLinks(links);
     // get links from different dyn sys in the same order as the generated xml
-    for(uint j=0;j<links.size();j++) {
+    for(size_t j=0;j<links.size();j++) {
       if(links[j]->getType()=="ExternGeneralizedIO")
         r.add(links[j]);
     }
-    for(uint j=0;j<links.size();j++) {
+    for(size_t j=0;j<links.size();j++) {
       if(links[j]->getType()=="ExternSignalSource")
         r.add(links[j]);
     }
-    for(uint j=0;j<links.size();j++) {
+    for(size_t j=0;j<links.size();j++) {
       if(links[j]->getType()=="ExternSignalSink")
         r.add(links[j]);
     }
@@ -167,7 +167,7 @@ namespace fmi {
   void ModelInstance::setupzNames(){
     const std::vector<MBSim::Object*> objList = system->getObjects();
     int qSize=0,uSize=0;
-    for(uint i = 0; i < objList.size();i++){
+    for(size_t i = 0; i < objList.size(); i++){
       for(int j = 0; j < objList[i]->getqSize(); j++){
         string name = string(objList[i]->getName()+".q."+NumberToString(j));
         std::replace(name.begin(), name.end(), '/', '.');
@@ -175,7 +175,7 @@ namespace fmi {
       }
       qSize+=objList[i]->getqSize();
     }
-    for(uint i = 0; i < objList.size();i++){
+    for(size_t i = 0; i < objList.size(); i++){
       for(int j = 0; j < objList[i]->getuSize(); j++){
         string name = string(objList[i]->getName()+".u."+NumberToString(j));
         std::replace(name.begin(), name.end(), '/', '.');

@@ -247,22 +247,22 @@ void FmiXmlExport::saveFile(string filename_){
 void FmiXmlExport::addIO(DOMElement* e) {
   DOMElement *sv;
   int valRef=0;
-  uint nIO;
+  size_t nIO;
   std::vector<MBSim::Link*> links;
   dss->buildListOfLinks(links);
-  for(uint b=0;b<links.size();b++)
+  for(size_t b=0;b<links.size();b++)
     std::cout<<links[b]->getType()<<std::endl;
   /**************************************************/
   /****** ExternGeneralizedIO ***********************/
   /**************************************************/
   {
     std::vector<MBSim::ExternGeneralizedIO*> vectorIO;
-    for(uint i=0;i<links.size();i++) {
+    for(size_t i=0;i<links.size();i++) {
       if(links[i]->getType()=="ExternGeneralizedIO")
         vectorIO.push_back((MBSim::ExternGeneralizedIO*)links[i]);
     }
     nIO=vectorIO.size();
-    for(uint i=0;i<nIO;i++) {
+    for(size_t i=0;i<nIO;i++) {
       string name = string(vectorIO[i]->getName()+".f."+NumberToString(i));
       std::replace(name.begin(), name.end(), '/', '.');
       string valueRef = NumberToString(valRef);
@@ -271,8 +271,8 @@ void FmiXmlExport::addIO(DOMElement* e) {
       string startValue=NumberToString(vectorIO[i]->getg()(i));
       addV(sv,"Real");
     }
-    for(uint j=0;j<2;j++) {
-      for(uint i=0;i<nIO;i++) {
+    for(size_t j=0;j<2;j++) {
+      for(size_t i=0;i<nIO;i++) {
         string name = string(vectorIO[i]->getName()+"."+(j?"u":"q")+"."+NumberToString(i));
         std::replace(name.begin(), name.end(), '/', '.');
         string valueRef = NumberToString(valRef);
@@ -288,12 +288,12 @@ void FmiXmlExport::addIO(DOMElement* e) {
   /**************************************************/
   {
     std::vector<MBSimControl::ExternSignalSource*> vectorIO;
-    for(uint i=0;i<links.size();i++) {
+    for(size_t i=0;i<links.size();i++) {
       if(links[i]->getType()=="ExternSignalSource")
         vectorIO.push_back((MBSimControl::ExternSignalSource*)links[i]);
     }
     nIO=vectorIO.size();
-    for(uint i=0;i<nIO;i++) {
+    for(size_t i=0;i<nIO;i++) {
       fmatvec::Vec sig=vectorIO[i]->getSignal();
       for(int j=0;j<sig.size();j++) {
         string name = string(vectorIO[i]->getType()+".f."+NumberToString(j));
@@ -311,12 +311,12 @@ void FmiXmlExport::addIO(DOMElement* e) {
   /**************************************************/
   {
     std::vector<MBSimControl::ExternSignalSink*> vectorIO;
-    for(uint i=0;i<links.size();i++) {
+    for(size_t i=0;i<links.size();i++) {
       if(links[i]->getType()=="ExternSignalSink")
         vectorIO.push_back((MBSimControl::ExternSignalSink*)links[i]);
     }
     nIO=vectorIO.size();
-    for(uint i=0;i<nIO;i++) {
+    for(size_t i=0;i<nIO;i++) {
       fmatvec::Vec sig=vectorIO[i]->getSignal();
       for(int j=0;j<sig.size();j++) {
         string name = string(vectorIO[i]->getType()+".f."+NumberToString(j));
@@ -338,7 +338,7 @@ void FmiXmlExport::addStates(DOMElement* e) {
     objList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name;
   }
   int qSize=0,uSize=0;
-  for(uint i = 0; i < objList.size();i++){
+  for(size_t i = 0; i < objList.size();i++){
     for(int j = 0; j < objList[i]->getqSize(); j++){
       string name = string(objList[i]->getName()+".q."+NumberToString(j));
       std::replace(name.begin(), name.end(), '/', '.');
@@ -349,7 +349,7 @@ void FmiXmlExport::addStates(DOMElement* e) {
     }
     qSize+=objList[i]->getqSize();
   }
-  for(uint i = 0; i < objList.size();i++){
+  for(size_t i = 0; i < objList.size();i++){
     for(int j = 0; j < objList[i]->getuSize(); j++){
       string name = string(objList[i]->getName()+".u."+NumberToString(j));
       std::replace(name.begin(), name.end(), '/', '.');
