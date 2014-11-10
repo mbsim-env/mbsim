@@ -29,10 +29,6 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/functions/symbolic_functions.h"
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-#include "mbsim/functions/symbolic_functions.h"
-#endif
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
