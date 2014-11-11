@@ -30,7 +30,6 @@ namespace MBSimGUI {
       ~Link();
       static Link* readXMLFile(const std::string &filename, Element *parent);
       virtual int getxSize() {return 0;}
-      virtual Element* getByPathSearch(std::string path);
   };
 
 }

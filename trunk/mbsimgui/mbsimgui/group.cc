@@ -427,58 +427,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  Element* Group::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") { // absolut path
-      if(parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    }
-    else if (path.substr(0, 3)=="../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else { // local path
-      size_t pos0=path.find_first_of("[");
-      string container=path.substr(0, pos0);
-      size_t pos1=path.find_first_of("]", pos0);
-      string searched_name=path.substr(pos0+1, pos1-pos0-1);
-      if(path.length()>pos1+1) { // weiter absteigen
-        string rest=path.substr(pos1+2);
-        if (container=="Group") {
-          Group *group = getGroup(searched_name);
-          return group?group->getByPathSearch(rest):NULL;
-        }
-        else if (container=="Object") {
-          Object *object = getObject(searched_name);
-          return object?object->getByPathSearch(rest):NULL;
-        }
-        else if (container=="Link") {
-          Link *link = getLink(searched_name);
-          return link?link->getByPathSearch(rest):NULL;
-        }
-        else if (container=="Observer") {
-          Observer *observer = getObserver(searched_name);
-          return observer?observer->getByPathSearch(rest):NULL;
-        }
-      }
-      else {
-        if (container=="Frame")
-          return getFrame(searched_name);
-        else if (container=="Contour")
-          return getContour(searched_name);
-        else if (container=="Group")
-          return getGroup(searched_name);
-        else if (container=="Object")
-          return getObject(searched_name);
-        else if (container=="Link")
-          return getLink(searched_name);
-        else if (container=="Observer")
-          return getObserver(searched_name);
-      }
-    }
-    return NULL;
-  }
-
-  Frame* Group::getFrame(const string &name) {
+  Frame* Group::getFrame(const string &name) const {
     int i;
     for(i=0; i<frame.size(); i++) {
       if(frame[i]->getName() == name)
@@ -487,7 +436,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Contour* Group::getContour(const string &name) {
+  Contour* Group::getContour(const string &name) const {
     int i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
@@ -496,7 +445,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Group* Group::getGroup(const string &name) {
+  Group* Group::getGroup(const string &name) const {
     int i;
     for(i=0; i<group.size(); i++) {
       if(group[i]->getName() == name)
@@ -505,7 +454,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Object* Group::getObject(const string &name) {
+  Object* Group::getObject(const string &name) const {
     int i;
     for(i=0; i<object.size(); i++) {
       if(object[i]->getName() == name)
@@ -514,7 +463,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Link* Group::getLink(const string &name) {
+  Link* Group::getLink(const string &name) const {
     int i;
     for(i=0; i<link.size(); i++) {
       if(link[i]->getName() == name)
@@ -523,13 +472,30 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  Observer* Group::getObserver(const string &name) {
+  Observer* Group::getObserver(const string &name) const {
     int i;
     for(i=0; i<observer.size(); i++) {
       if(observer[i]->getName() == name)
         return observer[i];
     }
     return NULL;
+  }
+
+  Element * Group::getChildByContainerAndName(const std::string &container, const std::string &name) const {
+    if (container == "Object")
+      return getObject(name);
+    else if (container == "Link")
+      return getLink(name);
+    else if (container == "Group")
+      return getGroup(name);
+    else if (container == "Frame")
+      return getFrame(name);
+    else if (container == "Contour")
+      return getContour(name);
+    else if (container == "Observer")
+      return getObserver(name);
+    else
+      return 0;
   }
 
 }

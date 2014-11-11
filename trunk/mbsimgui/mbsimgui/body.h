@@ -32,16 +32,16 @@ namespace MBSimGUI {
     ~Body();
     Body& operator=(const Body &b);
 
-    virtual Element* getByPathSearch(std::string path);
+    virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
 
     int getNumberOfFrames() {return frame.size();}
     int getNumberOfContours() {return contour.size();}
 
-    Frame* getFrame(int i) {return frame[i];}
-    Contour* getContour(int i) {return contour[i];}
+    Frame* getFrame(int i) const {return frame[i];}
+    Contour* getContour(int i) const {return contour[i];}
 
-    Frame* getFrame(const std::string &name);
-    Contour* getContour(const std::string &name);
+    Frame* getFrame(const std::string &name) const;
+    Contour* getContour(const std::string &name) const;
 
     void addFrame(Frame *frame);
     void addContour(Contour *contour);
