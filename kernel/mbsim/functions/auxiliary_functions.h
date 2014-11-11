@@ -31,10 +31,8 @@ namespace MBSim {
         int n;
       public:
         StateDependentFunction(Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_), n(0) { 
-          if(f) {
-            n = (*f)(fmatvec::VecV(getArg1Size())).rows();
+          if(f)
             f->setParent(this);
-          }
         }
         ~StateDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
@@ -51,8 +49,9 @@ namespace MBSim {
         Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }
         void init(Element::InitStage stage) {
           Function<Ret(fmatvec::VecV,double)>::init(stage);
-          if(f)
-            f->init(stage);
+          f->init(stage);
+          if(stage == Element::preInit)
+            n = (*f)(fmatvec::VecV(getArg1Size())).rows();
         }
     };
 
@@ -62,11 +61,9 @@ namespace MBSim {
         Function<Ret(double)> *f;
         int n;
       public:
-        TimeDependentFunction(Function<Ret(double)> *f_=NULL) : f(f_), n(0) { 
-          if(f) {
-            n = (*f)(0).rows();
+        TimeDependentFunction(Function<Ret(double)> *f_=NULL) : f(f_), n(0) {
+          if(f)
             f->setParent(this);
-          }
         }
         ~TimeDependentFunction() { delete f; }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
@@ -82,8 +79,9 @@ namespace MBSim {
         bool constParDer2() const { return f->constParDer(); }
         void init(Element::InitStage stage) {
           Function<Ret(fmatvec::VecV,double)>::init(stage);
-          if(f)
-            f->init(stage);
+          f->init(stage);
+          if(stage == Element::preInit)
+            n = (*f)(0).rows();
         }
     };
 

@@ -581,6 +581,10 @@ namespace MBSim {
     else {
       LinkMechanics::init(stage);
     }
+    if(fcl) fcl->init(stage);
+    if(fdf) fdf->init(stage);
+    if(fnil) fnil->init(stage);
+    if(ftil) ftil->init(stage);
   }
 
   bool SingleContact::isSetValued() const {
@@ -755,6 +759,30 @@ namespace MBSim {
     if (getPlotFeature(plotRecursive) == enabled) {
       LinkMechanics::closePlot();
     }
+  }
+
+  void SingleContact::setNormalForceLaw(GeneralizedForceLaw *fcl_) { 
+    fcl = fcl_; 
+    if(fcl) 
+      fcl->setParent(this);
+  }
+
+  void SingleContact::setNormalImpactLaw(GeneralizedImpactLaw *fnil_) { 
+    fnil = fnil_; 
+    if(fnil) 
+      fnil->setParent(this);
+  }
+
+  void SingleContact::setTangentialForceLaw(FrictionForceLaw *fdf_) { 
+    fdf = fdf_; 
+    if(fdf) 
+      fdf->setParent(this);
+  }
+
+  void SingleContact::setTangentialImpactLaw(FrictionImpactLaw *ftil_) { 
+    ftil = ftil_; 
+    if(ftil) 
+      ftil->setParent(this);
   }
 
   void SingleContact::solveImpactsFixpointSingle(double dt) {

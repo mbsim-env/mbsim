@@ -806,6 +806,7 @@ namespace MBSim {
       Pair = pair<Contour*, Contour*>(contour2, contour1);
     if (!influenceFunctions.count(Pair)) {
       influenceFunctions[Pair] = fct;
+      influenceFunctions[Pair]->setParent(this);
     }
     else {
       msg(Warn) << "Function existed for contour-pair: \"" << contour1->getPath() << "\" + \"" << contour2->getPath() << "\".\n" <<

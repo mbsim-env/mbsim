@@ -38,19 +38,26 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedForceLaw : virtual public fmatvec::Atom {
+  class GeneralizedForceLaw : public Element {
     public:
       /**
        * \brief constructor
        */
-      GeneralizedForceLaw() : Atom(), forceFunc(NULL) {};
-
-      GeneralizedForceLaw(Function<double(double,double)> *forceFunc_) : Atom(), forceFunc(forceFunc_) {};
+      GeneralizedForceLaw(Function<double(double,double)> *forceFunc_=NULL) : Element(uniqueDummyName(this)), forceFunc(forceFunc_) { 
+        if(forceFunc)
+          forceFunc->setParent(this);
+      }
 
       /**
        * \brief destructor
        */
       virtual ~GeneralizedForceLaw() { if(forceFunc) delete forceFunc; forceFunc = NULL; };
+
+      void init(Element::InitStage stage) {
+        Element::init(stage);
+        if(forceFunc)
+          forceFunc->init(stage);
+      }
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
@@ -122,7 +129,10 @@ namespace MBSim {
        * The second input parameter to the force function is gd.
        * The return value is the force.
        */
-      void setForceFunction(Function<double(double,double)> *forceFunc_) { forceFunc=forceFunc_; }
+      void setForceFunction(Function<double(double,double)> *forceFunc_) { 
+        forceFunc=forceFunc_; 
+        forceFunc->setParent(this);
+      }
 
     protected:
       /*!
@@ -141,12 +151,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      UnilateralConstraint() {};
+      UnilateralConstraint() { }
 
       /**
        * \brief destructor
        */
-      virtual ~UnilateralConstraint() {};
+      virtual ~UnilateralConstraint() { }
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return g<=gTol; }
@@ -174,12 +184,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      BilateralConstraint() {};
+      BilateralConstraint() { }
 
       /**
        * \brief destructor
        */
-      virtual ~BilateralConstraint() {};
+      virtual ~BilateralConstraint() { }
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return true; }
@@ -200,17 +210,17 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class GeneralizedImpactLaw : virtual public fmatvec::Atom {
+  class GeneralizedImpactLaw : public Element {
     public:
       /**
        * \brief constructor
        */
-      GeneralizedImpactLaw() : fmatvec::Atom() {};
+      GeneralizedImpactLaw() : Element(uniqueDummyName(this)) { }
 
       /**
        * \brief destructor
        */
-      virtual ~GeneralizedImpactLaw() {};
+      virtual ~GeneralizedImpactLaw() { }
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual double project(double la, double gdn, double gda, double r, double laMin=0) = 0;
@@ -238,22 +248,17 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      UnilateralNewtonImpact() : epsilon(0), gd_limit(1e-2) {};
+      UnilateralNewtonImpact(double epsilon_=0) : epsilon(epsilon_), gd_limit(1e-2) { }
 
       /**
        * \brief constructor
        */
-      UnilateralNewtonImpact(double epsilon_) : epsilon(epsilon_), gd_limit(1e-2) {};
-
-      /**
-       * \brief constructor
-       */
-      UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) {};
+      UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) { }
 
       /**
        * \brief destructor
        */
-      virtual ~UnilateralNewtonImpact() {};
+      virtual ~UnilateralNewtonImpact() { }
 
       /* INHERITED INTERFACE */
       virtual double project(double la, double gdn, double gda, double r, double laMin=0);
@@ -279,12 +284,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      BilateralImpact() {};
+      BilateralImpact() { }
 
       /**
        * \brief destructor
        */
-      virtual ~BilateralImpact() {};
+      virtual ~BilateralImpact() { }
 
       /* INHERITED INTERFACE */
       virtual double project(double la, double gdn, double gda, double r, double laMin=0);
@@ -300,19 +305,26 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionForceLaw : virtual public fmatvec::Atom {
+  class FrictionForceLaw : public Element {
     public:
       /**
        * \brief constructor
        */
-      FrictionForceLaw() : Atom(), frictionForceFunc(NULL) {};
-
-      FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : frictionForceFunc(frictionForceFunc_) {};
+      FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=NULL) : Element(uniqueDummyName(this)), frictionForceFunc(frictionForceFunc_) {
+        if(frictionForceFunc)
+          frictionForceFunc->setParent(this);
+      }
 
       /**
        * \brief destructor
        */
       virtual ~FrictionForceLaw() { if(frictionForceFunc) delete frictionForceFunc; frictionForceFunc = NULL; };
+
+      void init(Element::InitStage stage) {
+        Element::init(stage);
+        if(frictionForceFunc)
+          frictionForceFunc->init(stage);
+      }
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { return fmatvec::Vec(2); }
@@ -340,7 +352,10 @@ namespace MBSim {
        * The second input parameter to the friction force function is laN.
        * The return value is the force vector.
        */
-      void setFrictionForceFunction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) { frictionForceFunc=frictionForceFunc_; }
+      void setFrictionForceFunction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) { 
+        frictionForceFunc=frictionForceFunc_; 
+        frictionForceFunc->setParent(this);
+      }
 
     protected:
       Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc;
@@ -356,17 +371,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      PlanarCoulombFriction() : mu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      PlanarCoulombFriction(double mu_) : mu(mu_) {};
+      PlanarCoulombFriction(double mu_=0) : mu(mu_) { }
 
       /**
        * \brief destructor
        */
-      virtual ~PlanarCoulombFriction() {}
+      virtual ~PlanarCoulombFriction() { }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
@@ -399,17 +409,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialCoulombFriction() : mu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      SpatialCoulombFriction(double mu_) : mu(mu_) {};
+      SpatialCoulombFriction(double mu_=0) : mu(mu_) { }
 
       /**
        * \brief destructor
        */
-      virtual ~SpatialCoulombFriction() {}
+      virtual ~SpatialCoulombFriction() { }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
@@ -443,17 +448,19 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      PlanarStribeckFriction() : fmu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      PlanarStribeckFriction(Function<double(double)> *fmu_) : fmu(fmu_) {};
+      PlanarStribeckFriction(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
+        fmu->setParent(this);
+      }
 
       /**
        * \brief destructor
        */
       virtual ~PlanarStribeckFriction() { if(fmu) delete fmu; fmu=0; }
+
+      void init(Element::InitStage stage) {
+        FrictionForceLaw::init(stage);
+        fmu->init(stage);
+      }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
@@ -485,17 +492,19 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialStribeckFriction() : fmu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      SpatialStribeckFriction(Function<double(double)> *fmu_) : fmu(fmu_) {};
+      SpatialStribeckFriction(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
+        fmu->setParent(this);
+      }
 
       /**
        * \brief destructor
        */
       virtual ~SpatialStribeckFriction() { if(fmu) delete fmu; fmu=0; }
+
+      void init(Element::InitStage stage) {
+        FrictionForceLaw::init(stage);
+        fmu->init(stage);
+      }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
@@ -521,17 +530,17 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
    */
-  class FrictionImpactLaw : virtual public fmatvec::Atom {
+  class FrictionImpactLaw : public Element {
     public:
       /**
        * \brief constructor
        */
-      FrictionImpactLaw() : fmatvec::Atom() {};
+      FrictionImpactLaw() : Element(uniqueDummyName(this)) { }
 
       /**
        * \brief destructor
        */
-      virtual ~FrictionImpactLaw() {};
+      virtual ~FrictionImpactLaw() { }
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
@@ -560,17 +569,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      PlanarCoulombImpact() : mu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      PlanarCoulombImpact(double mu_) : mu(mu_) {};
+      PlanarCoulombImpact(double mu_=0) : mu(mu_) { }
 
       /**
        * \brief destructor
        */
-      virtual ~PlanarCoulombImpact() {}
+      virtual ~PlanarCoulombImpact() { }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
@@ -601,17 +605,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialCoulombImpact() : mu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      SpatialCoulombImpact(double mu_) : mu(mu_) {};
+      SpatialCoulombImpact(double mu_=0) : mu(mu_) { }
 
       /**
        * \brief destructor
        */
-      virtual ~SpatialCoulombImpact() {}
+      virtual ~SpatialCoulombImpact() { }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
@@ -643,17 +642,19 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      PlanarStribeckImpact() : fmu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      PlanarStribeckImpact(Function<double(double)> *fmu_) : fmu(fmu_) {};
+      PlanarStribeckImpact(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
+        fmu->setParent(this);
+      }
 
       /**
        * \brief destructor
        */
       virtual ~PlanarStribeckImpact() { if(fmu) delete fmu; fmu=0; }
+
+      void init(Element::InitStage stage) {
+        FrictionImpactLaw::init(stage);
+        fmu->init(stage);
+      }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
@@ -684,17 +685,19 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      SpatialStribeckImpact() : fmu(0) {};
-
-      /**
-       * \brief constructor
-       */
-      SpatialStribeckImpact(Function<double(double)> *fmu_) : fmu(fmu_) {};
+      SpatialStribeckImpact(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
+        fmu->setParent(this);
+      }
 
       /**
        * \brief destructor
        */
       virtual ~SpatialStribeckImpact() { if(fmu) delete fmu; fmu=0; }
+
+      void init(Element::InitStage stage) {
+        FrictionImpactLaw::init(stage);
+        fmu->init(stage);
+      }
 
       /* INHERITED INTERFACE */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
@@ -724,9 +727,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      RegularizedUnilateralConstraint() {};
-
-      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
+      RegularizedUnilateralConstraint(Function<double(double,double)> *forceFunc_=NULL) : GeneralizedForceLaw(forceFunc_) { }
 
       /**
        * \brief destructor
@@ -921,9 +922,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      RegularizedBilateralConstraint() {};
-
-      RegularizedBilateralConstraint(Function<double(double,double)> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
+      RegularizedBilateralConstraint(Function<double(double,double)> *forceFunc_=NULL) : GeneralizedForceLaw(forceFunc_) { }
 
       /**
        * \brief destructor
@@ -944,8 +943,7 @@ namespace MBSim {
 
   class RegularizedPlanarFriction : public FrictionForceLaw {
     public:
-      RegularizedPlanarFriction() {};
-      RegularizedPlanarFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
+      RegularizedPlanarFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=NULL) : FrictionForceLaw(frictionForceFunc_) { }
       virtual ~RegularizedPlanarFriction() {}
       int getFrictionDirections() { return 1; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
@@ -955,8 +953,7 @@ namespace MBSim {
 
   class RegularizedSpatialFriction : public FrictionForceLaw {
     public:
-      RegularizedSpatialFriction() {};
-      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
+      RegularizedSpatialFriction(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=NULL) : FrictionForceLaw(frictionForceFunc_) { }
       virtual ~RegularizedSpatialFriction() {}
       int getFrictionDirections() { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }

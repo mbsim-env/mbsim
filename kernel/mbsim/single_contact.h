@@ -163,11 +163,11 @@ namespace MBSim {
 #endif
 
       /* GETTER / SETTER */
-      void setNormalForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
+      void setNormalForceLaw(GeneralizedForceLaw *fcl_);
       GeneralizedForceLaw * getNormalForceLaw() const {return fcl; }
-      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
-      void setTangentialForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
-      void setTangentialImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
+      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
+      void setTangentialForceLaw(FrictionForceLaw *fdf_);
+      void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
       ContactKinematics* getContactKinematics() const { return contactKinematics; }
       ContourPointData* & getcpData() { return cpData; }

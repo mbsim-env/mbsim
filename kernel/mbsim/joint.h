@@ -114,12 +114,8 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setForceLaw(GeneralizedForceLaw * rc) {
-        ffl = rc;
-      }
-      void setMomentLaw(GeneralizedForceLaw * rc) {
-        fml = rc;
-      }
+      void setForceLaw(GeneralizedForceLaw * rc);
+      void setMomentLaw(GeneralizedForceLaw * rc);
       /***************************************************/
 
       /**

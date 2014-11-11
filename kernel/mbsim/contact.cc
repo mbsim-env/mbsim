@@ -449,6 +449,10 @@ namespace MBSim {
     else
       LinkMechanics::init(stage);
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
+    if(fcl) fcl->init(stage);
+    if(fdf) fdf->init(stage);
+    if(fnil) fnil->init(stage);
+    if(ftil) ftil->init(stage);
   }
 
   bool Contact::isSetValued() const {
@@ -528,6 +532,26 @@ namespace MBSim {
     if (getPlotFeature(plotRecursive) == enabled) {
       Element::closePlot();
     }
+  }
+
+  void Contact::setNormalForceLaw(GeneralizedForceLaw *fcl_) {
+    fcl = fcl_;
+    fcl->setParent(this);
+  }
+
+  void Contact::setNormalImpactLaw(GeneralizedImpactLaw *fnil_) {
+    fnil = fnil_;
+    fnil->setParent(this);
+  }
+
+  void Contact::setTangentialForceLaw(FrictionForceLaw *fdf_) { 
+    fdf = fdf_; 
+    fdf->setParent(this);
+  }
+
+  void Contact::setTangentialImpactLaw(FrictionImpactLaw *ftil_) {
+    ftil = ftil_;
+    ftil->setParent(this);
   }
 
   void Contact::setgInd(int gInd_) {
