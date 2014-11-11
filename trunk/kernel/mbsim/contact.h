@@ -197,21 +197,11 @@ namespace MBSim {
 
       /* GETTER / SETTER */
 
-      void setNormalForceLaw(GeneralizedForceLaw *fcl_) {
-        fcl = fcl_;
-      }
-      GeneralizedForceLaw * getNormalForceLaw() const {
-        return fcl;
-      }
-      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_) {
-        fnil = fnil_;
-      }
-      void setTangentialForceLaw(FrictionForceLaw *fdf_) {
-        fdf = fdf_;
-      }
-      void setTangentialImpactLaw(FrictionImpactLaw *ftil_) {
-        ftil = ftil_;
-      }
+      void setNormalForceLaw(GeneralizedForceLaw *fcl_);
+      GeneralizedForceLaw * getNormalForceLaw() const { return fcl; }
+      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
+      void setTangentialForceLaw(FrictionForceLaw *fdf_); 
+      void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck, size_t index = 0) {
         assert(index < contactKinematics.size());
         contactKinematics[index] = ck;

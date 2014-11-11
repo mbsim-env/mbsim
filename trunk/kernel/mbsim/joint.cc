@@ -169,10 +169,14 @@ namespace MBSim {
     else if (stage == unknownStage) {
       LinkMechanics::init(stage);
 
-      if (ffl)
+      if (ffl) {
         fifl = new BilateralImpact;
-      if (fml)
+        fifl->setParent(this);
+      }
+      if (fml) {
         fiml = new BilateralImpact;
+        fiml->setParent(this);
+      }
 
       IT = Index(0, forceDir.cols() - 1);
       IR = Index(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
@@ -221,6 +225,10 @@ namespace MBSim {
     }
     else
       LinkMechanics::init(stage);
+    if(ffl) ffl->init(stage);
+    if(fml) fml->init(stage);
+    if(fifl) fifl->init(stage);
+    if(fiml) fiml->init(stage);
   }
 
   void Joint::calclaSize(int j) {
@@ -552,6 +560,16 @@ namespace MBSim {
         return;
       }
     }
+  }
+
+  void Joint::setForceLaw(GeneralizedForceLaw * rc) {
+    ffl = rc;
+    ffl->setParent(this);
+  }
+
+  void Joint::setMomentLaw(GeneralizedForceLaw * rc) {
+    fml = rc;
+    fml->setParent(this);
   }
 
   void Joint::setForceDirection(const Mat3xV &fd) {

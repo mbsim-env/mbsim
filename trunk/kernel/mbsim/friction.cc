@@ -126,6 +126,12 @@ namespace MBSim {
     }
     else
       LinkMechanics::init(stage);
+    func->init(stage);
+  }
+
+  void GeneralizedFriction::setGeneralizedFrictionForceLaw(FrictionForceLaw *func_) { 
+    func = func_; 
+    func->setParent(this);
   }
 
   void GeneralizedFriction::plot(double t,double dt) {

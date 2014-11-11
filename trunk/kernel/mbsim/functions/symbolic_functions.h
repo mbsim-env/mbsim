@@ -111,55 +111,57 @@ template<typename Ret, typename Arg>
     CasADi::SXFunction f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
-      init();
-    }
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
 //    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
 //      f.init();
 //      pd = CasADi::SXFunction(f.inputExpr(),f.jac(0));
 //      pd.init();
 //    }
 
-    void init() {
-      // check function: number in inputs and outputs
-      if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
-      if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
-      // check template arguments: only scalar and vector arguments are supported
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg>::size2==1);
-      // check function: only scalar and vector arguments are supported
-      if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-      // check function <-> template argument dimension
-      if(fmatvec::StaticSize<Arg>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg>::size1)
-        THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
-        THROW_MBSIMERROR("The output dimension does not match.");
-      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
-        THROW_MBSIMERROR("The output dimension does not match.");
+    void init(Element::InitStage stage) {
+      Function<Ret(Arg)>::init(stage);
+      if(stage == Element::preInit) {
+        f.init();
 
-      f.init();
-      pd = CasADi::SXFunction(f.inputExpr(),f.jac());
-      pd.init();
-      int nq = getArgSize();
-      std::vector<CasADi::SX> sqd(nq);
-      for(int i=0; i<nq; i++) {
-        std::stringstream stream;
-        stream << "qd" << i;
-        sqd[i] = CasADi::SX(stream.str());
+        // check function: number in inputs and outputs
+        if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
+        if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
+        // check template arguments: only scalar and vector arguments are supported
+        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg>::size2==1);
+        // check function: only scalar and vector arguments are supported
+        if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+        // check function <-> template argument dimension
+        if(fmatvec::StaticSize<Arg>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg>::size1)
+          THROW_MBSIMERROR("The dimension of a parameter does not match.");
+        if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+          THROW_MBSIMERROR("The output dimension does not match.");
+        if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+          THROW_MBSIMERROR("The output dimension does not match.");
+
+        pd = CasADi::SXFunction(f.inputExpr(),f.jac());
+        pd.init();
+        int nq = getArgSize();
+        std::vector<CasADi::SX> sqd(nq);
+        for(int i=0; i<nq; i++) {
+          std::stringstream stream;
+          stream << "qd" << i;
+          sqd[i] = CasADi::SX(stream.str());
+        }
+        std::vector<CasADi::SXMatrix> input2(3);
+        input2[0] = sqd;
+        input2[1] = f.inputExpr(0);
+        dd = CasADi::SXFunction(input2,f.jac().mul(sqd));
+        dd.init();
+        int n = f.outputExpr(0).size();
+        CasADi::SXMatrix Jd(n,nq);
+        for(int j=0; j<nq; j++) {
+          Jd(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
+        }
+        pddd = CasADi::SXFunction(input2,Jd);
+        pddd.init();
+        pdpd = CasADi::SXFunction(f.inputExpr(),pd.jac());
+        pdpd.init();
       }
-      std::vector<CasADi::SXMatrix> input2(3);
-      input2[0] = sqd;
-      input2[1] = f.inputExpr(0);
-      dd = CasADi::SXFunction(input2,f.jac().mul(sqd));
-      dd.init();
-      int n = f.outputExpr(0).size();
-      CasADi::SXMatrix Jd(n,nq);
-      for(int j=0; j<nq; j++) {
-        Jd(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
-      }
-      pddd = CasADi::SXFunction(input2,Jd);
-      pddd.init();
-      pdpd = CasADi::SXFunction(f.inputExpr(),pd.jac());
-      pdpd.init();
     }
 
     CasADi::SXFunction& getSXFunction() {return f;} 
@@ -202,7 +204,6 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
-      init();
     }
   };
 
@@ -212,9 +213,7 @@ template<typename Ret, typename Arg1, typename Arg2>
     CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
-      init();
-    }
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
 //    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
 //      f.init();
 //      pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
@@ -223,60 +222,64 @@ template<typename Ret, typename Arg1, typename Arg2>
 //      pd2.init();
 //    }
 
-    void init() {
-      // check function: number in inputs and outputs
-      if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
-      if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
-      // check template arguments: only scalar and vector arguments are supported
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg2>::size2==1);
-      // check function: only scalar and vector arguments are supported
-      if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-      if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-      // check function <-> template argument dimension
-      if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
-        THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Arg2>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<Arg2>::size1)
-        THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
-        THROW_MBSIMERROR("The output dimension does not match.");
-      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
-        THROW_MBSIMERROR("The output dimension does not match.");
+    void init(Element::InitStage stage) {
+      Function<Ret(Arg1, Arg2)>::init(stage);
+      if(stage == Element::preInit) {
+        f.init();
 
-      f.init();
-      pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
-      pd1.init();
-      pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
-      pd2.init();
-      int nq = getArg1Size();
-      std::vector<CasADi::SX> sqd(nq);
-      for(int i=0; i<nq; i++) {
-        std::stringstream stream;
-        stream << "qd" << i;
-        sqd[i] = CasADi::SX(stream.str());
-      }
-      std::vector<CasADi::SXMatrix> input2(3);
-      input2[0] = sqd;
-      input2[1] = f.inputExpr(0);
-      input2[2] = f.inputExpr(1);
-      int n = f.outputExpr(0).size1();
-      CasADi::SXMatrix Jd1(n,nq);
-      CasADi::SXMatrix Jd2(n,nq);
-      for(int j=0; j<nq; j++) {
-        Jd1(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
-        Jd2(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(1)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,1));
-      }
-      pd1dd1 = CasADi::SXFunction(input2,Jd1);
-      pd1dd1.init();
-      pd1pd2 = CasADi::SXFunction(f.inputExpr(),Jd2);
-      pd1pd2.init();
+        // check function: number in inputs and outputs
+        if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
+        if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
+        // check template arguments: only scalar and vector arguments are supported
+        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
+        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg2>::size2==1);
+        // check function: only scalar and vector arguments are supported
+        if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+        if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+        // check function <-> template argument dimension
+        if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
+          THROW_MBSIMERROR("The dimension of a parameter does not match.");
+        if(fmatvec::StaticSize<Arg2>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<Arg2>::size1)
+          THROW_MBSIMERROR("The dimension of a parameter does not match.");
+        if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+          THROW_MBSIMERROR("The output dimension does not match.");
+        if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+          THROW_MBSIMERROR("The output dimension does not match.");
 
-      CasADi::SXMatrix djT1 = pd2.jac(0).mul(sqd);
-      CasADi::SXMatrix djT2 = pd2.jac(1);
-      pd2dd1 = CasADi::SXFunction(input2,djT1);
-      pd2dd1.init();
-      pd2pd2 = CasADi::SXFunction(f.inputExpr(),djT2);
-      pd2pd2.init();
+        pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
+        pd1.init();
+        pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
+        pd2.init();
+        int nq = getArg1Size();
+        std::vector<CasADi::SX> sqd(nq);
+        for(int i=0; i<nq; i++) {
+          std::stringstream stream;
+          stream << "qd" << i;
+          sqd[i] = CasADi::SX(stream.str());
+        }
+        std::vector<CasADi::SXMatrix> input2(3);
+        input2[0] = sqd;
+        input2[1] = f.inputExpr(0);
+        input2[2] = f.inputExpr(1);
+        int n = f.outputExpr(0).size1();
+        CasADi::SXMatrix Jd1(n,nq);
+        CasADi::SXMatrix Jd2(n,nq);
+        for(int j=0; j<nq; j++) {
+          Jd1(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
+          Jd2(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(1)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,1));
+        }
+        pd1dd1 = CasADi::SXFunction(input2,Jd1);
+        pd1dd1.init();
+        pd1pd2 = CasADi::SXFunction(f.inputExpr(),Jd2);
+        pd1pd2.init();
+
+        CasADi::SXMatrix djT1 = pd2.jac(0).mul(sqd);
+        CasADi::SXMatrix djT2 = pd2.jac(1);
+        pd2dd1 = CasADi::SXFunction(input2,djT1);
+        pd2dd1.init();
+        pd2pd2 = CasADi::SXFunction(f.inputExpr(),djT2);
+        pd2pd2.init();
+      }
     }
 
     CasADi::SXFunction& getSXFunction() {return f;} 
@@ -342,7 +345,6 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
-      init();
     }
   };
 
@@ -350,12 +352,16 @@ template<typename Ret, typename Arg1, typename Arg2>
   class SymbolicFunction<Ret(Arg1, Arg2, Arg3)> : public Function<Ret(Arg1, Arg2, Arg3)> {
     CasADi::SXFunction f;
     public:
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
-      f.init();
+    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
+    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) { }
+
+    void init(Element::InitStage stage) {
+      Function<Ret(Arg1, Arg2, Arg3)>::init(stage);
+      if(stage == Element::preInit) {
+        f.init();
+      }
     }
-    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
-      f.init();
-    }
+
     CasADi::SXFunction& getSXFunction() {return f;} 
 
     Ret operator()(const Arg1& x1, const Arg2& x2, const Arg3& x3, const void * =NULL) {

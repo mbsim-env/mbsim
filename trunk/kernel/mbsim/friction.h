@@ -54,7 +54,7 @@ namespace MBSim {
 
       /** \brief Set the function for the torque calculation. */
       //void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
-      void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_) { func = func_; }
+      void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_);
       void setGeneralizedNormalForce(double laN_) { laN = laN_; }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
