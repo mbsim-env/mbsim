@@ -30,7 +30,6 @@ namespace MBSimGUI {
       Observer(const std::string &str, Element *parent);
       static Observer* readXMLFile(const std::string &filename, Element *parent);
       virtual int getxSize() {return 0;}
-      virtual Element* getByPathSearch(std::string path);
   };
 
   class CoordinatesObserver : public Observer {

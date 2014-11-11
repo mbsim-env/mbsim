@@ -72,17 +72,6 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  Element *Contour::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") // absolut path
-      if(getParent())
-        return getParent()->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3)=="../") // relative path
-      return getParent()->getByPathSearch(path.substr(3));
-    return NULL;
-  }
-
   Point::Point(const string &str, Element *parent) : Contour(str,parent) {
     visu.setProperty(new PointMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }

@@ -34,7 +34,6 @@ namespace MBSimGUI {
     static Object* readXMLFile(const std::string &filename, Element *parent);
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual Element* getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   };
 

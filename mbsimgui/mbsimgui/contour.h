@@ -33,7 +33,6 @@ namespace MBSimGUI {
     static Contour* readXMLFile(const std::string &filename, Element *parent);
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual Element *getByPathSearch(std::string path);
     void setSavedFrameOfReference(const std::string &str);
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}

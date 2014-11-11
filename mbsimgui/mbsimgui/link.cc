@@ -48,17 +48,6 @@ namespace MBSimGUI {
     return link;
   }
 
-  Element * Link::getByPathSearch(string path) {
-    if (path.substr(0, 3)=="../") // relative path
-      return getParent()->getByPathSearch(path.substr(3));
-    else // absolut path
-      if(getParent())
-        return getParent()->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    return NULL;
-  }
-
   //void Link::initializeUsingXML(DOMElement *element) {
   //}
 

@@ -76,8 +76,8 @@ namespace MBSimGUI {
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
-    template<class T> T* getByPath(std::string path);
-    virtual Element* getByPathSearch(std::string path) {return 0; }
+    template<class T> T* getByPath(const std::string &path, bool initialCaller=true) const;
+    virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const { return 0; }
     virtual int getNumberOfFrames() {return 0;}
     virtual int getNumberOfContours() {return 0;}
     virtual int getNumberOfGroups() {return 0;}
@@ -85,19 +85,17 @@ namespace MBSimGUI {
     virtual int getNumberOfExtraDynamics() {return 0;}
     virtual int getNumberOfLinks() {return 0;}
     virtual int getNumberOfObservers() {return 0;}
-    virtual Frame* getFrame(int i) {return 0;}
-    virtual Contour* getContour(int i) {return 0;}
-    virtual Group* getGroup(int i) {return 0;}
-    virtual Object* getObject(int i) {return 0;}
-    virtual ExtraDynamic* getExtraDynamic(int i) {return 0;}
-    virtual Link* getLink(int i) {return 0;}
-    virtual Observer* getObserver(int i) {return 0;}
-    virtual Frame* getFrame(const std::string &name) {return 0;}
+    virtual Frame* getFrame(int i) const {return 0;}
+    virtual Contour* getContour(int i) const {return 0;}
+    virtual Group* getGroup(int i) const {return 0;}
+    virtual Object* getObject(int i) const {return 0;}
+    virtual Link* getLink(int i) const {return 0;}
+    virtual Observer* getObserver(int i) const {return 0;}
+    virtual Frame* getFrame(const std::string &name) const {return 0;}
     virtual void addFrame(Frame *frame) {}
     virtual void addContour(Contour *contour) {}
     virtual void addGroup(Group *group) {}
     virtual void addObject(Object *object) {}
-    virtual void addExtraDynamic(ExtraDynamic *extraDynamic) {}
     virtual void addLink(Link *link) {}
     virtual void addObserver(Observer *observer) {}
     virtual void removeElement(Element *element) {}
@@ -121,9 +119,37 @@ namespace MBSimGUI {
   };
 
   template<class T>
-    T* Element::getByPath(std::string path) {
-      Element * e = getByPathSearch(path);
-      return dynamic_cast<T*>(e);
+    T* Element::getByPath(const std::string &path, bool initialCaller) const {
+        if(path.substr(0, 1) == "/") { // if absolute path ...
+          if(parent) // .. and a parent exists ...
+            return parent->getByPath<T>(path, false); // ... than call getByPath of the parent (walk to the top)
+          else // .. and no parent exits ...
+            return getByPath<T>(path.substr(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
+        }
+        else if (path.substr(0, 3) == "../") // if relative path to parent ...
+          return parent->getByPath<T>(path.substr(3), false); // ... call getByPath of the parent with the leading "../" removed
+        else { // if relative path to a child ...
+          // extract the first path and all other paths (rest)
+          size_t idx=path.find('/');
+          std::string first=path.substr(0, idx);
+          std::string rest;
+          if(idx!=std::string::npos)
+            rest=path.substr(idx+1);
+          // get the object of the first child path by calling the virtual function getChildByContainerAndName
+          size_t pos0=first.find('[');
+          if(pos0==std::string::npos)
+            return 0;
+          std::string container=first.substr(0, pos0);
+          if(first[first.size()-1]!=']')
+            return 0;
+          std::string name=first.substr(pos0+1, first.size()-pos0-2);
+          Element *e=getChildByContainerAndName(container, name);
+          // if their are other child paths call getByPath of e for this
+          if(e and not(rest.empty()))
+            return e->getByPath<T>(rest, false);
+          // this is the last relative path -> check type and return
+          return dynamic_cast<T*>(e);
+        }
     }
 
 }

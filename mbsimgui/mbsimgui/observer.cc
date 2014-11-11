@@ -47,17 +47,6 @@ namespace MBSimGUI {
     return observer;
   }
 
-  Element * Observer::getByPathSearch(string path) {
-    if (path.substr(0, 3)=="../") // relative path
-      return getParent()->getByPathSearch(path.substr(3));
-    else // absolut path
-      if(getParent())
-        return getParent()->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    return NULL;
-  }
-
   CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));

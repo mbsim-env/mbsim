@@ -80,17 +80,6 @@ namespace MBSimGUI {
     return 0;
   }
 
-  Element *Frame::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") // absolut path
-      if(getParent())
-        return getParent()->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3)=="../") // relative path
-      return getParent()->getByPathSearch(path.substr(3));
-    return NULL;
-  }
-
   FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
 
     position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"relativePosition"),"",4));

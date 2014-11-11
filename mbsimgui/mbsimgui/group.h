@@ -56,7 +56,7 @@ namespace MBSimGUI {
     static Group* readXMLFile(const std::string &filename, Element *parent);
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual Element *getByPathSearch(std::string path);
+    virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
     void setActionPasteDisabled(bool flag);
     void initialize();
     int getNumberOfFrames() {return frame.size();}
@@ -65,18 +65,18 @@ namespace MBSimGUI {
     int getNumberOfObjects() {return object.size();}
     int getNumberOfLinks() {return link.size();}
     int getNumberOfObservers() {return observer.size();}
-    Frame* getFrame(int i) {return frame[i];}
-    Contour* getContour(int i) {return contour[i];}
-    Object* getObject(int i) {return object[i];}
-    Group* getGroup(int i) {return group[i];}
-    Link* getLink(int i) {return link[i];}
-    Observer* getObserver(int i) {return observer[i];}
-    Frame* getFrame(const std::string &name);
-    Contour* getContour(const std::string &name);
-    Object* getObject(const std::string &name);
-    Group* getGroup(const std::string &name);
-    Link* getLink(const std::string &name);
-    Observer* getObserver(const std::string &name);
+    Frame* getFrame(int i) const {return frame[i];}
+    Contour* getContour(int i) const {return contour[i];}
+    Object* getObject(int i) const {return object[i];}
+    Group* getGroup(int i) const {return group[i];}
+    Link* getLink(int i) const {return link[i];}
+    Observer* getObserver(int i) const {return observer[i];}
+    Frame* getFrame(const std::string &name) const;
+    Contour* getContour(const std::string &name) const;
+    Object* getObject(const std::string &name) const;
+    Group* getGroup(const std::string &name) const;
+    Link* getLink(const std::string &name) const;
+    Observer* getObserver(const std::string &name) const;
 
     void addFrame(Frame *frame);
     void addContour(Contour *contour);

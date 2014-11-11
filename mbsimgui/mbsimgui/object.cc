@@ -55,15 +55,4 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  Element * Object::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") // absolut path
-      if(getParent())
-        return getParent()->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3)=="../") // relative path
-      return getParent()->getByPathSearch(path.substr(3));
-    return NULL;
-  }
-
 }
