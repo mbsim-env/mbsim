@@ -187,7 +187,7 @@ namespace MBSim {
       fmatvec::Vec XYval;
       fmatvec::Mat XYfac;
 
-      void calcIndex(double x, fmatvec::Vec X, int xSize, int &xIndexMinus, int &xIndexPlus) {
+      void calcIndex(double x, const fmatvec::Vec &X, int xSize, int &xIndexMinus, int &xIndexPlus) {
         if (x <= X(0)) {
           xIndexPlus = 1;
           xIndexMinus = 0;
