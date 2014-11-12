@@ -56,7 +56,7 @@ namespace MBSimControl {
       bool gActiveChanged() {return false; }
       bool isSingleValued() const { return true; }
 
-      virtual fmatvec::Vec calculateOutput() = 0;
+      virtual fmatvec::VecV calculateOutput() = 0;
 
       void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
 

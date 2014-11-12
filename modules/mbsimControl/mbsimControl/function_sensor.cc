@@ -79,8 +79,8 @@ namespace MBSimControl {
     fun->init(stage);
   }
 
-  Vec Function_SSEvaluation::getSignal() {
-    Vec y=signal->getSignal().copy();
+  VecV Function_SSEvaluation::getSignal() {
+    VecV y=signal->getSignal();
     for (int i=0; i<y.size(); i++)
       y(i)=(*fun)(y(i));
     return y;
@@ -110,8 +110,8 @@ namespace MBSimControl {
     fun->init(stage);
   }
 
-  Vec Function_SSSEvaluation::getSignal() {
-    return Vec(1, INIT, (*fun)(signal1->getSignal()(0), signal2->getSignal()(0)));
+  VecV Function_SSSEvaluation::getSignal() {
+    return VecV(1, INIT, (*fun)(signal1->getSignal()(0), signal2->getSignal()(0)));
   }
 
 }

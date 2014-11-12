@@ -40,7 +40,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement * element);
       
       void calcxSize() {xSize=1; }
-      fmatvec::Vec calculateOutput() {return x.copy(); }
+      fmatvec::VecV calculateOutput() {return x.copy(); }
       
       void init(InitStage stage);
 

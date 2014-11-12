@@ -64,7 +64,7 @@ namespace MBSimControl {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
       
-      virtual fmatvec::Vec getSignal() = 0;
+      virtual fmatvec::VecV getSignal() = 0;
 
   };
 
