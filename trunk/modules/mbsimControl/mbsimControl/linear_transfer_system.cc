@@ -115,19 +115,19 @@ namespace MBSimControl {
       SignalProcessingSystem::init(stage);
   }
 
-  Vec LinearTransferSystem::calculateOutput() {
+  VecV LinearTransferSystem::calculateOutput() {
     return (this->*calculateOutputMethod)();
   }
 
-  Vec LinearTransferSystem::outputMethodC() {
+  VecV LinearTransferSystem::outputMethodC() {
     return C*x;
   }
 
-  Vec LinearTransferSystem::outputMethodD() {
+  VecV LinearTransferSystem::outputMethodD() {
     return D*inputSignal->getSignal();
   }
 
-  Vec LinearTransferSystem::outputMethodCD() {
+  VecV LinearTransferSystem::outputMethodCD() {
     return outputMethodC()+outputMethodD();
   }
 
@@ -212,7 +212,7 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::plot(double t, double dt) {
-    Vec y=calculateOutput();
+    VecV y=calculateOutput();
     if(getPlotFeature(plotRecursive)==enabled) {
       if (getPlotFeature(globalPosition)==enabled)
         for (int i=0; i<y.size(); i++)

@@ -61,8 +61,8 @@ namespace MBSimControl {
     factors.push_back(factor);
   }
 
-  Vec SignalAddition::getSignal() {
-    Vec y=factors[0]*(signals[0]->getSignal());
+  VecV SignalAddition::getSignal() {
+    VecV y=factors[0]*(signals[0]->getSignal());
     for (unsigned int i=1; i<signals.size(); i++)
       y+=factors[i]*(signals[i]->getSignal());
     return y;
@@ -86,7 +86,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec SignalOffset::getSignal() {
+  VecV SignalOffset::getSignal() {
     return signal->getSignal()+offset;
   }
 
@@ -119,12 +119,12 @@ namespace MBSimControl {
     exponents.push_back(exp);
   }
 
-  Vec SignalMultiplication::getSignal() {
-    Vec y=signals[0]->getSignal();
+  VecV SignalMultiplication::getSignal() {
+    VecV y=signals[0]->getSignal();
     for (int i=0; i<y.size(); i++)
       y(i)=pow(y(i), exponents[0]);
     for (unsigned int i=1; i<signals.size(); i++) {
-      const Vec y2=signals[i]->getSignal();
+      const VecV y2=signals[i]->getSignal();
       for (int j=0; j<y.size(); j++)
         y(j)*=pow(y2(j), exponents[i]);
     }
@@ -154,14 +154,14 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec SignalMux::getSignal() {
-    Vec y=signals[0]->getSignal();
+  VecV SignalMux::getSignal() {
+    VecV y=signals[0]->getSignal();
     for (unsigned int i=1; i<signals.size(); i++) {
-      Vec s1=y;
-      Vec s2=signals[i]->getSignal();
+      VecV s1=y;
+      VecV s2=signals[i]->getSignal();
       y.resize(s1.size()+s2.size());
-      y(Index(0, s1.size()-1))=s1;
-      y(Index(s1.size(), y.size()-1))=s2;
+      y.set(Index(0, s1.size()-1),s1);
+      y.set(Index(s1.size(), y.size()-1),s2);
     }
     return y;
   }
@@ -200,11 +200,11 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec SignalDemux::getSignal() {
-    Vec y(totalSignalSize, INIT, 0);
+  VecV SignalDemux::getSignal() {
+    VecV y(totalSignalSize, INIT, 0);
     int j=0;
     for (unsigned int i=0; i<signals.size(); i++) {
-      Vec yy=signals[i]->getSignal().copy();
+      VecV yy=signals[i]->getSignal();
       for (int k=0; k<indizes[i].size(); k++) {
         y(j)=yy(indizes[i](k));
         j++;
@@ -221,10 +221,10 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     signalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalValue");
-    Vec min=Element::getVec(e);
+    VecV min=Element::getVec(e);
     setMinimalValue(min);
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalValue");
-    Vec max=Element::getVec(e, min.size());
+    VecV max=Element::getVec(e, min.size());
     setMaximalValue(max);
   }
 
@@ -238,8 +238,8 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec SignalLimitation::getSignal() { 
-    Vec y=s->getSignal();
+  VecV SignalLimitation::getSignal() { 
+    VecV y=s->getSignal();
     for (int i=0; i<y.size(); i++)
       if (y(i)<minValue(i))
         y(i)=minValue(i);
@@ -274,7 +274,7 @@ namespace MBSimControl {
     } 
   }
 
-  Vec SignalTimeDiscretization::getSignal() { 
+  VecV SignalTimeDiscretization::getSignal() { 
     if (y.size()==0)
       updateg(-98e99);
     return y; 
@@ -378,9 +378,9 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec SignalOperation::getSignal() { 
-    Vec y=s->getSignal().copy();
-    Vec y2=s2?s2->getSignal().copy():s2values;
+  VecV SignalOperation::getSignal() { 
+    VecV y=s->getSignal();
+    VecV y2=s2?s2->getSignal():s2values;
     if (op==1)
       for (int i=0; i<y.size(); i++)
         y(i)=acos((fabs(y(i))>=1)?((y(i)>0)?1.:-1.):y(i));
@@ -494,9 +494,9 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec SpecialSignalOperation::getSignal() { 
-    Vec y=s->getSignal();
-    Vec y2=s2?s2->getSignal():s2values;
+  VecV SpecialSignalOperation::getSignal() { 
+    VecV y=s->getSignal();
+    VecV y2=s2?s2->getSignal():s2values;
     if (op==1)
       for (int i=0; i<y.size(); i++)
         y(i)=(fabs(y(i))<macheps())?0:((y(i)>0)?1.:-1.);
@@ -554,15 +554,15 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec PIDController::getSignal() {
+  VecV PIDController::getSignal() {
     return (this->*getSignalMethod)();
   }
 
-  Vec PIDController::getSignalPID() {
+  VecV PIDController::getSignalPID() {
     return P*s->getSignal() + D*sd->getSignal() + I*x;
   }
 
-  Vec PIDController::getSignalPD() {
+  VecV PIDController::getSignalPD() {
     return P*s->getSignal() + D*sd->getSignal();
   }
 
@@ -587,7 +587,7 @@ namespace MBSimControl {
     signalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      MBSim::Function<Vec(Vec)> *f=ObjectFactory::createAndInit<MBSim::Function<Vec(Vec)> >(e->getFirstElementChild());
+      MBSim::Function<VecV(VecV)> *f=ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
@@ -603,7 +603,7 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  Vec UnarySignalOperation::getSignal() { 
+  VecV UnarySignalOperation::getSignal() { 
     return (*f)(s->getSignal()); 
   }
 
@@ -618,7 +618,7 @@ namespace MBSimControl {
     signal2String=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
-      MBSim::Function<Vec(Vec,Vec)> *f=ObjectFactory::createAndInit<MBSim::Function<Vec(Vec,Vec)> >(e->getFirstElementChild());
+      MBSim::Function<VecV(VecV,VecV)> *f=ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
       setFunction(f);
     }
   }
@@ -636,7 +636,7 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  Vec BinarySignalOperation::getSignal() { 
+  VecV BinarySignalOperation::getSignal() { 
     return (*f)(s1->getSignal(),s2->getSignal()); 
   }
 

@@ -48,7 +48,7 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  Vec SignalProcessingSystemSensor::getSignal() {
+  VecV SignalProcessingSystemSensor::getSignal() {
     return sps->calculateOutput();
   }
 

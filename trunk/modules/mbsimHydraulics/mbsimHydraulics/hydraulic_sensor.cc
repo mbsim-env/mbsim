@@ -33,7 +33,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlowSensor, MBSIMHYDRAULICS%"FlowSensor")
 
-  Vec FlowSensor::getSignal() {
+  VecV FlowSensor::getSignal() {
     return line->getQIn(); 
   }
 
@@ -56,7 +56,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PressureSensor, MBSIMHYDRAULICS%"PressureSensor")
 
-  Vec PressureSensor::getSignal() {
+  VecV PressureSensor::getSignal() {
     return node->getla(); 
   }
 

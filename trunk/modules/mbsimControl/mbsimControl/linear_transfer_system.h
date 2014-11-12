@@ -60,11 +60,11 @@ namespace MBSimControl {
     protected:
       fmatvec::Mat A,B,C,D;
       double R1,R2,c;
-      fmatvec::Vec calculateOutput();
-      fmatvec::Vec (LinearTransferSystem::*calculateOutputMethod)();
-      fmatvec::Vec outputMethodC();
-      fmatvec::Vec outputMethodD();
-      fmatvec::Vec outputMethodCD();
+      fmatvec::VecV calculateOutput();
+      fmatvec::VecV (LinearTransferSystem::*calculateOutputMethod)();
+      fmatvec::VecV outputMethodC();
+      fmatvec::VecV outputMethodD();
+      fmatvec::VecV outputMethodCD();
   };
 }
 

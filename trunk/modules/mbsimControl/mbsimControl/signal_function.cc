@@ -18,7 +18,13 @@
 #include <config.h>
 #include "mbsimControl/signal_function.h"
 
+using namespace fmatvec;
+
 namespace MBSimControl {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SignalFunction<double(double)>, MBSIMCONTROL%"SignalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SignalFunction<VecV(double)>, MBSIMCONTROL%"SignalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SignalFunction<VecV(VecV)>, MBSIMCONTROL%"SignalFunction")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SignalFunction<double(double,double)>, MBSIMCONTROL%"SignalFunction")
 

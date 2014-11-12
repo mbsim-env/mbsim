@@ -169,7 +169,7 @@ namespace MBSimControl {
   }
 
   void MasslessSpringDamper::plot(double t, double dt) {
-    Vec y=calculateOutput();
+    VecV y=calculateOutput();
     if(getPlotFeature(plotRecursive)==enabled) {
       if (getPlotFeature(globalPosition)==enabled) {
         plotVector.push_back(y(0));

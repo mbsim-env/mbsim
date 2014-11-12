@@ -54,7 +54,7 @@ namespace MBSimControl {
     public:
       GeneralizedPositionSensor(const std::string &name="") : GeneralizedCoordinateSensor(name) {}
       std::string getType() const { return "GeneralizedPositionSensor"; }
-      fmatvec::Vec getSignal();
+      fmatvec::VecV getSignal();
   };
 
   /*!
@@ -65,7 +65,7 @@ namespace MBSimControl {
     public:
       GeneralizedVelocitySensor(const std::string &name="") : GeneralizedCoordinateSensor(name) {}
       std::string getType() const { return "GeneralizedVelocitySensor"; }
-      fmatvec::Vec getSignal(); 
+      fmatvec::VecV getSignal(); 
   };
 
 }
