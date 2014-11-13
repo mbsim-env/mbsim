@@ -23,8 +23,8 @@ class VoltageSensor : public MBSimControl::Sensor {
     void setComponent(MBSimElectronics::ElectronicLink *comp_) {comp = comp_;}
     VoltageSensor(const std::string &name) : Sensor(name) {}
     std::string getType() const { return "VoltageSensor"; }
-    Vec getSignal() {
-      return Vec(1,INIT,comp->computeVoltage());
+    VecV getSignal() {
+      return VecV(1,INIT,comp->computeVoltage());
     }
 };
 
@@ -48,9 +48,9 @@ class SwitchSignal : public MBSimControl::Signal {
       Signal::updateg(t);
     }
     void setInputSignal(Signal *input) {inputSignal = input;}
-    fmatvec::Vec getSignal() {
+    fmatvec::VecV getSignal() {
       double UR = inputSignal->getSignal()(0);
-      return Vec(1, INIT, (-UR <= h ? 0 : 100));
+      return VecV(1, INIT, (-UR <= h ? 0 : 100));
     }
 };
 
