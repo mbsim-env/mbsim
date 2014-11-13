@@ -90,7 +90,7 @@ void initDssWithXml(std::string xmlpath, MBSim::DynamicSystemSolver **system, MB
 
   // load MBSim XML document
   boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
-  boost::shared_ptr<DOMDocument> doc=parser->parse(xmlpath.c_str());
+  boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(xmlpath.c_str());
   if(doc==false)
     throw MBSimError(std::string("ERROR! Unable to load file: ")+xmlpath);
   DOMElement *e=doc->getDocumentElement();
@@ -109,7 +109,7 @@ void initIntegratorWithXml(std::string xmlpath, MBSimIntegrator::Integrator **in
   using namespace MBSim;
   // load MBSim XML document
   boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
-  boost::shared_ptr<DOMDocument> doc=parser->parse(xmlpath.c_str());
+  boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(xmlpath.c_str());
   if(doc==false)
     throw MBSimError(std::string("ERROR! Unable to load file: ")+xmlpath);
   DOMElement *e=doc->getDocumentElement();
