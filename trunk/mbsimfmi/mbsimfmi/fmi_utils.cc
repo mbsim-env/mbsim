@@ -26,7 +26,7 @@
 #endif
 #include <iostream>
 #include "fmi_utils.h"
-// #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include "mbsim/objectfactory.h"
@@ -55,7 +55,7 @@ boost::filesystem::path getSharedLibDir() {
   // Get the file containing this function
 #ifdef _WIN32
   wchar_t moduleName[2048];
-  GetModuleFileNameW((HINSTANCE)&__ImageBase, moduleName, sizeof(moduleName));
+  GetModuleFileNameW(GetModuleHandle("mbsim.dll"), moduleName, sizeof(moduleName));
   boost::filesystem::path dllPath(moduleName);
 #else
   Dl_info info;
