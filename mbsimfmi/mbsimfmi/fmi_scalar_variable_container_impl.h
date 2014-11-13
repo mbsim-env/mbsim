@@ -63,7 +63,7 @@ void ScalarVariableContainer<T>::rem() {
 
 template<class T>
 void ScalarVariableContainer<T>::pull(std::vector<T>& vOut) {
-  if(vOut.size() != this->size()) vOut.resize(this->size());
+  if(static_cast<int>(vOut.size()) != this->size()) vOut.resize(this->size());
   for(size_t i=0; i<mapping.size()-1;i++){
     int j=mapping[i];
     while(j<mapping[i+1]) {
