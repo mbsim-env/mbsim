@@ -36,6 +36,7 @@ namespace MBSimGUI {
     name.push_back(OPENMBV%"Cube");
     name.push_back(OPENMBV%"Cuboid");
     name.push_back(OPENMBV%"Frustum");
+    name.push_back(OPENMBV%"Extrusion");
     name.push_back(OPENMBV%"Sphere");
     name.push_back(OPENMBV%"IvBody");
     name.push_back(OPENMBV%"CompoundRigidBody");
@@ -50,12 +51,14 @@ namespace MBSimGUI {
     if(i==2)
       return new FrustumProperty("Body"+toStr(count++),ID);
     if(i==3)
-      return new SphereProperty("Body"+toStr(count++),ID);
+      return new ExtrusionProperty("Body"+toStr(count++),ID);
     if(i==4)
-      return new IvBodyProperty("Body"+toStr(count++),ID);
+      return new SphereProperty("Body"+toStr(count++),ID);
     if(i==5)
-      return new CompoundRigidBodyProperty("Body"+toStr(count++),ID);
+      return new IvBodyProperty("Body"+toStr(count++),ID);
     if(i==6)
+      return new CompoundRigidBodyProperty("Body"+toStr(count++),ID);
+    if(i==7)
       return new InvisibleBodyProperty("Body"+toStr(count++),ID);
   }
 
@@ -668,6 +671,47 @@ namespace MBSimGUI {
     height.toWidget(static_cast<FrustumWidget*>(widget)->height);
     innerBase.toWidget(static_cast<FrustumWidget*>(widget)->innerBase);
     innerTop.toWidget(static_cast<FrustumWidget*>(widget)->innerTop);
+  }
+
+  ExtrusionProperty::ExtrusionProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+
+    windingRule.setProperty(new TextProperty("odd", OPENMBV%"windingRule", true));
+
+    height.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",OPENMBV%"height",vector<string>(2,"m")),"",4));
+
+    contour.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"1","0"),OPENMBV%"contour",vector<string>(3,"m")),"",4));
+
+  }
+
+  DOMElement* ExtrusionProperty::initializeUsingXML(DOMElement *element) {
+    OMBVBodyProperty::initializeUsingXML(element);
+    DOMElement *e;
+    windingRule.initializeUsingXML(element);
+    height.initializeUsingXML(element);
+    contour.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ExtrusionProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    windingRule.writeXMLFile(e);
+    height.writeXMLFile(e);
+    contour.writeXMLFile(e);
+    return e;
+  }
+
+  void ExtrusionProperty::fromWidget(QWidget *widget) {
+    OMBVBodyProperty::fromWidget(widget);
+    windingRule.fromWidget(static_cast<ExtrusionWidget*>(widget)->windingRule);
+    height.fromWidget(static_cast<ExtrusionWidget*>(widget)->height);
+    contour.fromWidget(static_cast<ExtrusionWidget*>(widget)->contour);
+  }
+
+  void ExtrusionProperty::toWidget(QWidget *widget) {
+    OMBVBodyProperty::toWidget(widget);
+    windingRule.toWidget(static_cast<ExtrusionWidget*>(widget)->windingRule);
+    height.toWidget(static_cast<ExtrusionWidget*>(widget)->height);
+    contour.toWidget(static_cast<ExtrusionWidget*>(widget)->contour);
   }
 
   IvBodyProperty::IvBodyProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {

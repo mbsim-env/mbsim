@@ -241,6 +241,19 @@ namespace MBSimGUI {
       ExtProperty top, base, height, innerBase, innerTop;
   };
 
+  class ExtrusionProperty : public OMBVBodyProperty {
+    public:
+      ExtrusionProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+      virtual Property* clone() const {return new ExtrusionProperty(*this);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      virtual std::string getType() const { return "Extrusion"; }
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty windingRule, height, contour;
+  };
+
   class IvBodyProperty : public OMBVBodyProperty {
     public:
       IvBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
