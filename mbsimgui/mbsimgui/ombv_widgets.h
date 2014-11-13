@@ -188,6 +188,16 @@ namespace MBSimGUI {
     ExtWidget *top, *base, *height, *innerBase, *innerTop;
   };
 
+  class ExtrusionWidget : public OMBVBodyWidget {
+
+    friend class ExtrusionProperty;
+
+    public:
+    ExtrusionWidget(const QString &name="NOTSET");
+    protected:
+    ExtWidget *windingRule, *height, *contour;
+  };
+
   class IvBodyWidget : public OMBVBodyWidget {
 
     friend class IvBodyProperty;

@@ -33,6 +33,7 @@ namespace MBSimGUI {
     name.push_back("Cube");
     name.push_back("Cuboid");
     name.push_back("Frustum");
+    name.push_back("Extrusion");
     name.push_back("Sphere");
     name.push_back("IvBody");
     name.push_back("CompoundRigidBody");
@@ -47,12 +48,14 @@ namespace MBSimGUI {
     if(i==2)
       return new FrustumWidget;
     if(i==3)
-      return new SphereWidget;
+      return new ExtrusionWidget;
     if(i==4)
-      return new IvBodyWidget;
+      return new SphereWidget;
     if(i==5)
-      return new CompoundRigidBodyWidget;
+      return new IvBodyWidget;
     if(i==6)
+      return new CompoundRigidBodyWidget;
+    if(i==7)
       return new InvisibleBodyWidget;
   }
 
@@ -300,6 +303,23 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), lengthUnits(), 4));
     innerBase = new ExtWidget("Inner base radius",new ExtPhysicalVarWidget(input));
     layout->addWidget(innerBase);
+  }
+
+  ExtrusionWidget::ExtrusionWidget(const QString &name) : OMBVBodyWidget(name) {
+    vector<QString> list;
+    list.push_back("odd");
+    list.push_back("nonzero");
+    list.push_back("positive");
+    list.push_back("negative");
+    list.push_back("absGEqTwo");
+    windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,0));
+    layout->addWidget(windingRule);
+
+    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits())),QBoxLayout::RightToLeft));
+    layout->addWidget(height);
+
+    contour = new ExtWidget("Contour",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,3,"1","0"),vector<QStringList>(3,lengthUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    layout->addWidget(contour);
   }
 
   IvBodyWidget::IvBodyWidget(const QString &name) : OMBVBodyWidget(name) {
