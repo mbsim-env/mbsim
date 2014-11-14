@@ -8,5 +8,5 @@ Name: mbsimxml
 Description: mbsimxml is a multi-body simulation software.
 Requires: mbsim
 Version: @VERSION@
-Libs: -L${libdir} -lmbsimflatxml
+Libs: -L${libdir} -lmbsimxml -lmbsimflatxml
 Cflags: -I${includedir}

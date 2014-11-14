@@ -9,6 +9,7 @@ mbsimxmlinclude_HEADERS = mbsimflatxml.h
 libmbsimxml_la_SOURCES = mbsimxml.cc
 libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS)
 libmbsimxml_la_LIBADD = $(DEPS_LIBS)
+mbsimxmlinclude_HEADERS = mbsimxml.h
 
 
 bin_PROGRAMS = mbsimflatxml mbsimxml

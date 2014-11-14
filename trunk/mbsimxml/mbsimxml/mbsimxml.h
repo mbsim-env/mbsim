@@ -3,7 +3,7 @@
 
 #include <boost/filesystem.hpp>
 
-namespace MBSimXML {
+namespace MBSim {
 
   void generateMBSimXMLSchema(const boost::filesystem::path &mbsimxml_xsd, const boost::filesystem::path &MBXMLUTILSSCHEMA);
 
