@@ -155,6 +155,7 @@ def main():
         pj('fmatvec')
       ])],
     pj('openmbv', 'mbxmlutils'): [False, set([ # depends on
+        pj('fmatvec')
       ])],
     pj('openmbv', 'openmbv'): [False, set([ # depends on
         pj('openmbv', 'openmbvcppinterface'),
