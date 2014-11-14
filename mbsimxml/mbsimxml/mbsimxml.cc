@@ -10,7 +10,7 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimXML {
+namespace MBSim {
 
 void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>

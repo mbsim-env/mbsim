@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
       mbsimxml_xsd=".mbsimxml.xsd";
     else
       mbsimxml_xsd=ONLYGENERATESCHEMA;
-    MBSimXML::generateMBSimXMLSchema(mbsimxml_xsd, MBXMLUTILSSCHEMA);
+    MBSim::generateMBSimXMLSchema(mbsimxml_xsd, MBXMLUTILSSCHEMA);
     if(!ONLYGENERATESCHEMA.empty())
       return 0;
   
