@@ -300,7 +300,6 @@ namespace MBSim {
     LinkMechanics::calcsvSize();
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setsvInd(svInd + svSize);
         jter->calcsvSize();
         svSize += jter->getsvSize();
       }
@@ -572,6 +571,16 @@ namespace MBSim {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setgdInd(nextgdInd);
         nextgdInd += jter->getgdSize();
+      }
+    }
+  }
+
+  void Contact::setsvInd(int svInd_) {
+    LinkMechanics::setsvInd(svInd_);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setsvInd(svInd_);
+        svInd_ += jter->getsvSize();
       }
     }
   }

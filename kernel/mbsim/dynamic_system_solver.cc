@@ -228,6 +228,7 @@ namespace MBSim {
       calcqSize();
       calcuSize(0);
       calcuSize(1);
+      setsvInd(0);
       setqInd(0);
       setuInd(0, 0);
       setuInd(0, 1);
