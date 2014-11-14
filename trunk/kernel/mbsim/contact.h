@@ -133,6 +133,7 @@ namespace MBSim {
       virtual void setrMax(double rMax_);
       virtual void setLinkStatusInd(int LinkStatusInd_);
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
+      virtual void setsvInd(int svInd_);
       virtual void setlaInd(int laInd_);
       virtual void setgInd(int gInd_);
       virtual void setgdInd(int gdInd_);

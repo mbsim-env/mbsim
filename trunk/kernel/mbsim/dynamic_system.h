@@ -292,7 +292,7 @@ namespace MBSim {
       void setgInd(int ind) { gInd = ind; }
       void setgdInd(int ind) { gdInd = ind; }
       void setrFactorInd(int ind) { rFactorInd = ind; }
-      void setsvInd(int svInd_) { svInd = svInd_; };
+      virtual void setsvInd(int svInd_);
       void setLinkStatusInd(int LinkStatusInd_) {LinkStatusInd = LinkStatusInd_;};      
       void setLinkStatusRegInd(int LinkStatusRegInd_) {LinkStatusRegInd = LinkStatusRegInd_;};
 

@@ -131,7 +131,8 @@ namespace MBSim {
     if (g.size())
       contactKinematics->updateg(g, cpData);
     else {
-      cout << "No contact" << endl;
+      if(msgAct(Debug))
+        msg(Debug) << "No contact" << endl;
     }
   }
 

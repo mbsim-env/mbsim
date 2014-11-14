@@ -202,6 +202,19 @@ namespace MBSim {
     }
   }
 
+  void DynamicSystem::setsvInd(int svInd_) {
+    svInd = svInd_;
+
+    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->setsvInd(svInd_);
+      svInd_ += (*i)->getsvSize();
+    }
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+      (*i)->setsvInd(svInd_);
+      svInd_ += (*i)->getsvSize();
+    }
+  }
+
   void DynamicSystem::setqInd(int qInd_) {
     qInd = qInd_;
 
@@ -1218,12 +1231,10 @@ namespace MBSim {
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
       (*i)->calcsvSize();
-      (*i)->setsvInd(svSize);
       svSize += (*i)->getsvSize();
     }
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->calcsvSize();
-      (*i)->setsvInd(svSize);
       svSize += (*i)->getsvSize();
     }
   }
