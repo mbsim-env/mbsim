@@ -51,9 +51,9 @@ namespace MBSimGUI {
 
     vector<Property*> property;
 
-    translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4,"",3)); 
+    translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this),"",3)); 
 
-    rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4,"",3)); 
+    rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4(this),"",3)); 
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"translationDependentRotation"));
@@ -80,12 +80,12 @@ namespace MBSimGUI {
     if(translation.isActive()) {
       const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
       const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-      nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
+      nqT = static_cast<Function*>(trans->getProperty())->getArg1Size();
     }
     if(rotation.isActive()) {
       const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
       const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-      nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
+      nqR = static_cast<Function*>(rot->getProperty())->getArg1Size();
     }
     int nq = nqT + nqR;
     return nq;
@@ -104,7 +104,7 @@ namespace MBSimGUI {
       contour[i]->initialize();
   }
 
-  void RigidBody::initializeUsingXML(DOMElement *element) {
+  DOMElement* RigidBody::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);
 
@@ -149,6 +149,8 @@ namespace MBSimGUI {
 
     jointForceArrow.initializeUsingXML(element);
     jointMomentArrow.initializeUsingXML(element);
+
+    return element;
   }
 
   DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {

@@ -45,7 +45,7 @@ namespace MBSimGUI {
   class OctaveExpressionProperty : public VariableProperty {
     public:
       OctaveExpressionProperty() {}
-      virtual Property* clone() const {return new OctaveExpressionProperty(*this);}
+      virtual PropertyInterface* clone() const {return new OctaveExpressionProperty(*this);}
       std::string getValue() const { return value; }
       void setValue(const std::string &str) { value = str; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -60,7 +60,7 @@ namespace MBSimGUI {
       std::string scalar;
     public:
       ScalarProperty(const std::string &scalar_="1") : scalar(scalar_) {}
-      virtual Property* clone() const {return new ScalarProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ScalarProperty(*this);}
       std::string getValue() const {return scalar;}
       void setValue(const std::string &scalar_) {scalar = scalar_;}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -74,7 +74,7 @@ namespace MBSimGUI {
       VecProperty(int size);
       VecProperty(const std::vector<std::string> &x) : value(x) {}
       ~VecProperty();
-      virtual Property* clone() const {return new VecProperty(*this);}
+      virtual PropertyInterface* clone() const {return new VecProperty(*this);}
       std::vector<std::string> getVec() const {return value;}
       void setVec(const std::vector<std::string> &x) {value = x;}
       std::string getValue() const {return toStr(getVec());}
@@ -93,7 +93,7 @@ namespace MBSimGUI {
     public:
       MatProperty(int rows, int cols);
       MatProperty(const std::vector<std::vector<std::string> > &A) : value(A) {}
-      virtual Property* clone() const {return new MatProperty(*this);}
+      virtual PropertyInterface* clone() const {return new MatProperty(*this);}
       std::vector<std::vector<std::string> > getMat() const {return value;}
       void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
       std::string getValue() const {return toStr(getMat());}
@@ -114,7 +114,7 @@ namespace MBSimGUI {
     public:
       CardanProperty();
       ~CardanProperty();
-      virtual Property* clone() const {return new CardanProperty(*this);}
+      virtual PropertyInterface* clone() const {return new CardanProperty(*this);}
       std::vector<std::string> getAngles() const {return angles;}
       void setAngles(const std::vector<std::string> &x) {angles = x;}
       std::string getValue() const {return toStr(getAngles());}
@@ -134,7 +134,7 @@ namespace MBSimGUI {
     public:
       AboutZProperty();
       ~AboutZProperty();
-      virtual Property* clone() const {return new AboutZProperty(*this);}
+      virtual PropertyInterface* clone() const {return new AboutZProperty(*this);}
       std::string getValue() const {return angle;}
       void setValue(const std::string &angle_) {angle = angle_;}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -153,7 +153,7 @@ namespace MBSimGUI {
       PhysicalVariableProperty(const PhysicalVariableProperty &p) : value(static_cast<VariableProperty*>(p.value->clone())), unit(p.unit), xmlName(p.xmlName) {}
       ~PhysicalVariableProperty() {delete value;}
       PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<VariableProperty*>(p.value->clone()); unit=p.unit; xmlName=p.xmlName;}
-      virtual Property* clone() const {return new PhysicalVariableProperty(*this);}
+      virtual PropertyInterface* clone() const {return new PhysicalVariableProperty(*this);}
       std::string getValue() const {return value->getValue();}
       void setValue(const std::string &str) {value->setValue(str);}
       std::string getUnit() const {return unit;}
@@ -171,7 +171,7 @@ namespace MBSimGUI {
   //
   //  public:
   //    VecFromFileProperty(const std::string &file_="") : file(file_) {}
-  //    virtual Property* clone() const {return new VecFromFileProperty(*this);}
+  //    virtual PropertyInterface* clone() const {return new VecFromFileProperty(*this);}
   //    std::string getValue() const;
   //    void setValue(const std::string &str) {}
   //    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -187,7 +187,7 @@ namespace MBSimGUI {
 
     public:
       FromFileProperty(const std::string &file_="") : file(file_) {}
-      virtual Property* clone() const {return new FromFileProperty(*this);}
+      virtual PropertyInterface* clone() const {return new FromFileProperty(*this);}
       void setValue(const std::string &str) {}
       std::string getValue() const { return ""; }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

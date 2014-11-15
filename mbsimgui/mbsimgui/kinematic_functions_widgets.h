@@ -77,7 +77,7 @@ namespace MBSimGUI {
 
   class TranslationAlongFixedAxisWidget : public FunctionWidget {
 
-    friend class TranslationAlongFixedAxisProperty;
+    friend class TranslationAlongFixedAxis;
 
     public:
     TranslationAlongFixedAxisWidget();
@@ -88,7 +88,7 @@ namespace MBSimGUI {
 
   class LinearTranslationWidget : public FunctionWidget {
 
-    friend class LinearTranslationProperty;
+    friend class LinearTranslation;
 
     public:
     LinearTranslationWidget(int m=1, int n=1);
@@ -163,7 +163,7 @@ namespace MBSimGUI {
 
   class RotationAboutFixedAxisWidget : public FunctionWidget {
 
-    friend class RotationAboutFixedAxisProperty;
+    friend class RotationAboutFixedAxis;
 
     public:
     RotationAboutFixedAxisWidget();

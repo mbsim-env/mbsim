@@ -48,13 +48,13 @@ namespace MBSimGUI {
     Group(const Group &g);
     ~Group();
     Group& operator=(const Group &g);
-    virtual Element* clone() const {return new Group(*this);}
+    virtual PropertyInterface* clone() const {return new Group(*this);}
     std::string getType() const { return "Group"; }
     int getqSize();
     int getuSize();
     int getxSize();
     static Group* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
     void setActionPasteDisabled(bool flag);

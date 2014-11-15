@@ -29,9 +29,9 @@ namespace MBSimGUI {
     friend class KineticExcitationPropertyDialog;
     public:
     KineticExcitation(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new KineticExcitation(*this);}
+    virtual PropertyInterface* clone() const {return new KineticExcitation(*this);}
     std::string getType() const { return "KineticExcitation"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}

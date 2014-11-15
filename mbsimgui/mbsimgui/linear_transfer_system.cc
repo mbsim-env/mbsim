@@ -49,9 +49,10 @@ namespace MBSimGUI {
     choice.setProperty(new ChoiceProperty2(new LinearTransferSystemPropertyFactory,"",3));
   }
 
-  void LinearTransferSystem::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearTransferSystem::initializeUsingXML(DOMElement *element) {
     SignalProcessingSystem::initializeUsingXML(element);
     choice.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* LinearTransferSystem::writeXMLFile(DOMNode *parent) {

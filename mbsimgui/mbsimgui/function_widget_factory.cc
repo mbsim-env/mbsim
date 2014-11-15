@@ -44,11 +44,11 @@ namespace MBSimGUI {
     if(i==5)
       return new AbsoluteValueFunctionWidget(1);
     if(i==6)
-      return new VectorValuedFunctionWidget(1,true);
+      return new VectorValuedFunctionWidget(parent,1,true);
     if(i==7)
-      return new PiecewiseDefinedFunctionWidget;
+      return new PiecewiseDefinedFunctionWidget(parent);
     if(i==8)
-      return new NestedFunctionWidget(new FunctionWidgetFactory2, new FunctionWidgetFactory2);
+      return new NestedFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
     if(i==10)
@@ -58,11 +58,13 @@ namespace MBSimGUI {
     if(i==12)
       return new SignumFunctionWidget(1);
     if(i==13)
-      return new AdditionFunctionWidget(1);
+      return new AdditionFunctionWidget(parent,1);
     if(i==14)
-      return new MultiplicationFunctionWidget(1);
+      return new MultiplicationFunctionWidget(parent,1);
     if(i==15)
       return new FourierFunctionWidget(1);
+    if(i==16)
+      return new SignalFunctionWidget(parent);
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -83,6 +85,7 @@ namespace MBSimGUI {
     name.push_back("Addition function");
     name.push_back("Multiplication function");
     name.push_back("Fourier function");
+    name.push_back("Signal function");
     return name;
   }
 
@@ -108,7 +111,7 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
-      return new NestedFunctionWidget(new TranslationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
+      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
   }
 
   vector<QString> TranslationWidgetFactory2::getNames() {
@@ -129,15 +132,15 @@ namespace MBSimGUI {
 
   QWidget* TranslationWidgetFactory3::createWidget(int i) {
     if(i==0)
-      return new VectorValuedFunctionWidget(1,true);
+      return new VectorValuedFunctionWidget(parent,1,true);
     if(i==1)
-      return new NestedFunctionWidget(new TranslationWidgetFactory2, new FunctionWidgetFactory2);
+      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==2)
       return new SymbolicFunctionWidget(QStringList("t"),3,3);
     if(i==3)
       return new TabularFunctionWidget(1);
     if(i==4)
-      return new PiecewiseDefinedFunctionWidget;
+      return new PiecewiseDefinedFunctionWidget(parent);
     if(i==5)
       return new PiecewisePolynomFunctionWidget(1);
   }
@@ -176,7 +179,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxisWidget;
     if(i==10)
-      return new NestedFunctionWidget(new RotationWidgetFactory2, new SymbolicFunctionWidgetFactory2(QStringList("q")));
+      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
     if(i==11)
       return new SymbolicFunctionWidget(QStringList("q"),1,3);
   }
@@ -200,7 +203,7 @@ namespace MBSimGUI {
 
   QWidget* RotationWidgetFactory3::createWidget(int i) {
     if(i==0)
-      return new NestedFunctionWidget(new RotationWidgetFactory2, new FunctionWidgetFactory2);
+      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
   }
@@ -239,7 +242,7 @@ namespace MBSimGUI {
     return name;
   }
 
-  TranslationWidgetFactory4::TranslationWidgetFactory4() {
+  TranslationWidgetFactory4::TranslationWidgetFactory4(Element *parent_) : parent(parent_) {
     name.push_back("State dependent translation");
     name.push_back("Time dependent translation");
     name.push_back("General translation");
@@ -247,9 +250,9 @@ namespace MBSimGUI {
 
   QWidget* TranslationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new TranslationWidgetFactory2));
+      return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new TranslationWidgetFactory2(parent)));
     if(i==1)
-      return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new TranslationWidgetFactory3));
+      return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new TranslationWidgetFactory3(parent)));
     if(i==2) {
       QStringList var;
       var << "q" << "t";
@@ -257,16 +260,16 @@ namespace MBSimGUI {
     }
   }
 
-  RotationWidgetFactory4::RotationWidgetFactory4() {
+  RotationWidgetFactory4::RotationWidgetFactory4(Element *parent_) : parent(parent_) {
     name.push_back("State dependent rotation");
     name.push_back("Time dependent rotation");
   }
 
   QWidget* RotationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new RotationWidgetFactory2));
+      return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent)));
     if(i==1)
-      return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new RotationWidgetFactory3));
+      return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent)));
   }
 
   TabularFunctionWidgetFactory::TabularFunctionWidgetFactory() {
@@ -303,28 +306,28 @@ namespace MBSimGUI {
     }
   }
 
-  ConstraintWidgetFactory::ConstraintWidgetFactory() {
+  ConstraintWidgetFactory::ConstraintWidgetFactory(Element *parent_) : parent(parent_) {
     name.push_back("Time dependent constraint function");
     name.push_back("State dependent constraint function");
   }
 
   QWidget* ConstraintWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+      return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     if(i==1)
       return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"))));
   }
 
-  ConnectFramesWidgetFactory::ConnectFramesWidgetFactory(Element *element_) : element(element_) {
+  ConnectFramesWidgetFactory::ConnectFramesWidgetFactory(Element *parent_) : parent(parent_) {
     name.push_back("1 frame");
     name.push_back("2 frames");
   }
 
   QWidget* ConnectFramesWidgetFactory::createWidget(int i) {
-    return new ConnectFramesWidget(i+1,element);
+    return new ConnectFramesWidget(i+1,parent);
   }
 
-  SpringDamperWidgetFactory::SpringDamperWidgetFactory() {
+  SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *parent_) : parent(parent_){
     name.push_back("Linear spring damper force");
     name.push_back("Nonlinear spring damper force");
     name.push_back("Symbolic function");
@@ -334,7 +337,7 @@ namespace MBSimGUI {
     if(i==0)
       return new LinearSpringDamperForceWidget;
     if(i==1)
-      return new NonlinearSpringDamperForceWidget;
+      return new NonlinearSpringDamperForceWidget(parent);
     if(i==2) {
       QStringList var;
       var << "g" << "gd";

@@ -31,7 +31,7 @@ namespace MBSimGUI {
     SpringDamper(const std::string &str, Element *element);
     ~SpringDamper();
     std::string getType() const { return "SpringDamper"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
@@ -45,7 +45,7 @@ namespace MBSimGUI {
     DirectionalSpringDamper(const std::string &str, Element *element);
     ~DirectionalSpringDamper();
     std::string getType() const { return "DirectionalSpringDamper"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
@@ -59,7 +59,7 @@ namespace MBSimGUI {
     GeneralizedSpringDamper(const std::string &str, Element *element);
     ~GeneralizedSpringDamper();
     std::string getType() const { return "GeneralizedSpringDamper"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}

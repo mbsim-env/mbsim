@@ -91,32 +91,32 @@ namespace MBSimGUI {
     return new ExtPhysicalVarProperty(input);
   }
 
-  ConstantFunctionProperty::ConstantFunctionProperty(int m) {
+  ConstantFunction::ConstantFunction(const string &name, Element *parent, int m) : Function(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
     a0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* ConstantFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* ConstantFunction::initializeUsingXML(DOMElement *element) {
     a0.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* ConstantFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* ConstantFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a0.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void ConstantFunctionProperty::fromWidget(QWidget *widget) {
+  void ConstantFunction::fromWidget(QWidget *widget) {
     a0.fromWidget(static_cast<ConstantFunctionWidget*>(widget)->a0);
   }
 
-  void ConstantFunctionProperty::toWidget(QWidget *widget) {
+  void ConstantFunction::toWidget(QWidget *widget) {
     a0.toWidget(static_cast<ConstantFunctionWidget*>(widget)->a0);
   }
 
-  LinearFunctionProperty::LinearFunctionProperty(int m) : a0(0,false) {
+  LinearFunction::LinearFunction(const string &name, Element *parent, int m) : Function(name,parent), a0(0,false) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
     a0.setProperty(new ExtPhysicalVarProperty(input));
@@ -126,30 +126,30 @@ namespace MBSimGUI {
     a1.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* LinearFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearFunction::initializeUsingXML(DOMElement *element) {
     a0.initializeUsingXML(element);
     a1.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* LinearFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* LinearFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a0.writeXMLFile(ele0);
     a1.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void LinearFunctionProperty::fromWidget(QWidget *widget) {
+  void LinearFunction::fromWidget(QWidget *widget) {
     a0.fromWidget(static_cast<LinearFunctionWidget*>(widget)->a0);
     a1.fromWidget(static_cast<LinearFunctionWidget*>(widget)->a1);
   }
 
-  void LinearFunctionProperty::toWidget(QWidget *widget) {
+  void LinearFunction::toWidget(QWidget *widget) {
     a0.toWidget(static_cast<LinearFunctionWidget*>(widget)->a0);
     a1.toWidget(static_cast<LinearFunctionWidget*>(widget)->a1);
   }
 
-  QuadraticFunctionProperty::QuadraticFunctionProperty(int m) : a0(0,false), a1(0,false) {
+  QuadraticFunction::QuadraticFunction(const string &name, Element *parent, int m) : Function(name,parent), a0(0,false), a1(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"a0"));
@@ -164,57 +164,57 @@ namespace MBSimGUI {
     a2.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* QuadraticFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* QuadraticFunction::initializeUsingXML(DOMElement *element) {
     a0.initializeUsingXML(element);
     a1.initializeUsingXML(element);
     a2.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* QuadraticFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* QuadraticFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a0.writeXMLFile(ele0);
     a1.writeXMLFile(ele0);
     a2.writeXMLFile(ele0);
     return ele0;
   }
 
-  void QuadraticFunctionProperty::fromWidget(QWidget *widget) {
+  void QuadraticFunction::fromWidget(QWidget *widget) {
     a0.fromWidget(static_cast<QuadraticFunctionWidget*>(widget)->a0);
     a1.fromWidget(static_cast<QuadraticFunctionWidget*>(widget)->a1);
     a2.fromWidget(static_cast<QuadraticFunctionWidget*>(widget)->a2);
   }
 
-  void QuadraticFunctionProperty::toWidget(QWidget *widget) {
+  void QuadraticFunction::toWidget(QWidget *widget) {
     a0.toWidget(static_cast<QuadraticFunctionWidget*>(widget)->a0);
     a1.toWidget(static_cast<QuadraticFunctionWidget*>(widget)->a1);
     a2.toWidget(static_cast<QuadraticFunctionWidget*>(widget)->a2);
   }
 
-  PolynomFunctionProperty::PolynomFunctionProperty(int m) {
+  PolynomFunction::PolynomFunction(const string &name, Element *parent, int m) : Function(name,parent) {
     a.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"coefficients",vector<string>(3,"")),"",4));
   }
 
-  DOMElement* PolynomFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* PolynomFunction::initializeUsingXML(DOMElement *element) {
     a.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* PolynomFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* PolynomFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a.writeXMLFile(ele0);
     return ele0;
   }
 
-  void PolynomFunctionProperty::fromWidget(QWidget *widget) {
+  void PolynomFunction::fromWidget(QWidget *widget) {
     a.fromWidget(static_cast<PolynomFunctionWidget*>(widget)->a);
   }
 
-  void PolynomFunctionProperty::toWidget(QWidget *widget) {
+  void PolynomFunction::toWidget(QWidget *widget) {
     a.toWidget(static_cast<PolynomFunctionWidget*>(widget)->a);
   }
 
-  SinusoidalFunctionProperty::SinusoidalFunctionProperty(int m) : p(0,false), o(0,false) {
+  SinusoidalFunction::SinusoidalFunction(const string &name, Element *parent, int m) : Function(name,parent), p(0,false), o(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"amplitude"));
@@ -233,7 +233,7 @@ namespace MBSimGUI {
     o.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* SinusoidalFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* SinusoidalFunction::initializeUsingXML(DOMElement *element) {
     a.initializeUsingXML(element);
     f.initializeUsingXML(element);
     p.initializeUsingXML(element);
@@ -241,8 +241,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* SinusoidalFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* SinusoidalFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a.writeXMLFile(ele0);
     f.writeXMLFile(ele0);
     p.writeXMLFile(ele0);
@@ -250,211 +250,211 @@ namespace MBSimGUI {
     return ele0;
   } 
 
-  void SinusoidalFunctionProperty::fromWidget(QWidget *widget) {
+  void SinusoidalFunction::fromWidget(QWidget *widget) {
     a.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->a);
     f.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->f);
     p.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->p);
     o.fromWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
   }
 
-  void SinusoidalFunctionProperty::toWidget(QWidget *widget) {
+  void SinusoidalFunction::toWidget(QWidget *widget) {
     a.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->a);
     f.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->f);
     p.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->p);
     o.toWidget(static_cast<SinusoidalFunctionWidget*>(widget)->o);
   }
 
-  ModuloFunctionProperty::ModuloFunctionProperty() {
+  ModuloFunction::ModuloFunction(const string &name, Element *parent) : Function(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"denominator"));
     denom.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* ModuloFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* ModuloFunction::initializeUsingXML(DOMElement *element) {
     denom.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* ModuloFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* ModuloFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     denom.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void ModuloFunctionProperty::fromWidget(QWidget *widget) {
+  void ModuloFunction::fromWidget(QWidget *widget) {
     denom.fromWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
   }
 
-  void ModuloFunctionProperty::toWidget(QWidget *widget) {
+  void ModuloFunction::toWidget(QWidget *widget) {
     denom.toWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
   }
 
-  AdditionFunctionProperty::AdditionFunctionProperty() {
-    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"firstSummand",0));
-    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"secondSummand",0));
+  AdditionFunction::AdditionFunction(const string &name, Element *parent) : Function(name,parent) {
+    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"firstSummand",0));
+    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"secondSummand",0));
   }
 
-  DOMElement* AdditionFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* AdditionFunction::initializeUsingXML(DOMElement *element) {
     f1.initializeUsingXML(element);
     f2.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* AdditionFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* AdditionFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     f1.writeXMLFile(ele0);
     f2.writeXMLFile(ele0);
     return ele0;
   }
 
-  void AdditionFunctionProperty::fromWidget(QWidget *widget) {
+  void AdditionFunction::fromWidget(QWidget *widget) {
     f1.fromWidget(static_cast<AdditionFunctionWidget*>(widget)->f1);
     f2.fromWidget(static_cast<AdditionFunctionWidget*>(widget)->f2);
   }
 
-  void AdditionFunctionProperty::toWidget(QWidget *widget) {
+  void AdditionFunction::toWidget(QWidget *widget) {
     f1.toWidget(static_cast<AdditionFunctionWidget*>(widget)->f1);
     f2.toWidget(static_cast<AdditionFunctionWidget*>(widget)->f2);
   }
 
-  MultiplicationFunctionProperty::MultiplicationFunctionProperty() {
-    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"firstFactor",0));
-    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"secondFactor",0));
+  MultiplicationFunction::MultiplicationFunction(const string &name, Element *parent) : Function(name,parent) {
+    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"firstFactor",0));
+    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"secondFactor",0));
   }
 
-  DOMElement* MultiplicationFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* MultiplicationFunction::initializeUsingXML(DOMElement *element) {
     f1.initializeUsingXML(element);
     f2.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* MultiplicationFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* MultiplicationFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     f1.writeXMLFile(ele0);
     f2.writeXMLFile(ele0);
     return ele0;
   }
 
-  void MultiplicationFunctionProperty::fromWidget(QWidget *widget) {
+  void MultiplicationFunction::fromWidget(QWidget *widget) {
     f1.fromWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f1);
     f2.fromWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f2);
   }
 
-  void MultiplicationFunctionProperty::toWidget(QWidget *widget) {
+  void MultiplicationFunction::toWidget(QWidget *widget) {
     f1.toWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f1);
     f2.toWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f2);
   }
 
-  VectorValuedFunctionProperty::VectorValuedFunctionProperty(int m) {
-    functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2,""),""));
+  VectorValuedFunction::VectorValuedFunction(const string &name, Element *parent, int m) : Function(name,parent) {
+    functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2(this),""),""));
     functions.setXMLName(MBSIM%"components");
   }
 
-  DOMElement* VectorValuedFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* VectorValuedFunction::initializeUsingXML(DOMElement *element) {
     functions.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* VectorValuedFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* VectorValuedFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     functions.writeXMLFile(ele0);
     return ele0;
   }
 
-  void VectorValuedFunctionProperty::fromWidget(QWidget *widget) {
+  void VectorValuedFunction::fromWidget(QWidget *widget) {
     functions.fromWidget(static_cast<VectorValuedFunctionWidget*>(widget)->functions);
   }
 
-  void VectorValuedFunctionProperty::toWidget(QWidget *widget) {
+  void VectorValuedFunction::toWidget(QWidget *widget) {
     functions.toWidget(static_cast<VectorValuedFunctionWidget*>(widget)->functions);
   }
 
-  //NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<Property*> &property_) {
+  //NestedFunction::NestedFunction(const string &ext, const vector<Property*> &property_) {
   //  fo.setProperty(new ChoiceProperty(MBSIM%"outerFunction",property_));
   //
   //  vector<Property*> property;
   //  vector<string> var;
   //  if(ext[1]=='V' and ext[2]=='V') {
   //    var.push_back("q");
-  //    property.push_back(new SymbolicFunctionProperty("VV",var));
+  //    property.push_back(new SymbolicFunction("VV",var));
   //  }
   //  else if(ext[1]=='V' and ext[2]=='S') {
   //    var.push_back("t");
-  //    property.push_back(new SymbolicFunctionProperty("VS",var));
-  //    property.push_back(new ConstantFunctionProperty);
-  //    property.push_back(new LinearFunctionProperty);
-  //    property.push_back(new QuadraticFunctionProperty);
-  //    property.push_back(new SinusoidalFunctionProperty);
+  //    property.push_back(new SymbolicFunction("VS",var));
+  //    property.push_back(new ConstantFunction);
+  //    property.push_back(new LinearFunction);
+  //    property.push_back(new QuadraticFunction);
+  //    property.push_back(new SinusoidalFunction);
   //  }
   //  fi.setProperty(new ChoiceProperty(MBSIM%"innerFunction",property));
   //}
 
-  NestedFunctionProperty::NestedFunctionProperty(PropertyFactory *factoryo, PropertyFactory *factoryi) {
+  NestedFunction::NestedFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi) : Function(name,parent) {
     fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
     fi.setProperty(new ChoiceProperty2(factoryi,MBSIM%"innerFunction",0));
   }
 
-  int NestedFunctionProperty::getArg1Size() const {
+  int NestedFunction::getArg1Size() const {
     //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArg1Size();
   }
 
-  DOMElement* NestedFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* NestedFunction::initializeUsingXML(DOMElement *element) {
     fo.initializeUsingXML(element);
     fi.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* NestedFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* NestedFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     fo.writeXMLFile(ele0);
     fi.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void NestedFunctionProperty::fromWidget(QWidget *widget) {
+  void NestedFunction::fromWidget(QWidget *widget) {
     fo.fromWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
     fi.fromWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
   }
 
-  void NestedFunctionProperty::toWidget(QWidget *widget) {
+  void NestedFunction::toWidget(QWidget *widget) {
     fo.toWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
     fi.toWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
   }
 
-  PiecewiseDefinedFunctionProperty::PiecewiseDefinedFunctionProperty() {
+  PiecewiseDefinedFunction::PiecewiseDefinedFunction(const string &name, Element *parent) : Function(name,parent) {
     //  functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(1),""));
     //  functions.setXMLName(MBSIM%"limitedFunctions");
-    functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(new FunctionPropertyFactory2,""),""));
+    functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(new FunctionPropertyFactory2(this),""),""));
     functions.setXMLName(MBSIM%"limitedFunctions");
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"continouslyDifferentiable"));
     contDiff.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* PiecewiseDefinedFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* PiecewiseDefinedFunction::initializeUsingXML(DOMElement *element) {
     functions.initializeUsingXML(element);
     contDiff.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* PiecewiseDefinedFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* PiecewiseDefinedFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     functions.writeXMLFile(ele0);
     contDiff.writeXMLFile(ele0);
     return ele0;
   }
 
-  void PiecewiseDefinedFunctionProperty::fromWidget(QWidget *widget) {
+  void PiecewiseDefinedFunction::fromWidget(QWidget *widget) {
     functions.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->functions);
     contDiff.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
   }
 
-  void PiecewiseDefinedFunctionProperty::toWidget(QWidget *widget) {
+  void PiecewiseDefinedFunction::toWidget(QWidget *widget) {
     functions.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->functions);
     contDiff.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
   }
 
-  SymbolicFunctionProperty::SymbolicFunctionProperty(const string &ext_, const vector<string> &var, int m) : ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
+  SymbolicFunction::SymbolicFunction(const string &name, Element *parent, const string &ext_, const vector<string> &var, int m) : Function(name,parent), ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
     for(int i=1; i<ext.size(); i++) {
       argname[i-1].setProperty(new TextProperty(var[i-1],""));
       argdim[i-1].setProperty(new IntegerProperty(1,""));
@@ -464,7 +464,7 @@ namespace MBSimGUI {
     f.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* SymbolicFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* SymbolicFunction::initializeUsingXML(DOMElement *element) {
     f.initializeUsingXML(element);
     for(int i=1; i<ext.size(); i++) {
       string str = "arg"+toStr(i);
@@ -477,8 +477,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* SymbolicFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* SymbolicFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     for(int i=1; i<ext.size(); i++) {
       string istr = toStr(i);
       E(ele0)->setAttribute("arg"+istr, static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
@@ -489,7 +489,7 @@ namespace MBSimGUI {
     return ele0;
   } 
 
-  void SymbolicFunctionProperty::fromWidget(QWidget *widget) {
+  void SymbolicFunction::fromWidget(QWidget *widget) {
     for(int i=0; i<argname.size(); i++) {
       argname[i].fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->argname[i]);
       argdim[i].fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->argdim[i]);
@@ -497,7 +497,7 @@ namespace MBSimGUI {
     f.fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->f);
   }
 
-  void SymbolicFunctionProperty::toWidget(QWidget *widget) {
+  void SymbolicFunction::toWidget(QWidget *widget) {
     for(int i=0; i<argname.size(); i++) {
       argname[i].toWidget(static_cast<SymbolicFunctionWidget*>(widget)->argname[i]);
       argdim[i].toWidget(static_cast<SymbolicFunctionWidget*>(widget)->argdim[i]);
@@ -505,99 +505,99 @@ namespace MBSimGUI {
     f.toWidget(static_cast<SymbolicFunctionWidget*>(widget)->f);
   }
 
-  int SymbolicFunctionProperty::getArg1Size() const {
+  int SymbolicFunction::getArg1Size() const {
     return static_cast<const IntegerProperty*>(argdim[0].getProperty())->getValue();
   }
 
-  int SymbolicFunctionProperty::getArg2Size() const {
+  int SymbolicFunction::getArg2Size() const {
     return static_cast<const IntegerProperty*>(argdim[1].getProperty())->getValue();
   }
 
-  TabularFunctionProperty::TabularFunctionProperty() : choice(new TabularFunctionPropertyFactory,"",3) {
+  TabularFunction::TabularFunction(const string &name, Element *parent) : Function(name,parent), choice(new TabularFunctionPropertyFactory(this),"",3) {
   }
 
-  DOMElement* TabularFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* TabularFunction::initializeUsingXML(DOMElement *element) {
     choice.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* TabularFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* TabularFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     choice.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void TabularFunctionProperty::fromWidget(QWidget *widget) {
+  void TabularFunction::fromWidget(QWidget *widget) {
     choice.fromWidget(static_cast<TabularFunctionWidget*>(widget)->choice);
   }
 
-  void TabularFunctionProperty::toWidget(QWidget *widget) {
+  void TabularFunction::toWidget(QWidget *widget) {
     choice.toWidget(static_cast<TabularFunctionWidget*>(widget)->choice);
   }
 
-  TwoDimensionalTabularFunctionProperty::TwoDimensionalTabularFunctionProperty() {
+  TwoDimensionalTabularFunction::TwoDimensionalTabularFunction(const string &name, Element *parent) : Function(name,parent) {
     x.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"xValues",vector<string>(3,"")),"",4));
     y.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"yValues",vector<string>(3,"")),"",4));
     xy.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,1,"0"),MBSIM%"xyValues",vector<string>(3,"")),"",4));
   }
 
-  DOMElement* TwoDimensionalTabularFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* TwoDimensionalTabularFunction::initializeUsingXML(DOMElement *element) {
     x.initializeUsingXML(element);
     y.initializeUsingXML(element);
     xy.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* TwoDimensionalTabularFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* TwoDimensionalTabularFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     x.writeXMLFile(ele0);
     y.writeXMLFile(ele0);
     xy.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void TwoDimensionalTabularFunctionProperty::fromWidget(QWidget *widget) {
+  void TwoDimensionalTabularFunction::fromWidget(QWidget *widget) {
     x.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
     y.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
     xy.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
   }
 
-  void TwoDimensionalTabularFunctionProperty::toWidget(QWidget *widget) {
+  void TwoDimensionalTabularFunction::toWidget(QWidget *widget) {
     x.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
     y.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
     xy.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
   }
 
-  PiecewisePolynomFunctionProperty::PiecewisePolynomFunctionProperty() : choice(new TabularFunctionPropertyFactory,"",3), method(0,false) {
+  PiecewisePolynomFunction::PiecewisePolynomFunction(const string &name, Element *parent) : Function(name,parent), choice(new TabularFunctionPropertyFactory(this),"",3), method(0,false) {
     
     method.setProperty(new TextProperty("\"cSplineNatural\"", MBSIM%"interpolationMethod"));
 
   }
 
-  DOMElement* PiecewisePolynomFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* PiecewisePolynomFunction::initializeUsingXML(DOMElement *element) {
     choice.initializeUsingXML(element);
     method.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* PiecewisePolynomFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* PiecewisePolynomFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     choice.writeXMLFile(ele0);
     method.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void PiecewisePolynomFunctionProperty::fromWidget(QWidget *widget) {
+  void PiecewisePolynomFunction::fromWidget(QWidget *widget) {
     choice.fromWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->choice);
     method.fromWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
-  void PiecewisePolynomFunctionProperty::toWidget(QWidget *widget) {
+  void PiecewisePolynomFunction::toWidget(QWidget *widget) {
     choice.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->choice);
     method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
-  FourierFunctionProperty::FourierFunctionProperty() : a0(0,false), choice(new FourierFunctionPropertyFactory,"",3), amplitudePhaseAngleForm(0,false) {
+  FourierFunction::FourierFunction(const string &name, Element *parent) : Function(name,parent), a0(0,false), choice(new FourierFunctionPropertyFactory(this),"",3), amplitudePhaseAngleForm(0,false) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"frequency"));
     f.setProperty(new ExtPhysicalVarProperty(input));
@@ -608,7 +608,7 @@ namespace MBSimGUI {
     amplitudePhaseAngleForm.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"amplitudePhaseAngleForm",vector<string>(2,"")),"",4));
   }
 
-  DOMElement* FourierFunctionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* FourierFunction::initializeUsingXML(DOMElement *element) {
     f.initializeUsingXML(element);
     a0.initializeUsingXML(element);
     choice.initializeUsingXML(element);
@@ -616,8 +616,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* FourierFunctionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* FourierFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     f.writeXMLFile(ele0);
     a0.writeXMLFile(ele0);
     choice.writeXMLFile(ele0);
@@ -625,21 +625,21 @@ namespace MBSimGUI {
     return ele0;
   } 
 
-  void FourierFunctionProperty::fromWidget(QWidget *widget) {
+  void FourierFunction::fromWidget(QWidget *widget) {
     f.fromWidget(static_cast<FourierFunctionWidget*>(widget)->f);
     a0.fromWidget(static_cast<FourierFunctionWidget*>(widget)->a0);
     choice.fromWidget(static_cast<FourierFunctionWidget*>(widget)->choice);
     amplitudePhaseAngleForm.fromWidget(static_cast<FourierFunctionWidget*>(widget)->amplitudePhaseAngleForm);
   }
 
-  void FourierFunctionProperty::toWidget(QWidget *widget) {
+  void FourierFunction::toWidget(QWidget *widget) {
     f.toWidget(static_cast<FourierFunctionWidget*>(widget)->f);
     a0.toWidget(static_cast<FourierFunctionWidget*>(widget)->a0);
     choice.toWidget(static_cast<FourierFunctionWidget*>(widget)->choice);
     amplitudePhaseAngleForm.toWidget(static_cast<FourierFunctionWidget*>(widget)->amplitudePhaseAngleForm);
   }
 
-  LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
+  LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -654,64 +654,64 @@ namespace MBSimGUI {
     l0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* LinearSpringDamperForceProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     c.initializeUsingXML(element);
     d.initializeUsingXML(element);
     l0.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* LinearSpringDamperForceProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* LinearSpringDamperForce::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     c.writeXMLFile(ele0);
     d.writeXMLFile(ele0);
     l0.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void LinearSpringDamperForceProperty::fromWidget(QWidget *widget) {
+  void LinearSpringDamperForce::fromWidget(QWidget *widget) {
     c.fromWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->c);
     d.fromWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->d);
     l0.fromWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->l0);
   }
 
-  void LinearSpringDamperForceProperty::toWidget(QWidget *widget) {
+  void LinearSpringDamperForce::toWidget(QWidget *widget) {
     c.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->c);
     d.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->d);
     l0.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->l0);
   }
 
-  NonlinearSpringDamperForceProperty::NonlinearSpringDamperForceProperty() {
+  NonlinearSpringDamperForce::NonlinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
-    g.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"distanceForce",0));
+    g.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"distanceForce",0));
 
-    gd.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"velocityForce",0));
+    gd.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"velocityForce",0));
   }
 
-  DOMElement* NonlinearSpringDamperForceProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* NonlinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     g.initializeUsingXML(element);
     gd.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* NonlinearSpringDamperForceProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* NonlinearSpringDamperForce::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     g.writeXMLFile(ele0);
     gd.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void NonlinearSpringDamperForceProperty::fromWidget(QWidget *widget) {
+  void NonlinearSpringDamperForce::fromWidget(QWidget *widget) {
     g.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
     gd.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
   }
 
-  void NonlinearSpringDamperForceProperty::toWidget(QWidget *widget) {
+  void NonlinearSpringDamperForce::toWidget(QWidget *widget) {
     g.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
     gd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
   }
 
-  LinearRegularizedBilateralConstraintProperty::LinearRegularizedBilateralConstraintProperty() {
+  LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -722,30 +722,30 @@ namespace MBSimGUI {
     d.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* LinearRegularizedBilateralConstraintProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearRegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     c.initializeUsingXML(element);
     d.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* LinearRegularizedBilateralConstraintProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* LinearRegularizedBilateralConstraint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     c.writeXMLFile(ele0);
     d.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void LinearRegularizedBilateralConstraintProperty::fromWidget(QWidget *widget) {
+  void LinearRegularizedBilateralConstraint::fromWidget(QWidget *widget) {
     c.fromWidget(static_cast<LinearRegularizedBilateralConstraintWidget*>(widget)->c);
     d.fromWidget(static_cast<LinearRegularizedBilateralConstraintWidget*>(widget)->d);
   }
 
-  void LinearRegularizedBilateralConstraintProperty::toWidget(QWidget *widget) {
+  void LinearRegularizedBilateralConstraint::toWidget(QWidget *widget) {
     c.toWidget(static_cast<LinearRegularizedBilateralConstraintWidget*>(widget)->c);
     d.toWidget(static_cast<LinearRegularizedBilateralConstraintWidget*>(widget)->d);
   }
 
-  LinearRegularizedUnilateralConstraintProperty::LinearRegularizedUnilateralConstraintProperty() {
+  LinearRegularizedUnilateralConstraint::LinearRegularizedUnilateralConstraint(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -756,30 +756,30 @@ namespace MBSimGUI {
     d.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* LinearRegularizedUnilateralConstraintProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearRegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
     c.initializeUsingXML(element);
     d.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* LinearRegularizedUnilateralConstraintProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* LinearRegularizedUnilateralConstraint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     c.writeXMLFile(ele0);
     d.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void LinearRegularizedUnilateralConstraintProperty::fromWidget(QWidget *widget) {
+  void LinearRegularizedUnilateralConstraint::fromWidget(QWidget *widget) {
     c.fromWidget(static_cast<LinearRegularizedUnilateralConstraintWidget*>(widget)->c);
     d.fromWidget(static_cast<LinearRegularizedUnilateralConstraintWidget*>(widget)->d);
   }
 
-  void LinearRegularizedUnilateralConstraintProperty::toWidget(QWidget *widget) {
+  void LinearRegularizedUnilateralConstraint::toWidget(QWidget *widget) {
     c.toWidget(static_cast<LinearRegularizedUnilateralConstraintWidget*>(widget)->c);
     d.toWidget(static_cast<LinearRegularizedUnilateralConstraintWidget*>(widget)->d);
   }
 
-  LinearRegularizedCoulombFrictionProperty::LinearRegularizedCoulombFrictionProperty() : gd(0,false) {
+  LinearRegularizedCoulombFriction::LinearRegularizedCoulombFriction(const string &name, Element *parent) : Function(name,parent), gd(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"),"m/s",MBSIM%"marginalVelocity"));
@@ -790,27 +790,52 @@ namespace MBSimGUI {
     mu.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* LinearRegularizedCoulombFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearRegularizedCoulombFriction::initializeUsingXML(DOMElement *element) {
     gd.initializeUsingXML(element);
     mu.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* LinearRegularizedCoulombFrictionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* LinearRegularizedCoulombFriction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     gd.writeXMLFile(ele0);
     mu.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void LinearRegularizedCoulombFrictionProperty::fromWidget(QWidget *widget) {
+  void LinearRegularizedCoulombFriction::fromWidget(QWidget *widget) {
     gd.fromWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->gd);
     mu.fromWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->mu);
   }
 
-  void LinearRegularizedCoulombFrictionProperty::toWidget(QWidget *widget) {
+  void LinearRegularizedCoulombFriction::toWidget(QWidget *widget) {
     gd.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->gd);
     mu.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->mu);
+  }
+
+  SignalFunction::SignalFunction(const string &name, Element *parent) : Function(name,parent) {
+
+    sRef.setProperty(new SignalOfReferenceProperty("",this,MBSIMCONTROL%"returnSignal"));
+
+  }
+
+  DOMElement* SignalFunction::initializeUsingXML(DOMElement *element) {
+    sRef.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SignalFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    sRef.writeXMLFile(ele0);
+    return ele0;
+  } 
+
+  void SignalFunction::fromWidget(QWidget *widget) {
+    sRef.fromWidget(static_cast<SignalFunctionWidget*>(widget)->sRef);
+  }
+
+  void SignalFunction::toWidget(QWidget *widget) {
+    sRef.toWidget(static_cast<SignalFunctionWidget*>(widget)->sRef);
   }
 
 }

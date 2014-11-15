@@ -61,9 +61,10 @@ namespace MBSimGUI {
     return contour;
   }
 
-  void Contour::initializeUsingXML(DOMElement *element) {
+  DOMElement* Contour::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
     refFrame.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Contour::writeXMLFile(DOMNode *parent) {
@@ -79,9 +80,10 @@ namespace MBSimGUI {
   Point::~Point() {
   }
 
-  void Point::initializeUsingXML(DOMElement *element) {
+  DOMElement* Point::initializeUsingXML(DOMElement *element) {
     Contour::initializeUsingXML(element);
     visu.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Point::writeXMLFile(DOMNode *parent) {
@@ -97,9 +99,10 @@ namespace MBSimGUI {
   Line::~Line() {
   }
 
-  void Line::initializeUsingXML(DOMElement *element) {
+  DOMElement* Line::initializeUsingXML(DOMElement *element) {
     Contour::initializeUsingXML(element);
     visu.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Line::writeXMLFile(DOMNode *parent) {
@@ -116,9 +119,10 @@ namespace MBSimGUI {
   Plane::~Plane() {
   }
 
-  void Plane::initializeUsingXML(DOMElement *element) {
+  DOMElement* Plane::initializeUsingXML(DOMElement *element) {
     Contour::initializeUsingXML(element);
     visu.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Plane::writeXMLFile(DOMNode *parent) {
@@ -140,10 +144,11 @@ namespace MBSimGUI {
   Sphere::~Sphere() {
   }
 
-  void Sphere::initializeUsingXML(DOMElement *element) {
+  DOMElement* Sphere::initializeUsingXML(DOMElement *element) {
     Contour::initializeUsingXML(element);
     radius.initializeUsingXML(element);
     visu.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Sphere::writeXMLFile(DOMNode *parent) {
@@ -166,10 +171,11 @@ namespace MBSimGUI {
   CircleSolid::~CircleSolid() {
   }
 
-  void CircleSolid::initializeUsingXML(DOMElement *element) {
+  DOMElement* CircleSolid::initializeUsingXML(DOMElement *element) {
     Contour::initializeUsingXML(element);
     radius.initializeUsingXML(element);
     visu.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* CircleSolid::writeXMLFile(DOMNode *parent) {

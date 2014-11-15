@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   Gear::Gear(const string &str, Element *parent) : Link(str, parent), function(0,false), gearForceArrow(0,false), gearMomentArrow(0,false) {
 
-    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIM%"generalizedForceFunction"));
+    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
@@ -55,7 +55,7 @@ namespace MBSimGUI {
     independentBodies.initialize();
   }
 
-  void Gear::initializeUsingXML(DOMElement *element) {
+  DOMElement* Gear::initializeUsingXML(DOMElement *element) {
     DOMElement *e, *ee;
     Link::initializeUsingXML(element);
     function.initializeUsingXML(element);
@@ -63,6 +63,7 @@ namespace MBSimGUI {
     independentBodies.initializeUsingXML(element);
     gearForceArrow.initializeUsingXML(element);
     gearMomentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Gear::writeXMLFile(DOMNode *parent) {

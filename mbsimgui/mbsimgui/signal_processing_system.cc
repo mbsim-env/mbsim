@@ -35,9 +35,10 @@ namespace MBSimGUI {
     signalRef.initialize();
   }
 
-  void SignalProcessingSystem::initializeUsingXML(DOMElement *element) {
+  DOMElement* SignalProcessingSystem::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     signalRef.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* SignalProcessingSystem::writeXMLFile(DOMNode *parent) {

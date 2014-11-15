@@ -37,13 +37,13 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
     forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-    forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"forceFunction",0));
+    forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceFunction",0));
 
     input.clear();
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
     momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-    momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"momentFunction",0));
+    momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
 
     // vector<Property*> widget;
     // widget.push_back(new ConnectFramesProperty(1,this));
@@ -61,10 +61,11 @@ namespace MBSimGUI {
 
   void KineticExcitation::initialize() {
     Link::initialize();
+    forceFunction.initialize();
     connections.initialize();
   }
 
-  void KineticExcitation::initializeUsingXML(DOMElement *element) {
+  DOMElement* KineticExcitation::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     refFrameID.initializeUsingXML(element);
     forceDirection.initializeUsingXML(element);
@@ -74,6 +75,7 @@ namespace MBSimGUI {
     connections.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
     momentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {

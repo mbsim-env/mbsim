@@ -38,7 +38,7 @@ namespace MBSimGUI {
     SignalAddition(const std::string &str, Element *parent);
     virtual std::string getType() const { return "SignalAddition"; }
     void initialize();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new SignalAdditionPropertyDialog(this);}
     protected:
@@ -50,7 +50,7 @@ namespace MBSimGUI {
     public:
     PIDController(const std::string &str, Element *parent);
     std::string getType() const { return "PIDController"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
@@ -63,7 +63,7 @@ namespace MBSimGUI {
     public:
     UnarySignalOperation(const std::string &str, Element *parent);
     std::string getType() const { return "UnarySignalOperation"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
@@ -76,7 +76,7 @@ namespace MBSimGUI {
     public:
     BinarySignalOperation(const std::string &str, Element *parent);
     std::string getType() const { return "BinarySignalOperation"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}

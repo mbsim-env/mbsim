@@ -47,7 +47,7 @@
 //class TranslationInXDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInXDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInXDirectionProperty(*this);}
 //    int getqTSize() const {return 1;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -55,7 +55,7 @@
 //class TranslationInYDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInYDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInYDirectionProperty(*this);}
 //    int getqTSize() const {return 1;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -63,7 +63,7 @@
 //class TranslationInZDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInZDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInZDirectionProperty(*this);}
 //    int getqTSize() const {return 1;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -71,7 +71,7 @@
 //class TranslationInXYDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInXYDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInXYDirectionProperty(*this);}
 //    int getqTSize() const {return 2;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -79,7 +79,7 @@
 //class TranslationInXZDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInXZDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInXZDirectionProperty(*this);}
 //    int getqTSize() const {return 2;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -87,7 +87,7 @@
 //class TranslationInYZDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInYZDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInYZDirectionProperty(*this);}
 //    int getqTSize() const {return 2;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -95,7 +95,7 @@
 //class TranslationInXYZDirectionProperty : public RotationIndependentTranslationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new TranslationInXYZDirectionProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationInXYZDirectionProperty(*this);}
 //    int getqTSize() const {return 3;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -104,7 +104,7 @@
 //
 //  public:
 //    LinearTranslationProperty();
-//    virtual Property* clone() const {return new LinearTranslationProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new LinearTranslationProperty(*this);}
 //    int getqTSize() const;
 //    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -119,7 +119,7 @@
 //
 //  public:
 //    TimeDependentTranslationProperty();
-//    virtual Property* clone() const {return new TimeDependentTranslationProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TimeDependentTranslationProperty(*this);}
 //    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //    void fromWidget(QWidget *widget);
@@ -133,7 +133,7 @@
 //
 //  public:
 //    StateDependentTranslationProperty();
-//    virtual Property* clone() const {return new StateDependentTranslationProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new StateDependentTranslationProperty(*this);}
 //    int getqSize() const;
 //    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -148,7 +148,7 @@
 //
 //  public:
 //    GeneralTranslationProperty();
-//    virtual Property* clone() const {return new GeneralTranslationProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new GeneralTranslationProperty(*this);}
 //    int getqSize() const;
 //    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -166,7 +166,7 @@
 //    TranslationChoiceProperty(const TranslationChoiceProperty &p);
 //    ~TranslationChoiceProperty();
 //    TranslationChoiceProperty& operator=(const TranslationChoiceProperty &p);
-//    virtual Property* clone() const {return new TranslationChoiceProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TranslationChoiceProperty(*this);}
 //
 //    int getqSize() const { return translation[index]->getqSize(); }
 //    int getuSize() const { return translation[index]->getuSize(); }
@@ -204,7 +204,7 @@
 ////class RotationAboutXAxisProperty : public TranslationIndependentRotationProperty {
 ////
 ////  public:
-////    virtual Property* clone() const {return new RotationAboutXAxisProperty(*this);}
+////    virtual PropertyInterface* clone() const {return new RotationAboutXAxisProperty(*this);}
 ////    int getqRSize() const {return 1;}
 ////    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 ////};
@@ -212,7 +212,7 @@
 ////class RotationAboutYAxisProperty : public TranslationIndependentRotationProperty {
 ////
 ////  public:
-////    virtual Property* clone() const {return new RotationAboutYAxisProperty(*this);}
+////    virtual PropertyInterface* clone() const {return new RotationAboutYAxisProperty(*this);}
 ////    int getqRSize() const {return 1;}
 ////    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 ////};
@@ -220,7 +220,7 @@
 ////class RotationAboutZAxisProperty : public TranslationIndependentRotationProperty {
 ////
 ////  public:
-////    virtual Property* clone() const {return new RotationAboutZAxisProperty(*this);}
+////    virtual PropertyInterface* clone() const {return new RotationAboutZAxisProperty(*this);}
 ////    int getqRSize() const {return 1;}
 ////    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 ////};
@@ -229,7 +229,7 @@
 ////
 ////  public:
 ////    RotationAboutFixedAxisProperty();
-////    virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
+////    virtual PropertyInterface* clone() const {return new RotationAboutFixedAxisProperty(*this);}
 ////    int getqRSize() const {return 1;}
 ////    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 ////    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -242,7 +242,7 @@
 //class RotationAboutAxesXYProperty : public TranslationIndependentRotationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new RotationAboutAxesXYProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new RotationAboutAxesXYProperty(*this);}
 //    int getqRSize() const {return 2;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -250,7 +250,7 @@
 //class RotationAboutAxesXZProperty : public TranslationIndependentRotationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new RotationAboutAxesXZProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new RotationAboutAxesXZProperty(*this);}
 //    int getqRSize() const {return 2;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -258,7 +258,7 @@
 //class RotationAboutAxesYZProperty : public TranslationIndependentRotationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new RotationAboutAxesYZProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new RotationAboutAxesYZProperty(*this);}
 //    int getqRSize() const {return 2;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -266,7 +266,7 @@
 //class RotationAboutAxesXYZProperty : public TranslationIndependentRotationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new RotationAboutAxesXYZProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new RotationAboutAxesXYZProperty(*this);}
 //    int getqRSize() const {return 3;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -274,7 +274,7 @@
 //class CardanAnglesProperty : public TranslationIndependentRotationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new CardanAnglesProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new CardanAnglesProperty(*this);}
 //    int getqRSize() const {return 3;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -282,7 +282,7 @@
 //class EulerAnglesProperty : public TranslationIndependentRotationProperty {
 //
 //  public:
-//    virtual Property* clone() const {return new EulerAnglesProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new EulerAnglesProperty(*this);}
 //    int getqRSize() const {return 3;}
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //};
@@ -291,7 +291,7 @@
 //
 //  public:
 //    TimeDependentRotationAboutFixedAxisProperty();
-//    virtual Property* clone() const {return new TimeDependentRotationAboutFixedAxisProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new TimeDependentRotationAboutFixedAxisProperty(*this);}
 //    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 //    void fromWidget(QWidget *widget);
@@ -305,7 +305,7 @@
 //
 //  public:
 //    StateDependentRotationAboutFixedAxisProperty();
-//    virtual Property* clone() const {return new StateDependentRotationAboutFixedAxisProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new StateDependentRotationAboutFixedAxisProperty(*this);}
 //    int getqSize() const;
 //    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
 //    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -323,7 +323,7 @@
 //    RotationChoiceProperty(const RotationChoiceProperty &p);
 //    ~RotationChoiceProperty();
 //    RotationChoiceProperty& operator=(const RotationChoiceProperty &p);
-//    virtual Property* clone() const {return new RotationChoiceProperty(*this);}
+//    virtual PropertyInterface* clone() const {return new RotationChoiceProperty(*this);}
 //
 //    int getqSize() const { return rotation[index]->getqSize(); }
 //    int getuSize() const { return rotation[index]->getuSize(); }

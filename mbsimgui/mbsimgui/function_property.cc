@@ -26,9 +26,9 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  DOMElement* FunctionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* Function::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
+    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType());
     parent->insertBefore(ele0, NULL);
     return ele0;
   }

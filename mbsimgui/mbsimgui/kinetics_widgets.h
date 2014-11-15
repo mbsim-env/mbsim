@@ -53,7 +53,7 @@ namespace MBSimGUI {
   class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
     Q_OBJECT
 
-      friend class RegularizedBilateralConstraintProperty;
+      friend class RegularizedBilateralConstraint;
 
     public:
     RegularizedBilateralConstraintWidget(); 
@@ -75,7 +75,7 @@ namespace MBSimGUI {
   class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
     Q_OBJECT
 
-      friend class RegularizedUnilateralConstraintProperty;
+      friend class RegularizedUnilateralConstraint;
 
     public:
     RegularizedUnilateralConstraintWidget(); 
@@ -103,7 +103,7 @@ namespace MBSimGUI {
 
   class UnilateralNewtonImpactWidget : public GeneralizedImpactLawWidget {
 
-    friend class UnilateralNewtonImpactProperty;
+    friend class UnilateralNewtonImpact;
 
     public:
     UnilateralNewtonImpactWidget();
@@ -123,7 +123,7 @@ namespace MBSimGUI {
 
   class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
 
-    friend class PlanarCoulombFrictionProperty;
+    friend class PlanarCoulombFriction;
 
     public:
     PlanarCoulombFrictionWidget();
@@ -134,7 +134,7 @@ namespace MBSimGUI {
 
   class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
 
-    friend class SpatialCoulombFrictionProperty;
+    friend class SpatialCoulombFriction;
 
     public:
     SpatialCoulombFrictionWidget();
@@ -146,7 +146,7 @@ namespace MBSimGUI {
   class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
     Q_OBJECT
 
-      friend class RegularizedPlanarFrictionProperty;
+      friend class RegularizedPlanarFriction;
 
     public:
     RegularizedPlanarFrictionWidget(); 
@@ -161,7 +161,7 @@ namespace MBSimGUI {
   class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
     Q_OBJECT
 
-      friend class RegularizedSpatialFrictionProperty;
+      friend class RegularizedSpatialFriction;
 
     public:
     RegularizedSpatialFrictionWidget(); 
@@ -182,7 +182,7 @@ namespace MBSimGUI {
 
   class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
 
-    friend class PlanarCoulombImpactProperty;
+    friend class PlanarCoulombImpact;
 
     public:
     PlanarCoulombImpactWidget();
@@ -193,7 +193,7 @@ namespace MBSimGUI {
 
   class SpatialCoulombImpactWidget : public FrictionImpactLawWidget {
 
-    friend class SpatialCoulombImpactProperty;
+    friend class SpatialCoulombImpact;
 
     public:
     SpatialCoulombImpactWidget();

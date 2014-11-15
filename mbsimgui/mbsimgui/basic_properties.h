@@ -49,7 +49,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const MBXMLUtils::FQN &xmlName_="");
-      virtual Property* clone() const {return new LocalFrameOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new LocalFrameOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void fromWidget(QWidget *widget);
@@ -66,7 +66,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const MBXMLUtils::FQN &xmlName_="");
-      virtual Property* clone() const {return new ParentFrameOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ParentFrameOfReferenceProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void initialize();
@@ -84,7 +84,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       FrameOfReferenceProperty(const std::string &frame="", Element* element=0, const MBXMLUtils::FQN &xmlName=""); 
-      virtual Property* clone() const {return new FrameOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new FrameOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void initialize();
@@ -102,7 +102,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const MBXMLUtils::FQN &xmlName_=""); 
-      virtual Property* clone() const {return new ContourOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ContourOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void initialize();
@@ -120,7 +120,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_="");
-      virtual Property* clone() const {return new RigidBodyOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new RigidBodyOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void initialize();
@@ -139,7 +139,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       ObjectOfReferenceProperty(const std::string &object_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_=""); 
-      virtual Property* clone() const {return new ObjectOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ObjectOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void initialize();
@@ -157,7 +157,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       LinkOfReferenceProperty(const std::string &link_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_=""); 
-      virtual Property* clone() const {return new LinkOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new LinkOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void initialize();
@@ -175,7 +175,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       SignalOfReferenceProperty(const std::string &signal_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_=""); 
-      virtual Property* clone() const {return new SignalOfReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new SignalOfReferenceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void initialize();
@@ -189,7 +189,7 @@ namespace MBSimGUI {
 
     public:
       FileProperty(const MBXMLUtils::FQN &xmlName_) : xmlName(xmlName_) {}
-      virtual Property* clone() const {return new FileProperty(*this);}
+      virtual PropertyInterface* clone() const {return new FileProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -206,7 +206,7 @@ namespace MBSimGUI {
 
     public:
       IntegerProperty(int value_, const MBXMLUtils::FQN &xmlName_) : value(value_), xmlName(xmlName_) {}
-      virtual Property* clone() const {return new IntegerProperty(*this);}
+      virtual PropertyInterface* clone() const {return new IntegerProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -223,7 +223,7 @@ namespace MBSimGUI {
 
     public:
       TextProperty(const std::string &text_, const MBXMLUtils::FQN &xmlName_, bool quote_=false) : text(text_), xmlName(xmlName_), quote(quote_) {}
-      virtual Property* clone() const {return new TextProperty(*this);}
+      virtual PropertyInterface* clone() const {return new TextProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -241,7 +241,7 @@ namespace MBSimGUI {
 
     public:
       ConnectFramesProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
-      virtual Property* clone() const {return new ConnectFramesProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ConnectFramesProperty(*this);}
 
       void initialize();
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -258,7 +258,7 @@ namespace MBSimGUI {
 
     public:
       ConnectContoursProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
-      virtual Property* clone() const {return new ConnectContoursProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ConnectContoursProperty(*this);}
 
       void initialize();
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -275,7 +275,7 @@ namespace MBSimGUI {
 
     public:
       DynamicSystemSolverTolerancesProperty();
-      virtual Property* clone() const {return new DynamicSystemSolverTolerancesProperty(*this);}
+      virtual PropertyInterface* clone() const {return new DynamicSystemSolverTolerancesProperty(*this);}
 
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -290,7 +290,7 @@ namespace MBSimGUI {
 
     public:
       DynamicSystemSolverParametersProperty();
-      virtual Property* clone() const {return new DynamicSystemSolverParametersProperty(*this);}
+      virtual PropertyInterface* clone() const {return new DynamicSystemSolverParametersProperty(*this);}
 
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -305,7 +305,7 @@ namespace MBSimGUI {
 
     public:
       EmbedProperty(boost::function<const std::string&()> f);
-      virtual Property* clone() const {return new EmbedProperty(*this);}
+      virtual PropertyInterface* clone() const {return new EmbedProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -326,7 +326,7 @@ namespace MBSimGUI {
   class SignalReferenceProperty : public Property {
     public:
       SignalReferenceProperty(Element* element);
-      virtual Property* clone() const {return new SignalReferenceProperty(*this);}
+      virtual PropertyInterface* clone() const {return new SignalReferenceProperty(*this);}
       void initialize() {refSignal.initialize();}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -343,7 +343,7 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
     public:
       ColorProperty(const MBXMLUtils::FQN &xmlName=""); 
-      virtual Property* clone() const {return new ColorProperty(*this);}
+      virtual PropertyInterface* clone() const {return new ColorProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void fromWidget(QWidget *widget);
@@ -355,7 +355,7 @@ namespace MBSimGUI {
       std::vector<std::string> type, value;
     public:
       PlotFeatureStatusProperty();
-      virtual Property* clone() const {return new PlotFeatureStatusProperty(*this);}
+      virtual PropertyInterface* clone() const {return new PlotFeatureStatusProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       void fromWidget(QWidget *widget);

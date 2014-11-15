@@ -30,32 +30,32 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty() {
+  TranslationAlongFixedAxis::TranslationAlongFixedAxis(const string &name, Element *parent) : Function(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfTranslation"));
     a.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* TranslationAlongFixedAxisProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* TranslationAlongFixedAxis::initializeUsingXML(DOMElement *element) {
     a.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* TranslationAlongFixedAxisProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* TranslationAlongFixedAxis::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void TranslationAlongFixedAxisProperty::fromWidget(QWidget *widget) {
+  void TranslationAlongFixedAxis::fromWidget(QWidget *widget) {
     a.fromWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
   }
 
-  void TranslationAlongFixedAxisProperty::toWidget(QWidget *widget) {
+  void TranslationAlongFixedAxis::toWidget(QWidget *widget) {
     a.toWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
   }
 
-  LinearTranslationProperty::LinearTranslationProperty(int m, int n) : b(0,false) {
+  LinearTranslation::LinearTranslation(const string &name, Element *parent, int m, int n) : Function(name,parent), b(0,false) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIM%"translationVectors"));
     A.setProperty(new ExtPhysicalVarProperty(input));
@@ -65,57 +65,57 @@ namespace MBSimGUI {
     b.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  int LinearTranslationProperty::getArg1Size() const {
+  int LinearTranslation::getArg1Size() const {
     string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }
 
-  DOMElement* LinearTranslationProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* LinearTranslation::initializeUsingXML(DOMElement *element) {
     A.initializeUsingXML(element);
     b.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* LinearTranslationProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* LinearTranslation::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     A.writeXMLFile(ele0);
     b.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void LinearTranslationProperty::fromWidget(QWidget *widget) {
+  void LinearTranslation::fromWidget(QWidget *widget) {
     A.fromWidget(static_cast<LinearTranslationWidget*>(widget)->A);
     b.fromWidget(static_cast<LinearTranslationWidget*>(widget)->b);
   }
 
-  void LinearTranslationProperty::toWidget(QWidget *widget) {
+  void LinearTranslation::toWidget(QWidget *widget) {
     A.toWidget(static_cast<LinearTranslationWidget*>(widget)->A);
     b.toWidget(static_cast<LinearTranslationWidget*>(widget)->b);
   }
 
-  RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
+  RotationAboutFixedAxis::RotationAboutFixedAxis(const string &name, Element *parent) : Function(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIM%"axisOfRotation"));
     a.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* RotationAboutFixedAxisProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* RotationAboutFixedAxis::initializeUsingXML(DOMElement *element) {
     a.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* RotationAboutFixedAxisProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  DOMElement* RotationAboutFixedAxis::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
     a.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void RotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
+  void RotationAboutFixedAxis::fromWidget(QWidget *widget) {
     a.fromWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->a);
   }
 
-  void RotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
+  void RotationAboutFixedAxis::toWidget(QWidget *widget) {
     a.toWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->a);
   }
 

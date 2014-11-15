@@ -79,13 +79,14 @@ namespace MBSimGUI {
       body->setConstrained(false);
   }
 
-  void GearConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* GearConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e, *ee;
     Constraint::initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
     independentBodies.initializeUsingXML(element);
     gearForceArrow.initializeUsingXML(element);
     gearMomentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* GearConstraint::writeXMLFile(DOMNode *parent) {
@@ -123,12 +124,13 @@ namespace MBSimGUI {
       body->setConstrained(false);
   }
 
-  void KinematicConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* KinematicConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e, *ee;
     Constraint::initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
     constraintForceArrow.initializeUsingXML(element);
     constraintMomentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* KinematicConstraint::writeXMLFile(DOMNode *parent) {
@@ -143,13 +145,14 @@ namespace MBSimGUI {
 
   GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
 
-    constraintFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"constraintFunction"));
+    constraintFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"constraintFunction"));
   }
 
-  void GeneralizedPositionConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedPositionConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e, *ee;
     KinematicConstraint::initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* GeneralizedPositionConstraint::writeXMLFile(DOMNode *parent) {
@@ -162,18 +165,19 @@ namespace MBSimGUI {
 
   GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
-    constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory,"",3)); 
+    constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3)); 
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialState"));
     x0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedVelocityConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e, *ee;
     KinematicConstraint::initializeUsingXML(element);
     x0.initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* GeneralizedVelocityConstraint::writeXMLFile(DOMNode *parent) {
@@ -187,18 +191,19 @@ namespace MBSimGUI {
 
   GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
-    constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory,"",3)); 
+    constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3)); 
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialState"));
     x0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  void GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e, *ee;
     KinematicConstraint::initializeUsingXML(element);
     x0.initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* GeneralizedAccelerationConstraint::writeXMLFile(DOMNode *parent) {
@@ -279,7 +284,7 @@ namespace MBSimGUI {
     }
   }
 
-  void JointConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* JointConstraint::initializeUsingXML(DOMElement *element) {
     Constraint::initializeUsingXML(element);
 
     q0.initializeUsingXML(element);
@@ -297,6 +302,8 @@ namespace MBSimGUI {
 
     jointForceArrow.initializeUsingXML(element);
     jointMomentArrow.initializeUsingXML(element);
+
+    return element;
   }
 
   DOMElement* JointConstraint::writeXMLFile(DOMNode *parent) {

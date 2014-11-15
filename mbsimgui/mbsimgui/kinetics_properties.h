@@ -20,41 +20,45 @@
 #ifndef _KINETICS_PROPERTIES_H_
 #define _KINETICS_PROPERTIES_H_
 
+#include "element.h"
 #include "basic_properties.h"
 #include <QComboBox>
 
 namespace MBSimGUI {
 
-  class FunctionProperty;
+  class Function;
 
-  class GeneralizedForceLawProperty : public Property {
+  class GeneralizedForceLaw : public Element {
 
     public:
-      GeneralizedForceLawProperty() : forceFunc(0) {}
-      GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p);
-      ~GeneralizedForceLawProperty();
-      GeneralizedForceLawProperty& operator=(const GeneralizedForceLawProperty &p);
+      GeneralizedForceLaw(const std::string &name, Element *parent) : Element(name,parent), forceFunc(0) {}
+      GeneralizedForceLaw(const GeneralizedForceLaw &p);
+      ~GeneralizedForceLaw();
+      GeneralizedForceLaw& operator=(const GeneralizedForceLaw &p);
       virtual std::string getType() const { return "GeneralizedForceLaw"; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    protected:
-      FunctionProperty *forceFunc;
+      void fromWidget(QWidget *widget) { }
+      void toWidget(QWidget *widget) { }
+   protected:
+      Function *forceFunc;
   };
 
-  class BilateralConstraintProperty : public GeneralizedForceLawProperty {
+  class BilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      virtual Property* clone() const {return new BilateralConstraintProperty(*this);}
+      BilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent) {}
+      virtual PropertyInterface* clone() const {return new BilateralConstraint(*this);}
       std::string getType() const { return "BilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {}
       void fromWidget(QWidget *widget) {}
       void toWidget(QWidget *widget) {}
   };
 
-  class RegularizedBilateralConstraintProperty : public GeneralizedForceLawProperty {
+  class RegularizedBilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      RegularizedBilateralConstraintProperty() : index(0) {}
-      virtual Property* clone() const {return new RegularizedBilateralConstraintProperty(*this);}
+      RegularizedBilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent), index(0) {}
+      virtual PropertyInterface* clone() const {return new RegularizedBilateralConstraint(*this);}
       std::string getType() const { return "RegularizedBilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       void fromWidget(QWidget *widget);
@@ -64,21 +68,22 @@ namespace MBSimGUI {
       int index;
   };
 
-  class UnilateralConstraintProperty : public GeneralizedForceLawProperty {
+  class UnilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      virtual Property* clone() const {return new UnilateralConstraintProperty(*this);}
+      UnilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent) {}
+      virtual PropertyInterface* clone() const {return new UnilateralConstraint(*this);}
       std::string getType() const { return "UnilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {}
       void fromWidget(QWidget *widget) {}
       void toWidget(QWidget *widget) {}
   };
 
-  class RegularizedUnilateralConstraintProperty : public GeneralizedForceLawProperty {
+  class RegularizedUnilateralConstraint : public GeneralizedForceLaw {
 
     public:
-      RegularizedUnilateralConstraintProperty() : index(0) {} 
-      virtual Property* clone() const {return new RegularizedUnilateralConstraintProperty(*this);}
+      RegularizedUnilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent), index(0) {} 
+      virtual PropertyInterface* clone() const {return new RegularizedUnilateralConstraint(*this);}
       std::string getType() const { return "RegularizedUnilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       void fromWidget(QWidget *widget);
@@ -88,28 +93,32 @@ namespace MBSimGUI {
       int index;
   };
 
-  class GeneralizedImpactLawProperty : public Property {
+  class GeneralizedImpactLaw : public Element {
 
     public:
+      GeneralizedImpactLaw(const std::string &name, Element *parent) : Element(name,parent) {} 
       virtual std::string getType() const { return "GeneralizedImpactLaw"; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget) { }
+      void toWidget(QWidget *widget) { }
   };
 
-  class BilateralImpactProperty : public GeneralizedImpactLawProperty {
+  class BilateralImpact : public GeneralizedImpactLaw {
 
     public:
-      virtual Property* clone() const {return new BilateralImpactProperty(*this);}
+      BilateralImpact(const std::string &name, Element *parent) : GeneralizedImpactLaw(name,parent) {} 
+      virtual PropertyInterface* clone() const {return new BilateralImpact(*this);}
       std::string getType() const { return "BilateralImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {}
       void fromWidget(QWidget *widget) {}
       void toWidget(QWidget *widget) {}
   };
 
-  class UnilateralNewtonImpactProperty : public GeneralizedImpactLawProperty {
+  class UnilateralNewtonImpact : public GeneralizedImpactLaw {
 
     public:
-      UnilateralNewtonImpactProperty();
-      virtual Property* clone() const {return new UnilateralNewtonImpactProperty(*this);}
+      UnilateralNewtonImpact(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new UnilateralNewtonImpact(*this);}
       std::string getType() const { return "UnilateralNewtonImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -119,24 +128,26 @@ namespace MBSimGUI {
       ExtProperty restitutionCoefficient;
   };
 
-  class FrictionForceLawProperty : public Property {
+  class FrictionForceLaw : public Element {
 
     public:
-      FrictionForceLawProperty() : frictionForceFunc(0) {}
-      FrictionForceLawProperty(const FrictionForceLawProperty &p);
-      ~FrictionForceLawProperty();
-      FrictionForceLawProperty& operator=(const FrictionForceLawProperty &p);
+      FrictionForceLaw(const std::string &name, Element *parent) : Element(name,parent), frictionForceFunc(0) {}
+      FrictionForceLaw(const FrictionForceLaw &p);
+      ~FrictionForceLaw();
+      FrictionForceLaw& operator=(const FrictionForceLaw &p);
       virtual std::string getType() const { return "FrictionForceLaw"; }
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget) { }
+      void toWidget(QWidget *widget) { }
     protected:
-      FunctionProperty *frictionForceFunc;
+      Function *frictionForceFunc;
   };
 
-  class PlanarCoulombFrictionProperty : public FrictionForceLawProperty {
+  class PlanarCoulombFriction : public FrictionForceLaw {
 
     public:
-      PlanarCoulombFrictionProperty();
-      virtual Property* clone() const {return new PlanarCoulombFrictionProperty(*this);}
+      PlanarCoulombFriction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new PlanarCoulombFriction(*this);}
       std::string getType() const { return "PlanarCoulombFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -147,11 +158,11 @@ namespace MBSimGUI {
       ExtProperty frictionCoefficient;
   };
 
-  class SpatialCoulombFrictionProperty : public FrictionForceLawProperty {
+  class SpatialCoulombFriction : public FrictionForceLaw {
 
     public:
-      SpatialCoulombFrictionProperty();
-      virtual Property* clone() const {return new SpatialCoulombFrictionProperty(*this);}
+      SpatialCoulombFriction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new SpatialCoulombFriction(*this);}
       std::string getType() const { return "SpatialCoulombFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -162,11 +173,11 @@ namespace MBSimGUI {
       ExtProperty frictionCoefficient;
   };
 
-  class RegularizedPlanarFrictionProperty : public FrictionForceLawProperty {
+  class RegularizedPlanarFriction : public FrictionForceLaw {
 
     public:
-      RegularizedPlanarFrictionProperty() : index(0) {defineFunction(0);}
-      virtual Property* clone() const {return new RegularizedPlanarFrictionProperty(*this);}
+      RegularizedPlanarFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent), index(0) {defineFunction(0);}
+      virtual PropertyInterface* clone() const {return new RegularizedPlanarFriction(*this);}
       std::string getType() const { return "RegularizedPlanarFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       void fromWidget(QWidget *widget);
@@ -177,11 +188,11 @@ namespace MBSimGUI {
       int index;
   };
 
-  class RegularizedSpatialFrictionProperty : public FrictionForceLawProperty {
+  class RegularizedSpatialFriction : public FrictionForceLaw {
 
     public:
-      RegularizedSpatialFrictionProperty() : index(0) {defineFunction(0);}
-      virtual Property* clone() const {return new RegularizedSpatialFrictionProperty(*this);}
+      RegularizedSpatialFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent), index(0) {defineFunction(0);}
+      virtual PropertyInterface* clone() const {return new RegularizedSpatialFriction(*this);}
       std::string getType() const { return "RegularizedSpatialFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       void fromWidget(QWidget *widget);
@@ -192,19 +203,21 @@ namespace MBSimGUI {
       int index;
   };
 
-  class FrictionImpactLawProperty : public Property {
+  class FrictionImpactLaw : public Element {
 
     public:
-      FrictionImpactLawProperty() {}
+      FrictionImpactLaw(const std::string &name, Element *parent) : Element(name,parent) {}
       virtual std::string getType() const { return "FrictionImpactLaw"; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget) { }
+      void toWidget(QWidget *widget) { }
   };
 
-  class PlanarCoulombImpactProperty : public FrictionImpactLawProperty {
+  class PlanarCoulombImpact : public FrictionImpactLaw {
 
     public:
-      PlanarCoulombImpactProperty();
-      virtual Property* clone() const {return new PlanarCoulombImpactProperty(*this);}
+      PlanarCoulombImpact(const std::string &name, Element *parent); 
+      virtual PropertyInterface* clone() const {return new PlanarCoulombImpact(*this);}
       std::string getType() const { return "PlanarCoulombImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -215,11 +228,11 @@ namespace MBSimGUI {
       ExtProperty frictionCoefficient;
   };
 
-  class SpatialCoulombImpactProperty : public FrictionImpactLawProperty {
+  class SpatialCoulombImpact : public FrictionImpactLaw {
 
     public:
-      SpatialCoulombImpactProperty();
-      virtual Property* clone() const {return new SpatialCoulombImpactProperty(*this);}
+      SpatialCoulombImpact(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new SpatialCoulombImpact(*this);}
       std::string getType() const { return "SpatialCoulombImpact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element); 
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -233,11 +246,11 @@ namespace MBSimGUI {
   class GeneralizedForceLawChoiceProperty : public Property {
 
     public:
-      GeneralizedForceLawChoiceProperty(const MBXMLUtils::FQN &xmlName_) : generalizedForceLaw(0), index(0), xmlName(xmlName_) {defineForceLaw(0);}
-      GeneralizedForceLawChoiceProperty(const GeneralizedForceLawChoiceProperty &p) : generalizedForceLaw(static_cast<GeneralizedForceLawProperty*>(p.generalizedForceLaw->clone())), index(p.index), xmlName(p.xmlName) {}
+      GeneralizedForceLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), generalizedForceLaw(0), index(0), xmlName(xmlName_) {defineForceLaw(0);}
+      GeneralizedForceLawChoiceProperty(const GeneralizedForceLawChoiceProperty &p) : generalizedForceLaw(static_cast<GeneralizedForceLaw*>(p.generalizedForceLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~GeneralizedForceLawChoiceProperty() {delete generalizedForceLaw;}
-      GeneralizedForceLawChoiceProperty& operator=(const GeneralizedForceLawChoiceProperty &p) {delete generalizedForceLaw; generalizedForceLaw=static_cast<GeneralizedForceLawProperty*>(p.generalizedForceLaw->clone()); index=p.index; xmlName=p.xmlName;}
-      virtual Property* clone() const {return new GeneralizedForceLawChoiceProperty(*this);}
+      GeneralizedForceLawChoiceProperty& operator=(const GeneralizedForceLawChoiceProperty &p) {delete generalizedForceLaw; generalizedForceLaw=static_cast<GeneralizedForceLaw*>(p.generalizedForceLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      virtual PropertyInterface* clone() const {return new GeneralizedForceLawChoiceProperty(*this);}
 
       void defineForceLaw(int);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -246,7 +259,8 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
 
     protected:
-      GeneralizedForceLawProperty *generalizedForceLaw;
+      Element *parent;
+      GeneralizedForceLaw *generalizedForceLaw;
       int index;
       MBXMLUtils::FQN xmlName;
   };
@@ -254,11 +268,11 @@ namespace MBSimGUI {
   class GeneralizedImpactLawChoiceProperty : public Property {
 
     public:
-      GeneralizedImpactLawChoiceProperty(const MBXMLUtils::FQN &xmlName_) : generalizedImpactLaw(0), index(0), xmlName(xmlName_) {defineImpactLaw(0);}
-      GeneralizedImpactLawChoiceProperty(const GeneralizedImpactLawChoiceProperty &p) : generalizedImpactLaw(static_cast<GeneralizedImpactLawProperty*>(p.generalizedImpactLaw->clone())), index(p.index), xmlName(p.xmlName) {}
+      GeneralizedImpactLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), generalizedImpactLaw(0), index(0), xmlName(xmlName_) {defineImpactLaw(0);}
+      GeneralizedImpactLawChoiceProperty(const GeneralizedImpactLawChoiceProperty &p) : generalizedImpactLaw(static_cast<GeneralizedImpactLaw*>(p.generalizedImpactLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~GeneralizedImpactLawChoiceProperty() {delete generalizedImpactLaw;}
-      GeneralizedImpactLawChoiceProperty& operator=(const GeneralizedImpactLawChoiceProperty &p) {delete generalizedImpactLaw; generalizedImpactLaw=static_cast<GeneralizedImpactLawProperty*>(p.generalizedImpactLaw->clone()); index=p.index; xmlName=p.xmlName;}
-      virtual Property* clone() const {return new GeneralizedImpactLawChoiceProperty(*this);}
+      GeneralizedImpactLawChoiceProperty& operator=(const GeneralizedImpactLawChoiceProperty &p) {delete generalizedImpactLaw; generalizedImpactLaw=static_cast<GeneralizedImpactLaw*>(p.generalizedImpactLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      virtual PropertyInterface* clone() const {return new GeneralizedImpactLawChoiceProperty(*this);}
 
       void defineImpactLaw(int);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -267,7 +281,8 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
 
     protected:
-      GeneralizedImpactLawProperty *generalizedImpactLaw;
+      Element *parent;
+      GeneralizedImpactLaw *generalizedImpactLaw;
       int index;
       MBXMLUtils::FQN xmlName;
   };
@@ -275,11 +290,11 @@ namespace MBSimGUI {
   class FrictionForceLawChoiceProperty : public Property {
 
     public:
-      FrictionForceLawChoiceProperty(const MBXMLUtils::FQN &xmlName_) : frictionForceLaw(0), index(0), xmlName(xmlName_) {defineFrictionLaw(0);}
-      FrictionForceLawChoiceProperty(const FrictionForceLawChoiceProperty &p) : frictionForceLaw(static_cast<FrictionForceLawProperty*>(p.frictionForceLaw->clone())), index(p.index), xmlName(p.xmlName) {}
+      FrictionForceLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), frictionForceLaw(0), index(0), xmlName(xmlName_) {defineFrictionLaw(0);}
+      FrictionForceLawChoiceProperty(const FrictionForceLawChoiceProperty &p) : frictionForceLaw(static_cast<FrictionForceLaw*>(p.frictionForceLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~FrictionForceLawChoiceProperty() {delete frictionForceLaw;}
-      FrictionForceLawChoiceProperty& operator=(const FrictionForceLawChoiceProperty &p) {delete frictionForceLaw; frictionForceLaw=static_cast<FrictionForceLawProperty*>(p.frictionForceLaw->clone()); index=p.index; xmlName=p.xmlName;}
-      virtual Property* clone() const {return new FrictionForceLawChoiceProperty(*this);}
+      FrictionForceLawChoiceProperty& operator=(const FrictionForceLawChoiceProperty &p) {delete frictionForceLaw; frictionForceLaw=static_cast<FrictionForceLaw*>(p.frictionForceLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      virtual PropertyInterface* clone() const {return new FrictionForceLawChoiceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -288,7 +303,8 @@ namespace MBSimGUI {
       void defineFrictionLaw(int);
 
     protected:
-      FrictionForceLawProperty *frictionForceLaw;
+      Element *parent;
+      FrictionForceLaw *frictionForceLaw;
       int index;
       MBXMLUtils::FQN xmlName;
   };
@@ -296,11 +312,11 @@ namespace MBSimGUI {
   class FrictionImpactLawChoiceProperty : public Property {
 
     public:
-      FrictionImpactLawChoiceProperty(const MBXMLUtils::FQN &xmlName_) : frictionImpactLaw(0), index(0), xmlName(xmlName_) {defineFrictionImpactLaw(0);}
-      FrictionImpactLawChoiceProperty(const FrictionImpactLawChoiceProperty &p) : frictionImpactLaw(static_cast<FrictionImpactLawProperty*>(p.frictionImpactLaw->clone())), index(p.index), xmlName(p.xmlName) {}
+      FrictionImpactLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), frictionImpactLaw(0), index(0), xmlName(xmlName_) {defineFrictionImpactLaw(0);}
+      FrictionImpactLawChoiceProperty(const FrictionImpactLawChoiceProperty &p) : frictionImpactLaw(static_cast<FrictionImpactLaw*>(p.frictionImpactLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~FrictionImpactLawChoiceProperty() {delete frictionImpactLaw;}
-      FrictionImpactLawChoiceProperty& operator=(const FrictionImpactLawChoiceProperty &p) {delete frictionImpactLaw; frictionImpactLaw=static_cast<FrictionImpactLawProperty*>(p.frictionImpactLaw->clone()); index=p.index; xmlName=p.xmlName;}
-      virtual Property* clone() const {return new FrictionImpactLawChoiceProperty(*this);}
+      FrictionImpactLawChoiceProperty& operator=(const FrictionImpactLawChoiceProperty &p) {delete frictionImpactLaw; frictionImpactLaw=static_cast<FrictionImpactLaw*>(p.frictionImpactLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      virtual PropertyInterface* clone() const {return new FrictionImpactLawChoiceProperty(*this);}
 
       void defineFrictionImpactLaw(int);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -309,7 +325,8 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
 
     protected:
-      FrictionImpactLawProperty *frictionImpactLaw;
+      Element *parent;
+      FrictionImpactLaw *frictionImpactLaw;
       int index;
       MBXMLUtils::FQN xmlName;
   };

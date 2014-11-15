@@ -51,10 +51,11 @@ namespace MBSimGUI {
     object.initialize();
   }
 
-  void GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedCoordinateSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     object.initializeUsingXML(element);
     index.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* GeneralizedCoordinateSensor::writeXMLFile(DOMNode *parent) {
@@ -76,10 +77,11 @@ namespace MBSimGUI {
     frame.initialize();
   }
 
-  void AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
+  DOMElement* AbsoluteCoordinateSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     frame.initializeUsingXML(element);
     direction.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* AbsoluteCoordinateSensor::writeXMLFile(DOMNode *parent) {
@@ -100,12 +102,13 @@ namespace MBSimGUI {
     //  vector<string> var;
     //  var.push_back("t");
     //  property.push_back(new SymbolicFunctionProperty("VS",var));
-    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIMCONTROL%"function"));
+    function.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIMCONTROL%"function"));
   }
 
-  void FunctionSensor::initializeUsingXML(DOMElement *element) {
+  DOMElement* FunctionSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     function.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* FunctionSensor::writeXMLFile(DOMNode *parent) {
@@ -123,9 +126,10 @@ namespace MBSimGUI {
     spsRef.initialize();
   }
 
-  void SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
+  DOMElement* SignalProcessingSystemSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     spsRef.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* SignalProcessingSystemSensor::writeXMLFile(DOMNode *parent) {

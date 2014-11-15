@@ -24,6 +24,7 @@
 #include "extended_widgets.h"
 #include "utils.h"
 #include "function_widget_factory.h"
+#include "function_property.h"
 #include <QtGui>
 #include "mainwindow.h"
 #include <mbxmlutils/octeval.h>
@@ -208,14 +209,14 @@ namespace MBSimGUI {
     layout->addWidget(denom);
   }
 
-  AdditionFunctionWidget::AdditionFunctionWidget(int m) {
+  AdditionFunctionWidget::AdditionFunctionWidget(Element *parent, int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    f1 = new ExtWidget("First summand",new ChoiceWidget2(new FunctionWidgetFactory2));
+    f1 = new ExtWidget("First summand",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     layout->addWidget(f1);
-    f2 = new ExtWidget("Second summand",new ChoiceWidget2(new FunctionWidgetFactory2));
+    f2 = new ExtWidget("Second summand",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     layout->addWidget(f2);
   }
 
@@ -224,14 +225,14 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(f2->getWidget())->resize_(m,n);
   }
 
-  MultiplicationFunctionWidget::MultiplicationFunctionWidget(int m) {
+  MultiplicationFunctionWidget::MultiplicationFunctionWidget(Element *parent, int m) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    f1 = new ExtWidget("First factor",new ChoiceWidget2(new FunctionWidgetFactory2));
+    f1 = new ExtWidget("First factor",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     layout->addWidget(f1);
-    f2 = new ExtWidget("Second factor",new ChoiceWidget2(new FunctionWidgetFactory2));
+    f2 = new ExtWidget("Second factor",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     layout->addWidget(f2);
   }
 
@@ -239,13 +240,13 @@ namespace MBSimGUI {
 //    functions->resize_(m,n);
   }
 
-  VectorValuedFunctionWidget::VectorValuedFunctionWidget(int m, bool fixedSize) {
+  VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *parent, int m, bool fixedSize) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2),"Function",m,1));
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",m,1));
     layout->addWidget(functions);
   }
 
@@ -280,12 +281,12 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
-  PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(int n) {
+  PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *parent, int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2),"Function",n,1));
+    functions = new ExtWidget("Limited functions",new ListWidget(new LimitedFunctionWidgetFactory(new FunctionWidgetFactory2(parent)),"Function",n,1));
     layout->addWidget(functions);
 
     vector<PhysicalVariableWidget*> input;
@@ -466,15 +467,15 @@ namespace MBSimGUI {
     layout->addWidget(l0);
   }
 
-  NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget() {
+  NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget(Element *parent) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    g = new ExtWidget("Distance function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    g = new ExtWidget("Distance function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     layout->addWidget(g);
 
-    gd = new ExtWidget("Velocity function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    gd = new ExtWidget("Velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     layout->addWidget(gd);
   }
 
@@ -524,6 +525,23 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
     mu = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
     layout->addWidget(mu);
+  }
+
+  SignalFunctionWidget::SignalFunctionWidget(Element *element) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    dummy = new Function("NoName",element); // Workaround for correct XML path. TODO: provide a consistent concept
+    sRef = new ExtWidget("Return signal",new SignalOfReferenceWidget(dummy,0));
+    layout->addWidget(sRef);
+  }
+  
+  SignalFunctionWidget::~SignalFunctionWidget() { 
+    delete dummy; 
+  }
+
+  void SignalFunctionWidget::updateWidget() { 
+    sRef->updateWidget(); 
   }
 
 }

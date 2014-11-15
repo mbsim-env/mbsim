@@ -48,6 +48,7 @@
 #ifdef WIN32
 # define putenv _putenv
 #endif
+#include "function_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -71,7 +72,7 @@ namespace MBSimGUI {
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
     putenv("MBXMLUTILS_HTMLOUTPUT=1");
-
+    
     mw = this;
 
     if(bfs::is_directory("/dev/shm"))

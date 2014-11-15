@@ -236,12 +236,12 @@ namespace MBSimGUI {
   }
 
   ContainerProperty::~ContainerProperty() {
-    for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    for(vector<PropertyInterface*>::iterator i = property.begin(); i != property.end(); ++i)
       delete *i;
   }
 
   ContainerProperty& ContainerProperty::operator=(const ContainerProperty &p) {
-    for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    for(vector<PropertyInterface*>::iterator i = property.begin(); i != property.end(); ++i)
       delete *i;
     property.clear();
     xmlName=p.xmlName; 
@@ -403,7 +403,7 @@ namespace MBSimGUI {
       property[i]->initialize();
   }
 
-  Property* ChoicePropertyFactory::createProperty(int i) {
+  PropertyInterface* ChoicePropertyFactory::createProperty(int i) {
     return new ChoiceProperty2(factory,xmlName,mode);
   }
 

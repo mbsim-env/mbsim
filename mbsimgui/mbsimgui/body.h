@@ -49,7 +49,7 @@ namespace MBSimGUI {
 
     void initialize();
 
-    void initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}

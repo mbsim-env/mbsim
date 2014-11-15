@@ -53,9 +53,9 @@ namespace MBSimGUI {
     friend class GearConstraintPropertyDialog;
     public:
     GearConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new GearConstraint(*this);}
+    virtual PropertyInterface* clone() const {return new GearConstraint(*this);}
     std::string getType() const { return "GearConstraint"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     void deinitialize();
@@ -69,7 +69,7 @@ namespace MBSimGUI {
     public:
     KinematicConstraint(const std::string &str, Element *parent);
     std::string getType() const { return "KinematicConstraint"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     void deinitialize();
@@ -82,9 +82,9 @@ namespace MBSimGUI {
     friend class GeneralizedPositionConstraintPropertyDialog;
     public:
     GeneralizedPositionConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new GeneralizedPositionConstraint(*this);}
+    virtual PropertyInterface* clone() const {return new GeneralizedPositionConstraint(*this);}
     std::string getType() const { return "GeneralizedPositionConstraint"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
     protected:
@@ -95,9 +95,9 @@ namespace MBSimGUI {
     friend class GeneralizedVelocityConstraintPropertyDialog;
     public:
     GeneralizedVelocityConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new GeneralizedVelocityConstraint(*this);}
+    virtual PropertyInterface* clone() const {return new GeneralizedVelocityConstraint(*this);}
     std::string getType() const { return "GeneralizedVelocityConstraint"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
     protected:
@@ -108,9 +108,9 @@ namespace MBSimGUI {
     friend class GeneralizedAccelerationConstraintPropertyDialog;
     public:
     GeneralizedAccelerationConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new GeneralizedAccelerationConstraint(*this);}
+    virtual PropertyInterface* clone() const {return new GeneralizedAccelerationConstraint(*this);}
     std::string getType() const { return "GeneralizedAccelerationConstraint"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
     protected:
@@ -121,9 +121,9 @@ namespace MBSimGUI {
     friend class JointConstraintPropertyDialog;
     public:
     JointConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new JointConstraint(*this);}
+    virtual PropertyInterface* clone() const {return new JointConstraint(*this);}
     std::string getType() const { return "JointConstraint"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     void deinitialize();

@@ -31,7 +31,7 @@ namespace MBSimGUI {
     Contact(const std::string &str, Element *parent);
     ~Contact();
     std::string getType() const { return "Contact"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}

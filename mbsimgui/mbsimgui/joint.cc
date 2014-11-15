@@ -36,13 +36,13 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
     forceDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-    forceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"forceLaw"));
+    forceLaw.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"forceLaw"));
 
     input.clear();
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
     momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
-    momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"momentLaw"));
+    momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"momentLaw"));
 
     connections.setProperty(new ConnectFramesProperty(2,this));
 
@@ -61,7 +61,7 @@ namespace MBSimGUI {
     connections.initialize();
   }
 
-  void Joint::initializeUsingXML(DOMElement *element) {
+  DOMElement* Joint::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     refFrameID.initializeUsingXML(element);
     forceDirection.initializeUsingXML(element);
@@ -71,6 +71,7 @@ namespace MBSimGUI {
     connections.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
     momentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Joint::writeXMLFile(DOMNode *parent) {

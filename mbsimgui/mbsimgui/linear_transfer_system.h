@@ -40,7 +40,7 @@ namespace MBSimGUI {
     public:
     LinearTransferSystem(const std::string &str, Element *parent);
     std::string getType() const { return "LinearTransferSystem"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new LinearTransferSystemPropertyDialog(this);}
     protected:

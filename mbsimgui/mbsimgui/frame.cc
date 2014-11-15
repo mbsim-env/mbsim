@@ -60,9 +60,10 @@ namespace MBSimGUI {
     return frame;
   }
 
-  void Frame::initializeUsingXML(DOMElement *element) {
+  DOMElement* Frame::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
     visu.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Frame::writeXMLFile(DOMNode *parent) {
@@ -97,11 +98,12 @@ namespace MBSimGUI {
     refFrame.initialize();
   }
 
-  void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
+  DOMElement* FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
     refFrame.initializeUsingXML(element);
     position.initializeUsingXML(element);
     orientation.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {

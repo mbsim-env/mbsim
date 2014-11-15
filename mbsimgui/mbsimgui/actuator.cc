@@ -61,7 +61,7 @@ namespace MBSimGUI {
     connections.initialize();
   }
 
-  void Actuator::initializeUsingXML(DOMElement *element) {
+  DOMElement* Actuator::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     forceDir.initializeUsingXML(element);
     momentDir.initializeUsingXML(element);
@@ -70,6 +70,7 @@ namespace MBSimGUI {
     connections.initializeUsingXML(element);
     actuatorForceArrow.initializeUsingXML(element);
     actuatorMomentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Actuator::writeXMLFile(DOMNode *parent) {

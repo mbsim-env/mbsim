@@ -35,7 +35,7 @@ namespace MBSimGUI {
     public:
     GeneralizedCoordinateSensor(const std::string &str, Element *parent);
     virtual std::string getType() const { return "GeneralizedCoordinateSensor"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     protected:
@@ -62,7 +62,7 @@ namespace MBSimGUI {
     public:
     AbsoluteCoordinateSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     protected:
@@ -102,7 +102,7 @@ namespace MBSimGUI {
     public:
     FunctionSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "FunctionSensor"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
     protected:
@@ -115,7 +115,7 @@ namespace MBSimGUI {
     SignalProcessingSystemSensor(const std::string &str, Element *parent); 
     void initialize();
     virtual std::string getType() const { return "SignalProcessingSystemSensor"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemSensorPropertyDialog(this);}
     protected:

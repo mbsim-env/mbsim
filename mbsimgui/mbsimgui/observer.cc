@@ -66,12 +66,13 @@ namespace MBSimGUI {
     frame.initialize();
   }
 
-  void CoordinatesObserver::initializeUsingXML(DOMElement *element) {
+  DOMElement* CoordinatesObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     frame.initializeUsingXML(element);
     position.initializeUsingXML(element);
     velocity.initializeUsingXML(element);
     acceleration.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* CoordinatesObserver::writeXMLFile(DOMNode *parent) {
@@ -108,7 +109,7 @@ namespace MBSimGUI {
     frame.initialize();
   }
 
-  void KinematicsObserver::initializeUsingXML(DOMElement *element) {
+  DOMElement* KinematicsObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     frame.initializeUsingXML(element);
     position.initializeUsingXML(element);
@@ -116,6 +117,7 @@ namespace MBSimGUI {
     angularVelocity.initializeUsingXML(element);
     acceleration.initializeUsingXML(element);
     angularAcceleration.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* KinematicsObserver::writeXMLFile(DOMNode *parent) {
@@ -140,9 +142,10 @@ namespace MBSimGUI {
     refFrame.initialize();
   }
 
-  void RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
+  DOMElement* RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
     KinematicsObserver::initializeUsingXML(element);
     refFrame.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* RelativeKinematicsObserver::writeXMLFile(DOMNode *parent) {

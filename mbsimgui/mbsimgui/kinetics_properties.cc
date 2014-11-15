@@ -30,19 +30,19 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedForceLawProperty::GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p) : forceFunc(static_cast<FunctionProperty*>(p.forceFunc->clone())) {
+  GeneralizedForceLaw::GeneralizedForceLaw(const GeneralizedForceLaw &p) : Element(p), forceFunc(static_cast<Function*>(p.forceFunc->clone())) {
   }
 
-  GeneralizedForceLawProperty::~GeneralizedForceLawProperty() {
+  GeneralizedForceLaw::~GeneralizedForceLaw() {
     delete forceFunc;
   }
 
-  GeneralizedForceLawProperty& GeneralizedForceLawProperty::operator=(const GeneralizedForceLawProperty &p) {
+  GeneralizedForceLaw& GeneralizedForceLaw::operator=(const GeneralizedForceLaw &p) {
     delete forceFunc;
-    forceFunc=static_cast<FunctionProperty*>(p.forceFunc->clone());
+    forceFunc=static_cast<Function*>(p.forceFunc->clone());
   }
 
-  DOMElement* GeneralizedForceLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* GeneralizedForceLaw::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
     if(forceFunc) {
@@ -54,15 +54,15 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  void RegularizedBilateralConstraintProperty::defineFunction(int index_) {
+  void RegularizedBilateralConstraint::defineFunction(int index_) {
     index = index_;
     if(index==0) {
       delete forceFunc;
-      forceFunc = new LinearRegularizedBilateralConstraintProperty;  
+      forceFunc = new LinearRegularizedBilateralConstraint("NoName",this);  
     }
   }
 
-  DOMElement* RegularizedBilateralConstraintProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* RegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     DOMElement *e1 = e->getFirstElementChild();
@@ -73,12 +73,12 @@ namespace MBSimGUI {
     return e;
   }
 
-  void RegularizedBilateralConstraintProperty::fromWidget(QWidget *widget) {
+  void RegularizedBilateralConstraint::fromWidget(QWidget *widget) {
     defineFunction(static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->currentIndex());
     forceFunc->fromWidget(static_cast<RegularizedBilateralConstraintWidget*>(widget)->forceFunc);
   }
 
-  void RegularizedBilateralConstraintProperty::toWidget(QWidget *widget) {
+  void RegularizedBilateralConstraint::toWidget(QWidget *widget) {
     static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->blockSignals(true);;
     static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->setCurrentIndex(index);
     static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->blockSignals(false);;
@@ -86,15 +86,15 @@ namespace MBSimGUI {
     forceFunc->toWidget(static_cast<RegularizedBilateralConstraintWidget*>(widget)->forceFunc);
   }
 
-  void RegularizedUnilateralConstraintProperty::defineFunction(int index_) {
+  void RegularizedUnilateralConstraint::defineFunction(int index_) {
     index = index_;
     if(index==0) {
       delete forceFunc;
-      forceFunc = new LinearRegularizedUnilateralConstraintProperty;  
+      forceFunc = new LinearRegularizedUnilateralConstraint("NoName",this);  
     }
   }
 
-  DOMElement* RegularizedUnilateralConstraintProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* RegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     DOMElement *e1 = e->getFirstElementChild();
@@ -105,12 +105,12 @@ namespace MBSimGUI {
     return e;
   }
 
-  void RegularizedUnilateralConstraintProperty::fromWidget(QWidget *widget) {
+  void RegularizedUnilateralConstraint::fromWidget(QWidget *widget) {
     defineFunction(static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->currentIndex());
     forceFunc->fromWidget(static_cast<RegularizedUnilateralConstraintWidget*>(widget)->forceFunc);
   }
 
-  void RegularizedUnilateralConstraintProperty::toWidget(QWidget *widget) {
+  void RegularizedUnilateralConstraint::toWidget(QWidget *widget) {
     static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->blockSignals(true);;
     static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->setCurrentIndex(index);
     static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->blockSignals(false);;
@@ -118,51 +118,51 @@ namespace MBSimGUI {
     forceFunc->toWidget(static_cast<RegularizedUnilateralConstraintWidget*>(widget)->forceFunc);
   }
 
-  DOMElement* GeneralizedImpactLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* GeneralizedImpactLaw::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
     parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  UnilateralNewtonImpactProperty::UnilateralNewtonImpactProperty() {
+  UnilateralNewtonImpact::UnilateralNewtonImpact(const string &name, Element *parent) : GeneralizedImpactLaw(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"restitutionCoefficient"));
     restitutionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* UnilateralNewtonImpactProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* UnilateralNewtonImpact::initializeUsingXML(DOMElement *element) {
     restitutionCoefficient.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* UnilateralNewtonImpactProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele = GeneralizedImpactLawProperty::writeXMLFile(parent);
+  DOMElement* UnilateralNewtonImpact::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele = GeneralizedImpactLaw::writeXMLFile(parent);
     restitutionCoefficient.writeXMLFile(ele);
     return ele;
   }
 
-  void UnilateralNewtonImpactProperty::fromWidget(QWidget *widget) {
+  void UnilateralNewtonImpact::fromWidget(QWidget *widget) {
     restitutionCoefficient.fromWidget(static_cast<UnilateralNewtonImpactWidget*>(widget)->restitutionCoefficient);
   }
 
-  void UnilateralNewtonImpactProperty::toWidget(QWidget *widget) {
+  void UnilateralNewtonImpact::toWidget(QWidget *widget) {
     restitutionCoefficient.toWidget(static_cast<UnilateralNewtonImpactWidget*>(widget)->restitutionCoefficient);
   }
 
-  FrictionForceLawProperty::FrictionForceLawProperty(const FrictionForceLawProperty &p) : frictionForceFunc(static_cast<FunctionProperty*>(p.frictionForceFunc->clone())) {
+  FrictionForceLaw::FrictionForceLaw(const FrictionForceLaw &p) : Element(p), frictionForceFunc(static_cast<Function*>(p.frictionForceFunc->clone())) {
   }
 
-  FrictionForceLawProperty::~FrictionForceLawProperty() {
+  FrictionForceLaw::~FrictionForceLaw() {
     delete frictionForceFunc;
   }
 
-  FrictionForceLawProperty& FrictionForceLawProperty::operator=(const FrictionForceLawProperty &p) {
+  FrictionForceLaw& FrictionForceLaw::operator=(const FrictionForceLaw &p) {
     delete frictionForceFunc; 
-    frictionForceFunc=static_cast<FunctionProperty*>(p.frictionForceFunc->clone());
+    frictionForceFunc=static_cast<Function*>(p.frictionForceFunc->clone());
   }
 
-  DOMElement* FrictionForceLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* FrictionForceLaw::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
     if(frictionForceFunc) {
@@ -174,70 +174,70 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarCoulombFrictionProperty::PlanarCoulombFrictionProperty() {
+  PlanarCoulombFriction::PlanarCoulombFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* PlanarCoulombFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* PlanarCoulombFriction::initializeUsingXML(DOMElement *element) {
     frictionCoefficient.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* PlanarCoulombFrictionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
+  DOMElement* PlanarCoulombFriction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele = FrictionForceLaw::writeXMLFile(parent);
     frictionCoefficient.writeXMLFile(ele);
     return ele;
   }
 
-  void PlanarCoulombFrictionProperty::fromWidget(QWidget *widget) {
+  void PlanarCoulombFriction::fromWidget(QWidget *widget) {
     frictionCoefficient.fromWidget(static_cast<PlanarCoulombFrictionWidget*>(widget)->frictionCoefficient);
   }
 
-  void PlanarCoulombFrictionProperty::toWidget(QWidget *widget) {
+  void PlanarCoulombFriction::toWidget(QWidget *widget) {
     frictionCoefficient.toWidget(static_cast<PlanarCoulombFrictionWidget*>(widget)->frictionCoefficient);
   }
 
-  SpatialCoulombFrictionProperty::SpatialCoulombFrictionProperty() {
+  SpatialCoulombFriction::SpatialCoulombFriction(const std::string &name, Element *parent) : FrictionForceLaw(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* SpatialCoulombFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* SpatialCoulombFriction::initializeUsingXML(DOMElement *element) {
     frictionCoefficient.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* SpatialCoulombFrictionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
+  DOMElement* SpatialCoulombFriction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele = FrictionForceLaw::writeXMLFile(parent);
     frictionCoefficient.writeXMLFile(ele);
     return ele;
   }
 
-  void SpatialCoulombFrictionProperty::fromWidget(QWidget *widget) {
+  void SpatialCoulombFriction::fromWidget(QWidget *widget) {
     frictionCoefficient.fromWidget(static_cast<SpatialCoulombFrictionWidget*>(widget)->frictionCoefficient);
   }
 
-  void SpatialCoulombFrictionProperty::toWidget(QWidget *widget) {
+  void SpatialCoulombFriction::toWidget(QWidget *widget) {
     frictionCoefficient.toWidget(static_cast<SpatialCoulombFrictionWidget*>(widget)->frictionCoefficient);
   }
 
-  void RegularizedPlanarFrictionProperty::defineFunction(int index_) {
+  void RegularizedPlanarFriction::defineFunction(int index_) {
     index = index_;
     delete frictionForceFunc;
     if(index==0)
-      frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
+      frictionForceFunc = new LinearRegularizedCoulombFriction("NoName",this);  
     else {
       vector<string> var;
       var.push_back("gd");
       var.push_back("laN");
-      frictionForceFunc = new SymbolicFunctionProperty("VVS",var,1);
+      frictionForceFunc = new SymbolicFunction("NoName",this,"VVS",var,1);
     }
   }
 
-  DOMElement* RegularizedPlanarFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* RegularizedPlanarFriction::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
     DOMElement *e1 = e->getFirstElementChild();
@@ -252,12 +252,12 @@ namespace MBSimGUI {
     return e;
   }
 
-  void RegularizedPlanarFrictionProperty::fromWidget(QWidget *widget) {
+  void RegularizedPlanarFriction::fromWidget(QWidget *widget) {
     defineFunction(static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->currentIndex());
     frictionForceFunc->fromWidget(static_cast<RegularizedPlanarFrictionWidget*>(widget)->frictionForceFunc);
   }
 
-  void RegularizedPlanarFrictionProperty::toWidget(QWidget *widget) {
+  void RegularizedPlanarFriction::toWidget(QWidget *widget) {
     static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->blockSignals(true);;
     static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->setCurrentIndex(index);
     static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->blockSignals(false);;
@@ -265,14 +265,14 @@ namespace MBSimGUI {
     frictionForceFunc->toWidget(static_cast<RegularizedPlanarFrictionWidget*>(widget)->frictionForceFunc);
   }
 
-  void RegularizedSpatialFrictionProperty::defineFunction(int index_) {
+  void RegularizedSpatialFriction::defineFunction(int index_) {
     index = index_;
     delete frictionForceFunc;
     if(index==0)
-      frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
+      frictionForceFunc = new LinearRegularizedCoulombFriction("NoName",this);  
   }
 
-  DOMElement* RegularizedSpatialFrictionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* RegularizedSpatialFriction::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
     DOMElement *e1 = e->getFirstElementChild();
@@ -283,12 +283,12 @@ namespace MBSimGUI {
     return e;
   }
 
-  void RegularizedSpatialFrictionProperty::fromWidget(QWidget *widget) {
+  void RegularizedSpatialFriction::fromWidget(QWidget *widget) {
     defineFunction(static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->currentIndex());
     frictionForceFunc->fromWidget(static_cast<RegularizedSpatialFrictionWidget*>(widget)->frictionForceFunc);
   }
 
-  void RegularizedSpatialFrictionProperty::toWidget(QWidget *widget) {
+  void RegularizedSpatialFriction::toWidget(QWidget *widget) {
     static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->blockSignals(true);;
     static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->setCurrentIndex(index);
     static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->blockSignals(false);;
@@ -296,60 +296,60 @@ namespace MBSimGUI {
     frictionForceFunc->toWidget(static_cast<RegularizedSpatialFrictionWidget*>(widget)->frictionForceFunc);
   }
 
-  DOMElement* FrictionImpactLawProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* FrictionImpactLaw::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(MBSIM%getType());
     parent->insertBefore(ele0, NULL);
     return ele0;
   }
 
-  PlanarCoulombImpactProperty::PlanarCoulombImpactProperty() {
+  PlanarCoulombImpact::PlanarCoulombImpact(const std::string &name, Element *parent) : FrictionImpactLaw(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* PlanarCoulombImpactProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* PlanarCoulombImpact::initializeUsingXML(DOMElement *element) {
     frictionCoefficient.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* PlanarCoulombImpactProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
+  DOMElement* PlanarCoulombImpact::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele = FrictionImpactLaw::writeXMLFile(parent);
     frictionCoefficient.writeXMLFile(ele);
     return ele;
   }
 
-  void PlanarCoulombImpactProperty::fromWidget(QWidget *widget) {
+  void PlanarCoulombImpact::fromWidget(QWidget *widget) {
     frictionCoefficient.fromWidget(static_cast<PlanarCoulombImpactWidget*>(widget)->frictionCoefficient);
   }
 
-  void PlanarCoulombImpactProperty::toWidget(QWidget *widget) {
+  void PlanarCoulombImpact::toWidget(QWidget *widget) {
     frictionCoefficient.toWidget(static_cast<PlanarCoulombImpactWidget*>(widget)->frictionCoefficient);
   }
 
-  SpatialCoulombImpactProperty::SpatialCoulombImpactProperty() {
+  SpatialCoulombImpact::SpatialCoulombImpact(const std::string &name, Element *parent) : FrictionImpactLaw(name,parent) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"frictionCoefficient"));
     frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* SpatialCoulombImpactProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* SpatialCoulombImpact::initializeUsingXML(DOMElement *element) {
     frictionCoefficient.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* SpatialCoulombImpactProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
+  DOMElement* SpatialCoulombImpact::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele = FrictionImpactLaw::writeXMLFile(parent);
     frictionCoefficient.writeXMLFile(ele);
     return ele;
   }
 
-  void SpatialCoulombImpactProperty::fromWidget(QWidget *widget) {
+  void SpatialCoulombImpact::fromWidget(QWidget *widget) {
     frictionCoefficient.fromWidget(static_cast<SpatialCoulombImpactWidget*>(widget)->frictionCoefficient);
   }
 
-  void SpatialCoulombImpactProperty::toWidget(QWidget *widget) {
+  void SpatialCoulombImpact::toWidget(QWidget *widget) {
     frictionCoefficient.toWidget(static_cast<SpatialCoulombImpactWidget*>(widget)->frictionCoefficient);
   }
 
@@ -357,13 +357,13 @@ namespace MBSimGUI {
     index = index_;
     delete generalizedForceLaw;
     if(index==0)
-      generalizedForceLaw = new BilateralConstraintProperty;  
+      generalizedForceLaw = new BilateralConstraint("NoName",parent);  
     else if(index==1)
-      generalizedForceLaw = new RegularizedBilateralConstraintProperty;  
+      generalizedForceLaw = new RegularizedBilateralConstraint("NoName",parent);  
     else if(index==2)
-      generalizedForceLaw = new UnilateralConstraintProperty;  
+      generalizedForceLaw = new UnilateralConstraint("NoName",parent);  
     else if(index==3)
-      generalizedForceLaw = new RegularizedUnilateralConstraintProperty;  
+      generalizedForceLaw = new RegularizedUnilateralConstraint("NoName",parent);  
   }
 
   DOMElement* GeneralizedForceLawChoiceProperty::initializeUsingXML(DOMElement *element) {
@@ -413,9 +413,9 @@ namespace MBSimGUI {
     index = index_;
     delete generalizedImpactLaw;
     if(index==0)
-      generalizedImpactLaw = new BilateralImpactProperty;  
+      generalizedImpactLaw = new BilateralImpact("NoName",parent);  
     else if(index==1)
-      generalizedImpactLaw = new UnilateralNewtonImpactProperty;  
+      generalizedImpactLaw = new UnilateralNewtonImpact("NoName",parent);  
   }
 
   DOMElement* GeneralizedImpactLawChoiceProperty::initializeUsingXML(DOMElement *element) {
@@ -466,13 +466,13 @@ namespace MBSimGUI {
     index = index_;
     delete frictionForceLaw;
     if(index==0)
-      frictionForceLaw = new PlanarCoulombFrictionProperty;  
+      frictionForceLaw = new PlanarCoulombFriction("NoName",parent);  
     if(index==1)
-      frictionForceLaw = new RegularizedPlanarFrictionProperty;  
+      frictionForceLaw = new RegularizedPlanarFriction("NoName",parent);  
     if(index==2)
-      frictionForceLaw = new SpatialCoulombFrictionProperty;  
+      frictionForceLaw = new SpatialCoulombFriction("NoName",parent);  
     if(index==3)
-      frictionForceLaw = new RegularizedSpatialFrictionProperty;  
+      frictionForceLaw = new RegularizedSpatialFriction("NoName",parent);  
   }
 
   DOMElement* FrictionForceLawChoiceProperty::initializeUsingXML(DOMElement *element) {
@@ -527,9 +527,9 @@ namespace MBSimGUI {
     index = index_;
     delete frictionImpactLaw;
     if(index==0)
-      frictionImpactLaw = new PlanarCoulombImpactProperty;  
+      frictionImpactLaw = new PlanarCoulombImpact("NoName",parent);  
     else if(index==1)
-      frictionImpactLaw = new SpatialCoulombImpactProperty;  
+      frictionImpactLaw = new SpatialCoulombImpact("NoName",parent);  
   }
 
   DOMElement* FrictionImpactLawChoiceProperty::initializeUsingXML(DOMElement *element) {

@@ -28,56 +28,61 @@ namespace MBSimGUI {
 
   class FunctionWidgetFactory2 : public WidgetFactory {
     public:
-      FunctionWidgetFactory2() : name(FunctionWidgetFactory2::getNames()) { }
+      FunctionWidgetFactory2(Element *parent_) : parent(parent_), name(FunctionWidgetFactory2::getNames()) { }
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
   class TranslationWidgetFactory2 : public WidgetFactory {
     public:
-      TranslationWidgetFactory2() : name(TranslationWidgetFactory2::getNames()) { }
+      TranslationWidgetFactory2(Element *parent_) : parent(parent_), name(TranslationWidgetFactory2::getNames()) { }
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
   class TranslationWidgetFactory3 : public WidgetFactory {
     public:
-      TranslationWidgetFactory3() : name(TranslationWidgetFactory3::getNames()) { }
+      TranslationWidgetFactory3(Element *parent_) : parent(parent_), name(TranslationWidgetFactory3::getNames()) { }
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
   class RotationWidgetFactory2 : public WidgetFactory {
     public:
-      RotationWidgetFactory2() : name(RotationWidgetFactory2::getNames())  { }
+      RotationWidgetFactory2(Element *parent_) : parent(parent_), name(RotationWidgetFactory2::getNames())  { }
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
   class RotationWidgetFactory3 : public WidgetFactory {
     public:
-      RotationWidgetFactory3() : name(RotationWidgetFactory3::getNames())  { }
+      RotationWidgetFactory3(Element *parent_) : parent(parent_), name(RotationWidgetFactory3::getNames())  { }
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
@@ -107,21 +112,23 @@ namespace MBSimGUI {
 
   class TranslationWidgetFactory4 : public WidgetFactory {
     public:
-      TranslationWidgetFactory4();
+      TranslationWidgetFactory4(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
   class RotationWidgetFactory4 : public WidgetFactory {
     public:
-      RotationWidgetFactory4();
+      RotationWidgetFactory4(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
@@ -147,32 +154,34 @@ namespace MBSimGUI {
 
   class ConstraintWidgetFactory : public WidgetFactory {
     public:
-      ConstraintWidgetFactory();
+      ConstraintWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 
   class ConnectFramesWidgetFactory : public WidgetFactory {
     public:
-      ConnectFramesWidgetFactory(Element *element);
+      ConnectFramesWidgetFactory(Element *parent);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
-      Element *element;
   };
 
   class SpringDamperWidgetFactory : public WidgetFactory {
     public:
-      SpringDamperWidgetFactory();
+      SpringDamperWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
   };
 

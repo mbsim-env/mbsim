@@ -20,14 +20,14 @@
 #ifndef _FUNCTION_PROPERTY_H_
 #define _FUNCTION_PROPERTY_H_
 
-#include "property.h"
+#include "element.h"
 
 namespace MBSimGUI {
 
-  class FunctionProperty : public Property {
+  class Function : public Element {
     public:
-      FunctionProperty() {}
-      virtual ~FunctionProperty() {}
+      Function(const std::string &name, Element *parent) : Element(name,parent) {}
+      virtual ~Function() {}
       virtual int getArg1Size() const {return 0;}
       virtual int getArg2Size() const {return 0;}
       virtual std::string getType() const { return "Function"; }
