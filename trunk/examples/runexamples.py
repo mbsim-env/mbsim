@@ -43,7 +43,8 @@ directories=list() # a list of all examples sorted in descending order (filled r
 willFail=set([
 # pj('xml', 'time_dependent_kinematics')
   pj("mechanics", "flexible_body", "beltdrive"),
-  pj("mechanics", "contacts", "self_siphoning_beads")
+  pj("mechanics", "contacts", "self_siphoning_beads"),
+  pj("fmi", "simple_test")
 ])
 
 # MBSim Modules
