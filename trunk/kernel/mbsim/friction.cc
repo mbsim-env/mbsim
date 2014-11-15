@@ -67,7 +67,7 @@ namespace MBSim {
   } 
 
   void GeneralizedFriction::updateh(double t, int j) {
-    la = -(*func)(gd, laN);
+    la = -(*func)(gd, (*laN)(t));
     if(j==0) {
       if(body[0]) h[j][0]+=body[0]->getJRel(j).T()*la;
       h[j][1]-=body[1]->getJRel(j).T()*la;
@@ -144,11 +144,10 @@ namespace MBSim {
   void GeneralizedFriction::initializeUsingXML(DOMElement *element) {
     LinkMechanics::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionForceLaw");
-    FrictionForceLaw *f = ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild());
+    setGeneralizedFrictionForceLaw(ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild()));
    //Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
-    setGeneralizedFrictionForceLaw(f);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForce");
-    setGeneralizedNormalForce(Element::getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForceFunction");
+    setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
     if(e) saved_body1=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");

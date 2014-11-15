@@ -37,7 +37,7 @@ namespace MBSim {
     protected:
       //Function<double(double,double)> *func;
       FrictionForceLaw *func;
-      double laN;
+      Function<double(double)> *laN;
       std::vector<RigidBody*> body;
     public:
       GeneralizedFriction(const std::string &name="");
@@ -55,7 +55,10 @@ namespace MBSim {
       /** \brief Set the function for the torque calculation. */
       //void setGeneralizedForceFunction(Function<double(double,double)> *func_) { func=func_; }
       void setGeneralizedFrictionForceLaw(FrictionForceLaw *func_);
-      void setGeneralizedNormalForce(double laN_) { laN = laN_; }
+      void setGeneralizedNormalForceFunction(Function<double(double)> *laN_) { 
+        laN = laN_; 
+        laN->setParent(this);
+      }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }

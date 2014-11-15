@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
     function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
 
-    normalForce.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"generalizedNormalForce",vector<string>(2,"")),"",4));
+    normalForce.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"generalizedNormalForceFunction",0));
 
     body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodyFirstSide"));
     body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodySecondSide"));

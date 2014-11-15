@@ -1038,20 +1038,20 @@ namespace MBSimGUI {
     static_cast<GeneralizedSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
-  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Link *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Link *friction, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(friction,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
     function = new ExtWidget("Generalized friction force law",new FrictionForceLawChoiceWidget,true);
     addToTab("Kinetics", function);
 
-    normalForce = new ExtWidget("Generalized normal force",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft));
+    normalForce = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new FunctionWidgetFactory2(friction)),true);
     addToTab("Kinetics",normalForce);
 
-    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);
+    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(friction,0),true);
     addToTab("General", body1);
 
-    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(springDamper,0));
+    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(friction,0));
     addToTab("General", body2);
 
     forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
