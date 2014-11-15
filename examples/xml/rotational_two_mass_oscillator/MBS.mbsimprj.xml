@@ -158,7 +158,11 @@
             </frictionForceFunction>
           </RegularizedPlanarFriction>
         </generalizedFrictionForceLaw>
-        <generalizedNormalForce>0.1</generalizedNormalForce>
+        <generalizedNormalForceFunction>
+          <ConstantFunction>
+            <a0>0.1</a0>
+          </ConstantFunction>
+        </generalizedNormalForceFunction>
         <rigidBodySecondSide ref="../Object[RigidBody1]"/>
       </GeneralizedFriction>
       <GeneralizedFriction name="GeneralizedFriction2">
@@ -173,7 +177,11 @@
             </frictionForceFunction>
           </RegularizedPlanarFriction>
         </generalizedFrictionForceLaw>
-        <generalizedNormalForce>0.1</generalizedNormalForce>
+        <generalizedNormalForceFunction>
+          <ConstantFunction>
+            <a0>0.1</a0>
+          </ConstantFunction>
+        </generalizedNormalForceFunction>
         <rigidBodyFirstSide ref="../Object[RigidBody1]"/>
         <rigidBodySecondSide ref="../Object[RigidBody2]"/>
       </GeneralizedFriction>
