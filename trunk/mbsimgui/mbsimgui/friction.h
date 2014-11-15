@@ -31,7 +31,7 @@ namespace MBSimGUI {
     GeneralizedFriction(const std::string &str, Element *element);
     ~GeneralizedFriction();
     std::string getType() const { return "GeneralizedFriction"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedFrictionPropertyDialog(this);}

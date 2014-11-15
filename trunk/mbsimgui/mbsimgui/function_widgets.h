@@ -34,10 +34,11 @@ namespace MBSimGUI {
   class ListWidget;
   class ChoiceWidget;
   class ChoiceWidget2;
+  class Element;
 
   class ConstantFunctionWidget : public FunctionWidget {
 
-    friend class ConstantFunctionProperty;
+    friend class ConstantFunction;
 
     public:
     ConstantFunctionWidget(int m=1);
@@ -48,7 +49,7 @@ namespace MBSimGUI {
 
   class LinearFunctionWidget : public FunctionWidget {
 
-    friend class LinearFunctionProperty;
+    friend class LinearFunction;
 
     public:
     LinearFunctionWidget(int m=1);
@@ -59,7 +60,7 @@ namespace MBSimGUI {
 
   class QuadraticFunctionWidget : public FunctionWidget {
 
-    friend class QuadraticFunctionProperty;
+    friend class QuadraticFunction;
 
     public:
     QuadraticFunctionWidget(int m=1);
@@ -71,7 +72,7 @@ namespace MBSimGUI {
 
   class PolynomFunctionWidget : public FunctionWidget {
 
-    friend class PolynomFunctionProperty;
+    friend class PolynomFunction;
 
     public:
     PolynomFunctionWidget(int m=1);
@@ -83,7 +84,7 @@ namespace MBSimGUI {
 
   class SinusoidalFunctionWidget : public FunctionWidget {
 
-    friend class SinusoidalFunctionProperty;
+    friend class SinusoidalFunction;
 
     public:
     SinusoidalFunctionWidget(int m=1);
@@ -100,7 +101,7 @@ namespace MBSimGUI {
 
   class AbsoluteValueFunctionWidget : public FunctionWidget {
 
-    friend class AbsoluteValueFunctionProperty;
+    friend class AbsoluteValueFunction;
 
     public:
     AbsoluteValueFunctionWidget(int m=0) { }
@@ -108,7 +109,7 @@ namespace MBSimGUI {
 
   class ModuloFunctionWidget : public FunctionWidget {
 
-    friend class ModuloFunctionProperty;
+    friend class ModuloFunction;
 
     public:
     ModuloFunctionWidget(int m=0);
@@ -119,7 +120,7 @@ namespace MBSimGUI {
 
   class SignumFunctionWidget : public FunctionWidget {
 
-    friend class SignumFunctionProperty;
+    friend class SignumFunction;
 
     public:
     SignumFunctionWidget(int m=0) { }
@@ -127,10 +128,10 @@ namespace MBSimGUI {
 
   class AdditionFunctionWidget : public FunctionWidget {
 
-    friend class AdditionFunctionProperty;
+    friend class AdditionFunction;
 
     public:
-    AdditionFunctionWidget(int m=0);
+    AdditionFunctionWidget(Element* parent, int m=0);
     void resize_(int m, int n);
 
     protected:
@@ -139,10 +140,10 @@ namespace MBSimGUI {
 
   class MultiplicationFunctionWidget : public FunctionWidget {
 
-    friend class MultiplicationFunctionProperty;
+    friend class MultiplicationFunction;
 
     public:
-    MultiplicationFunctionWidget(int m=0);
+    MultiplicationFunctionWidget(Element* parent, int m=0);
     void resize_(int m, int n);
 
     protected:
@@ -151,10 +152,10 @@ namespace MBSimGUI {
 
   class VectorValuedFunctionWidget : public FunctionWidget {
 
-    friend class VectorValuedFunctionProperty;
+    friend class VectorValuedFunction;
 
     public:
-    VectorValuedFunctionWidget(int m=0, bool fixedSize=false);
+    VectorValuedFunctionWidget(Element *parent, int m=0, bool fixedSize=false);
     void resize_(int m, int n);
 
     protected:
@@ -164,7 +165,7 @@ namespace MBSimGUI {
   class NestedFunctionWidget : public FunctionWidget {
     Q_OBJECT
 
-    friend class NestedFunctionProperty;
+    friend class NestedFunction;
 
     public:
     NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
@@ -179,10 +180,10 @@ namespace MBSimGUI {
 
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
-    friend class PiecewiseDefinedFunctionProperty;
+    friend class PiecewiseDefinedFunction;
 
     public:
-    PiecewiseDefinedFunctionWidget(int n=0);
+    PiecewiseDefinedFunctionWidget(Element *parent, int n=0);
     void resize_(int m, int n);
 
     protected:
@@ -193,7 +194,7 @@ namespace MBSimGUI {
   class SymbolicFunctionWidget : public FunctionWidget {
     Q_OBJECT
 
-    friend class SymbolicFunctionProperty;
+    friend class SymbolicFunction;
 
     public:
     SymbolicFunctionWidget(const QStringList &var, int m, int max);
@@ -212,7 +213,7 @@ namespace MBSimGUI {
 
   class TabularFunctionWidget : public FunctionWidget {
 
-    friend class TabularFunctionProperty;
+    friend class TabularFunction;
 
     public:
     TabularFunctionWidget(int n);
@@ -224,7 +225,7 @@ namespace MBSimGUI {
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
 
-    friend class TwoDimensionalTabularFunctionProperty;
+    friend class TwoDimensionalTabularFunction;
 
     public:
     TwoDimensionalTabularFunctionWidget(int n);
@@ -236,7 +237,7 @@ namespace MBSimGUI {
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
 
-    friend class PiecewisePolynomFunctionProperty;
+    friend class PiecewisePolynomFunction;
 
     public:
     PiecewisePolynomFunctionWidget(int n);
@@ -249,7 +250,7 @@ namespace MBSimGUI {
 
   class FourierFunctionWidget : public FunctionWidget {
 
-    friend class FourierFunctionProperty;
+    friend class FourierFunction;
 
     public:
     FourierFunctionWidget(int n);
@@ -262,7 +263,7 @@ namespace MBSimGUI {
 
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
-    friend class LinearSpringDamperForceProperty;
+    friend class LinearSpringDamperForce;
 
     public:
     LinearSpringDamperForceWidget();
@@ -272,17 +273,17 @@ namespace MBSimGUI {
 
   class NonlinearSpringDamperForceWidget : public FunctionWidget {
 
-    friend class NonlinearSpringDamperForceProperty;
+    friend class NonlinearSpringDamperForce;
 
     public:
-    NonlinearSpringDamperForceWidget();
+    NonlinearSpringDamperForceWidget(Element *parent);
     protected:
     ExtWidget *g, *gd;
   };
 
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
 
-    friend class LinearRegularizedBilateralConstraintProperty;
+    friend class LinearRegularizedBilateralConstraint;
 
     public:
     LinearRegularizedBilateralConstraintWidget(); 
@@ -293,7 +294,7 @@ namespace MBSimGUI {
 
   class LinearRegularizedUnilateralConstraintWidget: public FunctionWidget {
 
-    friend class LinearRegularizedUnilateralConstraintProperty;
+    friend class LinearRegularizedUnilateralConstraint;
 
     public:
     LinearRegularizedUnilateralConstraintWidget(); 
@@ -304,13 +305,27 @@ namespace MBSimGUI {
 
   class LinearRegularizedCoulombFrictionWidget: public FunctionWidget {
 
-    friend class LinearRegularizedCoulombFrictionProperty;
+    friend class LinearRegularizedCoulombFriction;
 
     public:
     LinearRegularizedCoulombFrictionWidget(); 
 
     private:
     ExtWidget *gd, *mu;
+  };
+
+  class SignalFunctionWidget: public FunctionWidget {
+
+    friend class SignalFunction;
+
+    public:
+    SignalFunctionWidget(Element *element); 
+    ~SignalFunctionWidget();
+    void updateWidget();
+
+    private:
+    ExtWidget *sRef;
+    Element *dummy;
   };
 
 }

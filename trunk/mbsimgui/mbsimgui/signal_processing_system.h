@@ -30,7 +30,7 @@ namespace MBSimGUI {
     SignalProcessingSystem(const std::string &str, Element *parent);
     std::string getType() const { return "SignalProcessingSystem"; }
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SignalProcessingSystemPropertyDialog(this);}

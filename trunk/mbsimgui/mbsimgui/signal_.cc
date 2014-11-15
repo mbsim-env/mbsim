@@ -62,9 +62,10 @@ namespace MBSimGUI {
     signalReferences.initialize();
   }
 
-  void SignalAddition::initializeUsingXML(DOMElement *element) {
+  DOMElement* SignalAddition::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     signalReferences.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* SignalAddition::writeXMLFile(DOMNode *parent) {
@@ -96,13 +97,14 @@ namespace MBSimGUI {
     sdRef.initialize();
   }
 
-  void PIDController::initializeUsingXML(DOMElement *element) {
+  DOMElement* PIDController::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     sRef.initializeUsingXML(element);
     sdRef.initializeUsingXML(element);
     P.initializeUsingXML(element);
     I.initializeUsingXML(element);
     D.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* PIDController::writeXMLFile(DOMNode *parent) {
@@ -123,7 +125,7 @@ namespace MBSimGUI {
     //  var.push_back("x");
     //  property.push_back(new SymbolicFunctionProperty("VV",var));
     //  f.setProperty(new ChoiceProperty(MBSIMCONTROL%"function",property));
-    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory3("VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
+    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory3(this,"VV",vector<string>(1,"x")),MBSIMCONTROL%"function"));
   }
 
   void UnarySignalOperation::initialize() {
@@ -131,10 +133,11 @@ namespace MBSimGUI {
     sRef.initialize();
   }
 
-  void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
+  DOMElement* UnarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     sRef.initializeUsingXML(element);
     f.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* UnarySignalOperation::writeXMLFile(DOMNode *parent) {
@@ -151,7 +154,7 @@ namespace MBSimGUI {
     vector<string> var;
     var.push_back("x1");
     var.push_back("x2");
-    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVV",var),MBSIMCONTROL%"function"));
+    f.setProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(this,"VVV",var),MBSIMCONTROL%"function"));
   }
 
   void BinarySignalOperation::initialize() {
@@ -160,11 +163,12 @@ namespace MBSimGUI {
     s2Ref.initialize();
   }
 
-  void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
+  DOMElement* BinarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     s1Ref.initializeUsingXML(element);
     s2Ref.initializeUsingXML(element);
     f.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* BinarySignalOperation::writeXMLFile(DOMNode *parent) {

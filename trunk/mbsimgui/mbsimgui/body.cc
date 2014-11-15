@@ -123,11 +123,12 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  void Body::initializeUsingXML(DOMElement *element) {
+  DOMElement* Body::initializeUsingXML(DOMElement *element) {
     Object::initializeUsingXML(element);
     q0.initializeUsingXML(element);
     u0.initializeUsingXML(element);
     R.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Body::writeXMLFile(DOMNode *parent) {

@@ -32,10 +32,10 @@ namespace MBSimGUI {
     public:
     Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
-    virtual Element* clone() const {return new Frame(*this);}
+    virtual PropertyInterface* clone() const {return new Frame(*this);}
     std::string getType() const { return "Frame"; }
     static Frame* readXMLFile(const std::string &filename, Element *parent);    
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initializeUsingXML2(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
@@ -53,9 +53,9 @@ namespace MBSimGUI {
     public:
     FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
-    virtual Element* clone() const {return new FixedRelativeFrame(*this);}
+    virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
     std::string getType() const { return "FixedRelativeFrame"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}

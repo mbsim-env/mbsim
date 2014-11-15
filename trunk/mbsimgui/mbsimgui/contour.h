@@ -31,7 +31,7 @@ namespace MBSimGUI {
     Contour(const std::string &str, Element *parent);
     ~Contour();
     static Contour* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void setSavedFrameOfReference(const std::string &str);
     virtual void initialize();
@@ -46,7 +46,7 @@ namespace MBSimGUI {
     Point(const std::string &str, Element *parent);
     ~Point();
     std::string getType() const { return "Point"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new PointPropertyDialog(this);}
     protected:
@@ -59,7 +59,7 @@ namespace MBSimGUI {
     Line(const std::string &str, Element *parent);
     ~Line();
     std::string getType() const { return "Line"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new LinePropertyDialog(this);}
     protected:
@@ -72,7 +72,7 @@ namespace MBSimGUI {
     Plane(const std::string &str, Element *parent);
     ~Plane();
     std::string getType() const { return "Plane"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
     protected:
@@ -84,7 +84,7 @@ namespace MBSimGUI {
     public:
     Sphere(const std::string &str, Element *parent);
     ~Sphere();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "Sphere"; }
     ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
@@ -97,7 +97,7 @@ namespace MBSimGUI {
     public:
     CircleSolid(const std::string &str, Element *parent);
     ~CircleSolid();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getType() const { return "CircleSolid"; }
     ElementPropertyDialog* createPropertyDialog() {return new CircleSolidPropertyDialog(this);}

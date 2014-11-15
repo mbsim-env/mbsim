@@ -32,7 +32,7 @@ namespace MBSimGUI {
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
     static Object* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   };

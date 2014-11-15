@@ -45,7 +45,7 @@ namespace MBSimGUI {
     class DOMNode;
   }
 
-  class Element : public TreeItemData {
+  class Element : public TreeItemData, public PropertyInterface {
     friend class ElementPropertyDialog;
     friend class EmbeddingPropertyDialog;
     protected:
@@ -57,10 +57,10 @@ namespace MBSimGUI {
     public:
     Element(const std::string &name, Element *parent);
     virtual ~Element() { parameters.removeParameters(); }
-    virtual Element* clone() const {return 0;}
+    virtual PropertyInterface* clone() const {return 0;}
     virtual std::string getPath();
     std::string getXMLPath(Element *ref=0, bool rel=false);
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);

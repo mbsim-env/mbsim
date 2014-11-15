@@ -29,14 +29,14 @@ namespace MBSimGUI {
     friend class RigidBodyPropertyDialog;
     public:
     RigidBody(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new RigidBody(*this);}
+    virtual PropertyInterface* clone() const {return new RigidBody(*this);}
     std::string getType() const { return "RigidBody"; }
     int getqSize() const {return constrained?0:getqRelSize();}
     int getquize() const {return constrained?0:getuRelSize();}
     int getqRelSize() const;
     int getuRelSize() const;
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     bool isConstrained() const {return constrained;} 
     void setConstrained(bool b) {constrained = b;}
     void initialize();

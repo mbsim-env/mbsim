@@ -403,14 +403,14 @@ namespace MBSimGUI {
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("General",frameForInertiaTensor);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4),true);
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
     addToTab("Kinematics", translation);
 
     // connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
     // connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
     // connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4),true);
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
     addToTab("Kinematics", rotation);
 
     //  connect(static_cast<const ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget()),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
@@ -594,7 +594,7 @@ namespace MBSimGUI {
 
   GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new FunctionWidgetFactory2(constraint)));
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
@@ -620,7 +620,7 @@ namespace MBSimGUI {
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
     addTab("Initial conditions",1);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint)));
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
@@ -654,7 +654,7 @@ namespace MBSimGUI {
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
     addTab("Initial conditions",1);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory));
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint)));
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
@@ -862,7 +862,7 @@ namespace MBSimGUI {
     connect(forceDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
     connect(forceDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2),true);
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
     addToTab("Kinetics",forceFunction);
 
     connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
@@ -876,7 +876,7 @@ namespace MBSimGUI {
     connect(momentDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
     connect(momentDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
-    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2),true);
+    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
     addToTab("Kinetics",momentFunction);
 
     connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
@@ -926,7 +926,7 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory));
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
 
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
@@ -964,7 +964,7 @@ namespace MBSimGUI {
     forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input));
     addToTab("Kinetics", forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory));
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
 
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
@@ -999,7 +999,7 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory));
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", function);
 
     body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);
@@ -1085,7 +1085,7 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory),true);
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(constraint)),true);
     addToTab("Kinetics", function);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -1472,7 +1472,7 @@ namespace MBSimGUI {
   }
 
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2));
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(sensor)));
     addToTab("General", function);
   }
 

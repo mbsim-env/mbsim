@@ -37,7 +37,7 @@ namespace MBSimGUI {
     public:
     CoordinatesObserver(const std::string &str, Element *parent);
     std::string getType() const { return "CoordinatesObserver"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new CoordinatesObserverPropertyDialog(this);}
@@ -73,7 +73,7 @@ namespace MBSimGUI {
     friend class KinematicsObserverPropertyDialog;
     public:
     KinematicsObserver(const std::string &str, Element *parent);
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     protected:
@@ -93,7 +93,7 @@ namespace MBSimGUI {
     public:
     RelativeKinematicsObserver(const std::string &str, Element *parent);
     std::string getType() const { return "RelativeKinematicsObserver"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}

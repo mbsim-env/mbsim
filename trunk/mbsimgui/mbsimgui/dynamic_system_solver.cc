@@ -68,7 +68,7 @@ namespace MBSimGUI {
     initialProjection.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"initialProjection",vector<string>(2,"")),"",4));
   }
 
-  void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
+  DOMElement* DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
     Group::initializeUsingXML(element);
     DOMElement *e;
 
@@ -86,6 +86,8 @@ namespace MBSimGUI {
     inverseKinetics.initializeUsingXML(element);
 
     initialProjection.initializeUsingXML(element);
+
+    return element;
   }
 
   DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {

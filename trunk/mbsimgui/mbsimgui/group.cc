@@ -288,7 +288,7 @@ namespace MBSimGUI {
     return group;
   }
 
-  void Group::initializeUsingXML(DOMElement *element) {
+  DOMElement* Group::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Element::initializeUsingXML(element);
     e=element->getFirstElementChild();
@@ -370,6 +370,8 @@ namespace MBSimGUI {
       getFrame(0)->initializeUsingXML2(e);
     else
       getFrame(0)->setOpenMBVFrame(false);
+
+    return element;
   }
 
   DOMElement* Group::writeXMLFile(DOMNode *parent) {

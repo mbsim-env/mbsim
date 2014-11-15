@@ -80,8 +80,9 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
-  void Element::initializeUsingXML(DOMElement *element) {
+  DOMElement* Element::initializeUsingXML(DOMElement *element) {
     plotFeature.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Element::writeXMLFile(DOMNode *parent) {

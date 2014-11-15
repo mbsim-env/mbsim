@@ -33,7 +33,7 @@ namespace MBSimGUI {
 
   GeneralizedFriction::GeneralizedFriction(const string &str, Element *parent) : Link(str, parent), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-    function.setProperty(new FrictionForceLawChoiceProperty(MBSIM%"generalizedFrictionForceLaw"));
+    function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
 
     normalForce.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"generalizedNormalForce",vector<string>(2,"")),"",4));
 
@@ -54,7 +54,7 @@ namespace MBSimGUI {
     Link::initialize();
   }
 
-  void GeneralizedFriction::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedFriction::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Link::initializeUsingXML(element);
     function.initializeUsingXML(element);
@@ -63,6 +63,7 @@ namespace MBSimGUI {
     body2.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
     momentArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* GeneralizedFriction::writeXMLFile(DOMNode *parent) {

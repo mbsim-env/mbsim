@@ -46,8 +46,8 @@ namespace MBSimGUI {
     return object;
   }
 
-  void Object::initializeUsingXML(DOMElement *element) {
-    Element::initializeUsingXML(element);
+  DOMElement* Object::initializeUsingXML(DOMElement *element) {
+    return Element::initializeUsingXML(element);
   }
 
   DOMElement* Object::writeXMLFile(DOMNode *parent) {    

@@ -34,13 +34,13 @@ namespace MBSimGUI {
 
     connections.setProperty(new ConnectContoursProperty(2,this));
 
-    contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIM%"normalForceLaw"));
+    contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"normalForceLaw"));
 
-    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(MBSIM%"normalImpactLaw"));
+    contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(this,MBSIM%"normalImpactLaw"));
 
-    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(MBSIM%"tangentialForceLaw"));
+    frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"tangentialForceLaw"));
 
-    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(MBSIM%"tangentialImpactLaw"));
+    frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(this,MBSIM%"tangentialImpactLaw"));
 
     enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
@@ -59,7 +59,7 @@ namespace MBSimGUI {
     connections.initialize();
   }
 
-  void Contact::initializeUsingXML(DOMElement *element) {
+  DOMElement* Contact::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Link::initializeUsingXML(element);
     contactForceLaw.initializeUsingXML(element);
@@ -70,6 +70,7 @@ namespace MBSimGUI {
     enableOpenMBVContactPoints.initializeUsingXML(element);
     normalForceArrow.initializeUsingXML(element);
     frictionArrow.initializeUsingXML(element);
+    return element;
   }
 
   DOMElement* Contact::writeXMLFile(DOMNode *parent) {

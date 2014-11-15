@@ -32,7 +32,7 @@ namespace MBSimGUI {
     ~Actuator();
     std::string getType() const { return "Actuator"; }
     virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMCONTROL; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ActuatorPropertyDialog(this);}

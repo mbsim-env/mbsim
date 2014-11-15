@@ -30,9 +30,9 @@ namespace MBSimGUI {
     friend class GearPropertyDialog;
     public:
     Gear(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new Gear(*this);}
+    virtual PropertyInterface* clone() const {return new Gear(*this);}
     std::string getType() const { return "Gear"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GearPropertyDialog(this);}

@@ -44,9 +44,9 @@ namespace MBSimGUI {
     ExtProperty environment, solverParameters, inverseKinetics, initialProjection;
     public:
     DynamicSystemSolver(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new DynamicSystemSolver(*this);}
+    virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }
 

@@ -41,39 +41,41 @@ namespace MBSimGUI {
   //  return 0;
   //}
 
-  Property* FunctionPropertyFactory2::createProperty(int i) {
+  PropertyInterface* FunctionPropertyFactory2::createProperty(int i) {
     if(i==0)
-      return new ConstantFunctionProperty;
+      return new ConstantFunction("NoName",parent);
     if(i==1)
-      return new LinearFunctionProperty;
+      return new LinearFunction("NoName",parent);
     if(i==2)
-      return new QuadraticFunctionProperty;
+      return new QuadraticFunction("NoName",parent);
     if(i==3)
-      return new PolynomFunctionProperty;
+      return new PolynomFunction("NoName",parent);
     if(i==4)
-      return new SinusoidalFunctionProperty;
+      return new SinusoidalFunction("NoName",parent);
     if(i==5)
-      return new AbsoluteValueFunctionProperty;
+      return new AbsoluteValueFunction("NoName",parent);
     if(i==6)
-      return new VectorValuedFunctionProperty;
+      return new VectorValuedFunction("NoName",parent);
     if(i==7)
-      return new PiecewiseDefinedFunctionProperty;
+      return new PiecewiseDefinedFunction("NoName",parent);
     if(i==8)
-      return new NestedFunctionProperty(new FunctionPropertyFactory2, new FunctionPropertyFactory2);
+      return new NestedFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==9)
-      return new SymbolicFunctionProperty("VS",vector<string>(1,"t"),1);
+      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),1);
     if(i==10)
-      return new TabularFunctionProperty;
+      return new TabularFunction("NoName",parent);
     if(i==11)
-      return new PiecewisePolynomFunctionProperty;
+      return new PiecewisePolynomFunction("NoName",parent);
     if(i==12)
-      return new SignumFunctionProperty;
+      return new SignumFunction("NoName",parent);
     if(i==13)
-      return new AdditionFunctionProperty;
+      return new AdditionFunction("NoName",parent);
     if(i==14)
-      return new MultiplicationFunctionProperty;
+      return new MultiplicationFunction("NoName",parent);
     if(i==15)
-      return new FourierFunctionProperty;
+      return new FourierFunction("NoName",parent);
+    if(i==16)
+      return new SignalFunction("NoName",parent);
   }
 
   vector<FQN> FunctionPropertyFactory2::getNames() {
@@ -94,32 +96,33 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"AdditionFunction");
     name.push_back(MBSIM%"MultiplicationFunction");
     name.push_back(MBSIM%"FourierFunction");
+    name.push_back(MBSIMCONTROL%"SignalFunction");
     return name;
   }
 
-  Property* TranslationPropertyFactory2::createProperty(int i) {
+  PropertyInterface* TranslationPropertyFactory2::createProperty(int i) {
     if(i==0)
-      return new TranslationAlongXAxisProperty;
+      return new TranslationAlongXAxis("NoName",parent);
     if(i==1)
-      return new TranslationAlongYAxisProperty;
+      return new TranslationAlongYAxis("NoName",parent);
     if(i==2)
-      return new TranslationAlongZAxisProperty;
+      return new TranslationAlongZAxis("NoName",parent);
     if(i==3)
-      return new TranslationAlongAxesXYProperty;
+      return new TranslationAlongAxesXY("NoName",parent);
     if(i==4)
-      return new TranslationAlongAxesYZProperty;
+      return new TranslationAlongAxesYZ("NoName",parent);
     if(i==5)
-      return new TranslationAlongAxesXZProperty;
+      return new TranslationAlongAxesXZ("NoName",parent);
     if(i==6)
-      return new TranslationAlongAxesXYZProperty;
+      return new TranslationAlongAxesXYZ("NoName",parent);
     if(i==7)
-      return new TranslationAlongFixedAxisProperty;
+      return new TranslationAlongFixedAxis("NoName",parent);
     if(i==8)
-      return new LinearTranslationProperty(3,1);
+      return new LinearTranslation("NoName",parent,3,1);
     if(i==9)
-      return new SymbolicFunctionProperty("VV",vector<string>(1,"q"),3);
+      return new SymbolicFunction("NoName",parent,"VV",vector<string>(1,"q"),3);
     if(i==10)
-      return new NestedFunctionProperty(new TranslationPropertyFactory2, new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")));
+      return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"VV",vector<string>(1,"q")));
   }
 
   vector<FQN> TranslationPropertyFactory2::getNames() {
@@ -138,19 +141,19 @@ namespace MBSimGUI {
     return name;
   }
 
-  Property* TranslationPropertyFactory3::createProperty(int i) {
+  PropertyInterface* TranslationPropertyFactory3::createProperty(int i) {
     if(i==0)
-      return new VectorValuedFunctionProperty;
+      return new VectorValuedFunction("NoName",parent);
     if(i==1)
-      return new NestedFunctionProperty(new TranslationPropertyFactory2, new FunctionPropertyFactory2);
+      return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==2)
-      return new SymbolicFunctionProperty("VS",vector<string>(1,"t"),3);
+      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),3);
     if(i==3)
-      return new TabularFunctionProperty;
+      return new TabularFunction("NoName",parent);
     if(i==4)
-      return new PiecewiseDefinedFunctionProperty;
+      return new PiecewiseDefinedFunction("NoName",parent);
     if(i==5)
-      return new PiecewisePolynomFunctionProperty;
+      return new PiecewisePolynomFunction("NoName",parent);
   }
 
   vector<FQN> TranslationPropertyFactory3::getNames() {
@@ -164,32 +167,32 @@ namespace MBSimGUI {
     return name;
   }
 
-  Property* RotationPropertyFactory2::createProperty(int i) {
+  PropertyInterface* RotationPropertyFactory2::createProperty(int i) {
 
     if(i==0)
-      return new RotationAboutXAxisProperty;
+      return new RotationAboutXAxis("NoName",parent);
     if(i==1)
-      return new RotationAboutYAxisProperty;
+      return new RotationAboutYAxis("NoName",parent);
     if(i==2)
-      return new RotationAboutZAxisProperty;
+      return new RotationAboutZAxis("NoName",parent);
     if(i==3)
-      return new RotationAboutAxesXYProperty;
+      return new RotationAboutAxesXY("NoName",parent);
     if(i==4)
-      return new RotationAboutAxesYZProperty;
+      return new RotationAboutAxesYZ("NoName",parent);
     if(i==5)
-      return new RotationAboutAxesXZProperty;
+      return new RotationAboutAxesXZ("NoName",parent);
     if(i==6)
-      return new RotationAboutAxesXYZProperty;
+      return new RotationAboutAxesXYZ("NoName",parent);
     if(i==7)
-      return new RotationAboutAxesZXZProperty;
+      return new RotationAboutAxesZXZ("NoName",parent);
     if(i==8)
-      return new RotationAboutAxesZYXProperty;
+      return new RotationAboutAxesZYX("NoName",parent);
     if(i==9)
-      return new RotationAboutFixedAxisProperty;
+      return new RotationAboutFixedAxis("NoName",parent);
     if(i==10)
-      return new NestedFunctionProperty(new RotationPropertyFactory2, new SymbolicFunctionPropertyFactory2("MV",vector<string>(1,"q")));
+      return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"MV",vector<string>(1,"q")));
     if(i==11)
-      return new SymbolicFunctionProperty("MV",vector<string>(1,"q"),1);
+      return new SymbolicFunction("NoName",parent,"MV",vector<string>(1,"q"),1);
   }
 
   vector<FQN> RotationPropertyFactory2::getNames() {
@@ -209,11 +212,11 @@ namespace MBSimGUI {
     return name;
   }
 
-  Property* RotationPropertyFactory3::createProperty(int i) {
+  PropertyInterface* RotationPropertyFactory3::createProperty(int i) {
     if(i==0)
-      return new NestedFunctionProperty(new RotationPropertyFactory2, new FunctionPropertyFactory2);
+      return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==1)
-      return new SymbolicFunctionProperty("MS",vector<string>(1,"t"),1);
+      return new SymbolicFunction("NoName",parent,"MS",vector<string>(1,"t"),1);
   }
 
   vector<FQN> RotationPropertyFactory3::getNames() {
@@ -223,11 +226,11 @@ namespace MBSimGUI {
     return name;
   }
 
-  Property* SymbolicFunctionPropertyFactory2::createProperty(int i) {
+  PropertyInterface* SymbolicFunctionPropertyFactory2::createProperty(int i) {
     if(i==0)
-      return new SymbolicFunctionProperty(ext,var,1);
+      return new SymbolicFunction("NoName",parent,ext,var,1);
     if(i==1)
-      return new TwoDimensionalTabularFunctionProperty;
+      return new TwoDimensionalTabularFunction("NoName",parent);
   }
 
   vector<FQN> SymbolicFunctionPropertyFactory2::getNames() {
@@ -237,11 +240,11 @@ namespace MBSimGUI {
     return name;
   }
 
-  Property* SymbolicFunctionPropertyFactory3::createProperty(int i) {
+  PropertyInterface* SymbolicFunctionPropertyFactory3::createProperty(int i) {
     if(i==0)
-      return new SymbolicFunctionProperty(ext,var,1);
+      return new SymbolicFunction("NoName",parent,ext,var,1);
     if(i==1)
-      return new ModuloFunctionProperty;
+      return new ModuloFunction("NoName",parent);
   }
 
   vector<FQN> SymbolicFunctionPropertyFactory3::getNames() {
@@ -251,43 +254,43 @@ namespace MBSimGUI {
     return name;
   }
 
-  TranslationPropertyFactory4::TranslationPropertyFactory4() {
+  TranslationPropertyFactory4::TranslationPropertyFactory4(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"stateDependentTranslation");
     name.push_back(MBSIM%"timeDependentTranslation");
     name.push_back(MBSIM%"generalTranslation");
   }
 
-  Property* TranslationPropertyFactory4::createProperty(int i) {
+  PropertyInterface* TranslationPropertyFactory4::createProperty(int i) {
     if(i==0)
-      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory2,MBSIM%"stateDependentTranslation"));
+      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory2(parent),MBSIM%"stateDependentTranslation"));
     if(i==1)
-      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory3,MBSIM%"timeDependentTranslation"));
+      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory3(parent),MBSIM%"timeDependentTranslation"));
     if(i==2) {
       vector<string> var;
       var.push_back("q");
       var.push_back("t");
-      return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VVS",var),MBSIM%"generalTranslation"));
+      return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(parent,"VVS",var),MBSIM%"generalTranslation"));
     }
   }
 
-  RotationPropertyFactory4::RotationPropertyFactory4() {
+  RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"stateDependentRotation");
     name.push_back(MBSIM%"timeDependentRotation");
   }
 
-  Property* RotationPropertyFactory4::createProperty(int i) {
+  PropertyInterface* RotationPropertyFactory4::createProperty(int i) {
     if(i==0)
-      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2,MBSIM%"stateDependentRotation"));
+      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2(parent),MBSIM%"stateDependentRotation"));
     if(i==1)
-      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3,MBSIM%"timeDependentRotation"));
+      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3(parent),MBSIM%"timeDependentRotation"));
   }
 
-  TabularFunctionPropertyFactory::TabularFunctionPropertyFactory() {
+  TabularFunctionPropertyFactory::TabularFunctionPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"x");
     name.push_back(MBSIM%"xy");
   }
 
-  Property* TabularFunctionPropertyFactory::createProperty(int i) {
+  PropertyInterface* TabularFunctionPropertyFactory::createProperty(int i) {
     if(i==0) {
       ContainerProperty *propertyContainer = new ContainerProperty;
       vector<Property*> choiceProperty;
@@ -313,12 +316,12 @@ namespace MBSimGUI {
     }
   }
 
-  FourierFunctionPropertyFactory::FourierFunctionPropertyFactory() {
+  FourierFunctionPropertyFactory::FourierFunctionPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"a");
     name.push_back(MBSIM%"ab");
   }
 
-  Property* FourierFunctionPropertyFactory::createProperty(int i) {
+  PropertyInterface* FourierFunctionPropertyFactory::createProperty(int i) {
     if(i==0) {
       ContainerProperty *propertyContainer = new ContainerProperty;
       vector<Property*> choiceProperty;
@@ -334,41 +337,41 @@ namespace MBSimGUI {
     }
   }
 
-  ConstraintPropertyFactory::ConstraintPropertyFactory() {
+  ConstraintPropertyFactory::ConstraintPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"timeDependentConstraintFunction");
     name.push_back(MBSIM%"stateDependentConstraintFunction");
   }
 
-  Property* ConstraintPropertyFactory::createProperty(int i) {
+  PropertyInterface* ConstraintPropertyFactory::createProperty(int i) {
     if(i==0)
-      return new ExtProperty(new ChoiceProperty2(new FunctionPropertyFactory2,MBSIM%"timeDependentConstraintFunction"));
+      return new ExtProperty(new ChoiceProperty2(new FunctionPropertyFactory2(parent),MBSIM%"timeDependentConstraintFunction"));
     if(i==1)
-      return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2("VV",vector<string>(1,"q")),MBSIM%"stateDependentConstraintFunction"));
+      return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(parent,"VV",vector<string>(1,"q")),MBSIM%"stateDependentConstraintFunction"));
   }
 
-  ConnectFramesPropertyFactory::ConnectFramesPropertyFactory(Element *element_) : name(2), element(element_) {
+  ConnectFramesPropertyFactory::ConnectFramesPropertyFactory(Element *parent_) : parent(parent_), name(2) {
   }
 
-  Property* ConnectFramesPropertyFactory::createProperty(int i) {
-    return new ConnectFramesProperty(i+1,element);
+  PropertyInterface* ConnectFramesPropertyFactory::createProperty(int i) {
+    return new ConnectFramesProperty(i+1,parent);
   }
 
-  SpringDamperPropertyFactory::SpringDamperPropertyFactory() {
+  SpringDamperPropertyFactory::SpringDamperPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"LinearSpringDamperForce");
     name.push_back(MBSIM%"NonlinearSpringDamperForce");
     name.push_back(MBSIM%"SymbolicFunction");
   }
 
-  Property* SpringDamperPropertyFactory::createProperty(int i) {
+  PropertyInterface* SpringDamperPropertyFactory::createProperty(int i) {
     if(i==0)
-      return new LinearSpringDamperForceProperty;
+      return new LinearSpringDamperForce("NoName",parent);
     if(i==1)
-      return new NonlinearSpringDamperForceProperty;
+      return new NonlinearSpringDamperForce("NoName",parent);
     if(i==2) {
       vector<string> var;
       var.push_back("gd");
       var.push_back("g");
-      return new SymbolicFunctionProperty("SSS",var,1);
+      return new SymbolicFunction("NoName",parent,"SSS",var,1);
     }
   }
 
