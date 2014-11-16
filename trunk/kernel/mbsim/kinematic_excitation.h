@@ -104,6 +104,7 @@ namespace MBSim {
         f->setParent(this);
         f->setName("Excitation");
       }
+
       void init(Element::InitStage stage) {
         KinematicExcitation::init(stage);
         f->init(stage);
@@ -125,9 +126,17 @@ namespace MBSim {
 
       std::string getType() const { return "GeneralizedVelocityExcitation"; }
 
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV>(f_);}
-      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV>(f_);}
+      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { 
+        f = f_;
+        f->setParent(this);
+        f->setName("Excitation");
+      }
+      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) {
+        setExcitationFunction(new StateDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { 
+        setExcitationFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
+      }
   };
 
   class GeneralizedAccelerationExcitation : public KinematicExcitation {
@@ -145,9 +154,22 @@ namespace MBSim {
 
       std::string getType() const { return "GeneralizedAccelerationExcitation"; }
 
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV>(f_);}
-      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV>(f_);}
+      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { 
+        f = f_;
+        f->setParent(this);
+        f->setName("Excitation");
+      }
+      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { 
+        setExcitationFunction(new StateDependentFunction<fmatvec::VecV>(f_));
+      }
+      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { 
+        setExcitationFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
+      }
+
+      void init(Element::InitStage stage) {
+        KinematicExcitation::init(stage);
+        f->init(stage);
+      }
   };
 
 }
