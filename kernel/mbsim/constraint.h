@@ -175,7 +175,7 @@ namespace MBSim {
       void setGeneralConstraintFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
         f = f_;
         f->setParent(this);
-        f->setName("GeneralConstraintFunction");
+        f->setName("Constraint");
       }
       void setTimeDependentConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
         setGeneralConstraintFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
@@ -215,7 +215,7 @@ namespace MBSim {
       void setGeneralConstraintFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
         f = f_;
         f->setParent(this);
-        f->setName("GeneralConstraintFunction");
+        f->setName("Constraint");
       }
       void setTimeDependentConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
         setGeneralConstraintFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
