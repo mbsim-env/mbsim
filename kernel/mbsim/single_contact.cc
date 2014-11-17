@@ -51,7 +51,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactGrp(0), openMBVContactFrame(2), contactArrow(NULL), frictionArrow(NULL)
 #endif
-          , saved_ref1(""), saved_ref2("") {
+          , rootID(0), saved_ref1(""), saved_ref2("") {
   }
 
   SingleContact::~SingleContact() {
