@@ -51,6 +51,7 @@ namespace MBSim {
 
   GeneralizedFriction::~GeneralizedFriction() {
     delete func;
+    delete laN;
   }
 
   void GeneralizedFriction::updatehRef(const Vec &hParent, int j) {
