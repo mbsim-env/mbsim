@@ -183,7 +183,8 @@ def main():
         pj('mbsim', 'kernel')
       ])],
     pj('mbsim', 'modules', 'mbsimElectronics'): [False, set([ # depends on
-        pj('mbsim', 'kernel')
+        pj('mbsim', 'kernel'),
+        pj('mbsim', 'modules', 'mbsimControl')
       ])],
     pj('mbsim', 'modules', 'mbsimControl'): [False, set([ # depends on
         pj('mbsim', 'kernel')
