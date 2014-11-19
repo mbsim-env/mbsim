@@ -3,12 +3,13 @@ libmbsimflatxml_la_SOURCES = mbsimflatxml.cc
 libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS)
 libmbsimflatxml_la_LDFLAGS = 
 libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) -l@BOOST_TIMER_LIB@ -l@BOOST_CHRONO_LIB@ -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
-mbsimxmlincludedir = $(includedir)/mbsimxml
-mbsimxmlinclude_HEADERS = mbsimflatxml.h
+mbsimflatxmlincludedir = $(includedir)/mbsimxml
+mbsimflatxmlinclude_HEADERS = mbsimflatxml.h
 
 libmbsimxml_la_SOURCES = mbsimxml.cc
 libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS)
 libmbsimxml_la_LIBADD = $(DEPS_LIBS)
+mbsimxmlincludedir = $(includedir)/mbsimxml
 mbsimxmlinclude_HEADERS = mbsimxml.h
 
 
