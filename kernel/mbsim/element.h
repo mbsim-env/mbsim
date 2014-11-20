@@ -267,6 +267,20 @@ namespace MBSim {
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}
 
+      /**
+       * \brief checks dependency on other elements.
+       * \return a vector of elements the calling element depends on.
+       */
+      std::vector<Element*> getElementsDependingOn() const { return dependency; }
+
+      void addDependency(Element* ele) { dependency.push_back(ele); }
+      /**
+       * \brief computes the length of the pathes in the graph that represents
+       * the dependencies between all elements.
+       * \return the length of the longest path in the graph.
+       */
+      int computeLevel();
+
     protected:
       Element *parent;
 
@@ -310,6 +324,11 @@ namespace MBSim {
       H5::GroupBase *plotGroup;
 
       void updatePlotFeatures();
+
+      /**
+       * \brief vector containing all dependencies.
+       */
+      std::vector<Element*> dependency;
 
     private:
       /**

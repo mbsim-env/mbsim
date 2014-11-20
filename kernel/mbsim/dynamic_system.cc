@@ -91,18 +91,16 @@ namespace MBSim {
       (**i).updateT(t);
   }
 
-  void DynamicSystem::updateh(double t, int j) {
+  void DynamicSystem::updateh(double t, int k) {
     for (int i = 0; i < (int) dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateh(t, j);
+      dynamicsystem[i]->updateh(t, k);
 
     for (int i = 0; i < (int) object.size(); i++)
-      object[i]->updateh(t, j);
+      object[i]->updateh(t, k);
 
-    for (int i = 0; i < (int) linkSingleValued.size(); i++)
-      linkSingleValued[i]->updateh(t, j);
-
-    for (int i = 0; i < (int) linkSetValuedNotActiveWithSmoothPart.size(); i++)
-      linkSetValuedNotActiveWithSmoothPart[i]->updateh(t, j);
+    for(unsigned int i=0; i<linkOrdered.size(); i++) 
+      for(unsigned int j=0; j<linkOrdered[i].size(); j++) 
+	linkOrdered[i][j]->updateh(t, k);
   }
 
   void DynamicSystem::updateh0Fromh1(double t) {
@@ -326,14 +324,8 @@ namespace MBSim {
 
   void DynamicSystem::updategd(double t) {
 
-    for (int i = 0; i < (int) linkSingleValued.size(); i++)
-      linkSingleValued[i]->updategd(t);
-
-    for (int i = 0; i < (int) linkSetValuedNotActiveWithSmoothPart.size(); i++)
-      linkSetValuedNotActiveWithSmoothPart[i]->updategd(t);
-
-    for (int i = 0; i < (int) linkSetValued.size(); i++)
-      linkSetValued[i]->updategd(t);
+    for (int i = 0; i < (int) link.size(); i++)
+      link[i]->updategd(t);
   }
 
   void DynamicSystem::updategdInverseKinetics(double t) {
@@ -835,9 +827,6 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updatelaRef(laParent);
-
-    for (vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
-      (**i).deletelaRef();
   }
 
   void DynamicSystem::updatelaInverseKineticsRef(const Vec &laParent) {
@@ -1099,7 +1088,6 @@ namespace MBSim {
     // clear container first, because setUpLinks in called twice from InitStage resize (before and after the reorganization)
     linkSetValued.clear();
     linkSetValuedActive.clear();
-    linkSetValuedNotActiveWithSmoothPart.clear();
     linkSingleValued.clear();
     for (unsigned int i = 0; i < link.size(); i++) {
       bool hasForceLaw = false;
@@ -1302,13 +1290,10 @@ namespace MBSim {
   void DynamicSystem::setUpActiveLinks() {
 
     linkSetValuedActive.clear();
-    linkSetValuedNotActiveWithSmoothPart.clear();
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       if ((*i)->isActive())
         linkSetValuedActive.push_back(*i);
-      else if ((*i)->hasSmoothPart())
-        linkSetValuedNotActiveWithSmoothPart.push_back(*i);
     }
   }
 

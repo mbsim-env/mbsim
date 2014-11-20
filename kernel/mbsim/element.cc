@@ -359,5 +359,16 @@ namespace MBSim {
     return SymMat();
   }
 
+  int Element::computeLevel() {
+    int lOld = 0;
+    for (unsigned int i = 0; i < dependency.size(); i++) {
+      int lNew = dependency[i]->computeLevel() + 1;
+      if (lNew > lOld) {
+        lOld = lNew;
+      }
+    }
+    return lOld;
+  }
+  
 }
 
