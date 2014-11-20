@@ -195,16 +195,18 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updateh(double t, int j) {
-    if (linePressureLoss)
-      laSmooth=(*linePressureLoss)(line->getQIn()(0));
-    else if (closablePressureLoss)
-      laSmooth=(*closablePressureLoss)(line->getQIn()(0));
-    else if (leakagePressureLoss)
-      laSmooth=(*leakagePressureLoss)(line->getQIn()(0));
-    else if (unilateral || unidirectionalPressureLoss) {
-      laSmooth=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0)));
+    if(isSingleValued() or not(active)) {
+      if (linePressureLoss)
+        laSmooth=(*linePressureLoss)(line->getQIn()(0));
+      else if (closablePressureLoss)
+        laSmooth=(*closablePressureLoss)(line->getQIn()(0));
+      else if (leakagePressureLoss)
+        laSmooth=(*leakagePressureLoss)(line->getQIn()(0));
+      else if (unilateral || unidirectionalPressureLoss) {
+        laSmooth=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0)));
+      }
+      h[j][0]-=trans(line->getJacobian())*laSmooth;
     }
-    h[j][0]-=trans(line->getJacobian())*laSmooth;
   }
 
   void RigidLinePressureLoss::updateW(double t, int j) {
