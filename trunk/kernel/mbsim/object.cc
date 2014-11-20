@@ -301,34 +301,6 @@ namespace MBSim {
     return Element::writeXMLFile(parent);
   }
 
-  int Object::computeLevel() {
-    int lOld = 0;
-    for (unsigned int i = 0; i < dependency.size(); i++) {
-      int lNew = dependency[i]->computeLevel() + 1;
-      if (lNew > lOld) {
-        lOld = lNew;
-      }
-    }
-    return lOld;
-  }
-  
-  int Object::cutDependencies() {
-    int lOld = 0;
-    Object* buf = 0;
-    for (unsigned int i = 0; i < dependency.size(); i++) {
-      int lNew = dependency[i]->cutDependencies() + 1;
-      if (lNew > lOld) {
-        lOld = lNew;
-        buf = dependency[i];
-      }
-    }
-    if (dependency.size()) {
-      dependency.clear();
-      dependency.push_back(buf);
-    }
-    return lOld;
-  }
-
   void Object::updateW0FromW1(double t) {
     //W[0] = W[1];
   }

@@ -175,13 +175,13 @@ namespace MBSim {
       SqrMat A(objList.size(), INIT, 0.);
       for (unsigned int i = 0; i < objList.size(); i++) {
 
-        vector<Object*> parentBody = objList[i]->getObjectsDependingOn();
+        vector<Element*> parentBody = objList[i]->getElementsDependingOn();
 
         for (unsigned int h = 0; h < parentBody.size(); h++) {
-          unsigned int j = 0;
           bool foundBody = false;
-          for (unsigned int k = 0; k < objList.size(); k++, j++) {
-            if (objList[k] == parentBody[h]) {
+          unsigned int j;
+          for (j = 0; j < objList.size(); j++) {
+            if (objList[j] == parentBody[h]) {
               foundBody = true;
               break;
             }
@@ -193,7 +193,6 @@ namespace MBSim {
           }
         }
       }
-      // msg(Info) << "A = " << A << endl;
 
       vector<Graph*> bufGraph;
       int nt = 0;
@@ -210,19 +209,36 @@ namespace MBSim {
           addObject(objList[i]);
         }
       }
-      // msg(Info) << "A = " << A << endl;
 
       for (unsigned int i = 0; i < bufGraph.size(); i++) {
         addGroup(bufGraph[i]);
+      }
+
+      for (unsigned int i = 0; i < link.size(); i++) {
+        if (link[i]->isSingleValued() or (link[i]->isSetValued() and link[i]->hasSmoothPart())) {
+          int level = link[i]->computeLevel();
+          for(int j=linkOrdered.size(); j<=level; j++) {
+            vector<Link*> vec;
+            linkOrdered.push_back(vec);
+          }
+          linkOrdered[level].push_back(link[i]);
+        }
       }
 
       msg(Info) << "End of special group stage==preInit" << endl;
 
       // after reorganizing a resize is required
       init(resize);
+
       for (unsigned int i = 0; i < dynamicsystem.size(); i++)
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
+
+      for(unsigned int i=0; i<linkOrdered.size(); i++) {
+        msg(Debug) << "  Links in level "<< i << ":"<< endl;
+        for(unsigned int j=0; j<linkOrdered[i].size(); j++)
+          msg(Debug) << "    "<< linkOrdered[i][j]->getPath()<<endl;
+      }
     }
     else if (stage == resize) {
       calcqSize();

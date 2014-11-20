@@ -223,22 +223,6 @@ namespace MBSim {
       virtual void facLLM(int i=0) { LLM[i] = facLL(M[i]); }
 
       /**
-       * \brief checks dependency on other objects.
-       * \return a vector of objects the calling objects depends on.
-       */
-      std::vector<Object*> getObjectsDependingOn() const { return dependency; }
-
-      void addDependency(Object* obj) { dependency.push_back(obj); }
-      /**
-       * \brief computes the length of the pathes in the graph that represents
-       * the dependencies between all objects. The function also cuts
-       * all dependencies except the one associated with the longest path.
-       * \return the length of the longest path in the graph.
-       */
-      int cutDependencies();
-      int computeLevel();
-
-      /**
        * \brief calculates size of right hand side
        * \param j index of normal usage and inverse kinetics TODO
        */
@@ -369,16 +353,6 @@ namespace MBSim {
        * \brief LU-decomposition of mass matrix 
        */
       fmatvec::SymMat LLM[2];
-
-      /**
-       * \brief indices for velocities and right hand side
-       */
-      //fmatvec::Index Iu, Ih;
-
-      /**
-       * \brief vector containing all dependencies.
-       */
-      std::vector<Object*> dependency;
   };
 
 }
