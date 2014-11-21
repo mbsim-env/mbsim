@@ -19,6 +19,7 @@ using namespace MBXMLUtils;
 
 namespace MBSimFMI {
 
+  // A MBSIM FMI instance
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
     instanceName(instanceName_),
     logger(functions.logger),
@@ -44,12 +45,16 @@ namespace MBSimFMI {
       throw runtime_error("GUID provided by caller and internal GUID does not match.");
   }
 
+  // destroy a MBSim FMI instance
   FMIInstance::~FMIInstance() {
   }
 
+  // print exceptions using the FMI logger
   void FMIInstance::logException(const exception &ex) {
     logger(this, instanceName.c_str(), fmiOK, "error", ex.what());
   }
+
+  // FMI wrapper functions
 
   void FMIInstance::setDebugLogging(fmiBoolean loggingOn) {
     if(!loggingOn)
@@ -69,30 +74,42 @@ namespace MBSimFMI {
       z(i)=x[i];
   }
 
+  // is called when the current state is a valid/accepted integrator step.
+  // (e.g. not a intermediate Runge-Kutta step of a step which will be rejected due to
+  // the error tolerances of the integrator)
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     *callEventUpdate=false;
     // MISSING: currently we plot on each completed integrator step
-    // this should be changed: make it configureable via a parmeter, ...!??
+    // this should be changed: make it configureable via a parmeter:
+    // - plot only at each n-th completet integrator step OR
+    // - do not plot here but set nextEventTime to plot at e.g. equidistent time steps OR
+    // - ...???
     dss->plot(z, time);
   }
 
+  // set a real variable
   void FMIInstance::setReal(const fmiValueReference vr[], size_t nvr, const fmiReal value[]) {
+    // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss) {
       for(size_t i=0; i<nvr; ++i) {
         if(vr[i]>=vrUnion.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
         switch(vrUnion[vr[i]].first) {
+          // set ExternGeneralizedIO force
           case ValueReferenceMap::GeneralizedIO_h:
             vrUnion[vr[i]].second.generalizedIO->setGeneralizedForce(value[i]);
             break;
+          // set SignalSource value
           case ValueReferenceMap::SignalSource:
             vrUnion[vr[i]].second.signalSource->setSignal(value[i]);
             break;
+          // not an MBSim input -> error
           default:
             throw runtime_error(str(boost::format("Setting #r%d# not allowed.")%vr[i]));
         }
       }
     }
+    // no dss exists (before fmiInitialize) -> just save the value in vrReal
     else {
       for(size_t i=0; i<nvr; ++i)
         vrReal[vr[i]]=value[i];
@@ -162,43 +179,52 @@ namespace MBSimFMI {
     sv.resize(dss->getsvSize());
     svLast.resize(dss->getsvSize());
     jsv.resize(dss->getsvSize(), fmatvec::INIT, 0); // init with 0 = no shift in all indices
-    // initialize last stop vector with initial stop vector state
+    // initialize last stop vector with initial stop vector state (see eventUpdate for details)
     dss->getsv(z, svLast, time);
-
 
     // plot initial state
     dss->plot(z, time);
 
-    // copy all set values (between fmiInstantiateModel and fmiInitialize (this func)) to the dss
-    msg(Debug)<<"Copy values to DynamicSystemSolver."<<endl;
+    // between the fmiInstantiateModel and the fmiInitialize calls no dss is available (dss is generated in fmiInitialize).
+    // Hence the values of all fmiSetReal, ... calls between these functions are just saved (see setReal(...)).
+    // These values are not copied to the now existing dss as start values.
+    msg(Debug)<<"Copy already set values to DynamicSystemSolver."<<endl;
     size_t vr=0;
     for(ValueReferenceMap::VRMap::iterator vrIt=vrUnion.begin(); vrIt!=vrUnion.end(); ++vrIt, ++vr) {
       switch(vrIt->first) {
+        // set ExternGeneralizedIO force
         case ValueReferenceMap::GeneralizedIO_h: {
           map<size_t, double>::iterator vrRealIt=vrReal.find(vr);
           if(vrRealIt==vrReal.end())
             vrIt->second.generalizedIO->setGeneralizedForce(0); // default value is 0, see also mbsimCreateFMU.cc
-          else
+          else {
             vrIt->second.generalizedIO->setGeneralizedForce(vrRealIt->second);
+            vrReal.erase(vrRealIt); // value is processed now -> remove it
+          }
           break;
         }
+        // ExternGeneralizedIO position and velocity are outputs which cannot be set by the environment -> skip
         case ValueReferenceMap::GeneralizedIO_x: 
         case ValueReferenceMap::GeneralizedIO_v:
           break;
+        // set SignalSource value
         case ValueReferenceMap::SignalSource: {
           map<size_t, double>::iterator vrRealIt=vrReal.find(vr);
           if(vrRealIt==vrReal.end())
             vrIt->second.signalSource->setSignal(0); // default value is 0, see also mbsimCreateFMU.cc
-          else
+          else {
             vrIt->second.signalSource->setSignal(vrRealIt->second);
+            vrReal.erase(vrRealIt); // value is processed now -> remove it
+          }
           break;
         }
+        // SignalSink is output which cannot be set by the environment -> skip
         case ValueReferenceMap::SignalSink: 
           break;
       }
     }
 
-    // check illegal wrong previous calls
+    // the above code should have removed all already set values. Hence if something was not removed its an error.
     if(vrReal.size()>0) {
       stringstream str;
       str<<"The following value reference where set/get previously but are not defined:"<<endl;
@@ -209,41 +235,50 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
+    // calcualte MBSim zd and return it
     dss->zdot(z, zd, time);
     for(int i=0; i<nx; ++i)
       derivatives[i]=zd(i);
   }
 
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
+    // calcualte MBSim stop vector and return it
     dss->getsv(z, sv, time);
     for(int i=0; i<ni; ++i)
       eventIndicators[i]=sv(i);
   }
 
   void FMIInstance::getReal(const fmiValueReference vr[], size_t nvr, fmiReal value[]) {
+    // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss) {
       for(size_t i=0; i<nvr; ++i) {
         if(vr[i]>=vrUnion.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
         switch(vrUnion[vr[i]].first) {
+          // get current ExternGeneralizedIO force
           case ValueReferenceMap::GeneralizedIO_h:
             value[i]=vrUnion[vr[i]].second.generalizedIO->getla()(0);
             break;
+          // get current ExternGeneralizedIO position MISSING: system update required!?
           case ValueReferenceMap::GeneralizedIO_x:
             value[i]=vrUnion[vr[i]].second.generalizedIO->getGeneralizedPosition();
             break;
+          // get current ExternGeneralizedIO velocity MISSING: system update required!?
           case ValueReferenceMap::GeneralizedIO_v:
             value[i]=vrUnion[vr[i]].second.generalizedIO->getGeneralizedVelocity();
             break;
+          // get current SignalSource value
           case ValueReferenceMap::SignalSource:
             value[i]=vrUnion[vr[i]].second.signalSource->getSignal()(0);
             break;
+          // get current SignalSink value MISSING: system update required!?
           case ValueReferenceMap::SignalSink:
             value[i]=vrUnion[vr[i]].second.signalSink->getSignal()(0);
             break;
         }
       }
     }
+    // no dss exists (before fmiInitialize) -> just return the previously set value or 0 (the default value)
     else {
       for(size_t i=0; i<nvr; ++i) {
         if(vr[i]>=vrReal.size())
@@ -266,6 +301,13 @@ namespace MBSimFMI {
     throw runtime_error("No values of type string.");
   }
 
+  // MBSim shift
+  // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.
+  // Since MBSim required this information we have to generate it here. For this we:
+  // * store the stop vector (sv) of the initial state (see initialize(...)) or the
+  //   last event (shift point) in the variable svLast.
+  // * compare the current sv with the sv of the last event (or initial state) svLast
+  // * set all entries in jsv to 1 if the corresponding entries in sv and svLast have a sign change.
   void FMIInstance::eventUpdate(fmiBoolean intermediateResults, fmiEventInfo* eventInfo) {
     // initialize eventInfo fields
     eventInfo->iterationConverged=true;
@@ -278,16 +320,20 @@ namespace MBSimFMI {
     // MISSING: event handling must be conform to FMI and modellica!!!???
     // get current stop vector
     dss->getsv(z, sv, time);
-    // compare last and current stop vector: build jsv and set shiftRequired
+    // compare last (svLast) and current (sv) stop vector: build jsv and set shiftRequired
     bool shiftRequired=false;
     for(int i=0; i<sv.size(); ++i) {
       jsv(i)=(svLast(i)*sv(i)<0); // on sign change in svLast and sv set jsv to 1 (shift this index i)
       if(jsv(i))
-        shiftRequired=true; // set shiftRequired: a shift call is required
+        shiftRequired=true; // set shiftRequired: a MBSim shift call is required (at least 1 entry in jsv is 1)
+                            // (the environment may call eventUpdate of this system due to an event (shift) of another
+                            // system (FMU, ...). Hence not all eventUpdate must generate a shift of this system)
     }
     if(shiftRequired) {
-      // shift system and return changed state values flag
+      // shift MBSim system
       dss->shift(z, jsv, time);
+      // A MBSim shift always changes state values (non-smooth-mechanic)
+      // This must be reported to the environment (the integrator must be resetted in this case).
       eventInfo->stateValuesChanged=true;
     }
   }
@@ -298,11 +344,13 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::getNominalContinuousStates(fmiReal x_nominal[], size_t nx) {
+    // we do not proved a nominal value for states in MBSim -> just return 1 as nominal value.
     for(size_t i=0; i<nx; ++i)
       x_nominal[i]=1;
   }
 
   void FMIInstance::getStateValueReferences(fmiValueReference vrx[], size_t nx) {
+    // we do not assign any MBSim state to a FMI valueReference -> return fmiUndefinedValueReference for all states
     for(size_t i=0; i<nx; ++i)
       vrx[i]=fmiUndefinedValueReference;
   }
@@ -311,7 +359,8 @@ namespace MBSimFMI {
     // plot end state
     dss->plot(z, time);
 
-    // delete DynamicSystemSolver
+    // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
+    // calls to fmiFreeModelInstance and fmiInstantiateModel)
     dss.reset();
   }
 
