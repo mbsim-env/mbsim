@@ -84,10 +84,10 @@ namespace MBSimFMI {
       fmatvec::VecInt jsv;
 
       // map valueReference to object
-      std::vector<boost::shared_ptr<Variable<double> > > vrReal;
+      std::vector<boost::shared_ptr<Variable> > vrMap;
 
       // store for FMI variables before fmiInitialize is called
-      std::map<size_t, double> vrRealStore;
+      std::map<size_t, double> vrMapStore;
   };
 
 }

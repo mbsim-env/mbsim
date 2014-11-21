@@ -92,15 +92,15 @@ namespace MBSimFMI {
     // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss) {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrReal.size())
+        if(vr[i]>=vrMap.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        vrReal[vr[i]]->setValue(value[i]);
+        vrMap[vr[i]]->setRealValue(value[i]);
       }
     }
-    // no dss exists (before fmiInitialize) -> just save the value in vrRealStore
+    // no dss exists (before fmiInitialize) -> just save the value in vrMapStore
     else {
       for(size_t i=0; i<nvr; ++i)
-        vrRealStore[vr[i]]=value[i];
+        vrMapStore[vr[i]]=value[i];
     }
   }
 
@@ -151,7 +151,7 @@ namespace MBSimFMI {
 
     // build list of value references
     msg(Debug)<<"Create all FMI variables."<<endl;
-    createAllVariables(dss.get(), vrReal);
+    createAllVariables(dss.get(), vrMap);
 
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
@@ -167,23 +167,23 @@ namespace MBSimFMI {
     // Hence the values of all fmiSetReal, ... calls between these functions are just saved (see setReal(...)).
     // These values are not copied to the now existing dss as start values.
     msg(Debug)<<"Copy already set values to DynamicSystemSolver."<<endl;
-    for(size_t vr=0; vr<vrReal.size(); ++vr) {
-      map<size_t, double>::iterator vrRealStoreIt=vrRealStore.find(vr);
-      if(vrRealStoreIt==vrRealStore.end()) {
-        if(vrReal[vr]->getType()==Input) // only inputs are allowed to set (initialized with 0)
-          vrReal[vr]->setValue(0); // default value is 0, see also mbsimCreateFMU.cc
+    for(size_t vr=0; vr<vrMap.size(); ++vr) {
+      map<size_t, double>::iterator vrMapStoreIt=vrMapStore.find(vr);
+      if(vrMapStoreIt==vrMapStore.end()) {
+        if(vrMap[vr]->getType()==Input) // only inputs are allowed to set (initialized with 0)
+          vrMap[vr]->setRealValue(0); // default value is 0, see also mbsimCreateFMU.cc
       }
       else {
-        vrReal[vr]->setValue(vrRealStoreIt->second); // set to value of last corresponding setReal call
-        vrRealStore.erase(vrRealStoreIt); // value is processed now -> remove it
+        vrMap[vr]->setRealValue(vrMapStoreIt->second); // set to value of last corresponding setReal call
+        vrMapStore.erase(vrMapStoreIt); // value is processed now -> remove it
       }
     }
 
     // the above code should have removed all already set values. Hence if something was not removed its an error.
-    if(vrRealStore.size()>0) {
+    if(vrMapStore.size()>0) {
       stringstream str;
       str<<"The following value reference where set/get previously but are not defined:"<<endl;
-      for(map<size_t, double>::iterator it=vrRealStore.begin(); it!=vrRealStore.end(); ++it)
+      for(map<size_t, double>::iterator it=vrMapStore.begin(); it!=vrMapStore.end(); ++it)
         str<<"#r"<<it->first<<"#"<<endl;
       throw runtime_error(str.str());
     }
@@ -217,18 +217,18 @@ namespace MBSimFMI {
     // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss) {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrReal.size())
+        if(vr[i]>=vrMap.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        value[i]=vrReal[vr[i]]->getValue();
+        value[i]=vrMap[vr[i]]->getRealValue();
       }
     }
     // no dss exists (before fmiInitialize) -> just return the previously set value or 0 (the default value)
     else {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrRealStore.size())
+        if(vr[i]>=vrMapStore.size())
           value[i]=0; // not set till now, return default value 0, see also mbsimCreateFMU.cc
         else
-          value[i]=vrRealStore[vr[i]];
+          value[i]=vrMapStore[vr[i]];
       }
     }
   }

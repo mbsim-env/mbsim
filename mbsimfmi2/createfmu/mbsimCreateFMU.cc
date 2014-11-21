@@ -83,8 +83,8 @@ int main(int argc, char *argv[]) {
   dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
 
   // build list of value references
-  vector<boost::shared_ptr<Variable<double> > > vrReal;
-  createAllVariables(dss.get(), vrReal);
+  vector<boost::shared_ptr<Variable> > vrMap;
+  createAllVariables(dss.get(), vrMap);
 
   // initialize dss
   dss->initialize();
@@ -126,15 +126,15 @@ int main(int argc, char *argv[]) {
     // ModelVariables
     DOMElement *modelVars=D(modelDescDoc)->createElement("ModelVariables");
     modelDesc->appendChild(modelVars);
-    for(size_t vr=0; vr<vrReal.size(); ++vr) {
+    for(size_t vr=0; vr<vrMap.size(); ++vr) {
       DOMElement *scalarVar=D(modelDescDoc)->createElement("ScalarVariable");
       modelVars->appendChild(scalarVar);
         DOMElement *varType=D(modelDescDoc)->createElement("Real");
         scalarVar->appendChild(varType);
-        E(scalarVar)->setAttribute("name", vrReal[vr]->getName());
-        E(scalarVar)->setAttribute("description", vrReal[vr]->getDescription());
+        E(scalarVar)->setAttribute("name", vrMap[vr]->getName());
+        E(scalarVar)->setAttribute("description", vrMap[vr]->getDescription());
         E(scalarVar)->setAttribute("valueReference", boost::lexical_cast<string>(vr));
-        switch(vrReal[vr]->getType()) {
+        switch(vrMap[vr]->getType()) {
           case Input:
             E(scalarVar)->setAttribute("causality", "input");
             E(scalarVar)->setAttribute("variability", "continuous");
