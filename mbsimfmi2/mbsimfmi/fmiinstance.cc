@@ -47,9 +47,9 @@ namespace MBSimFMI {
     return booleanValue;
   }
 
-  const char* PreVariable::getValue(const char*) {
+  string& PreVariable::getValue(const string&) {
     if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
-    return stringValue.c_str();
+    return stringValue;
   }
 
   void PreVariable::setValue(double v) {
@@ -177,19 +177,19 @@ namespace MBSimFMI {
   }
 
   // set a real/integer/boolean/string variable
-  template<typename Type>
-  void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const Type value[]) {
+  template<typename CppType, typename FMIType>
+  void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIType value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-      var[vr[i]]->setValue(value[i]);
+        throw runtime_error("Unknown variable.");
+      var[vr[i]]->setValue(CppType(value[i]));
     }
   }
   // explicitly instantiate all four FMI types
-  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[]);
-  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiInteger value[]);
-  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]);
-  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiString value[]);
+  template void FMIInstance::setValue<double, fmiReal   >(const fmiValueReference vr[], size_t nvr, const fmiReal    value[]);
+  template void FMIInstance::setValue<int,    fmiInteger>(const fmiValueReference vr[], size_t nvr, const fmiInteger value[]);
+  template void FMIInstance::setValue<bool,   fmiBoolean>(const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]);
+  template void FMIInstance::setValue<string, fmiString >(const fmiValueReference vr[], size_t nvr, const fmiString  value[]);
 
   void FMIInstance::initialize(fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) {
     // after the ctor call another FMIInstance ctor may be called, hence we need to reset the message streams here
@@ -244,8 +244,8 @@ namespace MBSimFMI {
       switch((*varIt)->getDatatype()) {
         case 'r': (*varSimIt)->setValue((*varIt)->getValue(double())); break;
         case 'i': (*varSimIt)->setValue((*varIt)->getValue(int())); break;
-        case 'b': (*varSimIt)->setValue((*varIt)->getValue(char())); break;
-        case 's': (*varSimIt)->setValue(string((*varIt)->getValue(fmiString()))); break;
+        case 'b': (*varSimIt)->setValue((*varIt)->getValue(bool())); break;
+        case 's': (*varSimIt)->setValue((*varIt)->getValue(string())); break;
       }
     }
     // var is now no longer needed since we use varSim now.
@@ -283,19 +283,27 @@ namespace MBSimFMI {
   }
 
   // get a real/integer/boolean/string variable
-  template<typename Type>
-  void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, Type value[]) {
+  template<typename CppType, typename FMIType>
+  void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIType value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-      value[i]=var[vr[i]]->getValue(Type());
+        throw runtime_error("No such variable.");
+      value[i]=var[vr[i]]->getValue(CppType());
     }
   }
   // explicitly instantiate all four FMI types
-  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiReal value[]);
-  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiInteger value[]);
-  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
-  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiString value[]);
+  template void FMIInstance::getValue<double, fmiReal   >(const fmiValueReference vr[], size_t nvr, fmiReal value[]);
+  template void FMIInstance::getValue<int,    fmiInteger>(const fmiValueReference vr[], size_t nvr, fmiInteger value[]);
+  template void FMIInstance::getValue<bool,   fmiBoolean>(const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
+  // explicitly specialization for string
+  template<>
+  void FMIInstance::getValue<string, fmiString>(const fmiValueReference vr[], size_t nvr, fmiString value[]) {
+    for(size_t i=0; i<nvr; ++i) {
+      if(vr[i]>=var.size())
+        throw runtime_error("No such variable.");
+      value[i]=var[vr[i]]->getValue(string()).c_str();
+    }
+  }
 
   // MBSim shift
   // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.

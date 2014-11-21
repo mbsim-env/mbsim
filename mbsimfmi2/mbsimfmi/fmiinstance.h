@@ -39,7 +39,7 @@ namespace MBSimFMI {
       double getValue(double);
       int getValue(int);
       bool getValue(bool);
-      const char* getValue(const char *);
+      std::string& getValue(const std::string&);
       void setValue(double v);
       void setValue(int v);
       void setValue(bool v);
@@ -73,15 +73,15 @@ namespace MBSimFMI {
       void setContinuousStates       (const fmiReal x[], size_t nx);
       void completedIntegratorStep   (fmiBoolean* callEventUpdate);
 
-      template<typename Type>
-      void setValue                  (const fmiValueReference vr[], size_t nvr, const Type value[]);
+      template<typename CppType, typename FMIType>
+      void setValue                  (const fmiValueReference vr[], size_t nvr, const FMIType value[]);
 
       void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo);
       void getDerivatives            (fmiReal derivatives[], size_t nx);
       void getEventIndicators        (fmiReal eventIndicators[], size_t ni);
 
-      template<typename Type>
-      void getValue                  (const fmiValueReference vr[], size_t nvr, Type value[]);
+      template<typename CppType, typename FMIType>
+      void getValue                  (const fmiValueReference vr[], size_t nvr, FMIType value[]);
 
       void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo);
       void getContinuousStates       (fmiReal states[], size_t nx);
