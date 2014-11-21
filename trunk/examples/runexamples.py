@@ -63,8 +63,8 @@ argparser = argparse.ArgumentParser(
   - If a file named 'Makefile' exists, than it is treated as a SRC example.
   - If a file named 'MBS.mbsimprj.flat.xml' exists, then it is treated as a FLATXML example.
   - If a file named 'MBS.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
-  - If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
-    Beside running the file by mbsimxml also mbsimfmi is run to export the model as a FMU.
+  - If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a FMI export example.
+    Beside running the file by mbsimxml also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFOMR>.
   If more then one of these files exist the behaviour is undefined.
   The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
   '''
@@ -90,7 +90,7 @@ mainOpts.add_argument("--filter", default="True", type=str,
           flatxml: is True if the directory is a xml flat example;
           ppxml: is True if the directory is a preprocessing xml example;
           xml: is True if the directory is a flat or preprocessing xml example;
-          fmi: is True if the directory is a FMI export preprocessing xml example;
+          fmi: is True if the directory is a FMI export xml example;
           mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
                     mbsimXXX='''+str(mbsimModules)+''';
           Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
@@ -988,7 +988,7 @@ def executeSrcExample(executeFD, example):
 
 
 
-# execute the soruce code example in the current directory (write everything to fd executeFD)
+# execute the XML example in the current directory (write everything to fd executeFD)
 def executeXMLExample(executeFD, example):
   # we handle MBS.mbsimprj.xml and FMI.mbsimprj.xml files here
   prjFile=glob.glob("*.mbsimprj.xml")[0]
@@ -1006,7 +1006,7 @@ def executeXMLExample(executeFD, example):
 
 
 
-# execute the soruce code example in the current directory (write everything to fd executeFD)
+# execute the flat XML example in the current directory (write everything to fd executeFD)
 def executeFlatXMLExample(executeFD, example):
   print("Running command:", file=executeFD)
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsimprj.flat.xml"]))
@@ -1021,21 +1021,22 @@ def executeFlatXMLExample(executeFD, example):
 
 
 
-# execute the soruce code example in the current directory (write everything to fd executeFD)
+# execute the FMI export example in the current directory (write everything to fd executeFD)
 def executeFMIExample(executeFD, example):
   # first simple run the example as a preprocessing xml example
   ret, dt, outFiles=executeXMLExample(executeFD, example)
   if ret!=0:
     return ret, 0, outFiles
 
-  # run mbsimfmi.sh MISSING: should be a executable to work on windows. If so also enable --prefixSimulation
+  # run mbsimCreateFMU to export the model as a FMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimfmi.sh")]+[".pp.FMI.mbsimprj.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), "FMI.mbsimprj.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret=subprocessCall([pj(mbsimBinDir, "mbsimfmi.sh")]+
-                     [".pp.FMI.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime/5)
+  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
+                     "FMI.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime/5)
+  outFiles.extend(getOutFiles(example))
   if ret!=0:
     return ret, 0, outFiles
 
@@ -1047,14 +1048,15 @@ def executeFMIExample(executeFD, example):
   # run fmuChecker
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck)]+["mbsim.fmu"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck), "-l", "5", "mbsim.fmu"]))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck)]+
-                     ["mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
+                     "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, outFiles+getOutFiles(example)
+  outFiles.extend(getOutFiles(example))
+  return ret, dt, outFiles
 
 
 
