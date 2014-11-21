@@ -11,6 +11,9 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include "boost/filesystem/fstream.hpp"
+
+#include "zip.h"
 
 #include <../general/valueReferenceMap_impl.h>
 
@@ -19,6 +22,7 @@ using namespace boost::filesystem;
 using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace MBSimFMI;
 
 namespace {
   enum ScalarVarType {
@@ -27,6 +31,22 @@ namespace {
   };
 
   void addScalarVariable(DOMElement *modelVars, size_t vr, string name, const string &desc, ScalarVarType type);
+
+#ifdef _WIN32
+  string SHEXT(".dll");
+  #ifdef _WIN64
+  string FMIOS("win64");
+  #else
+  string FMIOS("win32");
+  #endif
+#else
+  string SHEXT(".so");
+  #ifdef __x86_64__
+  string FMIOS("linux64");
+  #else
+  string FMIOS("linux32");
+  #endif
+#endif
 }
 
 int main(int argc, char *argv[]) {
@@ -34,7 +54,7 @@ int main(int argc, char *argv[]) {
   if(argc!=2) {
     cout<<"Usage: "<<argv[0]<<" <MBSim Project XML File>"<<endl;
     cout<<endl;
-    cout<<"Create mbsimfmi.fmu in the current directory."<<endl;
+    cout<<"Create mbsim.fmu in the current directory."<<endl;
     return 0;
   }
 
@@ -81,9 +101,10 @@ int main(int argc, char *argv[]) {
   E(modelDesc)->setAttribute("fmiVersion", "1.0");
   E(modelDesc)->setAttribute("generationDateAndTime",
     boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time())+"Z");
-  E(modelDesc)->setAttribute("generationTool", "MBSimFMI");
+  E(modelDesc)->setAttribute("generationTool", "MBSim - FMI");
+  E(modelDesc)->setAttribute("version", VERSION);
   E(modelDesc)->setAttribute("guid", "mbsimfmi_guid");
-  E(modelDesc)->setAttribute("modelIdentifier", "mbsimfmi");
+  E(modelDesc)->setAttribute("modelIdentifier", "mbsim");
   path desc=mbsimxmlfile.filename();
   desc.replace_extension();
   desc.replace_extension();
@@ -91,7 +112,6 @@ int main(int argc, char *argv[]) {
   E(modelDesc)->setAttribute("numberOfContinuousStates", boost::lexical_cast<string>(dss->getzSize()));
   E(modelDesc)->setAttribute("numberOfEventIndicators", boost::lexical_cast<string>(dss->getsvSize()));
   E(modelDesc)->setAttribute("variableNamingConvention", "structured");
-  E(modelDesc)->setAttribute("version", VERSION);
     // DefaultExperiment
     DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
     modelDesc->appendChild(defaultExp);
@@ -124,6 +144,11 @@ int main(int argc, char *argv[]) {
     }
   DOMParser::serialize(modelDescDoc.get(), "modelDescription.xml");
 
+  CreateZip zip("mbsim.fmu");
+  zip.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+  zip.add("modelDescription.xml", path("modelDescription.xml"));
+  zip.close();
+
   return 0;
 }
 
@@ -149,4 +174,5 @@ namespace {
           break;
       }
   }
+
 }
