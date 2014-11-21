@@ -65,6 +65,8 @@ int main(int argc, char *argv[]) {
   boost::shared_ptr<DOMParser> parser=DOMParser::create(true);
   MBSim::generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
   parser->loadGrammar(".mbsimxml.xsd");
+  // create FMU zip file
+  CreateZip fmuFile("mbsim.fmu");
 
   // load MBSim project XML document
   path mbsimxmlfile=argv[1];
@@ -73,6 +75,11 @@ int main(int argc, char *argv[]) {
 
   // preprocess XML file
   Preprocess::preprocess(parser, octEval, dependencies, modelEle);
+
+  // save preprocessed model to FMU
+  string ppModelStr;
+  DOMParser::serialize(modelEle, ppModelStr);
+  fmuFile.add(path("resources")/"Model.mbsimprj.flat.xml", ppModelStr);
 
   // load all plugins
   MBSimXML::loadPlugins();
@@ -142,12 +149,15 @@ int main(int argc, char *argv[]) {
           break;
       }
     }
-  DOMParser::serialize(modelDescDoc.get(), "modelDescription.xml");
+  // add modelDescription.xml file to FMU
+  string modelDescriptionStr;
+  DOMParser::serialize(modelDescDoc.get(), modelDescriptionStr);
+  fmuFile.add("modelDescription.xml", modelDescriptionStr);
 
-  CreateZip zip("mbsim.fmu");
-  zip.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
-  zip.add("modelDescription.xml", path("modelDescription.xml"));
-  zip.close();
+  // add binaries to FMU
+  fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+
+  fmuFile.close();
 
   return 0;
 }

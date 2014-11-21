@@ -124,19 +124,8 @@ namespace MBSimFMI {
 
     // get fmu directory: the .so/.dll is in <fmuDir>/binaries/[linux|win][32|64]
     path fmuDir=getSharedLibDir().parent_path().parent_path();
-    // search the mbsimprj xml file in resources
-    path mbsimflatxmlfile;
-    for(directory_iterator it(fmuDir/"resources"); it!=directory_iterator(); ++it) {
-      string name=it->path().filename().string();
-      if(name.substr(name.length()-string(".mbsimprj.flat.xml").length())==".mbsimprj.flat.xml") {
-        mbsimflatxmlfile=it->path();
-        break;
-      }
-      if(name.substr(name.length()-string(".mbsimprj.xml").length())==".mbsimprj.xml" && name.substr(0, 4)==".pp.") {
-        mbsimflatxmlfile=it->path();
-        break;
-      }
-    }
+    // get the model file
+    path mbsimflatxmlfile=fmuDir/"resources"/"Model.mbsimprj.flat.xml";
 
     // load all plugins
     msg(Debug)<<"Load MBSim plugins."<<endl;
