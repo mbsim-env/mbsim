@@ -22,6 +22,7 @@ namespace MBSimFMI {
 
 class Variable;
 
+//! enumeration for HardCodedVariables::plotMode
 enum PlotMode {
   EverynthCompletedStep = 1,
   SampleTime            = 2
@@ -56,39 +57,46 @@ class Variable {
     //! Variable type
     virtual Type getType()=0;
     //! FMI variable datatype
-    virtual char getDatatype()=0;
+    virtual char getDatatypeChar()=0;
+
     //! get the current value as a string (usable to add it to e.g. XML)
     virtual std::string getValueAsString()=0;
+
+    // value setter
+
     //! set FMI variable of type real. The default implementation throws, if not overloaded.
     virtual void setValue(const double &v) {
       throw std::runtime_error("Setting this variable is not allowed or is not of type real.");
     }
+    //! set FMI variable of type integer. The default implementation throws, if not overloaded.
+    virtual void setValue(const int &v) {
+      throw std::runtime_error("Setting this variable is not allowed or is not of type integer.");
+    }
+    //! set FMI variable of type boolean. The default implementation throws, if not overloaded.
+    virtual void setValue(const bool &v) {
+      throw std::runtime_error("Setting this variable is not allowed or is not of type boolean.");
+    }
+    //! set FMI variable of type string. The default implementation throws, if not overloaded.
+    virtual void setValue(const std::string &v) {
+      throw std::runtime_error("Setting this variable is not allowed or is not of type string.");
+    }
+
+    // value getter
+
     //! get FMI variable of type real. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
     virtual const double& getValue(const double&) {
       throw std::runtime_error("This variable is not of type real.");
-    }
-    //! set FMI variable of type integer. The default implementation throws, if not overloaded.
-    virtual void setValue(const int &v) {
-      throw std::runtime_error("Setting this variable is not allowed or is not of type integer.");
     }
     //! get FMI variable of type integer. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
     virtual const int& getValue(const int&) {
       throw std::runtime_error("This variable is not of type integer.");
     }
-    //! set FMI variable of type boolean. The default implementation throws, if not overloaded.
-    virtual void setValue(const bool &v) {
-      throw std::runtime_error("Setting this variable is not allowed or is not of type boolean.");
-    }
     //! get FMI variable of type boolean. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
     virtual const bool& getValue(const bool&) {
       throw std::runtime_error("This variable is not of type boolean.");
-    }
-    //! set FMI variable of type string. The default implementation throws, if not overloaded.
-    virtual void setValue(const std::string &v) {
-      throw std::runtime_error("Setting this variable is not allowed or is not of type string.");
     }
     //! get FMI variable of type string. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
@@ -100,11 +108,12 @@ class Variable {
 
 
 //! map c++ type to FMI datatype character
-template<typename Type> struct MapTypeToFMIDatatype;
-template<> struct MapTypeToFMIDatatype<double     > { static const char value='r'; };
-template<> struct MapTypeToFMIDatatype<int        > { static const char value='i'; };
-template<> struct MapTypeToFMIDatatype<bool       > { static const char value='b'; };
-template<> struct MapTypeToFMIDatatype<std::string> { static const char value='s'; };
+template<typename Datatype> struct MapDatatypeToFMIDatatypeChar;
+template<> struct MapDatatypeToFMIDatatypeChar<double     > { static const char value='r'; };
+template<> struct MapDatatypeToFMIDatatypeChar<int        > { static const char value='i'; };
+template<> struct MapDatatypeToFMIDatatypeChar<bool       > { static const char value='b'; };
+template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char value='s'; };
+
 //! A FMI parameter which stores the value in a externally provided reference.
 //! This is used for "hard coded" variables.
 template<typename Datatype>
@@ -115,7 +124,7 @@ class ParameterValue : public Variable {
     std::string getName() { return name; }
     std::string getDescription() { return desc; }
     Type getType() { return Parameter; }
-    char getDatatype() { return MapTypeToFMIDatatype<Datatype>::value; }
+    char getDatatypeChar() { return MapDatatypeToFMIDatatypeChar<Datatype>::value; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
     void setValue(const Datatype &v) { value=v; }
     const Datatype& getValue(const Datatype&) { return value; }
@@ -131,7 +140,7 @@ class ExternGeneralizedIOForce : public Variable {
     std::string getName() { return mbsimPathToFMIName(io->getPath())+".h"; }
     std::string getDescription() { return "ExternGeneralizedIO force"; }
     Type getType() { return Input; }
-    char getDatatype() { return 'r'; }
+    char getDatatypeChar() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) { io->setGeneralizedForce(v); }
     const double& getValue(const double&) { return io->getla()(0); }
@@ -146,7 +155,7 @@ class ExternGeneralizedIOPosition : public Variable {
     std::string getName() { return mbsimPathToFMIName(io->getPath())+".x"; }
     std::string getDescription() { return "ExternGeneralizedIO position"; }
     Type getType() { return Output; }
-    char getDatatype() { return 'r'; }
+    char getDatatypeChar() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { return io->getGeneralizedPosition(); }
   protected:
@@ -160,7 +169,7 @@ class ExternGeneralizedIOVelocity : public Variable {
     std::string getName() { return mbsimPathToFMIName(io->getPath())+".v"; }
     std::string getDescription() { return "ExternGeneralizedIO velocity"; }
     Type getType() { return Output; }
-    char getDatatype() { return 'r'; }
+    char getDatatypeChar() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
   protected:
@@ -174,7 +183,7 @@ class ExternSignalSource : public Variable {
     std::string getName() { return mbsimPathToFMIName(sig->getPath()); }
     std::string getDescription() { return "ExternSignalSource"; }
     Type getType() { return Input; }
-    char getDatatype() { return 'r'; }
+    char getDatatypeChar() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
@@ -190,7 +199,7 @@ class ExternSignalSink : public Variable {
     std::string getName() { return mbsimPathToFMIName(sig->getPath()); }
     std::string getDescription() { return "ExternSignalSink"; }
     Type getType() { return Output; }
-    char getDatatype() { return 'r'; }
+    char getDatatypeChar() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
   protected:

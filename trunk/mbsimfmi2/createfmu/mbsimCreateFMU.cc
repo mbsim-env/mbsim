@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
         modelVars->appendChild(scalarVar);
           // create datatype element
           string datatypeEleName;
-          switch(var[vr]->getDatatype()) {
+          switch(var[vr]->getDatatypeChar()) {
             case 'r': datatypeEleName="Real";    break;
             case 'i': datatypeEleName="Integer"; break;
             case 'b': datatypeEleName="Boolean"; break;

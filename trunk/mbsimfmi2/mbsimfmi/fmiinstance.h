@@ -33,7 +33,7 @@ namespace MBSimFMI {
       PreVariable(Type type_, char datatype_, const std::string &defaultValue);
       std::string getName() { throw std::runtime_error("Internal error: getName not allowed"); }
       std::string getDescription() { throw std::runtime_error("Internal error: getDescription not allowed"); }
-      char getDatatype() { return datatype; }
+      char getDatatypeChar() { return datatype; }
       std::string getValueAsString() { throw std::runtime_error("Internal error: getValueAsString not allowed"); }
       Type getType() { return type; }
       const double& getValue(const double&);
@@ -73,15 +73,15 @@ namespace MBSimFMI {
       void setContinuousStates       (const fmiReal x[], size_t nx);
       void completedIntegratorStep   (fmiBoolean* callEventUpdate);
 
-      template<typename CppType, typename FMIType>
-      void setValue                  (const fmiValueReference vr[], size_t nvr, const FMIType value[]);
+      template<typename CppDatatype, typename FMIDatatype>
+      void setValue                  (const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]);
 
       void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo);
       void getDerivatives            (fmiReal derivatives[], size_t nx);
       void getEventIndicators        (fmiReal eventIndicators[], size_t ni);
 
-      template<typename CppType, typename FMIType>
-      void getValue                  (const fmiValueReference vr[], size_t nvr, FMIType value[]);
+      template<typename CppDatatype, typename FMIDatatype>
+      void getValue                  (const fmiValueReference vr[], size_t nvr, FMIDatatype value[]);
 
       void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo);
       void getContinuousStates       (fmiReal states[], size_t nx);
