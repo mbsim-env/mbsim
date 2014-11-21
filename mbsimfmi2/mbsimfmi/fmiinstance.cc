@@ -20,10 +20,10 @@ using namespace MBXMLUtils;
 
 namespace MBSimFMI {
 
-  PreVariable::PreVariable(Type type_, char datatype_, const std::string &defaultValue) :
-    type(type_), datatype(datatype_) {
+  PreVariable::PreVariable(Type type, char datatypeChar, const std::string &defaultValue) :
+    Variable("dummy", "dummy", type, datatypeChar) {
     if(!defaultValue.empty()) {
-      switch(datatype) {
+      switch(datatypeChar) {
         case 'r': doubleValue =boost::lexical_cast<double>(defaultValue); break;
         case 'i': integerValue=boost::lexical_cast<int>   (defaultValue); break;
         case 'b': booleanValue=boost::lexical_cast<bool>  (defaultValue); break;
@@ -33,45 +33,45 @@ namespace MBSimFMI {
   }
 
   const double& PreVariable::getValue(const double&) {
-    if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='r') throw runtime_error("Internal error: Variable datatype differ.");
     return doubleValue;
   }
 
   const int& PreVariable::getValue(const int&) {
-    if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='i') throw runtime_error("Internal error: Variable datatype differ.");
     return integerValue;
   }
 
   const bool& PreVariable::getValue(const bool&) {
-    if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='b') throw runtime_error("Internal error: Variable datatype differ.");
     return booleanValue;
   }
 
   const string& PreVariable::getValue(const string&) {
-    if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='s') throw runtime_error("Internal error: Variable datatype differ.");
     return stringValue;
   }
 
   void PreVariable::setValue(const double &v) {
-    if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='r') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     doubleValue=v;
   }
 
   void PreVariable::setValue(const int &v) {
-    if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='i') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     integerValue=v;
   }
 
   void PreVariable::setValue(const bool &v) {
-    if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='b') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     booleanValue=v;
   }
 
   void PreVariable::setValue(const std::string &v) {
-    if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
+    if(datatypeChar!='s') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     stringValue=v;
   }
@@ -122,16 +122,16 @@ namespace MBSimFMI {
       else if(E(scalarVar)->getAttribute("causality")=="output"   && E(scalarVar)->getAttribute("variability")=="continuous") type=Output;
       else throw runtime_error("Internal error: Unknwon variable type.");
       // get datatype
-      char datatype;
-           if(E(scalarVar)->getFirstElementChildNamed("Real")) datatype='r';
-      else if(E(scalarVar)->getFirstElementChildNamed("Integer")) datatype='i';
-      else if(E(scalarVar)->getFirstElementChildNamed("Boolean")) datatype='b';
-      else if(E(scalarVar)->getFirstElementChildNamed("String")) datatype='s';
+      char datatypeChar;
+           if(E(scalarVar)->getFirstElementChildNamed("Real")) datatypeChar='r';
+      else if(E(scalarVar)->getFirstElementChildNamed("Integer")) datatypeChar='i';
+      else if(E(scalarVar)->getFirstElementChildNamed("Boolean")) datatypeChar='b';
+      else if(E(scalarVar)->getFirstElementChildNamed("String")) datatypeChar='s';
       else throw runtime_error("Internal error: Unknown variable datatype.");
       // get default
       string defaultValue=E(scalarVar->getFirstElementChild())->getAttribute("start");
       // create preprocessing variable
-      var.push_back(boost::make_shared<PreVariable>(type, datatype, defaultValue));
+      var.push_back(boost::make_shared<PreVariable>(type, datatypeChar, defaultValue));
     }
   }
 
@@ -170,9 +170,9 @@ namespace MBSimFMI {
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     *callEventUpdate=false;
 
-    if(hardCodedVar.plotMode==EverynthCompletedStep) {
+    if(predefinedVar.plotMode==EverynthCompletedStep) {
       completedStepCounter++;
-      if(completedStepCounter==hardCodedVar.plotEachNStep) {
+      if(completedStepCounter==predefinedVar.plotEachNStep) {
         completedStepCounter=0;
         dss->plot(z, time);
       }
@@ -225,12 +225,12 @@ namespace MBSimFMI {
     // build list of value references (variables)
     msg(Debug)<<"Create all FMI variables."<<endl;
     std::vector<boost::shared_ptr<Variable> > varSim; // do not overwrite var here, use varSim (see below)
-    createAllVariables(dss.get(), varSim, hardCodedVar);
+    createAllVariables(dss.get(), varSim, predefinedVar);
 
     // save the current dir and change to outputDir -> MBSim will create output the current dir
-    msg(Debug)<<"Write MBSim output files to "<<hardCodedVar.outputDir<<endl;
+    msg(Debug)<<"Write MBSim output files to "<<predefinedVar.outputDir<<endl;
     path savedCurDir=current_path();
-    current_path(hardCodedVar.outputDir);
+    current_path(predefinedVar.outputDir);
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
@@ -274,7 +274,7 @@ namespace MBSimFMI {
     // plot initial state
     dss->plot(z, time);
 
-    if(hardCodedVar.plotMode==EverynthCompletedStep) {
+    if(predefinedVar.plotMode==EverynthCompletedStep) {
       // init
       completedStepCounter=0;
       // no next time event
@@ -285,7 +285,7 @@ namespace MBSimFMI {
     {
       // next time event
       eventInfo->upcomingTimeEvent=true;
-      nextPlotEvent=time+hardCodedVar.plotStepSize;
+      nextPlotEvent=time+predefinedVar.plotStepSize;
       eventInfo->nextEventTime=nextPlotEvent;
     }
   }
@@ -369,10 +369,10 @@ namespace MBSimFMI {
     eventInfo->upcomingTimeEvent=false;
     eventInfo->nextEventTime=0;
     // next event wenn plotting with sample time and we currently match that time
-    if(hardCodedVar.plotMode==SampleTime && fabs(time-nextPlotEvent)<1.0e-10) {
+    if(predefinedVar.plotMode==SampleTime && fabs(time-nextPlotEvent)<1.0e-10) {
       // next time event
       eventInfo->upcomingTimeEvent=true;
-      nextPlotEvent=time+hardCodedVar.plotStepSize;
+      nextPlotEvent=time+predefinedVar.plotStepSize;
       eventInfo->nextEventTime=nextPlotEvent;
     }
   }

@@ -86,8 +86,8 @@ int main(int argc, char *argv[]) {
 
   // build list of value references
   vector<boost::shared_ptr<Variable> > var;
-  HardCodedVariables hardCodedVar;
-  createAllVariables(dss.get(), var, hardCodedVar);
+  PredefinedVariables predefinedVar;
+  createAllVariables(dss.get(), var, predefinedVar);
 
   // disable all plotting (we wont any output here)
   dss->setPlotFeatureRecursive(Element::plotRecursive, Element::disabled);
