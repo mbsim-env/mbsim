@@ -29,7 +29,7 @@ enum PlotMode {
 };
 //! Struct holding all predefined FMI variables (variables which are not part of the MBSim dss)
 struct PredefinedVariables {
-  std::string outputDir; // the MBSim output directory //MFMF currently unused
+  std::string outputDir; // the MBSim output directory
   int plotMode;          // the MBSim plotting mode
   int plotEachNStep;     // plot at each n-th completed integrator step
   double plotStepSize;   // plot in equidistand time steps
@@ -50,9 +50,12 @@ enum Type {
 // MISSING: create a exception wrapper with add the VR to all exceptoins throw in by this class
 class Variable {
   public:
+    typedef std::vector<std::pair<std::string, std::string> > EnumListCont;
+    typedef boost::shared_ptr<EnumListCont> EnumList;
+
     //! ctor
-    Variable(const std::string &name_, const std::string &desc_, Type type_, char datatypeChar_) : name(name_), desc(desc_),
-      type(type_), datatypeChar(datatypeChar_) {}
+    Variable(const std::string &name_, const std::string &desc_, Type type_, char datatypeChar_, const EnumList &enumList_=EnumList()) :
+      name(name_), desc(desc_), type(type_), datatypeChar(datatypeChar_), enumList(enumList_) {}
 
     //! FMI name
     std::string getName() { return name; }
@@ -62,6 +65,9 @@ class Variable {
     Type getType() { return type; }
     //! FMI variable datatype
     char getDatatypeChar() { return datatypeChar; }
+    //! Enumeration list.
+    //! Only allowed for datatype int (='i'). A empty pointer means integer type a non empty pointer a enumeration type.
+    const EnumList& getEnumerationList() { return enumList; }
 
     //! get the current value as a string (usable to add it to e.g. XML)
     virtual std::string getValueAsString()=0;
@@ -112,6 +118,7 @@ class Variable {
     std::string name, desc;
     Type type;
     char datatypeChar;
+    EnumList enumList;
 };
 
 
@@ -128,8 +135,8 @@ template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char 
 template<typename Datatype>
 class PredefinedParameter : public Variable {
   public:
-    PredefinedParameter(const std::string &name_, const std::string &desc_, Datatype &v) :
-      Variable(name_, desc_, Parameter, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(v) {}
+    PredefinedParameter(const std::string &name_, const std::string &desc_, Datatype &v, EnumList enumList=EnumList()) :
+      Variable(name_, desc_, Parameter, MapDatatypeToFMIDatatypeChar<Datatype>::value, enumList), value(v) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
     void setValue(const Datatype &v) { value=v; }
     const Datatype& getValue(const Datatype&) { return value; }
@@ -204,18 +211,29 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
   var.push_back(boost::make_shared<PredefinedParameter<std::string> >("Output directory",
     "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(predefinedVar.outputDir)));
   (*--var.end())->setValue(std::string(".")); // default value: current dir
+
   // plot mode
+  // generate enumeration list
+  Variable::EnumList plotModeList=boost::make_shared<Variable::EnumListCont>();
+  plotModeList->push_back(std::make_pair<std::string, std::string>("Every n-th completed step", // PlotMode::EverynthCompletedStep
+    "Plot each n-th completed integrator step, with n = 'Plot.each n-th step'."));
+  plotModeList->push_back(std::make_pair<std::string, std::string>("Constant sample time", // PlotMode::SampleTime
+    "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
+  // add variable
   var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.mode",
-    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedVar.plotMode)));
+    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedVar.plotMode), plotModeList));
   (*--var.end())->setValue(int(1)); // default value: every n-th completed integrator step
+
   // plot at each n-th integrator step
   var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
     "... n-th completed integrator step", boost::ref(predefinedVar.plotEachNStep)));
   (*--var.end())->setValue(int(5)); // default value: every 5-th step
+
   // plot every dt
   var.push_back(boost::make_shared<PredefinedParameter<double> >("Plot.sample time",
     "... sample point with this sample time", boost::ref(predefinedVar.plotStepSize)));
   (*--var.end())->setValue(double(0.001)); // default value: every 1ms
+
   // ADD HERE MORE PREDEFINED PARAMETERS
 
   // create all input/output variables for links in the dss

@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
 
   // create DOM of modelDescription.xml
   boost::shared_ptr<DOMDocument> modelDescDoc(parser->createDocument());
+
   // root element fmiModelDescription and its attributes
   DOMElement *modelDesc=D(modelDescDoc)->createElement("fmiModelDescription");
   modelDescDoc->appendChild(modelDesc);
@@ -119,30 +120,67 @@ int main(int argc, char *argv[]) {
   E(modelDesc)->setAttribute("numberOfContinuousStates", boost::lexical_cast<string>(dss->getzSize()));
   E(modelDesc)->setAttribute("numberOfEventIndicators", boost::lexical_cast<string>(dss->getsvSize()));
   E(modelDesc)->setAttribute("variableNamingConvention", "structured");
+
+    // Type definition
+    // get a unique list of all enumeration types
+    set<Variable::EnumList> enumType;
+    for(size_t vr=0; vr<var.size(); ++vr)
+      if(var[vr]->getEnumerationList())
+        enumType.insert(var[vr]->getEnumerationList());
+    // write all enumeration type to xml file
+    DOMElement *typeDef=D(modelDescDoc)->createElement("TypeDefinitions");
+    modelDesc->appendChild(typeDef);
+      for(set<Variable::EnumList>::iterator it=enumType.begin(); it!=enumType.end(); ++it) {
+        DOMElement *type=D(modelDescDoc)->createElement("Type");
+        typeDef->appendChild(type);
+        E(type)->setAttribute("name", "EnumType_"+boost::lexical_cast<string>(*it));
+          DOMElement *enumEle=D(modelDescDoc)->createElement("EnumerationType");
+          type->appendChild(enumEle);
+          E(enumEle)->setAttribute("min", "1");
+          E(enumEle)->setAttribute("max", boost::lexical_cast<string>((*it)->size()));
+          for(size_t id=0; id<(*it)->size(); ++id) {
+            DOMElement *item=D(modelDescDoc)->createElement("Item");
+            enumEle->appendChild(item);
+            E(item)->setAttribute("name", (**it)[id].second);
+            E(item)->setAttribute("description", (**it)[id].second);
+          }
+      }
+
     // DefaultExperiment element and its attributes
     DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
     modelDesc->appendChild(defaultExp);
     E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(integrator->getStartTime()));
     E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(integrator->getEndTime()));
     E(defaultExp)->setAttribute("tolerance", boost::lexical_cast<string>(1e-5));
+
     // ModelVariables element
     DOMElement *modelVars=D(modelDescDoc)->createElement("ModelVariables");
     modelDesc->appendChild(modelVars);
+
       // loop over all FMI variables
       for(size_t vr=0; vr<var.size(); ++vr) {
         // create ScalarVariable element
         DOMElement *scalarVar=D(modelDescDoc)->createElement("ScalarVariable");
         modelVars->appendChild(scalarVar);
+
           // create datatype element
           string datatypeEleName;
           switch(var[vr]->getDatatypeChar()) {
-            case 'r': datatypeEleName="Real";    break;
-            case 'i': datatypeEleName="Integer"; break;
+            case 'r': datatypeEleName="Real"; break;
+            case 'i': datatypeEleName= var[vr]->getEnumerationList() ? "Enumeration" : "Integer"; break;
             case 'b': datatypeEleName="Boolean"; break;
-            case 's': datatypeEleName="String";  break;
+            case 's': datatypeEleName="String"; break;
           }
           DOMElement *varType=D(modelDescDoc)->createElement(datatypeEleName);
           scalarVar->appendChild(varType);
+
+          // handle enumeration
+          if(var[vr]->getEnumerationList()) {
+            E(varType)->setAttribute("declaredType", "EnumType_"+boost::lexical_cast<string>(var[vr]->getEnumerationList()));
+            E(varType)->setAttribute("min", "1");
+            E(varType)->setAttribute("max", boost::lexical_cast<string>(var[vr]->getEnumerationList()->size()));
+          }
+
         // attributes on ScalarVariable element
         E(scalarVar)->setAttribute("name", var[vr]->getName());
         E(scalarVar)->setAttribute("description", var[vr]->getDescription());
@@ -152,11 +190,13 @@ int main(int argc, char *argv[]) {
             E(scalarVar)->setAttribute("causality", "internal");
             E(scalarVar)->setAttribute("variability", "parameter");
             E(varType)->setAttribute("start", var[vr]->getValueAsString());
+            E(varType)->setAttribute("fixed", "true");
             break;
           case Input:
             E(scalarVar)->setAttribute("causality", "input");
             E(scalarVar)->setAttribute("variability", "continuous");
             E(varType)->setAttribute("start", var[vr]->getValueAsString());
+            E(varType)->setAttribute("fixed", "true");
             break;
           case Output:
             E(scalarVar)->setAttribute("causality", "output");
@@ -164,6 +204,7 @@ int main(int argc, char *argv[]) {
             break;
         }
       }
+
   // add modelDescription.xml file to FMU
   string modelDescriptionStr;
   DOMParser::serializeToString(modelDescDoc.get(), modelDescriptionStr);
