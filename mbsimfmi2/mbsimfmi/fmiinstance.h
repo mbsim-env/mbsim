@@ -70,8 +70,16 @@ namespace MBSimFMI {
       // the system
       boost::shared_ptr<MBSim::DynamicSystemSolver> dss;
 
-      // the system time
+      // system time
       double time;
+      // system state
+      fmatvec::Vec z;
+      // system state derivative
+      fmatvec::Vec zd;
+      // system stop vector
+      fmatvec::Vec sv, svLast;
+      // system stop vector indicator (0 = no shift in this index; 1 = shift in this index)
+      fmatvec::VecInt jsv;
 
       ValueReferenceMap::VRMap vrUnion;
 
