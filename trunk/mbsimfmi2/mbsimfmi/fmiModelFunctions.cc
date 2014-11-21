@@ -87,6 +87,8 @@ extern "C" {
     (fmiComponent c, fmiBoolean* callEventUpdate),
     (callEventUpdate))
 
+  // all fmiSetXXX function map to the overloaded setValue function
+
   FMIFUNC(fmiSetReal, setValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiReal value[]),
     (vr, nvr, value))
@@ -114,6 +116,8 @@ extern "C" {
   FMIFUNC(fmiGetEventIndicators, getEventIndicators,
     (fmiComponent c, fmiReal eventIndicators[], size_t ni),
     (eventIndicators, ni))
+
+  // all fmiGetXXX function map to the overloaded getValue function
 
   FMIFUNC(fmiGetReal, getValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiReal value[]),

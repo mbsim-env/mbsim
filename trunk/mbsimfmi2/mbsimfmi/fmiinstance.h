@@ -107,8 +107,8 @@ namespace MBSimFMI {
       std::vector<boost::shared_ptr<FMIVariablePre> > vrMapPre;
 
       // variables store after fmiInitialize
-      FMIParameters fmiPar;
-      std::vector<boost::shared_ptr<Variable> > vrMap;
+      HardCodedVariables hardCodedVar;
+      std::vector<boost::shared_ptr<Variable> > var;
   };
 
 }

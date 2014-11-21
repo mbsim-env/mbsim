@@ -33,6 +33,7 @@ namespace {
   #else
   string FMIOS("win32");
   #endif
+  string USERENVVAR("USERNAME");
 #else
   string SHEXT(".so");
   #ifdef __x86_64__
@@ -40,6 +41,7 @@ namespace {
   #else
   string FMIOS("linux32");
   #endif
+  string USERENVVAR("USER");
 #endif
 }
 
@@ -83,9 +85,9 @@ int main(int argc, char *argv[]) {
   dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
 
   // build list of value references
-  vector<boost::shared_ptr<Variable> > vrMap;
-  FMIParameters fmiPar;
-  createAllVariables(dss.get(), vrMap, fmiPar);
+  vector<boost::shared_ptr<Variable> > var;
+  HardCodedVariables hardCodedVar;
+  createAllVariables(dss.get(), var, hardCodedVar);
 
   // initialize dss
   dss->initialize();
@@ -96,13 +98,10 @@ int main(int argc, char *argv[]) {
 
   // create DOM of modelDescription.xml
   boost::shared_ptr<DOMDocument> modelDescDoc(parser->createDocument());
+  // root element fmiModelDescription and its attributes
   DOMElement *modelDesc=D(modelDescDoc)->createElement("fmiModelDescription");
   modelDescDoc->appendChild(modelDesc);
-#ifdef _WIN32
-  E(modelDesc)->setAttribute("author", getenv("USERNAME"));
-#else
-  E(modelDesc)->setAttribute("author", getenv("USER"));
-#endif
+  E(modelDesc)->setAttribute("author", getenv(USERENVVAR.c_str()));
   E(modelDesc)->setAttribute("description", "FMI export of a MBSim-XML model");
   E(modelDesc)->setAttribute("fmiVersion", "1.0");
   E(modelDesc)->setAttribute("generationDateAndTime",
@@ -118,47 +117,51 @@ int main(int argc, char *argv[]) {
   E(modelDesc)->setAttribute("numberOfContinuousStates", boost::lexical_cast<string>(dss->getzSize()));
   E(modelDesc)->setAttribute("numberOfEventIndicators", boost::lexical_cast<string>(dss->getsvSize()));
   E(modelDesc)->setAttribute("variableNamingConvention", "structured");
-    // DefaultExperiment
+    // DefaultExperiment element and its attributes
     DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
     modelDesc->appendChild(defaultExp);
     E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(integrator->getStartTime()));
     E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(integrator->getEndTime()));
     E(defaultExp)->setAttribute("tolerance", boost::lexical_cast<string>(1e-5));
-    // ModelVariables
+    // ModelVariables element
     DOMElement *modelVars=D(modelDescDoc)->createElement("ModelVariables");
     modelDesc->appendChild(modelVars);
-    for(size_t vr=0; vr<vrMap.size(); ++vr) {
-      DOMElement *scalarVar=D(modelDescDoc)->createElement("ScalarVariable");
-      modelVars->appendChild(scalarVar);
-        string datatypeEleName;
-        switch(vrMap[vr]->getDatatype()) {
-          case 'r': datatypeEleName="Real";    break;
-          case 'i': datatypeEleName="Integer"; break;
-          case 'b': datatypeEleName="Boolean"; break;
-          case 's': datatypeEleName="String";  break;
-        }
-        DOMElement *varType=D(modelDescDoc)->createElement(datatypeEleName);
-        scalarVar->appendChild(varType);
-        E(scalarVar)->setAttribute("name", vrMap[vr]->getName());
-        E(scalarVar)->setAttribute("description", vrMap[vr]->getDescription());
+      // loop over all FMI variables
+      for(size_t vr=0; vr<var.size(); ++vr) {
+        // create ScalarVariable element
+        DOMElement *scalarVar=D(modelDescDoc)->createElement("ScalarVariable");
+        modelVars->appendChild(scalarVar);
+          // create datatype element
+          string datatypeEleName;
+          switch(var[vr]->getDatatype()) {
+            case 'r': datatypeEleName="Real";    break;
+            case 'i': datatypeEleName="Integer"; break;
+            case 'b': datatypeEleName="Boolean"; break;
+            case 's': datatypeEleName="String";  break;
+          }
+          DOMElement *varType=D(modelDescDoc)->createElement(datatypeEleName);
+          scalarVar->appendChild(varType);
+        // attributes on ScalarVariable element
+        E(scalarVar)->setAttribute("name", var[vr]->getName());
+        E(scalarVar)->setAttribute("description", var[vr]->getDescription());
         E(scalarVar)->setAttribute("valueReference", boost::lexical_cast<string>(vr));
-        switch(vrMap[vr]->getType()) {
+        switch(var[vr]->getType()) {
           case Parameter:
             E(scalarVar)->setAttribute("causality", "internal");
             E(scalarVar)->setAttribute("variability", "parameter");
-            E(varType)->setAttribute("start", vrMap[vr]->getDefault());
+            E(varType)->setAttribute("start", var[vr]->getValueAsString());
             break;
           case Input:
             E(scalarVar)->setAttribute("causality", "input");
             E(scalarVar)->setAttribute("variability", "continuous");
-            E(varType)->setAttribute("start", vrMap[vr]->getDefault());
+            E(varType)->setAttribute("start", var[vr]->getValueAsString());
             break;
           case Output:
             E(scalarVar)->setAttribute("causality", "output");
             E(scalarVar)->setAttribute("variability", "continuous");
             break;
         }
-    }
+      }
   // add modelDescription.xml file to FMU
   string modelDescriptionStr;
   DOMParser::serializeToString(modelDescDoc.get(), modelDescriptionStr);
