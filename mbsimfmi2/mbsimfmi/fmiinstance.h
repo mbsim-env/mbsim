@@ -48,7 +48,7 @@ namespace MBSimFMI {
   };
 
   /*! A MBSim FMI instance */
-  class FMIInstance : public fmatvec::Atom {
+  class FMIInstance : virtual public fmatvec::Atom {
     public:
       //! ctor used in fmiInstantiateModel
       FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn);

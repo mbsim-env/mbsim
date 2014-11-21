@@ -3,6 +3,7 @@
 
 #include <string>
 #include <boost/filesystem.hpp>
+#include <fmatvec/atom.h>
 
 struct archive;
 struct archive_entry;
@@ -10,7 +11,7 @@ struct archive_entry;
 namespace MBSimFMI {
 
 //! Create a zip file
-class CreateZip {
+class CreateZip : virtual public fmatvec::Atom {
   public:
     //! Create zip file name zipFile_
     CreateZip(const boost::filesystem::path &zipFile_);

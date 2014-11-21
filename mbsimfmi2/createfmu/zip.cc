@@ -29,11 +29,11 @@ CreateZip::~CreateZip() {
       close();
   }
   catch(const exception &ex) {
-    cerr<<"Exception from CreateZip::close() in destructor of CreateZip (ZIP filename "<<zipFile<<") catched:"<<endl
-        <<ex.what()<<endl;
+    msg(Warn)<<"Exception from CreateZip::close() in destructor of CreateZip (ZIP filename "<<zipFile<<") catched:"<<endl
+             <<ex.what()<<endl;
   }
   catch(...) {
-    cerr<<"Unknown exception from CreateZip::close() in destructor of CreateZip (ZIP filename '"<<zipFile<<"') catched."<<endl;
+    msg(Warn)<<"Unknown exception from CreateZip::close() in destructor of CreateZip (ZIP filename '"<<zipFile<<"') catched."<<endl;
   }
   archive_entry_free(entry);
   archive_write_free(a);
