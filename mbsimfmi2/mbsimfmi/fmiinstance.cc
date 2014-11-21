@@ -180,12 +180,22 @@ namespace MBSimFMI {
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     *callEventUpdate=false;
 
-    if(predefinedVar.plotMode==EverynthCompletedStep) {
-      completedStepCounter++;
-      if(completedStepCounter==predefinedVar.plotEachNStep) {
-        completedStepCounter=0;
-        dss->plot(z, time);
-      }
+    switch(predefinedVar.plotMode) {
+      case EverynthCompletedStep:
+        completedStepCounter++;
+        if(completedStepCounter==predefinedVar.plotEachNStep) {
+          completedStepCounter=0;
+          dss->plot(z, time);
+        }
+        break;
+      case NextCompletedStepAfterSampleTime:
+        if(time>=nextPlotTime) {
+          nextPlotTime += predefinedVar.plotStepSize * (floor((time-nextPlotTime)/predefinedVar.plotStepSize)+1);
+          dss->plot(z, time);
+        }
+        break;
+      case SampleTime:
+        break;
     }
   }
 
@@ -288,20 +298,27 @@ namespace MBSimFMI {
     // plot initial state
     dss->plot(z, time);
 
-    if(predefinedVar.plotMode==EverynthCompletedStep) {
-      // init
-      completedStepCounter=0;
-      // no next time event
-      eventInfo->upcomingTimeEvent=false;
-      eventInfo->nextEventTime=0;
-    }
-    else
-    {
-      // init
-      nextPlotEvent=time+predefinedVar.plotStepSize;
-      // next time event
-      eventInfo->upcomingTimeEvent=true;
-      eventInfo->nextEventTime=nextPlotEvent;
+    // handling of plot mode
+    switch(predefinedVar.plotMode) {
+      case EverynthCompletedStep:
+        // init
+        completedStepCounter=0;
+        // no next time event
+        eventInfo->upcomingTimeEvent=false;
+        break;
+      case NextCompletedStepAfterSampleTime:
+        // init
+        nextPlotTime=time+predefinedVar.plotStepSize;
+        // next time event
+        eventInfo->upcomingTimeEvent=false;
+        break;
+      case SampleTime:
+        // init
+        nextPlotTime=time+predefinedVar.plotStepSize;
+        // next time event
+        eventInfo->upcomingTimeEvent=true;
+        eventInfo->nextEventTime=nextPlotTime;
+        break;
     }
   }
 
@@ -380,25 +397,26 @@ namespace MBSimFMI {
 
     // time event (currently only for plotting)
 
-    if(predefinedVar.plotMode==EverynthCompletedStep) {
-      // no next time event
-      eventInfo->upcomingTimeEvent=false;
-      eventInfo->nextEventTime=0;
-    }
-    else
-    {
-      // next time event
-      eventInfo->upcomingTimeEvent=true;
-      eventInfo->nextEventTime=nextPlotEvent;
-
-      // next event wenn plotting with sample time and we currently match that time
-      if(fabs(time-nextPlotEvent)<1.0e-10) {
-        // plot
-        dss->plot(z, time);
+    switch(predefinedVar.plotMode) {
+      case EverynthCompletedStep:
+      case NextCompletedStepAfterSampleTime:
+        // no next time event
+        eventInfo->upcomingTimeEvent=false;
+        break;
+      case SampleTime:
         // next time event
-        nextPlotEvent=time+predefinedVar.plotStepSize;
-        eventInfo->nextEventTime=nextPlotEvent;
-      }
+        eventInfo->upcomingTimeEvent=true;
+        eventInfo->nextEventTime=nextPlotTime;
+
+        // next event wenn plotting with sample time and we currently match that time
+        if(fabs(time-nextPlotTime)<1.0e-10) {
+          // plot
+          dss->plot(z, time);
+          // next time event
+          nextPlotTime=time+predefinedVar.plotStepSize;
+          eventInfo->nextEventTime=nextPlotTime;
+        }
+        break;
     }
   }
 

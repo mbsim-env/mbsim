@@ -119,7 +119,7 @@ namespace MBSimFMI {
       std::vector<boost::shared_ptr<Variable> > var;
 
       int completedStepCounter;
-      double nextPlotEvent;
+      double nextPlotTime;
   };
 
 }
