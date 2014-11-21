@@ -84,6 +84,8 @@ namespace MBSimFMI {
 
     private:
 
+      void rethrowVR(size_t vr, const std::string &what="");
+
       // store FMI instanceName and logger
       std::string instanceName;
       fmiCallbackLogger logger;
