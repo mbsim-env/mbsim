@@ -7,6 +7,7 @@
 #include <mbxmlutils/preprocess.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsimxml/mbsimxml.h>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
   OctEval octEval(&dependencies);
   // create parser
   boost::shared_ptr<DOMParser> parser=DOMParser::create(true);
-  //MFMF generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
+  MBSim::generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
   parser->loadGrammar(".mbsimxml.xsd");
 
   // load MBSim project XML document
