@@ -24,8 +24,9 @@ class Variable;
 
 //! enumeration for PredefinedVariables::plotMode
 enum PlotMode {
-  EverynthCompletedStep = 1,
-  SampleTime            = 2
+  EverynthCompletedStep            = 1,
+  NextCompletedStepAfterSampleTime = 2,
+  SampleTime                       = 3
 };
 //! Struct holding all predefined FMI variables (variables which are not part of the MBSim dss)
 struct PredefinedVariables {
@@ -214,14 +215,19 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
   // plot mode
   // generate enumeration list
   Variable::EnumList plotModeList=boost::make_shared<Variable::EnumListCont>();
-  plotModeList->push_back(std::make_pair<std::string, std::string>("Every n-th completed step", // PlotMode::EverynthCompletedStep
+  // PlotMode::EverynthCompletedStep
+  plotModeList->push_back(std::make_pair<std::string, std::string>("Every n-th completed step",
     "Plot each n-th completed integrator step, with n = 'Plot.each n-th step'."));
-  plotModeList->push_back(std::make_pair<std::string, std::string>("Constant sample time", // PlotMode::SampleTime
+  // PlotMode::NextCompletedStepAfterSampleTime
+  plotModeList->push_back(std::make_pair<std::string, std::string>("Next completed step after sample time",
+    "Plot at the first completed step after sample time, with sample time = 'Plot.sample time'."));
+  // PlotMode::SampleTime
+  plotModeList->push_back(std::make_pair<std::string, std::string>("Constant sample time",
     "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
   // add variable
   var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.mode",
     "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedVar.plotMode), plotModeList));
-  (*--var.end())->setValue(int(1)); // default value: every n-th completed integrator step
+  (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime)); // default value
 
   // plot at each n-th integrator step
   var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
