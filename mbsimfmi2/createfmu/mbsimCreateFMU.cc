@@ -7,15 +7,15 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/integrators/integrator.h>
 #include <mbsimxml/mbsimxml.h>
-#include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/filesystem/fstream.hpp"
 
 #include "zip.h"
 
-#include <../general/valueReferenceMap_impl.h>
+#include <../general/fmi_variables_impl.h>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -25,15 +25,6 @@ using namespace xercesc;
 using namespace MBSimFMI;
 
 namespace {
-  // enum for all types of variables
-  enum ScalarVarType {
-    Input, // FMI input
-    Output // FMI output
-  };
-
-  // helper variable to add a variable to the modelDescription.xml file
-  void addScalarVariable(DOMElement *modelVars, size_t vr, string name, const string &desc, ScalarVarType type);
-
   // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32
   string SHEXT(".dll");
@@ -92,11 +83,15 @@ int main(int argc, char *argv[]) {
   dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
 
   // build list of value references
-  ValueReferenceMap::VRMap vrUnion;
-  ValueReferenceMap::create(dss.get(), vrUnion);
+  vector<boost::shared_ptr<Variable<double> > > vrReal;
+  createAllVariables(dss.get(), vrReal);
 
   // initialize dss
   dss->initialize();
+
+  // create object for Integrator (just to get the start/end time for DefaultExperiment)
+  boost::shared_ptr<MBSimIntegrator::Integrator> integrator;
+  integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(modelEle->getFirstElementChild()->getNextElementSibling()));
 
   // create DOM of modelDescription.xml
   boost::shared_ptr<DOMDocument> modelDescDoc(parser->createDocument());
@@ -125,32 +120,31 @@ int main(int argc, char *argv[]) {
     // DefaultExperiment
     DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
     modelDesc->appendChild(defaultExp);
-    E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(0));
-    E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(2));
+    E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(integrator->getStartTime()));
+    E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(integrator->getEndTime()));
     E(defaultExp)->setAttribute("tolerance", boost::lexical_cast<string>(1e-5));
     // ModelVariables
     DOMElement *modelVars=D(modelDescDoc)->createElement("ModelVariables");
     modelDesc->appendChild(modelVars);
-    size_t vr=0;
-    for(ValueReferenceMap::VRMap::iterator it=vrUnion.begin(); it!=vrUnion.end(); ++it, ++vr) {
-      // ScalarVariable
-      switch(it->first) {
-        case ValueReferenceMap::GeneralizedIO_h:
-          addScalarVariable(modelVars, vr, it->second.generalizedIO->getPath()+"/h", "ExternGeneralizedIO force", Input);
-          break;
-        case ValueReferenceMap::GeneralizedIO_x:
-          addScalarVariable(modelVars, vr, it->second.generalizedIO->getPath()+"/x", "ExternGeneralizedIO position", Output);
-          break;
-        case ValueReferenceMap::GeneralizedIO_v:
-          addScalarVariable(modelVars, vr, it->second.generalizedIO->getPath()+"/v", "ExternGeneralizedIO velocity", Output);
-          break;
-        case ValueReferenceMap::SignalSource:
-          addScalarVariable(modelVars, vr, it->second.generalizedIO->getPath(), "ExternSignalSource", Input);
-          break;
-        case ValueReferenceMap::SignalSink:
-          addScalarVariable(modelVars, vr, it->second.generalizedIO->getPath(), "ExternSignalSink", Output);
-          break;
-      }
+    for(size_t vr=0; vr<vrReal.size(); ++vr) {
+      DOMElement *scalarVar=D(modelDescDoc)->createElement("ScalarVariable");
+      modelVars->appendChild(scalarVar);
+        DOMElement *varType=D(modelDescDoc)->createElement("Real");
+        scalarVar->appendChild(varType);
+        E(scalarVar)->setAttribute("name", vrReal[vr]->getName());
+        E(scalarVar)->setAttribute("description", vrReal[vr]->getDescription());
+        E(scalarVar)->setAttribute("valueReference", boost::lexical_cast<string>(vr));
+        switch(vrReal[vr]->getType()) {
+          case Input:
+            E(scalarVar)->setAttribute("causality", "input");
+            E(scalarVar)->setAttribute("variability", "continuous");
+            E(varType)->setAttribute("start", boost::lexical_cast<string>(0)); // default value is 0, see also fmiinstance.cc
+            break;
+          case Output:
+            E(scalarVar)->setAttribute("causality", "output");
+            E(scalarVar)->setAttribute("variability", "continuous");
+            break;
+        }
     }
   // add modelDescription.xml file to FMU
   string modelDescriptionStr;
@@ -163,29 +157,4 @@ int main(int argc, char *argv[]) {
   fmuFile.close();
 
   return 0;
-}
-
-namespace {
-  void addScalarVariable(DOMElement *modelVars, size_t vr, string name, const string &desc, ScalarVarType type) {
-    DOMElement *scalarVar=D(modelVars->getOwnerDocument())->createElement("ScalarVariable");
-    modelVars->appendChild(scalarVar);
-      DOMElement *varType=D(scalarVar->getOwnerDocument())->createElement("Real");
-      scalarVar->appendChild(varType);
-      boost::replace_all(name, "/", ".");
-      E(scalarVar)->setAttribute("name", name.substr(1));
-      E(scalarVar)->setAttribute("description", desc);
-      E(scalarVar)->setAttribute("valueReference", boost::lexical_cast<string>(vr));
-      switch(type) {
-        case Input:
-          E(scalarVar)->setAttribute("causality", "input");
-          E(scalarVar)->setAttribute("variability", "continuous");
-          E(varType)->setAttribute("start", boost::lexical_cast<string>(0)); // default value is 0, see also fmiinstance.cc
-          break;
-        case Output:
-          E(scalarVar)->setAttribute("causality", "output");
-          E(scalarVar)->setAttribute("variability", "continuous");
-          break;
-      }
-  }
-
 }

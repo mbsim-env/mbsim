@@ -23,6 +23,10 @@ else
   CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
 fi
 
+CFLAGS="$CFLAGS -Wall -Werror"
+CXXFLAGS="$CXXFLAGS -Wall -Werror"
+LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+
 # FMI platform name
 if test "_$host_os" = "_mingw32" ; then
   FMIPLATFORM=win$(getconf LONG_BIT)

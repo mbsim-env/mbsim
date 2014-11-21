@@ -51,7 +51,7 @@ namespace MBSimFMI {
 
   // print exceptions using the FMI logger
   void FMIInstance::logException(const exception &ex) {
-    logger(this, instanceName.c_str(), fmiOK, "error", ex.what());
+    logger(this, instanceName.c_str(), fmiError, "error", ex.what());
   }
 
   // FMI wrapper functions
@@ -70,7 +70,7 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::setContinuousStates(const fmiReal x[], size_t nx) {
-    for(int i=0; i<nx; ++i)
+    for(size_t i=0; i<nx; ++i)
       z(i)=x[i];
   }
 
@@ -92,27 +92,15 @@ namespace MBSimFMI {
     // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss) {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrUnion.size())
+        if(vr[i]>=vrReal.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        switch(vrUnion[vr[i]].first) {
-          // set ExternGeneralizedIO force
-          case ValueReferenceMap::GeneralizedIO_h:
-            vrUnion[vr[i]].second.generalizedIO->setGeneralizedForce(value[i]);
-            break;
-          // set SignalSource value
-          case ValueReferenceMap::SignalSource:
-            vrUnion[vr[i]].second.signalSource->setSignal(value[i]);
-            break;
-          // not an MBSim input -> error
-          default:
-            throw runtime_error(str(boost::format("Setting #r%d# not allowed.")%vr[i]));
-        }
+        vrReal[vr[i]]->setValue(value[i]);
       }
     }
-    // no dss exists (before fmiInitialize) -> just save the value in vrReal
+    // no dss exists (before fmiInitialize) -> just save the value in vrRealStore
     else {
       for(size_t i=0; i<nvr; ++i)
-        vrReal[vr[i]]=value[i];
+        vrRealStore[vr[i]]=value[i];
     }
   }
 
@@ -162,8 +150,8 @@ namespace MBSimFMI {
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
 
     // build list of value references
-    msg(Debug)<<"Build valueReference list."<<endl;
-    ValueReferenceMap::create(dss.get(), vrUnion);
+    msg(Debug)<<"Create all FMI variables."<<endl;
+    createAllVariables(dss.get(), vrReal);
 
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
@@ -175,6 +163,31 @@ namespace MBSimFMI {
     dss->initz(z);
     dss->computeInitialCondition();
 
+    // between the fmiInstantiateModel and the fmiInitialize calls no dss is available (dss is generated in fmiInitialize).
+    // Hence the values of all fmiSetReal, ... calls between these functions are just saved (see setReal(...)).
+    // These values are not copied to the now existing dss as start values.
+    msg(Debug)<<"Copy already set values to DynamicSystemSolver."<<endl;
+    for(size_t vr=0; vr<vrReal.size(); ++vr) {
+      map<size_t, double>::iterator vrRealStoreIt=vrRealStore.find(vr);
+      if(vrRealStoreIt==vrRealStore.end()) {
+        if(vrReal[vr]->getType()==Input) // only inputs are allowed to set (initialized with 0)
+          vrReal[vr]->setValue(0); // default value is 0, see also mbsimCreateFMU.cc
+      }
+      else {
+        vrReal[vr]->setValue(vrRealStoreIt->second); // set to value of last corresponding setReal call
+        vrRealStore.erase(vrRealStoreIt); // value is processed now -> remove it
+      }
+    }
+
+    // the above code should have removed all already set values. Hence if something was not removed its an error.
+    if(vrRealStore.size()>0) {
+      stringstream str;
+      str<<"The following value reference where set/get previously but are not defined:"<<endl;
+      for(map<size_t, double>::iterator it=vrRealStore.begin(); it!=vrRealStore.end(); ++it)
+        str<<"#r"<<it->first<<"#"<<endl;
+      throw runtime_error(str.str());
+    }
+
     // initialize stop vector
     sv.resize(dss->getsvSize());
     svLast.resize(dss->getsvSize());
@@ -184,67 +197,19 @@ namespace MBSimFMI {
 
     // plot initial state
     dss->plot(z, time);
-
-    // between the fmiInstantiateModel and the fmiInitialize calls no dss is available (dss is generated in fmiInitialize).
-    // Hence the values of all fmiSetReal, ... calls between these functions are just saved (see setReal(...)).
-    // These values are not copied to the now existing dss as start values.
-    msg(Debug)<<"Copy already set values to DynamicSystemSolver."<<endl;
-    size_t vr=0;
-    for(ValueReferenceMap::VRMap::iterator vrIt=vrUnion.begin(); vrIt!=vrUnion.end(); ++vrIt, ++vr) {
-      switch(vrIt->first) {
-        // set ExternGeneralizedIO force
-        case ValueReferenceMap::GeneralizedIO_h: {
-          map<size_t, double>::iterator vrRealIt=vrReal.find(vr);
-          if(vrRealIt==vrReal.end())
-            vrIt->second.generalizedIO->setGeneralizedForce(0); // default value is 0, see also mbsimCreateFMU.cc
-          else {
-            vrIt->second.generalizedIO->setGeneralizedForce(vrRealIt->second);
-            vrReal.erase(vrRealIt); // value is processed now -> remove it
-          }
-          break;
-        }
-        // ExternGeneralizedIO position and velocity are outputs which cannot be set by the environment -> skip
-        case ValueReferenceMap::GeneralizedIO_x: 
-        case ValueReferenceMap::GeneralizedIO_v:
-          break;
-        // set SignalSource value
-        case ValueReferenceMap::SignalSource: {
-          map<size_t, double>::iterator vrRealIt=vrReal.find(vr);
-          if(vrRealIt==vrReal.end())
-            vrIt->second.signalSource->setSignal(0); // default value is 0, see also mbsimCreateFMU.cc
-          else {
-            vrIt->second.signalSource->setSignal(vrRealIt->second);
-            vrReal.erase(vrRealIt); // value is processed now -> remove it
-          }
-          break;
-        }
-        // SignalSink is output which cannot be set by the environment -> skip
-        case ValueReferenceMap::SignalSink: 
-          break;
-      }
-    }
-
-    // the above code should have removed all already set values. Hence if something was not removed its an error.
-    if(vrReal.size()>0) {
-      stringstream str;
-      str<<"The following value reference where set/get previously but are not defined:"<<endl;
-      for(map<size_t, double>::iterator it=vrReal.begin(); it!=vrReal.end(); ++it)
-        str<<"#r"<<it->first<<"#"<<endl;
-      throw runtime_error(str.str());
-    }
   }
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
     // calcualte MBSim zd and return it
     dss->zdot(z, zd, time);
-    for(int i=0; i<nx; ++i)
+    for(size_t i=0; i<nx; ++i)
       derivatives[i]=zd(i);
   }
 
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
     // calcualte MBSim stop vector and return it
     dss->getsv(z, sv, time);
-    for(int i=0; i<ni; ++i)
+    for(size_t i=0; i<ni; ++i)
       eventIndicators[i]=sv(i);
   }
 
@@ -252,39 +217,18 @@ namespace MBSimFMI {
     // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss) {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrUnion.size())
+        if(vr[i]>=vrReal.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        switch(vrUnion[vr[i]].first) {
-          // get current ExternGeneralizedIO force
-          case ValueReferenceMap::GeneralizedIO_h:
-            value[i]=vrUnion[vr[i]].second.generalizedIO->getla()(0);
-            break;
-          // get current ExternGeneralizedIO position MISSING: system update required!?
-          case ValueReferenceMap::GeneralizedIO_x:
-            value[i]=vrUnion[vr[i]].second.generalizedIO->getGeneralizedPosition();
-            break;
-          // get current ExternGeneralizedIO velocity MISSING: system update required!?
-          case ValueReferenceMap::GeneralizedIO_v:
-            value[i]=vrUnion[vr[i]].second.generalizedIO->getGeneralizedVelocity();
-            break;
-          // get current SignalSource value
-          case ValueReferenceMap::SignalSource:
-            value[i]=vrUnion[vr[i]].second.signalSource->getSignal()(0);
-            break;
-          // get current SignalSink value MISSING: system update required!?
-          case ValueReferenceMap::SignalSink:
-            value[i]=vrUnion[vr[i]].second.signalSink->getSignal()(0);
-            break;
-        }
+        value[i]=vrReal[vr[i]]->getValue();
       }
     }
     // no dss exists (before fmiInitialize) -> just return the previously set value or 0 (the default value)
     else {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrReal.size())
+        if(vr[i]>=vrRealStore.size())
           value[i]=0; // not set till now, return default value 0, see also mbsimCreateFMU.cc
         else
-          value[i]=vrReal[vr[i]];
+          value[i]=vrRealStore[vr[i]];
       }
     }
   }
@@ -339,7 +283,7 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::getContinuousStates(fmiReal states[], size_t nx) {
-    for(int i=0; i<nx; ++i)
+    for(size_t i=0; i<nx; ++i)
       states[i]=z(i);
   }
 
