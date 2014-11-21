@@ -1,1 +1,1 @@
-SUBDIRS = mbsimfmi
+SUBDIRS = createfmu mbsimfmi

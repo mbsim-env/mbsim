@@ -3,7 +3,7 @@ AC_PREREQ([2.57])
 AC_INIT([mbsimfmi],[2.0.0],[friedrich.at.gc@googlemail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([subdir-objects])
-AC_CONFIG_SRCDIR([mbsimfmi/fmiFunctions.cc])
+AC_CONFIG_SRCDIR([mbsimfmi/fmiinstance.h])
 LT_INIT([win32-dll])
 
 : ${CFLAGS=""}
@@ -23,9 +23,10 @@ else
   CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
 fi
 
-PKG_CHECK_MODULES(DEPS, mbsimxml mbsim mbsimControl)
+PKG_CHECK_MODULES(FMUDEPS, mbsimxml mbsim mbsimControl)
+PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
 
-AC_CONFIG_FILES([Makefile mbsimfmi/Makefile])
+AC_CONFIG_FILES([Makefile createfmu/Makefile mbsimfmi/Makefile])
 AC_OUTPUT
 
 echo "

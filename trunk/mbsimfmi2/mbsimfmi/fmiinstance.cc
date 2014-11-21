@@ -1,3 +1,4 @@
+#include "../config.h"
 #include <fmiinstance.h>
 #include <stdexcept>
 #include <mbsimxml/mbsimflatxml.h>
@@ -15,10 +16,6 @@ using namespace boost::filesystem;
 using namespace MBSim;
 using namespace MBSimControl;
 using namespace MBXMLUtils;
-
-namespace {
-  void getAllLinks(const DynamicSystem *sys, vector<Link*> link);
-}
 
 namespace MBSimFMI {
 
@@ -81,10 +78,10 @@ namespace MBSimFMI {
         if(vr[i]>=vrUnion.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
         switch(vrUnion[vr[i]].first) {
-          case GeneralizedIO_h:
+          case ValueReferenceMap::GeneralizedIO_h:
             vrUnion[vr[i]].second.generalizedIO->setGeneralizedForce(value[i]);
             break;
-          case SignalSource:
+          case ValueReferenceMap::SignalSource:
             vrUnion[vr[i]].second.signalSource->setSignal(value[i]);
             break;
           default:
@@ -154,30 +151,9 @@ namespace MBSimFMI {
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
 
-    // get all links from dss and store in vrUnion vector
+    // build list of value references
     msg(Debug)<<"Build valueReference list."<<endl;
-    vector<Link*> link;
-    getAllLinks(dss.get(), link);
-    for(vector<Link*>::iterator it=link.begin(); it!=link.end(); ++it) {
-      TypeValue typeValue;
-      ExternGeneralizedIO *genIO=dynamic_cast<ExternGeneralizedIO*>(*it);
-      if(genIO) {
-        typeValue.generalizedIO=genIO;
-        vrUnion.push_back(make_pair(GeneralizedIO_h, typeValue));
-        vrUnion.push_back(make_pair(GeneralizedIO_x, typeValue));
-        vrUnion.push_back(make_pair(GeneralizedIO_v, typeValue));
-      }
-      ExternSignalSource *sigSource=dynamic_cast<ExternSignalSource*>(*it);
-      if(sigSource) {
-        typeValue.signalSource=sigSource;
-        vrUnion.push_back(make_pair(SignalSource, typeValue));
-      }
-      ExternSignalSink *sigSink=dynamic_cast<ExternSignalSink*>(*it);
-      if(sigSink) {
-        typeValue.signalSink=sigSink;
-        vrUnion.push_back(make_pair(SignalSink, typeValue));
-      }
-    }
+    ValueReferenceMap::create(dss.get(), vrUnion);
 
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
@@ -185,27 +161,29 @@ namespace MBSimFMI {
 
     // copy all set values (between fmiInstantiateModel and fmiInitialize (this func)) to the dss
     msg(Debug)<<"Copy values to DynamicSystemSolver."<<endl;
-    size_t idx=0;
-    for(vector<pair<Type, TypeValue> >::iterator vrIt=vrUnion.begin(); vrIt!=vrUnion.end(); ++vrIt, ++idx) {
+    size_t vr=0;
+    for(ValueReferenceMap::VRMap::iterator vrIt=vrUnion.begin(); vrIt!=vrUnion.end(); ++vrIt, ++vr) {
       switch(vrIt->first) {
-        case GeneralizedIO_h: {
-          map<size_t, double>::iterator vrRealIt=vrReal.find(idx);
+        case ValueReferenceMap::GeneralizedIO_h: {
+          map<size_t, double>::iterator vrRealIt=vrReal.find(vr);
           if(vrRealIt==vrReal.end())
-            throw runtime_error("mfmf: defaults are missing.");
-          vrIt->second.generalizedIO->setGeneralizedForce(vrRealIt->second);
+            vrIt->second.generalizedIO->setGeneralizedForce(0); // default value is 0, see also mbsimCreateFMU.cc
+          else
+            vrIt->second.generalizedIO->setGeneralizedForce(vrRealIt->second);
           break;
         }
-        case GeneralizedIO_x: 
-        case GeneralizedIO_v:
+        case ValueReferenceMap::GeneralizedIO_x: 
+        case ValueReferenceMap::GeneralizedIO_v:
           break;
-        case SignalSource: {
-          map<size_t, double>::iterator vrRealIt=vrReal.find(idx);
+        case ValueReferenceMap::SignalSource: {
+          map<size_t, double>::iterator vrRealIt=vrReal.find(vr);
           if(vrRealIt==vrReal.end())
-            throw runtime_error("mfmf: defaults are missing.");
-          vrIt->second.signalSource->setSignal(vrRealIt->second);
+            vrIt->second.signalSource->setSignal(0); // default value is 0, see also mbsimCreateFMU.cc
+          else
+            vrIt->second.signalSource->setSignal(vrRealIt->second);
           break;
         }
-        case SignalSink: 
+        case ValueReferenceMap::SignalSink: 
           break;
       }
     }
@@ -234,27 +212,31 @@ namespace MBSimFMI {
         if(vr[i]>=vrUnion.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
         switch(vrUnion[vr[i]].first) {
-          case GeneralizedIO_h:
+          case ValueReferenceMap::GeneralizedIO_h:
             value[i]=vrUnion[vr[i]].second.generalizedIO->getla()(0);
             break;
-          case GeneralizedIO_x:
+          case ValueReferenceMap::GeneralizedIO_x:
             value[i]=vrUnion[vr[i]].second.generalizedIO->getGeneralizedPosition();
             break;
-          case GeneralizedIO_v:
+          case ValueReferenceMap::GeneralizedIO_v:
             value[i]=vrUnion[vr[i]].second.generalizedIO->getGeneralizedVelocity();
             break;
-          case SignalSource:
+          case ValueReferenceMap::SignalSource:
             value[i]=vrUnion[vr[i]].second.signalSource->getSignal()(0);
             break;
-          case SignalSink:
+          case ValueReferenceMap::SignalSink:
             value[i]=vrUnion[vr[i]].second.signalSink->getSignal()(0);
             break;
         }
       }
     }
     else {
-      for(size_t i=0; i<nvr; ++i)
-        value[i]=vrReal[vr[i]];
+      for(size_t i=0; i<nvr; ++i) {
+        if(vr[i]>=vrReal.size())
+          value[i]=0; // not set till now, return default value 0, see also mbsimCreateFMU.cc
+        else
+          value[i]=vrReal[vr[i]];
+      }
     }
   }
 
@@ -290,19 +272,6 @@ namespace MBSimFMI {
 
   void FMIInstance::terminate() {
     dss.reset();
-  }
-
-}
-
-namespace {
-
-  void getAllLinks(const DynamicSystem *sys, vector<Link*> link) {
-    const vector<Link*> &l=sys->getLinks();
-    for(vector<Link*>::const_iterator it=l.begin(); it!=l.end(); ++it)
-      link.push_back(*it);
-    const vector<DynamicSystem*> &s=sys->getDynamicSystems();
-    for(vector<DynamicSystem*>::const_iterator it=s.begin(); it!=s.end(); ++it)
-      getAllLinks(*it, link);
   }
 
 }
