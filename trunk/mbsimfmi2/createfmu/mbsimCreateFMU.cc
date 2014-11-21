@@ -25,13 +25,16 @@ using namespace xercesc;
 using namespace MBSimFMI;
 
 namespace {
+  // enum for all types of variables
   enum ScalarVarType {
-    Input,
-    Output
+    Input, // FMI input
+    Output // FMI output
   };
 
+  // helper variable to add a variable to the modelDescription.xml file
   void addScalarVariable(DOMElement *modelVars, size_t vr, string name, const string &desc, ScalarVarType type);
 
+  // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32
   string SHEXT(".dll");
   #ifdef _WIN64

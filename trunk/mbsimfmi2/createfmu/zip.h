@@ -9,18 +9,25 @@ struct archive_entry;
 
 namespace MBSimFMI {
 
+//! Create a zip file
 class CreateZip {
   public:
+    //! Create zip file name zipFile_
     CreateZip(const boost::filesystem::path &zipFile_);
+    //! Destroy zipfile. Implicitly close the file if not already done by close().
     ~CreateZip();
+    //! Close the zip file. Write all content to disk.
     void close();
+    //! Add the content of srcFilename to zip file path filenameInZip.
     void add(const boost::filesystem::path &filenameInZip, const boost::filesystem::path &srcFilename);
+    //! Add the string textContent to zip file path filenameInZip.
     void add(const boost::filesystem::path &filenameInZip, const std::string &textContent);
+
   protected:
-    bool closed;
-    boost::filesystem::path zipFile;
-    archive *a;
-    archive_entry *entry;
+    bool closed; // already closed flag
+    boost::filesystem::path zipFile; // zip file name
+    archive *a; // zip archive handle
+    archive_entry *entry; // zip entry handle
 };
 
 }

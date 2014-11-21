@@ -5,10 +5,13 @@
 #include <map>
 #include <utils.h>
 #include <fmatvec/atom.h>
+
+// fmi function declarations must be included as extern C
 extern "C" {
   #include <3rdparty/fmiModelFunctions.h>
 }
 
+// the general valueReference map (used in mbsimCreateFMU and here)
 #include <../general/valueReferenceMap_impl.h>
 
 namespace MBSim {
@@ -81,9 +84,10 @@ namespace MBSimFMI {
       // system stop vector indicator (0 = no shift in this index; 1 = shift in this index)
       fmatvec::VecInt jsv;
 
+      // map valueReference to object
       ValueReferenceMap::VRMap vrUnion;
 
-      // store for valueReference before fmiInitialize is called
+      // store for FMI variables before fmiInitialize is called
       std::map<size_t, double> vrReal;
   };
 
