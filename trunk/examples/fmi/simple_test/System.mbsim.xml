@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DynamicSystemSolver name="System" xmlns="http://mbsim.berlios.de/MBSim"
+<Group name="System{n}" xmlns="http://mbsim.berlios.de/MBSim"
   xmlns:control="http://mbsim.berlios.de/MBSimControl"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <position>if n==1; ret=[0;0;-0.25]; else ret=[0;0;0.25]; end</position>
   <frames>
     <FixedRelativeFrame name="SpringMount">
       <enableOpenMBV/>
@@ -11,14 +12,14 @@
   <contours>
     <Plane name="Plane">
       <enableOpenMBV>
-        <length>[1.0;1.0]</length>
+        <length>[1.0;0.4]</length>
       </enableOpenMBV>
     </Plane>
   </contours>
   <groups/>
   <objects>
     <RigidBody name="Ball">
-      <initialGeneralizedPosition>[0.2;0.25;0.35]</initialGeneralizedPosition>
+      <initialGeneralizedPosition>[0.2;0.35;0]</initialGeneralizedPosition>
       <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
       <mass>m</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
@@ -62,5 +63,4 @@
     </control:ExternSignalSink>
     <pv:Embed href="{extern}"/>
   </links>
-  <environments/>
-</DynamicSystemSolver>
+</Group>
