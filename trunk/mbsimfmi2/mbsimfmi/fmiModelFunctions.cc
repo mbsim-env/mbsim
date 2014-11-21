@@ -4,7 +4,7 @@
 
 // include the fmi header
 extern "C" {
-  #define MODEL_IDENTIFIER mbsimfmi
+  #define MODEL_IDENTIFIER mbsim
   #include <extern/fmiModelFunctions.h>
 }
 

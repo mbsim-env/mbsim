@@ -25,6 +25,7 @@ fi
 
 PKG_CHECK_MODULES(FMUDEPS, mbsimxml mbsim mbsimControl)
 PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
+PKG_CHECK_MODULES(LIBARCHIVEDEPS, libarchive)
 
 AC_CONFIG_FILES([Makefile createfmu/Makefile mbsimfmi/Makefile])
 AC_OUTPUT

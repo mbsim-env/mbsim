@@ -1,7 +1,7 @@
 # the main binary library to be packed into the FMU (named mbsim.so or mbsim.dll)
-lib_LTLIBRARIES = mbsimfmi.la
+lib_LTLIBRARIES = mbsimxml_fmi.la
 
-mbsimfmi_la_SOURCES = fmiModelFunctions.cc fmiinstance.cc utils.cc
-mbsimfmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN -avoid-version
-mbsimfmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
-mbsimfmi_la_LIBADD = $(FMUDEPS_LIBS)
+mbsimxml_fmi_la_SOURCES = fmiModelFunctions.cc fmiinstance.cc utils.cc
+mbsimxml_fmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN -avoid-version
+mbsimxml_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
+mbsimxml_fmi_la_LIBADD = $(FMUDEPS_LIBS)
