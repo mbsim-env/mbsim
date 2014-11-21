@@ -10,6 +10,7 @@
 #include <mbsimControl/extern_signal_sink.h>
 #include <mbsim/extern_generalized_io.h>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -18,6 +19,62 @@ using namespace MBSimControl;
 using namespace MBXMLUtils;
 
 namespace MBSimFMI {
+
+  FMIVariablePre::FMIVariablePre(Type type_, char datatype_, const std::string &defaultValue) :
+    type(type_), datatype(datatype_) {
+    if(!defaultValue.empty()) {
+      switch(datatype) {
+        case 'r': doubleValue =boost::lexical_cast<double>(defaultValue);
+        case 'i': integerValue=boost::lexical_cast<int>   (defaultValue);
+        case 'b': booleanValue=boost::lexical_cast<bool>  (defaultValue);
+        case 's': stringValue =boost::lexical_cast<string>(defaultValue);
+      }
+    }
+  }
+
+  double FMIVariablePre::getValue(double) {
+    if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
+    return doubleValue;
+  }
+
+  int FMIVariablePre::getValue(int) {
+    if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
+    return integerValue;
+  }
+
+  bool FMIVariablePre::getValue(bool) {
+    if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
+    return booleanValue;
+  }
+
+  const char* FMIVariablePre::getValue(const char*) {
+    if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
+    return stringValue.c_str();
+  }
+
+  void FMIVariablePre::setValue(double v) {
+    if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
+    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
+    doubleValue=v;
+  }
+
+  void FMIVariablePre::setValue(int v) {
+    if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
+    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
+    integerValue=v;
+  }
+
+  void FMIVariablePre::setValue(bool v) {
+    if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
+    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
+    booleanValue=v;
+  }
+
+  void FMIVariablePre::setValue(const std::string &v) {
+    if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
+    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
+    stringValue=v;
+  }
 
   // A MBSIM FMI instance
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
@@ -43,6 +100,38 @@ namespace MBSimFMI {
     // check GUID: we use currently a constant GUID
     if(string(GUID)!="mbsimfmi_guid")
       throw runtime_error("GUID provided by caller and internal GUID does not match.");
+
+    // load modelDescription XML file
+    parser=DOMParser::create(false);
+    msg(Debug)<<"Read modelDescription file."<<endl;
+    path modelDescriptionXMLFile=getSharedLibDir().parent_path().parent_path()/"modelDescription.xml";
+    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
+
+    // create FMI variables from modelDescription.xml file
+    msg(Debug)<<"Generate variables used before fmiInitialize."<<endl;
+    size_t vr=0;
+    for(xercesc::DOMElement *scalarVar=E(doc->getDocumentElement())->getFirstElementChildNamed("ModelVariables")->getFirstElementChild();
+        scalarVar; scalarVar=scalarVar->getNextElementSibling(), ++vr) {
+      if(vr!=boost::lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
+        throw runtime_error("Internal error: valueReference missmatch!");
+      // get type
+      Type type;
+           if(E(scalarVar)->getAttribute("causality")=="internal" && E(scalarVar)->getAttribute("variability")=="parameter")  type=Parameter;
+      else if(E(scalarVar)->getAttribute("causality")=="input"    && E(scalarVar)->getAttribute("variability")=="continuous") type=Input;
+      else if(E(scalarVar)->getAttribute("causality")=="output"   && E(scalarVar)->getAttribute("variability")=="continuous") type=Output;
+      else throw runtime_error("Internal error: Unknwon variable type.");
+      // get datatype
+      char datatype;
+           if(E(scalarVar)->getFirstElementChildNamed("Real")) datatype='r';
+      else if(E(scalarVar)->getFirstElementChildNamed("Integer")) datatype='i';
+      else if(E(scalarVar)->getFirstElementChildNamed("Boolean")) datatype='b';
+      else if(E(scalarVar)->getFirstElementChildNamed("String")) datatype='s';
+      else throw runtime_error("Internal error: Unknown variable datatype.");
+      // get default
+      string defaultValue=E(scalarVar->getFirstElementChild())->getAttribute("start");
+      // create pre varaible
+      vrMapPre.push_back(boost::make_shared<FMIVariablePre>(type, datatype, defaultValue));
+    }
   }
 
   // destroy a MBSim FMI instance
@@ -87,34 +176,32 @@ namespace MBSimFMI {
     dss->plot(z, time);
   }
 
-  // set a real variable
-  void FMIInstance::setReal(const fmiValueReference vr[], size_t nvr, const fmiReal value[]) {
-    // dss exists (after fmiInitialize) -> set the corresponding MBSim input
-    if(dss) {
+  namespace {
+    template<typename VRMap, typename Type>
+    void setValue_vrMap_or_vrMapPre(VRMap &vrMap, const fmiValueReference vr[], size_t nvr, const Type value[]) {
       for(size_t i=0; i<nvr; ++i) {
         if(vr[i]>=vrMap.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        vrMap[vr[i]]->setRealValue(value[i]);
+        vrMap[vr[i]]->setValue(value[i]);
       }
     }
-    // no dss exists (before fmiInitialize) -> just save the value in vrMapStore
-    else {
-      for(size_t i=0; i<nvr; ++i)
-        vrMapStore[vr[i]]=value[i];
-    }
   }
 
-  void FMIInstance::setInteger(const fmiValueReference vr[], size_t nvr, const fmiInteger value[]) {
-    throw runtime_error("No values of type integer.");
+  // set a real/integer/boolean/string variable
+  template<typename Type>
+  void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const Type value[]) {
+    // dss exists (after fmiInitialize) -> use vrMap
+    if(dss)
+      setValue_vrMap_or_vrMapPre(vrMap, vr, nvr, value);
+    // no dss exists (before fmiInitialize) -> use vrMapPre
+    else
+      setValue_vrMap_or_vrMapPre(vrMapPre, vr, nvr, value);
   }
-
-  void FMIInstance::setBoolean(const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]) {
-    throw runtime_error("No values of type boolean.");
-  }
-
-  void FMIInstance::setString(const fmiValueReference vr[], size_t nvr, const fmiString value[]) {
-    throw runtime_error("No values of type string.");
-  }
+  // explicitly instantiate all four FMI types
+  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[]);
+  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiInteger value[]);
+  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]);
+  template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiString value[]);
 
   void FMIInstance::initialize(fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) {
     // after the ctor call another FMIInstance ctor may be called, hence we need to reset the message streams here
@@ -131,10 +218,8 @@ namespace MBSimFMI {
     eventInfo->upcomingTimeEvent=false;
     eventInfo->nextEventTime=0;
 
-    // get fmu directory: the .so/.dll is in <fmuDir>/binaries/[linux|win][32|64]
-    path fmuDir=getSharedLibDir().parent_path().parent_path();
     // get the model file
-    path mbsimflatxmlfile=fmuDir/"resources"/"Model.mbsimprj.flat.xml";
+    path mbsimflatxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"Model.mbsimprj.flat.xml";
 
     // load all plugins
     msg(Debug)<<"Load MBSim plugins."<<endl;
@@ -142,7 +227,6 @@ namespace MBSimFMI {
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim XML model file."<<endl;
-    boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
     boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile);
   
     // create object for DynamicSystemSolver
@@ -151,42 +235,29 @@ namespace MBSimFMI {
 
     // build list of value references
     msg(Debug)<<"Create all FMI variables."<<endl;
-    createAllVariables(dss.get(), vrMap);
+    createAllVariables(dss.get(), vrMap, fmiPar);
 
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
+
+    // copy all inputs from vrMapPre to vrMap
+    if(vrMapPre.size()!=vrMap.size())
+      throw runtime_error("Internal error: The number of parameters differ.");
+    vector<boost::shared_ptr<Variable> >::iterator it=vrMap.begin();
+    for(vector<boost::shared_ptr<FMIVariablePre> >::iterator itPre=vrMapPre.begin(); itPre!=vrMapPre.end(); ++itPre, ++it) {
+      if((*itPre)->getType()!=Input)
+        continue;
+      if((*it)->getType()!=Input)
+        throw runtime_error("Internal error: Variable type does not match.");
+      (*it)->setValue((*itPre)->getValue(double(0)));
+    }
 
     // initialize state
     z.resize(dss->getzSize());
     zd.resize(dss->getzSize());
     dss->initz(z);
     dss->computeInitialCondition();
-
-    // between the fmiInstantiateModel and the fmiInitialize calls no dss is available (dss is generated in fmiInitialize).
-    // Hence the values of all fmiSetReal, ... calls between these functions are just saved (see setReal(...)).
-    // These values are not copied to the now existing dss as start values.
-    msg(Debug)<<"Copy already set values to DynamicSystemSolver."<<endl;
-    for(size_t vr=0; vr<vrMap.size(); ++vr) {
-      map<size_t, double>::iterator vrMapStoreIt=vrMapStore.find(vr);
-      if(vrMapStoreIt==vrMapStore.end()) {
-        if(vrMap[vr]->getType()==Input) // only inputs are allowed to set (initialized with 0)
-          vrMap[vr]->setRealValue(0); // default value is 0, see also mbsimCreateFMU.cc
-      }
-      else {
-        vrMap[vr]->setRealValue(vrMapStoreIt->second); // set to value of last corresponding setReal call
-        vrMapStore.erase(vrMapStoreIt); // value is processed now -> remove it
-      }
-    }
-
-    // the above code should have removed all already set values. Hence if something was not removed its an error.
-    if(vrMapStore.size()>0) {
-      stringstream str;
-      str<<"The following value reference where set/get previously but are not defined:"<<endl;
-      for(map<size_t, double>::iterator it=vrMapStore.begin(); it!=vrMapStore.end(); ++it)
-        str<<"#r"<<it->first<<"#"<<endl;
-      throw runtime_error(str.str());
-    }
 
     // initialize stop vector
     sv.resize(dss->getsvSize());
@@ -213,37 +284,32 @@ namespace MBSimFMI {
       eventIndicators[i]=sv(i);
   }
 
-  void FMIInstance::getReal(const fmiValueReference vr[], size_t nvr, fmiReal value[]) {
-    // dss exists (after fmiInitialize) -> set the corresponding MBSim input
-    if(dss) {
+  namespace {
+    template<typename VRMap, typename Type>
+    void getValue_vrMap_or_vrMapPre(VRMap &vrMap, const fmiValueReference vr[], size_t nvr, Type value[]) {
       for(size_t i=0; i<nvr; ++i) {
         if(vr[i]>=vrMap.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        value[i]=vrMap[vr[i]]->getRealValue();
+        value[i]=vrMap[vr[i]]->getValue(static_cast<Type>(0));
       }
     }
+  }
+
+  // get a real/integer/boolean/string variable
+  template<typename Type>
+  void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, Type value[]) {
+    // dss exists (after fmiInitialize) -> set the corresponding MBSim input
+    if(dss)
+      getValue_vrMap_or_vrMapPre(vrMap, vr, nvr, value);
     // no dss exists (before fmiInitialize) -> just return the previously set value or 0 (the default value)
-    else {
-      for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrMapStore.size())
-          value[i]=0; // not set till now, return default value 0, see also mbsimCreateFMU.cc
-        else
-          value[i]=vrMapStore[vr[i]];
-      }
-    }
+    else
+      getValue_vrMap_or_vrMapPre(vrMapPre, vr, nvr, value);
   }
-
-  void FMIInstance::getInteger(const fmiValueReference vr[], size_t nvr, fmiInteger value[]) {
-    throw runtime_error("No values of type integer.");
-  }
-
-  void FMIInstance::getBoolean(const fmiValueReference vr[], size_t nvr, fmiBoolean value[]) {
-    throw runtime_error("No values of type boolean.");
-  }
-
-  void FMIInstance::getString(const fmiValueReference vr[], size_t nvr, fmiString value[]) {
-    throw runtime_error("No values of type string.");
-  }
+  // explicitly instantiate all four FMI types
+  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiReal value[]);
+  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiInteger value[]);
+  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
+  template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiString value[]);
 
   // MBSim shift
   // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.

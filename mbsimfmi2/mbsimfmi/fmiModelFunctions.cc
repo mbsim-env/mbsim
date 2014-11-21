@@ -87,19 +87,19 @@ extern "C" {
     (fmiComponent c, fmiBoolean* callEventUpdate),
     (callEventUpdate))
 
-  FMIFUNC(fmiSetReal, setReal,
+  FMIFUNC(fmiSetReal, setValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiReal value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiSetInteger, setInteger,
+  FMIFUNC(fmiSetInteger, setValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiInteger value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiSetBoolean, setBoolean,
+  FMIFUNC(fmiSetBoolean, setValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiSetString, setString,
+  FMIFUNC(fmiSetString, setValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiString value[]),
     (vr, nvr, value))
 
@@ -115,19 +115,19 @@ extern "C" {
     (fmiComponent c, fmiReal eventIndicators[], size_t ni),
     (eventIndicators, ni))
 
-  FMIFUNC(fmiGetReal, getReal,
+  FMIFUNC(fmiGetReal, getValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiReal value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiGetInteger, getInteger,
+  FMIFUNC(fmiGetInteger, getValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiInteger value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiGetBoolean, getBoolean,
+  FMIFUNC(fmiGetBoolean, getValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiBoolean value[]),
     (vr, nvr, value))
 
-  FMIFUNC(fmiGetString, getString,
+  FMIFUNC(fmiGetString, getValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiString value[]),
     (vr, nvr, value))
 

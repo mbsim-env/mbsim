@@ -53,11 +53,11 @@ int main(int argc, char *argv[]) {
   }
 
   // create octave
-  vector<boost::filesystem::path> dependencies;
+  vector<path> dependencies;
   OctEval octEval(&dependencies);
   // create parser
   boost::shared_ptr<DOMParser> parser=DOMParser::create(true);
-  MBSim::generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
+  generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
   parser->loadGrammar(".mbsimxml.xsd");
   // create FMU zip file
   CreateZip fmuFile("mbsim.fmu");
@@ -84,7 +84,8 @@ int main(int argc, char *argv[]) {
 
   // build list of value references
   vector<boost::shared_ptr<Variable> > vrMap;
-  createAllVariables(dss.get(), vrMap);
+  FMIParameters fmiPar;
+  createAllVariables(dss.get(), vrMap, fmiPar);
 
   // initialize dss
   dss->initialize();
@@ -129,16 +130,28 @@ int main(int argc, char *argv[]) {
     for(size_t vr=0; vr<vrMap.size(); ++vr) {
       DOMElement *scalarVar=D(modelDescDoc)->createElement("ScalarVariable");
       modelVars->appendChild(scalarVar);
-        DOMElement *varType=D(modelDescDoc)->createElement("Real");
+        string datatypeEleName;
+        switch(vrMap[vr]->getDatatype()) {
+          case 'r': datatypeEleName="Real";    break;
+          case 'i': datatypeEleName="Integer"; break;
+          case 'b': datatypeEleName="Boolean"; break;
+          case 's': datatypeEleName="String";  break;
+        }
+        DOMElement *varType=D(modelDescDoc)->createElement(datatypeEleName);
         scalarVar->appendChild(varType);
         E(scalarVar)->setAttribute("name", vrMap[vr]->getName());
         E(scalarVar)->setAttribute("description", vrMap[vr]->getDescription());
         E(scalarVar)->setAttribute("valueReference", boost::lexical_cast<string>(vr));
         switch(vrMap[vr]->getType()) {
+          case Parameter:
+            E(scalarVar)->setAttribute("causality", "internal");
+            E(scalarVar)->setAttribute("variability", "parameter");
+            E(varType)->setAttribute("start", vrMap[vr]->getDefault());
+            break;
           case Input:
             E(scalarVar)->setAttribute("causality", "input");
             E(scalarVar)->setAttribute("variability", "continuous");
-            E(varType)->setAttribute("start", boost::lexical_cast<string>(0)); // default value is 0, see also fmiinstance.cc
+            E(varType)->setAttribute("start", vrMap[vr]->getDefault());
             break;
           case Output:
             E(scalarVar)->setAttribute("causality", "output");

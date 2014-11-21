@@ -25,6 +25,28 @@ namespace MBSimControl {
 
 namespace MBSimFMI {
 
+  class FMIVariablePre {
+    public:
+      FMIVariablePre(Type type_, char datatype_, const std::string &defaultValue);
+      Type getType() { return type; }
+      double getValue(double);
+      int getValue(int);
+      bool getValue(bool);
+      const char* getValue(const char *);
+      void setValue(double v);
+      void setValue(int v);
+      void setValue(bool v);
+      void setValue(const std::string &v);
+    protected:
+      Type type;
+      char datatype;
+
+      double doubleValue;
+      int integerValue;
+      bool booleanValue;
+      std::string stringValue;
+  };
+
   /*! A MBSim FMI instance */
   class FMIInstance : public fmatvec::Atom {
     public:
@@ -42,17 +64,11 @@ namespace MBSimFMI {
       void setTime                   (fmiReal time_);
       void setContinuousStates       (const fmiReal x[], size_t nx);
       void completedIntegratorStep   (fmiBoolean* callEventUpdate);
-      void setReal                   (const fmiValueReference vr[], size_t nvr, const fmiReal value[]);
-      void setInteger                (const fmiValueReference vr[], size_t nvr, const fmiInteger value[]);
-      void setBoolean                (const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]);
-      void setString                 (const fmiValueReference vr[], size_t nvr, const fmiString value[]);
+      template<typename Type> void setValue(const fmiValueReference vr[], size_t nvr, const Type value[]);
       void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo);
       void getDerivatives            (fmiReal derivatives[], size_t nx);
       void getEventIndicators        (fmiReal eventIndicators[], size_t ni);
-      void getReal                   (const fmiValueReference vr[], size_t nvr, fmiReal value[]);
-      void getInteger                (const fmiValueReference vr[], size_t nvr, fmiInteger value[]);
-      void getBoolean                (const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
-      void getString                 (const fmiValueReference vr[], size_t nvr, fmiString value[]);
+      template<typename Type> void getValue(const fmiValueReference vr[], size_t nvr, Type value[]);
       void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo);
       void getContinuousStates       (fmiReal states[], size_t nx);
       void getNominalContinuousStates(fmiReal x_nominal[], size_t nx);
@@ -60,6 +76,7 @@ namespace MBSimFMI {
       void terminate                 ();
 
     private:
+
       // store FMI instanceName and logger
       std::string instanceName;
       fmiCallbackLogger logger;
@@ -68,6 +85,9 @@ namespace MBSimFMI {
       LoggerBuffer infoBuffer;
       LoggerBuffer warnBuffer;
       LoggerBuffer debugBuffer;
+
+      // XML parser
+      boost::shared_ptr<MBXMLUtils::DOMParser> parser;
 
       // the system
       boost::shared_ptr<MBSim::DynamicSystemSolver> dss;
@@ -83,11 +103,12 @@ namespace MBSimFMI {
       // system stop vector indicator (0 = no shift in this index; 1 = shift in this index)
       fmatvec::VecInt jsv;
 
-      // map valueReference to object
-      std::vector<boost::shared_ptr<Variable> > vrMap;
+      // variables store before fmiInitialize
+      std::vector<boost::shared_ptr<FMIVariablePre> > vrMapPre;
 
-      // store for FMI variables before fmiInitialize is called
-      std::map<size_t, double> vrMapStore;
+      // variables store after fmiInitialize
+      FMIParameters fmiPar;
+      std::vector<boost::shared_ptr<Variable> > vrMap;
   };
 
 }
