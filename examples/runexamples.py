@@ -554,12 +554,12 @@ def main():
             'Rerun all failed examples<span class="caret"> </span>'+\
             '</a></div>', file=mainFD)
     print('  <div class="panel-body panel-collapse collapse" id="collapseRerunFailedExamples">', file=mainFD)
-    print('<code>'+sys.argv[0].replace('/', u'/\u200B'), end=" ", file=mainFD)
+    print('<code>'+sys.argv[0], end=" ", file=mainFD)
     for arg in sys.argv[1:]:
       if not arg in set(args.directories):
-        print(arg.replace('/', u'/\u200B'), end=" ", file=mainFD)
+        print(arg, end=" ", file=mainFD)
     for failedEx in failedExamples:
-      print(failedEx.replace('/', u'/\u200B'), end=" ", file=mainFD)
+      print(failedEx, end=" ", file=mainFD)
     print('</code>', file=mainFD)
     print('  </div>', file=mainFD)
     print('</div>', file=mainFD)
