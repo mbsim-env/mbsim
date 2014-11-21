@@ -89,6 +89,8 @@ int main(int argc, char *argv[]) {
   HardCodedVariables hardCodedVar;
   createAllVariables(dss.get(), var, hardCodedVar);
 
+  // disable all plotting (we wont any output here)
+  dss->setPlotFeatureRecursive(Element::plotRecursive, Element::disabled);
   // initialize dss
   dss->initialize();
 

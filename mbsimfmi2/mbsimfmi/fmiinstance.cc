@@ -169,12 +169,14 @@ namespace MBSimFMI {
   // the error tolerances of the integrator)
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     *callEventUpdate=false;
-    // MISSING: currently we plot on each completed integrator step
-    // this should be changed: make it configureable via a parmeter:
-    // - plot only at each n-th completet integrator step OR
-    // - do not plot here but set nextEventTime to plot at e.g. equidistent time steps OR
-    // - ...???
-    dss->plot(z, time);
+
+    if(hardCodedVar.plotMode==EverynthCompletedStep) {
+      completedStepCounter++;
+      if(completedStepCounter==hardCodedVar.plotEachNStep) {
+        completedStepCounter=0;
+        dss->plot(z, time);
+      }
+    }
   }
 
   // set a real/integer/boolean/string variable
@@ -199,13 +201,11 @@ namespace MBSimFMI {
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  boost::make_shared<ostream>(&warnBuffer));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, boost::make_shared<ostream>(&debugBuffer));
 
-    // set eventInfo
+    // set eventInfo (except next event time)
     eventInfo->iterationConverged=true;
     eventInfo->stateValueReferencesChanged=false;
     eventInfo->stateValuesChanged=false;
     eventInfo->terminateSimulation=false;
-    eventInfo->upcomingTimeEvent=false;
-    eventInfo->nextEventTime=0;
 
     // get the model file
     path mbsimflatxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"Model.mbsimprj.flat.xml";
@@ -227,9 +227,15 @@ namespace MBSimFMI {
     std::vector<boost::shared_ptr<Variable> > varSim; // do not overwrite var here, use varSim (see below)
     createAllVariables(dss.get(), varSim, hardCodedVar);
 
+    // save the current dir and change to outputDir -> MBSim will create output the current dir
+    msg(Debug)<<"Write MBSim output files to "<<hardCodedVar.outputDir<<endl;
+    path savedCurDir=current_path();
+    current_path(hardCodedVar.outputDir);
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
+    // restore current dir (normally we are not allowed to change the current dir at all)
+    current_path(savedCurDir);
 
     // Till now (between fmiInstantiateModel and fmiInitialize) we have only used objects of type PreVariable's in var.
     // Now we copy all values from val to varSim (generated above).
@@ -267,6 +273,21 @@ namespace MBSimFMI {
 
     // plot initial state
     dss->plot(z, time);
+
+    if(hardCodedVar.plotMode==EverynthCompletedStep) {
+      // init
+      completedStepCounter=0;
+      // no next time event
+      eventInfo->upcomingTimeEvent=false;
+      eventInfo->nextEventTime=0;
+    }
+    else
+    {
+      // next time event
+      eventInfo->upcomingTimeEvent=true;
+      nextPlotEvent=time+hardCodedVar.plotStepSize;
+      eventInfo->nextEventTime=nextPlotEvent;
+    }
   }
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
@@ -314,13 +335,13 @@ namespace MBSimFMI {
   // * compare the current sv with the sv of the last event (or initial state) svLast
   // * set all entries in jsv to 1 if the corresponding entries in sv and svLast have a sign change.
   void FMIInstance::eventUpdate(fmiBoolean intermediateResults, fmiEventInfo* eventInfo) {
-    // initialize eventInfo fields
+    // initialize eventInfo fields (except next time event)
     eventInfo->iterationConverged=true;
     eventInfo->stateValueReferencesChanged=false;
     eventInfo->stateValuesChanged=false;
     eventInfo->terminateSimulation=false;
-    eventInfo->upcomingTimeEvent=false;
-    eventInfo->nextEventTime=0;
+
+    // state event = root = stop vector event
 
     // MISSING: event handling must be conform to FMI and modellica!!!???
     // get current stop vector
@@ -340,6 +361,19 @@ namespace MBSimFMI {
       // A MBSim shift always changes state values (non-smooth-mechanic)
       // This must be reported to the environment (the integrator must be resetted in this case).
       eventInfo->stateValuesChanged=true;
+    }
+
+    // time event (currently only for plotting)
+
+    // no next time event (per default)
+    eventInfo->upcomingTimeEvent=false;
+    eventInfo->nextEventTime=0;
+    // next event wenn plotting with sample time and we currently match that time
+    if(hardCodedVar.plotMode==SampleTime && fabs(time-nextPlotEvent)<1.0e-10) {
+      // next time event
+      eventInfo->upcomingTimeEvent=true;
+      nextPlotEvent=time+hardCodedVar.plotStepSize;
+      eventInfo->nextEventTime=nextPlotEvent;
     }
   }
 

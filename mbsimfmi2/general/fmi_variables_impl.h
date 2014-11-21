@@ -23,15 +23,15 @@ namespace MBSimFMI {
 class Variable;
 
 enum PlotMode {
-  EachnthCompletetStep = 1,
-  SampleTime           = 2
+  EverynthCompletedStep = 1,
+  SampleTime            = 2
 };
 //! Struct holding all "hard coded" FMI variables (variables which are not part of the MBSim dss)
 struct HardCodedVariables {
   std::string outputDir; // the MBSim output directory //MFMF currently unused
-  int plotMode;          // the MBSim plotting mode //MFMF currently unused
-  int plotEachNStep;     // plot at each n-th completed integrator step //MFMF currently unused
-  double plotStepSize;   // plot in equidistand time steps //MFMF currently unused
+  int plotMode;          // the MBSim plotting mode
+  int plotEachNStep;     // plot at each n-th completed integrator step
+  double plotStepSize;   // plot in equidistand time steps
 };
 
 //! create all FMI variables using a MBSim dss: "hard coded" and dynamic ones from dss
@@ -205,19 +205,19 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
   // output directory
   var.push_back(boost::make_shared<ParameterValue<std::string> >("Output directory",
     "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(hardCodedVar.outputDir)));
-  (*--var.end())->setValue(boost::filesystem::temp_directory_path().string()); // default value
+  (*--var.end())->setValue(std::string(".")); // default value: current dir
   // plot mode
   var.push_back(boost::make_shared<ParameterValue<int> >("Plot.mode",
     "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(hardCodedVar.plotMode)));
-  (*--var.end())->setValue(int(1)); // default value
+  (*--var.end())->setValue(int(1)); // default value: every n-th completed integrator step
   // plot at each n-th integrator step
   var.push_back(boost::make_shared<ParameterValue<int> >("Plot.each n-th step",
     "... n-th completed integrator step", boost::ref(hardCodedVar.plotEachNStep)));
-  (*--var.end())->setValue(int(5)); // default value
+  (*--var.end())->setValue(int(5)); // default value: every 5-th step
   // plot every dt
   var.push_back(boost::make_shared<ParameterValue<double> >("Plot.sample time",
     "... sample point with this sample time", boost::ref(hardCodedVar.plotStepSize)));
-  (*--var.end())->setValue(double(0.001)); // default value
+  (*--var.end())->setValue(double(0.001)); // default value: every 1ms
   // ADD HERE MORE HARD CODED PARAMETERS
 
   // create all input/output variables for links in the dss

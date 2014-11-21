@@ -122,6 +122,9 @@ namespace MBSimFMI {
 
       // all FMI variables
       std::vector<boost::shared_ptr<Variable> > var;
+
+      int completedStepCounter;
+      double nextPlotEvent;
   };
 
 }
