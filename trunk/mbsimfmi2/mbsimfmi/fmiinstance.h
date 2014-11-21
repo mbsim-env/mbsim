@@ -30,12 +30,8 @@ namespace MBSimFMI {
   //! The value of the variable is store by the class itself: as a member variable.
   class PreVariable : public Variable {
     public:
-      PreVariable(Type type_, char datatype_, const std::string &defaultValue);
-      std::string getName() { throw std::runtime_error("Internal error: getName not allowed"); }
-      std::string getDescription() { throw std::runtime_error("Internal error: getDescription not allowed"); }
-      char getDatatypeChar() { return datatype; }
+      PreVariable(Type type, char datatypeChar, const std::string &defaultValue);
       std::string getValueAsString() { throw std::runtime_error("Internal error: getValueAsString not allowed"); }
-      Type getType() { return type; }
       const double& getValue(const double&);
       const int& getValue(const int&);
       const bool& getValue(const bool&);
@@ -45,9 +41,6 @@ namespace MBSimFMI {
       void setValue(const bool &v);
       void setValue(const std::string &v);
     protected:
-      Type type;
-      char datatype;
-
       double doubleValue;
       int integerValue;
       bool booleanValue;
@@ -117,8 +110,8 @@ namespace MBSimFMI {
       // system stop vector indicator (0 = no shift in this index; 1 = shift in this index)
       fmatvec::VecInt jsv;
 
-      // variables store for all "hard coded" variables (variables not owned by dss)
-      HardCodedVariables hardCodedVar;
+      // variables store for all predefined variables (variables not owned by dss)
+      PredefinedVariables predefinedVar;
 
       // all FMI variables
       std::vector<boost::shared_ptr<Variable> > var;

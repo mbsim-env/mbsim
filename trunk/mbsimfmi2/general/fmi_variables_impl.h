@@ -22,22 +22,22 @@ namespace MBSimFMI {
 
 class Variable;
 
-//! enumeration for HardCodedVariables::plotMode
+//! enumeration for PredefinedVariables::plotMode
 enum PlotMode {
   EverynthCompletedStep = 1,
   SampleTime            = 2
 };
-//! Struct holding all "hard coded" FMI variables (variables which are not part of the MBSim dss)
-struct HardCodedVariables {
+//! Struct holding all predefined FMI variables (variables which are not part of the MBSim dss)
+struct PredefinedVariables {
   std::string outputDir; // the MBSim output directory //MFMF currently unused
   int plotMode;          // the MBSim plotting mode
   int plotEachNStep;     // plot at each n-th completed integrator step
   double plotStepSize;   // plot in equidistand time steps
 };
 
-//! create all FMI variables using a MBSim dss: "hard coded" and dynamic ones from dss
+//! create all FMI variables using a MBSim dss: predefined and dynamic ones from dss
 inline void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost::shared_ptr<Variable> > &var,
-                               HardCodedVariables &hardCodedVar);
+                               PredefinedVariables &predefinedVar);
 
 //! Type of the variable
 enum Type {
@@ -50,14 +50,18 @@ enum Type {
 // MISSING: create a exception wrapper with add the VR to all exceptoins throw in by this class
 class Variable {
   public:
+    //! ctor
+    Variable(const std::string &name_, const std::string &desc_, Type type_, char datatypeChar_) : name(name_), desc(desc_),
+      type(type_), datatypeChar(datatypeChar_) {}
+
     //! FMI name
-    virtual std::string getName()=0;
+    std::string getName() { return name; }
     //! FMI description
-    virtual std::string getDescription()=0;
+    std::string getDescription() { return desc; }
     //! Variable type
-    virtual Type getType()=0;
+    Type getType() { return type; }
     //! FMI variable datatype
-    virtual char getDatatypeChar()=0;
+    char getDatatypeChar() { return datatypeChar; }
 
     //! get the current value as a string (usable to add it to e.g. XML)
     virtual std::string getValueAsString()=0;
@@ -103,6 +107,11 @@ class Variable {
     virtual const std::string& getValue(const std::string&) {
       throw std::runtime_error("This variable is not of type string.");
     }
+
+  protected:
+    std::string name, desc;
+    Type type;
+    char datatypeChar;
 };
 
 
@@ -115,32 +124,24 @@ template<> struct MapDatatypeToFMIDatatypeChar<bool       > { static const char 
 template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char value='s'; };
 
 //! A FMI parameter which stores the value in a externally provided reference.
-//! This is used for "hard coded" variables.
+//! This is used for predefined variables.
 template<typename Datatype>
-class ParameterValue : public Variable {
+class PredefinedParameter : public Variable {
   public:
-    ParameterValue(const std::string &name_, const std::string &desc_, Datatype &v) :
-      name(name_), desc(desc_), value(v) {}
-    std::string getName() { return name; }
-    std::string getDescription() { return desc; }
-    Type getType() { return Parameter; }
-    char getDatatypeChar() { return MapDatatypeToFMIDatatypeChar<Datatype>::value; }
+    PredefinedParameter(const std::string &name_, const std::string &desc_, Datatype &v) :
+      Variable(name_, desc_, Parameter, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(v) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
     void setValue(const Datatype &v) { value=v; }
     const Datatype& getValue(const Datatype&) { return value; }
   protected:
-    std::string name, desc;
     Datatype &value;
 };
 
 //! FMI input variable for the force of MBSim::ExternGeneralizedIO
 class ExternGeneralizedIOForce : public Variable {
   public:
-    ExternGeneralizedIOForce(MBSim::ExternGeneralizedIO *io_) : io(io_) {}
-    std::string getName() { return mbsimPathToFMIName(io->getPath())+".h"; }
-    std::string getDescription() { return "ExternGeneralizedIO force"; }
-    Type getType() { return Input; }
-    char getDatatypeChar() { return 'r'; }
+    ExternGeneralizedIOForce(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+      "ExternGeneralizedIO force", Input, 'r'), io(io_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) { io->setGeneralizedForce(v); }
     const double& getValue(const double&) { return io->getla()(0); }
@@ -151,11 +152,8 @@ class ExternGeneralizedIOForce : public Variable {
 //! FMI output variable for position of MBSim::ExternGeneralizedIO
 class ExternGeneralizedIOPosition : public Variable {
   public:
-    ExternGeneralizedIOPosition(MBSim::ExternGeneralizedIO *io_) : io(io_) {}
-    std::string getName() { return mbsimPathToFMIName(io->getPath())+".x"; }
-    std::string getDescription() { return "ExternGeneralizedIO position"; }
-    Type getType() { return Output; }
-    char getDatatypeChar() { return 'r'; }
+    ExternGeneralizedIOPosition(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+      "ExternGeneralizedIO position", Output, 'r'), io(io_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { return io->getGeneralizedPosition(); }
   protected:
@@ -165,11 +163,8 @@ class ExternGeneralizedIOPosition : public Variable {
 //! FMI output variable for velocity of MBSim::ExternGeneralizedIO
 class ExternGeneralizedIOVelocity : public Variable {
   public:
-    ExternGeneralizedIOVelocity(MBSim::ExternGeneralizedIO *io_) : io(io_) {}
-    std::string getName() { return mbsimPathToFMIName(io->getPath())+".v"; }
-    std::string getDescription() { return "ExternGeneralizedIO velocity"; }
-    Type getType() { return Output; }
-    char getDatatypeChar() { return 'r'; }
+    ExternGeneralizedIOVelocity(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+      "ExternGeneralizedIO velocity", Output, 'r'), io(io_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
   protected:
@@ -179,11 +174,8 @@ class ExternGeneralizedIOVelocity : public Variable {
 //! FMI input variable for MBSim::ExternSignalSource
 class ExternSignalSource : public Variable {
   public:
-    ExternSignalSource(MBSimControl::ExternSignalSource *sig_) : sig(sig_) {}
-    std::string getName() { return mbsimPathToFMIName(sig->getPath()); }
-    std::string getDescription() { return "ExternSignalSource"; }
-    Type getType() { return Input; }
-    char getDatatypeChar() { return 'r'; }
+    ExternSignalSource(MBSimControl::ExternSignalSource *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
+      "ExternSignalSource", Input, 'r'), sig(sig_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
@@ -195,11 +187,8 @@ class ExternSignalSource : public Variable {
 //! FMI output variable for MBSim::ExternSignalSink
 class ExternSignalSink : public Variable {
   public:
-    ExternSignalSink(MBSimControl::ExternSignalSink *sig_) : sig(sig_) {}
-    std::string getName() { return mbsimPathToFMIName(sig->getPath()); }
-    std::string getDescription() { return "ExternSignalSink"; }
-    Type getType() { return Output; }
-    char getDatatypeChar() { return 'r'; }
+    ExternSignalSink(MBSimControl::ExternSignalSink *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
+      "ExternSignalSink", Output, 'r'), sig(sig_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
   protected:
@@ -208,26 +197,26 @@ class ExternSignalSink : public Variable {
 };
 
 void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost::shared_ptr<Variable> > &var,
-                        HardCodedVariables &hardCodedVar) {
-  // create "hard coded" parameters
+                        PredefinedVariables &predefinedVar) {
+  // create predefined parameters
 
   // output directory
-  var.push_back(boost::make_shared<ParameterValue<std::string> >("Output directory",
-    "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(hardCodedVar.outputDir)));
+  var.push_back(boost::make_shared<PredefinedParameter<std::string> >("Output directory",
+    "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(predefinedVar.outputDir)));
   (*--var.end())->setValue(std::string(".")); // default value: current dir
   // plot mode
-  var.push_back(boost::make_shared<ParameterValue<int> >("Plot.mode",
-    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(hardCodedVar.plotMode)));
+  var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.mode",
+    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedVar.plotMode)));
   (*--var.end())->setValue(int(1)); // default value: every n-th completed integrator step
   // plot at each n-th integrator step
-  var.push_back(boost::make_shared<ParameterValue<int> >("Plot.each n-th step",
-    "... n-th completed integrator step", boost::ref(hardCodedVar.plotEachNStep)));
+  var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
+    "... n-th completed integrator step", boost::ref(predefinedVar.plotEachNStep)));
   (*--var.end())->setValue(int(5)); // default value: every 5-th step
   // plot every dt
-  var.push_back(boost::make_shared<ParameterValue<double> >("Plot.sample time",
-    "... sample point with this sample time", boost::ref(hardCodedVar.plotStepSize)));
+  var.push_back(boost::make_shared<PredefinedParameter<double> >("Plot.sample time",
+    "... sample point with this sample time", boost::ref(predefinedVar.plotStepSize)));
   (*--var.end())->setValue(double(0.001)); // default value: every 1ms
-  // ADD HERE MORE HARD CODED PARAMETERS
+  // ADD HERE MORE PREDEFINED PARAMETERS
 
   // create all input/output variables for links in the dss
   std::vector<MBSim::Link*> l;
