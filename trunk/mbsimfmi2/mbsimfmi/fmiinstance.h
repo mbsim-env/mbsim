@@ -11,8 +11,7 @@ extern "C" {
   #include <3rdparty/fmiModelFunctions.h>
 }
 
-// the general valueReference map (used in mbsimCreateFMU and here)
-#include <../general/valueReferenceMap_impl.h>
+#include <../general/fmi_variables_impl.h>
 
 namespace MBSim {
   class DynamicSystemSolver;
@@ -85,10 +84,10 @@ namespace MBSimFMI {
       fmatvec::VecInt jsv;
 
       // map valueReference to object
-      ValueReferenceMap::VRMap vrUnion;
+      std::vector<boost::shared_ptr<Variable<double> > > vrReal;
 
       // store for FMI variables before fmiInitialize is called
-      std::map<size_t, double> vrReal;
+      std::map<size_t, double> vrRealStore;
   };
 
 }

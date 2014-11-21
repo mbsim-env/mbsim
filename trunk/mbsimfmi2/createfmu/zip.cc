@@ -63,7 +63,7 @@ void CreateZip::add(const path &filenameInZip, const path &srcFilename) {
     if(archive_write_data(a, &buf[0], f.gcount())!=f.gcount())
       throw runtime_error("Unable to write entry data.");
   }
-  while(f.gcount()==buf.size());
+  while(f.gcount()==static_cast<int>(buf.size()));
   f.close();
 }
 
@@ -78,7 +78,7 @@ void CreateZip::add(const path &filenameInZip, const string &textContent) {
   archive_entry_set_perm(entry, 0644);
   if(archive_write_header(a, entry))
     throw runtime_error("Unable to write entry header to archive "+zipFile.string()+".");
-  if(archive_write_data(a, textContent.c_str(), textContent.size())!=textContent.size())
+  if(archive_write_data(a, textContent.c_str(), textContent.size())!=static_cast<int>(textContent.size()))
     throw runtime_error("Unable to write entry data.");
 }
 
