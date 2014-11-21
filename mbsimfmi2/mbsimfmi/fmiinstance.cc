@@ -180,12 +180,12 @@ namespace MBSimFMI {
   }
 
   // set a real/integer/boolean/string variable
-  template<typename CppType, typename FMIType>
-  void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIType value[]) {
+  template<typename CppDatatype, typename FMIDatatype>
+  void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
         throw runtime_error("Unknown variable.");
-      var[vr[i]]->setValue(CppType(value[i]));
+      var[vr[i]]->setValue(CppDatatype(value[i]));
     }
   }
   // explicitly instantiate all four FMI types
@@ -248,7 +248,7 @@ namespace MBSimFMI {
       if((*varIt)->getType()==Output) // outputs are not allowed to be set -> skip
         continue;
       msg(Debug)<<"Copy variable '"<<(*varSimIt)->getName()<<"' from preprocessing space to simulation space."<<endl;
-      switch((*varIt)->getDatatype()) {
+      switch((*varIt)->getDatatypeChar()) {
         case 'r': (*varSimIt)->setValue((*varIt)->getValue(double())); break;
         case 'i': (*varSimIt)->setValue((*varIt)->getValue(int())); break;
         case 'b': (*varSimIt)->setValue((*varIt)->getValue(bool())); break;
@@ -305,12 +305,12 @@ namespace MBSimFMI {
   }
 
   // get a real/integer/boolean/string variable
-  template<typename CppType, typename FMIType>
-  void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIType value[]) {
+  template<typename CppDatatype, typename FMIDatatype>
+  void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
         throw runtime_error("No such variable.");
-      value[i]=var[vr[i]]->getValue(CppType());
+      value[i]=var[vr[i]]->getValue(CppDatatype());
     }
   }
   // explicitly instantiate all four FMI types
