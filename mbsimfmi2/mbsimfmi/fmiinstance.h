@@ -11,7 +11,7 @@ extern "C" {
   #include <3rdparty/fmiModelFunctions.h>
 }
 
-#include <../general/fmi_variables_impl.h>
+#include <../general/fmi_variables.h>
 
 namespace MBSim {
   class DynamicSystemSolver;
