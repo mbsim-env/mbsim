@@ -9,6 +9,8 @@ extern "C" {
   #include <extern/fmiModelFunctions.h>
 }
 
+#include <../general/valueReferenceMap_impl.h>
+
 namespace MBSim {
   class DynamicSystemSolver;
   class ExternGeneralizedIO;
@@ -68,23 +70,10 @@ namespace MBSimFMI {
       // the system
       boost::shared_ptr<MBSim::DynamicSystemSolver> dss;
 
-      // map valueReference to union
-      enum Type {
-        GeneralizedIO_h,
-        GeneralizedIO_x,
-        GeneralizedIO_v,
-        SignalSource,
-        SignalSink
-      };
-      union TypeValue {
-        MBSim::ExternGeneralizedIO *generalizedIO;
-        MBSimControl::ExternSignalSource *signalSource;
-        MBSimControl::ExternSignalSink *signalSink;
-      };
-      std::vector<std::pair<Type, TypeValue> > vrUnion;
-
       // the system time
       double time;
+
+      ValueReferenceMap::VRMap vrUnion;
 
       // store for valueReference before fmiInitialize is called
       std::map<size_t, double> vrReal;
