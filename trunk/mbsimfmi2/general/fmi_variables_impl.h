@@ -85,7 +85,7 @@ class Variable {
     }
     //! get FMI variable of type string. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
-    virtual const char* getValue(const char*) {
+    virtual std::string& getValue(const std::string&) {
       throw std::runtime_error("This variable is not of type string.");
     }
 };
@@ -104,7 +104,7 @@ class StringParameter : public Variable {
     char getDatatype() { return 's'; }
     std::string getValueAsString() { return value; }
     void setValue(const std::string &v) { value=v; }
-    const char* getValue(const char*) { return value.c_str(); }
+    std::string& getValue(const std::string&) { return value; }
   protected:
     std::string name, desc;
     std::string &value;
@@ -200,7 +200,7 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
     MBSim::ExternGeneralizedIO *genIO=dynamic_cast<MBSim::ExternGeneralizedIO*>(*it);
     if(genIO) {
       var.push_back(boost::make_shared<ExternGeneralizedIOForce>(genIO));
-      (*--var.end())->setValue(0.0); // default value
+      (*--var.end())->setValue(double(0.0)); // default value
       var.push_back(boost::make_shared<ExternGeneralizedIOPosition>(genIO));
       var.push_back(boost::make_shared<ExternGeneralizedIOVelocity>(genIO));
     }
@@ -208,7 +208,7 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
     MBSimControl::ExternSignalSource *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(*it);
     if(sigSource) {
       var.push_back(boost::make_shared<ExternSignalSource>(sigSource));
-      (*--var.end())->setValue(0.0); // default value
+      (*--var.end())->setValue(double(0.0)); // default value
     }
     // for ExternSignalSink create one output variable
     MBSimControl::ExternSignalSink *sigSink=dynamic_cast<MBSimControl::ExternSignalSink*>(*it);
