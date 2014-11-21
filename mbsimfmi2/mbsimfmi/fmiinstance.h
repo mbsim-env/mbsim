@@ -36,13 +36,13 @@ namespace MBSimFMI {
       char getDatatype() { return datatype; }
       std::string getValueAsString() { throw std::runtime_error("Internal error: getValueAsString not allowed"); }
       Type getType() { return type; }
-      double getValue(double);
-      int getValue(int);
-      bool getValue(bool);
-      std::string& getValue(const std::string&);
-      void setValue(double v);
-      void setValue(int v);
-      void setValue(bool v);
+      const double& getValue(const double&);
+      const int& getValue(const int&);
+      const bool& getValue(const bool&);
+      const std::string& getValue(const std::string&);
+      void setValue(const double &v);
+      void setValue(const int &v);
+      void setValue(const bool &v);
       void setValue(const std::string &v);
     protected:
       Type type;

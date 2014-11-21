@@ -24,47 +24,47 @@ namespace MBSimFMI {
     type(type_), datatype(datatype_) {
     if(!defaultValue.empty()) {
       switch(datatype) {
-        case 'r': doubleValue =boost::lexical_cast<double>(defaultValue);
-        case 'i': integerValue=boost::lexical_cast<int>   (defaultValue);
-        case 'b': booleanValue=boost::lexical_cast<bool>  (defaultValue);
-        case 's': stringValue =boost::lexical_cast<string>(defaultValue);
+        case 'r': doubleValue =boost::lexical_cast<double>(defaultValue); break;
+        case 'i': integerValue=boost::lexical_cast<int>   (defaultValue); break;
+        case 'b': booleanValue=boost::lexical_cast<bool>  (defaultValue); break;
+        case 's': stringValue =boost::lexical_cast<string>(defaultValue); break;
       }
     }
   }
 
-  double PreVariable::getValue(double) {
+  const double& PreVariable::getValue(const double&) {
     if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
     return doubleValue;
   }
 
-  int PreVariable::getValue(int) {
+  const int& PreVariable::getValue(const int&) {
     if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
     return integerValue;
   }
 
-  bool PreVariable::getValue(bool) {
+  const bool& PreVariable::getValue(const bool&) {
     if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
     return booleanValue;
   }
 
-  string& PreVariable::getValue(const string&) {
+  const string& PreVariable::getValue(const string&) {
     if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
     return stringValue;
   }
 
-  void PreVariable::setValue(double v) {
+  void PreVariable::setValue(const double &v) {
     if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     doubleValue=v;
   }
 
-  void PreVariable::setValue(int v) {
+  void PreVariable::setValue(const int &v) {
     if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     integerValue=v;
   }
 
-  void PreVariable::setValue(bool v) {
+  void PreVariable::setValue(const bool &v) {
     if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     booleanValue=v;
@@ -112,6 +112,7 @@ namespace MBSimFMI {
     size_t vr=0;
     for(xercesc::DOMElement *scalarVar=E(doc->getDocumentElement())->getFirstElementChildNamed("ModelVariables")->getFirstElementChild();
         scalarVar; scalarVar=scalarVar->getNextElementSibling(), ++vr) {
+      msg(Debug)<<"Generate variable '"<<E(scalarVar)->getAttribute("name")<<"'"<<endl;
       if(vr!=boost::lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
         throw runtime_error("Internal error: valueReference missmatch!");
       // get type
