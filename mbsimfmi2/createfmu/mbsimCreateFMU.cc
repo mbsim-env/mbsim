@@ -1,10 +1,10 @@
-#include "../config.h"
+#include <mbxmlutils/preprocess.h>
+#include "../config.h" // preprocess.h/octeval.h will undefine macro, hence include config.h after this file
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutilshelper/dom.h>
 #include <mbxmlutilshelper/getinstallpath.h>
-#include <mbxmlutils/preprocess.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsimxml/mbsimxml.h>
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
   E(modelDesc)->setAttribute("numberOfContinuousStates", boost::lexical_cast<string>(dss->getzSize()));
   E(modelDesc)->setAttribute("numberOfEventIndicators", boost::lexical_cast<string>(dss->getsvSize()));
   E(modelDesc)->setAttribute("variableNamingConvention", "structured");
-  E(modelDesc)->setAttribute("version", "2.0.0");//MFMF use VERSION but this re undef by ocatve
+  E(modelDesc)->setAttribute("version", VERSION);
     // DefaultExperiment
     DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
     modelDesc->appendChild(defaultExp);
