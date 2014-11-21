@@ -124,7 +124,8 @@ namespace MBSimFMI {
       // get datatype
       char datatypeChar;
            if(E(scalarVar)->getFirstElementChildNamed("Real")) datatypeChar='r';
-      else if(E(scalarVar)->getFirstElementChildNamed("Integer")) datatypeChar='i';
+      else if(E(scalarVar)->getFirstElementChildNamed("Integer") ||
+              E(scalarVar)->getFirstElementChildNamed("Enumeration")) datatypeChar='i';
       else if(E(scalarVar)->getFirstElementChildNamed("Boolean")) datatypeChar='b';
       else if(E(scalarVar)->getFirstElementChildNamed("String")) datatypeChar='s';
       else throw runtime_error("Internal error: Unknown variable datatype.");
