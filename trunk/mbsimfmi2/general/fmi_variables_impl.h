@@ -138,9 +138,9 @@ class PredefinedParameter : public Variable {
 };
 
 //! FMI input variable for the force of MBSim::ExternGeneralizedIO
-class ExternGeneralizedIOForce : public Variable {
+class ExternGeneralizedIOForceInput : public Variable {
   public:
-    ExternGeneralizedIOForce(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+    ExternGeneralizedIOForceInput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
       "ExternGeneralizedIO force", Input, 'r'), io(io_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) { io->setGeneralizedForce(v); }
@@ -150,9 +150,9 @@ class ExternGeneralizedIOForce : public Variable {
 };
 
 //! FMI output variable for position of MBSim::ExternGeneralizedIO
-class ExternGeneralizedIOPosition : public Variable {
+class ExternGeneralizedIOPositionOutput : public Variable {
   public:
-    ExternGeneralizedIOPosition(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+    ExternGeneralizedIOPositionOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
       "ExternGeneralizedIO position", Output, 'r'), io(io_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { return io->getGeneralizedPosition(); }
@@ -161,9 +161,9 @@ class ExternGeneralizedIOPosition : public Variable {
 };
 
 //! FMI output variable for velocity of MBSim::ExternGeneralizedIO
-class ExternGeneralizedIOVelocity : public Variable {
+class ExternGeneralizedIOVelocityOutput : public Variable {
   public:
-    ExternGeneralizedIOVelocity(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+    ExternGeneralizedIOVelocityOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
       "ExternGeneralizedIO velocity", Output, 'r'), io(io_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
@@ -172,9 +172,9 @@ class ExternGeneralizedIOVelocity : public Variable {
 };
 
 //! FMI input variable for MBSim::ExternSignalSource
-class ExternSignalSource : public Variable {
+class ExternSignalSourceInput : public Variable {
   public:
-    ExternSignalSource(MBSimControl::ExternSignalSource *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
+    ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
       "ExternSignalSource", Input, 'r'), sig(sig_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
@@ -185,9 +185,9 @@ class ExternSignalSource : public Variable {
 };
 
 //! FMI output variable for MBSim::ExternSignalSink
-class ExternSignalSink : public Variable {
+class ExternSignalSinkOutput : public Variable {
   public:
-    ExternSignalSink(MBSimControl::ExternSignalSink *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
+    ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
       "ExternSignalSink", Output, 'r'), sig(sig_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
@@ -225,21 +225,21 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
     // for ExternGeneralizedIO create three variables: force input, position output and velocity output
     MBSim::ExternGeneralizedIO *genIO=dynamic_cast<MBSim::ExternGeneralizedIO*>(*it);
     if(genIO) {
-      var.push_back(boost::make_shared<ExternGeneralizedIOForce>(genIO));
+      var.push_back(boost::make_shared<ExternGeneralizedIOForceInput>(genIO));
       (*--var.end())->setValue(double(0.0)); // default value
-      var.push_back(boost::make_shared<ExternGeneralizedIOPosition>(genIO));
-      var.push_back(boost::make_shared<ExternGeneralizedIOVelocity>(genIO));
+      var.push_back(boost::make_shared<ExternGeneralizedIOPositionOutput>(genIO));
+      var.push_back(boost::make_shared<ExternGeneralizedIOVelocityOutput>(genIO));
     }
     // for ExternSignalSource create one input variable
     MBSimControl::ExternSignalSource *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(*it);
     if(sigSource) {
-      var.push_back(boost::make_shared<ExternSignalSource>(sigSource));
+      var.push_back(boost::make_shared<ExternSignalSourceInput>(sigSource));
       (*--var.end())->setValue(double(0.0)); // default value
     }
     // for ExternSignalSink create one output variable
     MBSimControl::ExternSignalSink *sigSink=dynamic_cast<MBSimControl::ExternSignalSink*>(*it);
     if(sigSink) {
-      var.push_back(boost::make_shared<ExternSignalSink>(sigSink));
+      var.push_back(boost::make_shared<ExternSignalSinkOutput>(sigSink));
     }
     // ADD HERE MORE MBSIM TYPES WHICH SHOULD BECOME FMI INPUTS/OUTPUTS
   }

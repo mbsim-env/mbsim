@@ -30,7 +30,7 @@ namespace MBSimFMI {
   //! The value of the variable is store by the class itself: as a member variable.
   class PreVariable : public Variable {
     public:
-      PreVariable(Type type, char datatypeChar, const std::string &defaultValue);
+      PreVariable(Type type, char datatypeChar, const std::string &defaultValue="");
       std::string getValueAsString() { throw std::runtime_error("Internal error: getValueAsString not allowed"); }
       const double& getValue(const double&);
       const int& getValue(const int&);
