@@ -22,9 +22,16 @@ namespace MBSimFMI {
 
 class Variable;
 
+enum PlotMode {
+  EachnthCompletetStep = 1,
+  SampleTime           = 2
+};
 //! Struct holding all "hard coded" FMI variables (variables which are not part of the MBSim dss)
 struct HardCodedVariables {
-  std::string outputDir; // the MBSim output directory
+  std::string outputDir; // the MBSim output directory //MFMF currently unused
+  int plotMode;          // the MBSim plotting mode //MFMF currently unused
+  int plotEachNStep;     // plot at each n-th completed integrator step //MFMF currently unused
+  double plotStepSize;   // plot in equidistand time steps //MFMF currently unused
 };
 
 //! create all FMI variables using a MBSim dss: "hard coded" and dynamic ones from dss
@@ -53,30 +60,30 @@ class Variable {
     //! get the current value as a string (usable to add it to e.g. XML)
     virtual std::string getValueAsString()=0;
     //! set FMI variable of type real. The default implementation throws, if not overloaded.
-    virtual void setValue(double v) {
+    virtual void setValue(const double &v) {
       throw std::runtime_error("Setting this variable is not allowed or is not of type real.");
     }
     //! get FMI variable of type real. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
-    virtual double getValue(double) {
+    virtual const double& getValue(const double&) {
       throw std::runtime_error("This variable is not of type real.");
     }
     //! set FMI variable of type integer. The default implementation throws, if not overloaded.
-    virtual void setValue(int v) {
+    virtual void setValue(const int &v) {
       throw std::runtime_error("Setting this variable is not allowed or is not of type integer.");
     }
     //! get FMI variable of type integer. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
-    virtual int getValue(int) {
+    virtual const int& getValue(const int&) {
       throw std::runtime_error("This variable is not of type integer.");
     }
     //! set FMI variable of type boolean. The default implementation throws, if not overloaded.
-    virtual void setValue(bool v) {
+    virtual void setValue(const bool &v) {
       throw std::runtime_error("Setting this variable is not allowed or is not of type boolean.");
     }
     //! get FMI variable of type boolean. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
-    virtual bool getValue(bool) {
+    virtual const bool& getValue(const bool&) {
       throw std::runtime_error("This variable is not of type boolean.");
     }
     //! set FMI variable of type string. The default implementation throws, if not overloaded.
@@ -85,29 +92,36 @@ class Variable {
     }
     //! get FMI variable of type string. The default implementation throws, if not overloaded.
     //! Note: the argument just exists to be able to overload all type with the name function name.
-    virtual std::string& getValue(const std::string&) {
+    virtual const std::string& getValue(const std::string&) {
       throw std::runtime_error("This variable is not of type string.");
     }
 };
 
 
 
-//! A FMI parameter of type string which stores the string value in a externally provided reference.
+//! map c++ type to FMI datatype character
+template<typename Type> struct MapTypeToFMIDatatype;
+template<> struct MapTypeToFMIDatatype<double     > { static const char value='r'; };
+template<> struct MapTypeToFMIDatatype<int        > { static const char value='i'; };
+template<> struct MapTypeToFMIDatatype<bool       > { static const char value='b'; };
+template<> struct MapTypeToFMIDatatype<std::string> { static const char value='s'; };
+//! A FMI parameter which stores the value in a externally provided reference.
 //! This is used for "hard coded" variables.
-class StringParameter : public Variable {
+template<typename Datatype>
+class ParameterValue : public Variable {
   public:
-    StringParameter(const std::string &name_, const std::string &desc_, std::string &v) :
+    ParameterValue(const std::string &name_, const std::string &desc_, Datatype &v) :
       name(name_), desc(desc_), value(v) {}
     std::string getName() { return name; }
     std::string getDescription() { return desc; }
     Type getType() { return Parameter; }
-    char getDatatype() { return 's'; }
-    std::string getValueAsString() { return value; }
-    void setValue(const std::string &v) { value=v; }
-    std::string& getValue(const std::string&) { return value; }
+    char getDatatype() { return MapTypeToFMIDatatype<Datatype>::value; }
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
+    void setValue(const Datatype &v) { value=v; }
+    const Datatype& getValue(const Datatype&) { return value; }
   protected:
     std::string name, desc;
-    std::string &value;
+    Datatype &value;
 };
 
 //! FMI input variable for the force of MBSim::ExternGeneralizedIO
@@ -119,8 +133,8 @@ class ExternGeneralizedIOForce : public Variable {
     Type getType() { return Input; }
     char getDatatype() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    void setValue(double v) { io->setGeneralizedForce(v); }
-    double getValue(double) { return io->getla()(0); }
+    void setValue(const double &v) { io->setGeneralizedForce(v); }
+    const double& getValue(const double&) { return io->getla()(0); }
   protected:
     MBSim::ExternGeneralizedIO *io;
 };
@@ -134,7 +148,7 @@ class ExternGeneralizedIOPosition : public Variable {
     Type getType() { return Output; }
     char getDatatype() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    double getValue(double) { return io->getGeneralizedPosition(); }
+    const double& getValue(const double&) { return io->getGeneralizedPosition(); }
   protected:
     MBSim::ExternGeneralizedIO *io;
 };
@@ -148,7 +162,7 @@ class ExternGeneralizedIOVelocity : public Variable {
     Type getType() { return Output; }
     char getDatatype() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    double getValue(double) { return io->getGeneralizedVelocity(); }
+    const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
   protected:
     MBSim::ExternGeneralizedIO *io;
 };
@@ -162,10 +176,11 @@ class ExternSignalSource : public Variable {
     Type getType() { return Input; }
     char getDatatype() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    void setValue(double v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
-    double getValue(double) { return sig->getSignal()(0); }
+    void setValue(const double &v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
+    const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
   protected:
     MBSimControl::ExternSignalSource *sig;
+    double value; // MISSING: replace this varaible if getSignal returns a const reference!!!
 };
 
 //! FMI output variable for MBSim::ExternSignalSink
@@ -177,9 +192,10 @@ class ExternSignalSink : public Variable {
     Type getType() { return Output; }
     char getDatatype() { return 'r'; }
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    double getValue(double) { return sig->getSignal()(0); }
+    const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
   protected:
     MBSimControl::ExternSignalSink *sig;
+    double value; // MISSING: replace this varaible if getSignal returns a const reference!!!
 };
 
 void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost::shared_ptr<Variable> > &var,
@@ -187,9 +203,21 @@ void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost
   // create "hard coded" parameters
 
   // output directory
-  var.push_back(boost::make_shared<StringParameter>("Output directory",
+  var.push_back(boost::make_shared<ParameterValue<std::string> >("Output directory",
     "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(hardCodedVar.outputDir)));
   (*--var.end())->setValue(boost::filesystem::temp_directory_path().string()); // default value
+  // plot mode
+  var.push_back(boost::make_shared<ParameterValue<int> >("Plot.mode",
+    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(hardCodedVar.plotMode)));
+  (*--var.end())->setValue(int(1)); // default value
+  // plot at each n-th integrator step
+  var.push_back(boost::make_shared<ParameterValue<int> >("Plot.each n-th step",
+    "... n-th completed integrator step", boost::ref(hardCodedVar.plotEachNStep)));
+  (*--var.end())->setValue(int(5)); // default value
+  // plot every dt
+  var.push_back(boost::make_shared<ParameterValue<double> >("Plot.sample time",
+    "... sample point with this sample time", boost::ref(hardCodedVar.plotStepSize)));
+  (*--var.end())->setValue(double(0.001)); // default value
   // ADD HERE MORE HARD CODED PARAMETERS
 
   // create all input/output variables for links in the dss
