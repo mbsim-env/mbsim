@@ -297,9 +297,10 @@ namespace MBSimFMI {
     }
     else
     {
+      // init
+      nextPlotEvent=time+predefinedVar.plotStepSize;
       // next time event
       eventInfo->upcomingTimeEvent=true;
-      nextPlotEvent=time+predefinedVar.plotStepSize;
       eventInfo->nextEventTime=nextPlotEvent;
     }
   }
@@ -379,15 +380,25 @@ namespace MBSimFMI {
 
     // time event (currently only for plotting)
 
-    // no next time event (per default)
-    eventInfo->upcomingTimeEvent=false;
-    eventInfo->nextEventTime=0;
-    // next event wenn plotting with sample time and we currently match that time
-    if(predefinedVar.plotMode==SampleTime && fabs(time-nextPlotEvent)<1.0e-10) {
+    if(predefinedVar.plotMode==EverynthCompletedStep) {
+      // no next time event
+      eventInfo->upcomingTimeEvent=false;
+      eventInfo->nextEventTime=0;
+    }
+    else
+    {
       // next time event
       eventInfo->upcomingTimeEvent=true;
-      nextPlotEvent=time+predefinedVar.plotStepSize;
       eventInfo->nextEventTime=nextPlotEvent;
+
+      // next event wenn plotting with sample time and we currently match that time
+      if(fabs(time-nextPlotEvent)<1.0e-10) {
+        // plot
+        dss->plot(z, time);
+        // next time event
+        nextPlotEvent=time+predefinedVar.plotStepSize;
+        eventInfo->nextEventTime=nextPlotEvent;
+      }
     }
   }
 
