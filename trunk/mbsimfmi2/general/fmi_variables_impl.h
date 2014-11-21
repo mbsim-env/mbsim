@@ -1,3 +1,6 @@
+#ifndef _MBSIMFMI_FMI_VARIABLES_IMPL_H_
+#define _MBSIMFMI_FMI_VARIABLES_IMPL_H_
+
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsimControl/extern_signal_source.h>
 #include <mbsimControl/extern_signal_sink.h>
@@ -115,7 +118,7 @@ class ExternGeneralizedIOForce : public Variable {
     std::string getDescription() { return "ExternGeneralizedIO force"; }
     Type getType() { return Input; }
     char getDatatype() { return 'r'; }
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double(0))); }
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(double v) { io->setGeneralizedForce(v); }
     double getValue(double) { return io->getla()(0); }
   protected:
@@ -130,7 +133,7 @@ class ExternGeneralizedIOPosition : public Variable {
     std::string getDescription() { return "ExternGeneralizedIO position"; }
     Type getType() { return Output; }
     char getDatatype() { return 'r'; }
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double(0))); }
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     double getValue(double) { return io->getGeneralizedPosition(); }
   protected:
     MBSim::ExternGeneralizedIO *io;
@@ -144,7 +147,7 @@ class ExternGeneralizedIOVelocity : public Variable {
     std::string getDescription() { return "ExternGeneralizedIO velocity"; }
     Type getType() { return Output; }
     char getDatatype() { return 'r'; }
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double(0))); }
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     double getValue(double) { return io->getGeneralizedVelocity(); }
   protected:
     MBSim::ExternGeneralizedIO *io;
@@ -158,7 +161,7 @@ class ExternSignalSource : public Variable {
     std::string getDescription() { return "ExternSignalSource"; }
     Type getType() { return Input; }
     char getDatatype() { return 'r'; }
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double(0))); }
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(double v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
     double getValue(double) { return sig->getSignal()(0); }
   protected:
@@ -173,7 +176,7 @@ class ExternSignalSink : public Variable {
     std::string getDescription() { return "ExternSignalSink"; }
     Type getType() { return Output; }
     char getDatatype() { return 'r'; }
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double(0))); }
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     double getValue(double) { return sig->getSignal()(0); }
   protected:
     MBSimControl::ExternSignalSink *sig;
@@ -237,3 +240,5 @@ namespace {
   }
 
 }
+
+#endif

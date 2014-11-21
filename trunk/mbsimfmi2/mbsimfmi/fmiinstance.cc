@@ -20,7 +20,7 @@ using namespace MBXMLUtils;
 
 namespace MBSimFMI {
 
-  FMIVariablePre::FMIVariablePre(Type type_, char datatype_, const std::string &defaultValue) :
+  PreVariable::PreVariable(Type type_, char datatype_, const std::string &defaultValue) :
     type(type_), datatype(datatype_) {
     if(!defaultValue.empty()) {
       switch(datatype) {
@@ -32,45 +32,45 @@ namespace MBSimFMI {
     }
   }
 
-  double FMIVariablePre::getValue(double) {
+  double PreVariable::getValue(double) {
     if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
     return doubleValue;
   }
 
-  int FMIVariablePre::getValue(int) {
+  int PreVariable::getValue(int) {
     if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
     return integerValue;
   }
 
-  bool FMIVariablePre::getValue(bool) {
+  bool PreVariable::getValue(bool) {
     if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
     return booleanValue;
   }
 
-  const char* FMIVariablePre::getValue(const char*) {
+  const char* PreVariable::getValue(const char*) {
     if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
     return stringValue.c_str();
   }
 
-  void FMIVariablePre::setValue(double v) {
+  void PreVariable::setValue(double v) {
     if(datatype!='r') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     doubleValue=v;
   }
 
-  void FMIVariablePre::setValue(int v) {
+  void PreVariable::setValue(int v) {
     if(datatype!='i') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     integerValue=v;
   }
 
-  void FMIVariablePre::setValue(bool v) {
+  void PreVariable::setValue(bool v) {
     if(datatype!='b') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     booleanValue=v;
   }
 
-  void FMIVariablePre::setValue(const std::string &v) {
+  void PreVariable::setValue(const std::string &v) {
     if(datatype!='s') throw runtime_error("Internal error: Variable datatype differ.");
     if(type==Output) throw runtime_error("Setting this variable is not allowed.");
     stringValue=v;
@@ -129,8 +129,8 @@ namespace MBSimFMI {
       else throw runtime_error("Internal error: Unknown variable datatype.");
       // get default
       string defaultValue=E(scalarVar->getFirstElementChild())->getAttribute("start");
-      // create pre varaible
-      vrMapPre.push_back(boost::make_shared<FMIVariablePre>(type, datatype, defaultValue));
+      // create preprocessing variable
+      var.push_back(boost::make_shared<PreVariable>(type, datatype, defaultValue));
     }
   }
 
@@ -176,26 +176,14 @@ namespace MBSimFMI {
     dss->plot(z, time);
   }
 
-  namespace {
-    template<typename Var, typename Type>
-    void setValue_vrMap_or_vrMapPre(Var &var, const fmiValueReference vr[], size_t nvr, const Type value[]) {
-      for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=var.size())
-          throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        var[vr[i]]->setValue(value[i]);
-      }
-    }
-  }
-
   // set a real/integer/boolean/string variable
   template<typename Type>
   void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const Type value[]) {
-    // dss exists (after fmiInitialize) -> use var
-    if(dss)
-      setValue_vrMap_or_vrMapPre(var, vr, nvr, value);
-    // no dss exists (before fmiInitialize) -> use vrMapPre
-    else
-      setValue_vrMap_or_vrMapPre(vrMapPre, vr, nvr, value);
+    for(size_t i=0; i<nvr; ++i) {
+      if(vr[i]>=var.size())
+        throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
+      var[vr[i]]->setValue(value[i]);
+    }
   }
   // explicitly instantiate all four FMI types
   template void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[]);
@@ -233,25 +221,35 @@ namespace MBSimFMI {
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
 
-    // build list of value references
+    // build list of value references (variables)
     msg(Debug)<<"Create all FMI variables."<<endl;
-    createAllVariables(dss.get(), var, hardCodedVar);
+    std::vector<boost::shared_ptr<Variable> > varSim; // do not overwrite var here, use varSim (see below)
+    createAllVariables(dss.get(), varSim, hardCodedVar);
 
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
 
-    // copy all inputs from vrMapPre to var
-    if(vrMapPre.size()!=var.size())
+    // Till now (between fmiInstantiateModel and fmiInitialize) we have only used objects of type PreVariable's in var.
+    // Now we copy all values from val to varSim (generated above).
+    if(var.size()!=varSim.size())
       throw runtime_error("Internal error: The number of parameters differ.");
-    vector<boost::shared_ptr<Variable> >::iterator it=var.begin();
-    for(vector<boost::shared_ptr<FMIVariablePre> >::iterator itPre=vrMapPre.begin(); itPre!=vrMapPre.end(); ++itPre, ++it) {
-      if((*itPre)->getType()!=Input)
-        continue;
-      if((*it)->getType()!=Input)
+    vector<boost::shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
+    for(vector<boost::shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt) {
+      if((*varSimIt)->getType()!=(*varIt)->getType())
         throw runtime_error("Internal error: Variable type does not match.");
-      (*it)->setValue((*itPre)->getValue(double(0)));
+      if((*varIt)->getType()==Output) // outputs are not allowed to be set -> skip
+        continue;
+      msg(Debug)<<"Copy variable '"<<(*varSimIt)->getName()<<"' from preprocessing space to simulation space."<<endl;
+      switch((*varIt)->getDatatype()) {
+        case 'r': (*varSimIt)->setValue((*varIt)->getValue(double())); break;
+        case 'i': (*varSimIt)->setValue((*varIt)->getValue(int())); break;
+        case 'b': (*varSimIt)->setValue((*varIt)->getValue(char())); break;
+        case 's': (*varSimIt)->setValue(string((*varIt)->getValue(fmiString()))); break;
+      }
     }
+    // var is now no longer needed since we use varSim now.
+    var=varSim;
 
     // initialize state
     z.resize(dss->getzSize());
@@ -284,26 +282,14 @@ namespace MBSimFMI {
       eventIndicators[i]=sv(i);
   }
 
-  namespace {
-    template<typename Var, typename Type>
-    void getValue_vrMap_or_vrMapPre(Var &var, const fmiValueReference vr[], size_t nvr, Type value[]) {
-      for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=var.size())
-          throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        value[i]=var[vr[i]]->getValue(static_cast<Type>(0));
-      }
-    }
-  }
-
   // get a real/integer/boolean/string variable
   template<typename Type>
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, Type value[]) {
-    // dss exists (after fmiInitialize) -> set the corresponding MBSim input
-    if(dss)
-      getValue_vrMap_or_vrMapPre(var, vr, nvr, value);
-    // no dss exists (before fmiInitialize) -> just return the previously set value or 0 (the default value)
-    else
-      getValue_vrMap_or_vrMapPre(vrMapPre, vr, nvr, value);
+    for(size_t i=0; i<nvr; ++i) {
+      if(vr[i]>=var.size())
+        throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
+      value[i]=var[vr[i]]->getValue(Type());
+    }
   }
   // explicitly instantiate all four FMI types
   template void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, fmiReal value[]);
