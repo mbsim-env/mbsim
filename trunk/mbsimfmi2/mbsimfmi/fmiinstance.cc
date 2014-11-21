@@ -65,11 +65,15 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::setContinuousStates(const fmiReal x[], size_t nx) {
-    //MFMF
+    for(int i=0; i<nx; ++i)
+      z(i)=x[i];
   }
 
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     *callEventUpdate=false;
+    // MISSING: currently we plot on each completed integrator step
+    // this should be changed: make it configureable via a parmeter, ...!??
+    dss->plot(z, time);
   }
 
   void FMIInstance::setReal(const fmiValueReference vr[], size_t nvr, const fmiReal value[]) {
@@ -148,6 +152,23 @@ namespace MBSimFMI {
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
 
+    // initialize state
+    z.resize(dss->getzSize());
+    zd.resize(dss->getzSize());
+    dss->initz(z);
+    dss->computeInitialCondition();
+
+    // initialize stop vector
+    sv.resize(dss->getsvSize());
+    svLast.resize(dss->getsvSize());
+    jsv.resize(dss->getsvSize(), fmatvec::INIT, 0); // init with 0 = no shift in all indices
+    // initialize last stop vector with initial stop vector state
+    dss->getsv(z, svLast, time);
+
+
+    // plot initial state
+    dss->plot(z, time);
+
     // copy all set values (between fmiInstantiateModel and fmiInitialize (this func)) to the dss
     msg(Debug)<<"Copy values to DynamicSystemSolver."<<endl;
     size_t vr=0;
@@ -188,15 +209,15 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
-    //MFMF
+    dss->zdot(z, zd, time);
     for(int i=0; i<nx; ++i)
-      derivatives[i]=0;
+      derivatives[i]=zd(i);
   }
 
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
-    //MFMF
+    dss->getsv(z, sv, time);
     for(int i=0; i<ni; ++i)
-      eventIndicators[i]=1;
+      eventIndicators[i]=sv(i);
   }
 
   void FMIInstance::getReal(const fmiValueReference vr[], size_t nvr, fmiReal value[]) {
@@ -246,19 +267,34 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::eventUpdate(fmiBoolean intermediateResults, fmiEventInfo* eventInfo) {
-    //MFMF
+    // initialize eventInfo fields
     eventInfo->iterationConverged=true;
     eventInfo->stateValueReferencesChanged=false;
     eventInfo->stateValuesChanged=false;
     eventInfo->terminateSimulation=false;
     eventInfo->upcomingTimeEvent=false;
     eventInfo->nextEventTime=0;
+
+    // MISSING: event handling must be conform to FMI and modellica!!!???
+    // get current stop vector
+    dss->getsv(z, sv, time);
+    // compare last and current stop vector: build jsv and set shiftRequired
+    bool shiftRequired=false;
+    for(int i=0; i<sv.size(); ++i) {
+      jsv(i)=(svLast(i)*sv(i)<0); // on sign change in svLast and sv set jsv to 1 (shift this index i)
+      if(jsv(i))
+        shiftRequired=true; // set shiftRequired: a shift call is required
+    }
+    if(shiftRequired) {
+      // shift system and return changed state values flag
+      dss->shift(z, jsv, time);
+      eventInfo->stateValuesChanged=true;
+    }
   }
 
   void FMIInstance::getContinuousStates(fmiReal states[], size_t nx) {
-    //MFMF
     for(int i=0; i<nx; ++i)
-      states[i]=0;
+      states[i]=z(i);
   }
 
   void FMIInstance::getNominalContinuousStates(fmiReal x_nominal[], size_t nx) {
@@ -272,6 +308,10 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::terminate() {
+    // plot end state
+    dss->plot(z, time);
+
+    // delete DynamicSystemSolver
     dss.reset();
   }
 
