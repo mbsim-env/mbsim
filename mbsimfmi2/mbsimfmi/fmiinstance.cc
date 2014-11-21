@@ -12,6 +12,15 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
+// rethrow a catched exception after prefixing the what() string with the FMI variable name
+#define RETHROW_VR(vr) \
+  catch(const exception &ex) { \
+    rethrowVR(vr, ex.what()); \
+  } \
+  catch(...) { \
+    rethrowVR(vr); \
+  }
+
 using namespace std;
 using namespace boost::filesystem;
 using namespace MBSim;
@@ -185,8 +194,8 @@ namespace MBSimFMI {
   void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("Unknown variable.");
-      var[vr[i]]->setValue(CppDatatype(value[i]));
+        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+      try { var[vr[i]]->setValue(CppDatatype(value[i])); } RETHROW_VR(vr[i])
     }
   }
   // explicitly instantiate all four FMI types
@@ -243,18 +252,22 @@ namespace MBSimFMI {
     if(var.size()!=varSim.size())
       throw runtime_error("Internal error: The number of parameters differ.");
     vector<boost::shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
-    for(vector<boost::shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt) {
-      if((*varSimIt)->getType()!=(*varIt)->getType())
-        throw runtime_error("Internal error: Variable type does not match.");
-      if((*varIt)->getType()==Output) // outputs are not allowed to be set -> skip
-        continue;
-      msg(Debug)<<"Copy variable '"<<(*varSimIt)->getName()<<"' from preprocessing space to simulation space."<<endl;
-      switch((*varIt)->getDatatypeChar()) {
-        case 'r': (*varSimIt)->setValue((*varIt)->getValue(double())); break;
-        case 'i': (*varSimIt)->setValue((*varIt)->getValue(int())); break;
-        case 'b': (*varSimIt)->setValue((*varIt)->getValue(bool())); break;
-        case 's': (*varSimIt)->setValue((*varIt)->getValue(string())); break;
+    size_t vr=0;
+    for(vector<boost::shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
+      try {
+        if((*varSimIt)->getType()!=(*varIt)->getType())
+          throw runtime_error("Internal error: Variable type does not match.");
+        if((*varIt)->getType()==Output) // outputs are not allowed to be set -> skip
+          continue;
+        msg(Debug)<<"Copy variable '"<<(*varSimIt)->getName()<<"' from preprocessing space to simulation space."<<endl;
+        switch((*varIt)->getDatatypeChar()) {
+          case 'r': (*varSimIt)->setValue((*varIt)->getValue(double())); break;
+          case 'i': (*varSimIt)->setValue((*varIt)->getValue(int())); break;
+          case 'b': (*varSimIt)->setValue((*varIt)->getValue(bool())); break;
+          case 's': (*varSimIt)->setValue((*varIt)->getValue(string())); break;
+        }
       }
+      RETHROW_VR(vr)
     }
     // var is now no longer needed since we use varSim now.
     var=varSim;
@@ -310,8 +323,8 @@ namespace MBSimFMI {
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such variable.");
-      value[i]=var[vr[i]]->getValue(CppDatatype());
+        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+      try { value[i]=var[vr[i]]->getValue(CppDatatype()); } RETHROW_VR(vr[i])
     }
   }
   // explicitly instantiate all four FMI types
@@ -323,8 +336,8 @@ namespace MBSimFMI {
   void FMIInstance::getValue<string, fmiString>(const fmiValueReference vr[], size_t nvr, fmiString value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such variable.");
-      value[i]=var[vr[i]]->getValue(string()).c_str();
+        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+      try { value[i]=var[vr[i]]->getValue(string()).c_str(); } RETHROW_VR(vr[i])
     }
   }
 
@@ -402,6 +415,10 @@ namespace MBSimFMI {
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
     // calls to fmiFreeModelInstance and fmiInstantiateModel)
     dss.reset();
+  }
+
+  void FMIInstance::rethrowVR(size_t vr, const std::string &what) {
+    throw runtime_error(string("In variable #")+var[vr]->getDatatypeChar()+boost::lexical_cast<string>(vr)+"#: "+what);
   }
 
 }

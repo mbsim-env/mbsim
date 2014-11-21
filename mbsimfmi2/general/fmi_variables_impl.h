@@ -47,7 +47,6 @@ enum Type {
 };
 
 //! Abstract base class for all FMI variables
-// MISSING: create a exception wrapper with add the VR to all exceptoins throw in by this class
 class Variable {
   public:
     typedef std::vector<std::pair<std::string, std::string> > EnumListCont;
