@@ -23,8 +23,7 @@ else
   CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
 fi
 
-CFLAGS="$CFLAGS -Wall -Werror"
-CXXFLAGS="$CXXFLAGS -Wall -Werror"
+CPPFLAGS="$CFLAGS -Wall -Werror -Wno-sign-compare"
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
 # FMI platform name
