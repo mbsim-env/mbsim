@@ -12,7 +12,12 @@ using namespace boost::filesystem;
 
 namespace MBSimFMI {
 
-#ifndef _WIN32
+#ifdef _WIN32
+  #ifdef __MINGW32__
+    #define __ImageBase _image_base__
+    extern "C" IMAGE_DOS_HEADER __ImageBase;
+  #endif
+#else
   // initialize the currentDirOnLoad variable when loading the shared object
   path currentDirOnLoad=current_path();
 #endif
