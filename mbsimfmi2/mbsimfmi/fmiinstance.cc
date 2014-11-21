@@ -177,12 +177,12 @@ namespace MBSimFMI {
   }
 
   namespace {
-    template<typename VRMap, typename Type>
-    void setValue_vrMap_or_vrMapPre(VRMap &vrMap, const fmiValueReference vr[], size_t nvr, const Type value[]) {
+    template<typename Var, typename Type>
+    void setValue_vrMap_or_vrMapPre(Var &var, const fmiValueReference vr[], size_t nvr, const Type value[]) {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrMap.size())
+        if(vr[i]>=var.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        vrMap[vr[i]]->setValue(value[i]);
+        var[vr[i]]->setValue(value[i]);
       }
     }
   }
@@ -190,9 +190,9 @@ namespace MBSimFMI {
   // set a real/integer/boolean/string variable
   template<typename Type>
   void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const Type value[]) {
-    // dss exists (after fmiInitialize) -> use vrMap
+    // dss exists (after fmiInitialize) -> use var
     if(dss)
-      setValue_vrMap_or_vrMapPre(vrMap, vr, nvr, value);
+      setValue_vrMap_or_vrMapPre(var, vr, nvr, value);
     // no dss exists (before fmiInitialize) -> use vrMapPre
     else
       setValue_vrMap_or_vrMapPre(vrMapPre, vr, nvr, value);
@@ -235,16 +235,16 @@ namespace MBSimFMI {
 
     // build list of value references
     msg(Debug)<<"Create all FMI variables."<<endl;
-    createAllVariables(dss.get(), vrMap, fmiPar);
+    createAllVariables(dss.get(), var, hardCodedVar);
 
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
 
-    // copy all inputs from vrMapPre to vrMap
-    if(vrMapPre.size()!=vrMap.size())
+    // copy all inputs from vrMapPre to var
+    if(vrMapPre.size()!=var.size())
       throw runtime_error("Internal error: The number of parameters differ.");
-    vector<boost::shared_ptr<Variable> >::iterator it=vrMap.begin();
+    vector<boost::shared_ptr<Variable> >::iterator it=var.begin();
     for(vector<boost::shared_ptr<FMIVariablePre> >::iterator itPre=vrMapPre.begin(); itPre!=vrMapPre.end(); ++itPre, ++it) {
       if((*itPre)->getType()!=Input)
         continue;
@@ -285,12 +285,12 @@ namespace MBSimFMI {
   }
 
   namespace {
-    template<typename VRMap, typename Type>
-    void getValue_vrMap_or_vrMapPre(VRMap &vrMap, const fmiValueReference vr[], size_t nvr, Type value[]) {
+    template<typename Var, typename Type>
+    void getValue_vrMap_or_vrMapPre(Var &var, const fmiValueReference vr[], size_t nvr, Type value[]) {
       for(size_t i=0; i<nvr; ++i) {
-        if(vr[i]>=vrMap.size())
+        if(vr[i]>=var.size())
           throw runtime_error(str(boost::format("No value reference #r%d#.")%vr[i]));
-        value[i]=vrMap[vr[i]]->getValue(static_cast<Type>(0));
+        value[i]=var[vr[i]]->getValue(static_cast<Type>(0));
       }
     }
   }
@@ -300,7 +300,7 @@ namespace MBSimFMI {
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, Type value[]) {
     // dss exists (after fmiInitialize) -> set the corresponding MBSim input
     if(dss)
-      getValue_vrMap_or_vrMapPre(vrMap, vr, nvr, value);
+      getValue_vrMap_or_vrMapPre(var, vr, nvr, value);
     // no dss exists (before fmiInitialize) -> just return the previously set value or 0 (the default value)
     else
       getValue_vrMap_or_vrMapPre(vrMapPre, vr, nvr, value);
