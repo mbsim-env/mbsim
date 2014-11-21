@@ -6,7 +6,7 @@
 #include <utils.h>
 #include <fmatvec/atom.h>
 extern "C" {
-  #include <extern/fmiModelFunctions.h>
+  #include <3rdparty/fmiModelFunctions.h>
 }
 
 #include <../general/valueReferenceMap_impl.h>

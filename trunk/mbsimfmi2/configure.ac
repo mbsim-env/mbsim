@@ -23,11 +23,19 @@ else
   CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
 fi
 
+# FMI platform name
+if test "_$host_os" = "_mingw32" ; then
+  FMIPLATFORM=win$(getconf LONG_BIT)
+else
+  FMIPLATFORM=linux$(getconf LONG_BIT)
+fi
+AC_SUBST([FMIPLATFORM])
+
 PKG_CHECK_MODULES(FMUDEPS, mbsimxml mbsim mbsimControl)
 PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
 PKG_CHECK_MODULES(LIBARCHIVEDEPS, libarchive)
 
-AC_CONFIG_FILES([Makefile createfmu/Makefile mbsimfmi/Makefile])
+AC_CONFIG_FILES([Makefile 3rdparty/Makefile createfmu/Makefile mbsimfmi/Makefile])
 AC_OUTPUT
 
 echo "
