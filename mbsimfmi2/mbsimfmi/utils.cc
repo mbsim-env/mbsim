@@ -45,7 +45,7 @@ namespace MBSimFMI {
     string s=str();
     if(*--s.end()=='\n')
       s.resize(s.size()-1);
-    logger(c, instanceName.c_str(), fmiOK, category.c_str(), s.c_str());
+    logger(c, instanceName.c_str(), status, category.c_str(), s.c_str());
     // clear the buffer and return
     str("");
     return 0;

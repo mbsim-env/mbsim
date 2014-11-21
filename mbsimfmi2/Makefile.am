@@ -1,1 +1,1 @@
-SUBDIRS = createfmu mbsimfmi
+SUBDIRS = 3rdparty createfmu mbsimfmi

@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
   // save preprocessed model to FMU
   string ppModelStr;
-  DOMParser::serialize(modelEle, ppModelStr);
+  DOMParser::serializeToString(modelEle, ppModelStr, false);
   fmuFile.add(path("resources")/"Model.mbsimprj.flat.xml", ppModelStr);
 
   // load all plugins
@@ -108,8 +108,8 @@ int main(int argc, char *argv[]) {
   E(modelDesc)->setAttribute("fmiVersion", "1.0");
   E(modelDesc)->setAttribute("generationDateAndTime",
     boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time())+"Z");
-  E(modelDesc)->setAttribute("generationTool", "MBSim - FMI");
-  E(modelDesc)->setAttribute("version", VERSION);
+  E(modelDesc)->setAttribute("generationTool", string("MBSimFMI Version ")+VERSION);
+  E(modelDesc)->setAttribute("version", "1.0");
   E(modelDesc)->setAttribute("guid", "mbsimfmi_guid");
   E(modelDesc)->setAttribute("modelIdentifier", "mbsim");
   path desc=mbsimxmlfile.filename();
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
     }
   // add modelDescription.xml file to FMU
   string modelDescriptionStr;
-  DOMParser::serialize(modelDescDoc.get(), modelDescriptionStr);
+  DOMParser::serializeToString(modelDescDoc.get(), modelDescriptionStr);
   fmuFile.add("modelDescription.xml", modelDescriptionStr);
 
   // add binaries to FMU

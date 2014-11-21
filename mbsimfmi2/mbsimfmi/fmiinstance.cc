@@ -22,14 +22,14 @@ namespace MBSimFMI {
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
     instanceName(instanceName_),
     logger(functions.logger),
-    infoBuffer(logger, this, instanceName, "info"),
-    warnBuffer(logger, this, instanceName, "warning"),
-    debugBuffer(logger, this, instanceName, "debug") {
+    infoBuffer (logger, this, instanceName, fmiOK,      "info"),
+    warnBuffer (logger, this, instanceName, fmiWarning, "warning"),
+    debugBuffer(logger, this, instanceName, fmiOK,      "debug") {
 
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<ostream>(&infoBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&warnBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&debugBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  boost::make_shared<ostream>(&infoBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  boost::make_shared<ostream>(&warnBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, boost::make_shared<ostream>(&debugBuffer));
     // also use these streams for this object.
     // Note: we can not create a FMIInstance object with the correct streams but we can adopt the streams now!
     adoptMessageStreams(); // note: no arg means adopt the current (static) message streams (set above)
@@ -110,9 +110,9 @@ namespace MBSimFMI {
   void FMIInstance::initialize(fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) {
     // after the ctor call another FMIInstance ctor may be called, hence we need to reset the message streams here
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<ostream>(&infoBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&warnBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&debugBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  boost::make_shared<ostream>(&infoBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  boost::make_shared<ostream>(&warnBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, boost::make_shared<ostream>(&debugBuffer));
 
     // set eventInfo
     eventInfo->iterationConverged=true;
@@ -189,10 +189,14 @@ namespace MBSimFMI {
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
     //MFMF
+    for(int i=0; i<nx; ++i)
+      derivatives[i]=0;
   }
 
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
     //MFMF
+    for(int i=0; i<ni; ++i)
+      eventIndicators[i]=1;
   }
 
   void FMIInstance::getReal(const fmiValueReference vr[], size_t nvr, fmiReal value[]) {
@@ -243,10 +247,18 @@ namespace MBSimFMI {
 
   void FMIInstance::eventUpdate(fmiBoolean intermediateResults, fmiEventInfo* eventInfo) {
     //MFMF
+    eventInfo->iterationConverged=true;
+    eventInfo->stateValueReferencesChanged=false;
+    eventInfo->stateValuesChanged=false;
+    eventInfo->terminateSimulation=false;
+    eventInfo->upcomingTimeEvent=false;
+    eventInfo->nextEventTime=0;
   }
 
   void FMIInstance::getContinuousStates(fmiReal states[], size_t nx) {
     //MFMF
+    for(int i=0; i<nx; ++i)
+      states[i]=0;
   }
 
   void FMIInstance::getNominalContinuousStates(fmiReal x_nominal[], size_t nx) {
