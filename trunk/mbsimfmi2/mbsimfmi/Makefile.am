@@ -4,4 +4,4 @@ lib_LTLIBRARIES = mbsimxml_fmi.la
 mbsimxml_fmi_la_SOURCES = fmiModelFunctions.cc fmiinstance.cc utils.cc
 mbsimxml_fmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN -avoid-version
 mbsimxml_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
-mbsimxml_fmi_la_LIBADD = $(FMUDEPS_LIBS)
+mbsimxml_fmi_la_LIBADD = ../general/libfmivariables.la $(FMUDEPS_LIBS)

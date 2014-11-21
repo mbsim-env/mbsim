@@ -15,7 +15,7 @@
 
 #include "zip.h"
 
-#include <../general/fmi_variables_impl.h>
+#include <../general/fmi_variables.h>
 
 using namespace std;
 using namespace boost::filesystem;
