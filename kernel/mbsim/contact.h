@@ -57,7 +57,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contact
        */
-      Contact(const std::string &name="");
+      Contact(const std::string &name = "");
 
       /**
        * \brief destructor
@@ -147,9 +147,9 @@ namespace MBSim {
       virtual void checkRoot();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Frame* getOpenMBVFrame() { return openMBVFrame; }
-      OpenMBV::Arrow* getOpenMBVNormalForceArrow() { return contactArrow; }
-      OpenMBV::Arrow* getOpenMBVTangentialForceArrow() { return frictionArrow; }
+      OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame;}
+      OpenMBV::Arrow* getOpenMBVNormalForceArrow() {return contactArrow;}
+      OpenMBV::Arrow* getOpenMBVTangentialForceArrow() {return frictionArrow;}
 #endif
       /***************************************************/
 
@@ -168,9 +168,9 @@ namespace MBSim {
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
-        openMBVFrame=ombv.createOpenMBV(); 
+        openMBVFrame=ombv.createOpenMBV();
       }
 
       /** 
@@ -178,7 +178,7 @@ namespace MBSim {
        * This vector is the force which is applied on the second contour.
        * The reactio (not drawn) is applied on the first contour.
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         contactArrow=ombv.createOpenMBV();
       }
@@ -190,9 +190,9 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        frictionArrow=ombv.createOpenMBV(); 
+        frictionArrow=ombv.createOpenMBV();
       }
 #endif
 
@@ -210,6 +210,15 @@ namespace MBSim {
       ContactKinematics* getContactKinematics(size_t index = 0) const {
         assert(index < contactKinematics.size());
         return contactKinematics[index];
+      }
+
+      ContactKinematics* findContactKinematics(std::string cKName) const {
+        int pos = find(ckNames.begin(), ckNames.end(), cKName) - ckNames.begin();
+        if (pos < ckNames.size()) {
+          return contactKinematics[pos];
+        }
+        throw MBSimError("Name of contact Kinematics is not valid");
+        return NULL;
       }
 
       const std::vector<std::vector<SingleContact> > & getSubcontacts() const {
@@ -243,7 +252,7 @@ namespace MBSim {
        * \brief list of the single sub-contact(-points)
        */
       std::vector<std::vector<SingleContact> > contacts;
-      
+
       /**
        * \brief list of the single contact kinematics
        */
