@@ -20,6 +20,9 @@ all: main
 main: $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
 
+rpath: $(OBJECTS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))  $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
+
 # compile source with pkg-config options from PACKAGES
 %.o: %.cc
 	$(CXX) -c -o $@ $< $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES))

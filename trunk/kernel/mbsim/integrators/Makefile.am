@@ -7,6 +7,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    dopri5_integrator.cc \
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
+			    quasi_static_integrator.cc \
 			    radau5_integrator.cc \
 			    time_stepping_integrator.cc \
 			    time_stepping_ssc_integrator.cc \
@@ -51,6 +52,7 @@ integratorsinclude_HEADERS = integrator.h \
 			     dopri5_integrator.h \
 			     dop853_integrator.h \
 			     odex_integrator.h \
+			     quasi_static_integrator.h \
 			     radau5_integrator.h \
 			     fortran/fortran_wrapper.h
 #daspk_integrator.h
