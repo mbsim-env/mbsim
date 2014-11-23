@@ -4,6 +4,7 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/dom.h>
+#include <mbxmlutilshelper/shared_library.h>
 #include <xercesc/dom/DOMDocument.hpp>
 
 #include "mbsim/dynamic_system_solver.h"
@@ -13,16 +14,8 @@
 #include "mbsimflatxml.h"
 #include <boost/timer/timer.hpp>
 
-#include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/algorithm/string.hpp>
-
-#ifndef _WIN32
-#  include <dlfcn.h>
-#else
-#  include <windows.h>
-#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -30,50 +23,6 @@ using namespace xercesc;
 using namespace boost;
 
 namespace {
-
-class SharedLibrary {
-  public:
-    SharedLibrary(const boost::filesystem::path &file_);
-    SharedLibrary(const SharedLibrary& src);
-    ~SharedLibrary();
-    const boost::filesystem::path file;
-    const boost::posix_time::ptime writeTime;
-    bool operator<(const SharedLibrary& b) const { return file<b.file; }
-  private:
-    void init();
-#ifndef _WIN32
-    void* handle;
-#else
-    HMODULE handle;
-#endif
-};
-
-SharedLibrary::SharedLibrary(const boost::filesystem::path &file_) : file(file_),
-  writeTime(boost::myfilesystem::last_write_time(file.generic_string())) {
-  init();
-}
-
-SharedLibrary::SharedLibrary(const SharedLibrary& src) : file(src.file), writeTime(src.writeTime) {
-  init();
-}
-
-void SharedLibrary::init() {
-#ifndef _WIN32
-  handle=dlopen(file.generic_string().c_str(), RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND);
-#else
-  handle=LoadLibraryEx(file.generic_string().c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-#endif
-  if(!handle)
-    throw runtime_error("Unable to load the MBSim module: Library '"+file.generic_string()+"' not found.");
-}
-
-SharedLibrary::~SharedLibrary() {
-#ifndef _WIN32
-  dlclose(handle);
-#else
-  FreeLibrary(handle);
-#endif
-}
 
 // return the full relative path of a shared library (relative to the install directory, hance including the lib or bin subdir).
 // the library base filename 'base' is given with the prefix (lib on Linux) and without the extension.
