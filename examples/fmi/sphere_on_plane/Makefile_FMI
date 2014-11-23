@@ -1,0 +1,6 @@
+PACKAGES=mbsim
+
+fmiexport:
+
+SRCDIR:=$(dir $(lastword $(MAKEFILE_LIST)))
+include $(SRCDIR)../../default_build.mk

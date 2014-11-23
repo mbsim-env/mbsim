@@ -23,6 +23,23 @@ namespace {
 
   //! get all links form sys, recursively
   void getAllLinks(const MBSim::DynamicSystem *sys, std::vector<MBSim::Link*> &link);
+
+  // some platform dependent file suffixes, directory names, ...
+#ifdef _WIN32
+  std::string SHEXT(".dll");
+  #ifdef _WIN64
+  std::string FMIOS("win64");
+  #else
+  std::string FMIOS("win32");
+  #endif
+#else
+  std::string SHEXT(".so");
+  #ifdef __x86_64__
+  std::string FMIOS("linux64");
+  #else
+  std::string FMIOS("linux32");
+  #endif
+#endif
 }
 
 namespace MBSimFMI {

@@ -1,16 +1,25 @@
 #include "../config.h"
 #include <fmiinstance.h>
 #include <stdexcept>
-#include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
-#include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsimControl/extern_signal_source.h>
 #include <mbsimControl/extern_signal_sink.h>
 #include <mbsim/extern_generalized_io.h>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+
+// include for create the system from XML file
+#ifdef MBSIMXMLFMI
+  #include <mbsimxml/mbsimflatxml.h>
+  #include <mbsim/objectfactory.h>
+#endif
+// include for create the system from user supplied shared library file (source code FMU)
+#if MBSIMSRCFMI
+  #include <mbxmlutilshelper/shared_library.h>
+  #include "../general/mbsimsrc_fmi.h"
+#endif
 
 // rethrow a catched exception after prefixing the what() string with the FMI variable name
 #define RETHROW_VR(vr) \
@@ -227,6 +236,8 @@ namespace MBSimFMI {
     eventInfo->stateValuesChanged=false;
     eventInfo->terminateSimulation=false;
 
+// create the system from XML file
+#if MBSIMXMLFMI
     // get the model file
     path mbsimflatxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"Model.mbsimprj.flat.xml";
 
@@ -241,6 +252,17 @@ namespace MBSimFMI {
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+#endif
+// create the system from user supplied shared library file (source code FMU)
+#if MBSIMSRCFMI
+    // get the model shared library
+    path mbsimsrclibfile=getSharedLibDir().parent_path().parent_path()/"binaries"/FMIOS/("mbsimfmi_model"+SHEXT);
+
+    shLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile));
+    DynamicSystemSolver *dssPtr;
+    reinterpret_cast<mbsimSrcFMIPtr>(shLib->getAddress("mbsimSrcFMI"))(dssPtr);
+    dss.reset(dssPtr);
+#endif
 
     // build list of value references (variables)
     msg(Debug)<<"Create all FMI variables."<<endl;

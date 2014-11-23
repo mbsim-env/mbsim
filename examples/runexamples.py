@@ -44,7 +44,8 @@ willFail=set([
 # pj('xml', 'time_dependent_kinematics')
   pj("mechanics", "flexible_body", "beltdrive"),
   pj("mechanics", "contacts", "self_siphoning_beads"),
-  pj("fmi", "simple_test")
+  pj("fmi", "simple_test"),
+  pj("fmi", "sphere_on_plane")
 ])
 
 # MBSim Modules
@@ -63,8 +64,10 @@ argparser = argparse.ArgumentParser(
   - If a file named 'Makefile' exists, than it is treated as a SRC example.
   - If a file named 'MBS.mbsimprj.flat.xml' exists, then it is treated as a FLATXML example.
   - If a file named 'MBS.mbsimprj.xml' exists, then it is treated as a XML example which run throught the MBXMLUtils preprocessor first.
-  - If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a FMI export example.
-    Beside running the file by mbsimxml also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFOMR>.
+  - If a file named 'FMI.mbsimprj.xml' exists, then it is treated as a FMI XML export example.
+    Beside running the file by mbsimxml also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFORM>.
+  - If a file named 'Makefile_FMI' exists, then it is treated as a FMI source export example.
+    Beside compiling the source examples also mbsimCreateFMU is run to export the model as a FMU and the FMU is run by fmuCheck.<PLATFORM>.
   If more then one of these files exist the behaviour is undefined.
   The 'Makefile' of a SRC example must build the example and must create an executable named 'main'.
   '''
@@ -90,7 +93,7 @@ mainOpts.add_argument("--filter", default="True", type=str,
           flatxml: is True if the directory is a xml flat example;
           ppxml: is True if the directory is a preprocessing xml example;
           xml: is True if the directory is a flat or preprocessing xml example;
-          fmi: is True if the directory is a FMI export xml example;
+          fmi: is True if the directory is a FMI export example (source or XML);
           mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
                     mbsimXXX='''+str(mbsimModules)+''';
           Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
@@ -684,7 +687,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
-    fmi=os.path.isfile(pj(root, "FMI.mbsimprj.xml"))
+    fmi=(os.path.isfile(pj(root, "FMI.mbsimprj.xml")) or os.path.isfile(pj(root, "Makefile_FMI")))
     # skip none examples directires
     if(not ppxml and not flatxml and not src and not fmi):
       continue
@@ -742,7 +745,9 @@ def runExample(resultQueue, example):
       elif os.path.isfile("MBS.mbsimprj.flat.xml"):
         executeRet, dt, outfiles=executeFlatXMLExample(executeFD, example)
       elif os.path.isfile("FMI.mbsimprj.xml"):
-        executeRet, dt, outfiles=executeFMIExample(executeFD, example)
+        executeRet, dt, outfiles=executeFMIXMLExample(executeFD, example)
+      elif os.path.isfile("Makefile_FMI"):
+        executeRet, dt, outfiles=executeFMISrcExample(executeFD, example)
       else:
         print("Unknown example type in directory "+example[0]+" found.", file=executeFD)
         executeRet=1
@@ -1021,20 +1026,17 @@ def executeFlatXMLExample(executeFD, example):
 
 
 
-# execute the FMI export example in the current directory (write everything to fd executeFD)
-def executeFMIExample(executeFD, example):
-  # first simple run the example as a preprocessing xml example
-  ret1, dt, outFiles1=executeXMLExample(executeFD, example)
-
+# helper function for executeFMIXMLExample and executeFMISrcExample
+def executeFMIExample(executeFD, example, fmiInputFile):
   # run mbsimCreateFMU to export the model as a FMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), "FMI.mbsimprj.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), fmiInputFile]))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret2=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
-                     "FMI.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime/5)
-  outFiles2=getOutFiles(example)
+  ret1=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
+                     fmiInputFile], executeFD, maxExecutionTime=args.maxExecutionTime/5)
+  outFiles1=getOutFiles(example)
 
   # get fmuChecker executable
   fmuCheck=glob.glob(pj(mbsimBinDir, "fmuCheck.*"))
@@ -1047,19 +1049,43 @@ def executeFMIExample(executeFD, example):
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck), "-l", "5", "mbsim.fmu"]))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret3=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
+  ret2=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
                       "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  outFiles3=getOutFiles(example)
+  outFiles2=getOutFiles(example)
 
-  # return error if one of the above returned an error; and return all outFiles
-  ret=abs(ret1)+abs(ret2)+abs(ret3)
+  # return
+  ret=abs(ret1)+abs(ret2)
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
-  outFiles.extend(outFiles3)
   return ret, dt, outFiles
+
+# execute the FMI XML export example in the current directory (write everything to fd executeFD)
+def executeFMIXMLExample(executeFD, example):
+  # first simple run the example as a preprocessing xml example
+  ret1, dt, outFiles1=executeXMLExample(executeFD, example)
+  # create and run FMU
+  ret2, dt, outFiles2=executeFMIExample(executeFD, example, "FMI.mbsimprj.xml")
+  # return
+  ret=abs(ret1)+abs(ret2)
+  outFiles=[]
+  outFiles.extend(outFiles1)
+  outFiles.extend(outFiles2)
+  return ret, dt, outFiles
+
+# execute the FMI source export example in the current directory (write everything to fd executeFD)
+def executeFMISrcExample(executeFD, example):
+  # compile examples
+  print("Running commands:", file=executeFD)
+  print("make -f Makefile_FMI clean && make -f Makefile_FMI", file=executeFD)
+  print("", file=executeFD)
+  executeFD.flush()
+  if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
+  if subprocessCall(["make", "-f", "Makefile_FMI"], executeFD)!=0: return 1, 0, []
+  # create and run FMU
+  return executeFMIExample(executeFD, example, "mbsimfmi_model.so")
 
 
 

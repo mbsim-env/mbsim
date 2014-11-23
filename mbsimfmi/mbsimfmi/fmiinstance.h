@@ -23,6 +23,10 @@ namespace MBSimControl {
   class ExternSignalSink;
 }
 
+namespace MBXMLUtils {
+  class SharedLibrary;
+}
+
 namespace MBSimFMI {
 
   //! This class is uses for ALL FMI variables during the preprocessing phase:
@@ -120,6 +124,11 @@ namespace MBSimFMI {
 
       int completedStepCounter;
       double nextPlotTime;
+
+#if MBSIMSRCFMI
+      // shared library of a user supplied model
+      boost::shared_ptr<MBXMLUtils::SharedLibrary> shLib;
+#endif
   };
 
 }
