@@ -170,6 +170,13 @@ namespace MBSim {
     return ele0;
   }
 
+  vector<Element*> Frame::getElementsDependingOn() const {
+    vector<Element*> dep;
+    if(not(dynamic_cast<DynamicSystem*>(parent)))
+      dep.push_back(parent);
+    return dep;
+  }
+
   void FixedRelativeFrame::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")

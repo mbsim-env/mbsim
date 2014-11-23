@@ -808,7 +808,7 @@ namespace MBSim {
        * \param current entry of matrix of dependencies
        * \param list of objects
        */
-      void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
+      void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Element*> &objList);
 
       bool truncateSimulationFiles;
 

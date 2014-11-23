@@ -48,17 +48,7 @@ namespace MBSim {
     delete func;
   }
 
-  void SpringDamper::updateh(double t, int j) {
-    la(0)=(*func)(g(0),gd(0));
-    if(dist<=epsroot() && abs(la(0))>epsroot())
-      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
-    WF[0]=n*la;
-    WF[1]=-WF[0];
-    for(unsigned int i=0; i<2; i++)
-      h[j][i]+=frame[i]->getJacobianOfTranslation(j).T()*WF[i];
-  }
-
-  void SpringDamper::updateg(double) {
+  void SpringDamper::updateStateDependentVariables(double t) {
     Vec3 WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
     dist=nrm2(WrP0P1);
     if(dist>epsroot())
@@ -66,11 +56,21 @@ namespace MBSim {
     else
       n.init(0);
     g(0)=dist;
-  } 
 
-  void SpringDamper::updategd(double) {
     Vec3 Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
     gd(0)=Wvrel.T()*n;
+
+    la(0)=(*func)(g(0),gd(0));
+
+    if(dist<=epsroot() && abs(la(0))>epsroot())
+      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
+    WF[0]=n*la;
+    WF[1]=-WF[0];
+  }
+
+  void SpringDamper::updateh(double t, int j) {
+    for(unsigned int i=0; i<2; i++)
+      h[j][i]+=frame[i]->getJacobianOfTranslation(j).T()*WF[i];
   }
 
   void SpringDamper::connect(Frame *frame0, Frame* frame1) {
@@ -85,6 +85,14 @@ namespace MBSim {
       if(not(frame.size()))
         THROW_MBSIMERROR("No connection given!");
       LinkMechanics::init(stage);
+    }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<frame.size(); i++) {
+        vector<Element*> dep = frame[i]->getElementsDependingOn();
+        for(unsigned int j=0; j<dep.size(); j++)
+          dependency.push_back(dep[j]);
+      }
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);

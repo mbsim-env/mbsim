@@ -54,6 +54,14 @@ namespace MBSim {
       }
       LinkMechanics::init(stage);
     }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<frame.size(); i++) {
+        vector<Element*> dep = frame[i]->getElementsDependingOn();
+        for(unsigned int j=0; j<dep.size(); j++)
+          dependency.push_back(dep[j]);
+      }
+    }
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);
       if(F) assert((*F)(0).size()==forceDir.cols());
@@ -84,19 +92,7 @@ namespace MBSim {
     LinkMechanics::connect(frame1);
   }
 
-  void KineticExcitation::updateh(double t, int j) {
-    Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
-    Mat3x3 tWrP0P1 = tilde(WrP0P1);
-
-    C.setOrientation(frame[0]->getOrientation());
-    C.setPosition(frame[0]->getPosition() + WrP0P1);
-    C.setAngularVelocity(frame[0]->getAngularVelocity());
-    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
-    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
-    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
-    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
-    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
-
+  void KineticExcitation::updateStateDependentVariables(double t) {
     if(F) {
       WF[1]=refFrame->getOrientation()*forceDir * (*F)(t);
       WF[0] = -WF[1];
@@ -105,6 +101,22 @@ namespace MBSim {
       WM[1]=refFrame->getOrientation()*momentDir * (*M)(t);
       WM[0] = -WM[1];
     }
+  }
+
+  void KineticExcitation::updateJacobians(double t, int j) {
+    Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
+    C.setOrientation(frame[0]->getOrientation());
+    C.setPosition(frame[0]->getPosition() + WrP0P1);
+    C.setAngularVelocity(frame[0]->getAngularVelocity());
+    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
+    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+  }
+
+  void KineticExcitation::updateh(double t, int j) {
     h[j][0]+=C.getJacobianOfTranslation(j).T()*WF[0] + C.getJacobianOfRotation(j).T()*WM[0];
     h[j][1]+=frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
   }

@@ -117,6 +117,8 @@ namespace MBSim {
     if (stage == reorganizeHierarchy) {
       msg(Info) << name << " (special group) stage==preInit:" << endl;
 
+      vector<Element*> eleList;
+
       vector<Object*> objList;
       buildListOfObjects(objList);
 
@@ -169,19 +171,24 @@ namespace MBSim {
         addObserver(obsrvList[i]);
       }
 
+     for (unsigned int i = 0; i < lnkList.size(); i++)
+       eleList.push_back(lnkList[i]);
+     for (unsigned int i = 0; i < objList.size(); i++)
+       eleList.push_back(objList[i]);
+
       /* now objects: these are much more complex since we must build a graph */
 
       /* matrix of body dependencies */
-      SqrMat A(objList.size(), INIT, 0.);
-      for (unsigned int i = 0; i < objList.size(); i++) {
+      SqrMat A(eleList.size(), INIT, 0.);
+      for (unsigned int i = 0; i < eleList.size(); i++) {
 
-        vector<Element*> parentBody = objList[i]->getElementsDependingOn();
+        vector<Element*> parentBody = eleList[i]->getElementsDependingOn();
 
         for (unsigned int h = 0; h < parentBody.size(); h++) {
           bool foundBody = false;
           unsigned int j;
-          for (j = 0; j < objList.size(); j++) {
-            if (objList[j] == parentBody[h]) {
+          for (j = 0; j < eleList.size(); j++) {
+            if (eleList[j] == parentBody[h]) {
               foundBody = true;
               break;
             }
@@ -200,13 +207,16 @@ namespace MBSim {
         double a = max(A.T().col(i));
         if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+lexical_cast<string>(nt++));
-          addToGraph(graph, A, i, objList);
+          addToGraph(graph, A, i, eleList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot()) { // absolut kinematics
-          objList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
-          addObject(objList[i]);
+          Object *obj = dynamic_cast<Object*>(eleList[i]);
+          if(obj) {
+            eleList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
+            addObject(obj);
+          }
         }
       }
 
@@ -214,15 +224,13 @@ namespace MBSim {
         addGroup(bufGraph[i]);
       }
 
-      for (unsigned int i = 0; i < link.size(); i++) {
-        if (link[i]->isSingleValued() or (link[i]->isSetValued() and link[i]->hasSmoothPart())) {
-          int level = link[i]->computeLevel();
-          for(int j=linkOrdered.size(); j<=level; j++) {
-            vector<Link*> vec;
-            linkOrdered.push_back(vec);
-          }
-          linkOrdered[level].push_back(link[i]);
+      for (unsigned int i = 0; i < eleList.size(); i++) {
+        int level = eleList[i]->computeLevel();
+        for(int j=elementOrdered.size(); j<=level; j++) {
+          vector<Element*> vec;
+          elementOrdered.push_back(vec);
         }
+        elementOrdered[level].push_back(eleList[i]);
       }
 
       msg(Info) << "End of special group stage==preInit" << endl;
@@ -234,10 +242,10 @@ namespace MBSim {
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
 
-      for(unsigned int i=0; i<linkOrdered.size(); i++) {
-        msg(Debug) << "  Links in level "<< i << ":"<< endl;
-        for(unsigned int j=0; j<linkOrdered[i].size(); j++)
-          msg(Debug) << "    "<< linkOrdered[i][j]->getPath()<<endl;
+      for(unsigned int i=0; i<elementOrdered.size(); i++) {
+        msg(Info) << "  Elements in level "<< i << ":"<< endl;
+        for(unsigned int j=0; j<elementOrdered[i].size(); j++)
+          msg(Info) << "    "<< elementOrdered[i][j]->getPath()<<endl;
       }
     }
     else if (stage == resize) {
@@ -1554,14 +1562,17 @@ namespace MBSim {
 //    doc.SaveFile((name.length() > 10 && name.substr(name.length() - 10, 10) == ".mbsim.xml") ? name : name + ".mbsim.xml");
   }
 
-  void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
-    objList[i]->setName("Object_graph_"+lexical_cast<string>(i)); // just a unique local name
-    graph->addObject(objList[i]->computeLevel(), objList[i]);
+  void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
+    Object *obj = dynamic_cast<Object*>(eleList[i]);
+    if(obj) {
+      eleList[i]->setName("Object_graph_"+lexical_cast<string>(i)); // just a unique local name
+      graph->addObject(eleList[i]->computeLevel(), obj);
+    }
     A(i, i) = -1;
 
     for (int j = 0; j < A.cols(); j++)
       if (A(i, j) > 0 && fabs(A(j, j) + 1) > epsroot()) // child node of object i
-        addToGraph(graph, A, j, objList);
+        addToGraph(graph, A, j, eleList);
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
