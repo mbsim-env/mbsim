@@ -271,7 +271,7 @@ namespace MBSim {
        * \brief checks dependency on other elements.
        * \return a vector of elements the calling element depends on.
        */
-      std::vector<Element*> getElementsDependingOn() const { return dependency; }
+      virtual std::vector<Element*> getElementsDependingOn() const { return dependency; }
 
       void addDependency(Element* ele) { dependency.push_back(ele); }
       /**
@@ -280,6 +280,9 @@ namespace MBSim {
        * \return the length of the longest path in the graph.
        */
       int computeLevel();
+
+      virtual void updateStateDependentVariables(double t) {}
+      virtual void updateJacobians(double t, int j=0) {}
 
     protected:
       Element *parent;

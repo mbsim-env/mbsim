@@ -91,16 +91,15 @@ namespace MBSim {
       (**i).updateT(t);
   }
 
-  void DynamicSystem::updateh(double t, int k) {
+  void DynamicSystem::updateh(double t, int j) {
     for (int i = 0; i < (int) dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateh(t, k);
+      dynamicsystem[i]->updateh(t, j);
 
     for (int i = 0; i < (int) object.size(); i++)
-      object[i]->updateh(t, k);
+      object[i]->updateh(t, j);
 
-    for(unsigned int i=0; i<linkOrdered.size(); i++) 
-      for(unsigned int j=0; j<linkOrdered[i].size(); j++) 
-	linkOrdered[i][j]->updateh(t, k);
+    for(unsigned int i=0; i<linkSmoothPart.size(); i++) 
+      linkSmoothPart[i]->updateh(t, j);
   }
 
   void DynamicSystem::updateh0Fromh1(double t) {
@@ -1079,6 +1078,9 @@ namespace MBSim {
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (*i)->setUpInverseKinetics();
+
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (*i)->setUpInverseKinetics();
   }
 
   void DynamicSystem::setUpLinks() {
@@ -1095,10 +1097,13 @@ namespace MBSim {
         hasForceLaw = true;
         linkSetValued.push_back(link[i]);
         linkSetValuedActive.push_back(link[i]);
+        if(link[i]->hasSmoothPart())
+          linkSmoothPart.push_back(link[i]);
       }
       if (link[i]->isSingleValued()) {
         hasForceLaw = true;
         linkSingleValued.push_back(link[i]);
+        linkSmoothPart.push_back(link[i]);
       }
       if (not hasForceLaw) {
         throw new MBSimError("The Link \"" + link[i]->getPath() + "\" comprises now force law!");

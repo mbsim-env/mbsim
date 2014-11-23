@@ -766,7 +766,8 @@ namespace MBSim {
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
       std::vector<Observer*> observer;
-      std::vector< std::vector<Link*> > linkOrdered;
+      std::vector<Link*> linkSmoothPart;
+      std::vector< std::vector<Element*> > elementOrdered;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

@@ -72,19 +72,17 @@ namespace MBSim {
       virtual void calcuSize(int j) {};
       //virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
-      //virtual int getuInd(DynamicSystem* sys, int i=0);
+      //virtual int getuInd(DynamicSystem* sys, int i=0)
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       //virtual int gethInd(DynamicSystem* sys,int i=0); 
-      virtual const fmatvec::Vec& getq() const { return q; };
-      virtual const fmatvec::Vec& getu() const { return u; };
+      virtual const fmatvec::Vec& getq() const { return q; }
+      virtual const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
-      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
-      virtual void updateStateDependentVariables(double t) = 0;
-      virtual void updateStateDerivativeDependentVariables(double t) {};
-      virtual void updateJacobians(double t, int j=0) = 0;
-      virtual void updatehInverseKinetics(double t, int i=0) {};
+      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); }
+      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); }
+      virtual void updateStateDerivativeDependentVariables(double t) {}
+      virtual void updatehInverseKinetics(double t, int i=0) {}
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */

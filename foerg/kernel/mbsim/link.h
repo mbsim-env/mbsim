@@ -64,10 +64,10 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg(double t) = 0;
       virtual void updategd(double t) = 0;
-      virtual void updatewb(double t, int i=0) {};
-      virtual void updateW(double t, int i=0) {};
-      virtual void updateV(double t, int i=0) {};
-      virtual void updateh(double t, int i=0) {};
+      virtual void updatewb(double t, int i=0) {}
+      virtual void updateW(double t, int i=0) {}
+      virtual void updateV(double t, int i=0) {}
+      virtual void updateh(double t, int i=0) {}
       virtual void updateStopVector(double t) {}
       virtual void updateLinkStatus(double t) {}
       virtual void updateLinkStatusReg(double t) {}
@@ -413,6 +413,8 @@ namespace MBSim {
 
       
       int getcorrSize() const { return corrSize; } 
+
+      virtual void setUpInverseKinetics() {}
 
     protected:
       /** 

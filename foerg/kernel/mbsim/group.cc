@@ -59,22 +59,25 @@ namespace MBSim {
   }
 
   void Group::updateStateDependentVariables(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateStateDependentVariables(t);
 
-    for(int i=0; i<(int)object.size(); i++)
-      object[i]->updateStateDependentVariables(t);
+    for(unsigned int i=0; i<elementOrdered.size(); i++) 
+      for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
+	elementOrdered[i][j]->updateStateDependentVariables(t);
   }
 
-  void Group::updateJacobians(double t, int j) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateJacobians(t,j);
+  void Group::updateJacobians(double t, int k) {
+//    for(int i=0; i<(int)dynamicsystem.size(); i++)
+//      dynamicsystem[i]->updateJacobians(t,j);
+//
+//    for(int i=0; i<(int)object.size(); i++)
+//      object[i]->updateJacobians(t,j);
+//
+//    for(int i=0; i<(int)link.size(); i++)
+//      link[i]->updateJacobians(t,j);
 
-    for(int i=0; i<(int)object.size(); i++)
-      object[i]->updateJacobians(t,j);
-
-    for(int i=0; i<(int)link.size(); i++)
-      link[i]->updateJacobians(t,j);
+    for(unsigned int i=0; i<elementOrdered.size(); i++) 
+      for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
+        elementOrdered[i][j]->updateJacobians(t,k);
   }
 
   void Group::updatedu(double t, double dt) {

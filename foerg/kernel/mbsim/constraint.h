@@ -19,7 +19,7 @@
 #ifndef _CONSTRAINT_H
 #define _CONSTRAINT_H
 
-#include "object.h"
+#include "link_mechanics.h"
 #include "functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -36,11 +36,16 @@ namespace MBSim {
    * \brief Class for constraints between generalized coordinates of objects
    * \author Martin Foerg
    */
-  class Constraint : public Object {
+  class Constraint : public LinkMechanics {
     private:
 
     public:
       Constraint(const std::string &name);
+      virtual void updateg(double t) {}
+      virtual void updategd(double t) {}
+      bool isActive() const { return true; }
+      bool gActiveChanged() { return false; }
+      bool isSingleValued() const { return true; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}
 #endif

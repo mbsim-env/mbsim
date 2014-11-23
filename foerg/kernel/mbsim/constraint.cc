@@ -75,7 +75,7 @@ namespace MBSim {
     return res;
   } 
 
-  Constraint::Constraint(const std::string &name) : Object(name) {
+  Constraint::Constraint(const std::string &name) : LinkMechanics(name) {
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
