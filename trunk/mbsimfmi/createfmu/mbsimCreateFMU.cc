@@ -5,6 +5,7 @@
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutilshelper/dom.h>
 #include <mbxmlutilshelper/getinstallpath.h>
+#include <mbxmlutilshelper/shared_library.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
@@ -12,10 +13,12 @@
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/filesystem/fstream.hpp"
+#include <boost/algorithm/string.hpp>
 
 #include "zip.h"
 
 #include <../general/fmi_variables.h>
+#include <../general/mbsimsrc_fmi.h>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -27,20 +30,8 @@ using namespace MBSimFMI;
 namespace {
   // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32
-  string SHEXT(".dll");
-  #ifdef _WIN64
-  string FMIOS("win64");
-  #else
-  string FMIOS("win32");
-  #endif
   string USERENVVAR("USERNAME");
 #else
-  string SHEXT(".so");
-  #ifdef __x86_64__
-  string FMIOS("linux64");
-  #else
-  string FMIOS("linux32");
-  #endif
   string USERENVVAR("USER");
 #endif
 }
@@ -49,41 +40,74 @@ int main(int argc, char *argv[]) {
   try {
     // help
     if(argc!=2) {
-      cout<<"Usage: "<<argv[0]<<" <MBSim Project XML File>"<<endl;
+      cout<<"Usage: "<<argv[0]<<" <MBSim Project XML File>|<MBSim FMI shared library>"<<endl;
       cout<<endl;
       cout<<"Create mbsim.fmu in the current directory."<<endl;
       return 0;
     }
 
-    // create octave
-    vector<path> dependencies;
-    OctEval octEval(&dependencies);
-    // create parser
-    boost::shared_ptr<DOMParser> parser=DOMParser::create(true);
-    generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
-    parser->loadGrammar(".mbsimxml.xsd");
+    // check input file
+    path inputFilename=argv[1];
+    bool xmlFile=false;
+    if(boost::iequals(extension(inputFilename), ".xml")) {
+      xmlFile=true;
+    }
+
     // create FMU zip file
     CreateZip fmuFile("mbsim.fmu");
-
-    // load MBSim project XML document
-    path mbsimxmlfile=argv[1];
-    boost::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(mbsimxmlfile);
-    DOMElement *modelEle=modelDoc->getDocumentElement();
-
-    // preprocess XML file
-    Preprocess::preprocess(parser, octEval, dependencies, modelEle);
-
-    // save preprocessed model to FMU
-    string ppModelStr;
-    DOMParser::serializeToString(modelEle, ppModelStr, false);
-    fmuFile.add(path("resources")/"Model.mbsimprj.flat.xml", ppModelStr);
 
     // load all plugins
     MBSimXML::loadPlugins();
 
-    // create object for DynamicSystemSolver
+    // create parser (a validating parser for XML input and a none validating parser for shared library input)
+    boost::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
+
+    // note the order of these variable definitions is importend for proper deallocation
+    // (dss and integrator must be deallocated before the shLib is unlaoded)
+    boost::shared_ptr<SharedLibrary> shLib;
     boost::shared_ptr<DynamicSystemSolver> dss;
-    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
+    boost::shared_ptr<MBSimIntegrator::Integrator> integrator;
+
+    // Create dss from XML file
+    if(xmlFile) {
+      // create octave
+      vector<path> dependencies;
+      OctEval octEval(&dependencies);
+
+      // init the validating parser with the mbsimxml schema file
+      generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
+      parser->loadGrammar(".mbsimxml.xsd");
+
+      // load MBSim project XML document
+      boost::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename);
+      DOMElement *modelEle=modelDoc->getDocumentElement();
+
+      // preprocess XML file
+      Preprocess::preprocess(parser, octEval, dependencies, modelEle);
+
+      // save preprocessed model to FMU
+      string ppModelStr;
+      DOMParser::serializeToString(modelEle, ppModelStr, false);
+      fmuFile.add(path("resources")/"Model.mbsimprj.flat.xml", ppModelStr);
+
+      // create object for DynamicSystemSolver
+      dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
+
+      // create object for Integrator (just to get the start/end time for DefaultExperiment)
+      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(
+        modelEle->getFirstElementChild()->getNextElementSibling()));
+    }
+    // Create dss from shared library
+    else {
+      // load the shared library and call mbsimSrcFMI function to get the dss
+      shLib=boost::make_shared<SharedLibrary>(absolute(inputFilename));
+      DynamicSystemSolver *dssPtr;
+      reinterpret_cast<mbsimSrcFMIPtr>(shLib->getAddress("mbsimSrcFMI"))(dssPtr);
+      dss.reset(dssPtr);
+
+      // we do not have a integrator for src models (but this is only used for convinence settings)
+      integrator.reset();
+    }
 
     // build list of value references
     vector<boost::shared_ptr<Variable> > var;
@@ -94,10 +118,6 @@ int main(int argc, char *argv[]) {
     dss->setPlotFeatureRecursive(Element::plotRecursive, Element::disabled);
     // initialize dss
     dss->initialize();
-
-    // create object for Integrator (just to get the start/end time for DefaultExperiment)
-    boost::shared_ptr<MBSimIntegrator::Integrator> integrator;
-    integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(modelEle->getFirstElementChild()->getNextElementSibling()));
 
     // create DOM of modelDescription.xml
     boost::shared_ptr<DOMDocument> modelDescDoc(parser->createDocument());
@@ -114,7 +134,7 @@ int main(int argc, char *argv[]) {
     E(modelDesc)->setAttribute("version", "1.0");
     E(modelDesc)->setAttribute("guid", "mbsimfmi_guid");
     E(modelDesc)->setAttribute("modelIdentifier", "mbsim");
-    path desc=mbsimxmlfile.filename();
+    path desc=inputFilename.filename();
     desc.replace_extension();
     desc.replace_extension();
     E(modelDesc)->setAttribute("modelName", desc.string());
@@ -147,12 +167,14 @@ int main(int argc, char *argv[]) {
             }
         }
 
-      // DefaultExperiment element and its attributes
-      DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
-      modelDesc->appendChild(defaultExp);
-      E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(integrator->getStartTime()));
-      E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(integrator->getEndTime()));
-      E(defaultExp)->setAttribute("tolerance", boost::lexical_cast<string>(1e-5));
+      // DefaultExperiment element and its attributes (only if a integrator object exists)
+      if(integrator) {
+        DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
+        modelDesc->appendChild(defaultExp);
+        E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(integrator->getStartTime()));
+        E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(integrator->getEndTime()));
+        E(defaultExp)->setAttribute("tolerance", boost::lexical_cast<string>(1e-5));
+      }
 
       // ModelVariables element
       DOMElement *modelVars=D(modelDescDoc)->createElement("ModelVariables");
@@ -211,8 +233,13 @@ int main(int argc, char *argv[]) {
     DOMParser::serializeToString(modelDescDoc.get(), modelDescriptionStr);
     fmuFile.add("modelDescription.xml", modelDescriptionStr);
 
-    // add binaries to FMU
-    fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+    // add main FMU binary to FMU file
+    if(xmlFile)
+      fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+    else {
+      fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
+      fmuFile.add(path("binaries")/FMIOS/("mbsimfmi_model"+SHEXT), inputFilename);
+    }
 
     fmuFile.close();
 
@@ -220,8 +247,10 @@ int main(int argc, char *argv[]) {
   }
   catch(const exception &ex) {
     cerr<<"Exception:\n"<<ex.what()<<endl;
+    return 1;
   }
   catch(...) {
     cerr<<"Unknwon exception."<<endl;
+    return 1;
   }
 }
