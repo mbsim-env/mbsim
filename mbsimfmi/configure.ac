@@ -15,7 +15,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
-if test $debug = "yes" ; then
+if test "_$debug" = "_yes" ; then
   CFLAGS="$CFLAGS -ggdb"
   CXXFLAGS="$CXXFLAGS -ggdb"
 else
