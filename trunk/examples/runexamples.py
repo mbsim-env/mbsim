@@ -1024,9 +1024,7 @@ def executeFlatXMLExample(executeFD, example):
 # execute the FMI export example in the current directory (write everything to fd executeFD)
 def executeFMIExample(executeFD, example):
   # first simple run the example as a preprocessing xml example
-  ret, dt, outFiles=executeXMLExample(executeFD, example)
-  if ret!=0:
-    return ret, 0, outFiles
+  ret1, dt, outFiles1=executeXMLExample(executeFD, example)
 
   # run mbsimCreateFMU to export the model as a FMU
   print("\n\n\n", file=executeFD)
@@ -1034,11 +1032,9 @@ def executeFMIExample(executeFD, example):
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), "FMI.mbsimprj.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
+  ret2=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
                      "FMI.mbsimprj.xml"], executeFD, maxExecutionTime=args.maxExecutionTime/5)
-  outFiles.extend(getOutFiles(example))
-  if ret!=0:
-    return ret, 0, outFiles
+  outFiles2=getOutFiles(example)
 
   # get fmuChecker executable
   fmuCheck=glob.glob(pj(mbsimBinDir, "fmuCheck.*"))
@@ -1051,11 +1047,18 @@ def executeFMIExample(executeFD, example):
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck), "-l", "5", "mbsim.fmu"]))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
-                     "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret3=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
+                      "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  outFiles.extend(getOutFiles(example))
+  outFiles3=getOutFiles(example)
+
+  # return error if one of the above returned an error; and return all outFiles
+  ret=abs(ret1)+abs(ret2)+abs(ret3)
+  outFiles=[]
+  outFiles.extend(outFiles1)
+  outFiles.extend(outFiles2)
+  outFiles.extend(outFiles3)
   return ret, dt, outFiles
 
 

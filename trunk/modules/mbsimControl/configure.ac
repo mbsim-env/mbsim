@@ -27,7 +27,7 @@ PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
 dnl Enable debugging 
 AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
 
-if test $debug = "yes" ; then
+if test "_$debug" = "_yes" ; then
   CFLAGS="$CFLAGS -ggdb"
   CXXFLAGS="$CXXFLAGS -ggdb"
   FCFLAGS="$FCFLAGS -ggdb"
