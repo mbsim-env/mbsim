@@ -36,62 +36,48 @@ using namespace MBSim;
 using namespace MBSimControl;
 using namespace MBXMLUtils;
 
+namespace {
+
+  template<class Datatype>
+  void addPreVariable(const xercesc::DOMElement *scalarVar, std::vector<boost::shared_ptr<MBSimFMI::Variable> > &var) {
+    // get type
+    MBSimFMI::Type type;
+         if(E(scalarVar)->getAttribute("causality")=="internal" && E(scalarVar)->getAttribute("variability")=="parameter")
+      type=MBSimFMI::Parameter;
+    else if(E(scalarVar)->getAttribute("causality")=="input"    && E(scalarVar)->getAttribute("variability")=="continuous")
+      type=MBSimFMI::Input;
+    else if(E(scalarVar)->getAttribute("causality")=="output"   && E(scalarVar)->getAttribute("variability")=="continuous")
+      type=MBSimFMI::Output;
+    else
+      throw runtime_error("Internal error: Unknwon variable type.");
+    // get default
+    Datatype defaultValue;
+    if(E(scalarVar->getFirstElementChild())->hasAttribute("start"))
+      defaultValue=boost::lexical_cast<Datatype>(E(scalarVar->getFirstElementChild())->getAttribute("start"));
+    // create preprocessing variable
+    //var.push_back(boost::make_shared<MBSimFMI::PreVariable<Datatype> >(type, defaultValue));
+    MBSimFMI::PreVariable<Datatype> *mfmfx=new MBSimFMI::PreVariable<Datatype>(type, defaultValue);
+    boost::shared_ptr<MBSimFMI::PreVariable<Datatype> > mfmf(mfmfx);
+    var.push_back(mfmf);
+  }
+
+}
+
 namespace MBSimFMI {
 
-  PreVariable::PreVariable(Type type, char datatypeChar, const std::string &defaultValue) :
-    Variable("dummy", "dummy", type, datatypeChar) {
-    if(!defaultValue.empty()) {
-      switch(datatypeChar) {
-        case 'r': doubleValue =boost::lexical_cast<double>(defaultValue); break;
-        case 'i': integerValue=boost::lexical_cast<int>   (defaultValue); break;
-        case 'b': booleanValue=boost::lexical_cast<bool>  (defaultValue); break;
-        case 's': stringValue =boost::lexical_cast<string>(defaultValue); break;
-      }
-    }
+  template<class Datatype>
+  PreVariable<Datatype>::PreVariable(Type type, const Datatype &defaultValue) :
+    Variable("dummy", "dummy", type, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(defaultValue) {
   }
 
-  const double& PreVariable::getValue(const double&) {
-    if(datatypeChar!='r') throw runtime_error("Internal error: Variable datatype differ.");
-    return doubleValue;
+  template<class Datatype>
+  const Datatype& PreVariable<Datatype>::getValue(const Datatype&) {
+    return value;
   }
 
-  const int& PreVariable::getValue(const int&) {
-    if(datatypeChar!='i') throw runtime_error("Internal error: Variable datatype differ.");
-    return integerValue;
-  }
-
-  const bool& PreVariable::getValue(const bool&) {
-    if(datatypeChar!='b') throw runtime_error("Internal error: Variable datatype differ.");
-    return booleanValue;
-  }
-
-  const string& PreVariable::getValue(const string&) {
-    if(datatypeChar!='s') throw runtime_error("Internal error: Variable datatype differ.");
-    return stringValue;
-  }
-
-  void PreVariable::setValue(const double &v) {
-    if(datatypeChar!='r') throw runtime_error("Internal error: Variable datatype differ.");
-    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
-    doubleValue=v;
-  }
-
-  void PreVariable::setValue(const int &v) {
-    if(datatypeChar!='i') throw runtime_error("Internal error: Variable datatype differ.");
-    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
-    integerValue=v;
-  }
-
-  void PreVariable::setValue(const bool &v) {
-    if(datatypeChar!='b') throw runtime_error("Internal error: Variable datatype differ.");
-    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
-    booleanValue=v;
-  }
-
-  void PreVariable::setValue(const std::string &v) {
-    if(datatypeChar!='s') throw runtime_error("Internal error: Variable datatype differ.");
-    if(type==Output) throw runtime_error("Setting this variable is not allowed.");
-    stringValue=v;
+  template<class Datatype>
+  void PreVariable<Datatype>::setValue(const Datatype &v) {
+    value=v;
   }
 
   // A MBSIM FMI instance
@@ -133,24 +119,18 @@ namespace MBSimFMI {
       msg(Debug)<<"Generate variable '"<<E(scalarVar)->getAttribute("name")<<"'"<<endl;
       if(vr!=boost::lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
         throw runtime_error("Internal error: valueReference missmatch!");
-      // get type
-      Type type;
-           if(E(scalarVar)->getAttribute("causality")=="internal" && E(scalarVar)->getAttribute("variability")=="parameter")  type=Parameter;
-      else if(E(scalarVar)->getAttribute("causality")=="input"    && E(scalarVar)->getAttribute("variability")=="continuous") type=Input;
-      else if(E(scalarVar)->getAttribute("causality")=="output"   && E(scalarVar)->getAttribute("variability")=="continuous") type=Output;
-      else throw runtime_error("Internal error: Unknwon variable type.");
-      // get datatype
-      char datatypeChar;
-           if(E(scalarVar)->getFirstElementChildNamed("Real")) datatypeChar='r';
+      // add variable
+      if(E(scalarVar)->getFirstElementChildNamed("Real"))
+        addPreVariable<double>(scalarVar, var);
       else if(E(scalarVar)->getFirstElementChildNamed("Integer") ||
-              E(scalarVar)->getFirstElementChildNamed("Enumeration")) datatypeChar='i';
-      else if(E(scalarVar)->getFirstElementChildNamed("Boolean")) datatypeChar='b';
-      else if(E(scalarVar)->getFirstElementChildNamed("String")) datatypeChar='s';
-      else throw runtime_error("Internal error: Unknown variable datatype.");
-      // get default
-      string defaultValue=E(scalarVar->getFirstElementChild())->getAttribute("start");
-      // create preprocessing variable
-      var.push_back(boost::make_shared<PreVariable>(type, datatypeChar, defaultValue));
+              E(scalarVar)->getFirstElementChildNamed("Enumeration"))
+        addPreVariable<int>(scalarVar, var);
+      else if(E(scalarVar)->getFirstElementChildNamed("Boolean"))
+        addPreVariable<bool>(scalarVar, var);
+      else if(E(scalarVar)->getFirstElementChildNamed("String"))
+        addPreVariable<string>(scalarVar, var);
+      else
+        throw runtime_error("Internal error: Unknown variable datatype.");
     }
   }
 
