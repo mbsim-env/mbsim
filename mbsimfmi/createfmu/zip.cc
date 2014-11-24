@@ -57,7 +57,7 @@ void CreateZip::add(const path &filenameInZip, const path &srcFilename) {
   archive_entry_set_perm(entry, 0644);
   if(archive_write_header(a, entry))
     throw runtime_error("Unable to write entry header to archive "+zipFile.string()+".");
-  boost::filesystem::ifstream f(srcFilename);
+  boost::filesystem::ifstream f(srcFilename, ios_base::binary);
   do {
     f.read(&buf[0], buf.size());
     if(archive_write_data(a, &buf[0], f.gcount())!=f.gcount())
