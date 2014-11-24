@@ -5,12 +5,6 @@
 
 namespace MBSimFMI {
 
-//! map c++ type to FMI datatype character
-template<> struct MapDatatypeToFMIDatatypeChar<double     > { static const char value='r'; };
-template<> struct MapDatatypeToFMIDatatypeChar<int        > { static const char value='i'; };
-template<> struct MapDatatypeToFMIDatatypeChar<bool       > { static const char value='b'; };
-template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char value='s'; };
-
 void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost::shared_ptr<Variable> > &var,
                         PredefinedVariables &predefinedVar) {
   // create predefined parameters

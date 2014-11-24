@@ -149,6 +149,10 @@ class Variable {
 
 //! map c++ type to FMI datatype character
 template<typename Datatype> struct MapDatatypeToFMIDatatypeChar;
+template<> struct MapDatatypeToFMIDatatypeChar<double     > { static const char value='r'; };
+template<> struct MapDatatypeToFMIDatatypeChar<int        > { static const char value='i'; };
+template<> struct MapDatatypeToFMIDatatypeChar<bool       > { static const char value='b'; };
+template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char value='s'; };
 
 //! A FMI parameter which stores the value in a externally provided reference.
 //! This is used for predefined variables.

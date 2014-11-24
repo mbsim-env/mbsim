@@ -32,23 +32,15 @@ namespace MBSimFMI {
   //! This class is uses for ALL FMI variables during the preprocessing phase:
   //! between fmiInstantiateModel and fmiInitialize.
   //! The value of the variable is store by the class itself: as a member variable.
+  template<class Datatype>
   class PreVariable : public Variable {
     public:
-      PreVariable(Type type, char datatypeChar, const std::string &defaultValue="");
+      PreVariable(Type type, const Datatype &defaultValue=Datatype());
       std::string getValueAsString() { throw std::runtime_error("Internal error: getValueAsString not allowed"); }
-      const double& getValue(const double&);
-      const int& getValue(const int&);
-      const bool& getValue(const bool&);
-      const std::string& getValue(const std::string&);
-      void setValue(const double &v);
-      void setValue(const int &v);
-      void setValue(const bool &v);
-      void setValue(const std::string &v);
+      const Datatype& getValue(const Datatype&);
+      void setValue(const Datatype &v);
     protected:
-      double doubleValue;
-      int integerValue;
-      bool booleanValue;
-      std::string stringValue;
+      Datatype value;
   };
 
   /*! A MBSim FMI instance */
