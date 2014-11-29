@@ -68,6 +68,7 @@ namespace MBSim {
       virtual void updatewb(double t, int i=0);
       virtual void updateW(double t, int i=0);
       virtual void updateV(double t, int i=0);
+      virtual void updateStateDependentVariables(double t);
       virtual void updateh(double t, int i=0);
       virtual void updateg(double t);
       virtual void updategd(double t);
@@ -336,6 +337,8 @@ namespace MBSim {
        * 3 = open-close transition, i.e., impact
        */
       int rootID;
+
+      fmatvec::Vec gBuf, gdBuf;
 
     private:
       std::string saved_ref1, saved_ref2;

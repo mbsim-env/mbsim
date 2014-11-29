@@ -1091,6 +1091,7 @@ namespace MBSim {
     linkSetValued.clear();
     linkSetValuedActive.clear();
     linkSingleValued.clear();
+    linkSmoothPart.clear();
     for (unsigned int i = 0; i < link.size(); i++) {
       bool hasForceLaw = false;
       if (link[i]->isSetValued()) {
