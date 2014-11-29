@@ -90,6 +90,7 @@ namespace MBSim {
       void addObject(int level, Object* object); 
 
       void printGraph();
+      const std::vector< std::vector<Object*> >& getObjects() const { return obj; }
 
     protected:
       /**

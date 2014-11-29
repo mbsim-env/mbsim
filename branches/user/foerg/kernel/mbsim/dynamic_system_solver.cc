@@ -205,13 +205,14 @@ namespace MBSim {
       int nt = 0;
       for (int i = 0; i < A.size(); i++) {
         double a = max(A.T().col(i));
-        if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
+        if (fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+lexical_cast<string>(nt++));
           addToGraph(graph, A, i, eleList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot()) { // absolut kinematics
+          throw;
           Object *obj = dynamic_cast<Object*>(eleList[i]);
           if(obj) {
             eleList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
@@ -220,8 +221,17 @@ namespace MBSim {
         }
       }
 
+      int k = 0;
       for (unsigned int i = 0; i < bufGraph.size(); i++) {
+        std::vector< std::vector<Object*> > obj = bufGraph[i]->getObjects();
+        if(obj.size() > 1)
         addGroup(bufGraph[i]);
+        else {
+          for(unsigned int j=0; j<obj[0].size(); j++) {
+            obj[0][j]->setName("Object_absolute_"+lexical_cast<string>(k++)); // just a unique local name
+            addObject(obj[0][j]);
+          }
+        }
       }
 
       for (unsigned int i = 0; i < eleList.size(); i++) {

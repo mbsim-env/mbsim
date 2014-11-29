@@ -181,22 +181,7 @@ namespace MBSim {
     delete func;
   }
 
-  void DirectionalSpringDamper::updateh(double t, int j) {
-    Mat3x3 tWrP0P1 = tilde(WrP0P1);
-
-    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
-    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
-    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
-    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
-
-    la(0)=(*func)(g(0),gd(0));
-    WF[0]=WforceDir*la; // projected force in direction of WforceDir
-    WF[1]=-WF[0];
-    h[j][0]+=C.getJacobianOfTranslation(j).T()*WF[0];
-    h[j][1]+=frame[1]->getJacobianOfTranslation(j).T()*WF[1];
-  }
-
-  void DirectionalSpringDamper::updateg(double) {
+  void DirectionalSpringDamper::updateStateDependentVariables(double t) {
     WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
 
     WforceDir=refFrame->getOrientation()*forceDir; // force direction in world system
@@ -204,13 +189,28 @@ namespace MBSim {
 
     C.setOrientation(frame[0]->getOrientation());
     C.setPosition(frame[1]->getPosition() - WforceDir*g(0));
-  } 
-
-  void DirectionalSpringDamper::updategd(double) {
     C.setAngularVelocity(frame[0]->getAngularVelocity());
     C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
     Vec3 WvP0P1 = frame[1]->getVelocity()-C.getVelocity();
     gd(0)=WvP0P1.T()*WforceDir;
+
+    la(0)=(*func)(g(0),gd(0));
+    WF[0]=WforceDir*la; // projected force in direction of WforceDir
+    WF[1]=-WF[0];
+  }
+
+  void DirectionalSpringDamper::updateJacobians(double t, int j) {
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
+
+    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+  }
+
+  void DirectionalSpringDamper::updateh(double t, int j) {
+    h[j][0]+=C.getJacobianOfTranslation(j).T()*WF[0];
+    h[j][1]+=frame[1]->getJacobianOfTranslation(j).T()*WF[1];
   }
 
   void DirectionalSpringDamper::connect(Frame *frame0, Frame* frame1) {
@@ -225,6 +225,14 @@ namespace MBSim {
       if(not(frame.size()))
         THROW_MBSIMERROR("No connection given!");
       LinkMechanics::init(stage);
+    }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<frame.size(); i++) {
+        vector<Element*> dep = frame[i]->getElementsDependingOn();
+        for(unsigned int j=0; j<dep.size(); j++)
+          dependency.push_back(dep[j]);
+      }
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);
@@ -342,35 +350,35 @@ namespace MBSim {
       h[j][0]>>hParent(I);
     }
   } 
+  
+  void GeneralizedSpringDamper::updateStateDependentVariables(double t) {
+    g=body[0]?(body[1]->getqRel()-body[0]->getqRel()):body[1]->getqRel();
+    gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
+    la(0) = (*func)(g(0),gd(0));
+    WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
+    WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
+    if(body[0]) {
+      WF[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJT()*la;
+      WM[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJR()*la;
+    } else {
+      WF[0] = -WF[1];
+      WM[0] = -WM[1];
+    }
+  }
 
   void GeneralizedSpringDamper::updateh(double t, int j) {
-    la(0) = (*func)(g(0),gd(0));
     if(j==0) {
       if(body[0]) h[j][0]+=body[0]->getJRel(j).T()*la;
       h[j][1]-=body[1]->getJRel(j).T()*la;
     }
     else {
-      WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
-      WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
       h[j][1]-=body[1]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[1] + body[1]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[1];
       if(body[0]) {
-        WF[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJT()*la;
-        WM[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJR()*la;
         h[j][0]-=body[0]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[0] + body[0]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[0];
       } else {
-        WF[0] = -WF[1];
-        WM[0] = -WM[1];
         h[j][0]-=body[1]->getFrameOfReference()->getJacobianOfTranslation(j).T()*WF[0]+body[1]->getFrameOfReference()->getJacobianOfRotation(j).T()*WM[0];
       }
     }
-  }
-
-  void GeneralizedSpringDamper::updateg(double) {
-    g=body[0]?(body[1]->getqRel()-body[0]->getqRel()):body[1]->getqRel();
-  } 
-
-  void GeneralizedSpringDamper::updategd(double) {
-    gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
   }
 
   void GeneralizedSpringDamper::init(InitStage stage) {
@@ -384,6 +392,16 @@ namespace MBSim {
       if(body[0]) LinkMechanics::connect(body[0]->getFrameForKinematics());
       LinkMechanics::connect(body[1]->getFrameForKinematics());
       LinkMechanics::init(stage);
+    }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<body.size(); i++) {
+        if(body[i]) {
+          vector<Element*> dep = body[i]->getElementsDependingOn();
+          for(unsigned int j=0; j<dep.size(); j++)
+            dependency.push_back(dep[j]);
+        }
+      }
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);

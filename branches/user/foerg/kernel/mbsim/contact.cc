@@ -109,12 +109,19 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateh(double t, int j) {
-    (*fcl).computeSmoothForces(contacts);
-
+  void Contact::updateStateDependentVariables(double t) {
+//    (*fcl).computeSmoothForces(contacts);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->applyh(t, j);
+        jter->updateStateDependentVariables(t);
+    }
+  }
+
+  void Contact::updateh(double t, int j) {
+//   cout << name << " " << j << " t = " << t << endl;
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->updateh(t, j);
     }
   }
 
@@ -412,7 +419,15 @@ namespace MBSim {
           jter->init(stage);
         }
       }
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<contour.size(); i++) {
+        vector<Element*> dep = contour[i]->getElementsDependingOn();
+         for(unsigned int j=0; j<dep.size(); j++) {
+          dependency.push_back(dep[j]);
+         }
+      }
     }
+
     else if (stage == resize) {
       LinkMechanics::init(stage);
 
