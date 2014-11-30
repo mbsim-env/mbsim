@@ -81,7 +81,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsSpherePolynomialFrustum::updateg(Vec & g, ContourPointData * cpData, int index) {
+  void ContactKinematicsSpherePolynomialFrustum::updateg(double & g, ContourPointData * cpData, int index) {
     /*Geometry*/
     //sphere center in coordinates of frustum
     Vec3 rF = frustum->getFrameOfReference()->getPosition();
@@ -125,12 +125,12 @@ namespace MBSim {
           cpData[isphere].getFrameOfReference().getPosition() = rS + cpData[isphere].getFrameOfReference().getOrientation().col(0) * sphere->getRadius();
 
           //Distance
-          g(0) = cpData[ifrustum].getFrameOfReference().getOrientation().col(0).T() * (cpData[isphere].getFrameOfReference().getPosition() - cpData[ifrustum].getFrameOfReference().getPosition());
+          g = cpData[ifrustum].getFrameOfReference().getOrientation().col(0).T() * (cpData[isphere].getFrameOfReference().getPosition() - cpData[ifrustum].getFrameOfReference().getPosition());
 
           return;
         }
       }
     }
-    g(0) = 1.;
+    g = 1.;
   }
 }/* namespace MBSim */

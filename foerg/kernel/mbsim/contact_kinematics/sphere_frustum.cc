@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsSphereFrustum::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsSphereFrustum::updateg(double &g, ContourPointData *cpData, int index) {
 
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche
@@ -69,14 +69,14 @@ namespace MBSim {
     
 
     if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || fabs(l)<epsroot()) { // TODO! rudimentäre Bestimmung ob Kontakt
-      g(0) = 1;
+      g = 1;
     }
     else {
       // Halber Oeffnungswinkel
       double  psi = atan((r(0) - r(1))/h); // psi > 0 falls r_unten(0) > r_oben(1)
       double phi = M_PI*0.5 - fabs(psi);
       double vz=psi/fabs(psi);
-      g(0) = fabs(r_h-l)*sin(phi)-sphere->getRadius();
+      g = fabs(r_h-l)*sin(phi)-sphere->getRadius();
       double out = 1;
 
       // Fallabfrage
@@ -127,7 +127,7 @@ namespace MBSim {
       }
 
       // System of sphere (position)
-      cpData[isphere].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g(0)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+      cpData[isphere].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
       // System of sphere (orientation)
       cpData[isphere].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
       cpData[isphere].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));

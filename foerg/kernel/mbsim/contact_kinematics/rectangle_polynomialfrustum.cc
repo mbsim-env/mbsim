@@ -159,7 +159,7 @@ namespace MBSim {
     cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh * -AWF * frustum->computeTangentAzimuthal(x, phi));
   }
 
-  bool ContactKinematicsRectanglePolynomialFrustum::cpLocationInRectangle(Vec & g, ContourPointData * cpData) {
+  bool ContactKinematicsRectanglePolynomialFrustum::cpLocationInRectangle(double & g, ContourPointData * cpData) {
 
     double rhs = 0.; //, rhs2 = 0.;
     int status = 0; // status2 = 0;
@@ -218,13 +218,13 @@ namespace MBSim {
 //    }
 
     if (status) {
-      g(0) = distance2Rectangle(cpData[ifrustum].getFrameOfReference().getPosition());
+      g = distance2Rectangle(cpData[ifrustum].getFrameOfReference().getPosition());
 
       Vec3 pF = computeContourPointFrustum(x1, v);
       cpData[ifrustum].getFrameOfReference().getPosition() = computeContourPoint(x1, v);
       setFrustumOrienationKinematics(x1, ArcTan(pF(1), pF(2)), cpData);
 
-      cpData[irectangle].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() - rectangle->getFrame()->getOrientation().col(0) * g(0);
+      cpData[irectangle].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() - rectangle->getFrame()->getOrientation().col(0) * g;
       cpData[irectangle].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
       cpData[irectangle].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
       cpData[irectangle].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
@@ -239,7 +239,7 @@ namespace MBSim {
     return false;
   }
 
-  bool ContactKinematicsRectanglePolynomialFrustum::gridContact(fmatvec::Vec & g, ContourPointData * cpData) {
+  bool ContactKinematicsRectanglePolynomialFrustum::gridContact(double & g, ContourPointData * cpData) {
 
     const double h = frustum->getHeight();
     double weightsum = 0;
@@ -279,9 +279,9 @@ namespace MBSim {
 
     Vec3 contactPointFrustum = frustum->computePoint(x(0), phi);
 
-    g(0) = frustum->computeNormal(x(0), phi).T() * (contactPointRectangle - contactPointFrustum);
+    g = frustum->computeNormal(x(0), phi).T() * (contactPointRectangle - contactPointFrustum);
 
-    if (g(0) < 0.) {
+    if (g < 0.) {
       //Frustum
       Vec3 rF = frustum->getFrame()->getPosition();
       SqrMat3 AWF = frustum->getFrame()->getOrientation();
@@ -300,7 +300,7 @@ namespace MBSim {
     return false;
   }
 
-  bool ContactKinematicsRectanglePolynomialFrustum::cornerContact(Vec & g, ContourPointData * cpData) {
+  bool ContactKinematicsRectanglePolynomialFrustum::cornerContact(double & g, ContourPointData * cpData) {
     cornerPoints[0] = rectangle->getA();
     cornerPoints[1] = rectangle->getB();
     cornerPoints[2] = rectangle->getC();
@@ -346,9 +346,9 @@ namespace MBSim {
 
     Vec3 contactPointFrustum = frustum->computePoint(x(0), phi);
 
-    g(0) = frustum->computeNormal(x(0), phi).T() * (contactPointRectangle - contactPointFrustum);
+    g = frustum->computeNormal(x(0), phi).T() * (contactPointRectangle - contactPointFrustum);
 
-    if (g(0) < 0.) {
+    if (g < 0.) {
       //Frustum
       Vec3 rF = frustum->getFrame()->getPosition();
       SqrMat3 AWF = frustum->getFrame()->getOrientation();
@@ -367,7 +367,7 @@ namespace MBSim {
     return false;
   }
 
-  bool ContactKinematicsRectanglePolynomialFrustum::edgeContact(Vec & g, ContourPointData * cpData) {
+  bool ContactKinematicsRectanglePolynomialFrustum::edgeContact(double & g, ContourPointData * cpData) {
     cornerPoints[0] = rectangle->getA();
     cornerPoints[1] = rectangle->getB();
     cornerPoints[2] = rectangle->getC();
@@ -416,8 +416,8 @@ namespace MBSim {
         const double phi = ArcTan(contactPointRectangle(1), contactPointRectangle(2));
         Vec3 contactPointFrustum = frustum->computePoint(x, phi);
 
-        g(0) = frustum->computeNormal(x, phi).T() * (contactPointRectangle - contactPointFrustum);
-        if (g(0) < 0.) {
+        g = frustum->computeNormal(x, phi).T() * (contactPointRectangle - contactPointFrustum);
+        if (g < 0.) {
 
           //Frustum
           cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * contactPointFrustum;
@@ -439,7 +439,7 @@ namespace MBSim {
     return false;
   }
 
-  void ContactKinematicsRectanglePolynomialFrustum::updateg(Vec & g, ContourPointData * cpData, int index) {
+  void ContactKinematicsRectanglePolynomialFrustum::updateg(double & g, ContourPointData * cpData, int index) {
     /*Geometry*/
     //rectangle
     Vec3 R_cen_A = rectangle->getFrame()->getPosition(); //center of rectangle
@@ -481,7 +481,7 @@ namespace MBSim {
         }
       }
     }
-    g(0) = 1.;
+    g = 1.;
   }
 
   void ContactKinematicsRectanglePolynomialFrustum::setGridSizeY(int gridSizeY_) {

@@ -52,7 +52,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleFrustum::updateg(fmatvec::Vec& g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleFrustum::updateg(double& g, ContourPointData *cpData, int index) {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */
@@ -106,32 +106,32 @@ namespace MBSim {
     double nrm2_MFMC = nrm2(Wd_CF - Wa_F * h_F * 0.5);
 
     if (outCont_F && !outCont_C && (r_C - rmax - nrm2_MFMC > 0.))
-      g(0) = 1.;
+      g = 1.;
     else if (!outCont_F && outCont_C && (rmin - r_C - nrm2_MFMC > 0.))
-      g(0) = 1.;
+      g = 1.;
     else if (outCont_F && outCont_C && (nrm2_MFMC - rmax - r_C > 0.))
-      g(0) = 1.;
+      g = 1.;
     else { // possible contact
 
       if (fabs(z_CF_nrm2) < epsroot()) { // circle - circle
         if (u_CF < 0. || u_CF > h_F)
-          g(0) = 1.; // not in relevant rectangle
+          g = 1.; // not in relevant rectangle
         else { // relevant rectangle
           double r_Fh = r_F(0) + tan(phi_F) * u_CF;
 
           if (outCont_F && !outCont_C) { // inner circle, outer frustum
-            g(0) = (r_C - r_Fh - c_CF_nrm2) * cos(phi_F);
+            g = (r_C - r_Fh - c_CF_nrm2) * cos(phi_F);
           }
           /********************************/
           else if (!outCont_F && outCont_C) { // outer circle, inner frustum
-            g(0) = (r_Fh - r_C - c_CF_nrm2) * cos(phi_F);
+            g = (r_Fh - r_C - c_CF_nrm2) * cos(phi_F);
           }
           /********************************/
           else { // outer circle, outer frustum
-            g(0) = (c_CF_nrm2 - r_C - r_Fh) * cos(phi_F);
+            g = (c_CF_nrm2 - r_C - r_Fh) * cos(phi_F);
           }
 
-          if (g(0) < eps) {
+          if (g < eps) {
             if (outCont_F && !outCont_C) { // inner circle, outer frustum
               if (fabs(c_CF_nrm2) < epsroot())
                 throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
@@ -143,7 +143,7 @@ namespace MBSim {
             }
             /********************************/
             else if (!outCont_F && outCont_C) { // outer circle, inner frustum
-              if (g(0) < eps) {
+              if (g < eps) {
                 if (fabs(c_CF_nrm2) < epsroot())
                   throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
                 else {
@@ -155,7 +155,7 @@ namespace MBSim {
             }
             /********************************/
             else { // outer circle, outer frustum
-              if (g(0) < eps) {
+              if (g < eps) {
                 cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2;
                 cpData[icircle].getFrameOfReference().getOrientation().set(0, sin(phi_F) * Wa_F - cos(phi_F) * c_CF / c_CF_nrm2);
                 cpData[ifrustum].getFrameOfReference().getOrientation().set(0, -cpData[icircle].getFrameOfReference().getOrientation().col(0));
@@ -173,7 +173,7 @@ namespace MBSim {
         double xi_1 = eF1.T() * Wd_CF;
         double xi_2 = Wa_F.T() * Wd_CF;
         if (xi_2 < -sin(al_CF) * r_C || xi_2 > h_F + sin(al_CF) * r_C)
-          g(0) = 1.;
+          g = 1.;
 
         else if (fabs(phi_F) < epsroot()) { // special case: frustum=cylinder (circle-ellipse)
           if (fabs(al_CF - M_PI / 2.) < epsroot()) {
@@ -214,7 +214,7 @@ namespace MBSim {
           cpData[ifrustum].getLagrangeParameterPosition()(0) = searchRho.slv();
 
           if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps)
-            g(0) = 1.; // too far away?
+            g = 1.; // too far away?
           else {
             Vec3 dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
@@ -226,18 +226,18 @@ namespace MBSim {
               if (warnLevel != 0) {
                 msg(Warn) << "(ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Cylinder not represented at the moment!" << endl;
               }
-              g(0) = 1.;
+              g = 1.;
             }
             else {
               double d_PF = sqrt(pow(nrm2(Wd_PF), 2) - pow(s_PF, 2));
               Vec3 Wb_PF = (Wd_PF - s_PF * Wa_F) / d_PF;
 
               if (!outCont_F && outCont_C) {
-                g(0) = r_F(0) - d_PF;
+                g = r_F(0) - d_PF;
                 cpData[ifrustum].getFrameOfReference().getOrientation().set(0, -Wb_PF);
               }
               else {
-                g(0) = d_PF - r_F(0);
+                g = d_PF - r_F(0);
                 cpData[ifrustum].getFrameOfReference().getOrientation().set(0, Wb_PF);
               }
             }
@@ -346,7 +346,7 @@ namespace MBSim {
           cpData[ifrustum].getLagrangeParameterPosition()(0) = searchRho.slv();
 
           if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps)
-            g(0) = 1.; // too far away?
+            g = 1.; // too far away?
           else {
             Vec3 dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
@@ -358,7 +358,7 @@ namespace MBSim {
               if (warnLevel != 0) {
                 msg(Warn) << "(ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Frustum not represented at the moment!" << endl;
               }
-              g(0) = 1.;
+              g = 1.;
             }
             else {
               double d_PF = sqrt(pow(nrm2(Wd_PF), 2) - pow(s_PF, 2));
@@ -366,12 +366,12 @@ namespace MBSim {
               Vec3 Wb_PF = (Wd_PF - s_PF * Wa_F) / d_PF;
 
               if (!outCont_F && outCont_C) {
-                g(0) = (r_Fh - d_PF) * cos(phi_F);
+                g = (r_Fh - d_PF) * cos(phi_F);
                 cpData[ifrustum].getFrameOfReference().getOrientation().set(0, sin(phi_F) * Wa_F - cos(phi_F) * Wb_PF);
               }
               /********************************/
               else {
-                g(0) = (d_PF - r_Fh) * cos(phi_F);
+                g = (d_PF - r_Fh) * cos(phi_F);
                 cpData[ifrustum].getFrameOfReference().getOrientation().set(0, -sin(phi_F) * Wa_F + cos(phi_F) * Wb_PF);
               }
               cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
@@ -401,8 +401,8 @@ namespace MBSim {
       }
     }
 
-    if (g(0) < eps) {
-      cpData[ifrustum].getFrameOfReference().getPosition() = cpData[icircle].getFrameOfReference().getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0) * g(0);
+    if (g < eps) {
+      cpData[ifrustum].getFrameOfReference().getPosition() = cpData[icircle].getFrameOfReference().getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0) * g;
       if (outCont_F)
         cpData[ifrustum].getFrameOfReference().getOrientation().set(1, (Wa_F + sin(phi_F) * cpData[ifrustum].getFrameOfReference().getOrientation().col(0)) / cos(phi_F)); // radial direction
       else

@@ -35,7 +35,7 @@ namespace MBSim {
     circle1 = static_cast<CircleSolid*>(contour[1]);
   }
 
-  void ContactKinematicsCircleSolidCircleSolid::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidCircleSolid::updateg(double &g, ContourPointData *cpData, int index) {
     Vec3 WrD = circle0->getFrame()->getPosition() - circle1->getFrame()->getPosition();
     cpData[icircle1].getFrameOfReference().getOrientation().set(0, WrD/nrm2(WrD));
     cpData[icircle0].getFrameOfReference().getOrientation().set(0, -cpData[icircle1].getFrameOfReference().getOrientation().col(0));
@@ -46,10 +46,10 @@ namespace MBSim {
     cpData[icircle0].getFrameOfReference().getPosition() = circle0->getFrame()->getPosition() + cpData[icircle0].getFrameOfReference().getOrientation().col(0)*circle0->getRadius();
     cpData[icircle1].getFrameOfReference().getPosition() = circle1->getFrame()->getPosition() + cpData[icircle1].getFrameOfReference().getOrientation().col(0)*circle1->getRadius();
 
-    g(0) = cpData[icircle1].getFrameOfReference().getOrientation().col(0).T()*WrD - circle0->getRadius() - circle1->getRadius();
+    g = cpData[icircle1].getFrameOfReference().getOrientation().col(0).T()*WrD - circle0->getRadius() - circle1->getRadius();
   }
       
-  void ContactKinematicsCircleSolidCircleSolid::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidCircleSolid::updatewb(Vec &wb, double g, ContourPointData *cpData) {
 
     const Vec3 KrPC1 = circle0->getFrame()->getOrientation().T()*(cpData[icircle0].getFrameOfReference().getPosition() - circle0->getFrame()->getPosition());
     const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));

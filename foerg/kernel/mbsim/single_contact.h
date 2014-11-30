@@ -177,8 +177,10 @@ namespace MBSim {
       fmatvec::Vec getlaN() const { return laN; }
       fmatvec::Vec & getlaT() { return laT; }
       fmatvec::Vec getlaT() const { return laT; }
-      fmatvec::Vec & getgdN() { return gdN; }
-      fmatvec::Vec getgdN() const { return gdN; }
+      double& getgN() { return gN; }
+      const double& getgN() const { return gN; }
+      double& getgdN() { return gdN; }
+      const double& getgdN() const { return gdN; }
       fmatvec::Vec & getgdT() { return gdT; }
       fmatvec::Vec getgdT() const { return gdT; }
       /***************************************************/
@@ -260,11 +262,16 @@ namespace MBSim {
       fmatvec::Vec laT;
 
       /*!
+       * \brief relative distance in normal direction
+       *
+       */
+      double gN;
+
+      /*!
        * \brief relative velocity in normal direction
        *
-       * \todo: only double needed here
        */
-      fmatvec::Vec gdN;
+      double gdN;
 
       /*!
        * \brief relative velocity in tangential direction
@@ -297,20 +304,23 @@ namespace MBSim {
        */
       fmatvec::Index iT;
 
+      double gdnN;
       /**
        * \brief new gap velocity after an impact for event driven scheme
        */
-      fmatvec::Vec gdnN, gdnT;
+      fmatvec::Vec gdnT;
       
+      double gddN;
       /**
        * \brief gap acceleration for event driven scheme on acceleration level
        */
-      fmatvec::Vec gddN, gddT;
+      fmatvec::Vec gddT;
 
+      double gddNBuf;
       /*!
        * \brief gap acceleration buffer
        */
-      fmatvec::Vec gddNBuf, gddTBuf;
+      fmatvec::Vec gddTBuf;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
@@ -337,8 +347,6 @@ namespace MBSim {
        * 3 = open-close transition, i.e., impact
        */
       int rootID;
-
-      fmatvec::Vec gBuf, gdBuf;
 
     private:
       std::string saved_ref1, saved_ref2;

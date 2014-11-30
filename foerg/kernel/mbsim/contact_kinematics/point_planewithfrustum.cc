@@ -88,7 +88,7 @@ namespace MBSim {
     msg(Debug) << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
-  void ContactKinematicsPointPlaneWithFrustum::updateg(Vec &g, ContourPointData* cpData, int index) {
+  void ContactKinematicsPointPlaneWithFrustum::updateg(double &g, ContourPointData* cpData, int index) {
 
     Vec3 WrOPoint = point->getFrame()->getPosition();
     Vec3 WrOPlane = plane->getFrame()->getPosition();
@@ -134,7 +134,7 @@ namespace MBSim {
       msg(Debug) << "Fall 1" << endl;
       Kn=Vec3("[1; 0; 0]");
       Kt=Vec3("[0; -1; 0]");
-      g(0)=KrOPoint(0)-h;
+      g=KrOPoint(0)-h;
       KrCP(0)=h;
       KrCP(1)=KrOPoint(1);
     }
@@ -148,7 +148,7 @@ namespace MBSim {
       Kt(1)=-cos_alpha;
       KrCP=MT+sign(h)*rho*Kn;
       Vec3 KrPointCP=-KrOPoint+KrCP;
-      g(0)=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
+      g=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else if (d<rFrustumPlane) { // contact with frustum
       msg(Debug) << "Fall 3" << endl;
@@ -163,7 +163,7 @@ namespace MBSim {
         KrExP=-ET+KrOPoint;
         KrCP=ET+(KrExP.T()*tFrustum)*tFrustum;
       }
-      g(0)=sign(KrExP.T()*nFrustum)*nrm2(KrCP-KrOPoint);
+      g=sign(KrExP.T()*nFrustum)*nrm2(KrCP-KrOPoint);
     }
     else if (d < rPlane) { // contact with outer rounding
       msg(Debug) << "Fall 4" << endl;
@@ -175,13 +175,13 @@ namespace MBSim {
       Kt(1)=-cos_alpha;
       KrCP=MP-sign(h)*rho*Kn;
       Vec3 KrPointCP=-KrOPoint+KrCP;
-      g(0)=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
+      g=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else { // contact with infinite plane
       msg(Debug) << "Fall 5" << endl;
       Kn=Vec3("[1; 0; 0]");
       Kt=Vec3("[0; -1; 0]");
-      g(0)=KrOPoint(0);
+      g=KrOPoint(0);
       KrCP(0)=0.;
       KrCP(1)=KrOPoint(1);
     }
@@ -195,7 +195,7 @@ namespace MBSim {
     msg(Debug) << "Kn=" << trans(Kn) << endl;
     msg(Debug) << "Kt=" << trans(Kt) << endl;
     msg(Debug) << "Kb=" << trans(Kb) << endl;
-    msg(Debug) << "g=" << g(0) << endl;
+    msg(Debug) << "g=" << g << endl;
     msg(Debug) << "KrCP=" << trans(KrCP) << endl;
     msg(Debug) << "Wn=" << trans(Wn) << endl;
     msg(Debug) << "Wt=" << trans(Wt) << endl;
