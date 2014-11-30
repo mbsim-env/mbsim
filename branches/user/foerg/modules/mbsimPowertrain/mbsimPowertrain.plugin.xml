@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimPlugin name="mbsimPowertrain" xmlns="http://mbsim.berlios.de/MBSimPlugin">
+  <schemas>
+    <Schema namespace="http://mbsim.berlios.de/MBSimPowertrain"
+            schemaLocation="http___mbsim_berlios_de_MBSimPowertrain/mbsimpowertrain.xsd"/>
+  </schemas>
+  <libraries>
+    <Library basename="mbsimPowertrain"/>
+  </libraries>
+</MBSimPlugin>

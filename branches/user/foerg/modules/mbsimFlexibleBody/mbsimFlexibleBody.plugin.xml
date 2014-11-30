@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimPlugin name="mbsimFlexibleBody" xmlns="http://mbsim.berlios.de/MBSimPlugin">
+  <schemas>
+    <Schema namespace="http://mbsim.berlios.de/MBSimFlexibleBody"
+            schemaLocation="http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd"/>
+  </schemas>
+  <libraries>
+    <Library basename="mbsimFlexibleBody"/>
+  </libraries>
+</MBSimPlugin>
