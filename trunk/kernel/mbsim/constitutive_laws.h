@@ -24,12 +24,12 @@
 
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/contour.h>
-#include <mbsim/contact.h>
 #include <mbsim/functions/function.h>
 #include <fmatvec/atom.h>
 
 namespace MBSim {
 
+  class Contact;
   class SingleContact;
   class InfluenceFunction;
 
