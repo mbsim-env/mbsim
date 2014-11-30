@@ -34,11 +34,11 @@ namespace MBSim {
     sphere = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsPointSphere::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointSphere::updateg(double &g, ContourPointData *cpData, int index) {
     Vec3 Wd = sphere->getFrame()->getPosition() - point->getFrame()->getPosition();
     double l = nrm2(Wd);
     Wd = Wd/l;
-    g(0) = l-sphere->getRadius();
+    g = l-sphere->getRadius();
     Vec3 t;
     if(fabs(Wd(0))<epsroot() && fabs(Wd(1))<epsroot()) {
       t(0) = 1.;

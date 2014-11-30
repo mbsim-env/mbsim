@@ -43,15 +43,15 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointRectangle::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointRectangle::updateg(double &g, ContourPointData *cpData, int index) {
     Vec3 Ar = rectangle->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - rectangle->getFrame()->getPosition());
     if(fabs(Ar(1)) <= rectangle->getYLength()/2 and fabs(Ar(2)) <= rectangle->getZLength()/2){
-      g(0) = Ar(0);
-      if(g(0) < -rectangle->getThickness())
-        g(0) = 1;
+      g = Ar(0);
+      if(g < -rectangle->getThickness())
+        g = 1;
       else {
         cpData[ipoint].getFrameOfReference().getPosition() = point->getFrame()->getPosition();
-        cpData[irectangle].getFrameOfReference().getPosition() = point->getFrame()->getPosition() - g(0) * rectangle->getFrame()->getOrientation().col(0);
+        cpData[irectangle].getFrameOfReference().getPosition() = point->getFrame()->getPosition() - g * rectangle->getFrame()->getOrientation().col(0);
         cpData[irectangle].getFrameOfReference().getOrientation() = rectangle->getFrame()->getOrientation();
         cpData[ipoint].getFrameOfReference().getOrientation().set(0,-rectangle->getFrame()->getOrientation().col(0));
         cpData[ipoint].getFrameOfReference().getOrientation().set(1,-rectangle->getFrame()->getOrientation().col(1));
@@ -59,7 +59,7 @@ namespace MBSim {
       }
     }
     else
-      g(0) = 1.;
+      g = 1.;
 
   }
 

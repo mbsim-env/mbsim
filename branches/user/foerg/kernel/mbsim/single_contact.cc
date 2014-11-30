@@ -81,7 +81,7 @@ namespace MBSim {
       for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
         wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
 
-      contactKinematics->updatewb(wb, g, cpData);
+      contactKinematics->updatewb(wb, gN, cpData);
     }
   }
 
@@ -122,7 +122,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateStateDependentVariables(double t) {
-    contactKinematics->updateg(gBuf, cpData);
+    contactKinematics->updateg(gN, cpData);
     for (unsigned int i = 0; i < 2; i++)
       contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
@@ -130,7 +130,7 @@ namespace MBSim {
 
     Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
 
-    gdN(0) = Wn.T() * WvD;
+    gdN = Wn.T() * WvD;
 
     if (gdT.size()) {
       Mat3xV Wt(gdT.size());
@@ -142,7 +142,7 @@ namespace MBSim {
     }
 
     if (not fcl->isSetValued()) {
-      laN(0) = (*fcl)(gBuf(0), gdN(0));
+      laN(0) = (*fcl)(gN, gdN);
       WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
       if (fdf)
         if (not fdf->isSetValued()) {
@@ -157,7 +157,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateh(double t, int j) {
-    //cout << name  << " " << j << " t = " << t << " g = " << gBuf(0) << " gdN = " << gdN(0) << " laN = " << laN(0) << endl;
+    //cout << name  << " " << j << " t = " << t << " g = " << gN << " gdN = " << gdN << " laN = " << laN(0) << endl;
 
     for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
       h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
@@ -166,7 +166,7 @@ namespace MBSim {
 
   void SingleContact::updateg(double t) {
     if (g.size())
-      g = gBuf;
+      g(0) = gN;
     else {
       if(msgAct(Debug))
         msg(Debug) << "No contact" << endl;
@@ -174,15 +174,26 @@ namespace MBSim {
   }
 
   void SingleContact::updategd(double t) {
-    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(gBuf(0), 0)))
-      gd = gdBuf(0,gd.size()-1);
- }
+    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(gN, 0))) {
+      gd(0) = gdN;
+      gd(1, gdSize -1) = gdT(0,gdSize-2);
+    }
+  }
+//      int gdIndSizeNormal = 0;
+ //     if (fcl->isSetValued()) {
+//        gdN >> gd(0, 0);
+  //      gdIndSizeNormal++;
+ //     }
+ //     if (fdf)
+ //       if (fdf->isSetValued())
+//          gdT >> gd(gdIndSizeNormal, gdSize - 1);
+//    }
 
   void SingleContact::updateStopVector(double t) {
     if (gActive != gdActive[0])
       THROW_MBSIMERROR("Internal error");
     if (gActive) {
-      sv(0) = gddN(0) - gddTol;
+      sv(0) = gddN - gddTol;
       if (gdActive[1]) {
         if (getFrictionDirections()) {
           sv(1) = nrm2(gddT) - gddTol;
@@ -486,12 +497,8 @@ namespace MBSim {
       la.resize(1 + getFrictionDirections());
       g.resize(1);
       gd.resize(1 + getFrictionDirections());
-      gddN.resize(1);
       gddT.resize(getFrictionDirections());
-      gdnN.resize(1);
       gdnT.resize(getFrictionDirections());
-      gBuf.resize(1);
-      gdBuf.resize(1 + getFrictionDirections());
 
       // clear container first, because InitStage resize is called twice (before and after the reorganization)
       if (cpData)
@@ -525,10 +532,8 @@ namespace MBSim {
       laN.resize() >> la(0, 0);
       laT.resize() >> la(1, getFrictionDirections());
 
-      gdN.resize() >> gdBuf(0, 0);
-      gdT.resize() >> gdBuf(1, getFrictionDirections());
+      gdT.resize(getFrictionDirections());
 
-      gddNBuf.resize(1);
       gddTBuf.resize(getFrictionDirections());
     }
     else if (stage == preInit) {
@@ -739,7 +744,7 @@ namespace MBSim {
         bool flag = fcl->isSetValued();
         plotVector.push_back(g(0)); //gN
         if ((flag && gActive) || (!flag && fcl->isActive(g(0), 0))) {
-          plotVector.push_back(gdN(0)); //gd-Normal
+          plotVector.push_back(gdN); //gd-Normal
           for (int j = 0; j < getFrictionDirections(); j++)
             plotVector.push_back(gdT(j)); //gd-Tangential
         }
@@ -821,11 +826,11 @@ namespace MBSim {
       if (fcl->isSetValued()) {
         scaleFactorN = 1;
         addIndexNormal++;
-        gdnN(0) = b(laInd);
+        gdnN = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN += a[j] * laMBS(ja[j]);
 
-        laN(0) = fnil->project(laN(0), gdnN(0), gdN(0), rFactor(0));
+        laN(0) = fnil->project(laN(0), gdnN, gdN, rFactor(0));
       }
 
       if (ftil) {
@@ -853,11 +858,11 @@ namespace MBSim {
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
         addIndexnormal++;
-        gddN(0) = b(laInd);
+        gddN = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gddN(0) += a[j] * laMBS(ja[j]);
+          gddN += a[j] * laMBS(ja[j]);
 
-        laN(0) = fcl->project(laN(0), gddN(0), rFactor(0));
+        laN(0) = fcl->project(laN(0), gddN, rFactor(0));
       }
 
       if (fdf) {
@@ -889,11 +894,11 @@ namespace MBSim {
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
         addIndexnormal++;
-        gdnN(0) = b(laInd);
+        gdnN = b(laInd);
         for (int j = ia[laInd] + 1; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN += a[j] * laMBS(ja[j]);
 
-        const double buf = fnil->solve(a[ia[laInd]], gdnN(0), gdN(0));
+        const double buf = fnil->solve(a[ia[laInd]], gdnN, gdN);
         laN(0) += om * (buf - laN(0));
       }
 
@@ -924,11 +929,11 @@ namespace MBSim {
       int addIndexNormal = 0;
       if (fcl->isSetValued()) {
         addIndexNormal++;
-        gddN(0) = b(laInd);
+        gddN = b(laInd);
         for (int j = ia[laInd] + 1; j < ia[laInd + 1]; j++)
-          gddN(0) += a[j] * laMBS(ja[j]);
+          gddN += a[j] * laMBS(ja[j]);
 
-        const double buf = fcl->solve(a[ia[laInd]], gddN(0));
+        const double buf = fcl->solve(a[ia[laInd]], gddN);
         laN(0) += om * (buf - laN(0));
       }
 
@@ -958,11 +963,11 @@ namespace MBSim {
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
         addIndexnormal++;
-        gdnN(0) = b(laInd);
+        gdnN = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN += a[j] * laMBS(ja[j]);
 
-        res(0) = laN(0) - fnil->project(laN(0), gdnN(0), gdN(0), rFactor(0));
+        res(0) = laN(0) - fnil->project(laN(0), gdnN, gdN, rFactor(0));
       }
 
       //compute residuum for tangential directions
@@ -991,11 +996,11 @@ namespace MBSim {
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
         addIndexnormal++;
-        gdnN(0) = b(laInd);
+        gdnN = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN += a[j] * laMBS(ja[j]);
 
-        res(0) = laN(0) - fcl->project(laN(0), gddN(0), rFactor(0));
+        res(0) = laN(0) - fcl->project(laN(0), gddN, rFactor(0));
       }
 
       //compute residuum for tangential directions
@@ -1028,7 +1033,7 @@ namespace MBSim {
       int addIndexNormal = 0;
       if(fcl->isSetValued()) {
     	  addIndexNormal++;
-    	  Vec diff = fcl->diff(laN(0), gddN(0), rFactor(0));
+    	  Vec diff = fcl->diff(laN(0), gddN, rFactor(0));
 
     	  jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
     	  for (int i = 0; i < G.size(); i++)
@@ -1078,7 +1083,7 @@ namespace MBSim {
       if (fcl->isSetValued()) {
     	  addIndexNormal++;
 
-    	  Vec diff = fnil->diff(laN(0), gdnN(0), gdN(0), rFactor(0));
+    	  Vec diff = fnil->diff(laN(0), gdnN, gdN, rFactor(0));
 
     	  jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
     	  for (int i = 0; i < G.size(); i++)
@@ -1192,11 +1197,11 @@ namespace MBSim {
       if (fcl->isSetValued()) {
         addIndexnormal++;
 
-        gddN(0) = b(laInd);
+        gddN = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gddN(0) += a[j] * laMBS(ja[j]);
+          gddN += a[j] * laMBS(ja[j]);
 
-        if (!fcl->isFulfilled(laN(0), gddN(0), laTol, gddTol)) {
+        if (!fcl->isFulfilled(laN(0), gddN, laTol, gddTol)) {
           ds->setTermination(false);
           return;
         }
@@ -1232,10 +1237,10 @@ namespace MBSim {
       if (fcl->isSetValued()) {
         scaleFactorN = 1.;
         addIndexnormal++;
-        gdnN(0) = b(laInd);
+        gdnN = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
-        if (!fnil->isFulfilled(laN(0), gdnN(0), gdN(0), LaTol, gdTol)) {
+          gdnN += a[j] * laMBS(ja[j]);
+        if (!fnil->isFulfilled(laN(0), gdnN, gdN, LaTol, gdTol)) {
           ds->setTermination(false);
           return;
         }
@@ -1262,14 +1267,14 @@ namespace MBSim {
       gdActive[1] = gdActive[0];
     }
     else if (j == 2) { // formerly checkActivegd()
-      gdActive[0] = gActive ? (fcl->remainsActive(gdN(0), gdTol) ? 1 : 0) : 0;
+      gdActive[0] = gActive ? (fcl->remainsActive(gdN, gdTol) ? 1 : 0) : 0;
       gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(gdT, gdTol) ? 1 : 0) : 0;
       gddActive[0] = gdActive[0];
       gddActive[1] = gdActive[1];
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
       if (gActive) { // contact is closed
-        if (gdnN(0) <= gdTol) { // contact stays closed // TODO bilateral contact
+        if (gdnN <= gdTol) { // contact stays closed // TODO bilateral contact
           gdActive[0] = true;
           gddActive[0] = true;
           if (getFrictionDirections()) {
@@ -1294,7 +1299,7 @@ namespace MBSim {
     else if (j == 4) { // formerly checkActivegdd()
       if (gActive) {
         if (gdActive[0]) {
-          if (gddN(0) <= gddTol) { // contact stays closed on velocity level
+          if (gddN <= gddTol) { // contact stays closed on velocity level
             gddActive[0] = true;
             if (getFrictionDirections()) {
               if (gdActive[1]) {

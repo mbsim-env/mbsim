@@ -43,12 +43,12 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSphereRectangle::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsSphereRectangle::updateg(double &g, ContourPointData *cpData, int index) {
 
     Vec3 sphereInRect = rectangle->getFrame()->getOrientation().T() * (sphere->getFrame()->getPosition() - rectangle->getFrame()->getPosition());
 
     if ((rectangle->getYLength() / 2. + sphere->getRadius() < fabs(sphereInRect(1))) or (rectangle->getZLength() / 2. + sphere->getRadius() < fabs(sphereInRect(2)))) {
-      g(0) = 1.;
+      g = 1.;
       return;
     }
 
@@ -61,19 +61,19 @@ namespace MBSim {
 
     Vec3 Wd = sphere->getFrame()->getPosition() - rectangle->getFrame()->getPosition();
 
-    g(0) = Wn.T() * Wd - sphere->getRadius();
+    g = Wn.T() * Wd - sphere->getRadius();
 
     //assume that ball is far below rectangel --> no contact
-    if(g(0) < -sphere->getRadius()) {
-      g(0) = 1.;
+    if(g < -sphere->getRadius()) {
+      g = 1.;
       return;
     }
 
     cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn * sphere->getRadius());
-    cpData[irectangle].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition() - Wn * g(0));
+    cpData[irectangle].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition() - Wn * g);
   }
 
-  void ContactKinematicsSphereRectangle::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsSphereRectangle::updatewb(Vec &wb, double g, ContourPointData *cpData) {
 
     throw new MBSimError("ContactKinematicsSphereRectangle::updatewb(): not implemented yet");
     Vec3 v1 = cpData[irectangle].getFrameOfReference().getOrientation().col(2);

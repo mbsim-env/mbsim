@@ -155,8 +155,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, ContourPointData *cpData) {
+      virtual void updateg(double & g, ContourPointData *cpData, int index = 0);
+      virtual void updatewb(fmatvec::Vec& wb, double g, ContourPointData *cpData) {
         throw MBSimError("(ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
       }
 
@@ -176,19 +176,19 @@ namespace MBSim {
        *
        * If there is contact the position and the cpData information is setted right away
        */
-      bool cpLocationInRectangle(fmatvec::Vec & g, ContourPointData * cpData);
+      bool cpLocationInRectangle(double & g, ContourPointData * cpData);
 
       /*!
        * \brief if the unique contact point cannot be found a grid is walked through and a weighted sum results in the contact point
        * \return true (if) or false (if there is no contact at one of the corner points)
        */
-      bool gridContact(fmatvec::Vec & g, ContourPointData * cpData);
+      bool gridContact(double & g, ContourPointData * cpData);
 
       /*!
        * \brief checks if there is a contact point at one of the corner points
        * \return true (if) or false (if there is no contact at one of the corner points)
        */
-      bool cornerContact(fmatvec::Vec & g, ContourPointData * cpData);
+      bool cornerContact(double & g, ContourPointData * cpData);
 
       /*!
        * \brief checks if there is a contact on one edge of the rectangle
@@ -196,7 +196,7 @@ namespace MBSim {
        *
        * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
        */
-      bool edgeContact(fmatvec::Vec & g, ContourPointData * cpData);
+      bool edgeContact(double & g, ContourPointData * cpData);
 
       /*!
        * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates

@@ -775,7 +775,7 @@ namespace MBSim {
   void RegularizedUnilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
+        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN());
       }
     }
   }
@@ -822,8 +822,8 @@ namespace MBSim {
     //TODO: use damping function for that (to be more flexible...)
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        if ((*jter).getg()(0) < gLim and (*jter).getgdN()(0) < 0)
-          (*jter).getlaN()(0) = -dampingCoefficient * (*jter).getgdN()(0);
+        if ((*jter).getg()(0) < gLim and (*jter).getgdN() < 0)
+          (*jter).getlaN()(0) = -dampingCoefficient * (*jter).getgdN();
         else
           (*jter).getlaN()(0) = 0;
       }
@@ -1005,7 +1005,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
   void RegularizedBilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
+        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN());
       }
     }
   }

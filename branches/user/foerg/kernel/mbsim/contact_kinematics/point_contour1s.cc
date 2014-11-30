@@ -49,7 +49,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointContour1s::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointContour1s::updateg(double &g, ContourPointData *cpData, int index) {
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
     
     FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, contour1s); // root function for searching contact parameters
@@ -67,13 +67,13 @@ namespace MBSim {
     cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
 
     if (cpData[icontour].getLagrangeParameterPosition()(0) < contour1s->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > contour1s->getAlphaEnd())
-      g(0) = 1.0;
+      g = 1.0;
     else { // calculate the normal distance
       contour1s->updateKinematicsForFrame(cpData[icontour], Frame::position_cosy);
       cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
       cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
       cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));
-      g(0) = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
+      g = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
     }
     delete func;
   }

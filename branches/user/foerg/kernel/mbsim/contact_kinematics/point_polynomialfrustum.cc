@@ -131,7 +131,7 @@ namespace MBSim {
     cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh * -AWF * frustum->computeTangentAzimuthal(x, phi));
   }
 
-  void ContactKinematicsPointPolynomialFrustum::updateg(Vec & g, ContourPointData * cpData, int index) {
+  void ContactKinematicsPointPolynomialFrustum::updateg(double & g, ContourPointData * cpData, int index) {
     /*Geometry*/
     //point in frustum-coordinates
     Vec3 rPoint = frustum->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - frustum->getFrame()->getPosition());
@@ -151,9 +151,9 @@ namespace MBSim {
 
       Vec3 contactPointFrustum = frustum->computePoint(x(0), phi);
 
-      g(0) = frustum->computeNormal(x(0), phi).T() * (rPoint - contactPointFrustum);
+      g = frustum->computeNormal(x(0), phi).T() * (rPoint - contactPointFrustum);
 
-      if (g(0) < 0.) {
+      if (g < 0.) {
         //Frustum
         Vec3 rF = frustum->getFrame()->getPosition();
         SqrMat3 AWF = frustum->getFrame()->getOrientation();
@@ -169,7 +169,7 @@ namespace MBSim {
       }
     }
     else {
-      g(0) = 1.;
+      g = 1.;
     }
   }
 

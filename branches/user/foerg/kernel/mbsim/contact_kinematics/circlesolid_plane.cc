@@ -44,7 +44,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidPlane::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidPlane::updateg(double &g, ContourPointData *cpData, int index) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
     cpData[icircle].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
     cpData[icircle].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
@@ -71,10 +71,10 @@ namespace MBSim {
     //cout << z_EC<<endl;
     //cout << Wd << endl;
     //cout << Wn << endl;
-    g(0) = Wn.T()*Wd;
-    //cout << g(0) << endl;
+    g = Wn.T()*Wd;
+    //cout << g << endl;
     cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
-    cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g(0));
+    cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g);
 
   }
 

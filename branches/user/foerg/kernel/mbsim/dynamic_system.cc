@@ -316,6 +316,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategInverseKinetics(double t) {
+    for (int i = 0; i < (int) inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->updateStateDependentVariables(t);
 
     for (int i = 0; i < (int) inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->updateg(t);

@@ -48,9 +48,9 @@ namespace MBSim {
     func= new FuncPairContour1sLine(line,contour1s);
   }
 
-  void ContactKinematicsLineContour1s::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
+  void ContactKinematicsLineContour1s::updateg(double &g, ContourPointData *cpData, int index) {}
 
-  //  void ContactKinematicsLineContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
+  //  void ContactKinematicsLineContour1s::stage1(double &g, vector<ContourPointData> &cpData) {
   //
   //    Contact1sSearch search(func);
   //    search.setNodes(contour1s->getNodes());     
@@ -68,16 +68,16 @@ namespace MBSim {
   //
   //    cpData[icontour].WrOC = contour1s->computeWrOC(cpData[icontour]);
   //
-  //    g(0)=trans(cpData[icontour].Wn)*(cpData[icontour].WrOC-line->getWrOP());
+  //    g=trans(cpData[icontour].Wn)*(cpData[icontour].WrOC-line->getWrOP());
   //
-  //    cpData[iline].WrOC = cpData[icontour].WrOC - g(0)*cpData[icontour].Wn;
+  //    cpData[iline].WrOC = cpData[icontour].WrOC - g*cpData[icontour].Wn;
 
   //  }
 
-  //  void ContactKinematicsLineContour1s::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
+  //  void ContactKinematicsLineContour1s::stage2(double g, Vec &gd, vector<ContourPointData> &cpData) {
 
   //    cpData[icontour].WrOC =  contour1s->computeWrOC(cpData[icontour]);
-  //    cpData[iline].WrOC = cpData[icontour].WrOC - g(0)*cpData[icontour].Wn;
+  //    cpData[iline].WrOC = cpData[icontour].WrOC - g*cpData[icontour].Wn;
   //
   //    Vec WrPCLine;
   //    WrPCLine = cpData[iline].WrOC - line->getWrOP();

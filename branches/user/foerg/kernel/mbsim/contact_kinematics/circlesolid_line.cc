@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidLine::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidLine::updateg(double &g, ContourPointData *cpData, int index) {
 
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation());
     cpData[icircle].getFrameOfReference().getOrientation().set(0, -line->getFrame()->getOrientation().col(0));
@@ -53,13 +53,13 @@ namespace MBSim {
 
     Vec3 Wd = circlesolid->getFrame()->getPosition() - line->getFrame()->getPosition();
 
-    g(0) = Wn.T()*Wd - circlesolid->getRadius();
+    g = Wn.T()*Wd - circlesolid->getRadius();
 
     cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - Wn*circlesolid->getRadius());
-    cpData[iline].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g(0));
+    cpData[iline].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g);
   }
 
-  void ContactKinematicsCircleSolidLine::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidLine::updatewb(Vec &wb, double g, ContourPointData *cpData) {
 
     Vec3 v2 = cpData[icircle].getFrameOfReference().getOrientation().col(2);
     Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);

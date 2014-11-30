@@ -40,7 +40,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointLineSegment::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointLineSegment::updateg(double &g, ContourPointData *cpData, int index) {
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation());
     cpData[ipoint].getFrameOfReference().getOrientation().set(0, -line->getFrame()->getOrientation().col(0));
     cpData[ipoint].getFrameOfReference().getOrientation().set(1, -line->getFrame()->getOrientation().col(1));
@@ -53,19 +53,19 @@ namespace MBSim {
 
     double s = Wt.T()*Wd; 
     if(fabs(s) <= line->getLength()/2) {
-      g(0) = Wn.T()*Wd;
-      if(g(0) < -line->getThickness())
-        g(0) = 1;
+      g = Wn.T()*Wd;
+      if(g < -line->getThickness())
+        g = 1;
       else {
         cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
-        cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g(0));
+        cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g);
       }
     }
     else 
-      g(0) = 1;
+      g = 1;
   }
 
-  void ContactKinematicsPointLineSegment::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsPointLineSegment::updatewb(Vec &wb, double g, ContourPointData *cpData) {
     Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
     Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
     Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity();

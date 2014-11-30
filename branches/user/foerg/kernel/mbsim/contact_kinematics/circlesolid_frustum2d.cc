@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsCircleSolidFrustum2D::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidFrustum2D::updateg(double &g, ContourPointData *cpData, int index) {
     
     Vec3 Wd = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition();
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
@@ -65,14 +65,14 @@ namespace MBSim {
     
 
     if(loc<-circle->getRadius() || loc>h+circle->getRadius() || fabs(l)<epsroot()) {
-      g(0) = 1;
+      g = 1;
     }
     else {
       // Halber Oeffnungswinkel
       double  psi = atan((r(0) - r(1))/h); // psi > 0 falls r_unten(0) > r_oben(1)
       double phi = M_PI*0.5 - fabs(psi);
       double vz=psi/fabs(psi);
-      g(0) = fabs(r_h-l)*sin(phi)-circle->getRadius();
+      g = fabs(r_h-l)*sin(phi)-circle->getRadius();
       double out = 1;
 
       // Fallabfrage
@@ -124,7 +124,7 @@ namespace MBSim {
       }
 
       // System of circle (position)
-      cpData[icircle].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g(0)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+      cpData[icircle].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
       // System of circle (orientation)
       cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
       cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
