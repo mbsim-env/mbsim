@@ -182,11 +182,11 @@ namespace MBSim {
     if (gActive != gdActive[0])
       THROW_MBSIMERROR("Internal error");
     if (gActive) {
-      sv(0) = gddN(0) > gddTol ? -1 : 1;
+      sv(0) = gddN(0) - gddTol;
       if (gdActive[1]) {
         if (getFrictionDirections()) {
-          sv(1) = nrm2(gddT) > gddTol ? -1 : 1;
-          if ((int) sv(1) == -1) {
+          sv(1) = nrm2(gddT) - gddTol;
+          if (sv(1) > 0) {
             gddNBuf = gddN;
             gddTBuf = gddT;
           }
@@ -194,14 +194,14 @@ namespace MBSim {
       }
       else {
         if (getFrictionDirections() == 1)
-          sv(1) = gdT(0) > 0 ? 1 : -1;
+          sv(1) = gdT(0);
         else if (getFrictionDirections() == 2) {
           sv(1) = gdT(0) + gdT(1); // TODO: is there a better concept?
         }
       }
     }
     else {
-      sv(0) = g(0) > 0 ? 1 : -1;
+      sv(0) = g(0);
       if (getFrictionDirections())
         sv(1) = 1;
     }
