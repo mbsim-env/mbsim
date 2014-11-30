@@ -215,7 +215,7 @@ namespace MBSim {
 
       ContactKinematics* findContactKinematics(std::string cKName) const {
         int pos = find(ckNames.begin(), ckNames.end(), cKName) - ckNames.begin();
-        if (pos < ckNames.size()) {
+        if (pos < static_cast<int>(ckNames.size())) {
           return contactKinematics[pos];
         }
         throw MBSimError("Name of contact Kinematics is not valid");
