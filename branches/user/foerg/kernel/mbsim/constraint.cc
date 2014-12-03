@@ -257,7 +257,7 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityConstraint::updatexd(double t) {
-    xd = (*f)(x,t);
+    xd = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
   }
 
   void GeneralizedVelocityConstraint::updateStateDependentVariables(double t) {
@@ -309,10 +309,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
 
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
-    if(stage==unknownStage)
-      KinematicConstraint::init(stage);
-    else
-      KinematicConstraint::init(stage);
+    KinematicConstraint::init(stage);
+    f->init(stage);
   }
   
   void GeneralizedAccelerationConstraint::calcxSize() {
@@ -320,8 +318,8 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updatexd(double t) {
-    xd(0,bd->getqRelSize()-1) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(x,t);
+    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel();
   }
 
   void GeneralizedAccelerationConstraint::updateStateDependentVariables(double t) {
