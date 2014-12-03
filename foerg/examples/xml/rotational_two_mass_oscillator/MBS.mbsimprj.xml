@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://mbsim.berlios.de/MBSimXML" name="Project">
+
+  <DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS">
+    <frames>
+      <FixedRelativeFrame name="P1">
+        <enableOpenMBV>
+          <?OPENMBV_ID 2?>
+        </enableOpenMBV>
+        <relativePosition unit="m">
+          <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <ele>0</ele>
+            <ele>0</ele>
+            <ele>1</ele>
+          </xmlVector>
+        </relativePosition>
+      </FixedRelativeFrame>
+    </frames>
+    <contours/>
+    <groups/>
+    <objects>
+      <RigidBody name="RigidBody1">
+        <initialGeneralizedPosition>
+          <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <ele>1</ele>
+          </xmlVector>
+        </initialGeneralizedPosition>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">
+          <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <row>
+              <ele>0.01</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0.01</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0.01</ele>
+            </row>
+          </xmlMatrix>
+        </inertiaTensor>
+        <stateDependentRotation>
+          <RotationAboutZAxis/>
+        </stateDependentRotation>
+        <frames/>
+        <contours/>
+        <openMBVRigidBody>
+          <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+            <?OPENMBV_ID 3?>
+            <transparency unit="-">0.3</transparency>
+            <initialTranslation unit="m">
+              <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.5</ele>
+              </xmlVector>
+            </initialTranslation>
+            <initialRotation unit="rad">
+              <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </initialRotation>
+            <scaleFactor unit="-">1</scaleFactor>
+            <baseRadius unit="m">1</baseRadius>
+            <topRadius unit="m">1</topRadius>
+            <height unit="m">1</height>
+            <innerBaseRadius unit="m">0</innerBaseRadius>
+            <innerTopRadius unit="m">0</innerTopRadius>
+          </Frustum>
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC>
+          <?OPENMBV_ID 4?>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+      <RigidBody name="RigidBody2">
+        <frameOfReference ref="../Frame[P1]"/>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">
+          <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <row>
+              <ele>0.01</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0.01</ele>
+              <ele>0</ele>
+            </row>
+            <row>
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0.01</ele>
+            </row>
+          </xmlMatrix>
+        </inertiaTensor>
+        <stateDependentRotation>
+          <RotationAboutZAxis/>
+        </stateDependentRotation>
+        <frames/>
+        <contours/>
+        <openMBVRigidBody>
+          <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+            <?OPENMBV_ID 5?>
+            <diffuseColor unit="-">
+              <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <ele>0.277778</ele>
+                <ele>1</ele>
+                <ele>1</ele>
+              </xmlVector>
+            </diffuseColor>
+            <transparency unit="-">0.3</transparency>
+            <initialTranslation unit="m">
+              <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.5</ele>
+              </xmlVector>
+            </initialTranslation>
+            <initialRotation unit="rad">
+              <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </initialRotation>
+            <scaleFactor unit="-">1</scaleFactor>
+            <baseRadius unit="m">1</baseRadius>
+            <topRadius unit="m">1</topRadius>
+            <height unit="m">1</height>
+            <innerBaseRadius unit="m">0</innerBaseRadius>
+            <innerTopRadius unit="m">0</innerTopRadius>
+          </Frustum>
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC>
+          <?OPENMBV_ID 6?>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+    </objects>
+    <links>
+      <GeneralizedFriction name="GeneralizedFriction1">
+        <generalizedFrictionForceLaw>
+          <RegularizedPlanarFriction>
+            <frictionForceFunction>
+              <SymbolicFunction arg1="gd" arg1Dim="1" arg2="laN">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>-0.3*laN*2/pi*atan(100*gd)</ele>
+                </xmlVector>
+              </SymbolicFunction>
+            </frictionForceFunction>
+          </RegularizedPlanarFriction>
+        </generalizedFrictionForceLaw>
+        <generalizedNormalForceFunction>
+          <ConstantFunction>
+            <a0>0.1</a0>
+          </ConstantFunction>
+        </generalizedNormalForceFunction>
+        <rigidBodySecondSide ref="../Object[RigidBody1]"/>
+      </GeneralizedFriction>
+      <GeneralizedFriction name="GeneralizedFriction2">
+        <generalizedFrictionForceLaw>
+          <RegularizedPlanarFriction>
+            <frictionForceFunction>
+              <SymbolicFunction arg1="gd" arg1Dim="1" arg2="laN">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>-0.3*laN*2/pi*atan(100*gd)</ele>
+                </xmlVector>
+              </SymbolicFunction>
+            </frictionForceFunction>
+          </RegularizedPlanarFriction>
+        </generalizedFrictionForceLaw>
+        <generalizedNormalForceFunction>
+          <ConstantFunction>
+            <a0>0.1</a0>
+          </ConstantFunction>
+        </generalizedNormalForceFunction>
+        <rigidBodyFirstSide ref="../Object[RigidBody1]"/>
+        <rigidBodySecondSide ref="../Object[RigidBody2]"/>
+      </GeneralizedFriction>
+      <GeneralizedSpringDamper name="GeneralizedSpringDamper3">
+        <generalizedForceFunction>
+          <LinearSpringDamperForce>
+            <stiffnessCoefficient unit="N/m">1</stiffnessCoefficient>
+            <dampingCoefficient unit="N*s/m">0.01</dampingCoefficient>
+            <unloadedLength unit="m">0</unloadedLength>
+          </LinearSpringDamperForce>
+        </generalizedForceFunction>
+        <rigidBodySecondSide ref="../Object[RigidBody1]"/>
+      </GeneralizedSpringDamper>
+      <GeneralizedSpringDamper name="GeneralizedSpringDamper4">
+        <generalizedForceFunction>
+          <LinearSpringDamperForce>
+            <stiffnessCoefficient unit="N/m">1</stiffnessCoefficient>
+            <dampingCoefficient unit="N*s/m">0.01</dampingCoefficient>
+            <unloadedLength unit="m">0</unloadedLength>
+          </LinearSpringDamperForce>
+        </generalizedForceFunction>
+        <rigidBodyFirstSide ref="../Object[RigidBody1]"/>
+        <rigidBodySecondSide ref="../Object[RigidBody2]"/>
+      </GeneralizedSpringDamper>
+    </links>
+    <enableOpenMBVFrameI>
+      <?OPENMBV_ID 1?>
+    </enableOpenMBVFrameI>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <ele>0</ele>
+            <ele>-9.81</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+
+  <DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">5</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar>1e-6</relativeToleranceScalar>
+    <initialStepSize unit="s">0</initialStepSize>
+    <maximalStepSize unit="s">0</maximalStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>

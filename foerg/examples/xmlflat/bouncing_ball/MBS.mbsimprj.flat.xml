@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://mbsim.berlios.de/MBSimXML" name="Project"><?OriginalFilename MBS.mbsimprj.xml?><?LineNr 2?>
+
+  <DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS"><?LineNr 4?>
+    <frames><?LineNr 5?>
+      <FixedRelativeFrame name="P1"><?LineNr 6?>
+        <enableOpenMBV><?LineNr 7?>
+          <?OPENMBV_ID 4?>
+        </enableOpenMBV>
+        <relativeOrientation><?LineNr 10?>
+          
+        [6.123233995736766e-17,-1,0 ; 1,6.123233995736766e-17,0 ; 0,0,1]</relativeOrientation>
+      </FixedRelativeFrame>
+    </frames>
+    <contours><?LineNr 15?>
+      <Plane name="Plane1"><?LineNr 16?>
+        <frameOfReference ref="../Frame[P1]"><?LineNr 17?></frameOfReference>
+        <enableOpenMBV><?LineNr 18?>
+          <?OPENMBV_ID 5?>
+        </enableOpenMBV>
+      </Plane>
+    </contours>
+    <groups><?LineNr 23?></groups>
+    <objects><?LineNr 24?>
+      <RigidBody name="RigidBody1"><?LineNr 25?>
+        <initialGeneralizedPosition><?LineNr 26?>[0 ; 0.2]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity><?LineNr 27?>[0.5 ; 0]</initialGeneralizedVelocity>
+        <frameOfReference ref="../Frame[I]"><?LineNr 28?></frameOfReference>
+        <frameForKinematics ref="Frame[C]"><?LineNr 29?></frameForKinematics>
+        <mass unit="kg"><?LineNr 30?>1</mass>
+        <inertiaTensor unit="kg*m^2"><?LineNr 31?>
+          
+        [0.01,0,0 ; 0,0.01,0 ; 0,0,0.01]</inertiaTensor>
+        <stateDependentTranslation><?LineNr 50?>
+          <TranslationAlongAxesXY><?LineNr 51?></TranslationAlongAxesXY>
+        </stateDependentTranslation>
+        <frames><?LineNr 53?>
+          <FixedRelativeFrame name="P1"><?LineNr 54?>
+            <enableOpenMBV><?LineNr 55?>
+              <?OPENMBV_ID 8?>
+            </enableOpenMBV>
+            <relativePosition unit="m"><?LineNr 58?>
+              
+            [0 ; -0.1 ; 0]</relativePosition>
+          </FixedRelativeFrame>
+        </frames>
+        <contours><?LineNr 67?>
+          <Point name="Point1"><?LineNr 68?>
+            <frameOfReference ref="../Frame[P1]"><?LineNr 69?></frameOfReference>
+            <enableOpenMBV><?LineNr 70?>
+              <?OPENMBV_ID 9?>
+            </enableOpenMBV>
+          </Point>
+        </contours>
+        <openMBVRigidBody><?LineNr 75?>
+          <Sphere xmlns="http://openmbv.berlios.de/OpenMBV" boundingBox="0" dragger="0" drawMethod="filled" enable="1" localFrame="0" name="Body1" outLine="1" path="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 76?>
+            <?OPENMBV_ID 6?>
+            <transparency unit="-"><?LineNr 78?>0.3</transparency>
+            <initialTranslation unit="m"><?LineNr 79?>
+              
+            [0 ; 0 ; 0]</initialTranslation>
+            <initialRotation unit="rad"><?LineNr 86?>
+              
+            [0 ; 0 ; 0]</initialRotation>
+            <scaleFactor unit="-"><?LineNr 93?>1</scaleFactor>
+            <radius unit="m"><?LineNr 94?>0.1</radius>
+          </Sphere>
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC><?LineNr 97?>
+          <?OPENMBV_ID 7?>
+        </enableOpenMBVFrameC>
+      </RigidBody>
+    </objects>
+    <links><?LineNr 102?>
+      <Contact name="Contact1"><?LineNr 103?>
+        <normalForceLaw><?LineNr 104?>
+          <UnilateralConstraint><?LineNr 105?></UnilateralConstraint>
+        </normalForceLaw>
+        <normalImpactLaw><?LineNr 107?>
+          <UnilateralNewtonImpact><?LineNr 108?>
+            <restitutionCoefficient unit="-"><?LineNr 109?>0.5</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </normalImpactLaw>
+        <tangentialForceLaw><?LineNr 112?>
+          <PlanarCoulombFriction><?LineNr 113?>
+            <frictionCoefficient unit="-"><?LineNr 114?>0.1</frictionCoefficient>
+          </PlanarCoulombFriction>
+        </tangentialForceLaw>
+        <tangentialImpactLaw><?LineNr 117?>
+          <PlanarCoulombImpact><?LineNr 118?>
+            <frictionCoefficient unit="-"><?LineNr 119?>0.1</frictionCoefficient>
+          </PlanarCoulombImpact>
+        </tangentialImpactLaw>
+        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"><?LineNr 122?></connect>
+      </Contact>
+    </links>
+    <enableOpenMBVFrameI><?LineNr 125?>
+      <?OPENMBV_ID 3?>
+    </enableOpenMBVFrameI>
+    <environments><?LineNr 128?>
+      <MBSimEnvironment><?LineNr 129?>
+        <accelerationOfGravity unit="m/s^2"><?LineNr 130?>
+          
+        [0 ; -9.81 ; 0]</accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+
+  <TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator"><?LineNr 141?>
+    <startTime unit="s"><?LineNr 142?>0</startTime>
+    <endTime unit="s"><?LineNr 143?>1</endTime>
+    <plotStepSize unit="s"><?LineNr 144?>0.01</plotStepSize>
+    <stepSize unit="s"><?LineNr 145?>0.001</stepSize>
+  </TimeSteppingIntegrator>
+
+</MBSimProject>

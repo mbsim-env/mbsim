@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+<TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <startTime>0</startTime>
+  <endTime>10</endTime>
+  <plotStepSize>5e-3</plotStepSize>
+  <stepSize>1e-4</stepSize>
+</TimeSteppingIntegrator>
+-->
+<!--
+<LSODEIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <startTime>0</startTime>
+  <endTime>4</endTime>
+  <plotStepSize>1e-3</plotStepSize>
+  <absoluteTolerance>1e-4</absoluteTolerance>
+  <relativeToleranceScalar>1e-4</relativeToleranceScalar>
+  <initialStepSize>1e-6</initialStepSize>
+  <maximalStepSize>1e-2</maximalStepSize>
+  <minimalStepSize>1e-7</minimalStepSize>
+  <numberOfMaximalSteps>1000</numberOfMaximalSteps>
+</LSODEIntegrator>
+-->
+<!--
+<LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <startTime>0</startTime>
+  <endTime>4</endTime>
+  <plotStepSize>1e-3</plotStepSize>
+  <absoluteTolerance>1e-5</absoluteTolerance>
+  <relativeToleranceScalar>1e-5</relativeToleranceScalar>
+  <initialStepSize>1e-4</initialStepSize>
+  <minimalStepSize>1e-6</minimalStepSize>
+  <maximalStepSize>1e-2</maximalStepSize>
+  <plotOnRoot>1</plotOnRoot>
+</LSODARIntegrator>
+-->
+<InterfaceIntegrator xmlns="http://mbsim.berlios.de/MBSimInterface">
+  <startTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</startTime>
+  <endTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</endTime>
+  <plotStepSize xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</plotStepSize>
+  <outputSignals>
+    <signal ref="/Group[MBS]/Link[K1pxy]"/>
+    <signal ref="/Group[MBS]/Link[K1vxy]"/>
+    <signal ref="/Group[MBS]/Link[K2pxy]"/>
+  </outputSignals>
+  <inputSignals>
+    <signal ref="/Group[MBS]/ExternSignalSource[Ext1]"/>
+    <signal ref="/Group[MBS]/ExternSignalSource[Ext2]"/>
+  </inputSignals>
+  <methodForIPC>
+    <MBSimTcpServer xmlns="http://mbsim.berlios.de/MBSimInterface">
+      <port>4567</port>
+      <outputPrecision>18</outputPrecision>
+    </MBSimTcpServer>
+  </methodForIPC>
+</InterfaceIntegrator>

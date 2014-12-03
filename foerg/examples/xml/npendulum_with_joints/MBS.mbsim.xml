@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+  <position>[0;0;0]</position><!-- dummy -->
+  <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
+  <frames>
+    <FixedRelativeFrame name="Os">
+      <relativePosition>[0;0;0.04]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
+  </frames>
+  <contours/>
+  <groups/>
+  <objects>
+    <pv:Embed href="test.xml"/>
+    <pv:Embed href="{filenameWithoutExt}.xml" count="N-1+1" counterName="{myCounterName}_pendel"/>
+  </objects>
+  <links>
+    <Joint name="Gelenk1">
+      <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
+      <forceLaw>
+        <BilateralConstraint/>
+      </forceLaw>
+      <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[O]"/>
+    </Joint>
+    <pv:Embed href="Joint_n.xml" count="N" counterName="n"/>
+  </links>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>
