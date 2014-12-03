@@ -220,6 +220,8 @@ namespace MBSim {
       q.resize(qSize);
       u.resize(uSize[0]);
 
+      TRel.resize(nq,nu[0],Eye());
+
       WJTrel.resize(nu[0]);
       WJRrel.resize(nu[0]);
 
@@ -350,8 +352,11 @@ namespace MBSim {
 
   void RigidBody::initz() {
     Object::initz();
-    if(!constraint) qRel>>q;
-    if(!constraint) uRel>>u;
+    if(!constraint) { 
+      qRel>>q;
+      uRel>>u;
+      TRel>>T;
+    }
   }
 
   void RigidBody::setUpInverseKinetics() {
@@ -433,11 +438,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateT(double t) {
-    if(!constraint) {
-      // TODO
-      //if(fPrPK) T(iqT,iuT) = fPrPK->getT();
-      if(fTR) T(iqR,iuR) = (*fTR)(qRel(iuR));
-    }
+    if(fTR) TRel(iqR,iuR) = (*fTR)(qRel(iuR));
   }
 
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
