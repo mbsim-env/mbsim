@@ -81,7 +81,7 @@ namespace MBSim {
       for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
         wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
 
-      contactKinematics->updatewb(wb, gN, cpData);
+      contactKinematics->updatewb(wb, g(0), cpData);
     }
   }
 
@@ -122,31 +122,16 @@ namespace MBSim {
   }
 
   void SingleContact::updateStateDependentVariables(double t) {
-    contactKinematics->updateg(gN, cpData);
-    for (unsigned int i = 0; i < 2; i++)
-      contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
+    contactKinematics->updateg(g(0), cpData);
+    if(not fcl->isSetValued()) {
+      if(fcl->isActive(g(0), 0))
+        updateVelocities(t);
 
-    Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
-
-    Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
-
-    gdN = Wn.T() * WvD;
-
-    if (gdT.size()) {
-      Mat3xV Wt(gdT.size());
-      Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
-      if (gdT.size() > 1)
-        Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
-
-      gdT = Wt.T() * WvD;
-    }
-
-    if (not fcl->isSetValued()) {
-      laN(0) = (*fcl)(gN, gdN);
+      laN(0) = (*fcl)(g(0), gdN);
+      laT = (*fdf)(gdT, fabs(laN(0)));
       WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
       if (fdf)
         if (not fdf->isSetValued()) {
-          laT = (*fdf)(gdT, fabs(laN(0)));
           WF[1] += cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
           if (getFrictionDirections() > 1)
             WF[1] += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
@@ -157,37 +142,49 @@ namespace MBSim {
   }
 
   void SingleContact::updateh(double t, int j) {
-    //cout << name  << " " << j << " t = " << t << " g = " << gN << " gdN = " << gdN << " laN = " << laN(0) << endl;
+    //cout << name  << " " << j << " t = " << t << " g = " << g(0) << " gdN = " << gdN << " laN = " << laN(0) << endl;
 
     for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
       h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
     }
   }
 
+  void SingleContact::updateVelocities(double t) {
+      for (unsigned int i = 0; i < 2; i++)
+        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
+
+      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
+
+      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
+
+      gdN = Wn.T() * WvD;
+
+      if (gdT.size()) {
+        Mat3xV Wt(gdT.size());
+        Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
+        if (gdT.size() > 1)
+          Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
+
+        gdT = Wt.T() * WvD;
+      }
+      gd(0) = gdN;
+      gd(1, gdSize -1) = gdT(0,gdSize-2);
+  }
+
   void SingleContact::updateg(double t) {
-    if (g.size())
-      g(0) = gN;
-    else {
-      if(msgAct(Debug))
-        msg(Debug) << "No contact" << endl;
-    }
+    throw 5;
+//    if (g.size())
+//      g(0) = gN;
+//    else {
+//      if(msgAct(Debug))
+//        msg(Debug) << "No contact" << endl;
+//    }
   }
 
   void SingleContact::updategd(double t) {
-    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(gN, 0))) {
-      gd(0) = gdN;
-      gd(1, gdSize -1) = gdT(0,gdSize-2);
-    }
+    if ((fcl->isSetValued() and gdActive[0]))
+      updateVelocities(t);
   }
-//      int gdIndSizeNormal = 0;
- //     if (fcl->isSetValued()) {
-//        gdN >> gd(0, 0);
-  //      gdIndSizeNormal++;
- //     }
- //     if (fdf)
- //       if (fdf->isSetValued())
-//          gdT >> gd(gdIndSizeNormal, gdSize - 1);
-//    }
 
   void SingleContact::updateStopVector(double t) {
     if (gActive != gdActive[0])

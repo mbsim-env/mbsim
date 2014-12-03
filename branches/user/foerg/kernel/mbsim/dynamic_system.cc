@@ -310,9 +310,9 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateg(double t) {
-
-    for (int i = 0; i < (int) link.size(); i++)
-      link[i]->updateg(t);
+//
+//    for (int i = 0; i < (int) linkSetValuedActive.size(); i++)
+//      linkSetValuedActive[i]->updateg(t);
   }
 
   void DynamicSystem::updategInverseKinetics(double t) {
@@ -325,8 +325,8 @@ namespace MBSim {
 
   void DynamicSystem::updategd(double t) {
 
-    for (int i = 0; i < (int) link.size(); i++)
-      link[i]->updategd(t);
+    for (int i = 0; i < (int) linkSetValuedActive.size(); i++)
+      linkSetValuedActive[i]->updategd(t);
   }
 
   void DynamicSystem::updategdInverseKinetics(double t) {

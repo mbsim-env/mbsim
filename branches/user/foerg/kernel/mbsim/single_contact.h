@@ -177,8 +177,8 @@ namespace MBSim {
       fmatvec::Vec getlaN() const { return laN; }
       fmatvec::Vec & getlaT() { return laT; }
       fmatvec::Vec getlaT() const { return laT; }
-      double& getgN() { return gN; }
-      const double& getgN() const { return gN; }
+      double& getgN() { return g(0); }
+      const double& getgN() const { return g(0); }
       double& getgdN() { return gdN; }
       const double& getgdN() const { return gdN; }
       fmatvec::Vec & getgdT() { return gdT; }
@@ -215,6 +215,8 @@ namespace MBSim {
       void updatecorr(int j);
 
       void checkRoot();
+
+      void updateVelocities(double t);
 
     protected:
       /**
@@ -261,11 +263,11 @@ namespace MBSim {
        */
       fmatvec::Vec laT;
 
-      /*!
-       * \brief relative distance in normal direction
-       *
-       */
-      double gN;
+//      /*!
+//       * \brief relative distance in normal direction
+//       *
+//       */
+//      double gN;
 
       /*!
        * \brief relative velocity in normal direction
