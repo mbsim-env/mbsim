@@ -1,0 +1,49 @@
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim">
+  <frames>
+    <Embed count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <FixedRelativeFrame name="I{i}" xmlns="http://mbsim.berlios.de/MBSim">
+        <!--
+        -<enableOpenMBV>
+          -  <size>fSize</size>
+          -  <offset>1</offset>
+          -</enableOpenMBV>
+        -->
+        <frameOfReference ref="../Frame[I]"/>
+        <relativePosition>
+          <![CDATA[
+          x=linspace(-swingL/2*.6, swingL/2*.6, 3);
+          ret=[x(i) swingH+.02 0]';
+          ]]>
+        </relativePosition>
+        <relativeOrientation>eye(3)</relativeOrientation>
+      </FixedRelativeFrame>
+    </Embed>
+  </frames>
+  <contours>
+  </contours>
+  <groups>
+    <Embed href="swing.xml" count="1" counterName="X" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+    <Embed href="metronome.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+    <Embed href="control.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+  </groups>
+  <objects>
+  </objects>
+  <links>
+  </links>
+  <environments>
+    <MBSimEnvironment xmlns="http://mbsim.berlios.de/MBSim">
+      <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+  <solverParameters>
+    <numberOfMaximalIterations>1000000</numberOfMaximalIterations>
+    <tolerances>
+      <projection>eps*10</projection>
+      <gd>eps*10</gd>
+      <gdd>eps*10</gdd>
+      <la>eps*10</la>
+      <La>eps*10</La>
+    </tolerances>
+  </solverParameters>
+</DynamicSystemSolver>
+

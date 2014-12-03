@@ -1,0 +1,4 @@
+PACKAGES=mbsim mbsimFlexibleBody
+
+SRCDIR:=$(dir $(lastword $(MAKEFILE_LIST)))
+include $(SRCDIR)../../../default_build.mk

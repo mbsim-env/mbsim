@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <pv:Embed parameterHref="parameter.mbsim.xml">
+    <DynamicSystemSolver name="System" xmlns="http://mbsim.berlios.de/MBSim">
+      <frames/>
+      <contours/>
+      <groups>
+        <pv:Embed href="System.mbsim.xml" count="2" counterName="n">
+          <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <stringParameter name="extern">if n==1; ret='extern_nofmi.xml'; else ret='extern_fmi.xml'; end</stringParameter>
+          </Parameter>
+        </pv:Embed>
+      </groups>
+      <objects/>
+      <links/>
+      <environments/>
+    </DynamicSystemSolver>
+  </pv:Embed>
+  <pv:Embed href="Integrator.mbsimint.xml"/>
+</MBSimProject>
