@@ -260,6 +260,7 @@ namespace MBSim {
       fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
+      fmatvec::Mat& getTRel() {return TRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
       fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
@@ -267,6 +268,8 @@ namespace MBSim {
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
+
+      bool transformCoordinates() const {return fTR!=NULL;}
 
     protected:
       /**
@@ -365,6 +368,7 @@ namespace MBSim {
       fmatvec::Vec qRel, uRel;
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
+      fmatvec::Mat TRel;
 
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
       fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
