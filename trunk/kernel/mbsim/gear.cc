@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
 
-  Gear::Gear(const string &name) : LinkMechanics(name) {
+  Gear::Gear(const string &name) : LinkMechanics(name), func(0) {
     body.push_back(0); 
     ratio.push_back(-1);
 
@@ -222,7 +222,7 @@ namespace MBSim {
     else {
       LinkMechanics::init(stage);
     }
-    func->init(stage);
+    if(func) func->init(stage);
   }
 
   void Gear::plot(double t,double dt) {
