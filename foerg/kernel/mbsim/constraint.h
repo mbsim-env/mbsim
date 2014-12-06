@@ -262,6 +262,7 @@ namespace MBSim {
       void setDependentBodiesFirstSide(std::vector<RigidBody*> bd);
       void setDependentBodiesSecondSide(std::vector<RigidBody*> bd);
       void setIndependentBody(RigidBody* bi);
+      void setSecondIndependentBody(RigidBody* bi2);
 
       virtual void setUpInverseKinetics();
       void setForceDirection(const fmatvec::Mat3xV& d_);
@@ -279,6 +280,8 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual std::string getType() const { return "JointConstraint"; }
+
+      void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
@@ -308,7 +311,7 @@ namespace MBSim {
       };
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
-      RigidBody *bi;
+      RigidBody *bi, *bi2;
       std::vector<Frame*> if1;
       std::vector<Frame*> if2;
 
@@ -332,7 +335,7 @@ namespace MBSim {
 
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
-      std::string saved_IndependentBody;
+      std::string saved_IndependentBody, saved_IndependentBody2;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *FArrow, *MArrow;
 #endif

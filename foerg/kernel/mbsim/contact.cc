@@ -110,10 +110,17 @@ namespace MBSim {
   }
 
   void Contact::updateStateDependentVariables(double t) {
-//    (*fcl).computeSmoothForces(contacts);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateStateDependentVariables(t);
+        jter->updateKinematics(t);
+
+    (*fcl).computeSmoothForces(contacts);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+//        jter->updateNormalForce(t);
+        jter->updateTangentialForce(t);
+        jter->updateCartesianForces(t);
+      }
     }
   }
 

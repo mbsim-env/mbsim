@@ -28,6 +28,7 @@
 #include "mbsim/graph.h"
 #include "mbsim/object.h"
 #include "mbsim/observer.h"
+#include "mbsim/constraint.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
 #include <mbsim/environment.h>
@@ -171,24 +172,31 @@ namespace MBSim {
         addObserver(obsrvList[i]);
       }
 
-     for (unsigned int i = 0; i < lnkList.size(); i++)
-       eleList.push_back(lnkList[i]);
-     for (unsigned int i = 0; i < objList.size(); i++)
+     vector<Element*> depList;
+
+     for (unsigned int i = 0; i < objList.size(); i++) {
        eleList.push_back(objList[i]);
+       depList.push_back(objList[i]);
+     }
+     for (unsigned int i = 0; i < lnkList.size(); i++) {
+       eleList.push_back(lnkList[i]);
+       Constraint *c = dynamic_cast<Constraint*>(lnkList[i]);
+       if(c) depList.push_back(c);
+     }
 
       /* now objects: these are much more complex since we must build a graph */
 
       /* matrix of body dependencies */
-      SqrMat A(eleList.size(), INIT, 0.);
-      for (unsigned int i = 0; i < eleList.size(); i++) {
+      SqrMat A(depList.size(), INIT, 0.);
+      for (unsigned int i = 0; i < depList.size(); i++) {
 
-        vector<Element*> parentBody = eleList[i]->getElementsDependingOn();
+        vector<Element*> parentElement = depList[i]->getElementsDependingOn();
 
-        for (unsigned int h = 0; h < parentBody.size(); h++) {
+        for (unsigned int h = 0; h < parentElement.size(); h++) {
           bool foundBody = false;
           unsigned int j;
-          for (j = 0; j < eleList.size(); j++) {
-            if (eleList[j] == parentBody[h]) {
+          for (j = 0; j < depList.size(); j++) {
+            if (depList[j] == parentElement[h]) {
               foundBody = true;
               break;
             }
@@ -205,33 +213,23 @@ namespace MBSim {
       int nt = 0;
       for (int i = 0; i < A.size(); i++) {
         double a = max(A.T().col(i));
-        if (fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
+        if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+lexical_cast<string>(nt++));
-          addToGraph(graph, A, i, eleList);
+          addToGraph(graph, A, i, depList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot()) { // absolut kinematics
-          throw;
-          Object *obj = dynamic_cast<Object*>(eleList[i]);
+          Object *obj = dynamic_cast<Object*>(depList[i]);
           if(obj) {
-            eleList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
+            depList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
             addObject(obj);
           }
         }
       }
 
-      int k = 0;
       for (unsigned int i = 0; i < bufGraph.size(); i++) {
-        std::vector< std::vector<Object*> > obj = bufGraph[i]->getObjects();
-        if(obj.size() > 1)
         addGroup(bufGraph[i]);
-        else {
-          for(unsigned int j=0; j<obj[0].size(); j++) {
-            obj[0][j]->setName("Object_absolute_"+lexical_cast<string>(k++)); // just a unique local name
-            addObject(obj[0][j]);
-          }
-        }
       }
 
       for (unsigned int i = 0; i < eleList.size(); i++) {
@@ -252,6 +250,7 @@ namespace MBSim {
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
 
+      msg(Info) << "Content of element graph "<< name << ":" << endl;
       for(unsigned int i=0; i<elementOrdered.size(); i++) {
         msg(Info) << "  Elements in level "<< i << ":"<< endl;
         for(unsigned int j=0; j<elementOrdered[i].size(); j++)
