@@ -122,13 +122,38 @@ namespace MBSim {
   }
 
   void SingleContact::updateStateDependentVariables(double t) {
-    contactKinematics->updateg(g(0), cpData);
-    if(not fcl->isSetValued()) {
-      if(fcl->isActive(g(0), 0))
-        updateVelocities(t);
+    updateKinematics(t);
+    updateNormalForce(t);
+    updateTangentialForce(t);
+    updateCartesianForces(t);
+  }
 
+  void SingleContact::updateh(double t, int j) {
+    //cout << name  << " " << j << " t = " << t << " g = " << g(0) << " gdN = " << gdN << " laN = " << laN(0) << endl;
+
+    for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
+      h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
+    }
+  }
+
+  void SingleContact::updateKinematics(double t) {
+    contactKinematics->updateg(g(0), cpData);
+    if(not(fcl->isSetValued()) and fcl->isActive(g(0), 0))
+      updateVelocities(t);
+  }
+
+  void SingleContact::updateNormalForce(double t) {
+    if(not(fcl->isSetValued()))
       laN(0) = (*fcl)(g(0), gdN);
+  }
+
+  void SingleContact::updateTangentialForce(double t) {
+    if(not(fdf->isSetValued()))
       laT = (*fdf)(gdT, fabs(laN(0)));
+  }
+
+  void SingleContact::updateCartesianForces(double t) {
+    if(not(fcl->isSetValued())) {
       WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
       if (fdf)
         if (not fdf->isSetValued()) {
@@ -138,14 +163,6 @@ namespace MBSim {
         }
 
       WF[0] = -WF[1];
-    }
-  }
-
-  void SingleContact::updateh(double t, int j) {
-    //cout << name  << " " << j << " t = " << t << " g = " << g(0) << " gdN = " << gdN << " laN = " << laN(0) << endl;
-
-    for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
-      h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
     }
   }
 

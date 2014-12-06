@@ -216,7 +216,11 @@ namespace MBSim {
 
       void checkRoot();
 
+      void updateKinematics(double t);
       void updateVelocities(double t);
+      void updateNormalForce(double t);
+      void updateTangentialForce(double t);
+      void updateCartesianForces(double t);
 
     protected:
       /**

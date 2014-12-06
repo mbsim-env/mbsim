@@ -155,7 +155,7 @@ namespace MBSim {
   }
 
   void Graph::printGraph() {
-    msg(Info) << "Content of graph "<< name << ":" << endl;
+    msg(Info) << "Content of object graph "<< name << ":" << endl;
     for(unsigned int i=0; i<obj.size(); i++) {
       msg(Info) << "  Objects in level "<< i << ":"<< endl;
       for(unsigned int j=0; j<obj[i].size(); j++)
