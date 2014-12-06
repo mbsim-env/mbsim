@@ -1365,6 +1365,14 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="secondIndependentRigidBody" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Angabe eines zweiten Körpers, dessen Freiheitsgrad erhalten bleibt.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                tbd

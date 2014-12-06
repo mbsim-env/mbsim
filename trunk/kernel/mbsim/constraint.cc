@@ -366,7 +366,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
 
-  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow = 0;
     MArrow = 0;
@@ -390,6 +390,10 @@ namespace MBSim {
     bi = bi_;
   }
 
+  void JointConstraint::setSecondIndependentBody(RigidBody *bi2_) {
+    bi2 = bi2_;
+  }
+
   void JointConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
@@ -409,6 +413,8 @@ namespace MBSim {
       rigidBodies.clear();
       if (saved_IndependentBody!="")
         setIndependentBody(getByPath<RigidBody>(saved_IndependentBody));
+      if (saved_IndependentBody2!="")
+        setIndependentBody(getByPath<RigidBody>(saved_IndependentBody2));
       for(unsigned int i=0; i<bd1.size(); i++) 
         bd1[i]->addDependency(this);
       if(bd1.size()) {
@@ -429,6 +435,8 @@ namespace MBSim {
       Constraint::init(stage);
       if(bi)
         dependency.push_back(bi);
+      if(bi2)
+        dependency.push_back(bi2);
     } 
     else if(stage==unknownStage) {
       refFrame=refFrameID?frame2:frame1;
@@ -575,7 +583,7 @@ namespace MBSim {
     DOMElement *e, *ee;
     Constraint::initializeUsingXML(element);
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
-    if (e) q0=getVec(e);
+    if (e) setInitialGuess(getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodiesFirstSide");
     ee=e->getFirstElementChild();
     while(ee) {
@@ -590,6 +598,9 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
     saved_IndependentBody=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"secondIndependentRigidBody");
+    if(e) saved_IndependentBody2=E(e)->getAttribute("ref");
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if(e) refFrameID=getInt(e);
