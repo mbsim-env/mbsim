@@ -114,7 +114,8 @@ namespace MBSim {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateKinematics(t);
 
-    (*fcl).computeSmoothForces(contacts);
+    if(not(fcl->isSetValued()))
+      (*fcl).computeSmoothForces(contacts);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
 //        jter->updateNormalForce(t);
