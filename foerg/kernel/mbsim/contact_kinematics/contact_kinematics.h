@@ -85,9 +85,9 @@ namespace MBSim {
        *
        * REMARK: The given vector of Contacts is ordered by the possible contact points (cp. multi-contact preINIT-stage)
        */
-      virtual void updateg(std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(contact[0].getgN(), contact[0].getcpData());}
+      virtual void updateg(std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(contact[0].getg()(0), contact[0].getcpData());}
 
-      virtual void updatewb(std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(contact[0].getwb(), contact[0].getgN(), contact[0].getcpData());}
+      virtual void updatewb(std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(contact[0].getwb(), contact[0].getg()(0), contact[0].getcpData());}
 
       /** 
        * \brief treats ordering of contours
