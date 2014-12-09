@@ -215,7 +215,8 @@ namespace MBSim {
       void checkRoot();
 
       void updateKinematics(double t);
-      void updateVelocities(double t);
+      void updateNormalVelocities(double t);
+      void updateTangentialVelocities(double t);
       void updateNormalForce(double t);
       void updateTangentialForce(double t);
       void updateCartesianForces(double t);
@@ -345,6 +346,8 @@ namespace MBSim {
 
     private:
       std::string saved_ref1, saved_ref2;
+
+      fmatvec::Vec3 WvD;
   };
 
 }

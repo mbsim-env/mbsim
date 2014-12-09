@@ -33,7 +33,7 @@ using namespace xercesc;
 namespace MBSim {
 
   Object::Object(const string &name) :
-      Element(name), qSize(0), qInd(0), xSize(0), xInd(0) {
+      Element(name), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -185,14 +185,6 @@ namespace MBSim {
     udall[i] >> udParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
-  void Object::updatexRef(const Vec &xParent) {
-    x >> xParent(xInd,xInd+xSize-1);
-  } 
-
-  void Object::updatexdRef(const Vec &xdParent) {
-    xd >> xdParent(xInd,xInd+xSize-1);
-  } 
-
   void Object::updatehRef(const Vec& hParent, int i) {
     h[i] >> hParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
@@ -274,7 +266,6 @@ namespace MBSim {
   void Object::initz() {
     q = (q0.size() == 0) ? Vec(qSize, INIT, 0) : q0;
     u = (u0.size() == 0) ? Vec(uSize[0], INIT, 0) : u0;
-    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
   void Object::writez(H5::GroupBase *group) {

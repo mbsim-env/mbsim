@@ -729,9 +729,6 @@ namespace MBSim {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updatexRef(xParent);
 
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updatexRef(xParent);
-
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(xParent);
   }
@@ -740,9 +737,6 @@ namespace MBSim {
     xd >> xdParent(xInd, xInd + xSize - 1);
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatexdRef(xdParent);
-
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updatexdRef(xdParent);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
@@ -1164,11 +1158,6 @@ namespace MBSim {
       xSize += (*i)->getxSize();
     }
 
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->calcxSize();
-      xSize += (*i)->getxSize();
-    }
-
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->calcxSize();
       xSize += (*i)->getxSize();
@@ -1182,10 +1171,7 @@ namespace MBSim {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->setxInd(xInd_);
-      xInd_ += (*i)->getxSize();
-    }
+
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
