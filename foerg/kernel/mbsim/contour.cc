@@ -140,7 +140,7 @@ namespace MBSim {
    return ele0;
   }
 
-  vector<Element*> Contour::getElementsDependingOn() const {
+  vector<Element*> Contour::getDependencies() const {
     vector<Element*> dep;
     if(not(dynamic_cast<DynamicSystem*>(parent)))
       dep.push_back(parent);

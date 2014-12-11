@@ -31,18 +31,18 @@ namespace MBSimControl {
    */
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const std::string &name="") : Sensor(name), function(NULL), y() {}
+      FunctionSensor(const std::string &name="") : Sensor(name), function(NULL) {}
       FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       ~FunctionSensor() { delete function; }
       std::string getType() const { return "FunctionSensor"; }
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
-      fmatvec::VecV getSignal() {return y; }
+      void updateStateDependentVariables(double t);
       void updateg(double t);
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::Element::InitStage stage);
+      int getSignalSize() { return (*function)(0).size(); }
     private:
       MBSim::Function<fmatvec::VecV(double)> * function;
-      fmatvec::VecV y;
   };
 
   /*!
@@ -61,7 +61,7 @@ namespace MBSimControl {
         fun->setParent(this);
         fun->setName("Function");
       }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal * signal;
       MBSim::Function<double(double)>* fun;
@@ -84,7 +84,7 @@ namespace MBSimControl {
         fun->setParent(this);
         fun->setName("Function");
       }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal * signal1;
       Signal * signal2;

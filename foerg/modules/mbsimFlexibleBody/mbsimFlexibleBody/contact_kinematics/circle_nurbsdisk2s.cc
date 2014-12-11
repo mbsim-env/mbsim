@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleNurbsDisk2s::updateg(fmatvec::Vec& g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleNurbsDisk2s::updateg(double &g, ContourPointData *cpData, int index) {
     FuncPairCircleNurbsDisk2s *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
     Contact1sSearch search(func);
 
@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
 
     cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[icircle].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()));
 
-    if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g(0) = 1.;
+    if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g = 1.;
     else {
       nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],Frame::position_cosy); // writes the position, as well as the normal and the tangents into the frame of reference
 
@@ -84,7 +84,7 @@ namespace MBSimFlexibleBody {
       cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1));   
       cpData[icircle].getFrameOfReference().getOrientation().set(2,  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2)); // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
-      g(0) = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[icircle].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
+      g = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[icircle].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
     }
 
     delete func;

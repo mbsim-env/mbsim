@@ -271,9 +271,15 @@ namespace MBSim {
        * \brief checks dependency on other elements.
        * \return a vector of elements the calling element depends on.
        */
-      virtual std::vector<Element*> getElementsDependingOn() const { return dependency; }
+      virtual std::vector<Element*> getDependencies() const { return dependency; }
 
       void addDependency(Element* ele) { dependency.push_back(ele); }
+
+      void addDependencies(const std::vector<Element*> &ele) { 
+        for(unsigned int i=0; i<ele.size(); i++)
+          dependency.push_back(ele[i]);
+      }
+
       /**
        * \brief computes the length of the pathes in the graph that represents
        * the dependencies between all elements.

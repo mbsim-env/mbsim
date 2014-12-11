@@ -59,6 +59,7 @@ namespace MBSimControl {
       virtual fmatvec::VecV calculateOutput() = 0;
 
       void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
+      int getSignalSize();
 
     protected:
       Signal * inputSignal;

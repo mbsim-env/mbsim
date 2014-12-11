@@ -39,8 +39,8 @@ namespace MBSimFlexibleBody {
           rCircle(rCircle_), wBand(wBand_), node(node_), circle(0), band(0) {
       }
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) {
+      virtual void updateg(double &g, MBSim::ContourPointData *cpData, int index = 0);
+      virtual void updatewb(fmatvec::Vec &wb, double g, ContourPointData* cpData) {
         throw MBSimError("not implemented");
       }
     private:
@@ -65,24 +65,24 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleSolidNode::updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidNode::updateg(double &g, MBSim::ContourPointData *cpData, int index) {
     // set lagrange parateter position of current node
 
     cpData[inode].getLagrangeParameterPosition()(0) = node;
     cpData[inode].getLagrangeParameterPosition()(1) = 0;
 
     if (cpData[inode].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[inode].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-      g(0) = 1.0;
+      g = 1.0;
     else {
         band->updateKinematicsForFrame(cpData[inode],Frame::position_cosy);
       Vec Wd = circle->getFrame()->getPosition() - cpData[inode].getFrameOfReference().getPosition();
-      g(0) = nrm2(Wd) - rCircle;
+      g = nrm2(Wd) - rCircle;
 
       Vec Wb = cpData[inode].getFrameOfReference().getOrientation().col(2);
       cpData[inode].getLagrangeParameterPosition()(1) = trans(Wb) * Wd; // get contact parameter of second tangential direction
 
       if (fabs(cpData[inode].getLagrangeParameterPosition()(1)) > 0.5 * wBand)
-        g(0) = 1.0;
+        g = 1.0;
       else { // calculate the normal distance
         cpData[inode].getFrameOfReference().getPosition() += cpData[inode].getLagrangeParameterPosition()(1) * Wb;
         cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[inode].getFrameOfReference().getOrientation().col(0));
@@ -101,8 +101,8 @@ namespace MBSimFlexibleBody {
           rCircle(rCircle_), wBand(wBand_), nodes(nodes_), circle(0), band(0) {
       }
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) {
+      virtual void updateg(double &g, MBSim::ContourPointData *cpData, int index = 0);
+      virtual void updatewb(fmatvec::Vec &wb, double g, ContourPointData* cpData) {
         throw MBSimError("not implemented");
       }
     private:
@@ -128,7 +128,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleSolidNodeInterpolation::updateg(fmatvec::Vec &gNri, MBSim::ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidNodeInterpolation::updateg(double &gNri, MBSim::ContourPointData *cpData, int index) {
     FuncPairContour1sCircleSolid *func = new FuncPairContour1sCircleSolid(circle, band); // root function for searching contact parameters
     Contact1sSearch search(func);
 
@@ -142,11 +142,11 @@ namespace MBSimFlexibleBody {
       cpData[inode].getLagrangeParameterPosition()(1) = 0.0;
 
       if (cpData[inode].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[inode].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-        gNri(0) = 1.0;
+        gNri = 1.0;
       else {
           band->updateKinematicsForFrame(cpData[inode],Frame::position_cosy);
         Vec Wd = circle->getFrame()->getPosition() - cpData[inode].getFrameOfReference().getPosition();
-        gNri(0) = nrm2(Wd) - rCircle;
+        gNri = nrm2(Wd) - rCircle;
 
         {
           Vec Wb = cpData[inode].getFrameOfReference().getOrientation().col(2);

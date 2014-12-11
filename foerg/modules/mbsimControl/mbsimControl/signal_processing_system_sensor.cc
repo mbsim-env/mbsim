@@ -44,13 +44,18 @@ namespace MBSimControl {
         setSignalProcessingSystem(getByPath<SignalProcessingSystem>(spsString));
       Sensor::init(stage);
     }
+    else if(stage==preInit) {
+      Sensor::init(stage);
+      addDependency(sps);
+    }
     else
       Sensor::init(stage);
   }
 
-  VecV SignalProcessingSystemSensor::getSignal() {
-    return sps->calculateOutput();
+  void SignalProcessingSystemSensor::updateStateDependentVariables(double t) {
+    s = sps->calculateOutput();
   }
+    int  SignalProcessingSystemSensor::getSignalSize() { return sps->getSignalSize(); }
 
 }
 

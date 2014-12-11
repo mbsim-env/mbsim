@@ -32,19 +32,25 @@ namespace MBSimControl {
       
   FunctionSensor::FunctionSensor(const std::string &name, MBSim::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
     function->setParent(this);
-    y=(*function)(0);
+    s=(*function)(0);
   }
 
   void FunctionSensor::setFunction(MBSim::Function<fmatvec::VecV(double)>* function_) {
     function=function_; 
     function->setParent(this);
     function->setName("Function");
-    y=(*function)(0); 
+    s=(*function)(0); 
+  }
+
+  void FunctionSensor::updateStateDependentVariables(double t) {
+    Sensor::updateStateDependentVariables(t);
+    s=(*function)(t); 
   }
 
   void FunctionSensor::updateg(double t) {
+    throw;
     Sensor::updateg(t);
-    y=(*function)(t); 
+    s=(*function)(t); 
   }
 
   void FunctionSensor::initializeUsingXML(DOMElement *element) {
@@ -54,7 +60,12 @@ namespace MBSimControl {
   }
 
   void FunctionSensor::init(MBSim::Element::InitStage stage) {
-    Sensor::init(stage);
+    if(stage==preInit) {
+      Signal::init(stage);
+      addDependencies(function->getDependencies());
+    }
+    else
+      Sensor::init(stage);
     function->init(stage);
   }
 
@@ -79,11 +90,11 @@ namespace MBSimControl {
     fun->init(stage);
   }
 
-  VecV Function_SSEvaluation::getSignal() {
+  void Function_SSEvaluation::updateStateDependentVariables(double t) {
     VecV y=signal->getSignal();
     for (int i=0; i<y.size(); i++)
       y(i)=(*fun)(y(i));
-    return y;
+    s = y;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_SSSEvaluation, MBSIMCONTROL%"Function_SSSEvaluation")
@@ -105,13 +116,17 @@ namespace MBSimControl {
         setSignals(getByPath<Signal>(signal1String), getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependencies(fun->getDependencies());
+    }
     else
       Signal::init(stage);
     fun->init(stage);
   }
 
-  VecV Function_SSSEvaluation::getSignal() {
-    return VecV(1, INIT, (*fun)(signal1->getSignal()(0), signal2->getSignal()(0)));
+  void Function_SSSEvaluation::updateStateDependentVariables(double t) {
+    s = VecV(1, INIT, (*fun)(signal1->getSignal()(0), signal2->getSignal()(0)));
   }
 
 }

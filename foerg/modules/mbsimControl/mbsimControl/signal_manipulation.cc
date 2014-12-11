@@ -52,6 +52,11 @@ namespace MBSimControl {
       factorsTmp.clear();
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      for(unsigned int i=0; i<signals.size(); i++)
+        addDependencies(signals[i]->getDependencies());
+    }
     else
       Signal::init(stage);
   }
@@ -61,11 +66,11 @@ namespace MBSimControl {
     factors.push_back(factor);
   }
 
-  VecV SignalAddition::getSignal() {
+  void SignalAddition::updateStateDependentVariables(double t) {
     VecV y=factors[0]*(signals[0]->getSignal());
     for (unsigned int i=1; i<signals.size(); i++)
       y+=factors[i]*(signals[i]->getSignal());
-    return y;
+    s = y;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalOffset, MBSIMCONTROL%"SignalOffset")
@@ -86,8 +91,8 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV SignalOffset::getSignal() {
-    return signal->getSignal()+offset;
+  void SignalOffset::updateStateDependentVariables(double t) {
+    s = signal->getSignal()+offset;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMultiplication, MBSIMCONTROL%"SignalMultiplication")
@@ -119,7 +124,7 @@ namespace MBSimControl {
     exponents.push_back(exp);
   }
 
-  VecV SignalMultiplication::getSignal() {
+  void SignalMultiplication::updateStateDependentVariables(double t) {
     VecV y=signals[0]->getSignal();
     for (int i=0; i<y.size(); i++)
       y(i)=pow(y(i), exponents[0]);
@@ -128,7 +133,7 @@ namespace MBSimControl {
       for (int j=0; j<y.size(); j++)
         y(j)*=pow(y2(j), exponents[i]);
     }
-    return y;
+    s = y;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMux, MBSIMCONTROL%"SignalMux")
@@ -154,7 +159,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV SignalMux::getSignal() {
+  void SignalMux::updateStateDependentVariables(double t) {
     VecV y=signals[0]->getSignal();
     for (unsigned int i=1; i<signals.size(); i++) {
       VecV s1=y;
@@ -163,7 +168,7 @@ namespace MBSimControl {
       y.set(Index(0, s1.size()-1),s1);
       y.set(Index(s1.size(), y.size()-1),s2);
     }
-    return y;
+    s = y;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalDemux, MBSIMCONTROL%"SignalDemux")
@@ -200,7 +205,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV SignalDemux::getSignal() {
+  void SignalDemux::updateStateDependentVariables(double t) {
     VecV y(totalSignalSize, INIT, 0);
     int j=0;
     for (unsigned int i=0; i<signals.size(); i++) {
@@ -210,7 +215,7 @@ namespace MBSimControl {
         j++;
       }
     }
-    return y;
+    s = y;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalLimitation, MBSIMCONTROL%"SignalLimitation")
@@ -238,14 +243,14 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV SignalLimitation::getSignal() { 
+  void SignalLimitation::updateStateDependentVariables(double t) { 
     VecV y=s->getSignal();
     for (int i=0; i<y.size(); i++)
       if (y(i)<minValue(i))
         y(i)=minValue(i);
       else if (y(i)>maxValue(i))
         y(i)=maxValue(i);
-    return y; 
+    Signal::s = y; 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
@@ -263,21 +268,25 @@ namespace MBSimControl {
         setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s);
+    }
+    else if(stage==resize) {
+      Signal::init(stage);
+    }
     else
       Signal::init(stage);
   }
 
   void SignalTimeDiscretization::updateg(double t) { 
-    if (fabs(tOld-t)>epsroot()) {
-      y=s->getSignal(); 
-      tOld=t; 
-    } 
   }
 
-  VecV SignalTimeDiscretization::getSignal() { 
-    if (y.size()==0)
-      updateg(-98e99);
-    return y; 
+  void SignalTimeDiscretization::updateStateDependentVariables(double t) { 
+    if (fabs(tOld-t)>epsroot()) {
+      Signal::s=s->getSignal(); 
+      tOld=t; 
+    } 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalOperation, MBSIMCONTROL%"SignalOperation")
@@ -378,7 +387,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV SignalOperation::getSignal() { 
+  void SignalOperation::updateStateDependentVariables(double t) { 
     VecV y=s->getSignal();
     VecV y2=s2?s2->getSignal():s2values;
     if (op==1)
@@ -459,7 +468,7 @@ namespace MBSimControl {
     else if (op==26)
       for (int i=0; i<y.size(); i++)
         y(i)=tanh(y(i));
-    return y; 
+    Signal::s = y; 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpecialSignalOperation, MBSIMCONTROL%"SpecialSignalOperation")
@@ -494,7 +503,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV SpecialSignalOperation::getSignal() { 
+  void SpecialSignalOperation::updateStateDependentVariables(double t) { 
     VecV y=s->getSignal();
     VecV y2=s2?s2->getSignal():s2values;
     if (op==1)
@@ -503,7 +512,7 @@ namespace MBSimControl {
     else if (op==2)
       for (int i=0; i<y.size(); i++)
         y(i)=y2(i)>0?y(i):0;
-    return y; 
+    Signal::s = y; 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PIDController, MBSIMCONTROL%"PIDController")
@@ -554,23 +563,23 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV PIDController::getSignal() {
-    return (this->*getSignalMethod)();
+  void PIDController::updateStateDependentVariables(double t) {
+    (this->*updateSignalMethod)();
   }
 
-  VecV PIDController::getSignalPID() {
-    return P*s->getSignal() + D*sd->getSignal() + I*x;
+  void PIDController::updateSignalPID() {
+    Signal::s = P*s->getSignal() + D*sd->getSignal() + I*x;
   }
 
-  VecV PIDController::getSignalPD() {
-    return P*s->getSignal() + D*sd->getSignal();
+  void PIDController::updateSignalPD() {
+    Signal::s = P*s->getSignal() + D*sd->getSignal();
   }
 
   void PIDController::setPID(double PP, double II, double DD) {
     if ((fabs(II)<epsroot()))
-      getSignalMethod=&PIDController::getSignalPD;
+      updateSignalMethod=&PIDController::updateSignalPD;
     else
-      getSignalMethod=&PIDController::getSignalPID;
+      updateSignalMethod=&PIDController::updateSignalPID;
     P = PP; I = II; D = DD;
   }
 
@@ -603,8 +612,8 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  VecV UnarySignalOperation::getSignal() { 
-    return (*f)(s->getSignal()); 
+  void UnarySignalOperation::updateStateDependentVariables(double t) { 
+    Signal::s = (*f)(s->getSignal()); 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BinarySignalOperation, MBSIMCONTROL%"BinarySignalOperation")
@@ -636,8 +645,8 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  VecV BinarySignalOperation::getSignal() { 
-    return (*f)(s1->getSignal(),s2->getSignal()); 
+  void BinarySignalOperation::updateStateDependentVariables(double t) { 
+    s = (*f)(s1->getSignal(),s2->getSignal()); 
   }
 
 }

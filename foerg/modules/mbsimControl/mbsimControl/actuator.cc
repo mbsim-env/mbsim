@@ -68,6 +68,12 @@ namespace MBSimControl {
         THROW_MBSIMERROR("no connection given!");
       LinkMechanics::init(stage);
     }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<frame.size(); i++)
+        addDependencies(frame[i]->getDependencies());
+      addDependency(signal);
+    }
     else if (stage==resize) {
       LinkMechanics::init(stage);
       IT = Index(0,forceDir.cols()-1);

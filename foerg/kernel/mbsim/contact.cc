@@ -428,12 +428,8 @@ namespace MBSim {
         }
       }
       LinkMechanics::init(stage);
-      for(unsigned int i=0; i<contour.size(); i++) {
-        vector<Element*> dep = contour[i]->getElementsDependingOn();
-         for(unsigned int j=0; j<dep.size(); j++) {
-          dependency.push_back(dep[j]);
-         }
-      }
+      for(unsigned int i=0; i<contour.size(); i++)
+        addDependencies(contour[i]->getDependencies());
     }
 
     else if (stage == resize) {

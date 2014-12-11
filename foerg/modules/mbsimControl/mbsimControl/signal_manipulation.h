@@ -35,7 +35,8 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void addSignal(Signal * signal, double factor=1.);
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
+      int getSignalSize() { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
       std::vector<double> factors;
@@ -54,7 +55,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void setSignal(Signal * s) {signal=s; }
       void setOffset(fmatvec::VecV o) {offset=o; }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal * signal;
       fmatvec::VecV offset;
@@ -71,7 +72,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void addSignal(Signal * signal, double exp);
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       std::vector<Signal *> signals;
       std::vector<double> exponents;
@@ -90,7 +91,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void addSignal(Signal * signal) {signals.push_back(signal); }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       std::vector<Signal *> signals;
       std::vector<std::string> signalString;
@@ -107,7 +108,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       std::vector<Signal *> signals;
       std::vector<fmatvec::VecInt > indizes;
@@ -129,7 +130,7 @@ namespace MBSimControl {
       void setMinimalValue(fmatvec::VecV minValue_) {minValue=minValue_; }
       void setMaximalValue(fmatvec::VecV maxValue_) {maxValue=maxValue_; }
       void setSignal(Signal * signal_) {s=signal_; }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal * s;
       fmatvec::VecV minValue, maxValue;
@@ -143,15 +144,15 @@ namespace MBSimControl {
    */
   class SignalTimeDiscretization : public Signal {  
     public:
-      SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), y(), tOld(-99e99), signalString("") {}
+      SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), tOld(-99e99), signalString("") {}
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
+      int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal * s;
-      fmatvec::VecV y;
       double tOld;
       std::string signalString;
   };
@@ -170,7 +171,7 @@ namespace MBSimControl {
       void setSecondSignal(Signal * signal_) {s2=signal_; }
       void setSecondSignalValues(fmatvec::VecV s2_) {s2values=s2_; }
       void setOperator(unsigned int op_) {op=op_; };
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal * s;
       Signal * s2;
@@ -194,7 +195,7 @@ namespace MBSimControl {
       void setSecondSignal(Signal * signal_) {s2=signal_; }
       void setSecondSignalValues(fmatvec::VecV s2_) {s2values=s2_; }
       void setOperator(unsigned int op_) {op=op_; };
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal * s;
       Signal * s2;
@@ -214,7 +215,7 @@ namespace MBSimControl {
       PIDController(const std::string& name="") : Signal(name), s(NULL), sd(NULL) {}
       void initializeUsingXML(xercesc::DOMElement * element);
       
-      void calcxSize() {xSize=getSignalMethod==&PIDController::getSignalPD?0:1;}
+      void calcxSize() {xSize=updateSignalMethod==&PIDController::updateSignalPD?0:1;}
       
       void init(InitStage stage);
 
@@ -227,15 +228,15 @@ namespace MBSimControl {
       void setInputSignal(Signal *inputSignal_) {s=inputSignal_; }
       void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
 
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
 
     protected:
       double P,I,D;
       Signal *s, *sd;
       std::string sString, sdString;
-      fmatvec::VecV (PIDController::*getSignalMethod)();
-      fmatvec::VecV getSignalPD();
-      fmatvec::VecV getSignalPID();
+      void (PIDController::*updateSignalMethod)();
+      void updateSignalPD();
+      void updateSignalPID();
   };
 
   /*!
@@ -253,7 +254,7 @@ namespace MBSimControl {
         f->setParent(this);
         f->setName("Function");
       };
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal *s;
       std::string signalString;
@@ -276,7 +277,7 @@ namespace MBSimControl {
         f->setParent(this);
         f->setName("Function");
       };
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
     private:
       Signal *s1, *s2;
       std::string signal1String, signal2String;
