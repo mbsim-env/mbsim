@@ -49,14 +49,14 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkDistanceSensor, MBSIMCONTROL%"LinkDistanceSensor")
 
-  VecV LinkDistanceSensor::getSignal() {
-    return link->getg();
+  void LinkDistanceSensor::updateStateDependentVariables(double t) {
+    s = link->getg();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkVelocitySensor, MBSIMCONTROL%"LinkVelocitySensor")
 
-  VecV LinkVelocitySensor::getSignal() {
-    return link->getgd();
+  void LinkVelocitySensor::updateStateDependentVariables(double d) {
+    s = link->getgd();
   }
 
 }

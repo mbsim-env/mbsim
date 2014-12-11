@@ -38,4 +38,8 @@ namespace MBSimControl {
     Signal::init(stage);
   }
 
+  void ExternSignalSink::updateStateDependentVariables(double t) {
+    s = signal->getSignal();
+  }
+
 }

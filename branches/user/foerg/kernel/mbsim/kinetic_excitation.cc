@@ -56,11 +56,10 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       LinkMechanics::init(stage);
-      for(unsigned int i=0; i<frame.size(); i++) {
-        vector<Element*> dep = frame[i]->getElementsDependingOn();
-        for(unsigned int j=0; j<dep.size(); j++)
-          dependency.push_back(dep[j]);
-      }
+      for(unsigned int i=0; i<frame.size(); i++)
+        addDependencies(frame[i]->getDependencies());
+      if(F) addDependencies(F->getDependencies());
+      if(M) addDependencies(M->getDependencies());
     }
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);

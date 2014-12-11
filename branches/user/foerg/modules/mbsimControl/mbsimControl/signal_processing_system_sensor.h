@@ -38,7 +38,8 @@ namespace MBSimControl {
       void init(InitStage stage);
       
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
-      fmatvec::VecV getSignal();
+      void updateStateDependentVariables(double t);
+      int getSignalSize();
 
     private:
       SignalProcessingSystem * sps;

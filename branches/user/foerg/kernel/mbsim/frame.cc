@@ -170,7 +170,7 @@ namespace MBSim {
     return ele0;
   }
 
-  vector<Element*> Frame::getElementsDependingOn() const {
+  vector<Element*> Frame::getDependencies() const {
     vector<Element*> dep;
     if(not(dynamic_cast<DynamicSystem*>(parent)))
       dep.push_back(parent);

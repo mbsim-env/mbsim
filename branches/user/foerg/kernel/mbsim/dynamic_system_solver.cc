@@ -190,7 +190,7 @@ namespace MBSim {
       SqrMat A(depList.size(), INIT, 0.);
       for (unsigned int i = 0; i < depList.size(); i++) {
 
-        vector<Element*> parentElement = depList[i]->getElementsDependingOn();
+        vector<Element*> parentElement = depList[i]->getDependencies();
 
         for (unsigned int h = 0; h < parentElement.size(); h++) {
           bool foundBody = false;
