@@ -55,7 +55,7 @@ namespace MBSimControl {
     else if(stage==preInit) {
       Signal::init(stage);
       for(unsigned int i=0; i<signals.size(); i++)
-        addDependencies(signals[i]->getDependencies());
+        addDependency(signals[i]);
     }
     else
       Signal::init(stage);
@@ -87,6 +87,10 @@ namespace MBSimControl {
       setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependency(signal);
+    }
     else
       Signal::init(stage);
   }
@@ -114,6 +118,11 @@ namespace MBSimControl {
       signalString.clear();
       exponentsTmp.clear();
       Signal::init(stage);
+    }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      for(unsigned int i=0; i<signals.size(); i++)
+        addDependency(signals[i]);
     }
     else
       Signal::init(stage);
@@ -155,6 +164,11 @@ namespace MBSimControl {
       signalString.clear();
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      for(unsigned int i=0; i<signals.size(); i++)
+        addDependency(signals[i]);
+    }
     else
       Signal::init(stage);
   }
@@ -195,6 +209,11 @@ namespace MBSimControl {
       }
       signalString.clear();
       Signal::init(stage);
+    }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      for(unsigned int i=0; i<signals.size(); i++)
+        addDependency(signals[i]);
     }
     else if (stage==plotting) {
       for (unsigned int i=0; i<indizes.size(); i++)
@@ -238,6 +257,10 @@ namespace MBSimControl {
       if (signalString!="")
         setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
+    }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s);
     }
     else
       Signal::init(stage);
@@ -383,6 +406,11 @@ namespace MBSimControl {
         setSecondSignal(getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s);
+      addDependency(s2);
+    }
     else
       Signal::init(stage);
   }
@@ -499,6 +527,11 @@ namespace MBSimControl {
         setSecondSignal(getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s);
+      addDependency(s2);
+    }
     else
       Signal::init(stage);
   }
@@ -548,6 +581,11 @@ namespace MBSimControl {
       if (sdString!="")
         setDerivativeOfInputSignal(getByPath<Signal>(sdString));
       Signal::init(stage);
+    }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s);
+      addDependency(sd);
     }
     else if (stage==resize) {
       Signal::init(stage);
@@ -607,6 +645,10 @@ namespace MBSimControl {
         setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s);
+    }
     else
       Signal::init(stage);
     f->init(stage);
@@ -639,6 +681,11 @@ namespace MBSimControl {
       if (signal2String!="")
         setSignal2(getByPath<Signal>(signal2String));
       Signal::init(stage);
+    }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(s1);
+      addDependency(s2);
     }
     else
       Signal::init(stage);
