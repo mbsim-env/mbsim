@@ -299,7 +299,8 @@ namespace MBSim {
           f1->init(stage);
           f2->init(stage);
         }
-      private:
+        std::vector<Element*> getDependencies() const { return cat<Element*>(f1->getDependencies(),f2->getDependencies()); }
+     private:
         Function<Ret(Arg)> *f1, *f2;
     };
 
@@ -352,6 +353,7 @@ namespace MBSim {
           f1->init(stage);
           f2->init(stage);
         }
+        std::vector<Element*> getDependencies() const { return cat<Element*>(f1->getDependencies(),f2->getDependencies()); }
       private:
         Function<Ret(Arg)> *f1, *f2;
     };
@@ -406,6 +408,12 @@ namespace MBSim {
           for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
             (*it)->init(stage);
         }
+        std::vector<Element*> getDependencies() const {
+          std::vector<Element*> dep;
+          for(int i=0; i<component.size(); i++)
+            dep = cat<Element*>(dep,component[i]->getDependencies());
+          return dep;
+        }
       private:
         std::vector<Function<double(double)> *> component;
     };
@@ -454,6 +462,12 @@ namespace MBSim {
           Function<Ret(Arg)>::init(stage);
           for(typename std::vector<Function<double(Arg)> *>::iterator it=component.begin(); it!=component.end(); ++it)
             (*it)->init(stage);
+        }
+        std::vector<Element*> getDependencies() const {
+          std::vector<Element*> dep;
+          for(int i=0; i<component.size(); i++)
+            dep = cat<Element*>(dep,component[i]->getDependencies());
+          return dep;
         }
       private:
         std::vector<Function<double(Arg)> *> component;
@@ -514,6 +528,7 @@ namespace MBSim {
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
         } 
+        std::vector<Element*> getDependencies() const { return cat<Element*>(fo->getDependencies(),fi->getDependencies()); }
       private:
         Function<Ret(Argo)> *fo;
         Function<Argo(double)> *fi;
@@ -569,6 +584,7 @@ namespace MBSim {
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
         } 
+        std::vector<Element*> getDependencies() const { return cat<Element*>(fo->getDependencies(),fi->getDependencies()); }
       private:
         Function<Ret(Argo)> *fo;
         Function<Argo(Argi)> *fi;
@@ -656,6 +672,12 @@ namespace MBSim {
                 yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-a[a.size()-2]); 
             }
           }
+        }
+        std::vector<Element*> getDependencies() const {
+          std::vector<Element*> dep;
+          for(int i=0; i<function.size(); i++)
+            dep = cat<Element*>(dep,function[i]->getDependencies());
+          return dep;
         }
       private:
         std::vector<Function<Ret(Arg)> *> function;

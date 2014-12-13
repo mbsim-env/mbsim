@@ -63,10 +63,7 @@ namespace MBSim {
        */
       virtual ~RigidBody();
 
-      void addDependency(Constraint* constraint_) {
-        //body.push_back(body_); 
-        constraint = constraint_;
-      }
+      void addDependency(Constraint* constraint_);
 
       virtual void updatedq(double t, double dt);
       virtual void updateqd(double t); 

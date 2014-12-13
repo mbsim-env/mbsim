@@ -226,6 +226,16 @@ namespace MBSim {
       }
   };
 
+  template <class T>
+    std::vector<T> cat(const std::vector<T> a, const std::vector<T> b) {
+    std::vector<T> c;
+    for(int i=0; i<a.size(); i++)
+      c.push_back(a[i]);
+    for(int i=0; i<b.size(); i++)
+      c.push_back(b[i]);
+    return c;
+  }
+
 }
 
 #endif

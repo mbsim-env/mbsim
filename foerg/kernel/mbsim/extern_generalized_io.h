@@ -39,10 +39,13 @@ namespace MBSim {
       enum Type {
         constant, linear
       };
+
       ExternGeneralizedIO(const std::string &name="");
+
+      void updateStateDependentVariables(double t);
       void updateh(double, int i=0);
-      void updateg(double);
-      void updategd(double);
+      void updateg(double) { }
+      void updategd(double) { }
 
       void calcxSize();
       void updatedx(double t, double dt);
