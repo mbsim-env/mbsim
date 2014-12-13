@@ -168,7 +168,7 @@ namespace MBSim {
       nu[1] = 6;
 
       if(constraint)
-        dependency.push_back(constraint);
+        addDependency(constraint);
     }
     else if(stage==relativeFrameContourLocation) {
 
@@ -892,6 +892,11 @@ namespace MBSim {
 //#endif
 
     return ele0;
+  }
+
+  void RigidBody::addDependency(Constraint *constraint_) {
+    Body::addDependency(constraint_);
+    constraint = constraint_;
   }
 
 }

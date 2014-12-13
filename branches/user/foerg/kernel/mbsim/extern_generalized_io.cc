@@ -34,6 +34,14 @@ namespace MBSim {
     connectedObject(NULL), qInd(0), uInd(0), m(0), a(0), t0(0), saved_connectedObject("") {
   }
 
+  void ExternGeneralizedIO::updateStateDependentVariables(double) {
+    if(qInd>=0)
+      g(0)=connectedObject->getq()(qInd);
+    else
+      g(0)=x(0);
+    gd(0)=connectedObject->getu()(uInd);
+  }
+
   void ExternGeneralizedIO::updateh(double t, int j) {
     if(type==constant) {
       connectedObject->geth(j)(uInd)+=la(0);
@@ -46,17 +54,6 @@ namespace MBSim {
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
         applyForceAlsoTo[i].ref->geth(j)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
-  }
-
-  void ExternGeneralizedIO::updateg(double) {
-    if(qInd>=0)
-      g(0)=connectedObject->getq()(qInd);
-    else
-      g(0)=x(0);
-  } 
-
-  void ExternGeneralizedIO::updategd(double) {
-    gd(0)=connectedObject->getu()(uInd);
   }
 
   void ExternGeneralizedIO::calcxSize() {
@@ -85,6 +82,10 @@ namespace MBSim {
             applyForceAlsoTo[i].ref=parent->getByPath<Object>(applyForceAlsoTo[i].saved_ref);
         }
       Link::init(stage);
+    }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependency(connectedObject);
     }
     else if(stage==resize) {
       Link::init(stage);

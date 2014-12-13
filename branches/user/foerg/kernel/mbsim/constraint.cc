@@ -101,7 +101,7 @@ namespace MBSim {
     else if(stage==preInit) {
       Constraint::init(stage);
       for(unsigned int i=0; i<bi.size(); i++)
-        dependency.push_back(bi[i]);
+        addDependency(bi[i]);
     }
     else
       Constraint::init(stage);
@@ -434,9 +434,9 @@ namespace MBSim {
     else if(stage==preInit) {
       Constraint::init(stage);
       if(bi)
-        dependency.push_back(bi);
+        addDependency(bi);
       if(bi2)
-        dependency.push_back(bi2);
+        addDependency(bi2);
     } 
     else if(stage==unknownStage) {
       refFrame=refFrameID?frame2:frame1;
