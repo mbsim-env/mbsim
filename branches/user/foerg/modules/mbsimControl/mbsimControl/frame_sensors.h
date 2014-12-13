@@ -45,6 +45,7 @@ namespace MBSimControl {
           direction.col(i)=direction.col(i)/nrm2(direction.col(i)); 
         assert(direction.rows()==3); 
       }
+      int getSignalSize() { return direction.cols(); }
     protected:
       MBSim::Frame * frame;
       fmatvec::Mat direction;
@@ -130,6 +131,7 @@ namespace MBSimControl {
           direction.col(i)=direction.col(i)/nrm2(direction.col(i)); 
         assert(direction.rows()==3); 
       }
+      int getSignalSize() { return direction.cols(); }
     protected:
       MBSim::Frame * refFrame;
       MBSim::Frame * relFrame;

@@ -47,6 +47,10 @@ namespace MBSimControl {
         setFrame(getByPath<Frame>(frameString));
       Sensor::init(stage);
     }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependencies(frame->getDependencies());
+    }
     else
       Sensor::init(stage);
   }
@@ -99,6 +103,11 @@ namespace MBSimControl {
       if (relFrameString!="")
         setRelativeFrame(getByPath<Frame>(relFrameString));
       Sensor::init(stage);
+    }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependencies(refFrame->getDependencies());
+      addDependencies(relFrame->getDependencies());
     }
     else
       Sensor::init(stage);

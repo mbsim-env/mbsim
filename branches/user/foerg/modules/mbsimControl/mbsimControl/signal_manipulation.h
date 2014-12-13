@@ -56,6 +56,7 @@ namespace MBSimControl {
       void setSignal(Signal * s) {signal=s; }
       void setOffset(fmatvec::VecV o) {offset=o; }
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return signal->getSignalSize(); }
     private:
       Signal * signal;
       fmatvec::VecV offset;
@@ -73,6 +74,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void addSignal(Signal * signal, double exp);
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
       std::vector<double> exponents;
@@ -92,6 +94,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void addSignal(Signal * signal) {signals.push_back(signal); }
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
       std::vector<std::string> signalString;
@@ -109,6 +112,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
       std::vector<fmatvec::VecInt > indizes;
@@ -131,6 +135,7 @@ namespace MBSimControl {
       void setMaximalValue(fmatvec::VecV maxValue_) {maxValue=maxValue_; }
       void setSignal(Signal * signal_) {s=signal_; }
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal * s;
       fmatvec::VecV minValue, maxValue;
@@ -172,6 +177,7 @@ namespace MBSimControl {
       void setSecondSignalValues(fmatvec::VecV s2_) {s2values=s2_; }
       void setOperator(unsigned int op_) {op=op_; };
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal * s;
       Signal * s2;
@@ -196,6 +202,7 @@ namespace MBSimControl {
       void setSecondSignalValues(fmatvec::VecV s2_) {s2values=s2_; }
       void setOperator(unsigned int op_) {op=op_; };
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal * s;
       Signal * s2;
@@ -229,6 +236,7 @@ namespace MBSimControl {
       void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
 
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return s->getSignalSize(); }
 
     protected:
       double P,I,D;
@@ -255,6 +263,7 @@ namespace MBSimControl {
         f->setName("Function");
       };
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal *s;
       std::string signalString;
@@ -278,6 +287,7 @@ namespace MBSimControl {
         f->setName("Function");
       };
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return s1->getSignalSize(); }
     private:
       Signal *s1, *s2;
       std::string signal1String, signal2String;

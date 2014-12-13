@@ -38,6 +38,7 @@ namespace MBSimControl {
       void setSignal(Signal *sig) { signal=sig; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
+      int getSignalSize() { return signal->getSignalSize(); }
   };
 
 }
