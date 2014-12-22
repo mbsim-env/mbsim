@@ -83,24 +83,19 @@ namespace MBSim {
     gd(IT) = Wf.T() * WvP0P1;
     gd(IR) = Wm.T() * WomP0P1;
 
-    if (ffl) {
-      if (not ffl->isSetValued()) {
-        for (int i = 0; i < forceDir.cols(); i++)
-          la(i) = (*ffl)(g(i), gd(i));
-      }
+    if (ffl and not(ffl->isSetValued())) {
+      for (int i = 0; i < forceDir.cols(); i++)
+        la(i) = (*ffl)(g(i), gd(i));
+      WF[1] = Wf * la(IT);
+      WF[0] = -WF[1];
     }
 
-    if (fml) {
-      if (not fml->isSetValued()) {
-        for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
-          la(i) = (*fml)(g(i), gd(i));
-      }
+    if (fml and not(fml->isSetValued())) {
+      for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
+        la(i) = (*fml)(g(i), gd(i));
+      WM[1] = Wm * la(IR);
+      WM[0] = -WM[1];
     }
-
-    WF[1] = Wf * la(IT);
-    WM[1] = Wm * la(IR);
-    WF[0] = -WF[1];
-    WM[0] = -WM[1];
   }
 
   void Joint::updatewb(double t, int j) {

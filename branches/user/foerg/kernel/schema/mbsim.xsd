@@ -1028,7 +1028,7 @@
     </xs:complexContent>
   </xs:complexType>   
   
-  <xs:element name="Constraint" abstract="true" substitutionGroup="Object" type="ConstraintType">
+  <xs:element name="Constraint" abstract="true" substitutionGroup="LinkMechanics" type="ConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Kinematische Zwangsbedingungen.
@@ -1037,7 +1037,7 @@
   </xs:element>
   <xs:complexType name="ConstraintType">
     <xs:complexContent>
-      <xs:extension base="ObjectType"/>
+      <xs:extension base="LinkMechanicsType"/>
     </xs:complexContent>
   </xs:complexType>   
 

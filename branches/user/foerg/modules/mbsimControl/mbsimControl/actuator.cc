@@ -35,7 +35,15 @@ namespace MBSimControl {
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1), refFrame(0) {
   }
 
-  void Actuator::updateh(double t, int j) {
+  void Actuator::updateStateDependentVariables(double t) {
+    la = signal->getSignal();
+    WF[1] = refFrame->getOrientation()*forceDir*la(IT);
+    WF[0] = -WF[1];
+    WM[1] = refFrame->getOrientation()*momentDir*la(IR);
+    WM[0] = -WM[1];
+  }
+
+  void Actuator::updateJacobians(double t, int j) {
     Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
     Mat3x3 tWrP0P1 = tilde(WrP0P1);
 
@@ -47,13 +55,9 @@ namespace MBSimControl {
     C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
     C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
     C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+  }
 
-    la = signal->getSignal();
-    WF[1] = refFrame->getOrientation()*forceDir*la(IT);
-    WF[0] = -WF[1];
-    WM[1] = refFrame->getOrientation()*momentDir*la(IR);
-    WM[0] = -WM[1];
-
+  void Actuator::updateh(double t, int j) {
     h[j][0] += C.getJacobianOfTranslation(j).T()*WF[0] + C.getJacobianOfRotation(j).T()*WM[0];
     h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
   }

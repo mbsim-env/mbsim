@@ -62,6 +62,7 @@ namespace MBSimControl {
         fun->setName("Function");
       }
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return 1; }
     private:
       Signal * signal;
       MBSim::Function<double(double)>* fun;
@@ -85,6 +86,7 @@ namespace MBSimControl {
         fun->setName("Function");
       }
       void updateStateDependentVariables(double t);
+      int getSignalSize() { return 1; }
     private:
       Signal * signal1;
       Signal * signal2;

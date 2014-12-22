@@ -53,6 +53,25 @@ namespace MBSim {
     gdSize = 1;
   }
 
+  void Gear::updateStateDependentVariables(double t) {
+    g.init(0);
+    for(unsigned i=0; i<body.size(); i++)
+      g+=body[i]->getqRel()*ratio[i];
+
+    gd.init(0);
+    for(unsigned i=0; i<body.size(); i++) {
+      gd+=body[i]->getuRel()*ratio[i];
+    }
+
+    if(isSingleValued()) {
+      la(0) = (*func)(g(0),gd(0));
+      for(unsigned i=0; i<body.size(); i++) {
+        WF[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
+        WM[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
+      }
+    }
+  }
+
   void Gear::addTransmission(const Transmission &transmission) { 
     body.push_back(transmission.body); 
     ratio.push_back(transmission.ratio); 
@@ -74,17 +93,14 @@ namespace MBSim {
   }
 
   void Gear::updateh(double t, int j) {
-    la(0) = (*func)(g(0),gd(0));
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)  {
         h[j][i]-=body[i]->getJRel(j).T()*ratio[i]*la;
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        Vec3 WF = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
-        Vec3 WM = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
-        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM;
-        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF + C[i].getJacobianOfRotation(j).T()*WM;
+        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[i] + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[i];
+        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF[i] + C[i].getJacobianOfRotation(j).T()*WM[i];
       }
     }
   }
@@ -122,19 +138,6 @@ namespace MBSim {
       C[i].setJacobianOfRotation(body[i]->getFrameOfReference()->getJacobianOfRotation(j),j);
       C[i].setGyroscopicAccelerationOfTranslation(body[i]->getFrameOfReference()->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*body[i]->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j) + crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),WrP0P1)),j);
       C[i].setGyroscopicAccelerationOfRotation(body[i]->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
-    }
-  }
-
-  void Gear::updateg(double) {
-    g.init(0);
-    for(unsigned i=0; i<body.size(); i++)
-      g+=body[i]->getqRel()*ratio[i];
-  } 
-
-  void Gear::updategd(double) {
-    gd.init(0);
-    for(unsigned i=0; i<body.size(); i++) {
-      gd+=body[i]->getuRel()*ratio[i];
     }
   }
 
@@ -176,6 +179,12 @@ namespace MBSim {
         W[0].push_back(Mat(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols(),laSize));
         W[1].push_back(Mat(6,laSize));
       }
+    }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      for(unsigned int i=0; i<body.size(); i++)
+        if(body[i]) addDependencies(body[i]->getDependencies());
+      if(func) addDependencies(func->getDependencies());
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);

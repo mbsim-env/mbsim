@@ -91,7 +91,6 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentBody(getByPath<RigidBody>(saved_DependentBody));
-      bd->addDependency(this);
       if (saved_IndependentBody.size()>0) {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
@@ -100,6 +99,7 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       Constraint::init(stage);
+      bd->addDependency(this);
       for(unsigned int i=0; i<bi.size(); i++)
         addDependency(bi[i]);
     }
@@ -179,8 +179,11 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentBody(getByPath<RigidBody>(saved_DependentBody));
-      bd->addDependency(this);
       Constraint::init(stage);
+    }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      bd->addDependency(this);
     }
     else
       Constraint::init(stage);
@@ -209,8 +212,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
-    if(stage==unknownStage)
+    if(stage==preInit) {
       KinematicConstraint::init(stage);
+      addDependencies(f->getDependencies());
+    }
     else
       KinematicConstraint::init(stage);
     f->init(stage);
@@ -248,7 +253,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
 
   void GeneralizedVelocityConstraint::init(InitStage stage) {
-    KinematicConstraint::init(stage);
+    if(stage==preInit) {
+      KinematicConstraint::init(stage);
+      addDependencies(f->getDependencies());
+    }
+    else
+      KinematicConstraint::init(stage);
     f->init(stage);
   }
 
@@ -309,7 +319,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
 
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
-    KinematicConstraint::init(stage);
+    if(stage==preInit) {
+      KinematicConstraint::init(stage);
+      addDependencies(f->getDependencies());
+    }
+    else
+      KinematicConstraint::init(stage);
     f->init(stage);
   }
   
@@ -415,15 +430,11 @@ namespace MBSim {
         setIndependentBody(getByPath<RigidBody>(saved_IndependentBody));
       if (saved_IndependentBody2!="")
         setIndependentBody(getByPath<RigidBody>(saved_IndependentBody2));
-      for(unsigned int i=0; i<bd1.size(); i++) 
-        bd1[i]->addDependency(this);
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());
         if1.push_back(frame1);
       }
-      for(unsigned int i=0; i<bd2.size(); i++)
-        bd2[i]->addDependency(this);
       if(bd2.size()) {
         for(unsigned int i=0; i<bd2.size()-1; i++) 
           if2.push_back(bd2[i+1]->getFrameOfReference());
@@ -433,6 +444,10 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       Constraint::init(stage);
+      for(unsigned int i=0; i<bd1.size(); i++) 
+        bd1[i]->addDependency(this);
+      for(unsigned int i=0; i<bd2.size(); i++)
+        bd2[i]->addDependency(this);
       if(bi)
         addDependency(bi);
       if(bi2)
