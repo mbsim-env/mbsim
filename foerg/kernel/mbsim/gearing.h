@@ -37,11 +37,12 @@ namespace MBSim {
       fmatvec::Vec3 Wt;
     public:
       Gearing(const std::string &name);
-      void updateh(double, int i=0);
-      void updateW(double, int i=0);
+      void updateStateDependentVariables(double t);
+      void updateh(double t, int i=0);
+      void updateW(double t, int i=0);
       void updateJacobians(double t, int j=0);
-      void updateg(double);
-      void updategd(double);
+      void updateg(double t) { }
+      void updategd(double t) { }
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);

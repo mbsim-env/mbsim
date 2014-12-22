@@ -42,10 +42,11 @@ namespace MBSim {
       std::vector<std::string> saved_IndependentBody;
     public:
       Gear(const std::string &name="");
-      void updateh(double, int i=0);
-      void updateW(double, int i=0);
-      void updateg(double);
-      void updategd(double);
+      void updateStateDependentVariables(double t);
+      void updateh(double t, int i=0);
+      void updateW(double t, int i=0);
+      void updateg(double t) { }
+      void updategd(double t) { }
       void updateJacobians(double t, int j=0);
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);

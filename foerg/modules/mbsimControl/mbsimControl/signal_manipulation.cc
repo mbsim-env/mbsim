@@ -409,7 +409,7 @@ namespace MBSimControl {
     else if(stage==preInit) {
       Signal::init(stage);
       addDependency(s);
-      addDependency(s2);
+      if(s2) addDependency(s2);
     }
     else
       Signal::init(stage);

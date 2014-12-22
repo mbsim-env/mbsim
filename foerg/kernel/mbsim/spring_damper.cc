@@ -90,6 +90,7 @@ namespace MBSim {
       LinkMechanics::init(stage);
       for(unsigned int i=0; i<frame.size(); i++)
         addDependencies(frame[i]->getDependencies());
+      addDependencies(func->getDependencies());
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);
@@ -227,6 +228,7 @@ namespace MBSim {
       LinkMechanics::init(stage);
       for(unsigned int i=0; i<frame.size(); i++)
         addDependencies(frame[i]->getDependencies());
+      addDependencies(func->getDependencies());
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);
@@ -389,10 +391,9 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       LinkMechanics::init(stage);
-      for(unsigned int i=0; i<body.size(); i++) {
-        if(body[i])
-          addDependencies(body[i]->getDependencies());
-      }
+      for(unsigned int i=0; i<body.size(); i++)
+        if(body[i]) addDependencies(body[i]->getDependencies());
+      addDependencies(func->getDependencies());
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);

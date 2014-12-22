@@ -46,6 +46,16 @@ namespace MBSim {
     gdSize = body->getuRelSize();
   }
 
+  void KinematicExcitation::updateStateDependentVariables(double t) {
+    if(func) {
+      la = (*func)(g,gd);
+      WF[1] = body->getFrameOfReference()->getOrientation()*body->getPJT()*la;
+      WM[1] = body->getFrameOfReference()->getOrientation()*body->getPJR()*la;
+      WF[0] = -WF[1];
+      WM[0] = -WM[1];
+    }
+  }
+
   void KinematicExcitation::updateW(double t, int j) {
     if(j==0) {
       W[j][0]-=body->getJRel(j).T();
@@ -56,12 +66,11 @@ namespace MBSim {
   }
 
   void KinematicExcitation::updateh(double t, int j) {
-    la = (*func)(g,gd);
     if(j==0) {
       h[j][0]-=body->getJRel(j).T()*la;
     } else {
-      h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + body->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
-      h[j][1]+=C.getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + C.getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
+      h[j][0]+=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[0] + body->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[0];
+      h[j][1]+=C.getJacobianOfTranslation(j).T()*WF[1] + C.getJacobianOfRotation(j).T()*WM[1];
     }
   }
 
@@ -115,6 +124,10 @@ namespace MBSim {
       C.getJacobianOfRotation(0).resize(body->getFrameOfReference()->getJacobianOfRotation(0).cols());
       C.getJacobianOfTranslation(1).resize(body->getFrameOfReference()->getJacobianOfTranslation(1).cols());
       C.getJacobianOfRotation(1).resize(body->getFrameOfReference()->getJacobianOfRotation(1).cols());
+    }
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+      addDependency(body);
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);
@@ -190,15 +203,19 @@ namespace MBSim {
     if(!f) xSize = body->getqRelSize();
   }
 
-  void GeneralizedPositionExcitation::updatexd(double t) {
-    //if(!f && fd) xd = (*fd)(t);
+  void GeneralizedPositionExcitation::init(InitStage stage) {
+    if(stage==preInit) {
+      KinematicExcitation::init(stage);
+      addDependencies(f->getDependencies());
+    }
+    else
+      KinematicExcitation::init(stage);
+    f->init(stage);
   }
 
-  void GeneralizedPositionExcitation::updateg(double t) {
+  void GeneralizedPositionExcitation::updateStateDependentVariables(double t) {
+    KinematicExcitation::updateStateDependentVariables(t);
     if(g.size()) g=body->getqRel()-(*f)(t);
-  } 
-
-  void GeneralizedPositionExcitation::updategd(double t) {
     if(gd.size()) gd=body->getuRel()-f->parDer(t);
   }
 
@@ -210,16 +227,24 @@ namespace MBSim {
     xSize = body->getqRelSize();
   }
 
-  void GeneralizedVelocityExcitation::updatexd(double t) {
-    if(f) xd = (*f)(x,t);
+  void GeneralizedVelocityExcitation::init(InitStage stage) {
+    if(stage==preInit) {
+      KinematicExcitation::init(stage);
+      addDependencies(f->getDependencies());
+    }
+    else
+      KinematicExcitation::init(stage);
+    f->init(stage);
   }
 
-  void GeneralizedVelocityExcitation::updateg(double t) {
+  void GeneralizedVelocityExcitation::updateStateDependentVariables(double t) {
+    KinematicExcitation::updateStateDependentVariables(t);
     if(g.size()) g=body->getqRel()-x;
-  } 
-
-  void GeneralizedVelocityExcitation::updategd(double t) {
     if(gd.size()) gd=body->getuRel()-(*f)(x,t);
+  }
+
+  void GeneralizedVelocityExcitation::updatexd(double t) {
+    if(f) xd = (*f)(x,t);
   }
 
   void GeneralizedVelocityExcitation::updatewb(double t, int j) {
@@ -230,17 +255,25 @@ namespace MBSim {
     xSize = body->getqRelSize()+body->getuRelSize();
   }
 
+  void GeneralizedAccelerationExcitation::init(InitStage stage) {
+    if(stage==preInit) {
+      KinematicExcitation::init(stage);
+      addDependencies(f->getDependencies());
+    }
+    else
+      KinematicExcitation::init(stage);
+    f->init(stage);
+  }
+
+  void GeneralizedAccelerationExcitation::updateStateDependentVariables(double t) {
+    KinematicExcitation::updateStateDependentVariables(t);
+    if(g.size()) g=body->getqRel()-x(0,body->getqRelSize()-1);
+    if(gd.size()) gd=body->getuRel()-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
+  }
+
   void GeneralizedAccelerationExcitation::updatexd(double t) {
     xd(0,body->getqRelSize()-1) = x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
     xd(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1) = (*f)(x,t);
-  }
-
-  void GeneralizedAccelerationExcitation::updateg(double t) {
-    if(g.size()) g=body->getqRel()-x(0,body->getqRelSize()-1);
-  } 
-
-  void GeneralizedAccelerationExcitation::updategd(double t) {
-    if(gd.size()) gd=body->getuRel()-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
   }
 
   void GeneralizedAccelerationExcitation::updatewb(double t, int j) {

@@ -85,6 +85,11 @@ namespace MBSimControl {
         setSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
+    else if(stage==preInit) {
+      Signal::init(stage);
+      addDependency(signal);
+      addDependencies(fun->getDependencies());
+    }
     else
       Signal::init(stage);
     fun->init(stage);
@@ -92,7 +97,7 @@ namespace MBSimControl {
 
   void Function_SSEvaluation::updateStateDependentVariables(double t) {
     VecV y=signal->getSignal();
-    for (int i=0; i<y.size(); i++)
+   for (int i=0; i<y.size(); i++)
       y(i)=(*fun)(y(i));
     s = y;
   }
@@ -118,6 +123,8 @@ namespace MBSimControl {
     }
     else if(stage==preInit) {
       Signal::init(stage);
+      addDependency(signal1);
+      addDependency(signal2);
       addDependencies(fun->getDependencies());
     }
     else
