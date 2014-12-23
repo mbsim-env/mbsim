@@ -82,6 +82,8 @@
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVJointForce>
         </RigidBody>
+    </objects>
+    <links>
         <GeneralizedVelocityConstraint name="KinematicConstraint2">
             <dependentRigidBody ref="../Object[RigidBody1]" />
             <enableOpenMBVForce>
@@ -99,8 +101,7 @@
               <SymbolicFunction arg1="q" arg1Dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction>
             </stateDependentConstraintFunction>
         </GeneralizedVelocityConstraint>
-    </objects>
-    <links />
+    </links>
     <observers>
         <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
             <frame ref="../Object[RigidBody1]/Frame[C]" />
