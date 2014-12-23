@@ -56,7 +56,7 @@ namespace MBSimControl {
       bool gActiveChanged() {return false; }
       bool isSingleValued() const { return true; }
 
-      virtual fmatvec::VecV calculateOutput() = 0;
+      const fmatvec::VecV& getOutput() const { return output; }
 
       void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
       int getSignalSize();
@@ -64,6 +64,7 @@ namespace MBSimControl {
     protected:
       Signal * inputSignal;
       std::string inputSignalString;
+      fmatvec::VecV output;
   };
 
 }

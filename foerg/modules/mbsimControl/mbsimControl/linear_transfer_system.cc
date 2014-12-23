@@ -86,6 +86,10 @@ namespace MBSimControl {
       showABCD();
   }
 
+  void LinearTransferSystem::updateStateDependentVariables(double t) {
+    output=(this->*calculateOutputMethod)();
+  }
+
   void LinearTransferSystem::updatedx(double t, double dt) {
     xd=(A*x+B*inputSignal->getSignal())*dt;
   }
@@ -113,10 +117,6 @@ namespace MBSimControl {
     }
     else
       SignalProcessingSystem::init(stage);
-  }
-
-  VecV LinearTransferSystem::calculateOutput() {
-    return (this->*calculateOutputMethod)();
   }
 
   VecV LinearTransferSystem::outputMethodC() {
@@ -212,11 +212,10 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::plot(double t, double dt) {
-    VecV y=calculateOutput();
     if(getPlotFeature(plotRecursive)==enabled) {
       if (getPlotFeature(globalPosition)==enabled)
-        for (int i=0; i<y.size(); i++)
-          plotVector.push_back(y(i));
+        for (int i=0; i<output.size(); i++)
+          plotVector.push_back(output(i));
       if (getPlotFeature(rightHandSide)==enabled)
         for (int i=0; i<B.cols(); i++)
           plotVector.push_back(inputSignal->getSignal()(i));

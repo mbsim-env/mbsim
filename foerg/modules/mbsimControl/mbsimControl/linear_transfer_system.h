@@ -43,6 +43,7 @@ namespace MBSimControl {
       
       void init(InitStage stage);
 
+      void updateStateDependentVariables(double t);
       void updatedx(double t, double dt);
       void updatexd(double t);
       
@@ -60,7 +61,6 @@ namespace MBSimControl {
     protected:
       fmatvec::Mat A,B,C,D;
       double R1,R2,c;
-      fmatvec::VecV calculateOutput();
       fmatvec::VecV (LinearTransferSystem::*calculateOutputMethod)();
       fmatvec::VecV outputMethodC();
       fmatvec::VecV outputMethodD();
