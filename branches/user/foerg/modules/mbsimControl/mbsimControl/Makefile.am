@@ -13,7 +13,6 @@ libmbsimControl_la_SOURCES = \
   signal_processing_system_sensor.cc\
   linear_transfer_system.cc\
   massless_spring_damper.cc\
-  actuator.cc\
   signal_function.cc\
   extern_signal_sink.cc
 
@@ -36,5 +35,4 @@ mbsimControlinclude_HEADERS = \
   signal_processing_system_sensor.h\
   linear_transfer_system.h\
   massless_spring_damper.h\
-  actuator.h\
   signal_function.h

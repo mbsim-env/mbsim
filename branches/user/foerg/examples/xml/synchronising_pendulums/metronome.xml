@@ -206,7 +206,7 @@
       <inputSignal ref="../Link[VelocitySensor]"/>
       <tanh/>
     </SignalOperation>
-    <Function_SSEvaluation name="ExcitationTorque" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <UnarySignalOperation name="ExcitationTorque" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Link[AngularSensor]"/>
       <function>
         <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
@@ -221,7 +221,7 @@
           </xy>
         </TabularFunction>
       </function>
-    </Function_SSEvaluation>
+    </UnarySignalOperation>
     <SignalMultiplication name="Excitation" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Link[ExcitationTorque]">
         <exponent>1</exponent>
@@ -230,11 +230,15 @@
         <exponent>3</exponent>
       </inputSignal>
     </SignalMultiplication>
-    <Actuator name="Actuator" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <KineticExcitation name="Actuator" xmlns="http://mbsim.berlios.de/MBSim">
       <momentDirection>[0 0 -1]'</momentDirection>
-      <inputSignal ref="../Link[Excitation]"/>
+      <momentFunction>
+        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+          <returnSignal ref="../../Link[Excitation]"/>
+        </SignalFunction>
+      </momentFunction>
       <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>
-    </Actuator>
+    </KineticExcitation>
   </links>
 </Group>
 

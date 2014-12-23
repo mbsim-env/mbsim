@@ -1,13 +1,14 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/kinetic_excitation.h"
 #include "mbsim/environment.h"
 
-#include "mbsimControl/actuator.h"
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
+#include "mbsimControl/signal_function.h"
 
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/tabular_functions.h"
@@ -132,11 +133,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(bDis);
   bDis->setSignal(basisControlOut);
 
-  Actuator *motorBasis = new Actuator("MotorBasis");
+  KineticExcitation *motorBasis = new KineticExcitation("MotorBasis");
   addLink(motorBasis);
   // motorBasis->setSignal(basisControlOut);
-  motorBasis->setSignal(bDis);
   motorBasis->setMomentDirection("[0;1;0]");
+  motorBasis->setMomentFunction(new SignalFunction<VecV(double)>(bDis));
   motorBasis->connect(getFrame("I"),basis->getFrame("R"));
 
 //  RelativeAngularPositionSensor * armPosition = new RelativeAngularPositionSensor("ArmPositionIst");
@@ -173,11 +174,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(aDis);
   aDis->setSignal(armControlOut);
 
-  Actuator *motorArm = new Actuator("MotorArm");
+  KineticExcitation *motorArm = new KineticExcitation("MotorArm");
   addLink(motorArm);
   // motorArm->setSignal(armControlOut);
-  motorArm->setSignal(aDis);
   motorArm->setMomentDirection("[0;0;1]");
+  motorArm->setMomentFunction(new SignalFunction<VecV(double)>(aDis));
   motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
 
 //  RelativePositionSensor * spitzePosition = new RelativePositionSensor("SpitzePositionIst");
@@ -214,11 +215,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(sDis);
   sDis->setSignal(spitzeControlOut);
 
-  Actuator *motorSpitze = new Actuator("MotorSpitze");
+  KineticExcitation *motorSpitze = new KineticExcitation("MotorSpitze");
   addLink(motorSpitze);
   // motorSpitze->setSignal(spitzeControlOut);
-  motorSpitze->setSignal(sDis);
   motorSpitze->setForceDirection("[0;1;0]");
+  motorSpitze->setForceFunction(new SignalFunction<VecV(double)>(sDis));
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

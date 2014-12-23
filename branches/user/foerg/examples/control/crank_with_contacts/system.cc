@@ -14,7 +14,7 @@
 #include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/functions/basic_functions.h"
 
-#include "mbsimControl/actuator.h"
+#include "mbsimControl/signal_function.h"
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/signal_processing_system_sensor.h"
@@ -379,10 +379,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Reglerausgang->setSignalProcessingSystem(Regler);
 
   // Aktuator
-  Actuator *Antrieb = new Actuator("Antrieb");
+  KineticExcitation *Antrieb = new KineticExcitation("Antrieb");
   addLink(Antrieb);
-  Antrieb->setSignal(Reglerausgang);
   Antrieb->setMomentDirection("[0;0;1]");
+  Antrieb->setMomentFunction(new SignalFunction<VecV(double)>(Reglerausgang));
+
   Antrieb->connect(this->getFrame("I"),Crank->getFrameForKinematics());
 
   //---------------------------------------------------------------------------
