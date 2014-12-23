@@ -45,56 +45,6 @@ namespace MBSimControl {
       MBSim::Function<fmatvec::VecV(double)> * function;
   };
 
-  /*!
-   * \brief Function_SSEvaluation
-   * \author Markus Schneider
-   */
-  class Function_SSEvaluation : public Signal {
-    public:
-      Function_SSEvaluation(const std::string &name="") : Signal(name), signal(NULL), fun(NULL), signalString("") {}
-      ~Function_SSEvaluation() { delete fun; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setSignal(Signal * s) {signal=s; }
-      void setFunction(MBSim::Function<double(double)>* fun_) {
-        fun=fun_;
-        fun->setParent(this);
-        fun->setName("Function");
-      }
-      void updateStateDependentVariables(double t);
-      int getSignalSize() { return 1; }
-    private:
-      Signal * signal;
-      MBSim::Function<double(double)>* fun;
-      std::string signalString;
-  };
-
-  /*!
-   * \brief Function_SSSEvaluation
-   * \author Markus Schneider
-   */
-  class Function_SSSEvaluation : public Signal {
-    public:
-      Function_SSSEvaluation(const std::string &name="") : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
-      ~Function_SSSEvaluation() { delete fun; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
-      void setFunction(MBSim::Function<double(double,double)>* fun_) {
-        fun=fun_;
-        fun->setParent(this);
-        fun->setName("Function");
-      }
-      void updateStateDependentVariables(double t);
-      int getSignalSize() { return 1; }
-    private:
-      Signal * signal1;
-      Signal * signal2;
-      MBSim::Function<double(double,double)>* fun;
-      std::string signal1String;
-      std::string signal2String;
-  };
-
 }
 
 #endif /* _FUNCTION_SENSOR_H_ */
