@@ -13,10 +13,11 @@ namespace MBSimFMI {
   //! get the directory of this shared library
   boost::filesystem::path getSharedLibDir();
 
-  //! stream buffer used for FMI logging
+  //! stream buffer used by fmatvec::Atom for FMI logging
   class LoggerBuffer : public std::stringbuf {
     public:
-      LoggerBuffer(fmiCallbackLogger logger_, fmiComponent c_, const std::string &instanceName_, fmiStatus status_, const std::string &category_) :
+      LoggerBuffer(fmiCallbackLogger logger_, fmiComponent c_, const std::string &instanceName_,
+                   fmiStatus status_, const std::string &category_) :
           std::stringbuf(std::ios_base::out),
           logger(logger_),
           c(c_),
