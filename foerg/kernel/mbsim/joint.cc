@@ -36,7 +36,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
   Joint::Joint(const string &name) :
-      LinkMechanics(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
+      MechanicalLink(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
   }
 
   Joint::~Joint() {
@@ -59,8 +59,8 @@ namespace MBSim {
   }
 
   void Joint::connect(Frame* frame0, Frame* frame1) {
-    LinkMechanics::connect(frame0);
-    LinkMechanics::connect(frame1);
+    MechanicalLink::connect(frame0);
+    MechanicalLink::connect(frame1);
   }
 
   void Joint::updateStateDependentVariables(double t) {
@@ -145,7 +145,7 @@ namespace MBSim {
   }
 
   void Joint::calcxSize() {
-    LinkMechanics::calcxSize();
+    MechanicalLink::calcxSize();
     xSize = momentDir.cols();
   }
 
@@ -155,15 +155,15 @@ namespace MBSim {
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not(frame.size()))
         THROW_MBSIMERROR("no connection given!");
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     else if(stage==preInit) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       for(unsigned int i=0; i<frame.size(); i++)
         addDependencies(frame[i]->getDependencies());
     }
     else if (stage == resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
 
       g.resize(forceDir.cols() + momentDir.cols());
       gd.resize(forceDir.cols() + momentDir.cols());
@@ -172,7 +172,7 @@ namespace MBSim {
       gdn.resize(gdSize);
     }
     else if (stage == unknownStage) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
 
       if (ffl) {
         fifl = new BilateralImpact;
@@ -225,11 +225,11 @@ namespace MBSim {
           for (int j = 0; j < gd.size(); ++j)
             plotColumns.push_back("gd(" + numtostr(j) + ")");
         }
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
       }
     }
     else
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     if(ffl) ffl->init(stage);
     if(fml) fml->init(stage);
     if(fifl) fifl->init(stage);
@@ -237,27 +237,27 @@ namespace MBSim {
   }
 
   void Joint::calclaSize(int j) {
-    LinkMechanics::calclaSize(j);
+    MechanicalLink::calclaSize(j);
     laSize = forceDir.cols() + momentDir.cols();
   }
 
   void Joint::calcgSize(int j) {
-    LinkMechanics::calcgSize(j);
+    MechanicalLink::calcgSize(j);
     gSize = forceDir.cols() + momentDir.cols();
   }
 
   void Joint::calcgdSize(int j) {
-    LinkMechanics::calcgdSize(j);
+    MechanicalLink::calcgdSize(j);
     gdSize = forceDir.cols() + momentDir.cols();
   }
 
   void Joint::calcrFactorSize(int j) {
-    LinkMechanics::calcrFactorSize(j);
+    MechanicalLink::calcrFactorSize(j);
     rFactorSize = isSetValued() ? forceDir.cols() + momentDir.cols() : 0;
   }
 
   void Joint::calccorrSize(int j) {
-    LinkMechanics::calccorrSize(j);
+    MechanicalLink::calccorrSize(j);
     corrSize = forceDir.cols() + momentDir.cols();
   }
 
@@ -596,7 +596,7 @@ namespace MBSim {
   void Joint::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      // WF and WM are needed by OpenMBV plotting in LinkMechanics::plot(...)
+      // WF and WM are needed by OpenMBV plotting in MechanicalLink::plot(...)
       if (isSetValued()) {
         WF[0] = fF[0] * la;
         WF[1] = -WF[0];
@@ -614,12 +614,12 @@ namespace MBSim {
         for (int j = 0; j < gd.size(); j++)
           plotVector.push_back(gd(j));
       }
-      LinkMechanics::plot(t, dt);
+      MechanicalLink::plot(t, dt);
     }
   }
 
   void Joint::initializeUsingXML(DOMElement *element) {
-    LinkMechanics::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if (e)
       refFrameID = getInt(e);
@@ -654,7 +654,7 @@ namespace MBSim {
   }
 
   DOMElement* Joint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = LinkMechanics::writeXMLFile(parent);
+    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
 //    if (forceDir.cols()) {
 //      addElementText(ele0, MBSIM%"forceDirection", forceDir);
 //      DOMElement *ele1 = new DOMElement(MBSIM%"forceLaw");

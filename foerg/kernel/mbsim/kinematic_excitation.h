@@ -20,7 +20,7 @@
 #ifndef _KINEMATIC_EXCITATION_H_
 #define _KINEMATIC_EXCITATION_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 
@@ -31,7 +31,7 @@
 
 namespace MBSim {
 
-  class KinematicExcitation : public LinkMechanics {
+  class KinematicExcitation : public MechanicalLink {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
       RigidBody* body;

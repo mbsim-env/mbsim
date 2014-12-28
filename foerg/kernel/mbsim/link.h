@@ -38,7 +38,7 @@ namespace MBSim {
    * \brief general link to one or more objects
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
-   * \date 2009-04-06 ExtraDynamicInterface included / LinkMechanics added (Thorsten Schindler)
+   * \date 2009-04-06 ExtraDynamicInterface included / MechanicalLink added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 enhanced structure for implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)

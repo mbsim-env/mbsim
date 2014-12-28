@@ -20,7 +20,7 @@
 #ifndef _GEAR_H_
 #define _GEAR_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -32,7 +32,7 @@ namespace MBSim {
 
   class Transmission;
 
-  class Gear : public LinkMechanics {
+  class Gear : public MechanicalLink {
     protected:
       Function<double(double,double)> *func;
       std::vector<RigidBody*> body;

@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _LINK_MECHANICS_H_
-#define _LINK_MECHANICS_H_
+#ifndef _MECHANICAL_LINK_H_
+#define _MECHANICAL_LINK_H_
 
 #include "link.h"
 
@@ -45,18 +45,18 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
-  class LinkMechanics : public Link {
+  class MechanicalLink : public Link {
     public:
       /**
        * \brief constructor
        * \param name of link machanics
        */
-      LinkMechanics(const std::string &name);
+      MechanicalLink(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~LinkMechanics();
+      virtual ~MechanicalLink();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatedhdz(double t);

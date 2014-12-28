@@ -19,7 +19,7 @@
 #ifndef _CONSTRAINT_H
 #define _CONSTRAINT_H
 
-#include "link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -36,7 +36,7 @@ namespace MBSim {
    * \brief Class for constraints between generalized coordinates of objects
    * \author Martin Foerg
    */
-  class Constraint : public LinkMechanics {
+  class Constraint : public MechanicalLink {
     private:
 
     public:

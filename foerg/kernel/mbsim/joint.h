@@ -20,7 +20,7 @@
 #ifndef _JOINT_H_
 #define _JOINT_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -39,13 +39,13 @@ namespace MBSim {
   /** 
    * \brief class for connections: constraints on frames
    * \author Martin Foerg
-   * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
+   * \date 2009-04-06 MechanicalLink added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-08-21 one force direction (Thorsten Schindler)
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    * \todo hSize Frame C
    */
-  class Joint : public LinkMechanics {
+  class Joint : public MechanicalLink {
     public:
       /**
        * \brief constructor
@@ -152,7 +152,7 @@ namespace MBSim {
       void setOpenMBVForce(OpenMBV::Arrow *arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        MechanicalLink::setOpenMBVForceArrow(arrow, which);
       }
 
       /** \brief Visualize a moment arrow */
@@ -163,7 +163,7 @@ namespace MBSim {
       void setOpenMBVMoment(OpenMBV::Arrow *arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+        MechanicalLink::setOpenMBVMomentArrow(arrow, which);
       }
 #endif
 

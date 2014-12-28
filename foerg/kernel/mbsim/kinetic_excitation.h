@@ -20,7 +20,7 @@
 #ifndef _KINETICEXCITATION_H_
 #define _KINETICEXCITATION_H_
 
-#include <mbsim/link_mechanics.h>
+#include <mbsim/mechanical_link.h>
 #include <mbsim/frame.h>
 #include <mbsim/functions/function.h>
 
@@ -37,7 +37,7 @@ namespace MBSim {
    * \date 2009-08-11 some comments (Thorsten Schindler)
    * \date 2013-01-09 second frame for action-reaction law (Martin Förg)
    */
-  class KineticExcitation : public LinkMechanics {
+  class KineticExcitation : public MechanicalLink {
     public:
       /**
        * \brief constructor
@@ -97,7 +97,7 @@ namespace MBSim {
        */
       void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
-      using LinkMechanics::connect;
+      using MechanicalLink::connect;
 
       /**
        * \param first frame to connect
@@ -111,7 +111,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 
       /** \brief Visualize a moment arrow */
@@ -119,7 +119,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
 #endif
 

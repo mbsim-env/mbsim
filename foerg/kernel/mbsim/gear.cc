@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
 
-  Gear::Gear(const string &name) : LinkMechanics(name), func(0) {
+  Gear::Gear(const string &name) : MechanicalLink(name), func(0) {
     body.push_back(0); 
     ratio.push_back(-1);
 
@@ -158,7 +158,7 @@ namespace MBSim {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           body.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       }
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     else if(stage==unknownStage) {
 
@@ -181,13 +181,13 @@ namespace MBSim {
       }
     }
     else if(stage==preInit) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       for(unsigned int i=0; i<body.size(); i++)
         if(body[i]) addDependencies(body[i]->getDependencies());
       if(func) addDependencies(func->getDependencies());
     }
     else if(stage==resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(1);
       gd.resize(1);
       la.resize(1);
@@ -199,7 +199,7 @@ namespace MBSim {
         plotColumns.push_back("M");
       }
       if(getPlotFeature(plotRecursive)==enabled) {
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(FArrow[0]) {
@@ -229,7 +229,7 @@ namespace MBSim {
       }
     }
     else {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     if(func) func->init(stage);
   }
@@ -276,12 +276,12 @@ namespace MBSim {
         }
       }
 #endif
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 
   void Gear::initializeUsingXML(DOMElement* element) {
-    LinkMechanics::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     if(e) {
       Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());

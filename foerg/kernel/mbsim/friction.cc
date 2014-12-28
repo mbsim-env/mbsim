@@ -39,7 +39,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedFriction, MBSIM%"GeneralizedFriction")
 
-  GeneralizedFriction::GeneralizedFriction(const string &name) : LinkMechanics(name), func(NULL), laN(0), body(2)
+  GeneralizedFriction::GeneralizedFriction(const string &name) : MechanicalLink(name), func(NULL), laN(0), body(2)
   {
     WF.resize(2);
     WM.resize(2);
@@ -103,18 +103,18 @@ namespace MBSim {
         setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
       if(body[1]==NULL)
         THROW_MBSIMERROR("rigid body on second side must be given!");
-      if(body[0]) LinkMechanics::connect(body[0]->getFrameForKinematics());
-      LinkMechanics::connect(body[1]->getFrameForKinematics());
-      LinkMechanics::init(stage);
+      if(body[0]) MechanicalLink::connect(body[0]->getFrameForKinematics());
+      MechanicalLink::connect(body[1]->getFrameForKinematics());
+      MechanicalLink::init(stage);
     }
     else if(stage==preInit) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       for(unsigned int i=0; i<body.size(); i++)
         if(body[i]) addDependencies(body[i]->getDependencies());
       if(laN) addDependencies(laN->getDependencies());
     }
     else if(stage==resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(1);
       gd.resize(1);
       la.resize(1);
@@ -123,7 +123,7 @@ namespace MBSim {
       updatePlotFeatures();
       plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
       }
     }
     else if(stage==unknownStage) {
@@ -131,10 +131,10 @@ namespace MBSim {
         THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
       if(body[1]->getuRelSize()!=1)
         THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     else
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     func->init(stage);
   }
 
@@ -146,12 +146,12 @@ namespace MBSim {
   void GeneralizedFriction::plot(double t,double dt) {
     plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 
   void GeneralizedFriction::initializeUsingXML(DOMElement *element) {
-    LinkMechanics::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionForceLaw");
     setGeneralizedFrictionForceLaw(ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild()));
    //Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
@@ -166,13 +166,13 @@ namespace MBSim {
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
-      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
+      MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, true);
-      LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
+      MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }

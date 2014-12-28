@@ -75,7 +75,7 @@ namespace MBSim {
     return res;
   } 
 
-  Constraint::Constraint(const std::string &name) : LinkMechanics(name) {
+  Constraint::Constraint(const std::string &name) : MechanicalLink(name) {
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
@@ -182,7 +182,7 @@ namespace MBSim {
       Constraint::init(stage);
     }
     else if(stage==preInit) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       bd->addDependency(this);
     }
     else
