@@ -15,6 +15,11 @@ using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace boost::filesystem;
 
+namespace {
+  void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
+                                      boost::shared_ptr<Preprocess::XPathParamSet> &param);
+}
+
 namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
@@ -42,9 +47,7 @@ namespace MBSimFMI {
 
     // set param according data in var
     boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-    for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it) {
-      cerr<<"MFMF "<<(*it)->getName()<<endl;
-    }
+    convertVariableToXPathParamSet(varSim.size(), var, param);
 
     // preprocess XML file
     OctEval octEval;
@@ -77,6 +80,99 @@ namespace MBSimFMI {
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     doc->normalizeDocument();
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+  }
+
+}
+
+namespace {
+
+  double getValueAsDouble(MBSimFMI::Variable &v) {
+    switch(v.getDatatypeChar()) {
+      case 'r':
+        return v.getValue(double());
+      case 'i':
+        return v.getValue(int());
+      case 'b':
+        return v.getValue(bool());
+      default:
+        throw runtime_error("Internal error: Unknwon type.");
+    }
+  }
+
+  string getName(MBSimFMI::Variable &v) {
+    string name=v.getName();
+    return name.substr(0, name.find('['));
+  }
+
+  size_t getCol(MBSimFMI::Variable &v) {
+    string name=v.getName();
+    name=name.substr(name.find('[')+1);
+    name=name.substr(name.find(',')+1);
+    return boost::lexical_cast<size_t>(name.substr(0, name.size()-1));
+  }
+
+  void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
+                                      boost::shared_ptr<Preprocess::XPathParamSet> &param) {
+    Preprocess::ParamSet &p=param->insert(make_pair(
+      "/{"+MBSIMXML.getNamespaceURI()+"}MBSimProject[1]/{"+MBSIM.getNamespaceURI()+"}DynamicSystemSolver[1]",
+      Preprocess::ParamSet())).first->second;
+    for(vector<boost::shared_ptr<MBSimFMI::Variable> >::const_iterator it=var.begin()+startIndex; it!=var.end(); ++it) {
+      // skip all but parameters
+      if((*it)->getType()!=MBSimFMI::Parameter)
+        continue;
+      // handle string parameters (can only be scalars)
+      if((*it)->getDatatypeChar()=='s')
+        p.push_back(make_pair((*it)->getName(), octave_value((*it)->getValue(string()))));
+      // handle none string parameters (can be scalar, vector or matrix)
+      else {
+        // get name and type (scalar, vector or matrix)
+        string name=(*it)->getName();
+        size_t poss=name.find('[');
+        OctEval::ValueType type=OctEval::ScalarType;
+        if(poss!=string::npos) {
+          type=OctEval::VectorType;
+          if(name.substr(poss+1).find(',')!=string::npos)
+            type=OctEval::MatrixType;
+        }
+        name=name.substr(0, poss);
+        octave_value value;
+        switch(type) {
+          case OctEval::ScalarType:
+            value=getValueAsDouble(**it);
+            break;
+          case OctEval::VectorType: {
+            vector<double> vec;
+            for(; it!=var.end() && name==getName(**it); ++it)
+              vec.push_back(getValueAsDouble(**it));
+            --it;
+            Matrix m(vec.size(), 1);
+            for(int i=0; i<vec.size(); ++i)
+              m(i)=vec[i];
+            value=m;
+            break;
+          }
+          case OctEval::MatrixType: {
+            vector<vector<double> > mat;
+            for(; it!=var.end() && name==getName(**it);) {
+              vector<double> row;
+              for(; it!=var.end() && name==getName(**it) && !(getCol(**it)==1 && row.size()>0); ++it)
+                row.push_back(getValueAsDouble(**it));
+              mat.push_back(row);
+            }
+            --it;
+            Matrix m(mat.size(), mat[0].size());
+            for(int r=0; r<mat.size(); ++r)
+              for(int c=0; c<mat[r].size(); ++c)
+                m(c*m.rows()+r)=mat[r][c];
+            value=m;
+            break;
+          }
+          default:
+            throw runtime_error("Internal error: Unknwon type.");
+        }
+        p.push_back(make_pair(name, value));
+      }
+    }
   }
 
 }

@@ -121,13 +121,18 @@ int main(int argc, char *argv[]) {
       if(useParam.size()>0)
         convertXPathParamSetToVariable(param, xmlParam);
       // remove all variables which are not in useParam
-      vector<boost::shared_ptr<Variable> > preVar2;
-      for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it)
-        if(useParam.find((*it)->getName())!=useParam.end()) {
-          cout<<"Using DynamicSystemSolver parameter "<<(*it)->getName()<<"."<<endl;
-          preVar2.push_back(*it);
+      vector<boost::shared_ptr<Variable> > xmlParam2;
+      for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
+        string name=(*it)->getName();
+        size_t pos=name.find('[');
+        if(pos!=string::npos)
+          name=name.substr(0, pos);
+        if(useParam.find(name)!=useParam.end()) {
+          cout<<"Using DynamicSystemSolver parameter '"<<name<<"'."<<endl;
+          xmlParam2.push_back(*it);
         }
-      xmlParam=preVar2;
+      }
+      xmlParam=xmlParam2;
       cout<<"Create model parameters."<<endl;
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
