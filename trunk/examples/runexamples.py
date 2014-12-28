@@ -45,7 +45,8 @@ willFail=set([
   pj("mechanics", "flexible_body", "beltdrive"),
   pj("mechanics", "contacts", "self_siphoning_beads"),
   pj("fmi", "simple_test"),
-  pj("fmi", "sphere_on_plane")
+  pj("fmi", "sphere_on_plane"),
+  pj("fmi", "hierachical_modelling")
 ])
 
 # MBSim Modules

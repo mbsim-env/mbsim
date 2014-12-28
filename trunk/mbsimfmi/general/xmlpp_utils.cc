@@ -36,9 +36,11 @@ void convertXPathParamSetToVariable(const boost::shared_ptr<Preprocess::XPathPar
               ","+boost::lexical_cast<string>(c+1)+"]", Parameter, value[r][c]));
       }
       // add a string variable as it
-      else if(type==OctEval::StringType)
-        fmiParam.push_back(boost::make_shared<VariableStore<string> >(pIt->first,
-          Parameter, OctEval::cast<string>(pIt->second)));
+      else if(type==OctEval::StringType) {
+        string value=OctEval::cast<string>(pIt->second);
+        value=value.substr(1, value.length()-2); // remove the leading and trailing '
+        fmiParam.push_back(boost::make_shared<VariableStore<string> >(pIt->first, Parameter, value));
+      }
     }
   }
 }

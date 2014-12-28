@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml"/>
+  <pv:Embed href="Integrator.mbsimint.xml">
+    <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+      <scalarParameter name="Tend">4</scalarParameter>
+    </Parameter>
+  </pv:Embed>
+</MBSimProject>
