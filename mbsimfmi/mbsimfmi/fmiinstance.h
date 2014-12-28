@@ -105,9 +105,9 @@ namespace MBSimFMI {
       int completedStepCounter;
       double nextPlotTime;
 
-#ifdef MBSIMSRCFMI
-      boost::shared_ptr<MBXMLUtils::SharedLibrary> shLib; // shared library of a user supplied model (source code model)
-#endif
+      // shared library of a user supplied model (only used for source code models)
+      boost::shared_ptr<MBXMLUtils::SharedLibrary> modelLib;
+
       void addModelParametersAndCreateDSS(std::vector<boost::shared_ptr<Variable> > &varSim);
   };
 
