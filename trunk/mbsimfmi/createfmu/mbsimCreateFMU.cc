@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     // load all plugins
     cout<<"Load MBSim plugins."<<endl;
-    MBSimXML::loadPlugins();
+    set<path> pluginLibs=MBSimXML::loadPlugins();
 
     // create parser (a validating parser for XML input and a none validating parser for shared library input)
     boost::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
       if(xmlParam.empty()) {
-        cout<<"No parameters used, copy preprocessed XML model file to FMU."<<endl;
+        cout<<"Copy preprocessed XML model file to FMU."<<endl;
         // no parameters -> save preprocessed model to FMU
         string ppModelStr;
         // serialize to string: this automatically normalized modelEle
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"model"/"Model.mbsimprj.flat.xml", ppModelStr);
       }
       else {
-        cout<<"Parameters exists, copy original XML model file and its dependencies to FMU."<<endl;
+        cout<<"Copy original XML model file and its dependencies to FMU."<<endl;
         // normalize modelEle
         modelEle->getOwnerDocument()->normalizeDocument();
         // parameters existing -> save original XML file to FMU including all dependencies
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
           if(!is_directory(*it))
             fmuFile.add(path("resources")/"model"/(*it), *it);
 
-        cout<<"Parameters exists, copy XML schema files to FMU."<<endl;
+        cout<<"Copy XML schema files to FMU."<<endl;
         path schemaDir=getInstallPath()/"share"/"mbxmlutils"/"schema";
         size_t depth=distance(schemaDir.begin(), schemaDir.end());
         for(recursive_directory_iterator srcIt=recursive_directory_iterator(schemaDir);
@@ -178,6 +178,7 @@ int main(int argc, char *argv[]) {
       // save binary model to FMU
       cout<<"Copy the shared library model file to FMU."<<endl;
       fmuFile.add(path("binaries")/FMIOS/("mbsimfmi_model"+SHEXT), inputFilename);
+      // MISSING: copy also all dependent libraries
 
       // load the shared library and call mbsimSrcFMI function to get the dss
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
@@ -322,17 +323,25 @@ int main(int argc, char *argv[]) {
         // xml with no parameters -> save mbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models to FMU."<<endl;
         fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+        // MISSING: copy also all dependent libraries
       }
       else {
         // xml with parameters -> save mbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models to FMU."<<endl;
         fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimppxml_fmi"+SHEXT));
+        // MISSING: copy also all dependent libraries
+      }
+      cout<<"Copy MBSim plugin module libraries to FMU."<<endl;
+      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
+        fmuFile.add(path("binaries")/FMIOS/(it->filename()), *it);
+        // MISSING: copy also all dependent libraries
       }
     }
     else {
       // source model (always without parameters) -> save mbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models to FMU."<<endl;
       fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
+      // MISSING: copy also all dependent libraries
     }
 
     fmuFile.close();
