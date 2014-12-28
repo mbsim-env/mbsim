@@ -28,7 +28,6 @@ namespace MBSim {
       static int preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*& solver);
       static void initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
       static void plotInitialState(Solver*& solver, DynamicSystemSolver*& dss);
-      static void main(Solver *&solver, DynamicSystemSolver *&dss);
       static void postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss);
 
       //! Load all plugins and return a list of all loaded plugin libraries.

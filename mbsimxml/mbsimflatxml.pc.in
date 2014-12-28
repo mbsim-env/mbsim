@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@
 bindir=${exec_prefix}/bin
 
-Name: mbsimxml
-Description: mbsimxml is the preprocessing library part of MBSimXML.
-Requires: mbsimflatxml
+Name: mbsimflatxml
+Description: mbsimflatxml is the none preprocessing library part of MBSimXML.
+Requires: mbsim
 Version: @VERSION@
-Libs: -L${libdir} -lmbsimxml
+Libs: -L${libdir} -lmbsimflatxml
 Cflags: -I${includedir}

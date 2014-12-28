@@ -3,7 +3,9 @@
 #include "mbsimflatxml.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/solver.h"
 #include <boost/filesystem.hpp>
+#include <boost/timer/timer.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
 
 using namespace std;
@@ -28,8 +30,13 @@ int main(int argc, char *argv[]) {
     if(doNotIntegrate==false) {
       if(stopAfterFirstStep)
         MBSimXML::plotInitialState(solver, dss);
-      else
-        MBSimXML::main(solver, dss);
+      else {
+        boost::timer::cpu_timer t;
+        t.start();
+        solver->execute(*dss);
+        t.stop();
+        cout<<"Integration CPU times: "<<t.format()<<endl;
+      }
       // Remove the following block if --lastframe works in OpenMBV.
       // If this is removed openmbv should be opened with the --lastframe option.
       // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again

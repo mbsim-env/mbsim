@@ -38,10 +38,6 @@ AC_ARG_WITH([boost-timer-lib],
   [  --with-boost-timer-lib=LIBNAME  The library name of boost timer excluding prefix/suffix (Default: boost_timer).],
   [BOOST_TIMER_LIB="$withval"], [BOOST_TIMER_LIB="boost_timer"])
 AC_SUBST([BOOST_TIMER_LIB])
-AC_ARG_WITH([boost-chrono-lib],
-  [  --with-boost-chrono-lib=LIBNAME  The library name of boost chrono excluding prefix/suffix (Default: boost_chrono).],
-  [BOOST_CHRONO_LIB="$withval"], [BOOST_CHRONO_LIB="boost_chrono"])
-AC_SUBST([BOOST_CHRONO_LIB])
 
 AC_MSG_CHECKING([for WEXITSTATUS])
 AC_COMPILE_IFELSE([
@@ -76,7 +72,7 @@ CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimxml.pc])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimflatxml.pc mbsimxml.pc])
 
 AC_OUTPUT
 
