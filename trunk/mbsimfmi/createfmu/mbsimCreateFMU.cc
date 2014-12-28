@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
       if(xmlParam.empty()) {
-        cout<<"No parameters used, copy preprocessed XML file to FMU."<<endl;
+        cout<<"No parameters used, copy preprocessed XML model file to FMU."<<endl;
         // no parameters -> save preprocessed model to FMU
         string ppModelStr;
         // serialize to string: this automatically normalized modelEle
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"model"/"Model.mbsimprj.flat.xml", ppModelStr);
       }
       else {
-        cout<<"Parameters exists, copy original XML file and its dependencies to FMU."<<endl;
+        cout<<"Parameters exists, copy original XML model file and its dependencies to FMU."<<endl;
         // normalize modelEle
         modelEle->getOwnerDocument()->normalizeDocument();
         // parameters existing -> save original XML file to FMU including all dependencies
@@ -147,6 +147,21 @@ int main(int argc, char *argv[]) {
         for(vector<path>::iterator it=dependencies.begin(); it!=dependencies.end(); ++it)
           if(!is_directory(*it))
             fmuFile.add(path("resources")/"model"/(*it), *it);
+
+        cout<<"Parameters exists, copy XML schema files to FMU."<<endl;
+        path schemaDir=getInstallPath()/"share"/"mbxmlutils"/"schema";
+        size_t depth=distance(schemaDir.begin(), schemaDir.end());
+        for(recursive_directory_iterator srcIt=recursive_directory_iterator(schemaDir);
+            srcIt!=recursive_directory_iterator(); ++srcIt) {
+          if(is_directory(*srcIt)) // skip directories
+            continue;
+          path::iterator dstIt=srcIt->path().begin();
+          for(int i=0; i<depth; ++i) ++dstIt;
+          path dst;
+          for(; dstIt!=srcIt->path().end(); ++dstIt)
+            dst/=*dstIt;
+          fmuFile.add(path("resources")/"schema"/dst, srcIt->path());
+        }
       }
 
       // create object for DynamicSystemSolver
