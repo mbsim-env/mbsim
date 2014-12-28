@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
@@ -33,19 +33,19 @@ using namespace std;
 
 namespace MBSim {
 
-  LinkMechanics::LinkMechanics(const std::string &name) : Link(name) {
+  MechanicalLink::MechanicalLink(const std::string &name) : Link(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVForceGrp=0;
 #endif
   }
 
-  LinkMechanics::~LinkMechanics() {}
+  MechanicalLink::~MechanicalLink() {}
 
-  void LinkMechanics::updatedhdz(double t) {
+  void MechanicalLink::updatedhdz(double t) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void LinkMechanics::plot(double t, double dt) {
+  void MechanicalLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
@@ -83,13 +83,13 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::closePlot() {
+  void MechanicalLink::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Link::closePlot();
     }
   }
 
-  void LinkMechanics::updateWRef(const Mat& WParent, int j) {
+  void MechanicalLink::updateWRef(const Mat& WParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
@@ -102,7 +102,7 @@ namespace MBSim {
     }
   } 
 
-  void LinkMechanics::updateVRef(const Mat& VParent, int j) {
+  void MechanicalLink::updateVRef(const Mat& VParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
@@ -115,7 +115,7 @@ namespace MBSim {
     }
   } 
 
-  void LinkMechanics::updatehRef(const Vec &hParent, int j) {
+  void MechanicalLink::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
       h[j][i]>>hParent(I);
@@ -126,15 +126,15 @@ namespace MBSim {
     }
   } 
 
-  void LinkMechanics::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void MechanicalLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void LinkMechanics::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void MechanicalLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void LinkMechanics::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void MechanicalLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
       dhdt[i]>>dhdtParent(I);
@@ -145,7 +145,7 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::updaterRef(const Vec &rParent, int j) {
+  void MechanicalLink::updaterRef(const Vec &rParent, int j) {
   for(unsigned i=0; i<frame.size(); i++) {
       int hInd =  frame[i]->gethInd(j);
       Index I = Index(hInd,hInd+frame[i]->getJacobianOfTranslation(j).cols()-1);
@@ -158,7 +158,7 @@ namespace MBSim {
     }
   } 
 
-  void LinkMechanics::init(InitStage stage) {
+  void MechanicalLink::init(InitStage stage) {
     if(stage==unknownStage) {
       Link::init(stage);
 
@@ -225,16 +225,16 @@ namespace MBSim {
       Link::init(stage);
   }
 
-  void LinkMechanics::connect(Frame *frame_) {
+  void MechanicalLink::connect(Frame *frame_) {
     frame.push_back(frame_);
   }
 
-  void LinkMechanics::connect(Contour *contour_) {
+  void MechanicalLink::connect(Contour *contour_) {
     contour.push_back(contour_);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void LinkMechanics::setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+  void MechanicalLink::setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
     bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
       if(which[i]==true) {
@@ -250,7 +250,7 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+  void MechanicalLink::setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
     bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
       if(which[i]==true) {

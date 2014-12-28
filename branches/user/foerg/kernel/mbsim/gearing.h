@@ -20,13 +20,13 @@
 #ifndef _GEARING_H_
 #define _GEARING_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 
 namespace MBSim {
 
-  class Gearing : public LinkMechanics {
+  class Gearing : public MechanicalLink {
     protected:
       Function<double(double,double)> *func;
       double r0, r1;

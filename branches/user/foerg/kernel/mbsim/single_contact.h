@@ -20,7 +20,7 @@
 #ifndef _SINGLE_CONTACT_H_
 #define _SINGLE_CONTACT_H_
 
-#include <mbsim/link_mechanics.h>
+#include <mbsim/mechanical_link.h>
 #include <map>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -51,7 +51,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class SingleContact: public LinkMechanics {
+  class SingleContact: public MechanicalLink {
     public:
       /*!
        * \brief constructor
@@ -109,7 +109,7 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double dt);
-      using LinkMechanics::connect;
+      using MechanicalLink::connect;
       virtual void checkActive(int j);
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);

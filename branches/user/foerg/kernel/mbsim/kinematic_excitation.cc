@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), func(0), body(0) {
+  KinematicExcitation::KinematicExcitation(const string &name) : MechanicalLink(name), func(0), body(0) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow = 0;
@@ -110,7 +110,7 @@ namespace MBSim {
 
  void KinematicExcitation::init(InitStage stage) {
     if(stage==unknownStage) {
-      //LinkMechanics::init(stage);
+      //MechanicalLink::init(stage);
 
       h[0].push_back(Vec(body->getFrameForKinematics()->getJacobianOfTranslation(0).cols()));
       h[1].push_back(Vec(6));
@@ -126,11 +126,11 @@ namespace MBSim {
       C.getJacobianOfRotation(1).resize(body->getFrameOfReference()->getJacobianOfRotation(1).cols());
     }
     else if(stage==preInit) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       addDependency(body);
     }
     else if(stage==resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(gSize);
       gd.resize(gdSize);
       la.resize(laSize);
@@ -139,7 +139,7 @@ namespace MBSim {
       updatePlotFeatures();
       //plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(FArrow) {
@@ -155,7 +155,7 @@ namespace MBSim {
       }
     }
     else {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     if(func) func->init(stage);
   }
@@ -195,7 +195,7 @@ namespace MBSim {
         }
       }
 #endif
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 

@@ -23,7 +23,7 @@ spring_damper.cc\
 friction.cc\
 extern_generalized_io.cc\
 link.cc\
-link_mechanics.cc\
+mechanical_link.cc\
 kinetic_excitation.cc\
 kinematic_excitation.cc\
 mbsim_event.cc\
@@ -72,7 +72,7 @@ spring_damper.h\
 friction.h\
 extern_generalized_io.h\
 link.h\
-link_mechanics.h\
+mechanical_link.h\
 kinetic_excitation.h\
 kinematic_excitation.h\
 mbsim_event.h\
