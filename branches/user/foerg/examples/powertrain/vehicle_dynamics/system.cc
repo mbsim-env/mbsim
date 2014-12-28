@@ -1,7 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
-#include "mbsimControl/actuator.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/plane.h"
@@ -11,6 +10,7 @@
 #include "mbsim/joint.h" 
 #include "mbsim/constraint.h" 
 #include "mbsim/spring_damper.h"
+#include "mbsimControl/signal_function.h"
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsimPowertrain/cardan_shaft.h"
 #include "mbsim/kinetic_excitation.h"
@@ -331,7 +331,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   u0(0)= 0;
   karosserie->setInitialGeneralizedVelocity(u0);
 
-  Actuator *actuator;
+  KineticExcitation *actuator;
 
   FunctionSensor *sensor;
 
@@ -482,11 +482,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(sensor);
 
   sensor->setFunction(new Moment(shaft1,karosserie,true));
-  actuator = new Actuator("EMotor");
+  actuator = new KineticExcitation("EMotor");
   addLink(actuator);
-  actuator->setSignal(sensor);
-  actuator->setMomentDirection("[-1;0;0]");
-  actuator->connect(karosserie->getFrame("C"),shaft1->getFrame("C"));
+  actuator->setMomentDirection("[1;0;0]");
+  actuator->setMomentFunction(new SignalFunction<VecV(double)>(sensor));
+  actuator->connect(shaft1->getFrame("C"),karosserie->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;
