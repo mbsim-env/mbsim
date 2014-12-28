@@ -35,6 +35,7 @@ fi
 AC_SUBST([FMIPLATFORM])
 
 PKG_CHECK_MODULES(FMUXMLDEPS, mbsimxml mbsim mbsimControl)
+PKG_CHECK_MODULES(FMUPPXMLDEPS, mbxmlutils mbsimxml mbsim mbsimControl)
 PKG_CHECK_MODULES(FMUSRCDEPS, mbsim mbsimControl)
 PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
 PKG_CHECK_MODULES(LIBARCHIVEDEPS, libarchive)

@@ -29,39 +29,26 @@ namespace MBXMLUtils {
 
 namespace MBSimFMI {
 
-  //! This class is uses for ALL FMI variables during the preprocessing phase:
-  //! between fmiInstantiateModel and fmiInitialize.
-  //! The value of the variable is store by the class itself: as a member variable.
-  template<class Datatype>
-  class PreVariable : public Variable {
-    public:
-      PreVariable(Type type, const Datatype &defaultValue=Datatype());
-      std::string getValueAsString() { throw std::runtime_error("Internal error: getValueAsString not allowed"); }
-      const Datatype& getValue(const Datatype&);
-      void setValue(const Datatype &v);
-    protected:
-      Datatype value;
-  };
-
   /*! A MBSim FMI instance */
   class FMIInstance : virtual public fmatvec::Atom {
     public:
       //! ctor used in fmiInstantiateModel
       FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn);
 
-      //! ctor used in fmiFreeModelInstance
+      //! dtor used in fmiFreeModelInstance
       ~FMIInstance();
 
       //! print exception using FMI logger
       void logException(const std::exception &ex);
 
-      // Wrapper for all other FMI functions
+      // Wrapper for all other FMI functions (except fmiInstantiateModel and fmiFreeModelInstance, see above)
 
       void setDebugLogging           (fmiBoolean loggingOn);
       void setTime                   (fmiReal time_);
       void setContinuousStates       (const fmiReal x[], size_t nx);
       void completedIntegratorStep   (fmiBoolean* callEventUpdate);
 
+      // used in fmiSetReal, fmiSetInteger, fmiSetBoolean and fmiSetString
       template<typename CppDatatype, typename FMIDatatype>
       void setValue                  (const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]);
 
@@ -69,6 +56,7 @@ namespace MBSimFMI {
       void getDerivatives            (fmiReal derivatives[], size_t nx);
       void getEventIndicators        (fmiReal eventIndicators[], size_t ni);
 
+      // used in fmiGetReal, fmiGetInteger, fmiGetBoolean and fmiGetString
       template<typename CppDatatype, typename FMIDatatype>
       void getValue                  (const fmiValueReference vr[], size_t nvr, FMIDatatype value[]);
 
@@ -80,7 +68,7 @@ namespace MBSimFMI {
 
     private:
 
-      void rethrowVR(size_t vr, const std::string &what="");
+      void rethrowVR(size_t vr, const std::exception &ex=std::runtime_error("Unknown exception."));
 
       // store FMI instanceName and logger
       std::string instanceName;
@@ -91,7 +79,7 @@ namespace MBSimFMI {
       LoggerBuffer warnBuffer;
       LoggerBuffer debugBuffer;
 
-      // XML parser
+      // XML parser (none validating)
       boost::shared_ptr<MBXMLUtils::DOMParser> parser;
 
       // the system
@@ -109,7 +97,7 @@ namespace MBSimFMI {
       fmatvec::VecInt jsv;
 
       // variables store for all predefined variables (variables not owned by dss)
-      PredefinedVariables predefinedVar;
+      PredefinedParameterStruct predefinedParameterStruct;
 
       // all FMI variables
       std::vector<boost::shared_ptr<Variable> > var;
@@ -117,10 +105,10 @@ namespace MBSimFMI {
       int completedStepCounter;
       double nextPlotTime;
 
-#if MBSIMSRCFMI
-      // shared library of a user supplied model
-      boost::shared_ptr<MBXMLUtils::SharedLibrary> shLib;
+#ifdef MBSIMSRCFMI
+      boost::shared_ptr<MBXMLUtils::SharedLibrary> shLib; // shared library of a user supplied model (source code model)
 #endif
+      void addModelParametersAndCreateDSS(std::vector<boost::shared_ptr<Variable> > &varSim);
   };
 
 }

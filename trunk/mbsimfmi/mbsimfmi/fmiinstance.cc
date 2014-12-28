@@ -9,11 +9,22 @@
 #include <mbsim/extern_generalized_io.h>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/scope_exit.hpp>
 
 // include for create the system from XML file
 #ifdef MBSIMXMLFMI
   #include <mbsimxml/mbsimflatxml.h>
   #include <mbsim/objectfactory.h>
+#endif
+// include for create the system from XML file
+#ifdef MBSIMPPXMLFMI
+  #include <mbsimxml/mbsimflatxml.h>
+  #include <mbsimxml/mbsimxml.h>
+  #include <mbsim/objectfactory.h>
+  #include <mbxmlutilshelper/getinstallpath.h> //MFMF
+  #include <mbxmlutils/octeval.h>
+  #include <mbxmlutils/preprocess.h>
+  #include "../general/xmlpp_utils.h"
 #endif
 // include for create the system from user supplied shared library file (source code FMU)
 #if MBSIMSRCFMI
@@ -24,7 +35,7 @@
 // rethrow a catched exception after prefixing the what() string with the FMI variable name
 #define RETHROW_VR(vr) \
   catch(const exception &ex) { \
-    rethrowVR(vr, ex.what()); \
+    rethrowVR(vr, ex); \
   } \
   catch(...) { \
     rethrowVR(vr); \
@@ -39,10 +50,10 @@ using namespace MBXMLUtils;
 namespace {
 
   template<class Datatype>
-  void addPreVariable(const xercesc::DOMElement *scalarVar, std::vector<boost::shared_ptr<MBSimFMI::Variable> > &var) {
+  void addPreInitVariable(const xercesc::DOMElement *scalarVar, std::vector<boost::shared_ptr<MBSimFMI::Variable> > &var) {
     // get type
     MBSimFMI::Type type;
-         if(E(scalarVar)->getAttribute("causality")=="internal" && E(scalarVar)->getAttribute("variability")=="parameter")
+    if     (E(scalarVar)->getAttribute("causality")=="internal" && E(scalarVar)->getAttribute("variability")=="parameter")
       type=MBSimFMI::Parameter;
     else if(E(scalarVar)->getAttribute("causality")=="input"    && E(scalarVar)->getAttribute("variability")=="continuous")
       type=MBSimFMI::Input;
@@ -55,32 +66,14 @@ namespace {
     if(E(scalarVar->getFirstElementChild())->hasAttribute("start"))
       defaultValue=boost::lexical_cast<Datatype>(E(scalarVar->getFirstElementChild())->getAttribute("start"));
     // create preprocessing variable
-    //var.push_back(boost::make_shared<MBSimFMI::PreVariable<Datatype> >(type, defaultValue));
-    MBSimFMI::PreVariable<Datatype> *mfmfx=new MBSimFMI::PreVariable<Datatype>(type, defaultValue);
-    boost::shared_ptr<MBSimFMI::PreVariable<Datatype> > mfmf(mfmfx);
-    var.push_back(mfmf);
+    var.push_back(boost::make_shared<MBSimFMI::VariableStore<Datatype> >(E(scalarVar)->getAttribute("name"), type, defaultValue));
   }
 
 }
 
 namespace MBSimFMI {
 
-  template<class Datatype>
-  PreVariable<Datatype>::PreVariable(Type type, const Datatype &defaultValue) :
-    Variable("dummy", "dummy", type, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(defaultValue) {
-  }
-
-  template<class Datatype>
-  const Datatype& PreVariable<Datatype>::getValue(const Datatype&) {
-    return value;
-  }
-
-  template<class Datatype>
-  void PreVariable<Datatype>::setValue(const Datatype &v) {
-    value=v;
-  }
-
-  // A MBSIM FMI instance
+  // A MBSim FMI instance. Called by fmiInstantiateModel
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
     instanceName(instanceName_),
     logger(functions.logger),
@@ -112,7 +105,7 @@ namespace MBSimFMI {
     boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
 
     // create FMI variables from modelDescription.xml file
-    msg(Debug)<<"Generate variables used before fmiInitialize."<<endl;
+    msg(Debug)<<"Generate call variables as VariableStore objects. Used until fmiInitialize is called."<<endl;
     size_t vr=0;
     for(xercesc::DOMElement *scalarVar=E(doc->getDocumentElement())->getFirstElementChildNamed("ModelVariables")->getFirstElementChild();
         scalarVar; scalarVar=scalarVar->getNextElementSibling(), ++vr) {
@@ -121,29 +114,24 @@ namespace MBSimFMI {
         throw runtime_error("Internal error: valueReference missmatch!");
       // add variable
       if(E(scalarVar)->getFirstElementChildNamed("Real"))
-        addPreVariable<double>(scalarVar, var);
+        addPreInitVariable<double>(scalarVar, var);
       else if(E(scalarVar)->getFirstElementChildNamed("Integer") ||
               E(scalarVar)->getFirstElementChildNamed("Enumeration"))
-        addPreVariable<int>(scalarVar, var);
+        addPreInitVariable<int>(scalarVar, var);
       else if(E(scalarVar)->getFirstElementChildNamed("Boolean"))
-        addPreVariable<bool>(scalarVar, var);
+        addPreInitVariable<bool>(scalarVar, var);
       else if(E(scalarVar)->getFirstElementChildNamed("String"))
-        addPreVariable<string>(scalarVar, var);
+        addPreInitVariable<string>(scalarVar, var);
       else
         throw runtime_error("Internal error: Unknown variable datatype.");
     }
   }
 
-  // destroy a MBSim FMI instance
+  // destroy a MBSim FMI instance. Called by fmiFreeModelInstance
   FMIInstance::~FMIInstance() {
   }
 
-  // print exceptions using the FMI logger
-  void FMIInstance::logException(const exception &ex) {
-    logger(this, instanceName.c_str(), fmiError, "error", ex.what());
-  }
-
-  // FMI wrapper functions
+  // FMI wrapper functions, except fmiInstantiateModel and fmiFreeModelInstance see above
 
   void FMIInstance::setDebugLogging(fmiBoolean loggingOn) {
     if(!loggingOn)
@@ -164,25 +152,29 @@ namespace MBSimFMI {
   }
 
   // is called when the current state is a valid/accepted integrator step.
-  // (e.g. not a intermediate Runge-Kutta step of a step which will be rejected due to
+  // (e.g. not a intermediate Runge-Kutta step or a step which will be rejected due to
   // the error tolerances of the integrator)
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     *callEventUpdate=false;
 
-    switch(predefinedVar.plotMode) {
+    // plot the current system state dependent on plotMode
+    switch(predefinedParameterStruct.plotMode) {
+      // plot at each n-th completed step
       case EverynthCompletedStep:
         completedStepCounter++;
-        if(completedStepCounter==predefinedVar.plotEachNStep) {
+        if(completedStepCounter==predefinedParameterStruct.plotEachNStep) {
           completedStepCounter=0;
           dss->plot(z, time);
         }
         break;
+      // plot if this is the first completed step after nextPlotTime
       case NextCompletedStepAfterSampleTime:
         if(time>=nextPlotTime) {
-          nextPlotTime += predefinedVar.plotStepSize * (floor((time-nextPlotTime)/predefinedVar.plotStepSize)+1);
+          nextPlotTime += predefinedParameterStruct.plotStepSize * (floor((time-nextPlotTime)/predefinedParameterStruct.plotStepSize)+1);
           dss->plot(z, time);
         }
         break;
+      // do not plot at completed steps -> plot at discrete sample times
       case SampleTime:
         break;
     }
@@ -216,62 +208,56 @@ namespace MBSimFMI {
     eventInfo->stateValuesChanged=false;
     eventInfo->terminateSimulation=false;
 
-// create the system from XML file
-#if MBSIMXMLFMI
-    // get the model file
-    path mbsimflatxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"Model.mbsimprj.flat.xml";
+    // predefined variables used during simulation
+    std::vector<boost::shared_ptr<Variable> > varSim;
+    msg(Debug)<<"Create predefined parameters."<<endl;
+    addPredefinedParameters(varSim, predefinedParameterStruct);
 
-    // load all plugins
-    msg(Debug)<<"Load MBSim plugins."<<endl;
-    MBSimXML::loadPlugins();
-  
-    // load MBSim project XML document
-    msg(Debug)<<"Read MBSim XML model file."<<endl;
-    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile);
-  
-    // create object for DynamicSystemSolver
-    msg(Debug)<<"Create DynamicSystemSolver."<<endl;
-    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
-#endif
-// create the system from user supplied shared library file (source code FMU)
-#if MBSIMSRCFMI
-    // get the model shared library
-    path mbsimsrclibfile=getSharedLibDir().parent_path().parent_path()/"binaries"/FMIOS/("mbsimfmi_model"+SHEXT);
+    // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
+    addModelParametersAndCreateDSS(varSim);
 
-    shLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile));
-    DynamicSystemSolver *dssPtr;
-    reinterpret_cast<mbsimSrcFMIPtr>(shLib->getAddress("mbsimSrcFMI"))(dssPtr);
-    dss.reset(dssPtr);
-#endif
+    // create model IO vars
+    msg(Debug)<<"Create model input/output variables."<<endl;
+    addModelInputOutputs(varSim, dss.get());
 
-    // build list of value references (variables)
-    msg(Debug)<<"Create all FMI variables."<<endl;
-    std::vector<boost::shared_ptr<Variable> > varSim; // do not overwrite var here, use varSim (see below)
-    createAllVariables(dss.get(), varSim, predefinedVar);
-
-    // save the current dir and change to outputDir -> MBSim will create output the current dir
-    msg(Debug)<<"Write MBSim output files to "<<predefinedVar.outputDir<<endl;
+    // save the current dir and change to outputDir -> MBSim will create output files in the current dir
+    msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
     path savedCurDir=current_path();
-    current_path(predefinedVar.outputDir);
+    // restore current dir on scope exit
+    BOOST_SCOPE_EXIT(&savedCurDir) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
+    current_path(predefinedParameterStruct.outputDir);
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
-    // restore current dir (normally we are not allowed to change the current dir at all)
-    current_path(savedCurDir);
 
-    // Till now (between fmiInstantiateModel and fmiInitialize) we have only used objects of type PreVariable's in var.
-    // Now we copy all values from val to varSim (generated above).
+    // Till now (between fmiInstantiateModel and fmiInitialize) we have only used objects of type VariableStore's in var.
+    // Now we copy all values from var to varSim (varSim is generated above).
     if(var.size()!=varSim.size())
-      throw runtime_error("Internal error: The number of parameters differ.");
+      throw runtime_error("The number of parameters from modelDescription.xml and model differ: "
+                          +boost::lexical_cast<string>(var.size())+", "+boost::lexical_cast<string>(varSim.size())+". "+
+                          "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
     vector<boost::shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
     size_t vr=0;
     for(vector<boost::shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
       try {
+        // check for a change of the model topologie
+        if((*varSimIt)->getName()!=(*varIt)->getName())
+          throw runtime_error("Variable names from modelDescription.xml and model does not match: "
+                              +(*varIt)->getName()+", "+(*varSimIt)->getName()+". "+
+                              "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getType()!=(*varIt)->getType())
-          throw runtime_error("Internal error: Variable type does not match.");
+          throw runtime_error("Variable type (parameter, input, output) from modelDescription.xml and model does not match: "
+                              +boost::lexical_cast<string>((*varIt)->getType())+", "
+                              +boost::lexical_cast<string>((*varSimIt)->getType())+". "+
+                              "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
+        if((*varSimIt)->getDatatypeChar()!=(*varIt)->getDatatypeChar())
+          throw runtime_error(string("Variable datatype from modelDescription.xml and model does not match: ")
+                              +(*varIt)->getDatatypeChar()+", "+(*varSimIt)->getDatatypeChar()+". "+
+                              "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
+        // copy variable values
         if((*varIt)->getType()==Output) // outputs are not allowed to be set -> skip
           continue;
-        msg(Debug)<<"Copy variable '"<<(*varSimIt)->getName()<<"' from preprocessing space to simulation space."<<endl;
+        msg(Debug)<<"Copy variable '"<<(*varSimIt)->getName()<<"' from VariableStore object to the \"real\" varaible object."<<endl;
         switch((*varIt)->getDatatypeChar()) {
           case 'r': (*varSimIt)->setValue((*varIt)->getValue(double())); break;
           case 'i': (*varSimIt)->setValue((*varIt)->getValue(int())); break;
@@ -301,7 +287,7 @@ namespace MBSimFMI {
     dss->plot(z, time);
 
     // handling of plot mode
-    switch(predefinedVar.plotMode) {
+    switch(predefinedParameterStruct.plotMode) {
       case EverynthCompletedStep:
         // init
         completedStepCounter=0;
@@ -310,13 +296,13 @@ namespace MBSimFMI {
         break;
       case NextCompletedStepAfterSampleTime:
         // init
-        nextPlotTime=time+predefinedVar.plotStepSize;
+        nextPlotTime=time+predefinedParameterStruct.plotStepSize;
         // next time event
         eventInfo->upcomingTimeEvent=false;
         break;
       case SampleTime:
         // init
-        nextPlotTime=time+predefinedVar.plotStepSize;
+        nextPlotTime=time+predefinedParameterStruct.plotStepSize;
         // next time event
         eventInfo->upcomingTimeEvent=true;
         eventInfo->nextEventTime=nextPlotTime;
@@ -363,7 +349,7 @@ namespace MBSimFMI {
 
   // MBSim shift
   // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.
-  // Since MBSim required this information we have to generate it here. For this we:
+  // Since MBSim requires this information we have to generate it here. For this we:
   // * store the stop vector (sv) of the initial state (see initialize(...)) or the
   //   last event (shift point) in the variable svLast.
   // * compare the current sv with the sv of the last event (or initial state) svLast
@@ -399,7 +385,7 @@ namespace MBSimFMI {
 
     // time event (currently only for plotting)
 
-    switch(predefinedVar.plotMode) {
+    switch(predefinedParameterStruct.plotMode) {
       case EverynthCompletedStep:
       case NextCompletedStepAfterSampleTime:
         // no next time event
@@ -415,7 +401,7 @@ namespace MBSimFMI {
           // plot
           dss->plot(z, time);
           // next time event
-          nextPlotTime=time+predefinedVar.plotStepSize;
+          nextPlotTime=time+predefinedParameterStruct.plotStepSize;
           eventInfo->nextEventTime=nextPlotTime;
         }
         break;
@@ -441,15 +427,114 @@ namespace MBSimFMI {
 
   void FMIInstance::terminate() {
     // plot end state
-    dss->plot(z, time);
+    if(dss)
+      dss->plot(z, time);
 
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
     // calls to fmiFreeModelInstance and fmiInstantiateModel)
     dss.reset();
   }
 
-  void FMIInstance::rethrowVR(size_t vr, const std::string &what) {
-    throw runtime_error(string("In variable #")+var[vr]->getDatatypeChar()+boost::lexical_cast<string>(vr)+"#: "+what);
+  // FMI helper functions
+
+  // print exceptions using the FMI logger
+  void FMIInstance::logException(const exception &ex) {
+    logger(this, instanceName.c_str(), fmiError, "error", ex.what());
   }
+
+  // rethrow a exception thrown during a operation on a valueReference: prefix the exception text with the variable name.
+  void FMIInstance::rethrowVR(size_t vr, const std::exception &ex) {
+    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+boost::lexical_cast<string>(vr)+"#': "+ex.what());
+  }
+
+#ifdef MBSIMXMLFMI
+  void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
+    // get the model file
+    path mbsimflatxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"model"/"Model.mbsimprj.flat.xml";
+
+    // load all plugins
+    msg(Debug)<<"Load MBSim plugins."<<endl;
+    MBSimXML::loadPlugins();
+  
+    // load MBSim project XML document
+    msg(Debug)<<"Read MBSim flat XML model file."<<endl;
+    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile);
+  
+    // create object for DynamicSystemSolver
+    msg(Debug)<<"Create DynamicSystemSolver."<<endl;
+    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+  }
+#endif
+
+#ifdef MBSIMPPXMLFMI
+  void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
+    // get the model file
+    path mbsimxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"model"/"Model.mbsimprj.xml";
+
+    // load all plugins
+    msg(Debug)<<"Load MBSim plugins."<<endl;
+    MBSimXML::loadPlugins();
+
+    // init the validating parser with the mbsimxml schema file
+    boost::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(true);
+    msg(Debug)<<"Create MBSim XML schema file including all plugins."<<endl;
+    generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
+    validatingParser->loadGrammar(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd");
+  
+    // load MBSim project XML document
+    msg(Debug)<<"Read MBSim XML model file."<<endl;
+    boost::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
+
+    // set param according data in var
+    boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
+    for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it) {
+      cerr<<"MFMF "<<(*it)->getName()<<endl;
+    }
+
+    // preprocess XML file
+    OctEval octEval;
+    vector<path> dependencies;
+    xercesc::DOMElement *ele=doc->getDocumentElement();
+    msg(Debug)<<"Preprocess MBSim XML model."<<endl;
+    Preprocess::preprocess(validatingParser, octEval, dependencies, ele, param);
+
+    // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
+    msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;
+    vector<boost::shared_ptr<Variable> > xmlParam;
+    convertXPathParamSetToVariable(param, xmlParam);
+    // build a set of all Parameter's in var
+    set<string> useParam;
+    for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
+      if((*it)->getType()==Parameter)
+        useParam.insert((*it)->getName());
+    // remove all variables in xmlParam which are not in var (these were not added as a parameter by the --param
+    // option during creating of the FMU
+    vector<boost::shared_ptr<Variable> > xmlParam2;
+    for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it)
+      if(useParam.find((*it)->getName())!=useParam.end())
+        xmlParam2.push_back(*it);
+    xmlParam=xmlParam2;
+    // add model parameters to varSim
+    msg(Debug)<<"Create model parameter variables."<<endl;
+    varSim.insert(varSim.end(), xmlParam.begin(), xmlParam.end());
+  
+    // create object for DynamicSystemSolver
+    msg(Debug)<<"Create DynamicSystemSolver."<<endl;
+    doc->normalizeDocument();
+    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+  }
+#endif
+
+#ifdef MBSIMSRCFMI
+  void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
+    // get the model shared library
+    path mbsimsrclibfile=getSharedLibDir().parent_path().parent_path()/"binaries"/FMIOS/("mbsimfmi_model"+SHEXT);
+
+    shLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile));
+    DynamicSystemSolver *dssPtr;
+    reinterpret_cast<mbsimSrcFMIPtr>(shLib->getAddress("mbsimSrcFMI"))(dssPtr);
+    dss.reset(dssPtr);
+  }
+#endif
 
 }

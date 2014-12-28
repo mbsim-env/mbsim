@@ -46,23 +46,28 @@ namespace MBSimFMI {
 
 class Variable;
 
-//! enumeration for PredefinedVariables::plotMode
+//! enumeration for PredefinedParameterStruct::plotMode
 enum PlotMode {
   EverynthCompletedStep            = 1,
   NextCompletedStepAfterSampleTime = 2,
   SampleTime                       = 3
 };
-//! Struct holding all predefined FMI variables (variables which are not part of the MBSim dss)
-struct PredefinedVariables {
+//! Struct holding all predefined FMI parameters (parameters which are not part of the MBSim dss)
+struct PredefinedParameterStruct {
   std::string outputDir; // the MBSim output directory
   int plotMode;          // the MBSim plotting mode
   int plotEachNStep;     // plot at each n-th completed integrator step
   double plotStepSize;   // plot in equidistand time steps
 };
 
-//! create all FMI variables using a MBSim dss: predefined and dynamic ones from dss
-void createAllVariables(const MBSim::DynamicSystemSolver *dss, std::vector<boost::shared_ptr<Variable> > &var,
-                        PredefinedVariables &predefinedVar);
+//! add all FMI predefined parameters to var.
+//! The values of all predefined parameters are stored in the struct PredefinedParameterStruct.
+void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
+                             PredefinedParameterStruct &predefinedParameterStruct);
+
+//! add all FMI input/outputs used by the MBSim dss to var.
+void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
+                          const MBSim::DynamicSystemSolver *dss);
 
 //! Type of the variable
 enum Type {
@@ -155,7 +160,7 @@ template<> struct MapDatatypeToFMIDatatypeChar<bool       > { static const char 
 template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char value='s'; };
 
 //! A FMI parameter which stores the value in a externally provided reference.
-//! This is used for predefined variables.
+//! This is used for predefined parameters.
 template<typename Datatype>
 class PredefinedParameter : public Variable {
   public:
@@ -212,7 +217,7 @@ class ExternSignalSourceInput : public Variable {
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
   protected:
     MBSimControl::ExternSignalSource *sig;
-    double value; // MISSING: replace this varaible if getSignal returns a const reference!!!
+    double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 
 //! FMI output variable for MBSim::ExternSignalSink
@@ -224,7 +229,23 @@ class ExternSignalSinkOutput : public Variable {
     const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
   protected:
     MBSimControl::ExternSignalSink *sig;
-    double value; // MISSING: replace this varaible if getSignal returns a const reference!!!
+    double value; // MISSING: remove this variable if getSignal returns a const reference!!!
+};
+
+//! A FMI variable which stores the value internally.
+//! This class is uses for ALL FMI variables during the preprocessing phase:
+//! between fmiInstantiateModel and fmiInitialize.
+//! This class is also used for XML model parameters during mbsimCreateFMU.
+template<class Datatype>
+class VariableStore : public Variable {
+  public:
+    VariableStore(const std::string &name_, Type type, const Datatype &defaultValue=Datatype()) :
+      Variable(name_, "", type, MapDatatypeToFMIDatatypeChar<Datatype>::value), value(defaultValue) {}
+    std::string getValueAsString() { return boost::lexical_cast<std::string>(value); }
+    const Datatype& getValue(const Datatype&) { return value; }
+    void setValue(const Datatype &v) { value=v; }
+  protected:
+    Datatype value;
 };
 
 }
