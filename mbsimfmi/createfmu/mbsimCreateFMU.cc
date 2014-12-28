@@ -144,12 +144,15 @@ int main(int argc, char *argv[]) {
         // normalize modelEle
         modelEle->getOwnerDocument()->normalizeDocument();
         // parameters existing -> save original XML file to FMU including all dependencies
-        if(inputFilename.is_absolute())
-          throw runtime_error("A XML model file "+inputFilename.string()+" must be relatvie when parameters are used.");
+        // Note: We copy the XML model file including all dependencies to resources/model. However the full absolute path
+        // (excluding the leading '/' or 'c:\') of each file is added as subdir of resources/model. This will
+        // enable XML models with file references to all parent directories. Hence only absolute file references
+        // are not allowed!
+
         // path to XML project file relative to resources/model
-        fmuFile.add(path("resources")/"model"/"XMLProjectFile.txt", inputFilename.string());
+        fmuFile.add(path("resources")/"model"/"XMLProjectFile.txt", absolute(inputFilename).relative_path().string());
         // copy XML project file
-        fmuFile.add(path("resources")/"model"/inputFilename, inputFilename);
+        fmuFile.add(path("resources")/"model"/absolute(inputFilename).relative_path(), inputFilename);
         // copy dependencies
         cout<<"Copy dependent files of the original XML model file to FMU."<<endl;
         for(vector<path>::iterator it=dependencies.begin(); it!=dependencies.end(); ++it)
@@ -158,13 +161,8 @@ int main(int argc, char *argv[]) {
               throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
                                   "However the model references the absolute file '"+it->string()+"'.\n"+
                                   "Remove all --param options OR rework the model to not contain any absolute file path.");
-            if(*it->begin()=="..")
-              throw runtime_error("A XML model file with parameters may only reference files under the current directory.\n"
-                                  "However the model references the file '"+it->string()+"' in the parent directory.\n"+
-                                  "Remove all --param options OR rework the model to not contain file references to a parent\n"
-                                  "directory OR call "+argv[0]+" for a parent directory.");
             cout<<"."<<flush;
-            fmuFile.add(path("resources")/"model"/(*it), *it);
+            fmuFile.add(path("resources")/"model"/current_path().relative_path()/(*it), *it);
           }
         cout<<endl;
 
