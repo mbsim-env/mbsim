@@ -5,7 +5,6 @@
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbsimxml/mbsimxml.h>
 #include <mbsim/objectfactory.h>
-#include <mbxmlutilshelper/getinstallpath.h> //MFMF
 #include <mbxmlutils/octeval.h>
 #include <mbxmlutils/preprocess.h>
 #include "../general/xmlpp_utils.h"
@@ -19,7 +18,8 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
     // get the model file
-    path mbsimxmlfile=getSharedLibDir().parent_path().parent_path()/"resources"/"model"/"Model.mbsimprj.xml";
+    path resourcesDir=getSharedLibDir().parent_path().parent_path()/"resources";
+    path mbsimxmlfile=resourcesDir/"model"/"Model.mbsimprj.xml";
 
     // load all plugins
     msg(Debug)<<"Load MBSim plugins."<<endl;
@@ -28,7 +28,7 @@ namespace MBSimFMI {
     // init the validating parser with the mbsimxml schema file
     boost::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(true);
     msg(Debug)<<"Create MBSim XML schema file including all plugins."<<endl;
-    generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
+    generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", resourcesDir/"schema");
     validatingParser->loadGrammar(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd");
   
     // load MBSim project XML document
