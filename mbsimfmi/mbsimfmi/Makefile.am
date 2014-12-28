@@ -22,5 +22,5 @@ mbsimppxml_fmi_la_LIBADD = libmbsim_fmi.la ../general/libxmlpputils.la $(FMUPPXM
 # build main FMU library for source models
 mbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
 mbsimsrc_fmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN -avoid-version
-mbsimsrc_fmi_la_CPPFLAGS = 
+mbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
 mbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la
