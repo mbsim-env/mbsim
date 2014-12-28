@@ -12,7 +12,6 @@
 #include <mbsimxml/mbsimxml.h>
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
-#include "boost/filesystem/fstream.hpp"
 #include <boost/algorithm/string.hpp>
 
 #include "zip.h"
@@ -35,6 +34,8 @@ namespace {
 #else
   string USERENVVAR("USER");
 #endif
+
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dstBasename, const path &src);
 }
 
 int main(int argc, char *argv[]) {
@@ -139,14 +140,33 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"model"/"Model.mbsimprj.flat.xml", ppModelStr);
       }
       else {
-        cout<<"Copy original XML model file and its dependencies to FMU."<<endl;
+        cout<<"Copy original XML model file to FMU."<<endl;
         // normalize modelEle
         modelEle->getOwnerDocument()->normalizeDocument();
         // parameters existing -> save original XML file to FMU including all dependencies
-        fmuFile.add(path("resources")/"model"/"Model.mbsimprj.xml", inputFilename);
+        if(inputFilename.is_absolute())
+          throw runtime_error("A XML model file "+inputFilename.string()+" must be relatvie when parameters are used.");
+        // path to XML project file relative to resources/model
+        fmuFile.add(path("resources")/"model"/"XMLProjectFile.txt", inputFilename.string());
+        // copy XML project file
+        fmuFile.add(path("resources")/"model"/inputFilename, inputFilename);
+        // copy dependencies
+        cout<<"Copy dependent files of the original XML model file to FMU."<<endl;
         for(vector<path>::iterator it=dependencies.begin(); it!=dependencies.end(); ++it)
-          if(!is_directory(*it))
+          if(!is_directory(*it)) {
+            if(it->is_absolute())
+              throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
+                                  "However the model references the absolute file '"+it->string()+"'.\n"+
+                                  "Remove all --param options OR rework the model to not contain any absolute file path.");
+            if(*it->begin()=="..")
+              throw runtime_error("A XML model file with parameters may only reference files under the current directory.\n"
+                                  "However the model references the file '"+it->string()+"' in the parent directory.\n"+
+                                  "Remove all --param options OR rework the model to not contain file references to a parent\n"
+                                  "directory OR call "+argv[0]+" for a parent directory.");
+            cout<<"."<<flush;
             fmuFile.add(path("resources")/"model"/(*it), *it);
+          }
+        cout<<endl;
 
         cout<<"Copy XML schema files to FMU."<<endl;
         path schemaDir=getInstallPath()/"share"/"mbxmlutils"/"schema";
@@ -160,8 +180,10 @@ int main(int argc, char *argv[]) {
           path dst;
           for(; dstIt!=srcIt->path().end(); ++dstIt)
             dst/=*dstIt;
+          cout<<"."<<flush;
           fmuFile.add(path("resources")/"schema"/dst, srcIt->path());
         }
+        cout<<endl;
       }
 
       // create object for DynamicSystemSolver
@@ -176,9 +198,9 @@ int main(int argc, char *argv[]) {
     // Create dss from shared library
     else {
       // save binary model to FMU
-      cout<<"Copy the shared library model file to FMU."<<endl;
-      fmuFile.add(path("binaries")/FMIOS/("mbsimfmi_model"+SHEXT), inputFilename);
-      // MISSING: copy also all dependent libraries
+      cout<<"Copy the shared library model file and dependencies to FMU."<<endl;
+      copyShLibToFMU(fmuFile, "mbsimfmi_model"+SHEXT, inputFilename);
+      cout<<endl;
 
       // load the shared library and call mbsimSrcFMI function to get the dss
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
@@ -321,27 +343,26 @@ int main(int argc, char *argv[]) {
     if(xmlFile) {
       if(xmlParam.empty()) {
         // xml with no parameters -> save mbsimxml_fmi.so to FMU
-        cout<<"Copy MBSim FMI library for preprocessed XML models to FMU."<<endl;
-        fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
-        // MISSING: copy also all dependent libraries
+        cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
+        copyShLibToFMU(fmuFile, "mbsim"+SHEXT, getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+        cout<<endl;
       }
       else {
         // xml with parameters -> save mbsimppxml_fmi.so to FMU
-        cout<<"Copy MBSim FMI library for (normal) XML models to FMU."<<endl;
-        fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimppxml_fmi"+SHEXT));
-        // MISSING: copy also all dependent libraries
+        cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
+        copyShLibToFMU(fmuFile, "mbsim"+SHEXT, getInstallPath()/"lib"/("mbsimppxml_fmi"+SHEXT));
+        cout<<endl;
       }
-      cout<<"Copy MBSim plugin module libraries to FMU."<<endl;
-      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
-        fmuFile.add(path("binaries")/FMIOS/(it->filename()), *it);
-        // MISSING: copy also all dependent libraries
-      }
+      cout<<"Copy MBSim plugin module libraries and dependencies to FMU."<<endl;
+      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it)
+        copyShLibToFMU(fmuFile, it->filename(), *it);
+      cout<<endl;
     }
     else {
       // source model (always without parameters) -> save mbsimppxml_fmi.so to FMU
-      cout<<"Copy MBSim FMI library for source code models to FMU."<<endl;
-      fmuFile.add(path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
-      // MISSING: copy also all dependent libraries
+      cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
+      copyShLibToFMU(fmuFile, "mbsim"+SHEXT, getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
+      cout<<endl;
     }
 
     fmuFile.close();
@@ -356,4 +377,14 @@ int main(int argc, char *argv[]) {
     cerr<<"Unknwon exception."<<endl;
     return 1;
   }
+}
+
+namespace {
+
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dstBasename, const path &src) {
+    cout<<"."<<flush;
+    fmuFile.add(path("binaries")/FMIOS/dstBasename, src);
+    // MISSING: copy also dependencies
+  }
+
 }
