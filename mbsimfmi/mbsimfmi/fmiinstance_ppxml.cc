@@ -8,6 +8,7 @@
 #include <mbxmlutils/octeval.h>
 #include <mbxmlutils/preprocess.h>
 #include "../general/xmlpp_utils.h"
+#include "boost/filesystem/fstream.hpp"
 
 using namespace std;
 using namespace MBSim;
@@ -19,7 +20,11 @@ namespace MBSimFMI {
   void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
     // get the model file
     path resourcesDir=getSharedLibDir().parent_path().parent_path()/"resources";
-    path mbsimxmlfile=resourcesDir/"model"/"Model.mbsimprj.xml";
+    // path to XML project file relative to resources/model
+    boost::filesystem::ifstream xmlProjectStream(resourcesDir/"model"/"XMLProjectFile.txt");
+    string xmlProjectFile;
+    getline(xmlProjectStream, xmlProjectFile);
+    path mbsimxmlfile=resourcesDir/"model"/xmlProjectFile;
 
     // load all plugins
     msg(Debug)<<"Load MBSim plugins."<<endl;
