@@ -8,6 +8,11 @@
 using namespace std;
 using namespace boost::filesystem;
 
+namespace {
+  //! remove all ".." from a path
+  path parentCanonical(const path &name);
+}
+
 namespace MBSimFMI {
 
 CreateZip::CreateZip(const path &zipFile_) : closed(false), zipFile(zipFile_) {
@@ -50,8 +55,11 @@ void CreateZip::add(const path &filenameInZip, const path &srcFilename) {
     throw runtime_error("ZIP file "+zipFile.string()+" is already closed.");
   if(!archive_entry_clear(entry))
     throw runtime_error("Unable to clear archive entry.");
+  path filenameInZipCano=parentCanonical(filenameInZip);
+  if(!content.insert(filenameInZipCano).second)
+    return;
   vector<char> buf(1024*1024*10); // read/write file content in 10MB blocks
-  archive_entry_set_pathname(entry, filenameInZip.string().c_str());
+  archive_entry_set_pathname(entry, filenameInZipCano.string().c_str());
   archive_entry_set_size(entry, file_size(srcFilename));
   archive_entry_set_filetype(entry, AE_IFREG);
   archive_entry_set_perm(entry, 0644);
@@ -72,7 +80,10 @@ void CreateZip::add(const path &filenameInZip, const string &textContent) {
     throw runtime_error("ZIP file "+zipFile.string()+" is already closed.");
   if(!archive_entry_clear(entry))
     throw runtime_error("Unable to clear archive entry.");
-  archive_entry_set_pathname(entry, filenameInZip.string().c_str());
+  path filenameInZipCano=parentCanonical(filenameInZip);
+  if(!content.insert(filenameInZipCano).second)
+    return;
+  archive_entry_set_pathname(entry, filenameInZipCano.string().c_str());
   archive_entry_set_size(entry, textContent.size());
   archive_entry_set_filetype(entry, AE_IFREG);
   archive_entry_set_perm(entry, 0644);
@@ -80,6 +91,25 @@ void CreateZip::add(const path &filenameInZip, const string &textContent) {
     throw runtime_error("Unable to write entry header to archive "+zipFile.string()+".");
   if(archive_write_data(a, textContent.c_str(), textContent.size())!=static_cast<int>(textContent.size()))
     throw runtime_error("Unable to write entry data.");
+}
+
+}
+
+namespace {
+
+path parentCanonical(const path &name) {
+  path cano;
+  for(path::iterator it=name.begin(); it!=--name.end(); ++it) {
+    path::iterator itn=it;
+    itn++;
+    if(*itn=="..") {
+      it++;
+      continue;
+    }
+    cano/=*it;
+  }
+  cano/=*(--name.end());
+  return cano;
 }
 
 }

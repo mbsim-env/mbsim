@@ -2,6 +2,7 @@
 #define _MBSIMFMI_ZIP_H_
 
 #include <string>
+#include <set>
 #include <boost/filesystem.hpp>
 #include <fmatvec/atom.h>
 
@@ -20,8 +21,10 @@ class CreateZip : virtual public fmatvec::Atom {
     //! Close the zip file. Write all content to disk.
     void close();
     //! Add the content of srcFilename to zip file path filenameInZip.
+    //! If filenameInZip already exists in the zip file nothing happens.
     void add(const boost::filesystem::path &filenameInZip, const boost::filesystem::path &srcFilename);
     //! Add the string textContent to zip file path filenameInZip.
+    //! If filenameInZip already exists in the zip file nothing happens.
     void add(const boost::filesystem::path &filenameInZip, const std::string &textContent);
 
   protected:
@@ -29,6 +32,7 @@ class CreateZip : virtual public fmatvec::Atom {
     boost::filesystem::path zipFile; // zip file name
     archive *a; // zip archive handle
     archive_entry *entry; // zip entry handle
+    std::set<boost::filesystem::path> content;
 };
 
 }
