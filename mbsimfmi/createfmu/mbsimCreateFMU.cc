@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
       cout<<"For XML project model files --param may be specified 0 to n times. Where <name> defines"<<endl;
       cout<<"a parameter name of the DynamicSystemSolver Embed element which should be"<<endl;
       cout<<"provided as an FMU parameter. Note that only parameters which do not depend"<<endl;
-      cout<<"on any other parameters are allowed."<<endl;
+      cout<<"on any other parameters are allowed. If no --param option is given all are exported."<<endl;
       return 0;
     }
 
@@ -118,8 +118,7 @@ int main(int argc, char *argv[]) {
       Preprocess::preprocess(parser, octEval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      if(useParam.size()>0)
-        convertXPathParamSetToVariable(param, xmlParam);
+      convertXPathParamSetToVariable(param, xmlParam);
       // remove all variables which are not in useParam
       vector<boost::shared_ptr<Variable> > xmlParam2;
       for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
@@ -127,7 +126,7 @@ int main(int argc, char *argv[]) {
         size_t pos=name.find('[');
         if(pos!=string::npos)
           name=name.substr(0, pos);
-        if(useParam.find(name)!=useParam.end()) {
+        if(useParam.size()==0 || useParam.find(name)!=useParam.end()) {
           cout<<"Using DynamicSystemSolver parameter '"<<name<<"'."<<endl;
           xmlParam2.push_back(*it);
         }
