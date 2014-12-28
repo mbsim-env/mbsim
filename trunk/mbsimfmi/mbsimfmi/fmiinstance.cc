@@ -199,7 +199,7 @@ namespace MBSimFMI {
     msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
     path savedCurDir=current_path();
     // restore current dir on scope exit
-    BOOST_SCOPE_EXIT(&savedCurDir) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
+    BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
     current_path(predefinedParameterStruct.outputDir);
     // initialize dss
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
