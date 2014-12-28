@@ -9,10 +9,8 @@
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/solver.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
-#include <boost/timer/timer.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
@@ -161,16 +159,6 @@ void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
     dss->initz(z);          
   dss->computeInitialCondition();
   dss->plot(z, 0);
-}
-
-void MBSimXML::main(Solver *&solver, DynamicSystemSolver *&dss) {
-  boost::timer::cpu_timer t;
-  t.start();
-
-  solver->execute(*dss);
-
-  t.stop();
-  cout<<"Integration CPU times: "<<t.format()<<endl;
 }
 
 void MBSimXML::postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss) {
