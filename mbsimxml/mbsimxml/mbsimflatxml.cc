@@ -13,8 +13,6 @@
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
 #include <boost/timer/timer.hpp>
-
-#include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
@@ -43,7 +41,7 @@ namespace MBSim {
 // load all MBSim module plugins:
 // If a module plugin (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
-void MBSimXML::loadPlugins() {
+set<boost::filesystem::path> MBSimXML::loadPlugins() {
   static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
@@ -75,6 +73,8 @@ void MBSimXML::loadPlugins() {
   // load plugins which are not already loaded
   for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
     loadedPlugin.insert(SharedLibrary(*it));
+
+  return pluginLibFile;
 }
 
 int PrefixedStringBuf::sync() {

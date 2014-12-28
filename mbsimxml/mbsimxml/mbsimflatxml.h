@@ -3,6 +3,8 @@
 
 #include <string>
 #include <sstream>
+#include <set>
+#include <boost/filesystem/fstream.hpp>
 
 namespace MBSim {
 
@@ -28,7 +30,9 @@ namespace MBSim {
       static void plotInitialState(Solver*& solver, DynamicSystemSolver*& dss);
       static void main(Solver *&solver, DynamicSystemSolver *&dss);
       static void postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss);
-      static void loadPlugins();
+
+      //! Load all plugins and return a list of all loaded plugin libraries.
+      static std::set<boost::filesystem::path> loadPlugins();
   };
 
 }
