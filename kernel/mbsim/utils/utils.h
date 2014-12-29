@@ -21,7 +21,7 @@
 #define UTILS_H_
 
 #define PVNS_ "http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-#define PVNS "{"PVNS_"}"
+#define PVNS "{" PVNS_ "}"
 
 #include <string>
 #include "fmatvec/fmatvec.h"
