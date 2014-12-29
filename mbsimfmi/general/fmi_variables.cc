@@ -1,3 +1,4 @@
+#include "config.h"
 #include "fmi_variables.h"
 #include <mbsim/dynamic_system_solver.h>
 #include <boost/algorithm/string/replace.hpp>

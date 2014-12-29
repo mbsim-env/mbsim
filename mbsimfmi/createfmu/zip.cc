@@ -1,3 +1,4 @@
+#include "config.h"
 #include "zip.h"
 #include <exception>
 #include <iostream>
