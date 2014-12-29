@@ -210,7 +210,7 @@ template<typename Ret, typename Arg>
 // TODO mit double vorbelegen
 template<typename Ret, typename Arg1, typename Arg2>
   class SymbolicFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
-    CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
+    CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1dd2, pd1pd1, pd1pd2, pd2dd1, pd2dd2, pd2pd1, pd2pd2;
     public:
     SymbolicFunction() {}
     SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
@@ -264,19 +264,33 @@ template<typename Ret, typename Arg1, typename Arg2>
         int n = f.outputExpr(0).size1();
         CasADi::SXMatrix Jd1(n,nq);
         CasADi::SXMatrix Jd2(n,nq);
+        CasADi::SXMatrix Jd3(n,nq);
+        CasADi::SXMatrix Jd4(n,nq);
         for(int j=0; j<nq; j++) {
           Jd1(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
           Jd2(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(1)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,1));
+        //  Jd3(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq));
+          Jd4(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(1)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,1)).mul(sqd);
         }
         pd1dd1 = CasADi::SXFunction(input2,Jd1);
         pd1dd1.init();
+        pd1dd2 = CasADi::SXFunction(input2,Jd4);
+        pd1dd2.init();
+        //pd1pd1 = CasADi::SXFunction(f.inputExpr(),Jd3);
+        //pd1pd1.init();
         pd1pd2 = CasADi::SXFunction(f.inputExpr(),Jd2);
         pd1pd2.init();
 
         CasADi::SXMatrix djT1 = pd2.jac(0).mul(sqd);
         CasADi::SXMatrix djT2 = pd2.jac(1);
+        CasADi::SXMatrix djT3 = pd2.jac(0);
+        CasADi::SXMatrix djT4 = pd2.jac(1).mul(sqd);
         pd2dd1 = CasADi::SXFunction(input2,djT1);
         pd2dd1.init();
+        pd2dd2 = CasADi::SXFunction(input2,djT4);
+        pd2dd2.init();
+        pd2pd1 = CasADi::SXFunction(f.inputExpr(),djT3);
+        pd2pd1.init();
         pd2pd2 = CasADi::SXFunction(f.inputExpr(),djT2);
         pd2pd2.init();
       }
@@ -321,6 +335,21 @@ template<typename Ret, typename Arg1, typename Arg2>
       return FromCasadi<typename fmatvec::Der<Ret, Arg1>::type>::cast(pd1dd1.output());
     }
 
+    typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer2(const Arg1 &xd2, const Arg1 &x1, const Arg2 &x2) {
+      pd1dd2.setInput(ToCasadi<Arg1>::cast(xd2),0);
+      pd1dd2.setInput(ToCasadi<Arg1>::cast(x1),1);
+      pd1dd2.setInput(ToCasadi<Arg2>::cast(x2),2);
+      pd1dd2.evaluate();
+      return FromCasadi<typename fmatvec::Der<Ret, Arg1>::type>::cast(pd1dd2.output());
+    }
+
+//    typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg1>::type parDer1ParDer1(const Arg1 &x1, const Arg2 &x2) {
+//      pd1pd1.setInput(ToCasadi<Arg1>::cast(x1),0);
+//      pd1pd1.setInput(ToCasadi<Arg2>::cast(x2),1);
+//      pd1pd1.evaluate();
+//      return FromCasadi<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg1>::type>::cast(pd1pd1.output());
+//    }
+    
     typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg2>::type parDer1ParDer2(const Arg1 &x1, const Arg2 &x2) {
       pd1pd2.setInput(ToCasadi<Arg1>::cast(x1),0);
       pd1pd2.setInput(ToCasadi<Arg2>::cast(x2),1);
@@ -334,6 +363,21 @@ template<typename Ret, typename Arg1, typename Arg2>
       pd2dd1.setInput(ToCasadi<Arg2>::cast(x2),2);
       pd2dd1.evaluate();
       return FromCasadi<typename fmatvec::Der<Ret, Arg2>::type>::cast(pd2dd1.output());
+    }
+
+    typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer2(const Arg1 &xd2, const Arg1 &x1, const Arg2 &x2) {
+      pd2dd2.setInput(ToCasadi<Arg1>::cast(xd2),0);
+      pd2dd2.setInput(ToCasadi<Arg1>::cast(x1),1);
+      pd2dd2.setInput(ToCasadi<Arg2>::cast(x2),2);
+      pd2dd2.evaluate();
+      return FromCasadi<typename fmatvec::Der<Ret, Arg2>::type>::cast(pd2dd2.output());
+    }
+
+    typename fmatvec::Der<typename fmatvec::Der<Ret, Arg2>::type, Arg1>::type parDer2ParDer1(const Arg1 &x1, const Arg2 &x2) {
+      pd2pd1.setInput(ToCasadi<Arg1>::cast(x1),0);
+      pd2pd1.setInput(ToCasadi<Arg2>::cast(x2),1);
+      pd2pd1.evaluate();
+      return FromCasadi<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg2>::type, Arg1>::type>::cast(pd2pd1.output());
     }
 
     typename fmatvec::Der<typename fmatvec::Der<Ret, Arg2>::type, Arg2>::type parDer2ParDer2(const Arg1 &x1, const Arg2 &x2) {

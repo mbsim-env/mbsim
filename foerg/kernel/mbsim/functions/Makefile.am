@@ -1,5 +1,8 @@
 noinst_LTLIBRARIES = libfunction.la
 libfunction_la_SOURCES = basic_functions.cc \
+			 nested_functions.cc \
+			 vector_valued_functions.cc \
+			 piecewise_defined_function.cc \
 			 tabular_functions.cc \
 			 symbolic_functions.cc \
 			 kinematic_functions.cc \
@@ -14,6 +17,9 @@ libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_C
 
 functioninclude_HEADERS = function.h \
 			  basic_functions.h \
+			  nested_functions.h \
+			  vector_valued_functions.h \
+			  piecewise_defined_function.h \
 			  tabular_functions.h \
 			  symbolic_functions.h \
 			  kinematic_functions.h \
