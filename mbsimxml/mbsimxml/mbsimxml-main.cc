@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
   
     // get path of this executable
     string EXEEXT;
-#ifdef MBSIMXML_MINGW // Windows
+#ifdef _WIN32 // Windows
     EXEEXT=".exe";
 #else // Linux
     EXEEXT="";
