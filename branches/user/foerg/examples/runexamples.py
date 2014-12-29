@@ -45,7 +45,8 @@ willFail=set([
   pj("mechanics", "flexible_body", "beltdrive"),
   pj("mechanics", "contacts", "self_siphoning_beads"),
   pj("fmi", "simple_test"),
-  pj("fmi", "sphere_on_plane")
+  pj("fmi", "sphere_on_plane"),
+  pj("fmi", "hierachical_modelling")
 ])
 
 # MBSim Modules
@@ -1085,7 +1086,11 @@ def executeFMISrcExample(executeFD, example):
   if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
   if subprocessCall(["make", "-f", "Makefile_FMI"], executeFD)!=0: return 1, 0, []
   # create and run FMU
-  return executeFMIExample(executeFD, example, "mbsimfmi_model.so")
+  if args.exeExt==".exe":
+    dllExt=".dll"
+  else:
+    dllExt=".so"
+  return executeFMIExample(executeFD, example, "mbsimfmi_model"+dllExt)
 
 
 
