@@ -3585,78 +3585,6 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="AdditionFunction" substitutionGroup="Function" type="AdditionFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="AdditionFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="firstSummand">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="secondSummand">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="MultiplicationFunction" substitutionGroup="Function" type="MultiplicationFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="MultiplicationFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="firstFactor">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="secondFactor">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
   <xs:element name="VectorValuedFunction" substitutionGroup="Function" type="VectorValuedFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -3701,6 +3629,46 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="innerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="BinaryNestedFunction" substitutionGroup="Function" type="BinaryNestedFunctionType"/>
+  <xs:complexType name="BinaryNestedFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="outerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="firstInnerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondInnerFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
