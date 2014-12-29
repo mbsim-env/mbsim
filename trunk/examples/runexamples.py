@@ -1086,7 +1086,11 @@ def executeFMISrcExample(executeFD, example):
   if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
   if subprocessCall(["make", "-f", "Makefile_FMI"], executeFD)!=0: return 1, 0, []
   # create and run FMU
-  return executeFMIExample(executeFD, example, "mbsimfmi_model.so")
+  if args.exeExt==".exe":
+    dllExt=".dll"
+  else
+    dllExt=".so"
+  return executeFMIExample(executeFD, example, "mbsimfmi_model"+dllExt)
 
 
 

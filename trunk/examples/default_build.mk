@@ -14,12 +14,14 @@ OBJECTS=$(SOURCES:.cc=.o)
 DEPFILES=$(SOURCES:.cc=.d)
 
 # platform specific settings
-ifeq ($(OS),Windows_NT)
+ifeq ($(PLATFORM),Windows)
   SHEXT=.dll
   EXEEXT=.exe
+  PIC=
 else
   SHEXT=.so
   EXEEXT=
+  PIC=-fpic
 endif
 
 # default target
@@ -41,7 +43,7 @@ rpath: $(OBJECTS)
 
 # compile source with pkg-config options from PACKAGES
 %.o: %.cc
-	$(CXX) -c -fpic -o $@ $< $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES))
+	$(CXX) -c $(PIC) -o $@ $< $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES))
 
 # generate make rules for all source files using gcc -M with pkg-config options from PACKAGES
 %.d: %.cc
