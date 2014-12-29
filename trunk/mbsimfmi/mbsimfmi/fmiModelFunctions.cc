@@ -1,4 +1,5 @@
 // includes
+#include "config.h"
 #include <fmiinstance.h>
 #include <string>
 

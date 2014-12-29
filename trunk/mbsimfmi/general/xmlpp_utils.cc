@@ -1,3 +1,4 @@
+#include "config.h"
 #include "xmlpp_utils.h"
 #include <mbsimxml/mbsimxml.h>
 

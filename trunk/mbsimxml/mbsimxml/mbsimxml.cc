@@ -1,3 +1,4 @@
+#include "config.h"
 #include <mbsimxml.h>
 #include <vector>
 #include <mbxmlutilshelper/dom.h>
