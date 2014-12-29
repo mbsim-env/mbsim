@@ -1088,7 +1088,7 @@ def executeFMISrcExample(executeFD, example):
   # create and run FMU
   if args.exeExt==".exe":
     dllExt=".dll"
-  else
+  else:
     dllExt=".so"
   return executeFMIExample(executeFD, example, "mbsimfmi_model"+dllExt)
 
