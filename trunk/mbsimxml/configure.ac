@@ -12,12 +12,12 @@ AC_LANG([C++])
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
 PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
+AC_SUBST([PIC])
 if test "_$host_os" = "_mingw32" ; then
-  AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
-  MBSIMXML_MINGW=""
+  PIC=""
   EXTRA_LIBS=""
 else
-  MBSIMXML_MINGW="-fPIC"
+  PIC="-fPIC -DPIC"
   EXTRA_LIBS="-ldl"
 fi
 AC_SUBST([EXTRA_LIBS])
