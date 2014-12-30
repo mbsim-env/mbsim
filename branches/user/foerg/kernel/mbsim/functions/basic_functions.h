@@ -22,6 +22,7 @@
 
 #include "mbsim/functions/function.h"
 #include "mbsim/objectfactory.h"
+#include <limits>
 
 namespace MBSim {
 
@@ -266,14 +267,30 @@ namespace MBSim {
       }
   };
 
-  template<typename Sig> class PositiveValueFunction; 
+  template<typename Sig> class BoundedFunction; 
 
   template<typename Ret, typename Arg>
-  class PositiveValueFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+  class BoundedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    private:
+      double lowerBound, upperBound;
     public:
+      BoundedFunction() : lowerBound(-std::numeric_limits<double>::max()), upperBound(std::numeric_limits<double>::max()) { }
+      void setLowerBound(double lowerBound_) { lowerBound = lowerBound_; }
+      void setUpperBound(double upperBound_) { upperBound = upperBound_; }
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
-        return FromDouble<Ret>::cast(x>=0?x:0);
+        if(x<lowerBound)
+          x = lowerBound;
+        if(x>upperBound)
+          x = upperBound;
+        return FromDouble<Ret>::cast(x);
+      }
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e;
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"lowerBound");
+        lowerBound=Element::getDouble(e);
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"upperBound");
+        upperBound=Element::getDouble(e);
       }
   };
 

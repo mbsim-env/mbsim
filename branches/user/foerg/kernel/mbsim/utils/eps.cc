@@ -19,6 +19,7 @@
 #include <config.h>
 #include "eps.h"
 #include <cmath>
+#include <limits>
 
 namespace MBSim {
 
@@ -28,9 +29,7 @@ namespace MBSim {
     static bool alreadyCalculated = false;
 
     if (!alreadyCalculated) {
-      for (eps = 1.; (1.0 + eps)>1.0; )
-        eps *= 0.5;
-      eps *= 2.0;
+      eps = std::numeric_limits<double>::epsilon();
       alreadyCalculated = true;
     }
     return eps;
