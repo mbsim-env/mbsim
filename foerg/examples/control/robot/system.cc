@@ -143,11 +143,10 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalTimeDiscretization * bDis = new SignalTimeDiscretization("BaseDis");
   addLink(bDis);
-  bDis->setSignal(basisControlOut);
+  bDis->setInputSignal(basisControlOut);
 
   KineticExcitation *motorBasis = new KineticExcitation("MotorBasis");
   addLink(motorBasis);
-  // motorBasis->setSignal(basisControlOut);
   motorBasis->setMomentDirection("[0;1;0]");
   motorBasis->setMomentFunction(new SignalFunction<VecV(double)>(bDis));
   motorBasis->connect(getFrame("I"),basis->getFrame("R"));
@@ -185,11 +184,10 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalTimeDiscretization * aDis = new SignalTimeDiscretization("ArmDis");
   addLink(aDis);
-  aDis->setSignal(armControlOut);
+  aDis->setInputSignal(armControlOut);
 
   KineticExcitation *motorArm = new KineticExcitation("MotorArm");
   addLink(motorArm);
-  // motorArm->setSignal(armControlOut);
   motorArm->setMomentDirection("[0;0;1]");
   motorArm->setMomentFunction(new SignalFunction<VecV(double)>(aDis));
   motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
@@ -227,11 +225,10 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalTimeDiscretization * sDis = new SignalTimeDiscretization("SpitzeDis");
   addLink(sDis);
-  sDis->setSignal(spitzeControlOut);
+  sDis->setInputSignal(spitzeControlOut);
 
   KineticExcitation *motorSpitze = new KineticExcitation("MotorSpitze");
   addLink(motorSpitze);
-  // motorSpitze->setSignal(spitzeControlOut);
   motorSpitze->setForceDirection("[0;1;0]");
   motorSpitze->setForceFunction(new SignalFunction<VecV(double)>(sDis));
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
