@@ -56,6 +56,7 @@ namespace MBSim {
   //MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<Vec3(Vec,double)>, MBSIM%"SymbolicFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<Vec3(VecV,double)>, MBSIM%"SymbolicFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<Vec3(Vec3,double)>, MBSIM%"SymbolicFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<VecV(VecV,VecV)>, MBSIM%"SymbolicFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<Vec(Vec,Vec)>, MBSIM%"SymbolicFunction")
 
 #endif
