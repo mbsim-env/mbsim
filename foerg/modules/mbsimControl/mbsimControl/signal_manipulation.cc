@@ -34,10 +34,9 @@ namespace MBSimControl {
 
   void SignalMux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
-      string s=E(e)->getAttribute("ref");
-      signalString.push_back(s);
+    DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignals")->getFirstElementChild();
+     while (e) {
+      signalString.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }
   }
@@ -75,90 +74,32 @@ namespace MBSimControl {
   void SignalDemux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
-      string s=E(e)->getAttribute("ref");
-      signalString.push_back(s);
-      indizesTmp.push_back(getVec(E(e)->getFirstElementChildNamed(MBSIMCONTROL%"index")));
-      e=e->getNextElementSibling();
-    }
+    signalString=E(e)->getAttribute("ref");
+    indicesTmp = Element::getVec(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"indices"));
   }
 
   void SignalDemux::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      for (unsigned int i=0; i<signalString.size(); i++) {
-        Vec tmp=indizesTmp[i];
-        fmatvec::VecInt tmpI(tmp.size(), INIT, 0);
-        for (int j=0; j<tmp.size(); j++)
-          tmpI(j)=int(tmp(j));
-        addInputSignal(getByPath<Signal>(signalString[i]), tmpI);
-      }
-      signalString.clear();
-      Signal::init(stage);
+        for (int j=0; j<indicesTmp.size(); j++)
+          indices(j)=int(indicesTmp(j));
+        if (signalString!="")
+          setInputSignal(getByPath<Signal>(signalString));
+        Signal::init(stage);
     }
     else if(stage==preInit) {
       Signal::init(stage);
-      for(unsigned int i=0; i<signals.size(); i++)
-        addDependency(signals[i]);
-    }
-    else if (stage==plotting) {
-      for (unsigned int i=0; i<indizes.size(); i++)
-        totalSignalSize+=indizes[i].size();
-      Signal::init(stage);
+      addDependency(signal);
     }
     else
       Signal::init(stage);
   }
 
   void SignalDemux::updateStateDependentVariables(double t) {
-    VecV y(totalSignalSize, INIT, 0);
-    int j=0;
-    for (unsigned int i=0; i<signals.size(); i++) {
-      VecV yy=signals[i]->getSignal();
-      for (int k=0; k<indizes[i].size(); k++) {
-        y(j)=yy(indizes[i](k));
-        j++;
-      }
+    VecV y(indices.size(), INIT, 0);
+    for (int k=0; k<indices.size(); k++) {
+      y(k)=signal->getSignal()(indices(k));
     }
     s = y;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalLimitation, MBSIMCONTROL%"SignalLimitation")
-
-  void SignalLimitation::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    signalString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalValue");
-    VecV min=Element::getVec(e);
-    setMinimalValue(min);
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalValue");
-    VecV max=Element::getVec(e, min.size());
-    setMaximalValue(max);
-  }
-
-  void SignalLimitation::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (signalString!="")
-        setInputSignal(getByPath<Signal>(signalString));
-      Signal::init(stage);
-    }
-    else if(stage==preInit) {
-      Signal::init(stage);
-      addDependency(s);
-    }
-    else
-      Signal::init(stage);
-  }
-
-  void SignalLimitation::updateStateDependentVariables(double t) { 
-    VecV y=s->getSignal();
-    for (int i=0; i<y.size(); i++)
-      if (y(i)<minValue(i))
-        y(i)=minValue(i);
-      else if (y(i)>maxValue(i))
-        y(i)=maxValue(i);
-    Signal::s = y; 
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
