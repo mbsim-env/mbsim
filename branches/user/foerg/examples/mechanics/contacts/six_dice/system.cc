@@ -10,6 +10,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/nested_functions.h"
 
 #include "openmbvcppinterface/ivbody.h"
 #include "openmbvcppinterface/cube.h"
