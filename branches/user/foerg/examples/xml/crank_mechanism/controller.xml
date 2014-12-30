@@ -28,14 +28,15 @@
         </ConstantFunction>
       </function>
     </FunctionSensor>
-    <SignalAddition name="speedDeviation" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Link[crankReferenceSpeed]">
-        <factor>1</factor>
-      </inputSignal>
-      <inputSignal ref="../Link[crankMeasuredSpeed]">
-        <factor>-1</factor>
-      </inputSignal>
-    </SignalAddition>
+    <BinarySignalOperation name="speedDeviation" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <firstInputSignal ref="../Link[crankReferenceSpeed]"/>
+      <secondInputSignal ref="../Link[crankMeasuredSpeed]"/>
+      <function>
+       <SymbolicFunction arg1="x" arg2="y" xmlns="http://mbsim.berlios.de/MBSim">
+          x-y
+        </SymbolicFunction>
+      </function>
+    </BinarySignalOperation>
     <SignalProcessingSystemSensor name="controllerOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
       <signalProcessingSystem ref="../Link[pidController]"/>
     </SignalProcessingSystemSensor>

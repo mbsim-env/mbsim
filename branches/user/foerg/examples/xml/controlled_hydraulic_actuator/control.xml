@@ -44,14 +44,16 @@
         </TabularFunction>
       </function>
     </FunctionSensor>
-    <SignalAddition name="DifferencePosition" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Link[DesiredPosition]">
-        <factor>-1.</factor>
+    <BinarySignalOperation name="DifferencePosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <firstInputSignal ref="../Link[DesiredPosition]"/>
+      <secondInputSignal ref="../Link[MassPosition]"/>
+      <function>
+       <SymbolicFunction arg1="x" arg2="y" xmlns="http://mbsim.berlios.de/MBSim">
+          y-x
+        </SymbolicFunction>
+      </function>
       </inputSignal>
-      <inputSignal ref="../Link[MassPosition]">
-        <factor>1.</factor>
-      </inputSignal>
-    </SignalAddition>
+    </BinarySignalOperation>
     <SignalProcessingSystemSensor name="ControlOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
       <signalProcessingSystem ref="../Link[LTI]"/>
     </SignalProcessingSystemSensor>
