@@ -13,6 +13,7 @@
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/symbolic_functions.h"
 
 #include "mbsimControl/signal_function.h"
 #include "mbsimControl/linear_transfer_system.h"
@@ -34,6 +35,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 using namespace MBSimControl;
+using namespace CasADi;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Schwerkraft
@@ -361,11 +363,21 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(VelSoll);
   VelSoll->setFunction(new ConstantFunction<VecV(double)>(10));
 
+  vector<SX> s1(1), s2(1), y(1);
+  s1[0] = SX("s1");
+  s2[0] = SX("s2");
+  y[0] = s2[0]-s1[0];
+  vector<vector<SX> > input(2);
+  input[0] = s1;
+  input[1] = s2;
+  SXFunction f(input,y);
+
   // Signal-Addition
-  SignalAddition *Regelfehler = new SignalAddition("Regelfehler");
+  BinarySignalOperation * Regelfehler = new BinarySignalOperation("Regelfehler");
   addLink(Regelfehler);
-  Regelfehler->addSignal(AbsVelSensorAnCrank,-1);
-  Regelfehler->addSignal(VelSoll,1);
+  Regelfehler->setFirstInputSignal(AbsVelSensorAnCrank);
+  Regelfehler->setSecondInputSignal(VelSoll);
+  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   // Regler
   LinearTransferSystem *Regler = new LinearTransferSystem("Regler");

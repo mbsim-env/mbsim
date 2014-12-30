@@ -2,6 +2,9 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/symbolic_functions.h"
 
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
@@ -10,8 +13,6 @@
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/signal_function.h"
 
-#include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/functions/tabular_functions.h"
 #include "tools/file_to_fmatvecstring.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -22,6 +23,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
+using namespace CasADi;
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
@@ -115,10 +117,20 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
 
-  SignalAddition * basePositionDiff = new SignalAddition("BasePositionDiff");
+  vector<SX> s1(1), s2(1), y(1);
+  s1[0] = SX("s1");
+  s2[0] = SX("s2");
+  y[0] = s1[0]-s2[0];
+  vector<vector<SX> > input(2);
+  input[0] = s1;
+  input[1] = s2;
+  SXFunction f(input,y);
+
+  BinarySignalOperation * basePositionDiff = new BinarySignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
-  basePositionDiff->addSignal(basePositionSoll, 1);
-  basePositionDiff->addSignal(basePosition, -1);
+  basePositionDiff->setFirstInputSignal(basePositionSoll);
+  basePositionDiff->setSecondInputSignal(basePosition);
+  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
   addLink(basisControl);
@@ -156,10 +168,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
 
-  SignalAddition * armPositionDiff = new SignalAddition("ArmPositionDiff");
+  BinarySignalOperation * armPositionDiff = new BinarySignalOperation("ArmPositionDiff");
   addLink(armPositionDiff);
-  armPositionDiff->addSignal(armPositionSoll, 1);
-  armPositionDiff->addSignal(armPosition, -1);
+  armPositionDiff->setFirstInputSignal(armPositionSoll);
+  armPositionDiff->setSecondInputSignal(armPosition);
+  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
@@ -197,10 +210,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);
 
-  SignalAddition * spitzePositionDiff = new SignalAddition("SpitzePositionDiff");
+  BinarySignalOperation * spitzePositionDiff = new BinarySignalOperation("SpitzePositionDiff");
   addLink(spitzePositionDiff);
-  spitzePositionDiff->addSignal(spitzePositionSoll, 1);
-  spitzePositionDiff->addSignal(spitzePosition, -1);
+  spitzePositionDiff->setFirstInputSignal(spitzePositionSoll);
+  spitzePositionDiff->setSecondInputSignal(spitzePosition);
+  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);
