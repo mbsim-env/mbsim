@@ -26,25 +26,6 @@
 namespace MBSimControl {
 
   /*!
-   * \brief SignalAddition
-   * \author Markus Schneider
-   */
-  class SignalAddition : public Signal {
-    public:
-      SignalAddition(const std::string &name="") : Signal(name) {}
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void addSignal(Signal * signal, double factor=1.);
-      void updateStateDependentVariables(double t);
-      int getSignalSize() { return signals[0]->getSignalSize(); }
-    private:
-      std::vector<Signal *> signals;
-      std::vector<double> factors;
-      std::vector<std::string> signalString;
-      std::vector<double> factorsTmp;
-  };
-
-  /*!
    * \brief SignalOffset
    * \author Markus Schneider
    */
@@ -64,26 +45,6 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief SignalMultiplication
-   * \author Markus Schneider
-   */
-  class SignalMultiplication : public Signal {
-    public:
-      SignalMultiplication(const std::string &name="") : Signal(name) {}
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void addSignal(Signal * signal, double exp);
-      void updateStateDependentVariables(double t);
-      int getSignalSize() { return signals[0]->getSignalSize(); }
-    private:
-      std::vector<Signal *> signals;
-      std::vector<double> exponents;
-      std::vector<std::string> signalString;
-      std::vector<double> exponentsTmp;
-  };
-
-
-  /*!
    * \brief SignalMux
    * \author Markus Schneider
    */
@@ -99,7 +60,6 @@ namespace MBSimControl {
       std::vector<Signal *> signals;
       std::vector<std::string> signalString;
   };
-
 
   /*!
    * \brief SignalDemux
@@ -162,7 +122,6 @@ namespace MBSimControl {
       std::string signalString;
   };
 
-
   /*!
    * \brief SignalOperation according <cmath>
    * \author Markus Schneider
@@ -186,7 +145,6 @@ namespace MBSimControl {
       unsigned int op;
       fmatvec::VecV s2values;
   };
-
 
   /*!
    * \brief SpecialSignalOperation with advanced functionality
@@ -256,7 +214,7 @@ namespace MBSimControl {
       UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) {}
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setSignal(Signal *signal_) {s=signal_; }
+      void setInputSignal(Signal *signal_) {s=signal_; }
       void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f_) {
         f=f_;
         f->setParent(this);
@@ -279,8 +237,8 @@ namespace MBSimControl {
       BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) {}
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void setSignal1(Signal *signal_) {s1=signal_; }
-      void setSignal2(Signal *signal_) {s2=signal_; }
+      void setFirstInputSignal(Signal *signal_) {s1=signal_; }
+      void setSecondInputSignal(Signal *signal_) {s2=signal_; }
       void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f_) {
         f=f_;
         f->setParent(this);

@@ -30,49 +30,6 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalAddition, MBSIMCONTROL%"SignalAddition")
-
-  void SignalAddition::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
-      string path=E(e)->getAttribute("ref");
-      double f=getDouble(E(e)->getFirstElementChildNamed(MBSIMCONTROL%"factor"));
-      signalString.push_back(path);
-      factorsTmp.push_back(f);
-      e=e->getNextElementSibling();
-    }
-  }
-
-  void SignalAddition::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      for (unsigned int i=0; i<signalString.size(); i++)
-        addSignal(getByPath<Signal>(signalString[i]), factorsTmp[i]);
-      signalString.clear();
-      factorsTmp.clear();
-      Signal::init(stage);
-    }
-    else if(stage==preInit) {
-      Signal::init(stage);
-      for(unsigned int i=0; i<signals.size(); i++)
-        addDependency(signals[i]);
-    }
-    else
-      Signal::init(stage);
-  }
-
-  void SignalAddition::addSignal(Signal * signal, double factor) {
-    signals.push_back(signal);
-    factors.push_back(factor);
-  }
-
-  void SignalAddition::updateStateDependentVariables(double t) {
-    VecV y=factors[0]*(signals[0]->getSignal());
-    for (unsigned int i=1; i<signals.size(); i++)
-      y+=factors[i]*(signals[i]->getSignal());
-    s = y;
-  }
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalOffset, MBSIMCONTROL%"SignalOffset")
   
   void SignalOffset::initializeUsingXML(DOMElement *element) {
@@ -97,52 +54,6 @@ namespace MBSimControl {
 
   void SignalOffset::updateStateDependentVariables(double t) {
     s = signal->getSignal()+offset;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMultiplication, MBSIMCONTROL%"SignalMultiplication")
-  
-  void SignalMultiplication::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
-    while (e && E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
-      signalString.push_back(E(e)->getAttribute("ref"));
-      exponentsTmp.push_back(getDouble(E(e)->getFirstElementChildNamed(MBSIMCONTROL%"exponent")));
-      e=e->getNextElementSibling();
-    }
-  }
-
-  void SignalMultiplication::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      for (unsigned int i=0; i<signalString.size(); i++)
-        addSignal(getByPath<Signal>(signalString[i]), exponentsTmp[i]);
-      signalString.clear();
-      exponentsTmp.clear();
-      Signal::init(stage);
-    }
-    else if(stage==preInit) {
-      Signal::init(stage);
-      for(unsigned int i=0; i<signals.size(); i++)
-        addDependency(signals[i]);
-    }
-    else
-      Signal::init(stage);
-  }
-
-  void SignalMultiplication::addSignal(Signal * signal, double exp) {
-    signals.push_back(signal);
-    exponents.push_back(exp);
-  }
-
-  void SignalMultiplication::updateStateDependentVariables(double t) {
-    VecV y=signals[0]->getSignal();
-    for (int i=0; i<y.size(); i++)
-      y(i)=pow(y(i), exponents[0]);
-    for (unsigned int i=1; i<signals.size(); i++) {
-      const VecV y2=signals[i]->getSignal();
-      for (int j=0; j<y.size(); j++)
-        y(j)*=pow(y2(j), exponents[i]);
-    }
-    s = y;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMux, MBSIMCONTROL%"SignalMux")
@@ -642,7 +553,7 @@ namespace MBSimControl {
   void UnarySignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signalString!="")
-        setSignal(getByPath<Signal>(signalString));
+        setInputSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
     else if(stage==preInit) {
@@ -663,9 +574,9 @@ namespace MBSimControl {
   void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"input1Signal");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"firstInputSignal");
     signal1String=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"input2Signal");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondInputSignal");
     signal2String=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(e) {
@@ -677,9 +588,9 @@ namespace MBSimControl {
   void BinarySignalOperation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
       if (signal1String!="")
-        setSignal1(getByPath<Signal>(signal1String));
+        setFirstInputSignal(getByPath<Signal>(signal1String));
       if (signal2String!="")
-        setSignal2(getByPath<Signal>(signal2String));
+        setSecondInputSignal(getByPath<Signal>(signal2String));
       Signal::init(stage);
     }
     else if(stage==preInit) {
