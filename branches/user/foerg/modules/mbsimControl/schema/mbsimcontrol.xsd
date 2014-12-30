@@ -519,14 +519,16 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal" maxOccurs="unbounded">
+          <xs:element name="inputSignals">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Pfad zum Eingangssignal
+                Liste der Eingangssignale
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Signal"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -545,49 +547,18 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal" maxOccurs="unbounded">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Pfad des Eingangssignals
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="index" type="pv:nounitVector">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="">
-                      Vektor der ausgewählten Indizes.
-                      Der erste Eintrag eines Signals ist dem Index 0 zugeordnet.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="SignalLimitation" substitutionGroup="Signal" type="SignalLimitationType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Beschränkung der Ausgangswerte eines Signals.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="SignalLimitationType">
-    <xs:complexContent>
-      <xs:extension base="SignalType">
-        <xs:sequence>
           <xs:element name="inputSignal">
             <xs:complexType>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="minimalValue" type="pv:nounitVector"/>
-          <xs:element name="maximalValue" type="pv:nounitVector"/>
+          <xs:element name="indices" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Vektor der ausgewählten Indizes.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

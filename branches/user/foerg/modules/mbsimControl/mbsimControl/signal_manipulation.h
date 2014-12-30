@@ -48,37 +48,17 @@ namespace MBSimControl {
    */
   class SignalDemux : public Signal {  
     public:
-      SignalDemux(const std::string &name="") : Signal(name), totalSignalSize(0) {}
+      SignalDemux(const std::string &name="") : Signal(name) {}
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void addInputSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
+      void setInputSignal(Signal * signal_) { signal=signal_; }
+      void setIndices(const fmatvec::VecInt &indices_) { indices = indices_; }
       void updateStateDependentVariables(double t);
-      int getSignalSize() { return signals[0]->getSignalSize(); }
+      int getSignalSize() { return signal->getSignalSize(); }
     private:
-      std::vector<Signal *> signals;
-      std::vector<fmatvec::VecInt > indizes;
-      std::vector<fmatvec::Vec> indizesTmp;
-      std::vector<std::string> signalString;
-      int totalSignalSize;
-  };
-
-  /*!
-   * \brief SignalLimitation
-   * \author Markus Schneider
-   */
-  class SignalLimitation : public Signal {  
-    public:
-      SignalLimitation(const std::string &name="") : Signal(name), s(NULL), minValue(), maxValue(), signalString("") {}
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setMinimalValue(fmatvec::VecV minValue_) {minValue=minValue_; }
-      void setMaximalValue(fmatvec::VecV maxValue_) {maxValue=maxValue_; }
-      void setInputSignal(Signal * signal_) {s=signal_; }
-      void updateStateDependentVariables(double t);
-      int getSignalSize() { return s->getSignalSize(); }
-    private:
-      Signal * s;
-      fmatvec::VecV minValue, maxValue;
+      Signal *signal;
+      fmatvec::VecInt indices;
+      fmatvec::VecV indicesTmp;
       std::string signalString;
   };
 
