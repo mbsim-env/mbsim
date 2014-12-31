@@ -124,7 +124,7 @@ namespace MBSimAnalyser {
 
     Vec z;
     double t0 = tStart;
-    for(int j=0; j<f.size(); j++) {
+    for(int j=0; j<static_cast<int>(f.size()); j++) {
       c(f[j].second) = complex<double>(0,A);
       c(f[j].second+1) = complex<double>(0,-A);
       real(wbuf(f[j].second)) = 0;
@@ -147,7 +147,7 @@ namespace MBSimAnalyser {
     if(autoUpdate) computeEigenvalues();
     else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
       throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
-    if(n<1 or n>f.size())
+    if(n<1 or n>static_cast<int>(f.size()))
       throw MBSimError("In Eigenanalysis: frequency number out of range!");
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);

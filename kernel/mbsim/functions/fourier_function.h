@@ -104,7 +104,7 @@ namespace MBSim {
       }
     protected:
       double f;
-      bool a0;
+      double a0;
       fmatvec::VecV a, b;
       bool amplitudePhaseAngleForm;
       int size;
