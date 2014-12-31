@@ -131,7 +131,10 @@
               </pre>
             </div>
           </xsl:if>',
-        "c0":'danger',
+        "c0":'<xsl:choose>
+                <xsl:when test="kind/text()='Leak_DefinitelyLost' or kind/text()='Leak_IndirectlyLost' or kind/text()='Leak_PossiblyLost'">warning</xsl:when>
+                <xsl:otherwise>danger</xsl:otherwise>
+              </xsl:choose>',
         <!-- error details -->
         "d1":'<!-- location stack of the valgrind "what" message --><h4 class="text-danger">
             <xsl:call-template name="replace-string"><!-- quote ' to \' (this is a javascript string) -->
