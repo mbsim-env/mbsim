@@ -21,7 +21,6 @@
 #define SYMBOLIC_FUNCTION_H_
 
 #include <mbsim/functions/function.h>
-#include <casadi/symbolic/fx/sx_function.hpp>
 #include <casadi/symbolic/matrix/matrix_tools.hpp>
 #include <mbxmlutilshelper/casadiXML.h>
 #include "mbsim/mbsim_event.h"
@@ -141,19 +140,19 @@ template<typename Ret, typename Arg>
         pd = CasADi::SXFunction(f.inputExpr(),f.jac());
         pd.init();
         int nq = getArgSize();
-        std::vector<CasADi::SX> sqd(nq);
+        std::vector<CasADi::SXElement> sqd(nq);
         for(int i=0; i<nq; i++) {
           std::stringstream stream;
           stream << "qd" << i;
-          sqd[i] = CasADi::SX(stream.str());
+          sqd[i] = CasADi::SXElement(stream.str());
         }
-        std::vector<CasADi::SXMatrix> input2(3);
+        std::vector<CasADi::SX> input2(3);
         input2[0] = sqd;
         input2[1] = f.inputExpr(0);
         dd = CasADi::SXFunction(input2,f.jac().mul(sqd));
         dd.init();
         int n = f.outputExpr(0).size();
-        CasADi::SXMatrix Jd(n,nq);
+        CasADi::SX Jd(n,nq);
         for(int j=0; j<nq; j++) {
           Jd(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
         }
@@ -251,19 +250,19 @@ template<typename Ret, typename Arg1, typename Arg2>
         pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
         pd2.init();
         int nq = getArg1Size();
-        std::vector<CasADi::SX> sqd(nq);
+        std::vector<CasADi::SXElement> sqd(nq);
         for(int i=0; i<nq; i++) {
           std::stringstream stream;
           stream << "qd" << i;
-          sqd[i] = CasADi::SX(stream.str());
+          sqd[i] = CasADi::SXElement(stream.str());
         }
-        std::vector<CasADi::SXMatrix> input2(3);
+        std::vector<CasADi::SX> input2(3);
         input2[0] = sqd;
         input2[1] = f.inputExpr(0);
         input2[2] = f.inputExpr(1);
         int n = f.outputExpr(0).size1();
-        CasADi::SXMatrix Jd1(n,nq);
-        CasADi::SXMatrix Jd2(n,nq);
+        CasADi::SX Jd1(n,nq);
+        CasADi::SX Jd2(n,nq);
         for(int j=0; j<nq; j++) {
           Jd1(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
           Jd2(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(1)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,1));
@@ -273,8 +272,8 @@ template<typename Ret, typename Arg1, typename Arg2>
         pd1pd2 = CasADi::SXFunction(f.inputExpr(),Jd2);
         pd1pd2.init();
 
-        CasADi::SXMatrix djT1 = pd2.jac(0).mul(sqd);
-        CasADi::SXMatrix djT2 = pd2.jac(1);
+        CasADi::SX djT1 = pd2.jac(0).mul(sqd);
+        CasADi::SX djT2 = pd2.jac(1);
         pd2dd1 = CasADi::SXFunction(input2,djT1);
         pd2dd1.init();
         pd2pd2 = CasADi::SXFunction(f.inputExpr(),djT2);
@@ -353,7 +352,6 @@ template<typename Ret, typename Arg1, typename Arg2>
     CasADi::SXFunction f;
     public:
     SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
-    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) { }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg1, Arg2, Arg3)>::init(stage);
