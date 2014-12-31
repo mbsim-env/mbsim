@@ -217,6 +217,7 @@ def main():
       ])],
     pj('mbsim', 'examples'): [False, set([ # depends on
         pj('mbsim', 'mbsimxml'),
+        pj('mbsim', 'mbsimfmi'),
         pj('mbsim', 'kernel'),
         pj('mbsim', 'modules', 'mbsimHydraulics'),
         pj('mbsim', 'modules', 'mbsimFlexibleBody'),

@@ -54,3 +54,20 @@
    ...
    fun:_Z11eval_stringRKSsbRii
 }
+
+# FMUCHECKER
+{
+   fmuchecker
+   Memcheck:Leak
+   fun:malloc
+   fun:jm_vector_alloc_jm_voidp
+   fun:fmi1_xml_handle_ModelVariables
+   fun:fmi1_parse_element_end
+   fun:doContent
+   fun:prologProcessor
+   fun:XML_ParseBuffer
+   fun:fmi1_xml_parse_model_description
+   fun:fmi1_import_parse_xml
+   fun:fmi1_check
+   fun:main
+}
