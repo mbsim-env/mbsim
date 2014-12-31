@@ -260,15 +260,15 @@ namespace MBSimGUI {
 
   Parameter* MBSimObjectFactory::createParameter(DOMElement *element) {
     if(element==0) return 0;
-    if(E(element)->getTagName()==PARAM%"stringParameter")
+    if(E(element)->getTagName()==PV%"stringParameter")
       return new StringParameter(E(element)->getAttribute("name"));
-    else if(E(element)->getTagName()==PARAM%"scalarParameter")
+    else if(E(element)->getTagName()==PV%"scalarParameter")
       return new ScalarParameter(E(element)->getAttribute("name"));
-    else if(E(element)->getTagName()==PARAM%"vectorParameter")
+    else if(E(element)->getTagName()==PV%"vectorParameter")
       return new VectorParameter(E(element)->getAttribute("name"));
-    else if(E(element)->getTagName()==PARAM%"matrixParameter")
+    else if(E(element)->getTagName()==PV%"matrixParameter")
       return new MatrixParameter(E(element)->getAttribute("name"));
-    else if(E(element)->getTagName()==PARAM%"searchPath")
+    else if(E(element)->getTagName()==PV%"searchPath")
       return new SearchPathParameter;
     return 0;
   }
