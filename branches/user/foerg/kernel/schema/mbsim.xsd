@@ -3586,14 +3586,14 @@
           <xs:element name="lowerBound" minOccurs="0" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Untere Grenze.</object>.
+                Untere Grenze.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="upperBound" minOccurs="0" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Obere Grenze.</object>.
+                Obere Grenze.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
