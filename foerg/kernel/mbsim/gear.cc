@@ -58,17 +58,26 @@ namespace MBSim {
     for(unsigned i=0; i<body.size(); i++)
       g+=body[i]->getqRel()*ratio[i];
 
-    gd.init(0);
-    for(unsigned i=0; i<body.size(); i++) {
-      gd+=body[i]->getuRel()*ratio[i];
-    }
-
     if(isSingleValued()) {
+      gd.init(0);
+      for(unsigned i=0; i<body.size(); i++) {
+        gd+=body[i]->getuRel()*ratio[i];
+      }
       la(0) = (*func)(g(0),gd(0));
       for(unsigned i=0; i<body.size(); i++) {
         WF[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
         WM[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
       }
+    }
+  }
+
+  void Gear::updateg(double t) {
+  }
+
+  void Gear::updategd(double t) {
+    gd.init(0);
+    for(unsigned i=0; i<body.size(); i++) {
+      gd+=body[i]->getuRel()*ratio[i];
     }
   }
 

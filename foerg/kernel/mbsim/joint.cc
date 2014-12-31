@@ -80,10 +80,8 @@ namespace MBSim {
     WvP0P1 = frame[1]->getVelocity() - C.getVelocity();
     WomP0P1 = frame[1]->getAngularVelocity() - C.getAngularVelocity();
 
-    gd(IT) = Wf.T() * WvP0P1;
-    gd(IR) = Wm.T() * WomP0P1;
-
     if (ffl and not(ffl->isSetValued())) {
+      gd(IT) = Wf.T() * WvP0P1;
       for (int i = 0; i < forceDir.cols(); i++)
         la(i) = (*ffl)(g(i), gd(i));
       WF[1] = Wf * la(IT);
@@ -91,6 +89,7 @@ namespace MBSim {
     }
 
     if (fml and not(fml->isSetValued())) {
+      gd(IR) = Wm.T() * WomP0P1;
       for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
         la(i) = (*fml)(g(i), gd(i));
       WM[1] = Wm * la(IR);
@@ -125,6 +124,8 @@ namespace MBSim {
   }
 
   void Joint::updategd(double t) {
+      gd(IT) = Wf.T() * WvP0P1;
+      gd(IR) = Wm.T() * WomP0P1;
   }
 
   void Joint::updateJacobians(double t, int j) {
