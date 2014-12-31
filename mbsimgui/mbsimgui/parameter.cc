@@ -45,7 +45,7 @@ namespace MBSimGUI {
 
   DOMElement* Parameter::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0=D(doc)->createElement(PARAM%getType());
+    DOMElement *ele0=D(doc)->createElement(PV%getType());
     E(ele0)->setAttribute("name", getName());
     parent->insertBefore(ele0, NULL);
     return ele0;
@@ -145,7 +145,7 @@ namespace MBSimGUI {
   
   DOMElement* SearchPathParameter::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0=D(doc)->createElement(PARAM%getType());
+    DOMElement *ele0=D(doc)->createElement(PV%getType());
     parent->insertBefore(ele0, NULL);
     E(ele0)->setAttribute("href", getValue());
     return ele0;
@@ -192,7 +192,7 @@ namespace MBSimGUI {
 
   DOMElement* Parameters::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(PARAM%string("Parameter"));
+    DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     parent->insertBefore(ele0, NULL);
     for(int i=0; i<parameter.size(); i++)
       parameter[i]->writeXMLFile(ele0);

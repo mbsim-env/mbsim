@@ -34,7 +34,6 @@ class QWidget;
 namespace MBSimGUI {
 
   const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
-  const MBXMLUtils::NamespaceURI PARAM("http://openmbv.berlios.de/MBXMLUtils/physicalvariable");
   const MBXMLUtils::NamespaceURI OPENMBV("http://openmbv.berlios.de/OpenMBV");
   const MBXMLUtils::NamespaceURI MBSIMINT("http://mbsim.berlios.de/MBSimIntegrator");
   const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://mbsim.berlios.de/MBSimAnalyser");

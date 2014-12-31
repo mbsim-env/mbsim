@@ -68,7 +68,7 @@ namespace MBSimGUI {
     //    string absFileName =  static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile();
     //    string relFileName =  mbsDir.relativeFilePath(QString::fromStdString(absFileName)).toStdString();
     //    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-    //    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
+    //    DOMElement *ele1 = D(doc)->createElement(PV%"Parameter");
     //    doc->insertBefore( ele1, NULL );
     //    for(int i=0; i<parameter.size(); i++)
     //      parameter[i]->writeXMLFile(ele1);
@@ -80,7 +80,7 @@ namespace MBSimGUI {
     //    DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
     //  }
     //  else {
-    //    DOMElement *ele1 = D(doc)->createElement(PARAM%string("Parameter"));
+    //    DOMElement *ele1 = D(doc)->createElement(PV%"Parameter");
     //    ele->insertBefore( ele1, NULL );
     //    for(int i=0; i<parameter.size(); i++)
     //      parameter[i]->writeXMLFile(ele1);
