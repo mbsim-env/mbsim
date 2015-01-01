@@ -140,12 +140,7 @@ template<typename Ret, typename Arg>
         pd = CasADi::SXFunction(f.inputExpr(),f.jac());
         pd.init();
         int nq = getArgSize();
-        std::vector<CasADi::SXElement> sqd(nq);
-        for(int i=0; i<nq; i++) {
-          std::stringstream stream;
-          stream << "qd" << i;
-          sqd[i] = CasADi::SXElement(stream.str());
-        }
+        CasADi::SX sqd=CasADi::SX::sym("qd", nq);
         std::vector<CasADi::SX> input2(3);
         input2[0] = sqd;
         input2[1] = f.inputExpr(0);
@@ -250,12 +245,7 @@ template<typename Ret, typename Arg1, typename Arg2>
         pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
         pd2.init();
         int nq = getArg1Size();
-        std::vector<CasADi::SXElement> sqd(nq);
-        for(int i=0; i<nq; i++) {
-          std::stringstream stream;
-          stream << "qd" << i;
-          sqd[i] = CasADi::SXElement(stream.str());
-        }
+        CasADi::SX sqd=CasADi::SX::sym("qd", nq);
         std::vector<CasADi::SX> input2(3);
         input2[0] = sqd;
         input2[1] = f.inputExpr(0);

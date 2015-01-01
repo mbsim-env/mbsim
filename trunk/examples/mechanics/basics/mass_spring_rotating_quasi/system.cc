@@ -82,8 +82,8 @@ System::System(const string &projectName) :
   crankToSpring->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
 
-  SXElement t("t");
-  SXElement fexp2 = log(cosh(t));
+  SX t=SX::sym("t");
+  SX fexp2 = log(cosh(t));
   SXFunction foo2(t, fexp2);
 //  SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
 //  crank->setRotation(new TimeDependentRotationAboutFixedAxis(new AngleOverTime(), "[0;0;1]"));
