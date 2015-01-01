@@ -43,8 +43,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  SXElement t("t");
-  vector<SXElement> fexp(3);
+  SX t=SX::sym("t");
+  SX fexp=SX::zeros(3);
   fexp[0] = sin(freq1*t + M_PI/2);
   fexp[1] = v0y*t; 
   fexp[2] = 0; 
@@ -52,7 +52,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   body1->setTranslation(new SymbolicFunction<Vec3(double)>(foo));
 
-  SXElement fexp2 = 5*sin(freq2*t);
+  SX fexp2 = 5*sin(freq2*t);
   SXFunction foo2(t,fexp2);
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
