@@ -39,11 +39,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->addFrame(new FixedRelativeFrame("P",r,SqrMat(3,EYE)));
   body->setFrameOfReference(getFrame("I"));
 
-  //vector<SX> sq(2);
-  //sq[0] = SX("al");
-  //sq[1] = SX("be");
+  //vector<SXElement> sq(2);
+  //sq[0] = SXElement("al");
+  //sq[1] = SXElement("be");
 
-  //vector<SX> pos(3);
+  //vector<SXElement> pos(3);
   //pos[0] = a*cos(sq[0])*sin(sq[1]);
   //pos[1] = -a*cos(sq[1]);
   //pos[2] = -a*sin(sq[0])*sin(sq[1]); 

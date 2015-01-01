@@ -244,8 +244,8 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
 
   leader->getFrame("C")->enableOpenMBV(0.01);
 
-  SX t("t");
-  vector<SX> fexp(3);
+  SXElement t("t");
+  vector<SXElement> fexp(3);
   double v = M_PI / tEnd;
   double x0 = 2e-2;
   fexp[0] = x0 * sin(v * t - (M_PI_2)) + x0;

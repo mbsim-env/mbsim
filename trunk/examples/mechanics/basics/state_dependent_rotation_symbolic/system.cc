@@ -43,10 +43,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   double R = 10;
-  vector<SX> sq(1);
-  sq[0] = SX("q1");
+  vector<SXElement> sq(1);
+  sq[0] = SXElement("q1");
 
-  vector<SX> pos(3);
+  vector<SXElement> pos(3);
   pos[0] = -cos(sq[0]/R)*R;
   pos[1] = -sin(sq[0]/R)*R;
   pos[2] = 0; 
@@ -55,7 +55,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   
   body->setTranslation(new SymbolicFunction<Vec3(VecV)>(spos));
 
-  vector<SX> al(1);
+  vector<SXElement> al(1);
   al[0] = M_PI/2+sq[0]/R;
 
   SXFunction sangle(sq,al);

@@ -39,19 +39,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  vector<SX> sq(2);
-  sq[0] = SX("q1");
-  sq[1] = SX("q2");
+  vector<SXElement> sq(2);
+  sq[0] = SXElement("q1");
+  sq[1] = SXElement("q2");
 
-  vector<SX> st(1);
-  st[0] = SX("t");
+  vector<SXElement> st(1);
+  st[0] = SXElement("t");
 
-  vector<SX> pos(3);
+  vector<SXElement> pos(3);
   pos[0] = cos(sq[0]);
   pos[1] = sin(sq[0]);
   pos[2] = sq[1]; 
 
-  vector<vector<SX> > input1(2);
+  vector<vector<SXElement> > input1(2);
   input1[0] = sq;
   input1[1] = st;
 
