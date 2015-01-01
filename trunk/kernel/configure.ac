@@ -56,6 +56,7 @@ AC_CHECK_HEADERS([casadi/symbolic/sx/sx_node.hpp], [casadi="yes"],
 AC_MSG_CHECKING([for casadi c++ library])
 if test $casadi = "yes" ; then
   LDFLAGS="$LDFLAGS $CASADILDFLAGS"
+  CPPFLAGS="$CPPFLAGS -DWITHOUT_PRE_1_9_X" # do not allow deprecated functions from casadi
   LIBS="$LIBS -lcasadi"
   test "_$host_os" != "_mingw32" && LIBS="$LIBS -ldl"
   AC_TRY_LINK([#include <casadi/symbolic/sx/sx_node.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
