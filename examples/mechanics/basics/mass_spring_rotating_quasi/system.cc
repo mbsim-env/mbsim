@@ -10,7 +10,6 @@
 #include "mbsim/functions/symbolic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include <casadi/symbolic/fx/sx_function.hpp>
 #include <casadi/symbolic/sx/sx_tools.hpp>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -83,8 +82,8 @@ System::System(const string &projectName) :
   crankToSpring->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
 
-  SX t("t");
-  SX fexp2 = log(cosh(t));
+  SXElement t("t");
+  SXElement fexp2 = log(cosh(t));
   SXFunction foo2(t, fexp2);
 //  SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
 //  crank->setRotation(new TimeDependentRotationAboutFixedAxis(new AngleOverTime(), "[0;0;1]"));
