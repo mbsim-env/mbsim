@@ -44,9 +44,8 @@ willFail=set([
 # pj('xml', 'time_dependent_kinematics')
   pj("mechanics", "flexible_body", "beltdrive"),
   pj("mechanics", "contacts", "self_siphoning_beads"),
-  pj("fmi", "simple_test"),
-  pj("fmi", "sphere_on_plane"),
-  pj("fmi", "hierachical_modelling")
+  pj("mechanics", "flexible_body", "spatial_beam_cosserat"),
+  pj("mechanics", "flexible_body", "pearlchain_cosserat_2D_POD")
 ])
 
 # MBSim Modules
