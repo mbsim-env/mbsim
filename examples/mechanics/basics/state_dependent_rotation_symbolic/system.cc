@@ -47,8 +47,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SX pos=SX::zeros(3);
   pos[0] = -cos(sq[0]/R)*R;
-  pos[0] = -sin(sq[0]/R)*R;
-  pos[0] = 0;
+  pos[1] = -sin(sq[0]/R)*R;
+  pos[2] = 0;
 
   SXFunction spos(sq,pos);
   
