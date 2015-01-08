@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <mbsimControl/extern_signal_source.h>
 #include <mbsimControl/extern_signal_sink.h>
 #include <mbsim/extern_generalized_io.h>
@@ -19,10 +20,10 @@ namespace MBSim {
 // local helper functions
 namespace {
   //! convert a MBSim path to a FMI structured variable name
-  std::string mbsimPathToFMIName(std::string path);
-
-  //! get all links form sys, recursively
-  void getAllLinks(const MBSim::DynamicSystem *sys, std::vector<MBSim::Link*> &link);
+  std::string mbsimPathToFMIName(std::string path) {
+    boost::replace_all(path, "/", "."); // replace the MBSim separator / by the FMI seperator .
+    return path.substr(1); // skip the starting spearotor character
+  }
 
   // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32

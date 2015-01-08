@@ -1,8 +1,12 @@
 #include "config.h"
 #include "fmi_variables.h"
 #include <mbsim/dynamic_system_solver.h>
-#include <boost/algorithm/string/replace.hpp>
 #include <boost/ref.hpp>
+
+namespace {
+  //! get all links form sys, recursively
+  void getAllLinks(const MBSim::DynamicSystem *sys, std::vector<MBSim::Link*> &link);
+}
 
 namespace MBSimFMI {
 
@@ -80,11 +84,6 @@ void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
 }
 
 namespace {
-
-  std::string mbsimPathToFMIName(std::string path) {
-    boost::replace_all(path, "/", "."); // replace the MBSim separator / by the FMI seperator .
-    return path.substr(1); // skip the starting spearotor character
-  }
 
   void getAllLinks(const MBSim::DynamicSystem *sys, std::vector<MBSim::Link*> &link) {
     // add all link of dss
