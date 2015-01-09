@@ -1285,7 +1285,9 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         # check for difference
-        if not numpy.all(numpy.isclose(getColumn(refObj,column), getColumn(curObj,column), rtol=args.rtol,
+        refObjCol=getColumn(refObj,column)
+        curObjCol=getColumn(curObj,column)
+        if refObjCol.shape[0]==curObjCol.shape[0] and not numpy.all(numpy.isclose(refObjCol, curObjCol, rtol=args.rtol,
                          atol=args.atol, equal_nan=True)):
           cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"danger"))
           nrFailed[0]+=1
