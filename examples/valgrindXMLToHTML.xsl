@@ -111,64 +111,61 @@
 
   <!-- one row of the error table -->
   <xsl:template match="error">
-    <!-- Leak_StillReachable is not an error -> don't show it -->
-    <xsl:if test="kind/text()!='Leak_StillReachable'">
-      {
-        <!-- d<colIndex> == data for column <colIndex>
-             c<colIndex> == class attribute for column <colIndex> -->
-        <!-- error type -->
-        "d0":'<h3><xsl:value-of select="kind/text()"/></h3>
-          <!-- suppression raw text, if existing -->
-          <xsl:if test="suppression/rawtext">
-            <div class="btn-group btn-group-sm">
-              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Show suppression <span class="caret"></span></button>
-              <pre class="dropdown-menu" role="menu">
-                <xsl:call-template name="replace-string"><!-- convert all newline char to \n (this must be a single line javascript string) -->
-                  <xsl:with-param name="text" select="suppression/rawtext/text()"/>
-                  <xsl:with-param name="replace" select="'&#10;'" />
-                  <xsl:with-param name="with" select="'\n'"/>
-                </xsl:call-template>
-              </pre>
-            </div>
-          </xsl:if>',
-        "c0":'<xsl:choose>
-                <xsl:when test="kind/text()='Leak_DefinitelyLost' or kind/text()='Leak_IndirectlyLost' or kind/text()='Leak_PossiblyLost'">warning</xsl:when>
-                <xsl:otherwise>danger</xsl:otherwise>
-              </xsl:choose>',
-        <!-- error details -->
-        "d1":'<!-- location stack of the valgrind "what" message --><h4 class="text-danger">
+    {
+      <!-- d<colIndex> == data for column <colIndex>
+           c<colIndex> == class attribute for column <colIndex> -->
+      <!-- error type -->
+      "d0":'<h3><xsl:value-of select="kind/text()"/></h3>
+        <!-- suppression raw text, if existing -->
+        <xsl:if test="suppression/rawtext">
+          <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Show suppression <span class="caret"></span></button>
+            <pre class="dropdown-menu" role="menu">
+              <xsl:call-template name="replace-string"><!-- convert all newline char to \n (this must be a single line javascript string) -->
+                <xsl:with-param name="text" select="suppression/rawtext/text()"/>
+                <xsl:with-param name="replace" select="'&#10;'" />
+                <xsl:with-param name="with" select="'\n'"/>
+              </xsl:call-template>
+            </pre>
+          </div>
+        </xsl:if>',
+      "c0":'<xsl:choose>
+              <xsl:when test="kind/text()='Leak_DefinitelyLost' or kind/text()='Leak_IndirectlyLost' or kind/text()='Leak_PossiblyLost' or kind/text()='Leak_StillReachable'">warning</xsl:when>
+              <xsl:otherwise>danger</xsl:otherwise>
+            </xsl:choose>',
+      <!-- error details -->
+      "d1":'<!-- location stack of the valgrind "what" message --><h4 class="text-danger">
+          <xsl:call-template name="replace-string"><!-- quote ' to \' (this is a javascript string) -->
+            <xsl:with-param name="text" select="what/text()"/>
+            <xsl:with-param name="replace" select="&quot;'&quot;" />
+            <xsl:with-param name="with" select="&quot;\'&quot;"/>
+          </xsl:call-template>
+        </h4>
+        <xsl:apply-templates select="what/following-sibling::stack[position()=1]"/>
+        <!-- location stack of the valgrind "auxwhat" message, if existing -->
+        <xsl:if test="auxwhat">
+          <h4 class="text-danger">
             <xsl:call-template name="replace-string"><!-- quote ' to \' (this is a javascript string) -->
-              <xsl:with-param name="text" select="what/text()"/>
+              <xsl:with-param name="text" select="auxwhat/text()"/>
               <xsl:with-param name="replace" select="&quot;'&quot;" />
               <xsl:with-param name="with" select="&quot;\'&quot;"/>
             </xsl:call-template>
           </h4>
-          <xsl:apply-templates select="what/following-sibling::stack[position()=1]"/>
-          <!-- location stack of the valgrind "auxwhat" message, if existing -->
-          <xsl:if test="auxwhat">
-            <h4 class="text-danger">
-              <xsl:call-template name="replace-string"><!-- quote ' to \' (this is a javascript string) -->
-                <xsl:with-param name="text" select="auxwhat/text()"/>
-                <xsl:with-param name="replace" select="&quot;'&quot;" />
-                <xsl:with-param name="with" select="&quot;\'&quot;"/>
-              </xsl:call-template>
-            </h4>
-            <xsl:apply-templates select="auxwhat/following-sibling::stack[position()=1]"/>
-          </xsl:if>
-          <!-- location stack of the valgrind "xwhat" message, if existing -->
-          <xsl:if test="xwhat">
-            <h4 class="text-danger">
-              <xsl:call-template name="replace-string"><!-- quote ' to \' (this is a javascript string) -->
-                <xsl:with-param name="text" select="xwhat/text/text()"/>
-                <xsl:with-param name="replace" select="&quot;'&quot;" />
-                <xsl:with-param name="with" select="&quot;\'&quot;"/>
-              </xsl:call-template>
-            </h4>
-            <xsl:apply-templates select="xwhat/following-sibling::stack[position()=1]"/>
-          </xsl:if>',
-        "c1":''
-      },
-    </xsl:if>
+          <xsl:apply-templates select="auxwhat/following-sibling::stack[position()=1]"/>
+        </xsl:if>
+        <!-- location stack of the valgrind "xwhat" message, if existing -->
+        <xsl:if test="xwhat">
+          <h4 class="text-danger">
+            <xsl:call-template name="replace-string"><!-- quote ' to \' (this is a javascript string) -->
+              <xsl:with-param name="text" select="xwhat/text/text()"/>
+              <xsl:with-param name="replace" select="&quot;'&quot;" />
+              <xsl:with-param name="with" select="&quot;\'&quot;"/>
+            </xsl:call-template>
+          </h4>
+          <xsl:apply-templates select="xwhat/following-sibling::stack[position()=1]"/>
+        </xsl:if>',
+      "c1":''
+    },
   </xsl:template>
 
   <!-- a table for the location stack -->
