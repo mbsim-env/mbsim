@@ -325,6 +325,15 @@ namespace MBSimFMI {
       eventIndicators[i]=sv(i);
   }
 
+  namespace {
+    // convert a CppDatatype to FMIDatatype: default implementaion: just use implicit conversion.
+    template<class RetType, class ArgType>
+    RetType cppDatatypeToFMIDatatype(const ArgType &a) { return a; }
+    // convert a CppDatatype to FMIDatatype: specialization for string: return the c string part of the reference string.
+    template<>
+    fmiString cppDatatypeToFMIDatatype<fmiString, string>(const string &a) { return a.c_str(); }
+  }
+
   // get a real/integer/boolean/string variable
   template<typename CppDatatype, typename FMIDatatype>
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
@@ -336,27 +345,14 @@ namespace MBSimFMI {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
         throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
-      try { value[i]=var[vr[i]]->getValue(CppDatatype()); } RETHROW_VR(vr[i])
+      try { value[i]=cppDatatypeToFMIDatatype<FMIDatatype, CppDatatype>(var[vr[i]]->getValue(CppDatatype())); } RETHROW_VR(vr[i])
     }
   }
   // explicitly instantiate all four FMI types
   template void FMIInstance::getValue<double, fmiReal   >(const fmiValueReference vr[], size_t nvr, fmiReal value[]);
   template void FMIInstance::getValue<int,    fmiInteger>(const fmiValueReference vr[], size_t nvr, fmiInteger value[]);
   template void FMIInstance::getValue<bool,   fmiBoolean>(const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
-  // explicitly specialization for string
-  template<>
-  void FMIInstance::getValue<string, fmiString>(const fmiValueReference vr[], size_t nvr, fmiString value[]) {
-    if(updateValueRequired) {
-      // TODO: nothing to do currently since MBSimControl::Singal's is updated on demand but this will change
-      // (current branch of Foerg; MBSim issue 39)
-      updateValueRequired=false;
-    }
-    for(size_t i=0; i<nvr; ++i) {
-      if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
-      try { value[i]=var[vr[i]]->getValue(string()).c_str(); } RETHROW_VR(vr[i])
-    }
-  }
+  template void FMIInstance::getValue<string, fmiString> (const fmiValueReference vr[], size_t nvr, fmiString value[]);
 
   // MBSim shift
   // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.
