@@ -50,6 +50,9 @@ namespace MBSimFMI {
 
   // A MBSim FMI instance. Called by fmiInstantiateModel
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
+    updateDerivativesRequired(true),
+    updateEventIndicatorsRequired(true),
+    updateValueRequired(true),
     instanceName(instanceName_),
     logger(functions.logger),
     infoBuffer (logger, this, instanceName, fmiOK,      "info"),
@@ -119,11 +122,19 @@ namespace MBSimFMI {
 
   void FMIInstance::setTime(fmiReal time_) {
     time=time_;
+    // everything may depend on time -> update required on next getXXX
+    updateDerivativesRequired=true;
+    updateEventIndicatorsRequired=true;
+    updateValueRequired=true;
   }
 
   void FMIInstance::setContinuousStates(const fmiReal x[], size_t nx) {
     for(size_t i=0; i<nx; ++i)
       z(i)=x[i];
+    // everything may depend on the states -> update required on next getXXX
+    updateDerivativesRequired=true;
+    updateEventIndicatorsRequired=true;
+    updateValueRequired=true;
   }
 
   // is called when the current state is a valid/accepted integrator step.
@@ -163,6 +174,10 @@ namespace MBSimFMI {
         throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
       try { var[vr[i]]->setValue(CppDatatype(value[i])); } RETHROW_VR(vr[i])
     }
+    // everything may depend on inputs -> update required on next getXXX
+    updateDerivativesRequired=true;
+    updateEventIndicatorsRequired=true;
+    updateValueRequired=true;
   }
   // explicitly instantiate all four FMI types
   template void FMIInstance::setValue<double, fmiReal   >(const fmiValueReference vr[], size_t nvr, const fmiReal    value[]);
@@ -283,18 +298,29 @@ namespace MBSimFMI {
         eventInfo->nextEventTime=nextPlotTime;
         break;
     }
+
+    // everything may depend on inputs -> update required on next getXXX
+    updateDerivativesRequired=true;
+    updateEventIndicatorsRequired=true;
+    updateValueRequired=true;
   }
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
-    // calcualte MBSim zd and return it
-    dss->zdot(z, zd, time);
+      // calcualte MBSim zd and return it
+    if(updateDerivativesRequired) {
+      dss->zdot(z, zd, time);
+      updateDerivativesRequired=false;
+    }
     for(size_t i=0; i<nx; ++i)
       derivatives[i]=zd(i);
   }
 
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
     // calcualte MBSim stop vector and return it
-    dss->getsv(z, sv, time);
+    if(updateEventIndicatorsRequired) {
+      dss->getsv(z, sv, time);
+      updateEventIndicatorsRequired=false;
+    }
     for(size_t i=0; i<ni; ++i)
       eventIndicators[i]=sv(i);
   }
@@ -302,6 +328,11 @@ namespace MBSimFMI {
   // get a real/integer/boolean/string variable
   template<typename CppDatatype, typename FMIDatatype>
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
+    if(updateValueRequired) {
+      // TODO: nothing to do currently since MBSimControl::Singal's is updated on demand but this will change
+      // (current branch of Foerg; MBSim issue 39)
+      updateValueRequired=false;
+    }
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
         throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
@@ -315,6 +346,11 @@ namespace MBSimFMI {
   // explicitly specialization for string
   template<>
   void FMIInstance::getValue<string, fmiString>(const fmiValueReference vr[], size_t nvr, fmiString value[]) {
+    if(updateValueRequired) {
+      // TODO: nothing to do currently since MBSimControl::Singal's is updated on demand but this will change
+      // (current branch of Foerg; MBSim issue 39)
+      updateValueRequired=false;
+    }
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
         throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
@@ -340,7 +376,10 @@ namespace MBSimFMI {
 
     // MISSING: event handling must be conform to FMI and modellica!!!???
     // get current stop vector
-    dss->getsv(z, sv, time);
+    if(updateEventIndicatorsRequired) {
+      dss->getsv(z, sv, time);
+      updateEventIndicatorsRequired=false;
+    }
     // compare last (svLast) and current (sv) stop vector: build jsv and set shiftRequired
     bool shiftRequired=false;
     for(int i=0; i<sv.size(); ++i) {
@@ -356,6 +395,11 @@ namespace MBSimFMI {
       // A MBSim shift always changes state values (non-smooth-mechanic)
       // This must be reported to the environment (the integrator must be resetted in this case).
       eventInfo->stateValuesChanged=true;
+
+      // everything may depend on a changed (shifted) system -> update required on next getXXX
+      updateDerivativesRequired=true;
+      updateEventIndicatorsRequired=true;
+      updateValueRequired=true;
     }
 
     // time event (currently only for plotting)

@@ -70,6 +70,10 @@ namespace MBSimFMI {
 
       void rethrowVR(size_t vr, const std::exception &ex=std::runtime_error("Unknown exception."));
 
+      bool updateDerivativesRequired;
+      bool updateEventIndicatorsRequired;
+      bool updateValueRequired;
+
       // store FMI instanceName and logger
       std::string instanceName;
       fmiCallbackLogger logger;
