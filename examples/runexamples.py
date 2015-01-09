@@ -1275,13 +1275,6 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       if column>=curObjCols:
         printLabel=('&lt;label '+printLabel[0]+' not in cur.&gt;', 'danger')
         nrFailed[0]+=1
-      else:
-        # compare
-        if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-          if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
-            delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
-          else:
-            delta=float("inf") # very large => error
       cell=[]
       cell.append((h5CurFile.filename,""))
       cell.append((datasetName,""))
@@ -1291,16 +1284,9 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;',"danger"))
         nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        #check for NaN/Inf # check for NaN and Inf
-        #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
-        #check for NaN/Inf   cell.append(('cur. contains NaN or +/-Inf',"danger"))
-        #check for NaN/Inf   nrFailed[0]+=1
-        #check for NaN/Inf elif numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
-        #check for NaN/Inf   cell.append(('ref. contains NaN or +/-Inf',"danger"))
-        #check for NaN/Inf   nrFailed[0]+=1
-        #check for NaN/Inf use elif instead of if in next line
         # check for difference
-        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(getColumn(refObj,column)))):
+        if not numpy.all(numpy.isclose(getColumn(refObj,column), getColumn(curObj,column), rtol=args.rtol,
+                         atol=args.atol, equal_nan=True)):
           cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"danger"))
           nrFailed[0]+=1
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
