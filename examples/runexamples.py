@@ -1208,6 +1208,33 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   gnuplotProcess.stdin.write(("unset multiplot\n").encode("utf-8"))
   # dataFileName it not removed since gnuplot is running asynchronously
 
+# numpy.isclose(...) is only defined in newer numpy versions.
+# This implementation is taken varbatim from numpy 1.9
+def numpy_isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
+  import numpy
+  def within_tol(x, y, atol, rtol):
+    with numpy.errstate(invalid='ignore'):
+      result = numpy.less_equal(abs(x-y), atol + rtol * abs(y))
+    if numpy.isscalar(a) and isscalar(b):
+      result = bool(result)
+    return result
+  x = numpy.array(a, copy=False, subok=True, ndmin=1)
+  y = numpy.array(b, copy=False, subok=True, ndmin=1)
+  xfin = numpy.isfinite(x)
+  yfin = numpy.isfinite(y)
+  if all(xfin) and all(yfin):
+    return within_tol(x, y, atol, rtol)
+  else:
+    finite = xfin & yfin
+    cond = zeros_like(finite, subok=True)
+    x = x * ones_like(cond)
+    y = y * ones_like(cond)
+    cond[finite] = within_tol(x[finite], y[finite], atol, rtol)
+    cond[~finite] = (x[~finite] == y[~finite])
+    if equal_nan:
+      both_nan = isnan(x) & isnan(y)
+      cond[both_nan] = both_nan[both_nan]
+    return cond
 # return column col from arr as a column Vector if asColumnVector == True or as a row vector
 # arr may be of shape vector or a matrix
 def getColumn(arr, col, asColumnVector=True):
@@ -1287,7 +1314,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         # check for difference
         refObjCol=getColumn(refObj,column)
         curObjCol=getColumn(curObj,column)
-        if refObjCol.shape[0]==curObjCol.shape[0] and not numpy.all(numpy.isclose(refObjCol, curObjCol, rtol=args.rtol,
+        if refObjCol.shape[0]==curObjCol.shape[0] and not numpy.all(numpy_isclose(refObjCol, curObjCol, rtol=args.rtol,
                          atol=args.atol, equal_nan=True)):
           cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"danger"))
           nrFailed[0]+=1
