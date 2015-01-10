@@ -28,6 +28,10 @@ $PREFIX/bin/mbsimgui.exe
 $PREFIX/bin/mbxmlutilspp.exe
 $PREFIX/bin/openmbv.exe
 $PREFIX/bin/casadi_interface.oct
+$PREFIX/bin/mbsimCreateFMU.exe
+$PREFIX/lib/mbsimsrc_fmi.dll
+$PREFIX/lib/mbsimppxml_fmi.dll
+$PREFIX/lib/mbsimxml_fmi.dll
 $PREFIX/bin/tools/h5copy.exe
 $PREFIX/bin/tools/h5diff.exe
 $PREFIX/bin/tools/h5dump.exe
@@ -157,7 +161,7 @@ done
 # copy includes
 TMPINCFILE=$DISTBASEDIR/tmp/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/\|/mbsimfmi/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/tmp/distribute.dep
@@ -203,7 +207,6 @@ mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
 cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
 # copy casadi SWIG files for octave
 cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
-cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 
 # create mbsim-config.bat
