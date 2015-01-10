@@ -1215,7 +1215,7 @@ def numpy_isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
   def within_tol(x, y, atol, rtol):
     with numpy.errstate(invalid='ignore'):
       result = numpy.less_equal(abs(x-y), atol + rtol * abs(y))
-    if numpy.isscalar(a) and isscalar(b):
+    if numpy.isscalar(a) and numpy.isscalar(b):
       result = bool(result)
     return result
   x = numpy.array(a, copy=False, subok=True, ndmin=1)
@@ -1226,13 +1226,13 @@ def numpy_isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
     return within_tol(x, y, atol, rtol)
   else:
     finite = xfin & yfin
-    cond = zeros_like(finite, subok=True)
-    x = x * ones_like(cond)
-    y = y * ones_like(cond)
+    cond = numpy.zeros_like(finite, subok=True)
+    x = x * numpy.ones_like(cond)
+    y = y * numpy.ones_like(cond)
     cond[finite] = within_tol(x[finite], y[finite], atol, rtol)
     cond[~finite] = (x[~finite] == y[~finite])
     if equal_nan:
-      both_nan = isnan(x) & isnan(y)
+      both_nan = numpy.isnan(x) & numpy.isnan(y)
       cond[both_nan] = both_nan[both_nan]
     return cond
 # return column col from arr as a column Vector if asColumnVector == True or as a row vector
