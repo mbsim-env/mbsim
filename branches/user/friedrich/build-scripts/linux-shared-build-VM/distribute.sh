@@ -28,6 +28,10 @@ $PREFIX/bin/mbsimgui
 $PREFIX/bin/mbxmlutilspp
 $PREFIX/bin/openmbv
 $PREFIX/bin/casadi_interface.oct
+$PREFIX/bin/mbsimCreateFMU
+$PREFIX/lib/mbsimsrc_fmi.so
+$PREFIX/lib/mbsimppxml_fmi.so
+$PREFIX/lib/mbsimxml_fmi.so
 /usr/bin/h5copy
 /usr/bin/h5diff
 /usr/bin/h5dump
@@ -153,7 +157,7 @@ fi
 # copy includes
 TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
-for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/"); do
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/\|/mbsimfmi/"); do
   echo "#include <$F>" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/distribute.dep
@@ -222,7 +226,6 @@ mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
 cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
 # copy casadi SWIG files for octave
 cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
-cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 # modifie all ELF rpath in lib/*.so*
 for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
