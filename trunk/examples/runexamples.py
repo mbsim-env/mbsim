@@ -935,29 +935,34 @@ def runExample(resultQueue, example):
 
 # prefix the simultion with this parameter.
 # this is normaly just args.prefixSimulation but may be extended by keywords of args.prefixSimulationKeyword.
-def prefixSimulation(example):
+def prefixSimulation(example, id):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
-    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%p.xml']
+    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%s.%%p.xml'%(id)]
   return args.prefixSimulation
 
 # get additional output files of simulations.
 # these are all dependent on the keyword of args.prefixSimulationKeyword.
 # additional output files must be placed in the args.reportOutDir and here only the basename must be returned.
-def getOutFiles(example):
+def getOutFilesAndAdaptRet(example, ret):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
+    # get out files
+    # and adapt the return value if errors in valgrind outputs are detected
     xmlFiles=glob.glob("valgrind.*.xml")
-    ret=[]
+    outFiles=[]
     for xmlFile in xmlFiles:
-      htmlFile=xmlFile[:-4]+".html"
-      ret.append(htmlFile)
+      # check for errors
+      if "<error>" in codecs.open(xmlFile).read().decode('utf-8'):
+        ret[0]=1
       # transform xml file to html file (in reportOutDir)
+      htmlFile=xmlFile[:-4]+".html"
+      outFiles.append(htmlFile)
       global scriptDir
       subprocess.call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
                        pj(scriptDir, 'valgrindXMLToHTML.xsl')])
       os.remove(xmlFile)
-    return ret
+    return outFiles
   return []
 
 
@@ -985,11 +990,12 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(os.curdir, "main"+args.exeExt)], executeFD,
-                     env=mainEnv, maxExecutionTime=args.maxExecutionTime)
+  ret=[subprocessCall(prefixSimulation(example, 'src')+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+                      env=mainEnv, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, getOutFiles(example)
+  outFiles=getOutFilesAndAdaptRet(example, ret)
+  return ret[0], dt, outFiles
 
 
 
@@ -1003,11 +1009,12 @@ def executeXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                     [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret=[subprocessCall(prefixSimulation(example, 'xml')+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+                      [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, getOutFiles(example)
+  outFiles=getOutFilesAndAdaptRet(example, ret)
+  return ret[0], dt, outFiles
 
 
 
@@ -1018,11 +1025,12 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
-                     executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret=[subprocessCall(prefixSimulation(example, 'fxml')+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+                      executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, getOutFiles(example)
+  outFiles=getOutFilesAndAdaptRet(example, ret)
+  return ret[0], dt, outFiles
 
 
 
@@ -1034,9 +1042,9 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), fmiInputFile]))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret1=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
-                     fmiInputFile], executeFD, maxExecutionTime=args.maxExecutionTime/5)
-  outFiles1=getOutFiles(example)
+  ret1=[subprocessCall(prefixSimulation(example, 'fmucre')+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
+                       fmiInputFile], executeFD, maxExecutionTime=args.maxExecutionTime/5)]
+  outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
   # get fmuChecker executable
   fmuCheck=glob.glob(pj(mbsimBinDir, "fmuCheck.*"))
@@ -1049,14 +1057,14 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck), "-l", "5", "mbsim.fmu"]))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret2=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
-                      "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret2=[subprocessCall(prefixSimulation(example, 'fmuchk')+[pj(mbsimBinDir, fmuCheck),
+                       "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  outFiles2=getOutFiles(example)
+  outFiles2=getOutFilesAndAdaptRet(example, ret2)
 
   # return
-  ret=abs(ret1)+abs(ret2)
+  ret=abs(ret1[0])+abs(ret2[0])
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
