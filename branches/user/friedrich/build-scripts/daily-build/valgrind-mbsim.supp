@@ -33,8 +33,13 @@
    octave deinit bug?
    Memcheck:Leak
    ...
-   fun:_Z16do_octave_atexitv
    fun:_Z17clean_up_and_exiti
+}
+{
+   octave deinit bug?
+   Memcheck:Leak
+   ...
+   fun:_Z17clean_up_and_exitib
 }
 {
    feval bug in octave?
@@ -70,4 +75,12 @@
    fun:fmi1_import_parse_xml
    fun:fmi1_check
    fun:main
+}
+
+# XERCES
+{
+   xerces initialization
+   Memcheck:Leak
+   ...
+   fun:_ZN10MBXMLUtils10InitXercesC1Ev
 }
