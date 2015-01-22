@@ -514,6 +514,9 @@ namespace MBSim {
 
       void setRootID(int ID) {rootID = ID;}
       int getRootID() const {return rootID;}
+      void setq(const fmatvec::Vec& q_){ q = q_;}
+      void setLa(const fmatvec::Vec& la_){ la = la_;}
+
     protected:
       /**
        * \brief mass matrix

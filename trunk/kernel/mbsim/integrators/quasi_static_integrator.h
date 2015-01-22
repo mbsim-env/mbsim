@@ -27,27 +27,61 @@
 namespace MBSimIntegrator {
 
   /*!
-   * \brief function for the h force vector of the quasi-static integrator
+   * \brief calculate h vector according the new q and system boundary conditions
    * \author Zhan Wang
    * \date 2014-11-11 initial commit (Zhan Wang)
    */
-  class hFun : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
+  class hgFun : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /*!
        * \brief constructor
        */
-      hFun(MBSim::DynamicSystemSolver* sys_, double t_, fmatvec::Vec& z_) : sys(sys_), t(t_), z(z_) {}
+      hgFun(MBSim::DynamicSystemSolver* sys_, double t_, fmatvec::Vec& z_) :
+          sys(sys_), t(t_), z(z_) {
+      }
 
       /*!
        * \brief destructor
        */
-      virtual ~hFun(){
-    	  sys = NULL;
-    	  delete sys;
+      virtual ~hgFun() {
       }
+      ;
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec& q);
+      fmatvec::Vec operator()(const fmatvec::Vec& qla);
+      /*******************************************************/
+
+    private:
+
+      MBSim::DynamicSystemSolver* sys;
+      double t;
+      fmatvec::Vec z;
+
+  };
+
+  /*!
+   * \brief function for the dh/dq
+   * \author Zhan Wang
+   * \date 2014-12-01 initial commit (Zhan Wang)
+   */
+  class jacFun : public MBSim::Function<fmatvec::SqrMat(fmatvec::Vec)> {
+    public:
+      /*!
+       * \brief constructor
+       */
+      jacFun(MBSim::DynamicSystemSolver* sys_, double t_, fmatvec::Vec& z_) :
+          sys(sys_), t(t_), z(z_) {
+      }
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~jacFun() {
+      }
+      ;
+
+      /* INHERITED INTERFACE */
+      fmatvec::SqrMat operator()(const fmatvec::Vec& q);
       /*******************************************************/
 
     private:
@@ -58,9 +92,9 @@ namespace MBSimIntegrator {
 
   };
   /** 
-   * brief half-explicit time-stepping integrator of first order
-   * \author Martin Foerg
-   * \date 2009-07-13 some comments (Thorsten Schindler)
+   * brief quasi static time-stepping integrator
+   * \author Zhan Wang
+   * \date 2014-11-11 initial commit (Zhan Wang)
    */
   class QuasiStaticIntegrator : public Integrator {
     public:
@@ -68,11 +102,12 @@ namespace MBSimIntegrator {
        * \brief constructor
        */
       QuasiStaticIntegrator();
-      
+
       /**
        * \brief destructor
        */
-      virtual ~QuasiStaticIntegrator() {}
+      virtual ~QuasiStaticIntegrator() {
+      }
 
       void preIntegrate(MBSim::DynamicSystemSolver& system);
       void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
@@ -84,10 +119,14 @@ namespace MBSimIntegrator {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setStepSize(double dt_) { dt = dt_; }
-      void setDriftCompensation(bool dc) { driftCompensation = dc; }
+      void setStepSize(double dt_) {
+        dt = dt_;
+      }
+      void setDriftCompensation(bool dc) {
+        driftCompensation = dc;
+      }
       /***************************************************/
-    
+
     private:
       /**
        * \brief step size
@@ -102,7 +141,7 @@ namespace MBSimIntegrator {
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int iter,step, integrationSteps, maxIter, sumIter;
+      int iter, step, integrationSteps, maxIter, sumIter;
 
       /**
        * \brief computing time counter

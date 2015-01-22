@@ -99,30 +99,42 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      t += dt;   // step 0: update time, go into new time step.
-
+      //		system.update(z, t);
       // as the time changes, update boundary conditions, external forces......
       // step 1 and 2: update state dependent variables and check the gap distance of contact in order to get the active index.
       // update the g, gd, Jacobin, W, h, M, LLCM, G....
 //		system.update(z, t);
 
-      hFun fun_h(&system, t, z);
-      //      jacFun fun_jac();
-      //      MultiDimNewtonMethod slv_h(&fun_h, &fun_jac); //todo: add this later
-      MultiDimNewtonMethod slv_h(&fun_h);
+      hgFun fun_hg(&system, t, z);
+//			jacFun fun_jac(&system, t, z);  // dh/dq
+//			MultiDimNewtonMethod slv_h(&fun_h, &fun_jac);  // this fun_jac dh/dq does not consider the la force
 
-      q = slv_h.solve(q); // use the q from the previous timestep as the initial guess.
-      if (slv_h.getInfo() != 0)
+      MultiDimNewtonMethod slv_qla(&fun_hg);
+      slv_qla.setLinearAlgebra(1);
+
+      Vec qla;
+      qla.resize(q.size() + system.getla().size());
+
+      qla(0, q.size() - 1) = q;
+      qla(q.size(), qla.size() - 1) = system.getla();
+
+      qla = slv_qla.solve(qla); // use the qla from the previous timestep as the initial guess.
+      if (slv_qla.getInfo() != 0)
         throw("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+      q = qla(0, q.size() - 1);
+      system.setLa(qla(q.size(), qla.size() - 1));
 
-      iter = system.solveImpacts(dt);  // todo: which states does this change?
+      t += dt;   // step 0: update time, go into new time step.
 
-      if (iter > maxIter)
-        maxIter = iter;
-      sumIter += iter;
+      system.update(z, t);
 
-      //      u += system.deltau(z,t,dt);  // todo: do we need to update them here?
+      //in timestepping, u is updated according to 14a.
+      // should we consider the contributation part from the contact? or just calculate u according (q^(l+1) -q^(l))/dt
+      // then u is also introduced into the slv_h.solve(q) by consider it as constant.
+//		u += system.deltau(z,t,dt);
+//		u = (q - qOld) / dt;
       x += system.deltax(z, t, dt);
+
     }
   }
 
@@ -232,21 +244,63 @@ namespace MBSimIntegrator {
     setStepSize(Element::getDouble(e));
   }
 
-  fmatvec::Vec hFun::operator()(const fmatvec::Vec& q) {
-    // update h according the new q and system boundary condition
+  fmatvec::Vec hgFun::operator()(const fmatvec::Vec& qla) {
+    // backup the original q of the dynamical system sys.
+    Vec qlaOld;
+    int qSize = sys->getqSize();
+    int laSize = sys->getlaSize();
+    int qlaSize = qSize + laSize;
+    qlaOld.resize(qlaSize);
+
+//	qlaOld(0, qSize - 1) = sys->getq();
+//	qlaOld(qSize, qlaSize - 1) = sys->getla();
 
     // set the q of system to be the input q
-    z(Index(0, sys->getqSize() - 1)) << q;
+    sys->setq(qla(0, qSize - 1));
+    sys->setLa(qla(qSize, qlaSize - 1));
     // update the system by calling system.update(z,t);  inside this function the h vector is updated.
     sys->update(z, t);
-
     // get the new h vector
-    return sys->geth().copy();
+    Vec hg;
+    hg.resize(qla.size());
+
+    hg(0, qSize - 1) = sys->geth() + sys->getW() * sys->getla();
+    hg(qSize, qlaSize - 1) = sys->getg().copy();
+
+//    cout << "t = "  << t << "\n";
+//    cout << "sys.geth() = "  <<  sys->geth() << "\n";
+//    cout << "w * la = "  << sys->getW() * sys->getla()  << "\n \n";
+//    cout << "hg = "  << hg  << "\n \n";
+
+    // recover the old sys state
+//	sys->setq(qlaOld(0, qSize - 1));
+//	sys->setLa(qlaOld(qSize, qlaSize - 1));
+//	sys->update(z, t);
+
+    return hg;
 
 //	// todo: may get the reference and return a reference
 //	// the return type has to be changed into Vec&
 //	return sys->geth();
 
+  }
+
+  fmatvec::SqrMat jacFun::operator()(const fmatvec::Vec& q) {
+    // backup the original q of the dynamical system sys.
+    Vec qOld;
+    qOld << sys->getq();
+
+    // set the q of system to be the input q
+    sys->setq(q);
+
+    SqrMat jac;
+    jac << sys->dhdq(t);
+
+    // recover the old sys state
+    sys->setq(qOld);
+    sys->update(z, t);
+
+    return jac;
   }
 }
 
