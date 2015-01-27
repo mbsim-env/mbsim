@@ -44,7 +44,7 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuasiStaticIntegrator, MBSIMINT % "QuasiStaticIntegrator")
 
   QuasiStaticIntegrator::QuasiStaticIntegrator() :
-      dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {
+      dt(1e-3), t(0.), tPlot(0.), tolerance(1e-3), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
@@ -111,6 +111,7 @@ namespace MBSimIntegrator {
 
       MultiDimNewtonMethod slv_qla(&fun_hg);
       slv_qla.setLinearAlgebra(1);
+      slv_qla.setTolerance(tolerance);
 
       Vec qla;
       qla.resize(q.size() + system.getla().size());
@@ -120,7 +121,8 @@ namespace MBSimIntegrator {
 
       qla = slv_qla.solve(qla); // use the qla from the previous timestep as the initial guess.
       if (slv_qla.getInfo() != 0)
-        throw("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+        throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+      iter = slv_qla.getNumberOfIterations();
       q = qla(0, q.size() - 1);
       system.setLa(qla(q.size(), qla.size() - 1));
 

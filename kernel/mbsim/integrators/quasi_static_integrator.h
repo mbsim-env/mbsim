@@ -125,6 +125,9 @@ namespace MBSimIntegrator {
       void setDriftCompensation(bool dc) {
         driftCompensation = dc;
       }
+      void setTolerance(double tolerance_) {
+        tolerance = tolerance_;
+      }
       /***************************************************/
 
     private:
@@ -137,6 +140,11 @@ namespace MBSimIntegrator {
        * \brief time and plot time
        */
       double t, tPlot;
+
+      /*!
+       * \brief tolerance for the newton iteration
+       */
+      double tolerance;
 
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
