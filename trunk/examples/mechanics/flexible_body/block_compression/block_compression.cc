@@ -271,9 +271,9 @@ void BlockCompression::addBlocks() {
 }
 
 void BlockCompression::addContacts() {
-  double cBlBlBottom = 1e6;
-  double cBlBlTop = 5e6;
-  double cBlRod = 1e6;
+  double cBlBlBottom = 1e5;
+  double cBlBlTop = 5e5;
+  double cBlRod = 1e4;
 
   Contact * BlBlBottom = new Contact("BottomContacts");
   BlBlBottom->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlBottom, 0.)));
@@ -354,12 +354,12 @@ void BlockCompression::addBoundaryConditions() {
   addObject(compressionBody);
   blocks[blocks.size() - 1]->setFrameOfReference(compressionBody->getFrameC());
 
-  Joint * jointClampingFirstElement = new Joint("Clamping First Element");
-  jointClampingFirstElement->connect(compressionBody->getFrameC(), blocks[blocks.size() - 1]->getFrameC());
-  jointClampingFirstElement->setForceDirection(Mat("[1,0;0,1;0,0]"));
-
-  jointClampingFirstElement->setForceLaw(new BilateralConstraint());
-
-  addLink(jointClampingFirstElement);
+//  Joint * jointClampingFirstElement = new Joint("Clamping First Element");
+//  jointClampingFirstElement->connect(compressionBody->getFrameC(), blocks[blocks.size() - 1]->getFrameC());
+//  jointClampingFirstElement->setForceDirection(Mat("[1,0;0,1;0,0]"));
+//
+//  jointClampingFirstElement->setForceLaw(new BilateralConstraint());
+//
+//  addLink(jointClampingFirstElement);
 }
 
