@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
   }
 
   integrator->setPlotStepSize(1e-7);
-  integrator->setEndTime(5e-4);
+  integrator->setEndTime(3e-5);
   Timer.start();
   integrator->integrate(*sys);
 
