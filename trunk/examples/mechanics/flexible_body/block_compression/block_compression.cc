@@ -32,7 +32,6 @@ class Rod : public FlexibleBody1s21RCM {
     Rod(std::string name) :
         FlexibleBody1s21RCM(name, true) {
     }
-    ;
 
     virtual void facLLM(int i = 0) {
       FlexibleBody1s21RCM::facLLM(i);
@@ -180,6 +179,12 @@ BlockCompression::BlockCompression(const string &projectName) :
   }
 }
 
+void BlockCompression::plot(double t, double dt) {
+  DynamicSystemSolver::plot(t,dt);
+
+//  cout << h[0] + W[0]*la << endl;
+}
+
 void BlockCompression::defineEdges() {
   /*Add start body to system*/
   leftJointBody = new RigidBody("LeftJointBody");
@@ -278,19 +283,22 @@ void BlockCompression::addContacts() {
   Contact * BlBlBottom = new Contact("BottomContacts");
   BlBlBottom->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlBottom, 0.)));
   addLink(BlBlBottom);
+  BlBlBottom->enableOpenMBVNormalForce(1e-3);
 
   Contact * BlBlTop = new Contact("TopContacts");
   BlBlTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlTop, 0.)));
   addLink(BlBlTop);
+  BlBlTop->enableOpenMBVNormalForce(1e-3);
 
   Contact * BlRod = new Contact("BlockRodContacts");
   BlRod->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
   addLink(BlRod);
+  BlRod->enableOpenMBVNormalForce(1e-3);
 
   for (int i = 1; i < NoBlocks; i++) {
     /*(Inter-)Contact between Blocks*/
-    BlBlBottom->connect(blocks[i - 1]->back, blocks[i]->bottom);
-    BlBlTop->connect(blocks[i - 1]->back, blocks[i]->top);
+    BlBlBottom->connect(blocks[i]->bottom, blocks[i - 1]->back);
+    BlBlTop->connect(blocks[i]->top, blocks[i - 1]->back);
   }
   for (int i = 0; i < NoBlocks; i++) {
     /*Contact between block and rod*/
