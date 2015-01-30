@@ -26,7 +26,8 @@ int main(int argc, char* argv[]) {
   else {
     integrator = new QuasiStaticIntegrator;
     static_cast<QuasiStaticIntegrator*>(integrator)->setStepSize(1e-7);
-    static_cast<QuasiStaticIntegrator*>(integrator)->setTolerance(1e-1);
+    static_cast<QuasiStaticIntegrator*>(integrator)->setgTolerance(1e-1);
+    static_cast<QuasiStaticIntegrator*>(integrator)->sethTolerance(10);
   }
 
   integrator->setPlotStepSize(1e-7);

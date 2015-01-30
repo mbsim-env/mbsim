@@ -84,9 +84,11 @@ namespace MBSim {
     vector<double> & lastResults = criteriaResults.back();
     vector<double> currentResults = computeResults(x);
 
-    for (size_t i = 0; i < currentResults.size(); i++) {
-      if (currentResults[i] > lastResults[i])
+    int i = 0;
+    for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+      if ((currentResults[i] > lastResults[i]) and currentResults[i] > iter->second )
         return false;
+      i++;
     }
 
     return true;

@@ -21,6 +21,7 @@
 #include<mbsim/dynamic_system_solver.h>
 #include "quasi_static_integrator.h"
 #include <mbsim/utils/nonlinear_algebra.h>
+#include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 
 #include <time.h>
 #include <boost/iostreams/tee.hpp>
@@ -44,7 +45,7 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuasiStaticIntegrator, MBSIMINT % "QuasiStaticIntegrator")
 
   QuasiStaticIntegrator::QuasiStaticIntegrator() :
-      dt(1e-3), t(0.), tPlot(0.), tolerance(1e-3), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {
+      dt(1e-3), t(0.), tPlot(0.), gTol(1e-3), hTol(1), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
@@ -106,12 +107,6 @@ namespace MBSimIntegrator {
 //		system.update(z, t);
 
       hgFun fun_hg(&system, t, z);
-//			jacFun fun_jac(&system, t, z);  // dh/dq
-//			MultiDimNewtonMethod slv_h(&fun_h, &fun_jac);  // this fun_jac dh/dq does not consider the la force
-
-      MultiDimNewtonMethod slv_qla(&fun_hg);
-      slv_qla.setLinearAlgebra(1);
-      slv_qla.setTolerance(tolerance);
 
       Vec qla;
       qla.resize(q.size() + system.getla().size());
@@ -119,10 +114,39 @@ namespace MBSimIntegrator {
       qla(0, q.size() - 1) = q;
       qla(q.size(), qla.size() - 1) = system.getla();
 
-      qla = slv_qla.solve(qla); // use the qla from the previous timestep as the initial guess.
-      if (slv_qla.getInfo() != 0)
-        throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
-      iter = slv_qla.getNumberOfIterations();
+//			jacFun fun_jac(&system, t, z);  // dh/dq
+//			MultiDimNewtonMethod slv_h(&fun_h, &fun_jac);  // this fun_jac dh/dq does not consider the la force
+
+      if (0) {
+        MultiDimNewtonMethod slv_qla(&fun_hg);
+        slv_qla.setLinearAlgebra(1);
+        slv_qla.setTolerance(gTol);
+        qla = slv_qla.solve(qla); // use the qla from the previous timestep as the initial guess.
+        if (slv_qla.getInfo() != 0)
+          throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+        iter = slv_qla.getNumberOfIterations();
+      }
+      else {
+        NewtonJacobianFunction * jac = new NumericalNewtonJacobianFunction();
+        MultiDimensionalNewtonMethod newton;
+        map<Index, double> tolerances;
+        tolerances.insert(pair<Index, double>(Index(0, q.size() - 1), hTol));
+        tolerances.insert(pair<Index, double>(Index(q.size(), qla.size() - 1), gTol));
+        LocalResidualCriteriaFunction cfunc(tolerances);
+        GlobalResidualCriteriaFunction cfuncGlob(gTol);
+        StandardDampingFunction dfunc(30);
+
+        newton.setFunction(&fun_hg);
+        newton.setJacobianFunction(jac);
+        newton.setCriteriaFunction(&cfunc);
+        newton.setDampingFunction(&dfunc);
+        newton.setLinearAlgebra(1); // as system is possible underdetermined
+        qla = newton.solve(qla);
+        if (newton.getInfo() != 0)
+          throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+        iter = newton.getNumberOfIterations();
+      }
+
       q = qla(0, q.size() - 1);
       system.setLa(qla(q.size(), qla.size() - 1));
 
