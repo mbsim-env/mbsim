@@ -130,6 +130,8 @@ class BlockCompression : public MBSim::DynamicSystemSolver {
     double groove;
     double mass;
 
+    void plot(double t, double dt);
+
     void defineEdges();
     void clampRod();
     void addBoundaryConditions();

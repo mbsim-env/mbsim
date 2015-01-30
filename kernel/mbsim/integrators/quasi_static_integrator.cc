@@ -86,19 +86,6 @@ namespace MBSimIntegrator {
   void QuasiStaticIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
     while (t < tStop) { // time loop
       integrationSteps++;
-      if ((step * stepPlot - integrationSteps) < 0) {
-        step++;
-        if (driftCompensation)
-          system.projectGeneralizedPositions(t, 0);
-        system.plot2(z, t, dt);
-        double s1 = clock();
-        time += (s1 - s0) / CLOCKS_PER_SEC;
-        s0 = s1;
-        integPlot << t << " " << dt << " " << iter << " " << time << " " << system.getlaSize() << endl;
-        if (output)
-          cout << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
-        tPlot += dtPlot;
-      }
 
       //		system.update(z, t);
       // as the time changes, update boundary conditions, external forces......
@@ -106,6 +93,7 @@ namespace MBSimIntegrator {
       // update the g, gd, Jacobin, W, h, M, LLCM, G....
 //		system.update(z, t);
 
+      /* FIND EQUILIBRIUM*/
       hgFun fun_hg(&system, t, z);
 
       Vec qla;
@@ -150,6 +138,22 @@ namespace MBSimIntegrator {
       q = qla(0, q.size() - 1);
       system.setLa(qla(q.size(), qla.size() - 1));
 
+      if ((step * stepPlot - integrationSteps) < 0) {
+        /* WRITE OUTPUT */
+        step++;
+        if (driftCompensation)
+          system.projectGeneralizedPositions(t, 0);
+        system.plot2(z, t, dt);
+        double s1 = clock();
+        time += (s1 - s0) / CLOCKS_PER_SEC;
+        s0 = s1;
+        integPlot << t << " " << dt << " " << iter << " " << time << " " << system.getlaSize() << endl;
+        if (output)
+          cout << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        tPlot += dtPlot;
+      }
+
+      /* UPDATE SYSTEM FOR NEXT STEP*/
       t += dt;   // step 0: update time, go into new time step.
 
       system.update(z, t);
@@ -272,11 +276,11 @@ namespace MBSimIntegrator {
 
   fmatvec::Vec hgFun::operator()(const fmatvec::Vec& qla) {
     // backup the original q of the dynamical system sys.
-    Vec qlaOld;
+//    Vec qlaOld;
     int qSize = sys->getqSize();
     int laSize = sys->getlaSize();
     int qlaSize = qSize + laSize;
-    qlaOld.resize(qlaSize);
+//    qlaOld.resize(qlaSize);
 
 //	qlaOld(0, qSize - 1) = sys->getq();
 //	qlaOld(qSize, qlaSize - 1) = sys->getla();

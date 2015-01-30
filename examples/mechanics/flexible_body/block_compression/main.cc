@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
 
   sys->setStopIfNoConvergence(true, true);
   sys->setMaxIter(100000); // set up to 100000 because of "No Convergence" in only ONE step
+  sys->setPlotFeature(MBSim::Element::rightHandSide, MBSim::Element::enabled);
   sys->initialize();
   sys->setFlushEvery(1);
 
@@ -25,12 +26,12 @@ int main(int argc, char* argv[]) {
   }
   else {
     integrator = new QuasiStaticIntegrator;
-    static_cast<QuasiStaticIntegrator*>(integrator)->setStepSize(1e-7);
+    static_cast<QuasiStaticIntegrator*>(integrator)->setStepSize(1e-6);
     static_cast<QuasiStaticIntegrator*>(integrator)->setgTolerance(1e-1);
-    static_cast<QuasiStaticIntegrator*>(integrator)->sethTolerance(10);
+    static_cast<QuasiStaticIntegrator*>(integrator)->sethTolerance(1);
   }
 
-  integrator->setPlotStepSize(1e-7);
+  integrator->setPlotStepSize(1e-6);
   integrator->setEndTime(3e-5);
   Timer.start();
   integrator->integrate(*sys);
