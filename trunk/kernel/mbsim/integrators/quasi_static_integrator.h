@@ -125,8 +125,11 @@ namespace MBSimIntegrator {
       void setDriftCompensation(bool dc) {
         driftCompensation = dc;
       }
-      void setTolerance(double tolerance_) {
-        tolerance = tolerance_;
+      void setgTolerance(double tolerance_) {
+        gTol = tolerance_;
+      }
+      void sethTolerance(double tolerance_) {
+        hTol = tolerance_;
       }
       /***************************************************/
 
@@ -142,9 +145,14 @@ namespace MBSimIntegrator {
       double t, tPlot;
 
       /*!
-       * \brief tolerance for the newton iteration
+       * \brief tolerance for the newton iteration for distances
        */
-      double tolerance;
+      double gTol;
+
+      /*!
+       * \brief tolerance for newton iteration for forces
+       */
+      double hTol;
 
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
