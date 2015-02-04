@@ -45,7 +45,7 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuasiStaticIntegrator, MBSIMINT % "QuasiStaticIntegrator")
 
   QuasiStaticIntegrator::QuasiStaticIntegrator() :
-      dt(1e-3), t(0.), tPlot(0.), gTol(1e-3), hTol(1), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {
+      dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0) {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
@@ -84,6 +84,7 @@ namespace MBSimIntegrator {
   }
 
   void QuasiStaticIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+    static_cast<DynamicSystem&>(system).plot(t, dt);
     while (t < tStop) { // time loop
       integrationSteps++;
 
@@ -141,9 +142,7 @@ namespace MBSimIntegrator {
       if ((step * stepPlot - integrationSteps) < 0) {
         /* WRITE OUTPUT */
         step++;
-        if (driftCompensation)
-          system.projectGeneralizedPositions(t, 0);
-        system.plot2(z, t, dt);
+        static_cast<DynamicSystem&>(system).plot(t, dt);
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;
@@ -289,7 +288,12 @@ namespace MBSimIntegrator {
     sys->setq(qla(0, qSize - 1));
     sys->setLa(qla(qSize, qlaSize - 1));
     // update the system by calling system.update(z,t);  inside this function the h vector is updated.
-    sys->update(z, t);
+//    sys->update(z, t);
+    sys->updateStateDependentVariables(t);
+    sys->updateg(t);
+    sys->updateJacobians(t);
+    sys->updateh(t);
+    sys->updateW(t);
     // get the new h vector
     Vec hg;
     hg.resize(qla.size());
