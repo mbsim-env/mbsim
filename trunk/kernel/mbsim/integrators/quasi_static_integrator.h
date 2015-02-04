@@ -122,9 +122,6 @@ namespace MBSimIntegrator {
       void setStepSize(double dt_) {
         dt = dt_;
       }
-      void setDriftCompensation(bool dc) {
-        driftCompensation = dc;
-      }
       void setgTolerance(double tolerance_) {
         gTol = tolerance_;
       }
@@ -178,11 +175,6 @@ namespace MBSimIntegrator {
        * \brief file stream for integration information
        */
       std::ofstream integPlot;
-
-      /**
-       * \brief flag for drift compensation
-       */
-      bool driftCompensation;
   };
 
 }
