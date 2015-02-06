@@ -79,6 +79,10 @@ namespace MBSim {
       void setLinearAlgebra(int linAlg_) {
         linAlg = linAlg_;
       }
+
+      void setJacobianUpdateFreq(int JacobianUpdateFreq_) {
+        jacobianUpdateFreq = JacobianUpdateFreq_;
+      }
       /***************************************************/
 
       /**
@@ -132,6 +136,11 @@ namespace MBSim {
        * 1 = solve with LS (least squares) for underdetermined systems
        */
       int linAlg;
+
+      /*!
+       * \brief the frequency of updating Jacobian during iteration
+       */
+      int jacobianUpdateFreq;
 
   };
 }
