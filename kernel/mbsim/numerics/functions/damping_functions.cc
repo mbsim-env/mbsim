@@ -40,7 +40,7 @@ namespace MBSim {
 
     for (unsigned int k = 0; k < kmax; k++) {
       xnew = x - alpha * dx;
-      Vec f = (*function)(xnew);
+//      Vec f = (*function)(xnew);
       if(criteria->isBetter(xnew)) {
         return alpha;
       }
