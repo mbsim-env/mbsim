@@ -36,8 +36,8 @@ namespace MBSimIntegrator {
       /*!
        * \brief constructor
        */
-      hgFun(MBSim::DynamicSystemSolver* sys_, double t_, fmatvec::Vec& z_) :
-          sys(sys_), t(t_), z(z_) {
+      hgFun(MBSim::DynamicSystemSolver* sys_) :
+          sys(sys_), t(0) {
       }
 
       /*!
@@ -49,13 +49,17 @@ namespace MBSimIntegrator {
 
       /* INHERITED INTERFACE */
       fmatvec::Vec operator()(const fmatvec::Vec& qla);
+
+      void setT(double t) {
+        this->t = t;
+      }
+
       /*******************************************************/
 
     private:
 
       MBSim::DynamicSystemSolver* sys;
       double t;
-      fmatvec::Vec z;
 
   };
 
@@ -128,6 +132,12 @@ namespace MBSimIntegrator {
       void sethTolerance(double tolerance_) {
         hTol = tolerance_;
       }
+      void setmaxExtraPolate(int value) {
+        maxExtraPolate = value;
+      }
+      void setupdateJacobianEvery(int value) {
+        updateJacobianEvery = value;
+      }
       /***************************************************/
 
     private:
@@ -155,6 +165,16 @@ namespace MBSimIntegrator {
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
       int iter, step, integrationSteps, maxIter, sumIter;
+
+      /*!
+       * \brief value of how many points in the past should be used to extrapolate for new value
+       */
+      int maxExtraPolate;
+
+      /*!
+       * \brief value of how often the Jacobian should be updated every step
+       */
+      int updateJacobianEvery;
 
       /**
        * \brief computing time counter

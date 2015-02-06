@@ -45,7 +45,7 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuasiStaticIntegrator, MBSIMINT % "QuasiStaticIntegrator")
 
   QuasiStaticIntegrator::QuasiStaticIntegrator() :
-      dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0) {
+      dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), maxExtraPolate(0), updateJacobianEvery(1), s0(0.), time(0.), stepPlot(0) {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
@@ -84,61 +84,80 @@ namespace MBSimIntegrator {
   }
 
   void QuasiStaticIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    static_cast<DynamicSystem&>(system).plot(t, dt);
+//    static_cast<DynamicSystem&>(system).plot(t, dt);
+
+    /* FIND EQUILIBRIUM*/
+    hgFun fun_hg(&system);
+
+    VecV qla(q.size() + system.getla().size());
+    VecV la(system.getla().size());
+    Index qInd = Index(0, q.size() - 1);
+    Index laInd = Index(q.size(), qla.size() - 1);
+
+    VecV qlaStart(qla.size());
+    VecV qlaOld(qla.size());
+    VecV qlaOldOld(qla.size());
+
+    qla.set(qInd, q);
+    qla.set(laInd, system.getla());
+
+    /* use MultiDimNewtonMethod*/
+//    MultiDimNewtonMethod newton(&fun_hg);
+//    newton.setLinearAlgebra(1);
+//    newton.setTolerance(gTol);
+    /* use  MultiDimensionalNewtonMethod */
+    NewtonJacobianFunction * jac = new NumericalNewtonJacobianFunction();
+    MultiDimensionalNewtonMethod newton;
+    map<Index, double> tolerances;
+    tolerances.insert(pair<Index, double>(qInd, hTol));
+    tolerances.insert(pair<Index, double>(laInd, gTol));
+    LocalResidualCriteriaFunction cfunc(tolerances);
+    GlobalResidualCriteriaFunction cfuncGlob(gTol);
+    StandardDampingFunction dfunc(30);
+    newton.setFunction(&fun_hg);
+    newton.setJacobianFunction(jac);
+    newton.setCriteriaFunction(&cfunc);
+    newton.setDampingFunction(&dfunc);
+    newton.setLinearAlgebra(1); // as system is possible underdetermined
+    newton.setJacobianUpdateFreq(updateJacobianEvery);
+
     while (t < tStop) { // time loop
       integrationSteps++;
 
-      //		system.update(z, t);
-      // as the time changes, update boundary conditions, external forces......
-      // step 1 and 2: update state dependent variables and check the gap distance of contact in order to get the active index.
-      // update the g, gd, Jacobin, W, h, M, LLCM, G....
-//		system.update(z, t);
+      fun_hg.setT(t);
 
-      /* FIND EQUILIBRIUM*/
-      hgFun fun_hg(&system, t, z);
-
-      Vec qla;
-      qla.resize(q.size() + system.getla().size());
-
-      qla(0, q.size() - 1) = q;
-      qla(q.size(), qla.size() - 1) = system.getla();
-
-//			jacFun fun_jac(&system, t, z);  // dh/dq
-//			MultiDimNewtonMethod slv_h(&fun_h, &fun_jac);  // this fun_jac dh/dq does not consider the la force
-
-      if (0) {
-        MultiDimNewtonMethod slv_qla(&fun_hg);
-        slv_qla.setLinearAlgebra(1);
-        slv_qla.setTolerance(gTol);
-        qla = slv_qla.solve(qla); // use the qla from the previous timestep as the initial guess.
-        if (slv_qla.getInfo() != 0)
-          throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
-        iter = slv_qla.getNumberOfIterations();
+      if (integrationSteps == 1 or maxExtraPolate == 0) {
+        qlaStart = qla;
       }
       else {
-        NewtonJacobianFunction * jac = new NumericalNewtonJacobianFunction();
-        MultiDimensionalNewtonMethod newton;
-        map<Index, double> tolerances;
-        tolerances.insert(pair<Index, double>(Index(0, q.size() - 1), hTol));
-        tolerances.insert(pair<Index, double>(Index(q.size(), qla.size() - 1), gTol));
-        LocalResidualCriteriaFunction cfunc(tolerances);
-        GlobalResidualCriteriaFunction cfuncGlob(gTol);
-        StandardDampingFunction dfunc(30);
-
-        newton.setFunction(&fun_hg);
-        newton.setJacobianFunction(jac);
-        newton.setCriteriaFunction(&cfunc);
-        newton.setDampingFunction(&dfunc);
-        newton.setLinearAlgebra(1); // as system is possible underdetermined
-        qla = newton.solve(qla);
-        if (newton.getInfo() != 0)
-          throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
-        iter = newton.getNumberOfIterations();
+        if (maxExtraPolate == 1 or integrationSteps == 2) {
+          qlaStart = 2. * qla - qlaOld;
+        }
+        else {
+          // TODO: right now maximal second order extrapolation is supported
+          qlaStart = 3. * qla - 3. * qlaOld + qlaOldOld;
+        }
+        qlaOldOld = qlaOld;
+        qlaOld = qla;
       }
 
-      q = qla(0, q.size() - 1);
-      system.setLa(qla(q.size(), qla.size() - 1));
+      qla = newton.solve(qlaStart); // use the qla from the previous timestep as the initial guess.
 
+//      qla = newton.solve(qla);
+
+      if (newton.getInfo() != 0)
+        throw MBSimError("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
+      iter = newton.getNumberOfIterations();
+
+      for (int i = 0; i < q.size(); i++)
+        q(i) = qla(i);
+
+      for (int i = 0; i < la.size(); i++)
+        la(i) = qla(q.size() + i);
+
+      system.setLa(la);
+
+      // todo: check whether the plot make the openMBV unstable.
       if ((step * stepPlot - integrationSteps) < 0) {
         /* WRITE OUTPUT */
         step++;
@@ -155,85 +174,9 @@ namespace MBSimIntegrator {
       /* UPDATE SYSTEM FOR NEXT STEP*/
       t += dt;   // step 0: update time, go into new time step.
 
-      system.update(z, t);
-
-      //in timestepping, u is updated according to 14a.
-      // should we consider the contributation part from the contact? or just calculate u according (q^(l+1) -q^(l))/dt
-      // then u is also introduced into the slv_h.solve(q) by consider it as constant.
-//		u += system.deltau(z,t,dt);
-//		u = (q - qOld) / dt;
-      x += system.deltax(z, t, dt);
-
+//      x += system.deltax(z, t, dt);  // todo: framework is not ready for x.
     }
   }
-
-//  void QuasiStaticIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-//  while (t < tStop) { // time loop
-//		integrationSteps++;
-//		if ((step * stepPlot - integrationSteps) < 0) {
-//			step++;
-//			if (driftCompensation)
-//				system.projectGeneralizedPositions(t, 0);
-//			system.plot2(z, t, dt);
-//			double s1 = clock();
-//			time += (s1 - s0) / CLOCKS_PER_SEC;
-//			s0 = s1;
-//			integPlot << t << " " << dt << " " << iter << " " << time << " "
-//					<< system.getlaSize() << endl;
-//			if (output)
-//				cout << "   t = " << t << ",\tdt = " << dt << ",\titer = "
-//						<< setw(5) << setiosflags(ios::left) << iter << "\r"
-//						<< flush;
-//			tPlot += dtPlot;
-//		}
-//
-//  //      q += system.deltaq(z,t,dt); // step 4 : compute the new generalized position, order 1: q = q + Y * u * dt
-//
-//		t += dt;   // step 0: update time, go into new time step.
-//
-//		// as the time changes, update boundary conditions, external forces......
-//		// step 1 and 2: update state dependent variables and check the gap distance of contact in order to get the active index.
-//		// update the g, gd, Jacobin, W, h, M, LLCM, G....
-//		system.update(z, t);
-//
-//  //      system.getb() << system.getgd() + system.getW().T()*slvLLFac(system.getLLM(),system.geth())*dt;
-//
-//		// get the the necessary components from system
-//  //      Mat T = system.getT().copy();
-//  //      SymMat M = system.getM().copy();
-//  //      Mat W = system.getW().copy();
-//  //      Mat V = system.getV().copy();
-//  //		Vec h = system.geth().copy();
-//  //		Mat dhdq = system.dhdq(t);
-//  //		Mat dhdu = system.dhdu(t);
-//  //		Mat dhdx = system.dhdx(t); // todo: check whether need dhdx
-//
-//		// construct Jacobian matrix
-//		// todo: offer different possible strategy for Jacobian, maybe read the paper from simpack.
-//		// fully update, partially update, update in every n time steps.........
-//
-//		hFun fun_h(&system, t, z);
-//  //      jacFun fun_jac();
-//  //      MultiDimNewtonMethod slv_h(&fun_h, &fun_jac); //todo: add this later
-//
-////		fun_h.updateTime(t);
-//
-//		MultiDimNewtonMethod slv_h(&fun_h);
-//
-//		q = slv_h.solve(q); // use the q from the previous timestep as the initial guess.
-//		if (slv_h.getInfo() != 0)
-//			throw("ERROR (QuasiStaticIntegrator::subIntegrate): No convergence of Newton method for the new time step");
-//
-//		iter = system.solveImpacts(dt);  // todo: which states does this change?
-//
-//		if (iter > maxIter)
-//			maxIter = iter;
-//		sumIter += iter;
-//
-//  //      u += system.deltau(z,t,dt);  // todo: do we need to update them here?
-//  //      x += system.deltax(z,t,dt);
-//	}
-//  }
 
   void QuasiStaticIntegrator::postIntegrate(DynamicSystemSolver& system) {
     integPlot.close();
@@ -274,31 +217,33 @@ namespace MBSimIntegrator {
   }
 
   fmatvec::Vec hgFun::operator()(const fmatvec::Vec& qla) {
-    // backup the original q of the dynamical system sys.
-//    Vec qlaOld;
     int qSize = sys->getqSize();
     int laSize = sys->getlaSize();
     int qlaSize = qSize + laSize;
-//    qlaOld.resize(qlaSize);
-
-//	qlaOld(0, qSize - 1) = sys->getq();
-//	qlaOld(qSize, qlaSize - 1) = sys->getla();
 
     // set the q of system to be the input q
     sys->setq(qla(0, qSize - 1));
     sys->setLa(qla(qSize, qlaSize - 1));
-    // update the system by calling system.update(z,t);  inside this function the h vector is updated.
-//    sys->update(z, t);
+
     sys->updateStateDependentVariables(t);
-    sys->updateg(t);
-    sys->updateJacobians(t);
+    sys->updateg(t); // for joint, gap distance need also be updated.
+//    sys->checkActive(1);   // todo: flag = 1, gap distance level
+//    sys->updategd(t);  //todo:  ??? gd is needed for updating h
+//    sys->updateT(t);
+    sys->updateJacobians(t); // needed for calculating W.
     sys->updateh(t);
-    sys->updateW(t);
+//    sys->updateM(t);  // todo: needed?
+    if ((qlaSize - qSize) > 0)
+      sys->updateW(t);
+//    sys->updateV(t);  //not needed, because updateV is only needed for contact calculation
+//    sys->updateG(t);  //  todo: not needed, because la is not solved by contact iteration
+
     // get the new h vector
     Vec hg;
     hg.resize(qla.size());
 
-    hg(0, qSize - 1) = sys->geth() + sys->getW() * sys->getla();
+    // need new h, W, g, input la (not from the system, but from the input value),
+    hg(0, qSize - 1) = sys->geth() + sys->getW() * qla(qSize, qlaSize - 1);
     hg(qSize, qlaSize - 1) = sys->getg().copy();
 
 //    cout << "t = "  << t << "\n";
@@ -306,17 +251,7 @@ namespace MBSimIntegrator {
 //    cout << "w * la = "  << sys->getW() * sys->getla()  << "\n \n";
 //    cout << "hg = "  << hg  << "\n \n";
 
-    // recover the old sys state
-//	sys->setq(qlaOld(0, qSize - 1));
-//	sys->setLa(qlaOld(qSize, qlaSize - 1));
-//	sys->update(z, t);
-
     return hg;
-
-//	// todo: may get the reference and return a reference
-//	// the return type has to be changed into Vec&
-//	return sys->geth();
-
   }
 
   fmatvec::SqrMat jacFun::operator()(const fmatvec::Vec& q) {
