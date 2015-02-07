@@ -30,8 +30,8 @@ namespace MBSim {
 
   }
 
-  StandardDampingFunction::StandardDampingFunction(unsigned int kmax_ /* = 300*/) :
-      DampingFunction(), kmax(kmax_) {
+  StandardDampingFunction::StandardDampingFunction(unsigned int kmax_ , double d_) :
+      DampingFunction(), kmax(kmax_), d(d_) {
   }
 
   double StandardDampingFunction::operator ()(const Vec &x, const fmatvec::Vec &dx) {
@@ -44,7 +44,7 @@ namespace MBSim {
       if(criteria->isBetter(xnew)) {
         return alpha;
       }
-      alpha *= 0.5;
+      alpha *= d;
     }
 
     return 1;
