@@ -113,7 +113,7 @@ namespace MBSimIntegrator {
     tolerances.insert(pair<Index, double>(laInd, gTol));
     LocalResidualCriteriaFunction cfunc(tolerances);
     GlobalResidualCriteriaFunction cfuncGlob(gTol);
-    StandardDampingFunction dfunc(30);
+    StandardDampingFunction dfunc(30, 0.2);
     newton.setFunction(&fun_hg);
     newton.setJacobianFunction(jac);
     newton.setCriteriaFunction(&cfunc);
@@ -121,19 +121,19 @@ namespace MBSimIntegrator {
     newton.setLinearAlgebra(1); // as system is possible underdetermined
     newton.setJacobianUpdateFreq(updateJacobianEvery);
 
+    static_cast<DynamicSystem&>(system).plot(t, dt);
+
     while (t < tStop) { // time loop
       integrationSteps++;
 
       fun_hg.setT(t);
 
-      if (integrationSteps == 1 or maxExtraPolate == 0) {
-        qlaStart = qla;
-      }
-      else {
-        if (maxExtraPolate == 1 or integrationSteps == 2) {
+      qlaStart = qla;
+      if (integrationSteps > 1) {
+        if (maxExtraPolate == 1 and integrationSteps > 2) {
           qlaStart = 2. * qla - qlaOld;
         }
-        else {
+        else if (maxExtraPolate == 2) {
           // TODO: right now maximal second order extrapolation is supported
           qlaStart = 3. * qla - 3. * qlaOld + qlaOldOld;
         }
@@ -247,9 +247,11 @@ namespace MBSimIntegrator {
     hg(qSize, qlaSize - 1) = sys->getg().copy();
 
 //    cout << "t = "  << t << "\n";
-//    cout << "sys.geth() = "  <<  sys->geth() << "\n";
-//    cout << "w * la = "  << sys->getW() * sys->getla()  << "\n \n";
-//    cout << "hg = "  << hg  << "\n \n";
+//    cout << "sys.geth() = "  <<  sys->geth().T() << "\n";
+//    cout << "la= " << sys->getla().T() << endl;
+//    cout << "W= " << sys->getW().T() << endl;
+//    cout << "w * la = "  << Vec(sys->getW() * sys->getla()).T()  << "\n \n";
+//    cout << "hg = "  << hg.T()  << "\n \n";
 
     return hg;
   }
