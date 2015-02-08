@@ -21,7 +21,7 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/body.h"
-#include "functions/auxiliary_functions.h"
+#include "mbsim/functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
