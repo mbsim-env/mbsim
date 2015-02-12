@@ -197,14 +197,6 @@ namespace MBSim {
     h[i] >> hParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
-  void Object::updateWRef(const Mat& WParent, int i) {
-    W[i] >> WParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(0, WParent.cols() - 1));
-  }
-
-  void Object::updateVRef(const Mat& VParent, int i) {
-    V[i] >> VParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(0, VParent.cols() - 1));
-  }
-
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
     dhdq >> dhdqParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(qInd, qInd + qSize - 1));
   }
@@ -301,14 +293,5 @@ namespace MBSim {
     return Element::writeXMLFile(parent);
   }
 
-  void Object::updateW0FromW1(double t) {
-    //W[0] = W[1];
-  }
-  void Object::updateV0FromV1(double t) {
-    //V[0] = V[1];
-  }
-  void Object::updateh0Fromh1(double t) {
-    //h[0] = h[1];
-  }
 }
 

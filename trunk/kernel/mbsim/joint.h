@@ -34,7 +34,7 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
-  class RigidBody;
+  class Body;
 
   /** 
    * \brief class for connections: constraints on frames
@@ -237,7 +237,7 @@ namespace MBSim {
       InverseKineticsJoint(const std::string &name);
       virtual void updateb(double t);
       void calcbSize();
-      void setBody(RigidBody* body_) {
+      void setBody(Body* body_) {
         body = body_;
       }
       virtual void init(InitStage stage);
@@ -246,7 +246,7 @@ namespace MBSim {
       }
 
     protected:
-      RigidBody* body;
+      Body* body;
   };
 
 }

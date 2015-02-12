@@ -79,28 +79,11 @@ namespace MBSim {
   }
 
   void RigidBody::updateh(double t, int j) {
-
-    Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*C->getGyroscopicAccelerationOfTranslation(j);
-    Vec3 WM = crossProduct(WThetaS*C->getAngularVelocity(),C->getAngularVelocity()) - WThetaS*C->getGyroscopicAccelerationOfRotation(j);
-
-    h[j] += C->getJacobianOfTranslation(j).T()*WF + C->getJacobianOfRotation(j).T()*WM;
-  }
-
-  void RigidBody::updateh0Fromh1(double t) {
-    h[0] += C->getJacobianOfTranslation(0).T()*(h[1](0,2) - m*C->getGyroscopicAccelerationOfTranslation()) + C->getJacobianOfRotation(0).T()*(h[1](3,5) - WThetaS*C->getGyroscopicAccelerationOfRotation());
-  }
-
-  void RigidBody::updateW0FromW1(double t) {
-    W[0] += C->getJacobianOfTranslation(0).T()*W[1](i02,Index(0,W[1].cols()-1)) + C->getJacobianOfRotation(0).T()*W[1](Index(3,5),Index(0,W[1].cols()-1));
-  }
-
-  void RigidBody::updateV0FromV1(double t) {
-    V[0] += C->getJacobianOfTranslation(0).T()*V[1](i02,Index(0,V[1].cols()-1)) + C->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
+    h[j] += C->getJacobianOfTranslation(j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(j)) + C->getJacobianOfRotation(j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(j));
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
-    VecV buf = C->getJacobianOfTranslation(j).T()*(m*(C->getJacobianOfTranslation()*udall[0] + C->getGyroscopicAccelerationOfTranslation())) + C->getJacobianOfRotation(j).T()*(WThetaS*(C->getJacobianOfRotation()*udall[0] + C->getGyroscopicAccelerationOfRotation()));
-    h[j] -= buf;
+    h[j] -= C->getJacobianOfTranslation(j).T()*(m*(C->getJacobianOfTranslation()*udall[0] + C->getGyroscopicAccelerationOfTranslation())) + C->getJacobianOfRotation(j).T()*(WThetaS*(C->getJacobianOfRotation()*udall[0] + C->getGyroscopicAccelerationOfRotation()));
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -136,7 +119,6 @@ namespace MBSim {
       Body::init(stage);
 
       int nqT=0, nqR=0, nuT=0, nuR=0;
-      nq=0, nu[0]=0;
       if(fPrPK) {
         nqT = fPrPK->getArg1Size();
         nuT = fPrPK->getArg1Size(); // TODO fTT->getArg1Size()
@@ -530,6 +512,9 @@ namespace MBSim {
 
     //compute inertia in world frame
     WThetaS = JTMJ(SThetaS,C->getOrientation().T());
+
+    WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+    WM = crossProduct(WThetaS*C->getAngularVelocity(),C->getAngularVelocity()) ;
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t, int j) {
