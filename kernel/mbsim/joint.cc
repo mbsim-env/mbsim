@@ -678,7 +678,7 @@ namespace MBSim {
   }
 
   void InverseKineticsJoint::calcbSize() {
-    bSize = body ? body->getuRel().size() : 0;
+    bSize = body ? body->getuRelSize() : 0;
   }
 
   void InverseKineticsJoint::updateb(double t) {

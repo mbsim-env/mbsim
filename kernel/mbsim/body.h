@@ -141,6 +141,10 @@ namespace MBSim {
 
       virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
 
+      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
+      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
+      int getuRelSize(int i=0) const {return nu[i];}
+
     protected:
       /**
        * \param frame to add
@@ -162,6 +166,13 @@ namespace MBSim {
        * \brief frame of reference of the object
        */
       Frame *R;
+
+      /**
+       * JACOBIAN of translation, rotation and their derivatives in parent system
+       */
+      fmatvec::Mat3xV PJT[2], PJR[2];
+
+      int nu[2], nq;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Body* openMBVBody;

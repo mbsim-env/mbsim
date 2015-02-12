@@ -72,9 +72,6 @@ namespace MBSim {
       virtual void updateqd(double t); 
       virtual void updateT(double t);
       virtual void updateh(double t, int j=0);
-      virtual void updateh0Fromh1(double t);
-      virtual void updateW0FromW1(double t);
-      virtual void updateV0FromV1(double t);
       virtual void updatehInverseKinetics(double t, int j=0);
       virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
@@ -294,11 +291,6 @@ namespace MBSim {
        */
       bool coordinateTransformation;
 
-      /**
-       * JACOBIAN of translation, rotation and their derivatives in parent system
-       */
-      fmatvec::Mat3xV PJT[2], PJR[2];
-
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
       /**
@@ -375,8 +367,6 @@ namespace MBSim {
 
       Constraint *constraint;
 
-      int nu[2], nq;
-
       Frame *frameForJacobianOfRotation;
 
       std::vector<FixedRelativeFrame*> RBF;
@@ -387,6 +377,8 @@ namespace MBSim {
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
+
+      fmatvec::Vec3 WF, WM;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
