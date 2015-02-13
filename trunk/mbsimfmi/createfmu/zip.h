@@ -15,7 +15,7 @@ namespace MBSimFMI {
 class CreateZip : virtual public fmatvec::Atom {
   public:
     //! Create zip file name zipFile_
-    CreateZip(const boost::filesystem::path &zipFile_);
+    CreateZip(const boost::filesystem::path &zipFile_, bool compress=true);
     //! Destroy zipfile. Implicitly close the file if not already done by close().
     ~CreateZip();
     //! Close the zip file. Write all content to disk.
