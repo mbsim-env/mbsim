@@ -6,6 +6,7 @@
 #include <utils.h>
 #include <fmatvec/atom.h>
 #include "fmiinstancebase.h"
+#include <boost/make_shared.hpp>
 
 // fmi function declarations must be included as extern C
 extern "C" {
@@ -32,10 +33,9 @@ namespace MBSimFMI {
 
   /*! A MBSim FMI instance */
   class FMIInstance : public FMIInstanceBase, virtual public fmatvec::Atom {
+    friend boost::shared_ptr<FMIInstance> boost::make_shared<FMIInstance, fmiString, fmiString, fmiCallbackFunctions, fmiBoolean>(
+      const fmiString &instanceName_, const fmiString &GUID, const fmiCallbackFunctions &functions, const fmiBoolean &loggingOn);
     public:
-      //! ctor used in fmiInstantiateModel
-      FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn);
-
       //! dtor used in fmiFreeModelInstance
       ~FMIInstance();
 
@@ -78,6 +78,8 @@ namespace MBSimFMI {
       void terminate                 ();
 
     private:
+      //! ctor used in fmiInstantiateModel
+      FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn);
 
       void rethrowVR(size_t vr, const std::exception &ex=std::runtime_error("Unknown exception."));
 
