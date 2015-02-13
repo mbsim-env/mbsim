@@ -1,17 +1,24 @@
 // includes
 #include "config.h"
-#include <fmiinstance.h>
 #include <string>
+#include <stdexcept>
+#include <boost/shared_ptr.hpp>
 
 // include the fmi header
 extern "C" {
   #define MODEL_IDENTIFIER mbsim
-  #include <3rdparty/fmiModelFunctions.h>
+  #include <fmiinstancebase.h> // this includes 3rdparty/fmiModelFunctions
 }
 
 // use namespaces
 using namespace std;
 using namespace MBSimFMI;
+
+class SharedLibrary {//MFMF use real SharedLibrary from MBXMLUtils but with minimal dependencies
+  public:
+    SharedLibrary(const string &filename) {}
+    void *getAddress(const string &symbolName) { return NULL; }
+};
 
 // define all FMI function as C functions
 extern "C" {
@@ -26,11 +33,14 @@ extern "C" {
     return "1.0";
   }
 
-  // FMI instantiate function: just calls the FMIInstance ctor
+  // FMI instantiate function: just calls the FMIInstanceBase ctor
   // Convert exceptions to FMI logger calls and return no instance.
   fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
     try {
-      return new FMIInstance(instanceName_, GUID, functions, loggingOn);
+      SharedLibrary lib("MFMF"); // use sharedLibdir/resources/../libmbsimXXX_fmi.so.0; also copy mbsim.so to FMU in createFMU
+      FMIInstanceBaseCTorType FMIInstanceBaseCTor=reinterpret_cast<FMIInstanceBaseCTorType>(lib.getAddress("FMIInstanceBaseCTor"));
+      return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(
+        lib, boost::shared_ptr<FMIInstanceBase>(FMIInstanceBaseCTor(instanceName_, GUID, functions, loggingOn)));
     }
     // note: we can not use the instance here since the creation has failed
     catch(const exception &ex) {
@@ -45,18 +55,18 @@ extern "C" {
     }
   }
 
-  // FMI free instance function: just calls the FMIInstance dtor.
+  // FMI free instance function: just calls the FMIInstanceBase dtor.
   // No exception handling needed since the dtor must not throw.
   void fmiFreeModelInstance(fmiComponent c) {
     // must not throw
-    delete static_cast<FMIInstance*>(c);
+    delete static_cast<pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >*>(c);
   }
 
-  // All other FMI functions: just calls the corresponding member function in FMIInstance
+  // All other FMI functions: just calls the corresponding member function in FMIInstanceBase
   // Convert exceptions to call of logError which itself passed these to the FMI logge and return with fmiError.
   #define FMIFUNC(fmiFuncName, instanceMemberName, Sig, sig) \
   fmiStatus fmiFuncName Sig { \
-    FMIInstance *instance=static_cast<FMIInstance*>(c); \
+    boost::shared_ptr<FMIInstanceBase> instance=static_cast<pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >*>(c)->second; \
     try { \
       instance->instanceMemberName sig; \
       return fmiOK; \
@@ -88,23 +98,21 @@ extern "C" {
     (fmiComponent c, fmiBoolean* callEventUpdate),
     (callEventUpdate))
 
-  // all fmiSetXXX function map to the overloaded setValue function
-
-  FMIFUNC(fmiSetReal, setValue,
+  FMIFUNC(fmiSetReal, setDoubleValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiReal value[]),
-    <double BOOST_PP_COMMA() fmiReal>(vr, nvr, value))
+    (vr, nvr, value))
 
-  FMIFUNC(fmiSetInteger, setValue,
+  FMIFUNC(fmiSetInteger, setIntValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiInteger value[]),
-    <int BOOST_PP_COMMA() fmiInteger>(vr, nvr, value))
+    (vr, nvr, value))
 
-  FMIFUNC(fmiSetBoolean, setValue,
+  FMIFUNC(fmiSetBoolean, setBoolValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]),
-    <bool BOOST_PP_COMMA() fmiBoolean>(vr, nvr, value))
+    (vr, nvr, value))
 
-  FMIFUNC(fmiSetString, setValue,
+  FMIFUNC(fmiSetString, setStringValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiString value[]),
-    <string BOOST_PP_COMMA() fmiString>(vr, nvr, value))
+    (vr, nvr, value))
 
   FMIFUNC(fmiInitialize, initialize,
     (fmiComponent c, fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo),
@@ -118,23 +126,21 @@ extern "C" {
     (fmiComponent c, fmiReal eventIndicators[], size_t ni),
     (eventIndicators, ni))
 
-  // all fmiGetXXX function map to the overloaded getValue function
-
-  FMIFUNC(fmiGetReal, getValue,
+  FMIFUNC(fmiGetReal, getDoubleValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiReal value[]),
-    <double BOOST_PP_COMMA() fmiReal>(vr, nvr, value))
+    (vr, nvr, value))
 
-  FMIFUNC(fmiGetInteger, getValue,
+  FMIFUNC(fmiGetInteger, getIntValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiInteger value[]),
-    <int BOOST_PP_COMMA() fmiInteger>(vr, nvr, value))
+    (vr, nvr, value))
 
-  FMIFUNC(fmiGetBoolean, getValue,
+  FMIFUNC(fmiGetBoolean, getBoolValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiBoolean value[]),
-    <bool BOOST_PP_COMMA() fmiBoolean>(vr, nvr, value))
+    (vr, nvr, value))
 
-  FMIFUNC(fmiGetString, getValue,
+  FMIFUNC(fmiGetString, getStringValue,
     (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiString value[]),
-    <string BOOST_PP_COMMA() fmiString>(vr, nvr, value))
+    (vr, nvr, value))
 
   FMIFUNC(fmiEventUpdate, eventUpdate,
     (fmiComponent c, fmiBoolean intermediateResults, fmiEventInfo* eventInfo),
