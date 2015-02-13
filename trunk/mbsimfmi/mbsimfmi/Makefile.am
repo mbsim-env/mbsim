@@ -1,12 +1,14 @@
-# the main binary library to be packed into the FMU (named mbsim.so or mbsim.dll)
 noinst_LTLIBRARIES = libmbsim_fmi.la
 lib_LTLIBRARIES = mbsim.la libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_fmi.la
 
-# build main FMU library (just a wrapper to libmbsimXXX_fmi.la)
+# build FMU library; just a wrapper which loads at runtime libmbsimXXX_fmi.la); this library
+# should NOT depend on any library except system libraries!
 mbsim_la_SOURCES = fmiModelFunctions.cc
 mbsim_la_CPPFLAGS = $(MBXMLUTILSBASEDEPS_CFLAGS)
-mbsim_la_LDFLAGS = -module -avoid-version
-mbsim_la_LIBADD = $(MBXMLUTILSBASEDEPS_LIBS) 
+mbsim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN
+mbsim_la_LIBADD = $(MBXMLUTILSBASEDEPS_LIBS)
+
+
 
 # build main FMU library (common part; static archive)
 libmbsim_fmi_la_SOURCES = fmiinstance.cc utils.cc

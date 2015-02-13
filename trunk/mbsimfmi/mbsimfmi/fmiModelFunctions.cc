@@ -23,11 +23,11 @@ using namespace MBXMLUtils;
 namespace {
   // some platform dependent values
 #ifdef _WIN32
-  std::string SHEXT("-0.dll");
-  boost::filesystem::path LIBDIR="bin";
+  string SHEXT("-0.dll");
+  string LIBDIR="bin";
 #else
-  std::string SHEXT(".so.0");
-  boost::filesystem::path LIBDIR="lib";
+  string SHEXT(".so.0");
+  string LIBDIR="lib";
 #endif
 }
 
@@ -48,8 +48,11 @@ extern "C" {
   // Convert exceptions to FMI logger calls and return no instance.
   fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
     try {
-      SharedLibrary lib(MBXMLUtils::getFMUWrapperSharedLibPath().parent_path().parent_path().parent_path()/
-        "resources"/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT));
+      string fmuDir=MBXMLUtils::getFMUWrapperSharedLibPath();
+      size_t s=string::npos;
+      for(int i=0; i<3; ++i)
+        s=fmuDir.find_last_of("/\\", s)-1;
+      SharedLibrary lib(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT);
       fmiInstanceCreatePtr fmiInstanceCreate=reinterpret_cast<fmiInstanceCreatePtr>(lib.getAddress("fmiInstanceCreate"));
       return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(lib,
         fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));

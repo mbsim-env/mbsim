@@ -14,9 +14,10 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
     // get the model shared library
-    path mbsimsrclibfile=MBXMLUtils::getFMUSharedLibPath().parent_path().parent_path().parent_path()/"model"/("libmbsimfmi_model"+SHEXT);
+    path mbsimsrclibfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/
+      "model"/("libmbsimfmi_model"+SHEXT);
 
-    modelLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile));
+    modelLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile).string());
     DynamicSystemSolver *dssPtr;
     reinterpret_cast<mbsimSrcFMIPtr>(modelLib->getAddress("mbsimSrcFMI"))(dssPtr);
     dss.reset(dssPtr);
