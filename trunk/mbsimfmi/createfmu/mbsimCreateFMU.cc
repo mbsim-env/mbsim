@@ -13,6 +13,8 @@
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/algorithm/string.hpp>
+#include <octave/version.h>
+#include <octave/defaults.h>
 
 #include "zip.h"
 
@@ -32,9 +34,11 @@ namespace {
 #ifdef _WIN32
   string USERENVVAR("USERNAME");
   path LIBDIR="bin";
+  string SHEXT_(".dll");
 #else
   string USERENVVAR("USER");
   path LIBDIR="lib";
+  string SHEXT_(".so");
 #endif
 
   void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &src);
@@ -331,14 +335,14 @@ int main(int argc, char *argv[]) {
       if(xmlParam.empty()) {
         // xml with no parameters -> save libmbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimxml_fmi"+SHEXT),
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT),
                        getInstallPath()/LIBDIR/("libmbsimxml_fmi"+SHEXT));
         cout<<endl;
       }
       else {
         // xml with parameters -> save libmbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimppxml_fmi"+SHEXT),
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT),
                        getInstallPath()/LIBDIR/("libmbsimppxml_fmi"+SHEXT));
         cout<<endl;
 
@@ -356,14 +360,6 @@ int main(int argc, char *argv[]) {
             dst/=*dstIt;
           cout<<"."<<flush;
           fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"schema"/dst, srcIt->path());
-        }
-        cout<<endl;
-
-        cout<<"Copy MBSim plugin files to FMU."<<endl;
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins");
-          srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"share"/"mbsimxml"/"plugins"/srcIt->path().filename(), srcIt->path());
         }
         cout<<endl;
 
@@ -390,8 +386,15 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"xml"/"measurement.xml",
           getInstallPath()/"share"/"mbxmlutils"/"xml"/"measurement.xml");
 
+        // get octave prefix
+        path octave_prefix(getInstallPath()); // use octave in install path
+        if(!exists(octave_prefix/"share"/"octave")) // if not found use octave in system path
+          octave_prefix=OCTAVE_PREFIX;
+        // get octave libdir (without prefix dir)
+        path octave_libdir(string(OCTAVE_LIBDIR).substr(string(OCTAVE_PREFIX).length()+1));
+
         cout<<"Copy octave m-files to FMU."<<endl;
-        path mFileDir=path("/usr")/"share"/"octave"/"3.8.2"/"m";//MFMF dir and version
+        path mFileDir=octave_prefix/"share"/"octave"/OCTAVE_VERSION/"m";
         depth=distance(mFileDir.begin(), mFileDir.end());
         for(recursive_directory_iterator srcIt=recursive_directory_iterator(mFileDir);
             srcIt!=recursive_directory_iterator(); ++srcIt) {
@@ -403,19 +406,28 @@ int main(int argc, char *argv[]) {
           for(; dstIt!=srcIt->path().end(); ++dstIt)
             dst/=*dstIt;
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"share"/"octave"/"3.8.2"/"m"/dst, srcIt->path());//MFMF dir
+          fmuFile.add(path("resources")/"local"/"share"/"octave"/OCTAVE_VERSION/"m"/dst, srcIt->path());
         }
         cout<<endl;
 
         cout<<"Copy octave oct-files to FMU."<<endl;
-        for(directory_iterator srcIt=directory_iterator(path("/usr")/"lib64"/"octave"/"3.8.2"/"oct"/"x86_64-pc-linux-gnu");//MFMF dir
+        for(directory_iterator srcIt=directory_iterator(octave_prefix/octave_libdir/"octave"/OCTAVE_VERSION/
+          "oct"/OCTAVE_CANONICAL_HOST_TYPE);
           srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"lib"/"octave"/"3.8.2"/"oct"/"x86_64-pc-linux-gnu"/srcIt->path().filename(),//MFMF dir
-            srcIt->path());
+          fmuFile.add(path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
+            "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), srcIt->path());
         }
         cout<<endl;
       }
+
+      cout<<"Copy MBSim plugin files to FMU."<<endl;
+      for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins");
+        srcIt!=directory_iterator(); ++srcIt) {
+        cout<<"."<<flush;
+        fmuFile.add(path("resources")/"local"/"share"/"mbsimxml"/"plugins"/srcIt->path().filename(), srcIt->path());
+      }
+      cout<<endl;
       for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
         cout<<"Copy MBSim plugin module "<<it->filename()<<" and dependencies to FMU."<<endl;
         copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/it->filename(), *it);
@@ -425,10 +437,15 @@ int main(int argc, char *argv[]) {
     else {
       // source model (always without parameters) -> save libmbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimsrc_fmi"+SHEXT),
+      copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT),
                      getInstallPath()/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
+
+    cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
+    copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_),
+                   getInstallPath()/LIBDIR/("mbsim"+SHEXT_));
+    cout<<endl;
 
     fmuFile.close();
 

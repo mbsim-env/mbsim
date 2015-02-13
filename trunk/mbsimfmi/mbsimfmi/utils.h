@@ -8,10 +8,11 @@ extern "C" {
   #include <3rdparty/fmiModelFunctions.h>
 }
 
-namespace MBSimFMI {
+// define getFMUSharedLibPath() which returns the FMU shared library path = .../resources/local/[lib|bin]/<name>.[so|dll]
+#define MBXMLUTILS_SHAREDLIBNAME FMU
+#include <mbxmlutilshelper/getsharedlibpath.h>
 
-  //! get the directory of this shared library
-  boost::filesystem::path getSharedLibDir();
+namespace MBSimFMI {
 
   //! stream buffer used by fmatvec::Atom for FMI logging
   class LoggerBuffer : public std::stringbuf {

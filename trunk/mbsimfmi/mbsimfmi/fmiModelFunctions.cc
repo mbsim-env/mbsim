@@ -3,6 +3,7 @@
 #include <string>
 #include <stdexcept>
 #include <boost/shared_ptr.hpp>
+#include <mbxmlutilshelper/shared_library.h>
 
 // include the fmi header
 extern "C" {
@@ -10,15 +11,25 @@ extern "C" {
   #include <fmiinstancebase.h> // this includes 3rdparty/fmiModelFunctions
 }
 
+// define getFMUWrapperSharedLibPath() which returns the FMU wrapper shared library path = .../binaries/<OS>/<fmuname>.[so|dll]
+#define MBXMLUTILS_SHAREDLIBNAME FMUWrapper
+#include <mbxmlutilshelper/getsharedlibpath_impl.h>
+
 // use namespaces
 using namespace std;
 using namespace MBSimFMI;
+using namespace MBXMLUtils;
 
-class SharedLibrary {//MFMF use real SharedLibrary from MBXMLUtils but with minimal dependencies
-  public:
-    SharedLibrary(const string &filename) {}
-    void *getAddress(const string &symbolName) { return NULL; }
-};
+namespace {
+  // some platform dependent values
+#ifdef _WIN32
+  std::string SHEXT("-0.dll");
+  boost::filesystem::path LIBDIR="bin";
+#else
+  std::string SHEXT(".so.0");
+  boost::filesystem::path LIBDIR="lib";
+#endif
+}
 
 // define all FMI function as C functions
 extern "C" {
@@ -37,7 +48,8 @@ extern "C" {
   // Convert exceptions to FMI logger calls and return no instance.
   fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
     try {
-      SharedLibrary lib("MFMF"); // use sharedLibdir/resources/../libmbsimXXX_fmi.so.0; also copy mbsim.so to FMU in createFMU
+      SharedLibrary lib(MBXMLUtils::getFMUWrapperSharedLibPath().parent_path().parent_path().parent_path()/
+        "resources"/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT));
       fmiInstanceCreatePtr fmiInstanceCreate=reinterpret_cast<fmiInstanceCreatePtr>(lib.getAddress("fmiInstanceCreate"));
       return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(lib,
         fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));

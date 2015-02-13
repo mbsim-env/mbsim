@@ -24,7 +24,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
     // get the model file
-    path resourcesDir=getSharedLibDir().parent_path().parent_path()/"resources";
+    path resourcesDir=MBXMLUtils::getFMUSharedLibPath().parent_path().parent_path().parent_path();
     // path to XML project file relative to resources/model
     boost::filesystem::ifstream xmlProjectStream(resourcesDir/"model"/"XMLProjectFile.txt");
     string xmlProjectFile;
