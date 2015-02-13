@@ -29,10 +29,13 @@ LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 # FMI platform name
 if test "_$host_os" = "_mingw32" ; then
   FMIPLATFORM=win$(getconf LONG_BIT)
+  LIBDIR=bin
 else
   FMIPLATFORM=linux$(getconf LONG_BIT)
+  LIBDIR=lib
 fi
 AC_SUBST([FMIPLATFORM])
+AC_SUBST([LIBDIR])
 
 PKG_CHECK_MODULES(FMUDEPS, mbsim mbsimControl)
 PKG_CHECK_MODULES(FMUXMLDEPS, mbsimflatxml)

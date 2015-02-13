@@ -32,6 +32,11 @@
         end
         if 1 & 2, x=9; else x=8; end
         ret=myfunc(m1/2);
+
+        % just a dummy statement to check for octave m-files
+        interp1([1,2,3,4],[4,6,1,2],[1.2,2.3]);
+        % just a dummy statement to check for octave oct-files
+        fft([3,5,7,3])
         ]]>
       </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>

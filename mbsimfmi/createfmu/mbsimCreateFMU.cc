@@ -31,11 +31,13 @@ namespace {
   // some platform dependent values
 #ifdef _WIN32
   string USERENVVAR("USERNAME");
+  path LIBDIR="bin";
 #else
   string USERENVVAR("USER");
+  path LIBDIR="lib";
 #endif
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dstBasename, const path &src);
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &src);
 }
 
 int main(int argc, char *argv[]) {
@@ -169,23 +171,6 @@ int main(int argc, char *argv[]) {
             fmuFile.add(path("resources")/"model"/current_path().relative_path()/(*it), *it);
           }
         cout<<endl;
-
-        cout<<"Copy XML schema files to FMU."<<endl;
-        path schemaDir=getInstallPath()/"share"/"mbxmlutils"/"schema";
-        size_t depth=distance(schemaDir.begin(), schemaDir.end());
-        for(recursive_directory_iterator srcIt=recursive_directory_iterator(schemaDir);
-            srcIt!=recursive_directory_iterator(); ++srcIt) {
-          if(is_directory(*srcIt)) // skip directories
-            continue;
-          path::iterator dstIt=srcIt->path().begin();
-          for(int i=0; i<depth; ++i) ++dstIt;
-          path dst;
-          for(; dstIt!=srcIt->path().end(); ++dstIt)
-            dst/=*dstIt;
-          cout<<"."<<flush;
-          fmuFile.add(path("resources")/"schema"/dst, srcIt->path());
-        }
-        cout<<endl;
       }
 
       // create object for DynamicSystemSolver
@@ -201,7 +186,7 @@ int main(int argc, char *argv[]) {
     else {
       // save binary model to FMU
       cout<<"Copy the shared library model file and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, "mbsimfmi_model"+SHEXT, inputFilename);
+      copyShLibToFMU(fmuFile, path("resources")/"model"/("mbsimfmi_model"+SHEXT), inputFilename);
       cout<<endl;
 
       // load the shared library and call mbsimSrcFMI function to get the dss
@@ -341,29 +326,104 @@ int main(int argc, char *argv[]) {
     DOMParser::serializeToString(modelDescDoc.get(), modelDescriptionStr);
     fmuFile.add("modelDescription.xml", modelDescriptionStr);
 
-    // add main FMU binary to FMU file
+    // add main FMU binary (and other required files) to FMU file
     if(xmlFile) {
       if(xmlParam.empty()) {
         // xml with no parameters -> save mbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, "mbsim"+SHEXT, getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+        copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
         cout<<endl;
       }
       else {
         // xml with parameters -> save mbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, "mbsim"+SHEXT, getInstallPath()/"lib"/("mbsimppxml_fmi"+SHEXT));
+        copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimppxml_fmi"+SHEXT));
+        cout<<endl;
+
+        cout<<"Copy XML schema files to FMU."<<endl;
+        path schemaDir=getInstallPath()/"share"/"mbxmlutils"/"schema";
+        size_t depth=distance(schemaDir.begin(), schemaDir.end());
+        for(recursive_directory_iterator srcIt=recursive_directory_iterator(schemaDir);
+            srcIt!=recursive_directory_iterator(); ++srcIt) {
+          if(is_directory(*srcIt)) // skip directories
+            continue;
+          path::iterator dstIt=srcIt->path().begin();
+          for(int i=0; i<depth; ++i) ++dstIt;
+          path dst;
+          for(; dstIt!=srcIt->path().end(); ++dstIt)
+            dst/=*dstIt;
+          cout<<"."<<flush;
+          fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"schema"/dst, srcIt->path());
+        }
+        cout<<endl;
+
+        cout<<"Copy MBSim plugin files to FMU."<<endl;
+        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins");
+          srcIt!=directory_iterator(); ++srcIt) {
+          cout<<"."<<flush;
+          fmuFile.add(path("resources")/"local"/"share"/"mbsimxml"/"plugins"/srcIt->path().filename(), srcIt->path());
+        }
+        cout<<endl;
+
+        cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
+        copyShLibToFMU(fmuFile, path("resources")/"local"/"bin"/"casadi_interface.oct", getInstallPath()/"bin"/"casadi_interface.oct");
+        cout<<"."<<flush;
+        fmuFile.add(path("resources")/"local"/"bin"/"casadi.m", getInstallPath()/"bin"/"casadi.m");
+        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"bin"/"@swig_ref");
+          srcIt!=directory_iterator(); ++srcIt) {
+          cout<<"."<<flush;
+          fmuFile.add(path("resources")/"local"/"bin"/"@swig_ref"/srcIt->path().filename(), srcIt->path());
+        }
+        cout<<endl;
+
+        cout<<"Copy MBXMLUtils m-files to FMU."<<endl;
+        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbxmlutils"/"octave");
+          srcIt!=directory_iterator(); ++srcIt) {
+          cout<<"."<<flush;
+          fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"octave"/srcIt->path().filename(), srcIt->path());
+        }
+        cout<<endl;
+
+        cout<<"Copy MBXMLUtils measurement.xml file to FMU."<<endl;
+        fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"xml"/"measurement.xml",
+          getInstallPath()/"share"/"mbxmlutils"/"xml"/"measurement.xml");
+
+        cout<<"Copy octave m-files to FMU."<<endl;
+        path mFileDir=path("/usr")/"share"/"octave"/"3.8.2"/"m";//MFMF dir and version
+        depth=distance(mFileDir.begin(), mFileDir.end());
+        for(recursive_directory_iterator srcIt=recursive_directory_iterator(mFileDir);
+            srcIt!=recursive_directory_iterator(); ++srcIt) {
+          if(is_directory(*srcIt)) // skip directories
+            continue;
+          path::iterator dstIt=srcIt->path().begin();
+          for(int i=0; i<depth; ++i) ++dstIt;
+          path dst;
+          for(; dstIt!=srcIt->path().end(); ++dstIt)
+            dst/=*dstIt;
+          cout<<"."<<flush;
+          fmuFile.add(path("resources")/"local"/"share"/"octave"/"3.8.2"/"m"/dst, srcIt->path());//MFMF dir
+        }
+        cout<<endl;
+
+        cout<<"Copy octave oct-files to FMU."<<endl;
+        for(directory_iterator srcIt=directory_iterator(path("/usr")/"lib64"/"octave"/"3.8.2"/"oct"/"x86_64-pc-linux-gnu");//MFMF dir
+          srcIt!=directory_iterator(); ++srcIt) {
+          cout<<"."<<flush;
+          fmuFile.add(path("resources")/"local"/"lib"/"octave"/"3.8.2"/"oct"/"x86_64-pc-linux-gnu"/srcIt->path().filename(),//MFMF dir
+            srcIt->path());
+        }
         cout<<endl;
       }
-      cout<<"Copy MBSim plugin module libraries and dependencies to FMU."<<endl;
-      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it)
-        copyShLibToFMU(fmuFile, it->filename(), *it);
-      cout<<endl;
+      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
+        cout<<"Copy MBSim plugin module "<<it->filename()<<" and dependencies to FMU."<<endl;
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/it->filename(), *it);
+        cout<<endl;
+      }
     }
     else {
       // source model (always without parameters) -> save mbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, "mbsim"+SHEXT, getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
+      copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
 
@@ -383,10 +443,43 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dstBasename, const path &src) {
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &src) {
+    // copy src to FMU
     cout<<"."<<flush;
-    fmuFile.add(path("binaries")/FMIOS/dstBasename, src);
-    // MISSING: copy also dependencies
+    fmuFile.add(dst, src);
+
+    // check if *.deplibs file exits
+    path depFile=src.parent_path()/(src.filename().string()+".deplibs");
+    if(!exists(depFile)) {
+      cerr<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
+      return;
+    }
+
+    // read *.deplibs file
+    static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
+    boost::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
+    for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=NULL; e=e->getNextElementSibling()) {
+      string file=X()%E(e)->getFirstTextChild()->getData();
+
+      // check for file in reldir and copy it to FMU
+      path reldir=E(e)->getAttribute("reldir");
+      if(exists(getInstallPath()/reldir/file)) {
+        cout<<"."<<flush;
+        fmuFile.add(path("resources")/"local"/LIBDIR/file, getInstallPath()/reldir/file);
+        continue;
+      }
+
+      // check for file in orgdir and copy it to FMU
+      path orgdir=E(e)->getAttribute("orgdir");
+      if(exists(orgdir/file)) {
+        cout<<"."<<flush;
+        fmuFile.add(path("resources")/"local"/LIBDIR/file, orgdir/file);
+        continue;
+      }
+
+      // not found
+      cerr<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
+    }
   }
 
 }
