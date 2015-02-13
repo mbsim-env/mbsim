@@ -31,7 +31,7 @@ function cpebuild {
 # helper function: copy binary file including all dependent libraries to sandbox (at same position)
 function cpbinary {
   cpfile $1
-  for f in $(/home/markus/project/local-builddebug/share/mbxmlutils/python/deplibs.py /usr/bin/gdb | sed -rne 's|.* orgdir="(.*)">(.*)<.*|\1/\2|p'); do
+  for f in $(/home/markus/project/local-builddebug/share/mbxmlutils/python/deplibs.py $1 | sed -rne 's|.* orgdir="(.*)">(.*)<.*|\1/\2|p'); do
     cpfile $f
   done
 }
@@ -85,6 +85,14 @@ elif [ $MODE == "strace" ]; then
   cpbinary /usr/bin/strace
   # run with strace
   chroot $SANDBOXDIR /usr/bin/strace /bin/fmuCheck.linux64 /test/$(basename $1)
+
+elif [ $MODE == "bash" ]; then
+
+  cpbinary /bin/bash
+  cpbinary /bin/ls
+  cpbinary /bin/pwd
+  # run bash strace
+  chroot $SANDBOXDIR /bin/bash
 
 fi
 
