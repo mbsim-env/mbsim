@@ -1,29 +1,29 @@
 # the main binary library to be packed into the FMU (named mbsim.so or mbsim.dll)
 noinst_LTLIBRARIES = libmbsim_fmi.la
-lib_LTLIBRARIES = mbsimxml_fmi.la mbsimppxml_fmi.la mbsimsrc_fmi.la
+lib_LTLIBRARIES = libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_fmi.la
 
-# build main FMU library (common part)
+# build main FMU library (common part; static archive)
 libmbsim_fmi_la_SOURCES = fmiModelFunctions.cc fmiinstance.cc utils.cc
 libmbsim_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
 libmbsim_fmi_la_LIBADD = ../general/libfmivariables.la $(FMUDEPS_LIBS)
 
 # build main FMU library for XML models
-mbsimxml_fmi_la_SOURCES = fmiinstance_xml.cc
-mbsimxml_fmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN/../../resources/local/$(LIBDIR) -avoid-version
-mbsimxml_fmi_la_CPPFLAGS = $(FMUXMLDEPS_CFLAGS)
-mbsimxml_fmi_la_LIBADD = libmbsim_fmi.la $(FMUXMLDEPS_LIBS)
+libmbsimxml_fmi_la_SOURCES = fmiinstance_xml.cc
+libmbsimxml_fmi_la_LDFLAGS = -Wl,-rpath,\$$ORIGIN/../lib
+libmbsimxml_fmi_la_CPPFLAGS = $(FMUXMLDEPS_CFLAGS)
+libmbsimxml_fmi_la_LIBADD = libmbsim_fmi.la $(FMUXMLDEPS_LIBS)
 
 # build main FMU library for XML models with parameters (preprocessing is included in the FMU)
-mbsimppxml_fmi_la_SOURCES = fmiinstance_ppxml.cc
-mbsimppxml_fmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN/../../resources/local/$(LIBDIR) -avoid-version
-mbsimppxml_fmi_la_CPPFLAGS = $(FMUPPXMLDEPS_CFLAGS)
-mbsimppxml_fmi_la_LIBADD = libmbsim_fmi.la ../general/libxmlpputils.la $(FMUPPXMLDEPS_LIBS)
+libmbsimppxml_fmi_la_SOURCES = fmiinstance_ppxml.cc
+libmbsimppxml_fmi_la_LDFLAGS = -Wl,-rpath,\$$ORIGIN/../lib
+libmbsimppxml_fmi_la_CPPFLAGS = $(FMUPPXMLDEPS_CFLAGS)
+libmbsimppxml_fmi_la_LIBADD = libmbsim_fmi.la ../general/libxmlpputils.la $(FMUPPXMLDEPS_LIBS)
 
 # build main FMU library for source models
-mbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
-mbsimsrc_fmi_la_LDFLAGS = -module -Wl,-rpath,\$$ORIGIN/../../resources/local/$(LIBDIR) -avoid-version
-mbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
-mbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la
+libmbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
+libmbsimsrc_fmi_la_LDFLAGS = -Wl,-rpath,\$$ORIGIN/../lib
+libmbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
+libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la
 
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk
