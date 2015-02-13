@@ -38,9 +38,9 @@ extern "C" {
   fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
     try {
       SharedLibrary lib("MFMF"); // use sharedLibdir/resources/../libmbsimXXX_fmi.so.0; also copy mbsim.so to FMU in createFMU
-      FMIInstanceBaseCTorType FMIInstanceBaseCTor=reinterpret_cast<FMIInstanceBaseCTorType>(lib.getAddress("FMIInstanceBaseCTor"));
-      return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(
-        lib, boost::shared_ptr<FMIInstanceBase>(FMIInstanceBaseCTor(instanceName_, GUID, functions, loggingOn)));
+      fmiInstanceCreatePtr fmiInstanceCreate=reinterpret_cast<fmiInstanceCreatePtr>(lib.getAddress("fmiInstanceCreate"));
+      return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(lib,
+        fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
     }
     // note: we can not use the instance here since the creation has failed
     catch(const exception &ex) {

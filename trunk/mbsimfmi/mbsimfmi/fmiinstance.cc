@@ -48,8 +48,9 @@ namespace {
 
 namespace MBSimFMI {
 
-  FMIInstanceBase* FMIInstanceBaseCTor(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
-    return new FMIInstance(instanceName_, GUID, functions, loggingOn);
+  boost::shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
+                                                       fmiCallbackFunctions functions, fmiBoolean loggingOn) {
+    return boost::make_shared<FMIInstance>(instanceName_, GUID, functions, loggingOn);
   }
 
   // A MBSim FMI instance. Called by fmiInstantiateModel
