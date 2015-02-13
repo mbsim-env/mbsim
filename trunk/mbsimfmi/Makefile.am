@@ -9,3 +9,7 @@ install-exec-hook:
 	    $(prefix)/share/mbxmlutils/python/deplibs.py $$i > $(prefix)/lib/$$(basename $$i).deplibs || exit; \
 	  fi; \
 	done
+	if test $(prefix)/bin/casadi_interface.oct -nt $(prefix)/lib/casadi_interface.oct.deplibs; then \
+	  echo "Create dependency files for $(prefix)/bin/casadi_interface.oct"; \
+	  $(prefix)/share/mbxmlutils/python/deplibs.py $(prefix)/bin/casadi_interface.oct > $(prefix)/lib/casadi_interface.oct.deplibs || exit; \
+	fi

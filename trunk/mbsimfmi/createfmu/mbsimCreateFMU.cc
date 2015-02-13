@@ -366,7 +366,7 @@ int main(int argc, char *argv[]) {
 
         cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
         copyShLibToFMU(fmuFile, path("resources")/"local"/"bin"/"casadi_interface.oct", path("resources")/"local"/LIBDIR,
-                       getInstallPath()/"bin"/"casadi_interface.oct");
+                       getInstallPath()/"bin"/"casadi_interface.oct", getInstallPath()/"lib");
         cout<<"."<<flush;
         fmuFile.add(path("resources")/"local"/"bin"/"casadi.m", getInstallPath()/"bin"/"casadi.m");
         for(directory_iterator srcIt=directory_iterator(getInstallPath()/"bin"/"@swig_ref");
@@ -417,10 +417,14 @@ int main(int argc, char *argv[]) {
           "oct"/OCTAVE_CANONICAL_HOST_TYPE);
           srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
-          copyShLibToFMU(fmuFile, path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
-                         "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), path("resources")/"local"/LIBDIR,
-                         srcIt->path(),
-                         getInstallPath()/LIBDIR);
+          if(srcIt->path().extension()==".oct")
+            copyShLibToFMU(fmuFile, path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
+                           "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), path("resources")/"local"/LIBDIR,
+                           srcIt->path(),
+                           getInstallPath()/LIBDIR);
+          else
+            fmuFile.add(path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
+                        "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), srcIt->path());
         }
         cout<<endl;
       }
