@@ -62,7 +62,7 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
 
   // unload no longer existing plugins or plugins with newer write time
   for(set<SharedLibrary>::iterator it=loadedPlugin.begin(); it!=loadedPlugin.end(); it++)
-    if(pluginLibFile.count(it->file)==0 || boost::myfilesystem::last_write_time(it->file.generic_string())>it->writeTime) {
+    if(pluginLibFile.count(it->file)==0 || boost::myfilesystem::last_write_time(it->file)>it->writeTime) {
       set<SharedLibrary>::iterator it2=it; it2--;
       loadedPlugin.erase(it);
       it=it2;
@@ -70,7 +70,7 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
 
   // load plugins which are not already loaded
   for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
-    loadedPlugin.insert(SharedLibrary(*it));
+    loadedPlugin.insert(SharedLibrary(it->generic_string()));
 
   return pluginLibFile;
 }

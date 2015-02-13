@@ -13,7 +13,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
     // get the model file
-    path mbsimflatxmlfile=MBXMLUtils::getFMUSharedLibPath().parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
+    path mbsimflatxmlfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
 
     // load all plugins
     msg(Debug)<<"Load MBSim plugins."<<endl;

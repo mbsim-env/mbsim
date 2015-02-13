@@ -34,6 +34,16 @@ else
 fi
 AC_SUBST([FMIPLATFORM])
 
+# user supplied mkoctfile program
+AC_ARG_WITH([mkoctfile],
+  [  --with-mkoctfile=PATHTOMKOCTFILE  The 'mkoctfile' program.],
+  [mkoctfile="$withval"],[mkoctfile="no"])
+# get mkoctfile program
+if test "$mkoctfile" == "no"; then
+  AC_PATH_PROG([mkoctfile],[mkoctfile],[no],[$prefix/bin:$PATH])
+fi
+test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
+
 PKG_CHECK_MODULES(MBXMLUTILSBASEDEPS, mbxmlutilsbase)
 PKG_CHECK_MODULES(FMUDEPS, mbsim mbsimControl)
 PKG_CHECK_MODULES(FMUXMLDEPS, mbsimflatxml)

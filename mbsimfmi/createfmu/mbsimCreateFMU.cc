@@ -41,7 +41,7 @@ namespace {
   string SHEXT_(".so");
 #endif
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &src);
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src, path deplibdir=path());
 }
 
 int main(int argc, char *argv[]) {
@@ -190,12 +190,13 @@ int main(int argc, char *argv[]) {
     else {
       // save binary model to FMU
       cout<<"Copy the shared library model file and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("resources")/"model"/("libmbsimfmi_model"+SHEXT), inputFilename);
+      copyShLibToFMU(fmuFile, path("resources")/"model"/("libmbsimfmi_model"+SHEXT), path("resources")/"model",
+                     inputFilename);
       cout<<endl;
 
       // load the shared library and call mbsimSrcFMI function to get the dss
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
-      shLib=boost::make_shared<SharedLibrary>(absolute(inputFilename));
+      shLib=boost::make_shared<SharedLibrary>(absolute(inputFilename).string());
       DynamicSystemSolver *dssPtr;
       reinterpret_cast<mbsimSrcFMIPtr>(shLib->getAddress("mbsimSrcFMI"))(dssPtr);
       dss.reset(dssPtr);
@@ -335,14 +336,14 @@ int main(int argc, char *argv[]) {
       if(xmlParam.empty()) {
         // xml with no parameters -> save libmbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT),
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
                        getInstallPath()/LIBDIR/("libmbsimxml_fmi"+SHEXT));
         cout<<endl;
       }
       else {
         // xml with parameters -> save libmbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT),
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
                        getInstallPath()/LIBDIR/("libmbsimppxml_fmi"+SHEXT));
         cout<<endl;
 
@@ -364,7 +365,8 @@ int main(int argc, char *argv[]) {
         cout<<endl;
 
         cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/"bin"/"casadi_interface.oct", getInstallPath()/"bin"/"casadi_interface.oct");
+        copyShLibToFMU(fmuFile, path("resources")/"local"/"bin"/"casadi_interface.oct", path("resources")/"local"/LIBDIR,
+                       getInstallPath()/"bin"/"casadi_interface.oct");
         cout<<"."<<flush;
         fmuFile.add(path("resources")/"local"/"bin"/"casadi.m", getInstallPath()/"bin"/"casadi.m");
         for(directory_iterator srcIt=directory_iterator(getInstallPath()/"bin"/"@swig_ref");
@@ -415,8 +417,10 @@ int main(int argc, char *argv[]) {
           "oct"/OCTAVE_CANONICAL_HOST_TYPE);
           srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
-            "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), srcIt->path());
+          copyShLibToFMU(fmuFile, path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
+                         "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), path("resources")/"local"/LIBDIR,
+                         srcIt->path(),
+                         getInstallPath()/LIBDIR);
         }
         cout<<endl;
       }
@@ -430,20 +434,21 @@ int main(int argc, char *argv[]) {
       cout<<endl;
       for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
         cout<<"Copy MBSim plugin module "<<it->filename()<<" and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/it->filename(), *it);
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/it->filename(), path("resources")/"local"/LIBDIR,
+                       *it);
         cout<<endl;
       }
     }
     else {
       // source model (always without parameters) -> save libmbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT),
+      copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
                      getInstallPath()/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
-    copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_),
+    copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_), path("binaries")/FMIOS,
                    getInstallPath()/LIBDIR/("mbsim"+SHEXT_));
     cout<<endl;
 
@@ -463,13 +468,17 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &src) {
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src, path deplibdir) {
     // copy src to FMU
     cout<<"."<<flush;
     fmuFile.add(dst, src);
 
     // check if *.deplibs file exits
-    path depFile=src.parent_path()/(src.filename().string()+".deplibs");
+    path depFile;
+    if(deplibdir.empty())
+      depFile=src.parent_path()/(src.filename().string()+".deplibs");
+    else
+      depFile=deplibdir/(src.filename().string()+".deplibs");
     if(!exists(depFile)) {
       cerr<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
       return;
@@ -485,7 +494,7 @@ namespace {
       path reldir=E(e)->getAttribute("reldir");
       if(exists(getInstallPath()/reldir/file)) {
         cout<<"."<<flush;
-        fmuFile.add(path("resources")/"local"/LIBDIR/file, getInstallPath()/reldir/file);
+        fmuFile.add(depdstdir/file, getInstallPath()/reldir/file);
         continue;
       }
 
@@ -493,7 +502,7 @@ namespace {
       path orgdir=E(e)->getAttribute("orgdir");
       if(exists(orgdir/file)) {
         cout<<"."<<flush;
-        fmuFile.add(path("resources")/"local"/LIBDIR/file, orgdir/file);
+        fmuFile.add(depdstdir/file, orgdir/file);
         continue;
       }
 
