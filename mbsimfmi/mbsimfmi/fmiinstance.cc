@@ -84,7 +84,8 @@ namespace MBSimFMI {
     // load modelDescription XML file
     parser=DOMParser::create(false);
     msg(Debug)<<"Read modelDescription file."<<endl;
-    path modelDescriptionXMLFile=getSharedLibDir().parent_path().parent_path()/"modelDescription.xml";
+    path modelDescriptionXMLFile=MBXMLUtils::getFMUSharedLibPath().parent_path().parent_path().parent_path().parent_path()/
+      "modelDescription.xml";
     boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
 
     // create FMI variables from modelDescription.xml file
