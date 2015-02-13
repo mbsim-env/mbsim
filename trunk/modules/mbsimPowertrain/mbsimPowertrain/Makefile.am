@@ -13,3 +13,7 @@ mbsimPowertrainincludedir = $(includedir)/mbsimPowertrain
 mbsimPowertraininclude_HEADERS = planetary_gear.h\
 			     differential_gear.h\
 			     cardan_shaft.h
+
+
+include $(prefix)/share/mbxmlutils/python/deplibs.mk
+install-exec-hook: deplibs.target

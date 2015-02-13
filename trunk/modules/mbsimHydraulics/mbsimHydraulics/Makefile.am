@@ -37,3 +37,7 @@ mbsimHydraulicsinclude_HEADERS = \
   elastic_line_variational.h \
   dimensionless_line.h \
   hydraulic_sensor.h
+
+
+include $(prefix)/share/mbxmlutils/python/deplibs.mk
+install-exec-hook: deplibs.target

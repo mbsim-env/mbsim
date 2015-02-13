@@ -38,7 +38,7 @@ namespace MBSimFMI {
     // init the validating parser with the mbsimxml schema file
     boost::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(true);
     msg(Debug)<<"Create MBSim XML schema file including all plugins."<<endl;
-    generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", resourcesDir/"schema");
+    generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", resourcesDir/"local"/"share"/"mbxmlutils"/"schema");
     validatingParser->loadGrammar(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd");
   
     // load MBSim project XML document

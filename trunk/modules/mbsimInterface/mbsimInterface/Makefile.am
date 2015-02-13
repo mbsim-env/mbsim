@@ -17,3 +17,7 @@ mbsimInterfaceinclude_HEADERS = \
   interface_messages.m \
   interface_integrator.h \
   mbsim_server.h
+
+
+include $(prefix)/share/mbxmlutils/python/deplibs.mk
+install-exec-hook: deplibs.target

@@ -20,3 +20,6 @@ mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
 				   node_frame.h\
 				   fixed_nodal_frame.h\
 				   pointer.h
+
+include $(prefix)/share/mbxmlutils/python/deplibs.mk
+install-exec-hook: deplibs.target
