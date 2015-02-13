@@ -48,6 +48,10 @@ namespace {
 
 namespace MBSimFMI {
 
+  FMIInstanceBase* FMIInstanceBaseCTor(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
+    return new FMIInstance(instanceName_, GUID, functions, loggingOn);
+  }
+
   // A MBSim FMI instance. Called by fmiInstantiateModel
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
     updateDerivativesRequired(true),

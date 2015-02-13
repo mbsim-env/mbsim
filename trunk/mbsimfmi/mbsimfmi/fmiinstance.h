@@ -5,6 +5,7 @@
 #include <map>
 #include <utils.h>
 #include <fmatvec/atom.h>
+#include "fmiinstancebase.h"
 
 // fmi function declarations must be included as extern C
 extern "C" {
@@ -30,7 +31,7 @@ namespace MBXMLUtils {
 namespace MBSimFMI {
 
   /*! A MBSim FMI instance */
-  class FMIInstance : virtual public fmatvec::Atom {
+  class FMIInstance : public FMIInstanceBase, virtual public fmatvec::Atom {
     public:
       //! ctor used in fmiInstantiateModel
       FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn);
@@ -48,17 +49,27 @@ namespace MBSimFMI {
       void setContinuousStates       (const fmiReal x[], size_t nx);
       void completedIntegratorStep   (fmiBoolean* callEventUpdate);
 
+      // wrap the virtual none template functions to the corresponding template function
+      void setDoubleValue(const fmiValueReference vr[], size_t nvr, const fmiReal value[])    { setValue<double>     (vr, nvr, value); }
+      void setIntValue   (const fmiValueReference vr[], size_t nvr, const fmiInteger value[]) { setValue<int>        (vr, nvr, value); }
+      void setBoolValue  (const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]) { setValue<bool>       (vr, nvr, value); }
+      void setStringValue(const fmiValueReference vr[], size_t nvr, const fmiString value[])  { setValue<std::string>(vr, nvr, value); }
       // used in fmiSetReal, fmiSetInteger, fmiSetBoolean and fmiSetString
       template<typename CppDatatype, typename FMIDatatype>
-      void setValue                  (const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]);
+      void setValue      (const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]);
 
       void initialize                (fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo);
       void getDerivatives            (fmiReal derivatives[], size_t nx);
       void getEventIndicators        (fmiReal eventIndicators[], size_t ni);
 
+      // wrap the virtual none template functions to the corresponding template function
+      void getDoubleValue(const fmiValueReference vr[], size_t nvr, fmiReal value[])    { getValue<double>     (vr, nvr, value); }
+      void getIntValue   (const fmiValueReference vr[], size_t nvr, fmiInteger value[]) { getValue<int>        (vr, nvr, value); }
+      void getBoolValue  (const fmiValueReference vr[], size_t nvr, fmiBoolean value[]) { getValue<bool>       (vr, nvr, value); }
+      void getStringValue(const fmiValueReference vr[], size_t nvr, fmiString value[])  { getValue<std::string>(vr, nvr, value); }
       // used in fmiGetReal, fmiGetInteger, fmiGetBoolean and fmiGetString
       template<typename CppDatatype, typename FMIDatatype>
-      void getValue                  (const fmiValueReference vr[], size_t nvr, FMIDatatype value[]);
+      void getValue      (const fmiValueReference vr[], size_t nvr, FMIDatatype value[]);
 
       void eventUpdate               (fmiBoolean intermediateResults, fmiEventInfo* eventInfo);
       void getContinuousStates       (fmiReal states[], size_t nx);
