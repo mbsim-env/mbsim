@@ -29,6 +29,7 @@ $PREFIX/bin/mbxmlutilspp.exe
 $PREFIX/bin/openmbv.exe
 $PREFIX/bin/casadi_interface.oct
 $PREFIX/bin/mbsimCreateFMU.exe
+$PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.dll
 $PREFIX/lib/mbsimppxml_fmi.dll
 $PREFIX/lib/mbsimxml_fmi.dll
@@ -194,6 +195,8 @@ cp -ruL $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$OCTAVEVERSION/oct
 
 # SPECIAL handling
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libboost_system-gcc47-1_48.dll.a $DISTDIR/lib
+cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libboost_filesystem-gcc47-1_48.dll.a $DISTDIR/lib
+cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libxerces-c.dll.a $DISTDIR/lib
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
 # copy openmbvcppinterface SWIG files
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
@@ -281,6 +284,7 @@ mkdir -p $DISTDIR/examples
 (cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat/hierachical_modelling xmlflat/hierachical_modelling)
 (cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hierachical_modelling xml/hierachical_modelling)
 (cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hydraulics_ballcheckvalve xml/hydraulics_ballcheckvalve)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/fmi fmi)
 mkdir -p $DISTDIR/examples/compile_test_all
 cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 #include <openmbvcppinterface/cube.h>
@@ -295,7 +299,7 @@ cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 int main() {
   OpenMBV::Cube *cube=new OpenMBV::Cube();
   MBSim::RigidBody *rb=new MBSim::RigidBody("RB");
-  MBSim::LSODEIntegrator *integ=new MBSim::LSODEIntegrator;
+  MBSimIntegrator::LSODEIntegrator *integ=new MBSimIntegrator::LSODEIntegrator;
   MBSimControl::Actuator *act=new MBSimControl::Actuator("ACT");
   MBSimElectronics::Diode *di=new MBSimElectronics::Diode("DI");
   MBSimFlexibleBody::FlexibleBand *band=new MBSimFlexibleBody::FlexibleBand("FLEX");
@@ -314,11 +318,11 @@ set INSTDIR=%~dp0..
 set CXX=%1
 
 cd "%INSTDIR%\examples"
-set PATH=%INSTDIR%\bin;%PATH%
 
 if %CXX%!==! goto skipgcc
   set CXXBINDIR=%~dp1
   rem INSTDIR/bin must come before the compiler binary dir
+  set PATH_SAVE=%PATH%
   set PATH=%INSTDIR%\bin;%CXXBINDIR%;%PATH%
 
   echo COMPILE_TEST_ALL
@@ -350,6 +354,23 @@ if %CXX%!==! goto skipgcc
   if ERRORLEVEL 1 goto end
   cd ..\..\..
   echo DONE
+
+rem  echo FMI_SPHERE_ON_PLANE
+rem  cd fmi\sphere_on_plane
+rem  "%CXX%" -c -o fmi.o fmi.cc %CFLAGS%
+rem  if ERRORLEVEL 1 goto end
+rem  "%CXX%" -c -o system.o system.cc %CFLAGS%
+rem  if ERRORLEVEL 1 goto end
+rem  "%CXX%" -shared -o mbsimfmi_model.dll system.o fmi.o %LIBS%
+rem  if ERRORLEVEL 1 goto end
+rem  "%INSTDIR%\bin\mbsimCreateFMU.exe" mbsimfmi_model.so
+rem  if ERRORLEVEL 1 goto end
+rem  "%INSTDIR%\bin\fmuCheck.*" -l 5 mbsim.fmu
+rem  if ERRORLEVEL 1 goto end
+rem  cd ..\..
+rem  echo DONE
+
+  set PATH=%PATH_SAVE%
 :skipgcc
 
 echo XMLFLAT_HIERACHICAL_MODELLING
@@ -372,6 +393,26 @@ cd xml/hydraulics_ballcheckvalve
 if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
+
+rem BEGIN FMI not working till all dependent libraries are copied to the fmu
+rem echo FMI_SIMPLE_TEST
+rem cd fmi\simple_test
+rem "%INSTDIR\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
+rem if ERRORLEVEL 1 goto end
+rem "%INSTDIR\bin\fmuCheck.*" mbsim.fmu
+rem if ERRORLEVEL 1 goto end
+rem cd ..\..
+rem echo DONE
+
+rem echo FMI_HIERACHICAL_MODELLING
+rem cd fmi\hierachical_modelling
+rem "%INSTDIR\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
+rem if ERRORLEVEL 1 goto end
+rem "%INSTDIR\bin\fmuCheck.*" mbsim.fmu
+rem if ERRORLEVEL 1 goto end
+rem cd ..\..
+rem echo DONE
+rem END FMI not working till all dependent libraries are copied to the fmu
 
 echo STARTING H5PLOTSERIE
 "%INSTDIR%\bin\h5plotserie.exe" xml\hierachical_modelling\TS.mbsim.h5
