@@ -16,12 +16,14 @@ namespace {
 
 namespace MBSimFMI {
 
-CreateZip::CreateZip(const path &zipFile_) : closed(false), zipFile(zipFile_) {
+CreateZip::CreateZip(const path &zipFile_, bool compress) : closed(false), zipFile(zipFile_) {
   a=archive_write_new();
   if(!a)
     throw runtime_error("Unable to create archive struct.");
   if(archive_write_set_format_zip(a))
     throw runtime_error("Unable to set zip format on archive.");
+  if(archive_write_set_format_option(a, "zip", "compression", compress?"deflate":"store"))
+    throw runtime_error("Unable to set compression level on archive.");
   if(archive_write_open_filename(a, zipFile.string().c_str()))
     throw runtime_error("Unable to open archive file "+zipFile.string()+".");
   entry=archive_entry_new();

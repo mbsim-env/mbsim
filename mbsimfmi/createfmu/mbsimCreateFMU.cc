@@ -13,6 +13,7 @@
 #include <boost/lexical_cast.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/algorithm/string.hpp>
+#include <boost/scope_exit.hpp>
 #include <octave/version.h>
 #include <octave/defaults.h>
 
@@ -48,7 +49,7 @@ int main(int argc, char *argv[]) {
   try {
     // help
     if(argc<2) {
-      cout<<"Usage: "<<argv[0]<<" [--param <name> [--param <name> ...]]"<<endl;
+      cout<<"Usage: "<<argv[0]<<" [--nocompress] [--param <name> [--param <name> ...]]"<<endl;
       cout<<"  <MBSim Project XML File>|<MBSim FMI shared library>"<<endl;
       cout<<endl;
       cout<<"Creates mbsim.fmu in the current directory."<<endl;
@@ -61,17 +62,24 @@ int main(int argc, char *argv[]) {
     }
 
     // get --param
+    int optcount=0;
     set<string> useParam;
-    for(int i=1; i<argc-1; ++i)
+    bool compress=true;
+    for(int i=1; i<argc-1; ++i) {
       if(string(argv[i])=="--param")
         useParam.insert(argv[i+1]);
+      if(string(argv[i])=="--nocompress") {
+        compress=false;
+        optcount++;
+      }
+    }
 
     // get model file
-    if(2*useParam.size()+1>=argc) {
+    if(2*useParam.size()+1+optcount>=argc) {
       cout<<"Wrong command line."<<endl;
       return 1;
     }
-    path inputFilename=argv[2*useParam.size()+1];
+    path inputFilename=argv[2*useParam.size()+1+optcount];
 
     // xml or shared library
     bool xmlFile=false;
@@ -79,7 +87,7 @@ int main(int argc, char *argv[]) {
       xmlFile=true;
 
     // create FMU zip file
-    CreateZip fmuFile("mbsim.fmu");
+    CreateZip fmuFile("mbsim.fmu", compress);
 
     // load all plugins
     cout<<"Load MBSim plugins."<<endl;
@@ -413,18 +421,36 @@ int main(int argc, char *argv[]) {
         cout<<endl;
 
         cout<<"Copy octave oct-files to FMU."<<endl;
+        // octave oct-files are copied to $FMU/resources/local/$LIBDIR since their are also all dependent libraries
+        // installed (and are found their due to Linux rpath=$ORIGIN or Windows alternate search order flag.
+        // This requires to add this FMU path to the octave search path. MFMFmissing
         for(directory_iterator srcIt=directory_iterator(octave_prefix/octave_libdir/"octave"/OCTAVE_VERSION/
           "oct"/OCTAVE_CANONICAL_HOST_TYPE);
           srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
-          if(srcIt->path().extension()==".oct")
-            copyShLibToFMU(fmuFile, path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
-                           "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), path("resources")/"local"/LIBDIR,
-                           srcIt->path(),
+          if(srcIt->path().extension()==".oct") {
+            path src=srcIt->path();
+#ifndef _WIN32
+            //path elf
+            src=srcIt->path().filename();
+            copy_file(srcIt->path(), src);
+            BOOST_SCOPE_EXIT(&src) {
+              remove(src);
+            } BOOST_SCOPE_EXIT_END
+            string patchelf(MBSIMFMI_PATCHELF);
+            if(!exists(patchelf))
+              getInstallPath()/"bin"/"patchelf";
+            if(system((patchelf+" --set-rpath \\$ORIGIN "+src.string()).c_str()))
+              throw runtime_error("Cannot set rpath of octave oct-file.");
+#endif
+            copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/srcIt->path().filename(),
+                           path("resources")/"local"/LIBDIR,
+                           src,
                            getInstallPath()/LIBDIR);
+          }
           else
-            fmuFile.add(path("resources")/"local"/octave_libdir/"octave"/OCTAVE_VERSION/
-                        "oct"/OCTAVE_CANONICAL_HOST_TYPE/srcIt->path().filename(), srcIt->path());
+            fmuFile.add(path("resources")/"local"/LIBDIR/srcIt->path().filename(),
+                        srcIt->path());
         }
         cout<<endl;
       }
