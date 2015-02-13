@@ -34,5 +34,5 @@ endif
 noinst_PROGRAMS = $(MAYBE_CPPCASADITOXML)
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
 cppCasADiToXML_LDADD = libutils.la 
-cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed
+cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed -Wl,-rpath,\$$ORIGIN/../lib
 cppCasADiToXML_CPPFLAGS = $(libutils_la_CPPFLAGS)

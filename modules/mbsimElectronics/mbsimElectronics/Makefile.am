@@ -1,7 +1,7 @@
 SUBDIRS =  .
   
 lib_LTLIBRARIES = libmbsimElectronics.la
-libmbsimElectronics_la_LDFLAGS = -version-info @LIBMBSIMELECTRONICS_VERSION_INFO@
+libmbsimElectronics_la_LDFLAGS = -version-info @LIBMBSIMELECTRONICS_VERSION_INFO@ -Wl,-rpath,\$$ORIGIN/../lib
 libmbsimElectronics_la_SOURCES = simulation_classes.cc\
 			    modelling_classes.cc
 
