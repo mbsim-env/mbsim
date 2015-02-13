@@ -27,14 +27,14 @@ namespace {
 
   // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32
-  std::string SHEXT(".dll");
+  std::string SHEXT("-0.dll");
   #ifdef _WIN64
   std::string FMIOS("win64");
   #else
   std::string FMIOS("win32");
   #endif
 #else
-  std::string SHEXT(".so");
+  std::string SHEXT(".so.0");
   #ifdef __x86_64__
   std::string FMIOS("linux64");
   #else

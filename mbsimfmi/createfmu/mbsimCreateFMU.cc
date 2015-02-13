@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
     else {
       // save binary model to FMU
       cout<<"Copy the shared library model file and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("resources")/"model"/("mbsimfmi_model"+SHEXT), inputFilename);
+      copyShLibToFMU(fmuFile, path("resources")/"model"/("libmbsimfmi_model"+SHEXT), inputFilename);
       cout<<endl;
 
       // load the shared library and call mbsimSrcFMI function to get the dss
@@ -329,15 +329,17 @@ int main(int argc, char *argv[]) {
     // add main FMU binary (and other required files) to FMU file
     if(xmlFile) {
       if(xmlParam.empty()) {
-        // xml with no parameters -> save mbsimxml_fmi.so to FMU
+        // xml with no parameters -> save libmbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimxml_fmi"+SHEXT));
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimxml_fmi"+SHEXT),
+                       getInstallPath()/LIBDIR/("libmbsimxml_fmi"+SHEXT));
         cout<<endl;
       }
       else {
-        // xml with parameters -> save mbsimppxml_fmi.so to FMU
+        // xml with parameters -> save libmbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimppxml_fmi"+SHEXT));
+        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimppxml_fmi"+SHEXT),
+                       getInstallPath()/LIBDIR/("libmbsimppxml_fmi"+SHEXT));
         cout<<endl;
 
         cout<<"Copy XML schema files to FMU."<<endl;
@@ -421,9 +423,10 @@ int main(int argc, char *argv[]) {
       }
     }
     else {
-      // source model (always without parameters) -> save mbsimppxml_fmi.so to FMU
+      // source model (always without parameters) -> save libmbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), getInstallPath()/"lib"/("mbsimsrc_fmi"+SHEXT));
+      copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimsrc_fmi"+SHEXT),
+                     getInstallPath()/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
 
