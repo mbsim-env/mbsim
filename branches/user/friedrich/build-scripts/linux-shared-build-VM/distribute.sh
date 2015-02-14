@@ -121,7 +121,7 @@ cat << EOF > $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 DIRNAME=\$(dirname \$0)
 BASENAME=\$(basename \$0)
 export LD_LIBRARY_PATH=\$DIRNAME/../lib:\$LD_LIBRARY_PATH
-\$DIRNAME/.wrapper/\$BASENAME
+\$DIRNAME/.wrapper/\$BASENAME "$@"
 EOF
 chmod +x $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 for F in $DISTDIR/bin/*; do
@@ -366,7 +366,7 @@ if [ "_\$CXX" != "_" ]; then
   \$CXX -fPIC -c -o system.o system.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
   \$CXX -shared -o mbsimfmi_model.so system.o fmi.o \$(\$INSTDIR/bin/mbsim-config --libs) || exit
   \$INSTDIR/bin/mbsimCreateFMU mbsimfmi_model.so || exit
-  \$INSTDIR/bin/fmuCheck.* -l 5 mbsim.fmu || exit
+  \$INSTDIR/bin/fmuCheck.* mbsim.fmu || exit
   cd ../..
   echo "DONE"
 
@@ -391,13 +391,12 @@ cd xml/hydraulics_ballcheckvalve
 cd ../..
 echo "DONE"
 
-#BEGIN FMI not working till all dependent libraries are copied to the fmu
-#echo "FMI_SIMPLE_TEST"
-#cd fmi/simple_test
-#\$INSTDIR/bin/mbsimCreateFMU FMI.mbsimprj.xml || exit
-#\$INSTDIR/bin/fmuCheck.* mbsim.fmu || exit
-#cd ../..
-#echo "DONE"
+echo "FMI_SIMPLE_TEST"
+cd fmi/simple_test
+\$INSTDIR/bin/mbsimCreateFMU FMI.mbsimprj.xml || exit
+\$INSTDIR/bin/fmuCheck.* mbsim.fmu || exit
+cd ../..
+echo "DONE"
 
 #echo "FMI_HIERACHICAL_MODELLING"
 #cd fmi/hierachical_modelling
@@ -405,7 +404,6 @@ echo "DONE"
 #\$INSTDIR/bin/fmuCheck.* mbsim.fmu || exit
 #cd ../..
 #echo "DONE"
-#END FMI not working till all dependent libraries are copied to the fmu
 
 echo "STARTING H5PLOTSERIE"
 \$INSTDIR/bin/h5plotserie xml/hierachical_modelling/TS.mbsim.h5 || exit
