@@ -355,20 +355,20 @@ if %CXX%!==! goto skipgcc
   cd ..\..\..
   echo DONE
 
-rem  echo FMI_SPHERE_ON_PLANE
-rem  cd fmi\sphere_on_plane
-rem  "%CXX%" -c -o fmi.o fmi.cc %CFLAGS%
-rem  if ERRORLEVEL 1 goto end
-rem  "%CXX%" -c -o system.o system.cc %CFLAGS%
-rem  if ERRORLEVEL 1 goto end
-rem  "%CXX%" -shared -o mbsimfmi_model.dll system.o fmi.o %LIBS%
-rem  if ERRORLEVEL 1 goto end
-rem  "%INSTDIR%\bin\mbsimCreateFMU.exe" mbsimfmi_model.so
-rem  if ERRORLEVEL 1 goto end
-rem  "%INSTDIR%\bin\fmuCheck.*" -l 5 mbsim.fmu
-rem  if ERRORLEVEL 1 goto end
-rem  cd ..\..
-rem  echo DONE
+  echo FMI_SPHERE_ON_PLANE
+  cd fmi\sphere_on_plane
+  "%CXX%" -c -o fmi.o fmi.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -c -o system.o system.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -shared -o mbsimfmi_model.dll system.o fmi.o %LIBS%
+  if ERRORLEVEL 1 goto end
+  "%INSTDIR%\bin\mbsimCreateFMU.exe" mbsimfmi_model.so
+  if ERRORLEVEL 1 goto end
+  "%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
+  if ERRORLEVEL 1 goto end
+  cd ..\..
+  echo DONE
 
   set PATH=%PATH_SAVE%
 :skipgcc
@@ -394,15 +394,14 @@ if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
 
-rem BEGIN FMI not working till all dependent libraries are copied to the fmu
-rem echo FMI_SIMPLE_TEST
-rem cd fmi\simple_test
-rem "%INSTDIR\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
-rem if ERRORLEVEL 1 goto end
-rem "%INSTDIR\bin\fmuCheck.*" mbsim.fmu
-rem if ERRORLEVEL 1 goto end
-rem cd ..\..
-rem echo DONE
+echo FMI_SIMPLE_TEST
+cd fmi\simple_test
+"%INSTDIR\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
+if ERRORLEVEL 1 goto end
+"%INSTDIR\bin\fmuCheck.*" mbsim.fmu
+if ERRORLEVEL 1 goto end
+cd ..\..
+echo DONE
 
 rem echo FMI_HIERACHICAL_MODELLING
 rem cd fmi\hierachical_modelling
@@ -412,7 +411,6 @@ rem "%INSTDIR\bin\fmuCheck.*" mbsim.fmu
 rem if ERRORLEVEL 1 goto end
 rem cd ..\..
 rem echo DONE
-rem END FMI not working till all dependent libraries are copied to the fmu
 
 echo STARTING H5PLOTSERIE
 "%INSTDIR%\bin\h5plotserie.exe" xml\hierachical_modelling\TS.mbsim.h5
