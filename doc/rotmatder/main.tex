@@ -8,7 +8,7 @@
 
 \begin{document}
 
-We have a rotation matrix $\bs{R}_{12}$ and want the angular velocity $_1\bs{\omega}$. Starting from
+We have a rotation matrix $\bs{R}_{12}$ and want the angular velocity $_1\bs{\omega}_{12}$. Starting from
 \begin{equation}
 \bs{R}_{12}=\bs{R}_{12}(\bs{q},t),\quad,\bs{q}\in\mathbb{R}^{n_q}
 \end{equation}
@@ -30,17 +30,17 @@ Rewrite it in matrix notation
 \end{equation}
 and apply some substitutions
 \begin{equation}
-\underbrace{\widetilde{\left(\dot{\bs{R}}_{12}\bs{R}_{12}^T\right)}}_{_1\bs{\omega}}=\underbrace{\left[\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_1}\bs{R}_{12}^T\right)},\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_2}\bs{R}_{12}^T\right)},\dots\right]}_{_1\bs{J}_R}\dot{\bs{q}} + \underbrace{\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial t}\bs{R}_{12}^T\right)}}_{_1\bs{j}_R}
+\underbrace{\widetilde{\left(\dot{\bs{R}}_{12}\bs{R}_{12}^T\right)}}_{_1\bs{\omega}_{12}}=\underbrace{\left[\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_1}\bs{R}_{12}^T\right)},\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial q_2}\bs{R}_{12}^T\right)},\dots\right]}_{_1\bs{J}_R}\dot{\bs{q}} + \underbrace{\widetilde{\left(\frac{\partial \bs{R}_{12}}{\partial t}\bs{R}_{12}^T\right)}}_{_1\bs{j}_R}
 \end{equation}
 \begin{equation}
-_1\bs{\omega}=_1\bs{J}_R\cdot \dot{\bs{q}} + _1\bs{j}_R
+_1\bs{\omega}_{12}=_1\bs{J}_R\cdot \dot{\bs{q}} + _1\bs{j}_R
 \end{equation}
 Hence if we define the partial derivative operator of an rotation matrix $\bs{R}_{12}$ with respect to a scalar $x$ or a vector $\bs{x}$ formally as
 \begin{equation}
-\text{parder}_x(\bs{R}_{12}):=\widetilde{\left(\bs{R}_{12}^T\frac{\partial\bs{R}_{12}}{\partial x}\right)}
+\text{parder}_x(\bs{R}_{12}):=\widetilde{\left(\frac{\partial\bs{R}_{12}}{\partial x}\bs{R}_{12}^T\right)}
 \end{equation}
 \begin{equation}
-\text{parder}_{\bs{x}}(\bs{R}_{12}):=\left[\widetilde{\left(\bs{R}_{12}^T\frac{\partial\bs{R}_{12}}{\partial x_1}\right)},\widetilde{\left(\bs{R}_{12}^T\frac{\partial\bs{R}_{12}}{\partial x_2}\right)},\dots\right]
+\text{parder}_{\bs{x}}(\bs{R}_{12}):=\left[\widetilde{\left(\frac{\partial\bs{R}_{12}}{\partial x_1}\bs{R}_{12}^T\right)},\widetilde{\left(\frac{\partial\bs{R}_{12}}{\partial x_2}\bs{R}_{12}^T\right)},\dots\right]
 \end{equation}
 than the rotation is fully equal to the translation and using the new fmatvec Function concept yields the following:
 \begin{equation}
