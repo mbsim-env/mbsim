@@ -434,7 +434,7 @@ int main(int argc, char *argv[]) {
             //path elf
             src=srcIt->path().filename();
             copy_file(srcIt->path(), src);
-            BOOST_SCOPE_EXIT(&src) {
+            BOOST_SCOPE_EXIT((&src)) {
               remove(src);
             } BOOST_SCOPE_EXIT_END
             string patchelf(MBSIMFMI_PATCHELF);
