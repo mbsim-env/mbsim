@@ -479,7 +479,7 @@ int main(int argc, char *argv[]) {
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
     copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_), path("binaries")/FMIOS,
-                   getInstallPath()/LIBDIR/("mbsim"+SHEXT_));
+                   getInstallPath()/"lib"/("mbsim"+SHEXT_));
     cout<<endl;
 
     fmuFile.close();
