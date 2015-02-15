@@ -121,7 +121,7 @@ cat << EOF > $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 DIRNAME=\$(dirname \$0)
 BASENAME=\$(basename \$0)
 export LD_LIBRARY_PATH=\$DIRNAME/../lib:\$LD_LIBRARY_PATH
-\$DIRNAME/.wrapper/\$BASENAME "$@"
+\$DIRNAME/.wrapper/\$BASENAME "\$@"
 EOF
 chmod +x $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 for F in $DISTDIR/bin/*; do
