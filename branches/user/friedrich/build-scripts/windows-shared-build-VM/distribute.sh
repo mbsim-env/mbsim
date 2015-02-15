@@ -266,6 +266,7 @@ Using of the MBSim and Co. Package:
     NOTE: You have to use the MinGW-w64 compiler from
           http://mingw-w64.sourceforg.net NOT the MinGW compiler from
           http://www.mingw.org (both differ and are incompatible)!
+          Also use the varient with "sjlj" for Exception handling!
 - Try any of the programs in <install-dir>/mbsim/bin
 - Build your own models using XML and run it with
   <install-dir>/mbsim/bin/mbsimxml <mbsim-project-file.xml>
@@ -365,7 +366,7 @@ if %CXX%!==! goto skipgcc
   if ERRORLEVEL 1 goto end
   "%INSTDIR%\bin\mbsimCreateFMU.exe" mbsimfmi_model.dll
   if ERRORLEVEL 1 goto end
-  "%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
+  "%INSTDIR%\bin\fmuCheck.win32" mbsim.fmu
   if ERRORLEVEL 1 goto end
   cd ..\..
   echo DONE
@@ -398,7 +399,7 @@ echo FMI_SIMPLE_TEST
 cd fmi\simple_test
 "%INSTDIR%\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
 if ERRORLEVEL 1 goto end
-"%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
+"%INSTDIR%\bin\fmuCheck.win32" mbsim.fmu
 if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
@@ -407,7 +408,7 @@ rem echo FMI_HIERACHICAL_MODELLING
 rem cd fmi\hierachical_modelling
 rem "%INSTDIR%\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
 rem if ERRORLEVEL 1 goto end
-rem "%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
+rem "%INSTDIR%\bin\fmuCheck.win32" mbsim.fmu
 rem if ERRORLEVEL 1 goto end
 rem cd ..\..
 rem echo DONE
