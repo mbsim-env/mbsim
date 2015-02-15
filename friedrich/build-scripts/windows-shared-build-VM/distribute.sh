@@ -363,7 +363,7 @@ if %CXX%!==! goto skipgcc
   if ERRORLEVEL 1 goto end
   "%CXX%" -shared -o mbsimfmi_model.dll system.o fmi.o %LIBS%
   if ERRORLEVEL 1 goto end
-  "%INSTDIR%\bin\mbsimCreateFMU.exe" mbsimfmi_model.so
+  "%INSTDIR%\bin\mbsimCreateFMU.exe" mbsimfmi_model.dll
   if ERRORLEVEL 1 goto end
   "%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
   if ERRORLEVEL 1 goto end
@@ -396,18 +396,18 @@ echo DONE
 
 echo FMI_SIMPLE_TEST
 cd fmi\simple_test
-"%INSTDIR\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
+"%INSTDIR%\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
 if ERRORLEVEL 1 goto end
-"%INSTDIR\bin\fmuCheck.*" mbsim.fmu
+"%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
 if ERRORLEVEL 1 goto end
 cd ..\..
 echo DONE
 
 rem echo FMI_HIERACHICAL_MODELLING
 rem cd fmi\hierachical_modelling
-rem "%INSTDIR\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
+rem "%INSTDIR%\bin\mbsimCreateFMU.exe" FMI.mbsimprj.xml
 rem if ERRORLEVEL 1 goto end
-rem "%INSTDIR\bin\fmuCheck.*" mbsim.fmu
+rem "%INSTDIR%\bin\fmuCheck.*" mbsim.fmu
 rem if ERRORLEVEL 1 goto end
 rem cd ..\..
 rem echo DONE
