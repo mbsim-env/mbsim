@@ -116,6 +116,8 @@ mkdir -p $DISTDIR/bin
 for F in $BINFILES; do
   cp -uL $F $DISTDIR/bin
 done
+# also copy bin/*.deplibs (on Windows some *.deplibs files are installed to bin)
+cp -uL $PREFIX/bin/*.deplibs $DISTDIR/bin/
 
 #get dependent dlls and copy to bindir
 TMPDLLFILESOUT=$DISTBASEDIR/tmp/distribute.sh.sofile.out
