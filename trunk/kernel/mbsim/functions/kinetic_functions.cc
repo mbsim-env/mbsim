@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "mbsim/functions/kinetic_functions.h"
+#include <mbsim/contour.h>
+#include <mbsim/contour_pdata.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -132,7 +134,11 @@ namespace MBSim {
   }
 
   void InfluenceFunction::initializeUsingXML(DOMElement *element) {
-    Function<double(Vec2,Vec2)>::initializeUsingXML(element);
+    Function<double(std::pair<Contour*, ContourPointData>,std::pair<Contour*, ContourPointData>)>::initializeUsingXML(element);
+  }
+
+  fmatvec::Vec2 InfluenceFunction::computeLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo) {
+    return contourInfo.first->computeLagrangeParameter(contourInfo.second.getFrameOfReference().getPosition());
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")
