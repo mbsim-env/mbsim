@@ -40,7 +40,9 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     virtual ~CountourCouplingCantileverBeam() {
     }
 
-    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2) {
+    virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
+      Vec2 Arg1 = computeLagrangeParameter(firstContourInfo);
+      Vec2 Arg2 = computeLagrangeParameter(secondContourInfo);
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)
