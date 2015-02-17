@@ -201,6 +201,8 @@ namespace MBSimFlexibleBody {
       }
       void setC4(const std::vector<fmatvec::SqrMat3> &C4_) { C4 = C4_; }
       void setKe(const fmatvec::SymMatV &Ke_) { Ke.M0 = Ke_; }
+      void setKeN1(const std::vector<fmatvec::SqrMatV> &KeN_) { Ke.M1 = KeN_; }
+      void setKeN2(const std::vector<std::vector<fmatvec::SqrMatV> > &KeN_) { Ke.M2 = KeN_; }
       void setDe(const fmatvec::SymMatV &De_) { De.M0 = De_; }
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of basic data
@@ -279,7 +281,7 @@ namespace MBSimFlexibleBody {
       Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > Gr;
       Taylor<std::vector<fmatvec::SqrMatV> > Ge;
       Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > Oe;
-      Taylor<fmatvec::SymMatV,std::vector<fmatvec::SymMatV> > Ke, De;
+      Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > Ke, De;
       // End of standard input data (SID)
 
       // Number of mode shapes 
