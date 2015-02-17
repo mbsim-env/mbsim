@@ -39,6 +39,13 @@ namespace MBSimFlexibleBody {
   class FixedNodalFrame;
 
   class FlexibleBodyFFR : public MBSim::Body {
+    template<typename T0, typename T1=T0, typename T2=T1>
+    class Taylor {
+      public:
+        T0 M0;
+        T1 M1;
+        T2 M2;
+    };
     public:
 
       FlexibleBodyFFR(const std::string &name=""); 
@@ -172,12 +179,20 @@ namespace MBSimFlexibleBody {
        */
       MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
 
-      void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
       FixedNodalFrame* getFrameK() { return K; };
 
-      void setI0(const fmatvec::SymMat3& I0_) { I0 = I0_; }
+      // Basic data
+      /**
+       * \brief Set the mass.
+       */
+      void setMass(double m_) { m = m_; }
       void setc0(const fmatvec::Vec3 &c0_) { c0 = c0_; }
+      /**
+       * \brief Set the inertia tensor of the undeformend state w.r.t. the frame
+       * K.
+       */
+      void setI0(const fmatvec::SymMat3& I0_) { I0 = I0_; }
       void setC1(const fmatvec::Mat3xV &C1_) { C1 = C1_; }
       void setC3(const std::vector<std::vector<fmatvec::SqrMatV> > &C3_) { 
         for(int i=0; i<3; i++)
@@ -185,8 +200,15 @@ namespace MBSimFlexibleBody {
             C3[i][j].resize() = C3_[i][j]; 
       }
       void setC4(const std::vector<fmatvec::SqrMat3> &C4_) { C4 = C4_; }
-      void setKe(const fmatvec::SqrMatV &Ke_) { Ke = Ke_; }
-      void setDe(const fmatvec::SqrMatV &De_) { De = De_; }
+      void setKe(const fmatvec::SymMatV &Ke_) { Ke.M0 = Ke_; }
+      void setDe(const fmatvec::SymMatV &De_) { De.M0 = De_; }
+      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
+      // End of basic data
+
+      /**
+       * \brief Set standard input data (SID) file.
+       */
+      void setSIDFile(const std::string& file) { THROW_MBSIMERROR("Interface not yet implemented."); }
 
       void addFrame(FixedNodalFrame *frame); 
 
@@ -235,15 +257,33 @@ namespace MBSimFlexibleBody {
       bool transformCoordinates() const {return fTR!=NULL;}
 
     protected:
-      /**
-       * \brief mass
-       */
+      // Basic input data
       double m;
+      fmatvec::Vec3 c0;
+      fmatvec::SymMat3 I0;
+      fmatvec::Mat3xV C1, C2;
+      std::vector<std::vector<fmatvec::SqrMatV> > C3;
+      std::vector<fmatvec::SqrMat3> C4;
+      std::vector<fmatvec::Mat3xV> C5;
+      std::vector<std::vector<fmatvec::SqrMat3> > C6;
+      std::vector<fmatvec::SqrMatV> K0t, K0r, K0om;
+      fmatvec::Vec2 beta;
+      // End of basic input data
 
-      /**
-       * \brief inertia tensor with respect to centre of gravity in centre of gravity and world Frame
-       */
-      fmatvec::SymMat3 I, I0;
+      // Standard input data (SID)
+      Taylor<fmatvec::Vec3,fmatvec::Mat3xV> mCM;
+      Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > mmi;
+      Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > Ct;
+      Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > Cr;
+      Taylor<fmatvec::SymMat> Me;
+      Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > Gr;
+      Taylor<std::vector<fmatvec::SqrMatV> > Ge;
+      Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > Oe;
+      Taylor<fmatvec::SymMatV,std::vector<fmatvec::SymMatV> > Ke, De;
+      // End of standard input data (SID)
+
+      // Number of mode shapes 
+      int ne;
 
       FixedNodalFrame *K;
 
@@ -342,30 +382,13 @@ namespace MBSimFlexibleBody {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      fmatvec::Vec3 c0, c;
-
       fmatvec::SymMatV M_;
       fmatvec::VecV h_;
       fmatvec::MatV KJ[2];
       fmatvec::VecV Ki[2];
 
-      fmatvec::Mat3xV C1, C2;
-      fmatvec::MatVx3 Cr0, Ct, Cr; 
-      std::vector<std::vector<fmatvec::SqrMatV> > C3;
-      std::vector<fmatvec::SqrMat3> C4, Gr, Gr0, Gr1;
-      std::vector<fmatvec::Mat3xV> C5;
-      std::vector<std::vector<fmatvec::SqrMat3> > C6;
-      fmatvec::SqrMatV Ke, De;
-      std::vector<fmatvec::SquareMatrix<fmatvec::Var,double> > Kr;
-      std::vector<fmatvec::MatVx3> Ge;
-      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0, Oe1, Oe; 
-      std::vector<std::vector<fmatvec::SqrMatV> > Kom;
-      fmatvec::SqrMat3 hom21;
-      fmatvec::MatVx3 KR;
-
-      int ne;
-
-      void computeMatrices();
+      void determineSID();
+      void prefillMassMatrix();
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

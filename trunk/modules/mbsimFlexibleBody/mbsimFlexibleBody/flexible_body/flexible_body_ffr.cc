@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEXIBLEBODY%"FlexibleBodyFFR")
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), C3(3), Kr(3), ne(0) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), C3(3), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
 
     for(int i=0; i<3; i++)
       C3[i].resize(3);
@@ -108,20 +108,22 @@ namespace MBSimFlexibleBody {
       uSize[j] = 6 + ne;
   }
 
-  void FlexibleBodyFFR::computeMatrices() {
-    C2.resize(ne);
+  void FlexibleBodyFFR::determineSID() {
+    C2.resize(ne,NONINIT);
     C6.resize(ne);
-    Gr.resize(ne);
-    Gr0.resize(ne);
-    Gr1.resize(ne);
-    Ge.resize(ne);
-    Oe0.resize(ne);
-    Oe1.resize(ne);
-    Kom.resize(3);
+    Gr.M0.resize(ne);
+    Gr.M1.resize(ne);
+    Ge.M0.resize(ne);
+    Oe.M0.resize(ne,NONINIT);
+    Oe.M1.resize(6);
+    std::vector<std::vector<fmatvec::SqrMatV> > Kom(3);
+    mCM.M0 = m*c0;
+    mmi.M0 = I0;
+    mCM.M1 = C1;
     for(int i=0; i<3; i++) {
       Kom[i].resize(3);
       for(int j=0; j<3; j++) {
-        Kom[i][j].resize(ne);
+        Kom[i][j].resize(ne,NONINIT);
         if(i!=j)
           Kom[i][j] = C3[i][j];
       }
@@ -133,12 +135,12 @@ namespace MBSimFlexibleBody {
       C6[i].resize(ne);
     for(int i=0; i<ne; i++) {
       for(int j=0; j<3; j++)
-      Oe0(i,j) = C4[i](j,j);
-      Oe0(i,3) = C4[i](0,1)+C4[i](1,0);
-      Oe0(i,4) = C4[i](1,2)+C4[i](2,1); 
-      Oe0(i,5) = C4[i](2,0)+C4[i](0,2);
-      Gr0[i] = -2.*C4[i];
-//      Ge[i] = 2.*C5[i].T();
+        Oe.M0(i,j) = C4[i](j,j);
+      Oe.M0(i,3) = C4[i](0,1)+C4[i](1,0);
+      Oe.M0(i,4) = C4[i](1,2)+C4[i](2,1); 
+      Oe.M0(i,5) = C4[i](2,0)+C4[i](0,2);
+      Gr.M0[i] = -2.*C4[i];
+      Gr.M1[i].resize(ne);
       C2(0,i) = C4[i](2,1)-C4[i](1,2);
       C2(1,i) = C4[i](0,2)-C4[i](2,0);
       C2(2,i) = C4[i](1,0)-C4[i](0,1);
@@ -155,25 +157,68 @@ namespace MBSimFlexibleBody {
         C6[i][j](2,1) = C3[1][2](i,j);
         C6[j][i] = C6[i][j].T();
       }
+      for(int j=0; j<ne; j++)
+        Gr.M1[i][j] = -2.*C6[i][j];
     }
-    Ct = C1.T();
-    Cr0 = C2.T();
+    Ct.M0 = C1.T();
+    for(unsigned int i=0; i<K0t.size(); i++)
+      Ct.M1.push_back(K0t[i]);
 
-    M_.resize(6+ne);
-    for(int i=0; i<3; i++) {
-      M_.e(i,i)=m;
-      Kr[i].resize(ne);
-    }
+    Cr.M0 = C2.T();
+
+    std::vector<fmatvec::SqrMatV> Kr(3);
+    for(int i=0; i<3; i++)
+      Kr[i].resize(ne,NONINIT);
     Kr[0] = -C3[1][2] + C3[1][2].T();
     Kr[1] = -C3[2][0] + C3[2][0].T();
     Kr[2] = -C3[0][1] + C3[0][1].T();
+
+    for(unsigned int i=0; i<Kr.size(); i++)
+      Cr.M1.push_back(Kr[i]);
+    for(unsigned int i=0; i<K0r.size(); i++)
+      Cr.M1[i] += K0r[i];
+
+    Me.M0.resize(ne,NONINIT);
+    mmi.M1.resize(ne);
+    mmi.M2.resize(ne);
+    for(int i=0; i<ne; i++) {
+      mmi.M1[i] = -ApAT(C4[i]);
+      mmi.M2[i].resize(ne);
+      for(int j=0; j<ne; j++)
+        mmi.M2[i][j] = -C6[i][j];
+      for(int j=i; j<ne; j++)
+        Me.M0.ej(i,j) = C3[0][0](i,j) + C3[1][1](i,j) + C3[2][2](i,j);
+    }
+
+    Ge.M0.resize(3);
+    for(int i=0; i<3; i++)
+      Ge.M0[i].resize() = 2.*Kr[i];
+
+    for(int i=0; i<3; i++)
+      Oe.M1[i].resize() = Kom[i][i];
+    Oe.M1[3].resize() = Kom[0][1] + Kom[0][1].T();
+    Oe.M1[4].resize() = Kom[1][2] + Kom[1][2].T();
+    Oe.M1[5].resize() = Kom[2][0] + Kom[2][0].T();
+    for(unsigned int i=0; i<K0om.size(); i++)
+      Oe.M1[i] += K0om[i];
+
+    if(not(De.M0.size()))
+      De.M0 = beta(0)*Me.M0 + beta(1)*Ke.M0;
+  }
+
+  void FlexibleBodyFFR::prefillMassMatrix() {
+    M_.resize(6+ne,NONINIT);
+    for(int i=0; i<3; i++) {
+      M_.ej(i,i)=m;
+      for(int j=i+1; j<3; j++)
+        M_.ej(i,j)=0;
+    }
     for(int i=0; i<ne; i++) {
       for(int j=0; j<3; j++)
-        M_.e(i+6,j) = Ct(i,j);
-      for(int j=0; j<ne; j++)
-        M_.e(i+6,j+6) = C3[0][0](i,j) + C3[1][1](i,j) + C3[2][2](i,j);
+        M_.e(i+6,j) = Ct.M0(i,j);
+      for(int j=i; j<ne; j++)
+        M_.ej(i+6,j+6) = Me.M0.ej(i,j);
     }
-    KR.resize(ne);
   }
 
   void FlexibleBodyFFR::init(InitStage stage) {
@@ -293,7 +338,8 @@ namespace MBSimFlexibleBody {
     else if(stage==unknownStage) {
       Body::init(stage);
 
-      computeMatrices();
+      determineSID();
+      prefillMassMatrix();
 
       K->getJacobianOfTranslation(1) = PJT[1];
       K->getJacobianOfRotation(1) = PJR[1];
@@ -539,57 +585,59 @@ namespace MBSimFlexibleBody {
     K->setPosition(WrPK + R->getPosition());
     K->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),WrPK));
 
-    Vec3 c1 = 1./m*(C1*q(iqE));
-    c = c0 + c1;
-    SqrMat3 tc = tilde(c);
-
-    MatVx3 Cr1(ne);
-    for(int i=0; i<3; i++)
-      Cr1.set(i,Kr[i]*q(iqE));
-    Cr = Cr0 + Cr1;
+    Vec3 mc = mCM.M0 + mCM.M1*q(iqE);
+    SqrMat3 mtc = tilde(mc);
 
     SymMat3 I1;
     SqrMat3 I2;
-//    I2(0,0) = q(iqE).T()*(C3[1][1]+C3[2][2])*q(iqE);
-//    I2(1,1) = q(iqE).T()*(C3[2][2]+C3[0][0])*q(iqE);
-//    I2(2,2) = q(iqE).T()*(C3[0][0]+C3[1][1])*q(iqE);
-//    I2(0,1) = -q(iqE).T()*C3[1][0]*q(iqE);
-//    I2(0,2) = -q(iqE).T()*C3[2][0]*q(iqE);
-//    I2(1,2) = -q(iqE).T()*C3[2][1]*q(iqE);
     for (int i=0; i<ne; i++) {
-      I1 -= ApAT(C4[i])*q(iqE)(i);
+      I1 += mmi.M1[i]*q(iqE)(i);
       for (int j=0; j<ne; j++)
-        I2 -= C6[i][j]*q(iqE)(i)*q(iqE)(j);
+        I2 += mmi.M2[i][j]*q(iqE)(i)*q(iqE)(j);
     }
-    I = I0 + I1 + SymMat3(I2);
+    SymMat3 I = mmi.M0 + I1 + SymMat3(I2);
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
         M_.e(i+3,j+3) = I(i,j);
-        M_.e(i+3,j) = m*tc(i,j);
+        M_.e(i+3,j) = mtc(i,j);
       }
     }
+
+    MatVx3 Cr1(ne,NONINIT);
+    for(int i=0; i<3; i++)
+      Cr1.set(i,Cr.M1[i]*q(iqE));
     for(int i=0; i<ne; i++)
       for(int j=0; j<3; j++)
-        M_.e(i+6,j+3) = Cr(i,j);
+        M_.e(i+6,j+3) = Cr.M0.e(i,j) + Cr1.e(i,j);
 
-    for(int i=0; i<3; i++)
-      Oe1.set(i,Kom[i][i]*q(iqE));
-    Oe1.set(3, (Kom[0][1] + Kom[0][1].T())*q(iqE));
-    Oe1.set(4, (Kom[1][2] + Kom[1][2].T())*q(iqE));
-    Oe1.set(5, (Kom[2][0] + Kom[2][0].T())*q(iqE));
+    MatVx3 Ct_ = Ct.M0;
+    if(Ct.M1.size()) {
+      MatVx3 Ct1(ne,NONINIT);
+      for(int i=0; i<3; i++)
+        Ct1.set(i,Ct.M1[i]*q(iqE)); 
+      Ct_ += Ct1;
+      for(int i=0; i<ne; i++)
+        for(int j=0; j<3; j++)
+          M_.e(i+6,j) = Ct_.e(i,j);
+    }
 
-    Oe = Oe0 + Oe1;
+    fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe_(ne,NONINIT), Oe1(ne,NONINIT);
+    for(int i=0; i<6; i++)
+      Oe1.set(i,Oe.M1[i]*q(iqE));
 
-    hom21.init(0);
+    Oe_ = Oe.M0 + Oe1;
+
+    std::vector<fmatvec::SqrMat3> Gr1(ne);
+    fmatvec::SqrMat3 hom21;
     for(int i=0; i<ne; i++) {
       Gr1[i].init(0);
       for(int j=0; j<ne; j++)
-        Gr1[i] -= 2.*C6[j][i]*q(iqE)(j);
-      Gr[i] = Gr0[i] + Gr1[i];
-      hom21 += Gr[i]*u(iuE)(i);
+        Gr1[i] += Gr.M1[j][i]*q(iqE)(j);
+      hom21 += (Gr.M0[i]+Gr1[i])*u(iuE)(i);
     }
+    fmatvec::MatVx3 Ge_(ne,NONINIT);
     for(int i=0; i<3; i++)
-      KR.set(i,Kr[i]*u(iuE));
+      Ge_.set(i,Ge.M0[i]*u(iuE));
 
     Vec3 om = K->getOrientation().T()*K->getAngularVelocity();
     Vector<Fixed<6>,double> omq;
@@ -601,18 +649,23 @@ namespace MBSimFlexibleBody {
 
     VecV hom(6+ne), hg(6+ne), he(6+ne);
 
-    hom.set(Index(0,2),-m*crossProduct(om,crossProduct(om,c))-2.*crossProduct(om,C1*u(iuE)));
+    hom.set(Index(0,2),-crossProduct(om,crossProduct(om,mc))-2.*crossProduct(om,mCM.M1*u(iuE)));
     hom.set(Index(3,5),-(hom21*om) - crossProduct(om,I*om));
-    hom.set(Index(6,6+ne-1),-2.*KR*om - Oe*omq);
+    hom.set(Index(6,6+ne-1),-(Ge_*om) - Oe_*omq);
 
     Vec Kg = K->getOrientation().T()*(MBSimEnvironment::getInstance()->getAccelerationOfGravity());
     hg.set(Index(0,2),m*Kg);
-    hg.set(Index(3,5),m*tilde(c)*Kg);
-    hg.set(Index(6,hg.size()-1),C1.T()*Kg);
+    hg.set(Index(3,5),mtc*Kg);
+    hg.set(Index(6,hg.size()-1),Ct_*Kg);
 
-    he.set(Index(6,hg.size()-1),Ke*q(iqE) + De*qd(iqE));
+    he.set(Index(6,hg.size()-1),Ke.M0*q(iqE) + De.M0*qd(iqE));
 
     h_ = hom + hg - he;
+
+//    cout << "M_" << endl;
+//    cout << M_ << endl;
+//    cout << "h_" << endl;
+//    cout << h_ << endl;
   }
 
   void FlexibleBodyFFR::updateJacobiansForSelectedFrame0(double t) {

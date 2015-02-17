@@ -48,6 +48,8 @@ namespace MBSimFlexibleBody {
       void setPhi(const fmatvec::Mat3xV &Phi_) { Phi = Phi_; }
       void setPsi(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
       void setPhi(const std::string &frame) { saved_frameOfReference = frame; }
+      void setK0F(const std::vector<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
+      void setK0M(const std::vector<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
       void setFrameOfReference(const FixedNodalFrame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
@@ -59,30 +61,15 @@ namespace MBSimFlexibleBody {
       const Frame* getFrameOfReference() const { return R; }
       const fmatvec::Vec3& getWrRP() const { return WrRP; }
 
-      void updateRelativePosition() { WPhi = R->getOrientation()*Phi; WPsi = R->getOrientation()*Psi; WrRP = R->getOrientation()*RrRP + WPhi*q; }
-      void updateRelativeOrientation() { APK = E+tilde(Psi*q); }
-      void updatePosition() { updateRelativePosition(); setPosition(R->getPosition() + WrRP); }
-      void updateOrientation() { updateRelativeOrientation(); setOrientation(R->getOrientation()*ARP*APK); }
-      void updateVelocity() { setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrRP) + WPhi*qd); } 
-      void updateAngularVelocity() { setAngularVelocity(R->getAngularVelocity() + WPsi*qd); }
-      void updateStateDependentVariables() {
-        updatePosition();
-        updateOrientation();
-        updateVelocity();
-        updateAngularVelocity();
-      }
-      void updateJacobians(int j=0) {
-        fmatvec::SqrMat3 tWrRP = tilde(WrRP);
-        setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrRP*R->getJacobianOfRotation(j) + WPhi*R->getJacobianOfDeformation(j),j);
-        setJacobianOfRotation(R->getJacobianOfRotation(j) + WPsi*R->getJacobianOfDeformation(j),j);
-        setJacobianOfDeformation(R->getJacobianOfDeformation(j),j);
-        setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(j) - tWrRP*R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrRP)) + 2.*crossProduct(R->getAngularVelocity(),WPhi*qd),j);
-        setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),WPsi*qd),j);
-      }
-      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
-        setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
-        setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
-      }
+      void updateRelativePosition(); 
+      void updateRelativeOrientation();
+      void updatePosition();
+      void updateOrientation();
+      void updateVelocity();
+      void updateAngularVelocity();
+      void updateStateDependentVariables();
+      void updateJacobians(int j=0);
+      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud); 
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -92,6 +79,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP, APK, E;
       fmatvec::Mat3xV WPhi, WPsi, Phi, Psi;
+      std::vector<fmatvec::SqrMatV> K0F, K0M;
       fmatvec::MatV WJD[2];
       fmatvec::Vec q, qd;
       int nq;

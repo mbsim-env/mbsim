@@ -47,6 +47,67 @@ namespace MBSimFlexibleBody {
     else
       Frame::init(stage);
   }
+      
+  void FixedNodalFrame::updateRelativePosition() {
+    WPhi = R->getOrientation()*Phi; 
+    WPsi = R->getOrientation()*Psi; 
+    WrRP = R->getOrientation()*RrRP + WPhi*q; 
+  }
+
+  void FixedNodalFrame::updateRelativeOrientation() {
+    APK = E+tilde(Psi*q); 
+  }
+
+  void FixedNodalFrame::updatePosition() {
+    updateRelativePosition(); 
+    setPosition(R->getPosition() + WrRP); 
+  }
+
+  void FixedNodalFrame::updateOrientation() {
+    updateRelativeOrientation(); 
+    setOrientation(R->getOrientation()*ARP*APK); 
+  }
+
+  void FixedNodalFrame::updateVelocity() {
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrRP) + WPhi*qd); 
+  } 
+
+  void FixedNodalFrame::updateAngularVelocity() {
+    setAngularVelocity(R->getAngularVelocity() + WPsi*qd); 
+  }
+
+  void FixedNodalFrame::updateStateDependentVariables() {
+    updatePosition();
+    updateOrientation();
+    updateVelocity();
+    updateAngularVelocity();
+  }
+
+  void FixedNodalFrame::updateJacobians(int j) {
+    if(K0F.size()) {
+      MatVx3 PhigeoT(nq,NONINIT);
+      for(int i=0; i<3; i++)
+        PhigeoT.set(i,K0F[i]*q);
+      WPhi = R->getOrientation()*(Phi + PhigeoT.T()); 
+    }
+    if(K0M.size()) {
+      MatVx3 PsigeoT(nq,NONINIT);
+      for(int i=0; i<3; i++)
+        PsigeoT.set(i,K0M[i]*q);
+      WPsi = R->getOrientation()*(Psi + PsigeoT.T()); 
+    }
+    fmatvec::SqrMat3 tWrRP = tilde(WrRP);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrRP*R->getJacobianOfRotation(j) + WPhi*R->getJacobianOfDeformation(j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j) + WPsi*R->getJacobianOfDeformation(j),j);
+    setJacobianOfDeformation(R->getJacobianOfDeformation(j),j);
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(j) - tWrRP*R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrRP)) + 2.*crossProduct(R->getAngularVelocity(),WPhi*qd),j);
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),WPsi*qd),j);
+  }
+
+  void FixedNodalFrame::updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
+    setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
+    setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
+  }
 
   void FixedNodalFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
