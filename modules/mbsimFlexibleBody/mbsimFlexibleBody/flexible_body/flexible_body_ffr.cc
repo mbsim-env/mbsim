@@ -649,7 +649,7 @@ namespace MBSimFlexibleBody {
 
     VecV hom(6+ne), hg(6+ne), he(6+ne);
 
-    hom.set(Index(0,2),-crossProduct(om,crossProduct(om,mc))-2.*crossProduct(om,mCM.M1*u(iuE)));
+    hom.set(Index(0,2),-crossProduct(om,crossProduct(om,mc))-2.*crossProduct(om,Ct_.T()*u(iuE)));
     hom.set(Index(3,5),-(hom21*om) - crossProduct(om,I*om));
     hom.set(Index(6,6+ne-1),-(Ge_*om) - Oe_*omq);
 
@@ -658,7 +658,14 @@ namespace MBSimFlexibleBody {
     hg.set(Index(3,5),mtc*Kg);
     hg.set(Index(6,hg.size()-1),Ct_*Kg);
 
-    he.set(Index(6,hg.size()-1),Ke.M0*q(iqE) + De.M0*qd(iqE));
+    SqrMatV Ke_ = SqrMatV(Ke.M0);
+    for(unsigned int i=0; i<Ke.M1.size(); i++) {
+      Ke_ += Ke.M1[i]*q(iqE).e(i);
+      for(unsigned int j=0; i<Ke.M2.size(); j++)
+        Ke_ += Ke.M2[i][j]*q(iqE).e(i)*q(iqE).e(j);
+    }
+
+    he.set(Index(6,hg.size()-1),Ke_*q(iqE) + De.M0*qd(iqE));
 
     h_ = hom + hg - he;
 
