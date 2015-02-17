@@ -133,12 +133,11 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   C4[3](1,1) = -rho*d2*h2*pow(l2,2)*1./6;
   C4[3](2,2) = C4[3](1,1);
 
-  SqrMatV Ke(4);
+  SymMatV Ke(4);
   Ke(0,0) = 1./24*pow(M_PI,4)*pow(h2/l2,2);
   Ke(1,1) = 2./3*pow(M_PI,4)*pow(h2/l2,2);
   Ke(2,2) = 16./3;
   Ke(2,3) = -8./3;
-  Ke(3,2) = Ke(2,3); 
   Ke(3,3) = 7./3;
   Ke*=E/(1-pow(nu,2))*d2*h2/l2;
 
@@ -146,7 +145,6 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setC3(C3);
   body2->setC4(C4);
   body2->setKe(Ke);
-  body2->setDe(0.*Ke);
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
