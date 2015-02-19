@@ -207,6 +207,12 @@ namespace MBSimFlexibleBody {
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of basic data
 
+      // Geometric stiffness matrices 
+      void setK0t(const std::vector<fmatvec::SqrMatV> &K0t_) { K0t = K0t_; }
+      void setK0r(const std::vector<fmatvec::SqrMatV> &K0r_) { K0r = K0r_; }
+      void setK0om(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
+      // End of geometric stiffness matrices 
+
       /**
        * \brief Set standard input data (SID) file.
        */
