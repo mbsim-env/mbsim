@@ -213,7 +213,7 @@ namespace MBSimGUI {
   }
 
   void VecWidget::resize_(int size) {
-    if(box.size()!=size) {
+    if(static_cast<int>(box.size())!=size) {
       vector<QString> buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         layout()->removeWidget(box[i]);
@@ -257,7 +257,7 @@ namespace MBSimGUI {
   }
 
   bool VecWidget::validate(const vector<vector<QString> > &A) const {
-    if(size()!=A.size())
+    if(size()!=static_cast<int>(A.size()))
       return false;
     if(A.size() && A[0].size()!=1)
       return false;
@@ -281,7 +281,7 @@ namespace MBSimGUI {
   }
 
   void MatWidget::resize_(int rows, int cols) {
-    if(box.size()!=rows or (box.size() and box[0].size()!=cols)) {
+    if(static_cast<int>(box.size())!=rows or (box.size() and static_cast<int>(box[0].size())!=cols)) {
       vector<vector<QString> > buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         buf[i].resize(box[i].size());
@@ -338,7 +338,7 @@ namespace MBSimGUI {
   }
 
   bool MatWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=A.size() || cols()!=A[0].size())
+    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
       return false;
     return true;
   }
@@ -360,7 +360,7 @@ namespace MBSimGUI {
   }
 
   void SymMatWidget::resize_(int rows) {
-    if(box.size()!=rows) {
+    if(static_cast<int>(box.size())!=rows) {
       vector<vector<QString> > buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         for(unsigned int j=0; j<box[i].size(); j++) {
@@ -419,10 +419,10 @@ namespace MBSimGUI {
   }
 
   bool SymMatWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=A.size() || cols()!=A[0].size())
+    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
       return false;
-    for(unsigned int i=0; i<rows(); i++) {
-      for(unsigned int j=0; j<i; j++) {
+    for(int i=0; i<rows(); i++) {
+      for(int j=0; j<i; j++) {
         if(fabs(A[i][j].toDouble() - A[j][i].toDouble())>1e-8)
           return false;
       }
@@ -472,7 +472,7 @@ namespace MBSimGUI {
   }
 
   bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
-    if(A.size()<minSize || A.size()>maxSize)
+    if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
     if(A.size() && A[0].size()!=1)
       return false;
@@ -524,9 +524,9 @@ namespace MBSimGUI {
   }
 
   bool MatColsVarWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=A.size())
+    if(rows()!=static_cast<int>(A.size()))
       return false;
-    if(A[0].size()<minCols || A[0].size()>maxCols)
+    if(static_cast<int>(A[0].size())<minCols || static_cast<int>(A[0].size())>maxCols)
       return false;
     return true;
   }
@@ -576,9 +576,9 @@ namespace MBSimGUI {
   }
 
   bool MatRowsVarWidget::validate(const vector<vector<QString> > &A) const {
-    if(A.size()<minRows || A.size()>maxRows)
+    if(static_cast<int>(A.size())<minRows || static_cast<int>(A.size())>maxRows)
       return false;
-    if(cols()!=A[0].size())
+    if(cols()!=static_cast<int>(A[0].size()))
       return false;
     return true;
   }
@@ -640,9 +640,9 @@ namespace MBSimGUI {
   }
 
   bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
-    if(A.size()<minRows || A.size()>maxRows)
+    if(static_cast<int>(A.size())<minRows || static_cast<int>(A.size())>maxRows)
       return false;
-    if(A[0].size()<minCols || A[0].size()>maxCols)
+    if(static_cast<int>(A[0].size())<minCols || static_cast<int>(A[0].size())>maxCols)
       return false;
     return true;
   }
@@ -688,7 +688,7 @@ namespace MBSimGUI {
   }
 
   bool CardanWidget::validate(const vector<vector<QString> > &A) const {
-    if(size()!=A.size())
+    if(size()!=static_cast<int>(A.size()))
       return false;
     if(A.size() && A[0].size()!=1)
       return false;
@@ -697,7 +697,7 @@ namespace MBSimGUI {
 
   QWidget* CardanWidget::getValidatedWidget() const {
     vector<QString> x = getAngles();
-    for(int i=0; i<x.size(); i++)
+    for(size_t i=0; i<x.size(); i++)
       x[i] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(x[i].toStdString())));
     return new VecWidget(x);
   }
@@ -752,7 +752,7 @@ namespace MBSimGUI {
       w = widget->getValidatedWidget();
     }
     catch(MBXMLUtils::DOMEvalException e) {
-      int ret = QMessageBox::warning(0, "Octave evaluation", QString::fromStdString(e.getMessage()));
+      QMessageBox::warning(0, "Octave evaluation", QString::fromStdString(e.getMessage()));
       return;
     }
     EvalDialog evalDialog(w); 
@@ -801,6 +801,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new BoolWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+    return NULL;
   }
 
   ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
@@ -821,11 +822,12 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+    return NULL;
   }
 
   QWidget* BasicVecWidget::getValidatedWidget() const {
     vector<QString> x = getVec();
-    for(int i=0; i<x.size(); i++)
+    for(size_t i=0; i<x.size(); i++)
       x[i] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(x[i].toStdString())));
     return new VecWidget(x);
   }
@@ -852,6 +854,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
   }
 
   VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {
@@ -876,12 +879,13 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
   }
 
   QWidget* BasicMatWidget::getValidatedWidget() const {
     vector<vector<QString> > A = getMat();
-    for(int i=0; i<A.size(); i++)
-      for(int j=0; j<A[i].size(); j++)
+    for(size_t i=0; i<A.size(); i++)
+      for(size_t j=0; j<A[i].size(); j++)
         A[i][j] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(A[i][j].toStdString())));
     return new MatWidget(A);
   }
@@ -908,6 +912,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
   }
 
   MatRowsVarWidgetFactory::MatRowsVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
@@ -932,6 +937,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
   }
 
   MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1) {
@@ -947,6 +953,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
   }
 
   RotMatWidgetFactory::RotMatWidgetFactory() : name(4), unit(4), defaultUnit(4,1) {
@@ -972,6 +979,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
     if(i==3)
       return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
+    return NULL;
   }
 
   SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
@@ -996,6 +1004,7 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
       return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
   }
 
 }

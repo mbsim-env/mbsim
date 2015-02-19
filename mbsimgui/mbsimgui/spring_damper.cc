@@ -53,7 +53,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpringDamper::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Link::initializeUsingXML(element);
     forceFunction.initializeUsingXML(element);
     connections.initializeUsingXML(element);
@@ -97,7 +96,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Link::initializeUsingXML(element);
     forceDirection.initializeUsingXML(element);
     forceFunction.initializeUsingXML(element);
@@ -142,7 +140,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Link::initializeUsingXML(element);
     function.initializeUsingXML(element);
     body1.initializeUsingXML(element);

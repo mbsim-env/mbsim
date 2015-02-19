@@ -136,7 +136,7 @@ namespace MBSimGUI {
   DOMElement* VecProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
-    for(unsigned int i=0; i<size(); i++) {
+    for(int i=0; i<size(); i++) {
       DOMElement *elei = D(doc)->createElement(PV%"ele");
       DOMText *text = doc->createTextNode(X()%value[i]);
       elei->insertBefore(text, NULL);
@@ -188,9 +188,9 @@ namespace MBSimGUI {
   DOMElement* MatProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
-    for(unsigned int i=0; i<rows(); i++) {
+    for(int i=0; i<rows(); i++) {
       DOMElement *elei = D(doc)->createElement(PV%"row");
-      for(unsigned int j=0; j<cols(); j++) {
+      for(int j=0; j<cols(); j++) {
         DOMElement *elej = D(doc)->createElement(PV%"ele");
         DOMText *text = doc->createTextNode(X()%value[i][j]);
         elej->insertBefore(text, NULL);
@@ -372,7 +372,7 @@ namespace MBSimGUI {
     static_cast<FromFileWidget*>(widget)->blockSignals(false);
   }
 
-  ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const FQN &xmlName_) : value(value_), name(2), unit(2,"m"), xmlName(xmlName_) {
+  ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const FQN &xmlName_) : value(value_), name(2), xmlName(xmlName_), unit(2,"m") {
   }
 
   ScalarPropertyFactory::ScalarPropertyFactory(const string &value_, const FQN &xmlName_, const vector<string> &unit_) : value(value_), name(2), xmlName(xmlName_), unit(unit_) {
@@ -383,9 +383,10 @@ namespace MBSimGUI {
       return new PhysicalVariableProperty(new ScalarProperty(value), unit[0], xmlName);
     if(i==1)
       return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
+    return NULL;
   }
 
-  VecPropertyFactory::VecPropertyFactory(int m, const FQN &xmlName_) : x(getScalars<string>(m,"0")), name(3), unit(3,"m"), xmlName(xmlName_) {
+  VecPropertyFactory::VecPropertyFactory(int m, const FQN &xmlName_) : x(getScalars<string>(m,"0")), name(3), xmlName(xmlName_), unit(3,"m") {
   }
 
   VecPropertyFactory::VecPropertyFactory(int m, const FQN &xmlName_, const vector<string> &unit_) : x(getScalars<string>(m,"0")), name(3), xmlName(xmlName_), unit(unit_) {
@@ -401,9 +402,10 @@ namespace MBSimGUI {
       return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
     if(i==2)
       return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[2], xmlName);
+    return NULL;
   }
 
-  RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_) : name(4), unit(4,""), xmlName(xmlName_) {
+  RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_) : name(4), xmlName(xmlName_), unit(4,"") {
   }
 
   RotMatPropertyFactory::RotMatPropertyFactory(const FQN &xmlName_, const vector<string> &unit_) : name(4), xmlName(xmlName_), unit(unit_) {
@@ -418,9 +420,10 @@ namespace MBSimGUI {
       return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
     if(i==3)
       return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+    return NULL;
   }
 
-  MatPropertyFactory::MatPropertyFactory(const FQN &xmlName_) : name(3), unit(3,"-"), xmlName(xmlName_) {
+  MatPropertyFactory::MatPropertyFactory(const FQN &xmlName_) : name(3), xmlName(xmlName_), unit(3,"-") {
   }
 
   MatPropertyFactory::MatPropertyFactory(const vector<vector<string> > &A_, const FQN &xmlName_, const vector<string> &unit_) : A(A_), name(3), xmlName(xmlName_), unit(unit_) {
@@ -433,6 +436,7 @@ namespace MBSimGUI {
       return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
     if(i==2)
       return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+    return NULL;
   }
 
 }

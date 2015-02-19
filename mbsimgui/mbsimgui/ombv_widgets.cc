@@ -57,6 +57,7 @@ namespace MBSimGUI {
       return new CompoundRigidBodyWidget;
     if(i==7)
       return new InvisibleBodyWidget;
+    return NULL;
   }
 
   //class OmbvBodyWidgetFactory : public WidgetFactory {

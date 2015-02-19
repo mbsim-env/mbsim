@@ -71,7 +71,7 @@ namespace MBSimGUI {
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
-    putenv("MBXMLUTILS_HTMLOUTPUT=1");
+    putenv(const_cast<char*>("MBXMLUTILS_HTMLOUTPUT=1"));
     
     mw = this;
 
@@ -90,7 +90,7 @@ namespace MBSimGUI {
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
     arguments << "--onlyGenerateSchema" << (uniqueTempDir/"mbsimxml.xsd").string().c_str();
-    int code=mbsim->getProcess()->execute(program,arguments);
+    mbsim->getProcess()->execute(program,arguments);
     parser->loadGrammar(arguments[1].toStdString());
 
     elementList = new ElementView;
@@ -330,6 +330,7 @@ namespace MBSimGUI {
     delete mbsimThread;
     bfs::remove_all(uniqueTempDir);
     bfs::remove("./.MBS.mbsimprj.xml");
+    delete octEval;
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
@@ -412,7 +413,7 @@ namespace MBSimGUI {
       emodel->removeRow(index.row(), index.parent());
       if(parents.size()) {
         index = emodel->createEmbeddingItem(parents[0]);
-        for(int i=0; i<parents.size()-1; i++)
+        for(size_t i=0; i<parents.size()-1; i++)
           index = emodel->createEmbeddingItem(parents[i+1],index);
         emodel->createEmbeddingItem(element,index);
       }
@@ -523,7 +524,6 @@ namespace MBSimGUI {
           return;
         }
       }
-      DOMElement *e=doc->getDocumentElement();
       DOMElement *ele0=doc->getDocumentElement();
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
       setWindowTitle(fileProject+"[*]");
@@ -691,7 +691,7 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     vector<Element*> parents = element->getParents();
     Parameters param;
-    for(int i=0; i<parents.size(); i++)
+    for(size_t i=0; i<parents.size(); i++)
       param.addParameters(parents[i]->getParameters());
     param.addParameters(element->getParameters());
     string counterName = element->getCounterName();

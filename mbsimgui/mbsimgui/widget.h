@@ -44,6 +44,7 @@ namespace MBSimGUI {
 
   class WidgetFactory {
     public:
+      virtual ~WidgetFactory() {}
       virtual QWidget* createWidget(int i=0) = 0;
       virtual QString getName(int i=0) const { return ""; }
       virtual int getSize() const { return 0; }

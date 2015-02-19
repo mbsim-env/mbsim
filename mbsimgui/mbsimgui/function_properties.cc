@@ -396,6 +396,7 @@ namespace MBSimGUI {
 
   int NestedFunction::getArg1Size() const {
     //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArg1Size();
+    return 0;
   }
 
   DOMElement* NestedFunction::initializeUsingXML(DOMElement *element) {
@@ -455,7 +456,7 @@ namespace MBSimGUI {
   }
 
   SymbolicFunction::SymbolicFunction(const string &name, Element *parent, const string &ext_, const vector<string> &var, int m) : Function(name,parent), ext(ext_), argname(ext.size()-1), argdim(ext.size()-1) {
-    for(int i=1; i<ext.size(); i++) {
+    for(size_t i=1; i<ext.size(); i++) {
       argname[i-1].setProperty(new TextProperty(var[i-1],""));
       argdim[i-1].setProperty(new IntegerProperty(1,""));
     }
@@ -466,7 +467,7 @@ namespace MBSimGUI {
 
   DOMElement* SymbolicFunction::initializeUsingXML(DOMElement *element) {
     f.initializeUsingXML(element);
-    for(int i=1; i<ext.size(); i++) {
+    for(int i=1; i<static_cast<int>(ext.size()); i++) {
       string str = "arg"+toStr(i);
       if(E(element)->hasAttribute(str))
         static_cast<TextProperty*>(argname[i-1].getProperty())->setText(E(element)->getAttribute(str.c_str()));
@@ -479,7 +480,7 @@ namespace MBSimGUI {
 
   DOMElement* SymbolicFunction::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Function::writeXMLFile(parent);
-    for(int i=1; i<ext.size(); i++) {
+    for(int i=1; i<static_cast<int>(ext.size()); i++) {
       string istr = toStr(i);
       E(ele0)->setAttribute("arg"+istr, static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
       if(ext[i]=='V')
@@ -490,7 +491,7 @@ namespace MBSimGUI {
   } 
 
   void SymbolicFunction::fromWidget(QWidget *widget) {
-    for(int i=0; i<argname.size(); i++) {
+    for(size_t i=0; i<argname.size(); i++) {
       argname[i].fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->argname[i]);
       argdim[i].fromWidget(static_cast<SymbolicFunctionWidget*>(widget)->argdim[i]);
     }
@@ -498,7 +499,7 @@ namespace MBSimGUI {
   }
 
   void SymbolicFunction::toWidget(QWidget *widget) {
-    for(int i=0; i<argname.size(); i++) {
+    for(size_t i=0; i<argname.size(); i++) {
       argname[i].toWidget(static_cast<SymbolicFunctionWidget*>(widget)->argname[i]);
       argdim[i].toWidget(static_cast<SymbolicFunctionWidget*>(widget)->argdim[i]);
     }
@@ -597,7 +598,7 @@ namespace MBSimGUI {
     method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
-  FourierFunction::FourierFunction(const string &name, Element *parent) : Function(name,parent), a0(0,false), choice(new FourierFunctionPropertyFactory(this),"",3), amplitudePhaseAngleForm(0,false) {
+  FourierFunction::FourierFunction(const string &name, Element *parent) : Function(name,parent), a0(0,false), amplitudePhaseAngleForm(0,false), choice(new FourierFunctionPropertyFactory(this),"",3) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"frequency"));
     f.setProperty(new ExtPhysicalVarProperty(input));

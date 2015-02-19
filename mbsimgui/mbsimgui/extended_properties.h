@@ -47,10 +47,10 @@ namespace MBSimGUI {
 
   class ExtProperty : public Property {
     public:
-      ExtProperty(PropertyInterface *property_=0, bool active_=true, const MBXMLUtils::FQN &xmlName_="", bool alwaysWriteXMLName_=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(alwaysWriteXMLName_) {}
+      ExtProperty(PropertyInterface *property_=0, bool active_=true, const MBXMLUtils::FQN &xmlName_="", bool alwaysWriteXMLName_=true) : property(property_), xmlName(xmlName_), active(active_), alwaysWriteXMLName(alwaysWriteXMLName_) {}
       ExtProperty(const ExtProperty &p) : property(p.property?p.property->clone():0), xmlName(p.xmlName), active(p.active), alwaysWriteXMLName(p.alwaysWriteXMLName) {}
       ~ExtProperty() {delete property;}
-      ExtProperty& operator=(const ExtProperty &p) {delete property; property=p.property?p.property->clone():0; xmlName=p.xmlName; active=p.active; alwaysWriteXMLName=p.alwaysWriteXMLName;}
+      ExtProperty& operator=(const ExtProperty &p) {delete property; property=p.property?p.property->clone():0; xmlName=p.xmlName; active=p.active; alwaysWriteXMLName=p.alwaysWriteXMLName; return *this; }
       virtual PropertyInterface* clone() const {return new ExtProperty(*this);}
       PropertyInterface* getProperty() {return property;}
       const PropertyInterface* getProperty() const {return property;}

@@ -100,7 +100,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::writeXMLFileEmbed(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     //DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = embed.writeXMLFile(parent);
 

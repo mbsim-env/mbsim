@@ -82,7 +82,7 @@ namespace MBSimGUI {
   }
 
   SolverView::~SolverView() {
-    for(int i=0; i<solver.size(); i++)
+    for(size_t i=0; i<solver.size(); i++)
       delete solver[i];
   }
 

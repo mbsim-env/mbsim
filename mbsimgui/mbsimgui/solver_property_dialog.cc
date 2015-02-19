@@ -46,6 +46,7 @@ namespace MBSimGUI {
       input.push_back(new PhysicalVariableWidget(new VecWidget(0),QStringList(),1));
       return new ExtPhysicalVarWidget(input);
     }
+    return NULL;
   }
 
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), solver(solver_) {

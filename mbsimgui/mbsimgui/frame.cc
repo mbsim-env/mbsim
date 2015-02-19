@@ -108,7 +108,6 @@ namespace MBSimGUI {
 
   DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
 
-    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0 = Frame::writeXMLFile(parent);
     refFrame.writeXMLFile(ele0);
     position.writeXMLFile(ele0);

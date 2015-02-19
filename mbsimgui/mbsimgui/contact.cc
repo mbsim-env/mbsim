@@ -60,7 +60,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* Contact::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Link::initializeUsingXML(element);
     contactForceLaw.initializeUsingXML(element);
     contactImpactLaw.initializeUsingXML(element);

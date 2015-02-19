@@ -167,7 +167,7 @@ namespace MBSimGUI {
   }
 
   void Parameters::removeParameters() {
-    for(int i=0; i<parameter.size(); i++)
+    for(size_t i=0; i<parameter.size(); i++)
       delete parameter[i];
   }
 
@@ -194,7 +194,7 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
     parent->insertBefore(ele0, NULL);
-    for(int i=0; i<parameter.size(); i++)
+    for(size_t i=0; i<parameter.size(); i++)
       parameter[i]->writeXMLFile(ele0);
     return ele0;
   }

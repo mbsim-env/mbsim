@@ -40,6 +40,7 @@ namespace MBSimGUI {
   GeneralizedForceLaw& GeneralizedForceLaw::operator=(const GeneralizedForceLaw &p) {
     delete forceFunc;
     forceFunc=static_cast<Function*>(p.forceFunc->clone());
+    return *this;
   }
 
   DOMElement* GeneralizedForceLaw::writeXMLFile(DOMNode *parent) {
@@ -160,6 +161,7 @@ namespace MBSimGUI {
   FrictionForceLaw& FrictionForceLaw::operator=(const FrictionForceLaw &p) {
     delete frictionForceFunc; 
     frictionForceFunc=static_cast<Function*>(p.frictionForceFunc->clone());
+    return *this;
   }
 
   DOMElement* FrictionForceLaw::writeXMLFile(DOMNode *parent) {

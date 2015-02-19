@@ -49,7 +49,7 @@ namespace MBSimGUI {
       BilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent) {}
       virtual PropertyInterface* clone() const {return new BilateralConstraint(*this);}
       std::string getType() const { return "BilateralConstraint"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
       void fromWidget(QWidget *widget) {}
       void toWidget(QWidget *widget) {}
   };
@@ -74,7 +74,7 @@ namespace MBSimGUI {
       UnilateralConstraint(const std::string &name, Element *parent) : GeneralizedForceLaw(name,parent) {}
       virtual PropertyInterface* clone() const {return new UnilateralConstraint(*this);}
       std::string getType() const { return "UnilateralConstraint"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
       void fromWidget(QWidget *widget) {}
       void toWidget(QWidget *widget) {}
   };
@@ -109,7 +109,7 @@ namespace MBSimGUI {
       BilateralImpact(const std::string &name, Element *parent) : GeneralizedImpactLaw(name,parent) {} 
       virtual PropertyInterface* clone() const {return new BilateralImpact(*this);}
       std::string getType() const { return "BilateralImpact"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return NULL; }
       void fromWidget(QWidget *widget) {}
       void toWidget(QWidget *widget) {}
   };
@@ -249,7 +249,7 @@ namespace MBSimGUI {
       GeneralizedForceLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), generalizedForceLaw(0), index(0), xmlName(xmlName_) {defineForceLaw(0);}
       GeneralizedForceLawChoiceProperty(const GeneralizedForceLawChoiceProperty &p) : generalizedForceLaw(static_cast<GeneralizedForceLaw*>(p.generalizedForceLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~GeneralizedForceLawChoiceProperty() {delete generalizedForceLaw;}
-      GeneralizedForceLawChoiceProperty& operator=(const GeneralizedForceLawChoiceProperty &p) {delete generalizedForceLaw; generalizedForceLaw=static_cast<GeneralizedForceLaw*>(p.generalizedForceLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      GeneralizedForceLawChoiceProperty& operator=(const GeneralizedForceLawChoiceProperty &p) {delete generalizedForceLaw; generalizedForceLaw=static_cast<GeneralizedForceLaw*>(p.generalizedForceLaw->clone()); index=p.index; xmlName=p.xmlName; return *this; }
       virtual PropertyInterface* clone() const {return new GeneralizedForceLawChoiceProperty(*this);}
 
       void defineForceLaw(int);
@@ -271,7 +271,7 @@ namespace MBSimGUI {
       GeneralizedImpactLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), generalizedImpactLaw(0), index(0), xmlName(xmlName_) {defineImpactLaw(0);}
       GeneralizedImpactLawChoiceProperty(const GeneralizedImpactLawChoiceProperty &p) : generalizedImpactLaw(static_cast<GeneralizedImpactLaw*>(p.generalizedImpactLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~GeneralizedImpactLawChoiceProperty() {delete generalizedImpactLaw;}
-      GeneralizedImpactLawChoiceProperty& operator=(const GeneralizedImpactLawChoiceProperty &p) {delete generalizedImpactLaw; generalizedImpactLaw=static_cast<GeneralizedImpactLaw*>(p.generalizedImpactLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      GeneralizedImpactLawChoiceProperty& operator=(const GeneralizedImpactLawChoiceProperty &p) {delete generalizedImpactLaw; generalizedImpactLaw=static_cast<GeneralizedImpactLaw*>(p.generalizedImpactLaw->clone()); index=p.index; xmlName=p.xmlName; return *this; }
       virtual PropertyInterface* clone() const {return new GeneralizedImpactLawChoiceProperty(*this);}
 
       void defineImpactLaw(int);
@@ -293,7 +293,7 @@ namespace MBSimGUI {
       FrictionForceLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), frictionForceLaw(0), index(0), xmlName(xmlName_) {defineFrictionLaw(0);}
       FrictionForceLawChoiceProperty(const FrictionForceLawChoiceProperty &p) : frictionForceLaw(static_cast<FrictionForceLaw*>(p.frictionForceLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~FrictionForceLawChoiceProperty() {delete frictionForceLaw;}
-      FrictionForceLawChoiceProperty& operator=(const FrictionForceLawChoiceProperty &p) {delete frictionForceLaw; frictionForceLaw=static_cast<FrictionForceLaw*>(p.frictionForceLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      FrictionForceLawChoiceProperty& operator=(const FrictionForceLawChoiceProperty &p) {delete frictionForceLaw; frictionForceLaw=static_cast<FrictionForceLaw*>(p.frictionForceLaw->clone()); index=p.index; xmlName=p.xmlName; return *this; }
       virtual PropertyInterface* clone() const {return new FrictionForceLawChoiceProperty(*this);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -315,7 +315,7 @@ namespace MBSimGUI {
       FrictionImpactLawChoiceProperty(Element *parent_, const MBXMLUtils::FQN &xmlName_) : parent(parent_), frictionImpactLaw(0), index(0), xmlName(xmlName_) {defineFrictionImpactLaw(0);}
       FrictionImpactLawChoiceProperty(const FrictionImpactLawChoiceProperty &p) : frictionImpactLaw(static_cast<FrictionImpactLaw*>(p.frictionImpactLaw->clone())), index(p.index), xmlName(p.xmlName) {}
       ~FrictionImpactLawChoiceProperty() {delete frictionImpactLaw;}
-      FrictionImpactLawChoiceProperty& operator=(const FrictionImpactLawChoiceProperty &p) {delete frictionImpactLaw; frictionImpactLaw=static_cast<FrictionImpactLaw*>(p.frictionImpactLaw->clone()); index=p.index; xmlName=p.xmlName;}
+      FrictionImpactLawChoiceProperty& operator=(const FrictionImpactLawChoiceProperty &p) {delete frictionImpactLaw; frictionImpactLaw=static_cast<FrictionImpactLaw*>(p.frictionImpactLaw->clone()); index=p.index; xmlName=p.xmlName; return *this; }
       virtual PropertyInterface* clone() const {return new FrictionImpactLawChoiceProperty(*this);}
 
       void defineFrictionImpactLaw(int);

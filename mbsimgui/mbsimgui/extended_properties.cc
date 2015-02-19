@@ -37,7 +37,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExtPhysicalVarProperty::initializeUsingXML(DOMElement *element) {
-    for(int i=0; i< inputProperty.size(); i++) {
+    for(size_t i=0; i< inputProperty.size(); i++) {
       if(inputProperty[i].initializeUsingXML(element)) { 
         currentInput = i;
         return element;
@@ -61,7 +61,7 @@ namespace MBSimGUI {
     inputProperty[currentInput].toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
   }
 
-  ChoiceProperty2::ChoiceProperty2(PropertyFactory *factory_, const FQN &xmlName_, int mode_, const NamespaceURI &nsuri_) : factory(factory_), index(0), mode(mode_), xmlName(xmlName_), nsuri(nsuri_), property(factory->createProperty()) {
+  ChoiceProperty2::ChoiceProperty2(PropertyFactory *factory_, const FQN &xmlName_, int mode_, const NamespaceURI &nsuri_) : factory(factory_), property(factory->createProperty()), index(0), mode(mode_), xmlName(xmlName_), nsuri(nsuri_) {
   }
 
   ChoiceProperty2::ChoiceProperty2(const ChoiceProperty2 &p) : index(p.index), mode(p.mode), xmlName(p.xmlName), nsuri(p.nsuri) {
@@ -84,6 +84,7 @@ namespace MBSimGUI {
     //  nsuri=p.nsuri;
     //  for(unsigned int i=0; i<p.property.size(); i++)
     //    property.push_back(p.property[i]->clone());
+    return *this;
   }
 
   void ChoiceProperty2::initialize() {
@@ -144,6 +145,7 @@ namespace MBSimGUI {
         return 0;
       }
     }
+    return NULL;
   }
 
   DOMElement* ChoiceProperty2::writeXMLFile(DOMNode *parent) {
@@ -182,7 +184,7 @@ namespace MBSimGUI {
 
   DOMElement* ExtProperty::initializeUsingXML(DOMElement *element) {
     active = false;
-    if(element)
+    if(element) {
       if(xmlName!=FQN()) {
         DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
         if(e)
@@ -192,6 +194,7 @@ namespace MBSimGUI {
       }
       else
         active = property->initializeUsingXML(element);
+    }
     return active?element:0;
   }
 
@@ -213,6 +216,7 @@ namespace MBSimGUI {
     }
     else
       return active?property->writeXMLFile(parent):0;
+    return NULL;
   }
 
   void ExtProperty::fromWidget(QWidget *widget) {
@@ -247,6 +251,7 @@ namespace MBSimGUI {
     xmlName=p.xmlName; 
     for(unsigned int i=0; i<p.property.size(); i++)
       property.push_back(p.property[i]->clone());
+    return *this;
   }
 
   void ContainerProperty::initialize() {
@@ -364,15 +369,15 @@ namespace MBSimGUI {
   }
 
   void ListProperty::fromWidget(QWidget *widget) {
-    if(property.size()!=static_cast<ListWidget*>(widget)->stackedWidget->count()) {
+    if(static_cast<int>(property.size())!=static_cast<ListWidget*>(widget)->stackedWidget->count()) {
       property.clear();
-      for(unsigned int i=0; i<static_cast<ListWidget*>(widget)->stackedWidget->count(); i++) {
+      for(int i=0; i<static_cast<ListWidget*>(widget)->stackedWidget->count(); i++) {
         property.push_back(factory->createProperty());
         property[i]->fromWidget(static_cast<ListWidget*>(widget)->stackedWidget->widget(i));
       }
     }
     else {
-      for(unsigned int i=0; i<static_cast<ListWidget*>(widget)->stackedWidget->count(); i++) {
+      for(int i=0; i<static_cast<ListWidget*>(widget)->stackedWidget->count(); i++) {
         property[i]->fromWidget(static_cast<ListWidget*>(widget)->stackedWidget->widget(i));
       }
     }
@@ -380,7 +385,7 @@ namespace MBSimGUI {
 
   void ListProperty::toWidget(QWidget *widget) {
     static_cast<ListWidget*>(widget)->blockSignals(true);
-    if(property.size()!=static_cast<ListWidget*>(widget)->stackedWidget->count()) {
+    if(static_cast<int>(property.size())!=static_cast<ListWidget*>(widget)->stackedWidget->count()) {
       static_cast<ListWidget*>(widget)->removeElements(static_cast<ListWidget*>(widget)->stackedWidget->count());
 
       static_cast<ListWidget*>(widget)->spinBox->blockSignals(true);

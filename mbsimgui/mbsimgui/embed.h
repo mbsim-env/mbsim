@@ -75,7 +75,7 @@ namespace MBSimGUI {
           return object;
         }
 
-        static xercesc::DOMElement* writeXML(T* object, xercesc::DOMNode *ele0) {
+        static void writeXML(T* object, xercesc::DOMNode *ele0) {
           if(object->isEmbedded())
             object->writeXMLFileEmbed(ele0);
           else

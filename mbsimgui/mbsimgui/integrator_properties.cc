@@ -40,7 +40,7 @@ namespace MBSimGUI {
     static_cast<RKSuiteTypeWidget*>(widget)->comboBox->setCurrentIndex(index);
   }
 
-  DOMElement* RKSuiteTypeProperty::initializeUsingXML(DOMElement *element) {}
+  DOMElement* RKSuiteTypeProperty::initializeUsingXML(DOMElement *element) { return NULL; }
 
   DOMElement* RKSuiteTypeProperty::writeXMLFile(DOMNode *element) {
     DOMDocument *doc=element->getOwnerDocument();
