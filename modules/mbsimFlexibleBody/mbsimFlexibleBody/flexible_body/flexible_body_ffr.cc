@@ -135,26 +135,26 @@ namespace MBSimFlexibleBody {
       C6[i].resize(ne);
     for(int i=0; i<ne; i++) {
       for(int j=0; j<3; j++)
-        Oe.M0(i,j) = C4[i](j,j);
-      Oe.M0(i,3) = C4[i](0,1)+C4[i](1,0);
-      Oe.M0(i,4) = C4[i](1,2)+C4[i](2,1); 
-      Oe.M0(i,5) = C4[i](2,0)+C4[i](0,2);
+        Oe.M0.e(i,j) = C4[i](j,j);
+      Oe.M0(i,3) = C4[i].e(0,1)+C4[i].e(1,0);
+      Oe.M0(i,4) = C4[i].e(1,2)+C4[i].e(2,1); 
+      Oe.M0(i,5) = C4[i].e(2,0)+C4[i].e(0,2);
       Gr.M0[i] = -2.*C4[i];
       Gr.M1[i].resize(ne);
-      C2(0,i) = C4[i](2,1)-C4[i](1,2);
-      C2(1,i) = C4[i](0,2)-C4[i](2,0);
-      C2(2,i) = C4[i](1,0)-C4[i](0,1);
+      C2.e(0,i) = C4[i].e(2,1)-C4[i].e(1,2);
+      C2.e(1,i) = C4[i].e(0,2)-C4[i].e(2,0);
+      C2.e(2,i) = C4[i].e(1,0)-C4[i].e(0,1);
       for(int j=i; j<ne; j++) {
-        C6[i][j](0,0) = -C3[1][1](i,j) - C3[2][2](i,j);
-        C6[i][j](1,1) = -C3[0][0](i,j) - C3[2][2](i,j);
-        C6[i][j](2,2) = -C3[0][0](i,j) - C3[1][1](i,j);
+        C6[i][j].e(0,0) = -C3[1][1].e(i,j) - C3[2][2].e(i,j);
+        C6[i][j].e(1,1) = -C3[0][0].e(i,j) - C3[2][2].e(i,j);
+        C6[i][j].e(2,2) = -C3[0][0].e(i,j) - C3[1][1].e(i,j);
 
-        C6[i][j](0,1) = C3[1][0](i,j);
-        C6[i][j](0,2) = C3[2][0](i,j);
-        C6[i][j](1,2) = C3[2][1](i,j);
-        C6[i][j](1,0) = C3[0][1](i,j);
-        C6[i][j](2,0) = C3[0][2](i,j);
-        C6[i][j](2,1) = C3[1][2](i,j);
+        C6[i][j].e(0,1) = C3[1][0].e(i,j);
+        C6[i][j].e(0,2) = C3[2][0].e(i,j);
+        C6[i][j].e(1,2) = C3[2][1].e(i,j);
+        C6[i][j].e(1,0) = C3[0][1].e(i,j);
+        C6[i][j].e(2,0) = C3[0][2].e(i,j);
+        C6[i][j].e(2,1) = C3[1][2].e(i,j);
         C6[j][i] = C6[i][j].T();
       }
       for(int j=0; j<ne; j++)
@@ -187,7 +187,7 @@ namespace MBSimFlexibleBody {
       for(int j=0; j<ne; j++)
         mmi.M2[i][j] = -C6[i][j];
       for(int j=i; j<ne; j++)
-        Me.M0.ej(i,j) = C3[0][0](i,j) + C3[1][1](i,j) + C3[2][2](i,j);
+        Me.M0.ej(i,j) = C3[0][0].e(i,j) + C3[1][1].e(i,j) + C3[2][2].e(i,j);
     }
 
     Ge.M0.resize(3);
@@ -203,7 +203,7 @@ namespace MBSimFlexibleBody {
       Oe.M1[i] += K0om[i];
 
     if(not(De.M0.size()))
-      De.M0 = beta(0)*Me.M0 + beta(1)*Ke.M0;
+      De.M0 = beta.e(0)*Me.M0 + beta.e(1)*Ke.M0;
   }
 
   void FlexibleBodyFFR::prefillMassMatrix() {
@@ -215,7 +215,7 @@ namespace MBSimFlexibleBody {
     }
     for(int i=0; i<ne; i++) {
       for(int j=0; j<3; j++)
-        M_.e(i+6,j) = Ct.M0(i,j);
+        M_.e(i+6,j) = Ct.M0.e(i,j);
       for(int j=i; j<ne; j++)
         M_.ej(i+6,j+6) = Me.M0.ej(i,j);
     }
@@ -481,9 +481,9 @@ namespace MBSimFlexibleBody {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(notMinimalState)==enabled) {
         for(int i=0; i<nq; i++)
-          plotVector.push_back(qRel(i));
+          plotVector.push_back(qRel.e(i));
         for(int i=0; i<nu[0]; i++)
-          plotVector.push_back(uRel(i));
+          plotVector.push_back(uRel.e(i));
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -591,15 +591,15 @@ namespace MBSimFlexibleBody {
     SymMat3 I1;
     SqrMat3 I2;
     for (int i=0; i<ne; i++) {
-      I1 += mmi.M1[i]*q(iqE)(i);
+      I1 += mmi.M1[i]*q(iqE).e(i);
       for (int j=0; j<ne; j++)
-        I2 += mmi.M2[i][j]*q(iqE)(i)*q(iqE)(j);
+        I2 += mmi.M2[i][j]*q(iqE).e(i)*q(iqE).e(j);
     }
     SymMat3 I = mmi.M0 + I1 + SymMat3(I2);
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
-        M_.e(i+3,j+3) = I(i,j);
-        M_.e(i+3,j) = mtc(i,j);
+        M_.e(i+3,j+3) = I.e(i,j);
+        M_.e(i+3,j) = mtc.e(i,j);
       }
     }
 
@@ -632,8 +632,8 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<ne; i++) {
       Gr1[i].init(0);
       for(int j=0; j<ne; j++)
-        Gr1[i] += Gr.M1[j][i]*q(iqE)(j);
-      hom21 += (Gr.M0[i]+Gr1[i])*u(iuE)(i);
+        Gr1[i] += Gr.M1[j][i]*q(iqE).e(j);
+      hom21 += (Gr.M0[i]+Gr1[i])*u(iuE).e(i);
     }
     fmatvec::MatVx3 Ge_(ne,NONINIT);
     for(int i=0; i<3; i++)
@@ -642,10 +642,10 @@ namespace MBSimFlexibleBody {
     Vec3 om = K->getOrientation().T()*K->getAngularVelocity();
     Vector<Fixed<6>,double> omq;
     for(int i=0; i<3; i++)
-      omq(i) = pow(om(i),2);
-    omq(3) = om(0)*om(1); 
-    omq(4) = om(1)*om(2); 
-    omq(5) = om(0)*om(2);
+      omq.e(i) = pow(om.e(i),2);
+    omq.e(3) = om.e(0)*om.e(1); 
+    omq.e(4) = om.e(1)*om.e(2); 
+    omq.e(5) = om.e(0)*om.e(2);
 
     VecV hom(6+ne), hg(6+ne), he(6+ne);
 
@@ -774,6 +774,10 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::updateMNotConst(double t, int index) {
     M[index] += JTMJ(M_,KJ[index]); 
+//    cout << M[index] << endl;
+//    cout << inv(M[index]) << endl;
+//    cout << facLL(M[index]) << endl;
+//    cout << "ende" << endl;
   }
 
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
