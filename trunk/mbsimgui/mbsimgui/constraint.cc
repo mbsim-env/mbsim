@@ -80,7 +80,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* GearConstraint::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
     Constraint::initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
     independentBodies.initializeUsingXML(element);
@@ -125,7 +124,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* KinematicConstraint::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
     Constraint::initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
     constraintForceArrow.initializeUsingXML(element);
@@ -149,7 +147,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedPositionConstraint::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
     KinematicConstraint::initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
     return element;
@@ -173,7 +170,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedVelocityConstraint::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
     KinematicConstraint::initializeUsingXML(element);
     x0.initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
@@ -199,7 +195,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
     KinematicConstraint::initializeUsingXML(element);
     x0.initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);

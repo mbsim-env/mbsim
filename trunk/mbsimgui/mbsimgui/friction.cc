@@ -55,7 +55,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedFriction::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
     Link::initializeUsingXML(element);
     function.initializeUsingXML(element);
     normalForce.initializeUsingXML(element);

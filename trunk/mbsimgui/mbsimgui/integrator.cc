@@ -44,6 +44,7 @@ namespace MBSimGUI {
       input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMINT%(type+"Tolerance")));
       return new ExtPhysicalVarProperty(input);
     }
+    return NULL;
   }
 
   Integrator::Integrator() : initialState(0,false) {

@@ -65,6 +65,7 @@ namespace MBSimGUI {
       return new FourierFunctionWidget(1);
     if(i==16)
       return new SignalFunctionWidget(parent);
+    return NULL;
   }
 
   vector<QString> FunctionWidgetFactory2::getNames() {
@@ -112,6 +113,7 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
       return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
+    return NULL;
   }
 
   vector<QString> TranslationWidgetFactory2::getNames() {
@@ -143,6 +145,7 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(parent);
     if(i==5)
       return new PiecewisePolynomFunctionWidget(1);
+    return NULL;
   }
 
   vector<QString> TranslationWidgetFactory3::getNames() {
@@ -182,6 +185,7 @@ namespace MBSimGUI {
       return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
     if(i==11)
       return new SymbolicFunctionWidget(QStringList("q"),1,3);
+    return NULL;
   }
 
   vector<QString> RotationWidgetFactory2::getNames() {
@@ -206,6 +210,7 @@ namespace MBSimGUI {
       return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
+    return NULL;
   }
 
   vector<QString> RotationWidgetFactory3::getNames() {
@@ -220,6 +225,7 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(var,1,3);
     if(i==1)
       return new TwoDimensionalTabularFunctionWidget(1);
+    return NULL;
   }
 
   vector<QString> SymbolicFunctionWidgetFactory2::getNames() {
@@ -233,6 +239,7 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(var,1,3);
     if(i==1)
       return new ModuloFunctionWidget;
+    return NULL;
   }
 
   vector<QString> SymbolicFunctionWidgetFactory3::getNames() {
@@ -258,6 +265,7 @@ namespace MBSimGUI {
       var << "q" << "t";
       return new ExtWidget("Function r=r(q,t)",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var)));
     }
+    return NULL;
   }
 
   RotationWidgetFactory4::RotationWidgetFactory4(Element *parent_) : parent(parent_) {
@@ -270,6 +278,7 @@ namespace MBSimGUI {
       return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent)));
     if(i==1)
       return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent)));
+    return NULL;
   }
 
   TabularFunctionWidgetFactory::TabularFunctionWidgetFactory() {
@@ -287,6 +296,7 @@ namespace MBSimGUI {
     if(i==1) {
       return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
+    return NULL;
   }
 
   FourierFunctionWidgetFactory::FourierFunctionWidgetFactory() {
@@ -304,6 +314,7 @@ namespace MBSimGUI {
     if(i==1) {
       return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
+    return NULL;
   }
 
   ConstraintWidgetFactory::ConstraintWidgetFactory(Element *parent_) : parent(parent_) {
@@ -316,6 +327,7 @@ namespace MBSimGUI {
       return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     if(i==1)
       return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"))));
+    return NULL;
   }
 
   ConnectFramesWidgetFactory::ConnectFramesWidgetFactory(Element *parent_) : parent(parent_) {
@@ -343,6 +355,7 @@ namespace MBSimGUI {
       var << "g" << "gd";
       return new SymbolicFunctionWidget(var,1,3);
     }
+    return NULL;
   }
 
 }

@@ -69,6 +69,7 @@ namespace MBSimGUI {
       frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
     for(unsigned int i=0; i<b.contour.size(); i++)
       contour.push_back(static_cast<Contour*>(b.contour[i]->clone()));;
+    return *this;
   }
 
   void Body::initialize() {
@@ -106,7 +107,7 @@ namespace MBSimGUI {
   }
 
   Frame* Body::getFrame(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<frame.size(); i++) {
       if(frame[i]->getName() == name)
         return frame[i];
@@ -115,7 +116,7 @@ namespace MBSimGUI {
   }
 
   Contour* Body::getContour(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
         return contour[i];

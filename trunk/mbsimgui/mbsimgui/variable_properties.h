@@ -152,7 +152,7 @@ namespace MBSimGUI {
       PhysicalVariableProperty(VariableProperty *value_=0, const std::string &unit_="", const MBXMLUtils::FQN &xmlName_="") : value(value_), unit(unit_), xmlName(xmlName_) {}
       PhysicalVariableProperty(const PhysicalVariableProperty &p) : value(static_cast<VariableProperty*>(p.value->clone())), unit(p.unit), xmlName(p.xmlName) {}
       ~PhysicalVariableProperty() {delete value;}
-      PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<VariableProperty*>(p.value->clone()); unit=p.unit; xmlName=p.xmlName;}
+      PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<VariableProperty*>(p.value->clone()); unit=p.unit; xmlName=p.xmlName; return *this; }
       virtual PropertyInterface* clone() const {return new PhysicalVariableProperty(*this);}
       std::string getValue() const {return value->getValue();}
       void setValue(const std::string &str) {value->setValue(str);}

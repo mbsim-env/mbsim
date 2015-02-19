@@ -717,6 +717,7 @@ namespace MBSimGUI {
     //    string file = E(ele)->getAttribute("href");
     //    static_cast<FileProperty*>(parameterList.getProperty())->setFile(file);
     //  }
+    return NULL;
   }
 
   DOMElement* EmbedProperty::writeXMLFile(DOMNode *parent) {
@@ -834,7 +835,7 @@ namespace MBSimGUI {
 
   DOMElement* PlotFeatureStatusProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    for(int i=0; i<type.size(); i++) {
+    for(size_t i=0; i<type.size(); i++) {
       DOMElement *ele = D(doc)->createElement(MBSIM%type[i]);
       E(ele)->setAttribute("feature",value[i]);
       parent->insertBefore(ele, NULL);
@@ -855,7 +856,7 @@ namespace MBSimGUI {
   void PlotFeatureStatusProperty::toWidget(QWidget *widget) {
     QTreeWidget *tree = static_cast<PlotFeatureStatusWidget*>(widget)->tree;
     tree->clear();
-    for(int i=0; i<type.size(); i++) {
+    for(size_t i=0; i<type.size(); i++) {
       QTreeWidgetItem *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(type[i]));
       item->setText(1, QString::fromStdString(value[i]));

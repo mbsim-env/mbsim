@@ -56,7 +56,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* Gear::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
     Link::initializeUsingXML(element);
     function.initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);

@@ -76,6 +76,7 @@ namespace MBSimGUI {
       return new FourierFunction("NoName",parent);
     if(i==16)
       return new SignalFunction("NoName",parent);
+    return NULL;
   }
 
   vector<FQN> FunctionPropertyFactory2::getNames() {
@@ -123,6 +124,7 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,"VV",vector<string>(1,"q"),3);
     if(i==10)
       return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"VV",vector<string>(1,"q")));
+    return NULL;
   }
 
   vector<FQN> TranslationPropertyFactory2::getNames() {
@@ -154,6 +156,7 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunction("NoName",parent);
     if(i==5)
       return new PiecewisePolynomFunction("NoName",parent);
+    return NULL;
   }
 
   vector<FQN> TranslationPropertyFactory3::getNames() {
@@ -193,6 +196,7 @@ namespace MBSimGUI {
       return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"MV",vector<string>(1,"q")));
     if(i==11)
       return new SymbolicFunction("NoName",parent,"MV",vector<string>(1,"q"),1);
+    return NULL;
   }
 
   vector<FQN> RotationPropertyFactory2::getNames() {
@@ -217,6 +221,7 @@ namespace MBSimGUI {
       return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==1)
       return new SymbolicFunction("NoName",parent,"MS",vector<string>(1,"t"),1);
+    return NULL;
   }
 
   vector<FQN> RotationPropertyFactory3::getNames() {
@@ -231,6 +236,7 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,ext,var,1);
     if(i==1)
       return new TwoDimensionalTabularFunction("NoName",parent);
+    return NULL;
   }
 
   vector<FQN> SymbolicFunctionPropertyFactory2::getNames() {
@@ -245,6 +251,7 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,ext,var,1);
     if(i==1)
       return new ModuloFunction("NoName",parent);
+    return NULL;
   }
 
   vector<FQN> SymbolicFunctionPropertyFactory3::getNames() {
@@ -271,6 +278,7 @@ namespace MBSimGUI {
       var.push_back("t");
       return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(parent,"VVS",var),MBSIM%"generalTranslation"));
     }
+    return NULL;
   }
 
   RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_) : parent(parent_) {
@@ -283,6 +291,7 @@ namespace MBSimGUI {
       return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2(parent),MBSIM%"stateDependentRotation"));
     if(i==1)
       return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3(parent),MBSIM%"timeDependentRotation"));
+    return NULL;
   }
 
   TabularFunctionPropertyFactory::TabularFunctionPropertyFactory(Element *parent_) : parent(parent_) {
@@ -314,6 +323,7 @@ namespace MBSimGUI {
       //return new ExtProperty(new ExtPhysicalVarProperty(input));
       return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0"),MBSIM%"xy",vector<string>(3,"")),"",4));
     }
+    return NULL;
   }
 
   FourierFunctionPropertyFactory::FourierFunctionPropertyFactory(Element *parent_) : parent(parent_) {
@@ -335,6 +345,7 @@ namespace MBSimGUI {
     if(i==1) {
       return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0"),MBSIM%"ab",vector<string>(3,"")),"",4));
     }
+    return NULL;
   }
 
   ConstraintPropertyFactory::ConstraintPropertyFactory(Element *parent_) : parent(parent_) {
@@ -347,6 +358,7 @@ namespace MBSimGUI {
       return new ExtProperty(new ChoiceProperty2(new FunctionPropertyFactory2(parent),MBSIM%"timeDependentConstraintFunction"));
     if(i==1)
       return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(parent,"VV",vector<string>(1,"q")),MBSIM%"stateDependentConstraintFunction"));
+    return NULL;
   }
 
   ConnectFramesPropertyFactory::ConnectFramesPropertyFactory(Element *parent_) : parent(parent_), name(2) {
@@ -373,6 +385,7 @@ namespace MBSimGUI {
       var.push_back("g");
       return new SymbolicFunction("NoName",parent,"SSS",var,1);
     }
+    return NULL;
   }
 
 }

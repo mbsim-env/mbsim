@@ -101,7 +101,7 @@ namespace MBSimGUI {
     //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
   }
 
-  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : factory(factory_), widget(0) {
+  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : widget(0), factory(factory_) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
     setLayout(layout);

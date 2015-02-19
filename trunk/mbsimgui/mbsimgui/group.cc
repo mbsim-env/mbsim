@@ -127,27 +127,28 @@ namespace MBSimGUI {
       contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
     for(unsigned int i=0; i<g.observer.size(); i++)
       observer.push_back(static_cast<Observer*>(g.observer[i]->clone()));;
+    return *this;
   }
 
   void Group::initialize() {
     Element::initialize();
 
-    for(int i=0; i<frame.size(); i++)
+    for(size_t i=0; i<frame.size(); i++)
       frame[i]->initialize();
 
-    for(int i=0; i<contour.size(); i++)
+    for(size_t i=0; i<contour.size(); i++)
       contour[i]->initialize();
 
-    for(int i=0; i<group.size(); i++)
+    for(size_t i=0; i<group.size(); i++)
       group[i]->initialize();
 
-    for(int i=0; i<object.size(); i++)
+    for(size_t i=0; i<object.size(); i++)
       object[i]->initialize();
 
-    for(int i=0; i<link.size(); i++)
+    for(size_t i=0; i<link.size(); i++)
       link[i]->initialize();
 
-    for(int i=0; i<observer.size(); i++)
+    for(size_t i=0; i<observer.size(); i++)
       observer[i]->initialize();
 
     if(frameOfReference.getProperty())
@@ -388,33 +389,33 @@ namespace MBSimGUI {
     DOMDocument *doc=ele0->getOwnerDocument();
     //  DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     ele1 = D(doc)->createElement( MBSIM%"frames" );
-    for(int i=1; i<frame.size(); i++)
+    for(size_t i=1; i<frame.size(); i++)
       Embed<Frame>::writeXML(frame[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
     ele1 = D(doc)->createElement( MBSIM%"contours" );
-    for(int i=0; i<contour.size(); i++)
+    for(size_t i=0; i<contour.size(); i++)
       Embed<Contour>::writeXML(contour[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
     ele1 = D(doc)->createElement( MBSIM%"groups" );
-    for(int i=0; i<group.size(); i++)
+    for(size_t i=0; i<group.size(); i++)
       Embed<Group>::writeXML(group[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
     ele1 = D(doc)->createElement( MBSIM%"objects" );
-    for(int i=0; i<object.size(); i++)
+    for(size_t i=0; i<object.size(); i++)
       Embed<Object>::writeXML(object[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
     ele1 = D(doc)->createElement( MBSIM%"links" );
-    for(int i=0; i<link.size(); i++)
+    for(size_t i=0; i<link.size(); i++)
       Embed<Link>::writeXML(link[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
     if(observer.size()) { 
       ele1 = D(doc)->createElement( MBSIM%"observers" );
-      for(int i=0; i<observer.size(); i++)
+      for(size_t i=0; i<observer.size(); i++)
         Embed<Observer>::writeXML(observer[i],ele1);
       ele0->insertBefore( ele1, NULL );
     }
@@ -430,7 +431,7 @@ namespace MBSimGUI {
   }
 
   Frame* Group::getFrame(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<frame.size(); i++) {
       if(frame[i]->getName() == name)
         return frame[i];
@@ -439,7 +440,7 @@ namespace MBSimGUI {
   }
 
   Contour* Group::getContour(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
         return contour[i];
@@ -448,7 +449,7 @@ namespace MBSimGUI {
   }
 
   Group* Group::getGroup(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<group.size(); i++) {
       if(group[i]->getName() == name)
         return group[i];
@@ -457,7 +458,7 @@ namespace MBSimGUI {
   }
 
   Object* Group::getObject(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<object.size(); i++) {
       if(object[i]->getName() == name)
         return object[i];
@@ -466,7 +467,7 @@ namespace MBSimGUI {
   }
 
   Link* Group::getLink(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<link.size(); i++) {
       if(link[i]->getName() == name)
         return link[i];
@@ -475,7 +476,7 @@ namespace MBSimGUI {
   }
 
   Observer* Group::getObserver(const string &name) const {
-    int i;
+    size_t i;
     for(i=0; i<observer.size(); i++) {
       if(observer[i]->getName() == name)
         return observer[i];

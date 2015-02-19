@@ -36,7 +36,7 @@ namespace MBSimGUI {
   extern bool absolutePath;
   extern QDir mbsDir;
 
-  Solver::Solver() : name("Solver"), embed(0,false) {
+  Solver::Solver() : embed(0,false), name("Solver") {
 
     embed.setProperty(new EmbedProperty(boost::bind(&Solver::getName, this)));
   }
@@ -61,7 +61,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* Solver::writeXMLFileEmbed(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = embed.writeXMLFile(parent);
 
     //  if(static_cast<const EmbedProperty*>(embed.getProperty())->hasParameterFile()) {

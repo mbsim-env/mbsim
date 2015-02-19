@@ -98,9 +98,9 @@ namespace MBSimGUI {
   void RigidBody::initialize() {
     Body::initialize();
 
-    for(int i=0; i<frame.size(); i++)
+    for(size_t i=0; i<frame.size(); i++)
       frame[i]->initialize();
-    for(int i=0; i<contour.size(); i++)
+    for(size_t i=0; i<contour.size(); i++)
       contour[i]->initialize();
   }
 
@@ -171,12 +171,12 @@ namespace MBSimGUI {
 
     DOMDocument *doc=ele0->getOwnerDocument();
     ele1 = D(doc)->createElement( MBSIM%"frames" );
-    for(int i=1; i<frame.size(); i++)
+    for(size_t i=1; i<frame.size(); i++)
       Embed<Frame>::writeXML(frame[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
     ele1 = D(doc)->createElement( MBSIM%"contours" );
-    for(int i=0; i<contour.size(); i++)
+    for(size_t i=0; i<contour.size(); i++)
       Embed<Contour>::writeXML(contour[i],ele1);
     ele0->insertBefore( ele1, NULL );
 

@@ -62,6 +62,7 @@ namespace MBSimGUI {
 
   class PropertyFactory {
     public:
+      virtual ~PropertyFactory() {}
       virtual PropertyInterface* createProperty(int i=0) = 0;
       virtual MBXMLUtils::FQN getName(int i=0) const { return ""; }
       virtual int getSize() const { return 0; }

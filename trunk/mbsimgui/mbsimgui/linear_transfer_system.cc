@@ -129,6 +129,7 @@ namespace MBSimGUI {
 
       return widgetContainer;
     }
+    return NULL;
   }
 
   LinearTransferSystemPropertyFactory::LinearTransferSystemPropertyFactory() {
@@ -200,6 +201,7 @@ namespace MBSimGUI {
       return propertyContainer;
     }
 
+    return NULL;
   }
 
 }

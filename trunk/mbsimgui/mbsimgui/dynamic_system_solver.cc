@@ -33,8 +33,7 @@ using namespace boost;
 namespace MBSimGUI {
 
   void Environment::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
+    E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
     //setAccelerationOfGravity(Element::getVec3(e));
   }
 

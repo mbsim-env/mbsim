@@ -80,10 +80,10 @@ namespace MBSimGUI {
 
   vector<vector<double> > mult(const vector<vector<double> > &A, const vector<vector<double> > &B) {
     vector<vector<double> > C(A.size());
-    for(int i=0; i<A.size(); i++) {
+    for(size_t i=0; i<A.size(); i++) {
       C[i].resize(B[0].size());
-      for(int j=0; j<B[0].size(); j++) {
-        for(int k=0; k<A[0].size(); k++)
+      for(size_t j=0; j<B[0].size(); j++) {
+        for(size_t k=0; k<A[0].size(); k++)
           C[i][j] += A[i][k]*B[k][j];
       }
     }

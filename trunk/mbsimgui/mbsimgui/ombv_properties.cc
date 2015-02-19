@@ -60,6 +60,7 @@ namespace MBSimGUI {
       return new CompoundRigidBodyProperty("Body"+toStr(count++),ID);
     if(i==7)
       return new InvisibleBodyProperty("Body"+toStr(count++),ID);
+    return NULL;
   }
 
   void OMBVObjectProperty::writeXMLFileID(DOMNode *parent) {
@@ -91,6 +92,7 @@ namespace MBSimGUI {
   DOMElement* MBSOMBVProperty::writeXMLFile(DOMNode *parent) {
     DOMElement *e=initXMLFile(parent);
     writeProperties(e);
+    return e;
   }
 
   DOMElement* MBSOMBVProperty::initXMLFile(DOMNode *parent) {
@@ -104,6 +106,7 @@ namespace MBSimGUI {
   DOMElement* MBSOMBVProperty::writeProperties(DOMElement *e) {
     diffuseColor.writeXMLFile(e);
     transparency.writeXMLFile(e);
+    return e;
   }
 
   void MBSOMBVProperty::fromWidget(QWidget *widget) {
@@ -636,7 +639,6 @@ namespace MBSimGUI {
 
   DOMElement* FrustumProperty::initializeUsingXML(DOMElement *element) {
     OMBVBodyProperty::initializeUsingXML(element);
-    DOMElement *e;
     base.initializeUsingXML(element);
     top.initializeUsingXML(element);
     height.initializeUsingXML(element);
@@ -685,7 +687,6 @@ namespace MBSimGUI {
 
   DOMElement* ExtrusionProperty::initializeUsingXML(DOMElement *element) {
     OMBVBodyProperty::initializeUsingXML(element);
-    DOMElement *e;
     windingRule.initializeUsingXML(element);
     height.initializeUsingXML(element);
     contour.initializeUsingXML(element);
