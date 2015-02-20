@@ -21,6 +21,7 @@
 #define _FIXED_NODAL_FRAME_H__
 
 #include "mbsim/frame.h"
+#include "mbsimFlexibleBody/utils/taylor.h"
 
 namespace MBSimFlexibleBody {
 
@@ -47,11 +48,13 @@ namespace MBSimFlexibleBody {
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
       void setPhi(const fmatvec::Mat3xV &Phi_) { Phi = Phi_; }
       void setPsi(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
-      void setPhi(const std::string &frame) { saved_frameOfReference = frame; }
       void setK0F(const std::vector<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
       void setK0M(const std::vector<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
       void setFrameOfReference(const FixedNodalFrame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
+
+      void setPhi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Phi_) { Phi = Phi_.getM0(); K0F = Phi_.getM1(); }
+      void setPsi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Psi_) { Psi = Psi_.getM0(); K0M = Psi_.getM1(); }
 
       void setJacobianOfDeformation(const fmatvec::MatV &J, int j=0) { WJD[j] = J; }
       fmatvec::MatV& getJacobianOfDeformation(int j=0) { return WJD[j]; }

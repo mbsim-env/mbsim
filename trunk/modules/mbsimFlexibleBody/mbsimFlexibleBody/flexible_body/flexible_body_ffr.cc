@@ -56,10 +56,7 @@ namespace MBSimFlexibleBody {
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEXIBLEBODY%"FlexibleBodyFFR")
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), C3(3), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
-
-    for(int i=0; i<3; i++)
-      C3[i].resize(3);
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
 
     K=new FixedNodalFrame("K");
     Body::addFrame(K);
@@ -111,15 +108,15 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::determineSID() {
     C2.resize(ne,NONINIT);
     C6.resize(ne);
-    Gr.M0.resize(ne);
-    Gr.M1.resize(ne);
-    Ge.M0.resize(ne);
-    Oe.M0.resize(ne,NONINIT);
-    Oe.M1.resize(6);
+    Gr.getM0().resize(ne);
+    Gr.getM1().resize(ne);
+    Ge.getM0().resize(ne);
+    Oe.getM0().resize(ne,NONINIT);
+    Oe.getM1().resize(6);
     std::vector<std::vector<fmatvec::SqrMatV> > Kom(3);
-    mCM.M0 = m*c0;
-    mmi.M0 = I0;
-    mCM.M1 = C1;
+    mCM.getM0() = m*c0;
+    mmi.getM0() = I0;
+    mCM.getM1() = C1;
     for(int i=0; i<3; i++) {
       Kom[i].resize(3);
       for(int j=0; j<3; j++) {
@@ -135,12 +132,12 @@ namespace MBSimFlexibleBody {
       C6[i].resize(ne);
     for(int i=0; i<ne; i++) {
       for(int j=0; j<3; j++)
-        Oe.M0.e(i,j) = C4[i](j,j);
-      Oe.M0(i,3) = C4[i].e(0,1)+C4[i].e(1,0);
-      Oe.M0(i,4) = C4[i].e(1,2)+C4[i].e(2,1); 
-      Oe.M0(i,5) = C4[i].e(2,0)+C4[i].e(0,2);
-      Gr.M0[i] = -2.*C4[i];
-      Gr.M1[i].resize(ne);
+        Oe.getM0().e(i,j) = C4[i](j,j);
+      Oe.getM0()(i,3) = C4[i].e(0,1)+C4[i].e(1,0);
+      Oe.getM0()(i,4) = C4[i].e(1,2)+C4[i].e(2,1); 
+      Oe.getM0()(i,5) = C4[i].e(2,0)+C4[i].e(0,2);
+      Gr.getM0()[i] = -2.*C4[i];
+      Gr.getM1()[i].resize(ne);
       C2.e(0,i) = C4[i].e(2,1)-C4[i].e(1,2);
       C2.e(1,i) = C4[i].e(0,2)-C4[i].e(2,0);
       C2.e(2,i) = C4[i].e(1,0)-C4[i].e(0,1);
@@ -158,13 +155,13 @@ namespace MBSimFlexibleBody {
         C6[j][i] = C6[i][j].T();
       }
       for(int j=0; j<ne; j++)
-        Gr.M1[i][j] = -2.*C6[i][j];
+        Gr.getM1()[i][j] = -2.*C6[i][j];
     }
-    Ct.M0 = C1.T();
+    Ct.getM0() = C1.T();
     for(unsigned int i=0; i<K0t.size(); i++)
-      Ct.M1.push_back(K0t[i]);
+      Ct.getM1().push_back(K0t[i]);
 
-    Cr.M0 = C2.T();
+    Cr.getM0() = C2.T();
 
     std::vector<fmatvec::SqrMatV> Kr(3);
     for(int i=0; i<3; i++)
@@ -174,36 +171,50 @@ namespace MBSimFlexibleBody {
     Kr[2] = -C3[0][1] + C3[0][1].T();
 
     for(unsigned int i=0; i<Kr.size(); i++)
-      Cr.M1.push_back(Kr[i]);
+      Cr.getM1().push_back(Kr[i]);
     for(unsigned int i=0; i<K0r.size(); i++)
-      Cr.M1[i] += K0r[i];
+      Cr.getM1()[i] += K0r[i];
 
-    Me.M0.resize(ne,NONINIT);
-    mmi.M1.resize(ne);
-    mmi.M2.resize(ne);
+    Me.getM0().resize(ne,NONINIT);
+    mmi.getM1().resize(ne);
+    mmi.getM2().resize(ne);
     for(int i=0; i<ne; i++) {
-      mmi.M1[i] = -ApAT(C4[i]);
-      mmi.M2[i].resize(ne);
+      mmi.getM1()[i] = -ApAT(C4[i]);
+      mmi.getM2()[i].resize(ne);
       for(int j=0; j<ne; j++)
-        mmi.M2[i][j] = -C6[i][j];
+        mmi.getM2()[i][j] = -C6[i][j];
       for(int j=i; j<ne; j++)
-        Me.M0.ej(i,j) = C3[0][0].e(i,j) + C3[1][1].e(i,j) + C3[2][2].e(i,j);
+        Me.getM0().ej(i,j) = C3[0][0].e(i,j) + C3[1][1].e(i,j) + C3[2][2].e(i,j);
     }
 
-    Ge.M0.resize(3);
+    Ge.getM0().resize(3);
     for(int i=0; i<3; i++)
-      Ge.M0[i].resize() = 2.*Kr[i];
+      Ge.getM0()[i].resize() = 2.*Kr[i];
 
     for(int i=0; i<3; i++)
-      Oe.M1[i].resize() = Kom[i][i];
-    Oe.M1[3].resize() = Kom[0][1] + Kom[0][1].T();
-    Oe.M1[4].resize() = Kom[1][2] + Kom[1][2].T();
-    Oe.M1[5].resize() = Kom[2][0] + Kom[2][0].T();
+      Oe.getM1()[i].resize() = Kom[i][i];
+    Oe.getM1()[3].resize() = Kom[0][1] + Kom[0][1].T();
+    Oe.getM1()[4].resize() = Kom[1][2] + Kom[1][2].T();
+    Oe.getM1()[5].resize() = Kom[2][0] + Kom[2][0].T();
     for(unsigned int i=0; i<K0om.size(); i++)
-      Oe.M1[i] += K0om[i];
+      Oe.getM1()[i] += K0om[i];
 
-    if(not(De.M0.size()))
-      De.M0 = beta.e(0)*Me.M0 + beta.e(1)*Ke.M0;
+    if(not(De.getM0().size()))
+      De.getM0() = beta.e(0)*Me.getM0() + beta.e(1)*Ke.getM0();
+
+    if(C7.size()) {
+      Ke.getM1().resize(C7.size());
+      if(C8.size()) {
+        Ke.getM2().resize(C8.size());
+        for(unsigned int i=0; i<C8.size(); i++)
+          Ke.getM2()[i].resize(C8.size());
+      }
+      for(unsigned int i=0; i<C7.size(); i++) {
+        Ke.getM1()[i].resize() = (C7[i].T() + 0.5*C7[i]);
+        for(unsigned int j=0; j<C8.size(); j++)
+          Ke.getM2()[i][j].resize() = 0.5*C8[i][j];
+      }
+    }
   }
 
   void FlexibleBodyFFR::prefillMassMatrix() {
@@ -215,9 +226,9 @@ namespace MBSimFlexibleBody {
     }
     for(int i=0; i<ne; i++) {
       for(int j=0; j<3; j++)
-        M_.e(i+6,j) = Ct.M0.e(i,j);
+        M_.e(i+6,j) = Ct.getM0().e(i,j);
       for(int j=i; j<ne; j++)
-        M_.ej(i+6,j+6) = Me.M0.ej(i,j);
+        M_.ej(i+6,j+6) = Me.getM0().ej(i,j);
     }
   }
 
@@ -585,17 +596,17 @@ namespace MBSimFlexibleBody {
     K->setPosition(WrPK + R->getPosition());
     K->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),WrPK));
 
-    Vec3 mc = mCM.M0 + mCM.M1*q(iqE);
+    Vec3 mc = mCM.getM0() + mCM.getM1()*q(iqE);
     SqrMat3 mtc = tilde(mc);
 
     SymMat3 I1;
     SqrMat3 I2;
     for (int i=0; i<ne; i++) {
-      I1 += mmi.M1[i]*q(iqE).e(i);
+      I1 += mmi.getM1()[i]*q(iqE).e(i);
       for (int j=0; j<ne; j++)
-        I2 += mmi.M2[i][j]*q(iqE).e(i)*q(iqE).e(j);
+        I2 += mmi.getM2()[i][j]*(q(iqE).e(i)*q(iqE).e(j));
     }
-    SymMat3 I = mmi.M0 + I1 + SymMat3(I2);
+    SymMat3 I = mmi.getM0() + I1 + SymMat3(I2);
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
         M_.e(i+3,j+3) = I.e(i,j);
@@ -605,16 +616,16 @@ namespace MBSimFlexibleBody {
 
     MatVx3 Cr1(ne,NONINIT);
     for(int i=0; i<3; i++)
-      Cr1.set(i,Cr.M1[i]*q(iqE));
+      Cr1.set(i,Cr.getM1()[i]*q(iqE));
     for(int i=0; i<ne; i++)
       for(int j=0; j<3; j++)
-        M_.e(i+6,j+3) = Cr.M0.e(i,j) + Cr1.e(i,j);
+        M_.e(i+6,j+3) = Cr.getM0().e(i,j) + Cr1.e(i,j);
 
-    MatVx3 Ct_ = Ct.M0;
-    if(Ct.M1.size()) {
+    MatVx3 Ct_ = Ct.getM0();
+    if(Ct.getM1().size()) {
       MatVx3 Ct1(ne,NONINIT);
       for(int i=0; i<3; i++)
-        Ct1.set(i,Ct.M1[i]*q(iqE)); 
+        Ct1.set(i,Ct.getM1()[i]*q(iqE)); 
       Ct_ += Ct1;
       for(int i=0; i<ne; i++)
         for(int j=0; j<3; j++)
@@ -623,21 +634,21 @@ namespace MBSimFlexibleBody {
 
     fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe_(ne,NONINIT), Oe1(ne,NONINIT);
     for(int i=0; i<6; i++)
-      Oe1.set(i,Oe.M1[i]*q(iqE));
+      Oe1.set(i,Oe.getM1()[i]*q(iqE));
 
-    Oe_ = Oe.M0 + Oe1;
+    Oe_ = Oe.getM0() + Oe1;
 
     std::vector<fmatvec::SqrMat3> Gr1(ne);
     fmatvec::SqrMat3 hom21;
     for(int i=0; i<ne; i++) {
       Gr1[i].init(0);
       for(int j=0; j<ne; j++)
-        Gr1[i] += Gr.M1[j][i]*q(iqE).e(j);
-      hom21 += (Gr.M0[i]+Gr1[i])*u(iuE).e(i);
+        Gr1[i] += Gr.getM1()[j][i]*q(iqE).e(j);
+      hom21 += (Gr.getM0()[i]+Gr1[i])*u(iuE).e(i);
     }
     fmatvec::MatVx3 Ge_(ne,NONINIT);
     for(int i=0; i<3; i++)
-      Ge_.set(i,Ge.M0[i]*u(iuE));
+      Ge_.set(i,Ge.getM0()[i]*u(iuE));
 
     Vec3 om = K->getOrientation().T()*K->getAngularVelocity();
     Vector<Fixed<6>,double> omq;
@@ -658,14 +669,14 @@ namespace MBSimFlexibleBody {
     hg.set(Index(3,5),mtc*Kg);
     hg.set(Index(6,hg.size()-1),Ct_*Kg);
 
-    SqrMatV Ke_ = SqrMatV(Ke.M0);
-    for(unsigned int i=0; i<Ke.M1.size(); i++) {
-      Ke_ += Ke.M1[i]*q(iqE).e(i);
-      for(unsigned int j=0; i<Ke.M2.size(); j++)
-        Ke_ += Ke.M2[i][j]*q(iqE).e(i)*q(iqE).e(j);
+    SqrMatV Ke_ = SqrMatV(Ke.getM0());
+    for(unsigned int i=0; i<Ke.getM1().size(); i++) {
+      Ke_ += Ke.getM1()[i]*q(iqE).e(i);
+      for(unsigned int j=0; j<Ke.getM2().size(); j++)
+        Ke_ += Ke.getM2()[i][j]*(q(iqE).e(i)*q(iqE).e(j));
     }
 
-    he.set(Index(6,hg.size()-1),Ke_*q(iqE) + De.M0*qd(iqE));
+    he.set(Index(6,hg.size()-1),Ke_*q(iqE) + De.getM0()*qd(iqE));
 
     h_ = hom + hg - he;
 
