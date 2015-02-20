@@ -22,6 +22,7 @@
 
 #include "mbsim/body.h"
 #include "mbsim/functions/auxiliary_functions.h"
+#include "mbsimFlexibleBody/utils/taylor.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -39,13 +40,6 @@ namespace MBSimFlexibleBody {
   class FixedNodalFrame;
 
   class FlexibleBodyFFR : public MBSim::Body {
-    template<typename T0, typename T1=T0, typename T2=T1>
-    class Taylor {
-      public:
-        T0 M0;
-        T1 M1;
-        T2 M2;
-    };
     public:
 
       FlexibleBodyFFR(const std::string &name=""); 
@@ -182,7 +176,7 @@ namespace MBSimFlexibleBody {
       double getMass() const { return m; }
       FixedNodalFrame* getFrameK() { return K; };
 
-      // Basic data
+      // Interface for basic data
       /**
        * \brief Set the mass.
        */
@@ -194,29 +188,41 @@ namespace MBSimFlexibleBody {
        */
       void setI0(const fmatvec::SymMat3& I0_) { I0 = I0_; }
       void setC1(const fmatvec::Mat3xV &C1_) { C1 = C1_; }
-      void setC3(const std::vector<std::vector<fmatvec::SqrMatV> > &C3_) { 
-        for(int i=0; i<3; i++)
-          for(int j=0; j<3; j++)
-            C3[i][j].resize() = C3_[i][j]; 
-      }
+      void setC3(const std::vector<std::vector<fmatvec::SqrMatV> > &C3_) { C3 = C3_; }
       void setC4(const std::vector<fmatvec::SqrMat3> &C4_) { C4 = C4_; }
-      void setKe(const fmatvec::SymMatV &Ke_) { Ke.M0 = Ke_; }
-      void setKeN1(const std::vector<fmatvec::SqrMatV> &KeN_) { Ke.M1 = KeN_; }
-      void setKeN2(const std::vector<std::vector<fmatvec::SqrMatV> > &KeN_) { Ke.M2 = KeN_; }
-      void setDe(const fmatvec::SymMatV &De_) { De.M0 = De_; }
+      void setKe(const fmatvec::SymMatV &Ke_) { Ke.setM0(Ke_); }
+      void setDe(const fmatvec::SymMatV &De_) { De.setM0(De_); }
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
-      // End of basic data
+      // End of interface
 
-      // Geometric stiffness matrices 
+      // Interface for nonlinear stiffness matrices
+      void setC7(const std::vector<fmatvec::SqrMatV> &C7_) { C7 = C7_; }
+      void setC8(const std::vector<std::vector<fmatvec::SqrMatV> > &C8_) { C8 = C8_; }
+      // End of interface
+
+      // Interface for geometric stiffness matrices 
       void setK0t(const std::vector<fmatvec::SqrMatV> &K0t_) { K0t = K0t_; }
       void setK0r(const std::vector<fmatvec::SqrMatV> &K0r_) { K0r = K0r_; }
       void setK0om(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
-      // End of geometric stiffness matrices 
+      // End of interface
 
+      // Interface for standard input data
+      void setmCM(const Taylor<fmatvec::Vec3,fmatvec::Mat3xV> &mCM_) { mCM = mCM_; }
+      void setmmi(const Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &mmi_) { mmi = mmi_; }
+      void setCt(const Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > &Ct_) { Ct = Ct_; }
+      void setCr(const Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > &Cr_) { Cr = Cr_; }
+      void setMe(const Taylor<fmatvec::SymMat> &Me_) { Me = Me_; }
+      void setGr(const Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &Gr_) { Gr = Gr_; }
+      void setGe(const Taylor<std::vector<fmatvec::SqrMatV> > &Ge_) { Ge = Ge_; }
+      void setOe(const Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > &Oe_) { Oe = Oe_; }
+      void setKe(const Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > &Ke_) { Ke = Ke_; }
+      void setDe(const Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > &De_) { De = De_; }
+      // End of interface
+      
       /**
-       * \brief Set standard input data (SID) file.
+       * \brief Read standard input data (SID) from file.
        */
-      void setSIDFile(const std::string& file) { THROW_MBSIMERROR("Interface not yet implemented."); }
+      void readSIDFromFile(const std::string& file) { THROW_MBSIMERROR("Interface not yet implemented."); }
 
       void addFrame(FixedNodalFrame *frame); 
 
@@ -274,6 +280,8 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::SqrMat3> C4;
       std::vector<fmatvec::Mat3xV> C5;
       std::vector<std::vector<fmatvec::SqrMat3> > C6;
+      std::vector<fmatvec::SqrMatV> C7;
+      std::vector<std::vector<fmatvec::SqrMatV> > C8;
       std::vector<fmatvec::SqrMatV> K0t, K0r, K0om;
       fmatvec::Vec2 beta;
       // End of basic input data
