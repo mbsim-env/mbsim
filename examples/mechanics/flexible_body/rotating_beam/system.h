@@ -9,7 +9,7 @@ using namespace MBSim;
 
 class CrankMechanism : public DynamicSystemSolver {
   public:
-    CrankMechanism(const string &name, bool geo); 
+    CrankMechanism(const string &name, int stiffening); 
 };
 
 #endif

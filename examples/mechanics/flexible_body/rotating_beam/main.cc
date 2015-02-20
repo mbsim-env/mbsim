@@ -9,7 +9,7 @@ using namespace MBSimIntegrator;
 int main (int argc, char* argv[]) {
 
   // No consideration of geometric stiffness matrices
-  DynamicSystemSolver *sys = new CrankMechanism("MBS0",false);
+  DynamicSystemSolver *sys = new CrankMechanism("MBS0",0);
   sys->initialize();
 
   LSODEIntegrator integrator;
@@ -22,7 +22,15 @@ int main (int argc, char* argv[]) {
   delete sys;
 
   // Consideration of geometric stiffness matrices
-  sys = new CrankMechanism("MBS1",true);
+  sys = new CrankMechanism("MBS1",1);
+  sys->initialize();
+
+  integrator.integrate(*sys);
+
+  delete sys;
+
+  // Consideration of geometric stiffness matrices
+  sys = new CrankMechanism("MBS2",2);
   sys->initialize();
 
   integrator.integrate(*sys);
