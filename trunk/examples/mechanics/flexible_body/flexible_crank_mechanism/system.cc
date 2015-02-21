@@ -147,6 +147,9 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setKe(Ke);
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);
+  
+  static_cast<FixedNodalFrame*>(body2->getFrame("Q"))->setsigmahel("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
 
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
