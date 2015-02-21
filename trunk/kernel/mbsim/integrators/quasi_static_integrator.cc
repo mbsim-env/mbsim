@@ -45,7 +45,7 @@ namespace MBSimIntegrator {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuasiStaticIntegrator, MBSIMINT % "QuasiStaticIntegrator")
 
   QuasiStaticIntegrator::QuasiStaticIntegrator() :
-      dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), maxExtraPolate(0), updateJacobianEvery(1), s0(0.), time(0.), stepPlot(0) {
+      dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), maxExtraPolate(0), extraPolateAfter(2), updateJacobianEvery(1), s0(0.), time(0.), stepPlot(0) {
   }
 
   void QuasiStaticIntegrator::preIntegrate(DynamicSystemSolver& system) {
@@ -130,7 +130,7 @@ namespace MBSimIntegrator {
 
       qlaStart = qla;
       if (integrationSteps > 1) {
-        if (maxExtraPolate == 1 and integrationSteps > 2) {
+        if (maxExtraPolate == 1 and integrationSteps > extraPolateAfter) {
           qlaStart = 2. * qla - qlaOld;
         }
         else if (maxExtraPolate == 2) {
