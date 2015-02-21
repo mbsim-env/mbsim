@@ -40,7 +40,9 @@ namespace MBSimFlexibleBody {
 
       virtual void init(InitStage stage);
 
+      int getNumberOfModeShapes() const { return nq; }
       void setNumberOfModeShapes(int nq_) { nq = nq_; }
+
       void updateqRef(const fmatvec::Vec& ref) { q>>ref; }
       void updateqdRef(const fmatvec::Vec& ref) { qd>>ref; }
 
@@ -50,11 +52,15 @@ namespace MBSimFlexibleBody {
       void setPsi(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
       void setK0F(const std::vector<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
       void setK0M(const std::vector<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
+      void setsigma0(const fmatvec::Vector<fmatvec::Fixed<6>, double > &sigma0_) { sigma0 = sigma0_; }
+      void setsigmahel(const fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> &sigmahel_) { sigmahel = sigmahel_; }
+      void setsigmahen(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
       void setFrameOfReference(const FixedNodalFrame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       void setPhi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Phi_) { Phi = Phi_.getM0(); K0F = Phi_.getM1(); }
       void setPsi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Psi_) { Psi = Psi_.getM0(); K0M = Psi_.getM1(); }
+      void setsigma(const Taylor<fmatvec::Vector<fmatvec::Fixed<6>, double >,fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>,std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigma_) { sigma0 = sigma_.getM0(); sigmahel = sigma_.getM1(); sigmahen = sigma_.getM2(); }
 
       void setJacobianOfDeformation(const fmatvec::MatV &J, int j=0) { WJD[j] = J; }
       fmatvec::MatV& getJacobianOfDeformation(int j=0) { return WJD[j]; }
@@ -74,6 +80,8 @@ namespace MBSimFlexibleBody {
       void updateJacobians(int j=0);
       void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud); 
 
+      virtual void plot(double t, double dt = 1); 
+
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
@@ -83,6 +91,9 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat3 ARP, APK, E;
       fmatvec::Mat3xV WPhi, WPsi, Phi, Psi;
       std::vector<fmatvec::SqrMatV> K0F, K0M;
+      fmatvec::Vector<fmatvec::Fixed<6>, double > sigma0;
+      fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahel;
+      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahen;
       fmatvec::MatV WJD[2];
       fmatvec::Vec q, qd;
       int nq;

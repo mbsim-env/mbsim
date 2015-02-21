@@ -215,6 +215,9 @@ namespace MBSimFlexibleBody {
           Ke.getM2()[i][j].resize() = 0.5*C8[i][j];
       }
     }
+
+    ksigma.setM0(ke0);
+    ksigma.setM1(Ke0);
   }
 
   void FlexibleBodyFFR::prefillMassMatrix() {
@@ -234,6 +237,9 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::init(InitStage stage) {
     if(stage==preInit) {
+     ne = C1.cols();
+     for(unsigned int i=0; i<frame.size(); i++)
+       static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
 
       Mat3xV T(uSize[0]);
       Vec3 t;
@@ -255,8 +261,7 @@ namespace MBSimFlexibleBody {
         nqR = fAPK->getArg1Size();
         nuR = fAPK->getArg1Size(); // TODO fTR->getArg1Size()
       }
-      ne = C1.cols();
-
+ 
       if(translationDependentRotation) {
         assert(nqT == nqR);
         assert(nuT == nuR);
@@ -305,9 +310,7 @@ namespace MBSimFlexibleBody {
     else if(stage==resize) {
       Body::init(stage);
 
-      for(unsigned int i=0; i<frame.size(); i++)
-        static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
-
+  
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
       K->getJacobianOfDeformation().resize(ne,hSize[0]);
@@ -676,7 +679,14 @@ namespace MBSimFlexibleBody {
         Ke_ += Ke.getM2()[i][j]*(q(iqE).e(i)*q(iqE).e(j));
     }
 
-    he.set(Index(6,hg.size()-1),Ke_*q(iqE) + De.getM0()*qd(iqE));
+    VecV ke = Ke_*q(iqE) + De.getM0()*qd(iqE);
+
+    if(ksigma.getM0().size())
+      ke += ksigma.getM0();
+    if(ksigma.getM1().size())
+      ke += ksigma.getM1()*q(iqE);
+
+    he.set(Index(6,hg.size()-1),ke);
 
     h_ = hom + hg - he;
 
