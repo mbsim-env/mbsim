@@ -135,6 +135,9 @@ namespace MBSimIntegrator {
       void setmaxExtraPolate(int value) {
         maxExtraPolate = value;
       }
+      void setextraPolateAfter(int value) {
+        extraPolateAfter = value;
+      }
       void setupdateJacobianEvery(int value) {
         updateJacobianEvery = value;
       }
@@ -170,6 +173,11 @@ namespace MBSimIntegrator {
        * \brief value of how many points in the past should be used to extrapolate for new value
        */
       int maxExtraPolate;
+
+      /*!
+       * \brief extrapolate after such and that integration steps
+       */
+      int extraPolateAfter;
 
       /*!
        * \brief value of how often the Jacobian should be updated every step
