@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
   LSODEIntegrator integrator;
   integrator.setEndTime(1);
   integrator.setAbsoluteTolerance(1e-10);
-  integrator.setAbsoluteTolerance(1e-10);
+  integrator.setRelativeTolerance(1e-10);
   integrator.setPlotStepSize(1e-3);
   integrator.integrate(*sys);
 
