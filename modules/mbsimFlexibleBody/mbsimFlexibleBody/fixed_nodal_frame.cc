@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "fixed_nodal_frame.h"
+#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -33,7 +34,7 @@ namespace MBSimFlexibleBody {
         setFrameOfReference(getByPath<FixedNodalFrame>(saved_frameOfReference));
       Frame::init(stage);
     }
-    if(stage==resize) {
+    else if(stage==resize) {
       WJD[0].resize(nq,hSize[0]);
       WJD[1].resize(nq,hSize[1]);
       if(not(Phi.cols()))
@@ -43,6 +44,17 @@ namespace MBSimFlexibleBody {
       q.resize(nq);
       qd.resize(nq);
       Frame::init(stage);
+    }
+    else if(stage==plotting) {
+      updatePlotFeatures();
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(globalPosition)==enabled) {
+          for(int i=0; i<6; i++)
+            plotColumns.push_back("sigma("+MBSim::numtostr(i)+")");
+        }
+        Frame::init(stage);
+      }
     }
     else
       Frame::init(stage);
@@ -107,6 +119,23 @@ namespace MBSimFlexibleBody {
   void FixedNodalFrame::updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
     setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
     setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
+  }
+
+  void FixedNodalFrame::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+//      if(getPlotFeature(stresses)==enabled) {
+      Vector<Fixed<6>,double> sigma = sigma0;
+      if(sigmahel.cols()) {
+        fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahe = sigmahel;
+        for(unsigned int i=0; i<sigmahen.size(); i++)
+          sigmahe += sigmahen[i]*q.e(i);
+        sigma += sigmahe*q;
+      }
+      for(int i=0; i<6; i++)
+        plotVector.push_back(sigma(i));
+//      }
+      Frame::plot(t,dt);
+    }
   }
 
   void FixedNodalFrame::initializeUsingXML(DOMElement *element) {

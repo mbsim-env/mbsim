@@ -206,6 +206,11 @@ namespace MBSimFlexibleBody {
       void setK0om(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
       // End of interface
 
+      // Interface for reference stresses 
+      void setke0(const fmatvec::VecV &ke0_) { ke0 = ke0_; }
+      void setKe0(const fmatvec::SqrMatV &Ke0_) { Ke0 = Ke0_; }
+      // End of interface
+
       // Interface for standard input data
       void setmCM(const Taylor<fmatvec::Vec3,fmatvec::Mat3xV> &mCM_) { mCM = mCM_; }
       void setmmi(const Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &mmi_) { mmi = mmi_; }
@@ -217,6 +222,7 @@ namespace MBSimFlexibleBody {
       void setOe(const Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > &Oe_) { Oe = Oe_; }
       void setKe(const Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > &Ke_) { Ke = Ke_; }
       void setDe(const Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > &De_) { De = De_; }
+      void setksigma(const Taylor<fmatvec::VecV,fmatvec::SqrMatV> &ksigma_) { ksigma = ksigma_; }
       // End of interface
       
       /**
@@ -284,6 +290,8 @@ namespace MBSimFlexibleBody {
       std::vector<std::vector<fmatvec::SqrMatV> > C8;
       std::vector<fmatvec::SqrMatV> K0t, K0r, K0om;
       fmatvec::Vec2 beta;
+      fmatvec::VecV ke0;
+      fmatvec::SqrMatV Ke0;
       // End of basic input data
 
       // Standard input data (SID)
@@ -296,6 +304,7 @@ namespace MBSimFlexibleBody {
       Taylor<std::vector<fmatvec::SqrMatV> > Ge;
       Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > Oe;
       Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > Ke, De;
+      Taylor<fmatvec::VecV,fmatvec::SqrMatV> ksigma;
       // End of standard input data (SID)
 
       // Number of mode shapes 
