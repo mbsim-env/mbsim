@@ -36,7 +36,7 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
 fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
-CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare"
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes"
 
 AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
 
