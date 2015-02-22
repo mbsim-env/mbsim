@@ -546,12 +546,12 @@ namespace {
   PatchELF::PatchELF(const path &filename) {
     patchedFilename=filename;
 #ifndef _WIN32
-    patchedFilename=temp_directory_path()/unique_path();
+    patchedFilename=".patchelf."+filename.filename().string();
     copy_file(filename, patchedFilename);
-    string patchelf(MBSIMFMI_PATCHELF);
+    path patchelf(MBSIMFMI_PATCHELF);
     if(!exists(patchelf))
-      getInstallPath()/"bin"/"patchelf";
-    if(system((patchelf+" --set-rpath \\$ORIGIN/../lib:\\$ORIGIN "+patchedFilename.string()).c_str()))
+      patchelf=getInstallPath()/"bin"/"patchelf";
+    if(system((patchelf.string()+" --set-rpath \\$ORIGIN/../lib:\\$ORIGIN "+patchedFilename.string()).c_str()))
       throw runtime_error("Cannot set rpath of octave oct-file.");
 #endif
   }
