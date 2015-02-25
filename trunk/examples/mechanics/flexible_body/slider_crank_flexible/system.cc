@@ -32,6 +32,7 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
+using namespace boost;
 
 class Moment : public MBSim::Function<fmatvec::VecV(double)> {
   public:

@@ -29,6 +29,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimHydraulics;
+using namespace boost;
 
 string getBodyName(int i) {
   string name;
@@ -53,26 +54,26 @@ string getBodyName(int i) {
 }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, double dphi) {
+shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > createPiece(double rI, double rA, double phi0, double dphi) {
   int nI = int((dphi*rI)/(5e-2*rI));
   int nA = int((dphi*rA)/(5e-2*rI));
 
-  vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
+  shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
   for (int i=0; i<=nI; i++) {
     double phi = phi0 + double(i)/double(nI) * dphi;
     double x=rI*cos(phi);
     double y=rI*sin(phi);
     int b=((i==0)||(i==nI))?1:0;
-    vpp->push_back(new OpenMBV::PolygonPoint(x, y, b));
+    vpp->push_back(OpenMBV::PolygonPoint::create(x, y, b));
   }
   for (int i=nA; i>=0; i--) {
     double phi = phi0 + double(i)/double(nA) * dphi;
     double x=rA*cos(phi);
     double y=rA*sin(phi);
     int b=((i==0)||(i==nA))?1:0;
-    vpp->push_back(new OpenMBV::PolygonPoint(x, y, b));
+    vpp->push_back(OpenMBV::PolygonPoint::create(x, y, b));
   }
-  vpp->push_back(new OpenMBV::PolygonPoint(*(*vpp)[0]));
+  vpp->push_back((*vpp)[0]);
 
   return vpp;
 }

@@ -22,6 +22,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimFlexibleBody;
+using namespace boost;
 
 Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectName) {
 
@@ -220,11 +221,11 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   cuboid->setNumberOfSpinePoints(Elements*spineDiscretisation+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666,1,0.3333); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
-  vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
+  shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
   int circDiscretisation = 36;
   for(int i=0;i<=circDiscretisation;i++) {
     double phi = 2*M_PI/circDiscretisation*i;
-    OpenMBV::PolygonPoint* corner = new OpenMBV::PolygonPoint(r*cos(phi),r*sin(phi),1);
+    shared_ptr<OpenMBV::PolygonPoint>  corner = OpenMBV::PolygonPoint::create(r*cos(phi),r*sin(phi),1);
     rectangle->push_back(corner);
   }
 
