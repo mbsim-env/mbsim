@@ -100,7 +100,7 @@ namespace MBSimFlexibleBody {
       void setLehrDamping(double d);
       void setElementPlotList(fmatvec::VecInt plotElements_) {plotElements = plotElements_;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
 #endif
       double getLength() const { return L; }
       /***************************************************/

@@ -58,7 +58,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setInitialGeneralizedPosition(q0);
   body->setInitialGeneralizedVelocity(u0);
 
-  OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
+  boost::shared_ptr<OpenMBV::Sphere> sphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(0.1);
   sphere->setTransparency(0.3);
   body->setOpenMBVRigidBody(sphere);

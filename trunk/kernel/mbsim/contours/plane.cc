@@ -29,6 +29,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -54,8 +55,8 @@ namespace MBSim {
 //#ifdef HAVE_OPENMBVCPPINTERFACE
 //    if(openMBVRigidBody) {
 //      DOMElement *ele1 = new DOMElement(MBSIM%"enableOpenMBV");
-//      addElementText(ele1,MBSIM%"size",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXSize());
-//      addElementText(ele1,MBSIM%"numberOfLines",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXNumber());
+//      addElementText(ele1,MBSIM%"size",static_pointer_cast<OpenMBV::Grid>(openMBVRigidBody)->getXSize());
+//      addElementText(ele1,MBSIM%"numberOfLines",static_pointer_cast<OpenMBV::Grid>(openMBVRigidBody)->getXNumber());
 //      ele0->LinkEndChild(ele1);
 //    }
 //#endif

@@ -220,7 +220,7 @@ namespace MBSimFlexibleBody {
           }
         }
 
-        ((OpenMBV::NurbsDisk*) openMBVBody)->append(data);
+        ((OpenMBV::NurbsDisk*) openMBVBody.get())->append(data);
       }
 #endif
 #endif

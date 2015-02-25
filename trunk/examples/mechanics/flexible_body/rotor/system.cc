@@ -93,13 +93,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   welle->setTorsionalDamping(0.01);
   this->addObject(welle);
   #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cylinder=new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cylinder->setNumberOfSpinePoints(Elements*4+1); // resolution of visualisation
   cylinder->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cylinder->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *circle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   for(int i=0;i<20;i++) {
-    OpenMBV::PolygonPoint *corner  = new OpenMBV::PolygonPoint(R_GLS*0.5*cos(i*2*M_PI/20),R_GLS*0.5*sin(i*2*M_PI/20),1);
+    OpenMBV::PolygonPoint* corner  = new OpenMBV::PolygonPoint(R_GLS*0.5*cos(i*2*M_PI/20),R_GLS*0.5*sin(i*2*M_PI/20),1);
     circle->push_back(corner);
   }
   cylinder->setContour(circle);
@@ -119,7 +119,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(ScheibeS);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Frustum* ScheibeSMBV = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> ScheibeSMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   ScheibeSMBV->setBaseRadius(2.*r);
   ScheibeSMBV->setTopRadius(2.*r);
   ScheibeSMBV->setHeight(L/20.); 

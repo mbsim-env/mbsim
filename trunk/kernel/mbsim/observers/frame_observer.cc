@@ -26,17 +26,11 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
   FrameObserver::FrameObserver(const std::string &name) : Observer(name), frame(0) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVPosition=0;
-    openMBVVelocity=0;
-    openMBVAngularVelocity=0;
-    openMBVAcceleration=0;
-    openMBVAngularAcceleration=0;
-#endif
   }
 
   void FrameObserver::init(InitStage stage) {

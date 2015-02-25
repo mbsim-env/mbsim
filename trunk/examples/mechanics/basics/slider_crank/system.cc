@@ -210,17 +210,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank,width_crank,thickness_crank);
   openMBVCrank->setDiffuseColor(180./360.,1,1);
   crank->setOpenMBVRigidBody(openMBVCrank);
 
-  OpenMBV::Cuboid *openMBVRod = new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVRod = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVRod->setLength(length_rod,width_rod,thickness_rod);
   openMBVRod->setDiffuseColor(180./360.,1,1);
   rod->setOpenMBVRigidBody(openMBVRod);
 
-  OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVPiston=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVPiston->setLength(length_piston,width_piston,thickness_piston);
   openMBVPiston->setDiffuseColor(240./360.,1,1);
   piston->setOpenMBVRigidBody(openMBVPiston);

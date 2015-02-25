@@ -36,8 +36,8 @@ namespace MBSim {
     private:
       RigidBody* body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
-      OpenMBV::Arrow *openMBVAxisOfRotation;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVAxisOfRotation;
 #endif
 
     public:

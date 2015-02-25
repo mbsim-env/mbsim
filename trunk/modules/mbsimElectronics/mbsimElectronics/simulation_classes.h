@@ -34,7 +34,7 @@ namespace MBSimElectronics {
       int getNumberOfBranches() {return branch.size();}
       Branch* getBranch(int i) {return branch[i];}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
@@ -82,7 +82,7 @@ namespace MBSimElectronics {
       void updateW0FromW1(double t); 
       void updateV0FromV1(double t);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
@@ -203,7 +203,7 @@ namespace MBSimElectronics {
       virtual void setName(std::string name) {Object::setName(name);}
       Object* getObjectDependingOn() const {return branch;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 

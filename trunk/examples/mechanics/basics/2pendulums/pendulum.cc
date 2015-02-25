@@ -38,7 +38,7 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody* obj1=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj1=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj1->setIvFileName("wrl/pendel1.wrl");
   obj1->setScaleFactor(0.1*0.3);
   obj1->setInitialRotation(0,0,M_PI/2);
@@ -64,7 +64,7 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody* obj2=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj2=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj2->setIvFileName("wrl/pendel2.wrl");
   obj2->setScaleFactor(0.1*0.3);
   obj2->setInitialRotation(0,0,M_PI/2);

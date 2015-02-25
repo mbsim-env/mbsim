@@ -34,8 +34,8 @@ namespace MBSim {
       Frame* frame;
       std::string saved_frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group *openMBVPosGrp, *openMBVVelGrp, *openMBVAngVelGrp, *openMBVAccGrp, *openMBVAngAccGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAngularVelocity, *openMBVAcceleration, *openMBVAngularAcceleration;
+      boost::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAngVelGrp, openMBVAccGrp, openMBVAngAccGrp;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAngularVelocity, openMBVAcceleration, openMBVAngularAcceleration;
 #endif
 
     public:
@@ -79,11 +79,11 @@ namespace MBSim {
       Frame* refFrame;
       std::string saved_frameOfReference;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVrTrans, *openMBVrRel;
-      OpenMBV::Arrow *openMBVvTrans, *openMBVvRot, *openMBVvRel, *openMBVvF;
-      OpenMBV::Arrow *openMBVaTrans, *openMBVaRot, *openMBVaZp, *openMBVaCor, *openMBVaRel, *openMBVaF;
-      OpenMBV::Arrow *openMBVomTrans, *openMBVomRel;
-      OpenMBV::Arrow *openMBVpsiTrans, *openMBVpsiRot, *openMBVpsiRel;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVrTrans, openMBVrRel;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVvTrans, openMBVvRot, openMBVvRel, openMBVvF;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVaTrans, openMBVaRot, openMBVaZp, openMBVaCor, openMBVaRel, openMBVaF;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVomTrans, openMBVomRel;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVpsiTrans, openMBVpsiRot, openMBVpsiRel;
 #endif
 
     public:

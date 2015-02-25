@@ -156,11 +156,11 @@ namespace MBSimHydraulics {
         if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
           if (openMBVArrowSize>0) {
             for (int i=0; i<int(nTrans+nRot); i++) {
-              openMBVArrows.push_back(new OpenMBV::Arrow);
+              openMBVArrows.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Arrow>());
               openMBVArrows.back()->setArrowHead(openMBVArrowSize/4., openMBVArrowSize/4.);
               openMBVArrows.back()->setDiameter(openMBVArrowSize/10.);
             }
-            openMBVGrp = new OpenMBV::Group();
+            openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVGrp->setName(name);
             openMBVGrp->setExpand(false);
             parent->getOpenMBVGrp()->addObject(openMBVGrp);

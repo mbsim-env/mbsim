@@ -30,13 +30,11 @@
 
 using namespace fmatvec;
 using namespace std;
+using namespace boost;
 
 namespace MBSim {
 
   LinkMechanics::LinkMechanics(const std::string &name) : Link(name) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVForceGrp=0;
-#endif
   }
 
   LinkMechanics::~LinkMechanics() {}
@@ -201,7 +199,7 @@ namespace MBSim {
 
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        openMBVForceGrp=new OpenMBV::Group;
+        openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVForceGrp->setExpand(false);
         openMBVForceGrp->setName(name+"_ArrowGroup");
         parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
@@ -234,7 +232,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void LinkMechanics::setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+  void LinkMechanics::setOpenMBVForceArrow(const shared_ptr<OpenMBV::Arrow> &arrow, const vector<bool>& which) {
     bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
       if(which[i]==true) {
@@ -243,14 +241,14 @@ namespace MBSim {
           flag = false;
         }
         else 
-          openMBVArrowF.push_back(new OpenMBV::Arrow(*arrow));
+          openMBVArrowF.push_back(OpenMBV::ObjectFactory::create(arrow));
       }
       else
-        openMBVArrowF.push_back(NULL);
+        openMBVArrowF.push_back(shared_ptr<OpenMBV::Arrow>());
     }
   }
 
-  void LinkMechanics::setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+  void LinkMechanics::setOpenMBVMomentArrow(const shared_ptr<OpenMBV::Arrow> &arrow, const vector<bool>& which) {
     bool flag = true;
     for(unsigned int i=0; i<which.size(); i++) {
       if(which[i]==true) {
@@ -259,10 +257,10 @@ namespace MBSim {
           flag = false;
         }
         else
-          openMBVArrowM.push_back(new OpenMBV::Arrow(*arrow));
+          openMBVArrowM.push_back(OpenMBV::ObjectFactory::create(arrow));
       }
       else
-        openMBVArrowM.push_back(NULL);
+        openMBVArrowM.push_back(shared_ptr<OpenMBV::Arrow>());
     }
   }
 #endif

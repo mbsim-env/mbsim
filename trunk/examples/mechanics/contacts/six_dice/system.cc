@@ -77,7 +77,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   addFrame(new FixedRelativeFrame("Is",rB,SqrMat(3,EYE)));
   cup->setFrameOfReference(getFrame("Is"));
   addObject(cup);
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("iv/cup.iv");
   obj->setScaleFactor(0.1);
   obj->setInitialRotation(0,0,0);
@@ -167,7 +167,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     cuboid->setZLength(h);
     //cuboid->enableOpenMBV();
 
-    obj=new OpenMBV::IvBody;
+    obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     stringstream ivname;
     ivname << "iv/cube" << ceil((i+1)/2.) << ".iv";
     obj->setIvFileName(ivname.str());

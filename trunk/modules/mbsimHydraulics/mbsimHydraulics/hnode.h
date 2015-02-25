@@ -108,8 +108,8 @@ namespace MBSimHydraulics {
       double QHyd;
       unsigned int nLines;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group * openMBVGrp;
-      OpenMBV::Sphere * openMBVSphere;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
+      boost::shared_ptr<OpenMBV::Sphere> openMBVSphere;
       fmatvec::Vec3 WrON;
 #endif
   };

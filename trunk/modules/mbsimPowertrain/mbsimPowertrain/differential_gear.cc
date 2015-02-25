@@ -14,6 +14,7 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace boost;
 
 namespace MBSimPowertrain {
 
@@ -174,14 +175,14 @@ namespace MBSimPowertrain {
     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Cube *cube=new OpenMBV::Cube;
+    shared_ptr<OpenMBV::Cube> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
     cube->setLength(0.01);
     cube->setDiffuseColor(0.1,1,1);
     housing->setOpenMBVRigidBody(cube);
 
-    OpenMBV::Frustum *cylinder;
+    shared_ptr<OpenMBV::Frustum> cylinder;
 
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(data.radiusInputShaft);
     cylinder->setBaseRadius(data.radiusInputShaft);
     cylinder->setHeight(data.lengthInputShaft);
@@ -189,7 +190,7 @@ namespace MBSimPowertrain {
     shaft2->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthInputShaft/2);
 
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(data.radiusPlanet);
     cylinder->setBaseRadius(data.radiusPlanet);
     cylinder->setHeight(data.lengthPlanet);
@@ -197,7 +198,7 @@ namespace MBSimPowertrain {
     planet->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthPlanet/2);
 
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(data.radiusLeftOutputShaft);
     cylinder->setBaseRadius(data.radiusLeftOutputShaft);
     cylinder->setHeight(data.lengthLeftOutputShaft);
@@ -205,7 +206,7 @@ namespace MBSimPowertrain {
     shaft4->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthLeftOutputShaft/2);
 
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(data.radiusRightOutputShaft);
     cylinder->setBaseRadius(data.radiusRightOutputShaft);
     cylinder->setHeight(data.lengthRightOutputShaft);

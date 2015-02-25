@@ -351,7 +351,7 @@ namespace MBSimFlexibleBody {
     else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (openMBVBody)
-        ((OpenMBV::SpineExtrusion*) openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+        ((OpenMBV::SpineExtrusion*) openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
       FlexibleBodyContinuum<double>::init(stage);
     }
@@ -412,8 +412,8 @@ namespace MBSimFlexibleBody {
         double uMin = ncc->getuMin();
         double uMax = ncc->getuMax();
 
-        double ds = openStructure ? (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 1) : (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints() - 2);
-        for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints(); i++) {
+        double ds = openStructure ? (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 1) : (uMax - uMin) / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 2);
+        for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints(); i++) {
 
           // Get continous information from neutral fibre
           ContourPointData cp(uMin + ds * i);
@@ -430,7 +430,7 @@ namespace MBSimFlexibleBody {
           data.push_back(X(3)); // local twist
         }
 
-        ((OpenMBV::SpineExtrusion*) openMBVBody)->append(data);
+        ((OpenMBV::SpineExtrusion*) openMBVBody.get())->append(data);
       }
 #endif
     }

@@ -84,7 +84,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ke->setMomentFunction(new ConstantFunction<VecV(double)>(1/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(R1);
   cylinder->setBaseRadius(R1);
   cylinder->setHeight(l);

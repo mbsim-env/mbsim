@@ -33,6 +33,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -67,9 +68,9 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r);
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r);
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);
         }
 #endif
         RigidContour::init(stage);

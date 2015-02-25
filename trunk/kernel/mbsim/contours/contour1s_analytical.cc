@@ -38,6 +38,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -137,9 +138,9 @@ namespace MBSim {
             const Vec3 CrPC=(*funcCrPC)(alpha[i]);
             vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
           }
-          ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(0);
-          ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
-          ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
   #endif

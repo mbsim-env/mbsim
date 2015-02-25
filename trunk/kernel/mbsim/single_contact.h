@@ -132,9 +132,9 @@ namespace MBSim {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         setOpenMBVContactPoints(ombv.createOpenMBV());
       }
-      void setOpenMBVContactPoints(OpenMBV::Frame *frame) { 
+      void setOpenMBVContactPoints(const boost::shared_ptr<OpenMBV::Frame> &frame) { 
         openMBVContactFrame[0]=frame;
-        openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
+        openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
       }
 
       /** 
@@ -146,7 +146,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         contactArrow=ombv.createOpenMBV(); 
       }
-      void setOpenMBVNormalForce(OpenMBV::Arrow *arrow) { contactArrow=arrow; }
+      void setOpenMBVNormalForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { contactArrow=arrow; }
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
@@ -159,7 +159,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         frictionArrow=ombv.createOpenMBV(); 
       }
-      void setOpenMBVTangentialForce(OpenMBV::Arrow *arrow) { frictionArrow=arrow; }
+      void setOpenMBVTangentialForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { frictionArrow=arrow; }
 #endif
 
       /* GETTER / SETTER */
@@ -315,17 +315,17 @@ namespace MBSim {
       /**
        * \brief contact group to draw
        */
-      OpenMBV::Group* openMBVContactGrp;
+      boost::shared_ptr<OpenMBV::Group> openMBVContactGrp;
 
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<OpenMBV::Frame*> openMBVContactFrame;
+      std::vector<boost::shared_ptr<OpenMBV::Frame> > openMBVContactFrame;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw
        */
-      OpenMBV::Arrow *contactArrow, *frictionArrow;
+      boost::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
 #endif
 
       /**

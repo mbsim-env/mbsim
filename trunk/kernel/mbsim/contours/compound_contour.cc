@@ -26,14 +26,12 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace boost;
 
 namespace MBSim {
 
   CompoundContour::CompoundContour(const string &name, Frame *R) :
-      RigidContour(name,R),
-#ifdef HAVE_OPENMBVCPPINTERFACE
-          openMBVGroup(0)
-#endif
+      RigidContour(name,R)
   {
   }
 
@@ -117,7 +115,7 @@ namespace MBSim {
 
       if (getPlotFeature(plotRecursive) == enabled) {
         if (openMBVGroup == 0) {
-          openMBVGroup = new OpenMBV::Group();
+          openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGroup->setName(name + "Group");
           //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
           if (parent)

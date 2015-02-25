@@ -39,7 +39,7 @@ namespace MBSim {
       std::string id;
     public:
       OpenMBVObject(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0) : dc(dc_), tp(tp_) { }
-      void initializeObject(OpenMBV::DynamicColoredBody* object);
+      void initializeObject(const boost::shared_ptr<OpenMBV::DynamicColoredBody> &object);
       void initializeUsingXML(xercesc::DOMElement *element);
   };
 
@@ -51,8 +51,8 @@ namespace MBSim {
     public:
       OpenMBVArrow(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, double sL_=1, double sS_=1) : OpenMBVObject(dc,tp), type(type_), refPoint(refPoint_), sL(sL_), sS(sS_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Arrow* object);
-      OpenMBV::Arrow* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Arrow> &object);
+      boost::shared_ptr<OpenMBV::Arrow> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVFrame : public OpenMBVObject {
@@ -61,8 +61,8 @@ namespace MBSim {
     public:
       OpenMBVFrame(double size_=1, double offset_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), size(size_), offset(offset_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Frame* object);
-      OpenMBV::Frame* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Frame> &object);
+      boost::shared_ptr<OpenMBV::Frame> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVSphere : public OpenMBVObject {
@@ -72,8 +72,8 @@ namespace MBSim {
     public:
       OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, std::string xml_="radius") : OpenMBVObject(dc,tp), r(r_), xml(xml_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Sphere* object);
-      OpenMBV::Sphere* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Sphere> &object);
+      boost::shared_ptr<OpenMBV::Sphere> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVLine : public OpenMBVObject {
@@ -82,8 +82,8 @@ namespace MBSim {
     public:
       OpenMBVLine(double l_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Cuboid* object);
-      OpenMBV::Cuboid* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Cuboid> &object);
+      boost::shared_ptr<OpenMBV::Cuboid> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVPlane : public OpenMBVObject {
@@ -92,8 +92,8 @@ namespace MBSim {
     public:
       OpenMBVPlane(const fmatvec::Vec2 &l_=fmatvec::Vec2(fmatvec::INIT,1.), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Cuboid* object);
-      OpenMBV::Cuboid* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Cuboid> &object);
+      boost::shared_ptr<OpenMBV::Cuboid> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVCuboid : public OpenMBVObject {
@@ -102,8 +102,8 @@ namespace MBSim {
     public:
       OpenMBVCuboid(const fmatvec::Vec3 &l_=fmatvec::Vec3(fmatvec::INIT,1.), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Cuboid* object);
-      OpenMBV::Cuboid* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Cuboid> &object);
+      boost::shared_ptr<OpenMBV::Cuboid> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVCircle : public OpenMBVObject {
@@ -112,8 +112,8 @@ namespace MBSim {
     public:
       OpenMBVCircle(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), r(r_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Frustum* object);
-      OpenMBV::Frustum* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Frustum> &object);
+      boost::shared_ptr<OpenMBV::Frustum> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVFrustum : public OpenMBVObject {
@@ -122,8 +122,8 @@ namespace MBSim {
     public:
       OpenMBVFrustum(double t_=1, double b_=1, double h_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), t(t_), b(b_), h(h_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Frustum* object);
-      OpenMBV::Frustum* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Frustum> &object);
+      boost::shared_ptr<OpenMBV::Frustum> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVExtrusion : public OpenMBVObject {
@@ -132,8 +132,8 @@ namespace MBSim {
     public:
       OpenMBVExtrusion(double h_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), h(h_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::Extrusion* object);
-      OpenMBV::Extrusion* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::Extrusion> &object);
+      boost::shared_ptr<OpenMBV::Extrusion> createOpenMBV(xercesc::DOMElement* e=0);
   };
 
   class OpenMBVCoilSpring : public OpenMBVObject {
@@ -143,8 +143,8 @@ namespace MBSim {
     public:
       OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
-      void initializeObject(OpenMBV::CoilSpring* object);
-      OpenMBV::CoilSpring* createOpenMBV(xercesc::DOMElement* e=0);
+      void initializeObject(const boost::shared_ptr<OpenMBV::CoilSpring> &object);
+      boost::shared_ptr<OpenMBV::CoilSpring> createOpenMBV(xercesc::DOMElement* e=0);
   };
 }
 

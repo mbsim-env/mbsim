@@ -401,18 +401,18 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Visualisierung mit openMBV
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid *openMBVCrank=new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVCrank=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(Laenge_Crank,Breite_Crank-0.03,Dicke_Crank-0.05);
   openMBVCrank->setInitialTranslation(0, 0, 0.05);
   openMBVCrank->setDiffuseColor(0.5,1,1);
   Crank->setOpenMBVRigidBody(openMBVCrank);
 
-  OpenMBV::Cuboid *openMBVRod=new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVRod=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVRod->setLength(Laenge_Rod,Breite_Rod-0.04,Dicke_Rod-0.05);
   openMBVRod->setDiffuseColor(0.5,1,1);
   Rod->setOpenMBVRigidBody(openMBVRod);
 
-  OpenMBV::Frustum *openMBVCylinder=new OpenMBV::Frustum();
+  boost::shared_ptr<OpenMBV::Frustum> openMBVCylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   openMBVCylinder->setBaseRadius(0.045);
   openMBVCylinder->setTopRadius(0.045);
   openMBVCylinder->setHeight(0.054);
@@ -420,7 +420,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVCylinder->setDiffuseColor(0.5,1,1);
   Lager->setOpenMBVRigidBody(openMBVCylinder);
 
-  OpenMBV::Frustum *openMBVCylinder2=new OpenMBV::Frustum();
+  boost::shared_ptr<OpenMBV::Frustum> openMBVCylinder2=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   openMBVCylinder2->setBaseRadius(0.045);
   openMBVCylinder2->setTopRadius(0.045);
   openMBVCylinder2->setHeight(0.105);
@@ -428,12 +428,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVCylinder2->setDiffuseColor(0.45,1,1);
   Gelenk->setOpenMBVRigidBody(openMBVCylinder2);
 
-  OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVPiston=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVPiston->setLength(Laenge_Piston,Laenge_Piston,Laenge_Piston);
   openMBVPiston->setDiffuseColor(0.8,1,1);
   Piston->setOpenMBVRigidBody(openMBVPiston);
 
-  OpenMBV::Cuboid *openMBVBlock=new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVBlock=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVBlock->setLength(Laenge_Block,Breite_Block,Dicke_Block);
   Block->setOpenMBVRigidBody(openMBVBlock);
 

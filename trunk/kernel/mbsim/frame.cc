@@ -43,10 +43,6 @@ namespace MBSim {
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVFrame=0;
-#endif
   }
 
   void Frame::plot(double t, double dt) {

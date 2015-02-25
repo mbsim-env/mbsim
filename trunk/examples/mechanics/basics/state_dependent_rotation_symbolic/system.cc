@@ -71,12 +71,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
- // OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
+ // boost::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
  // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
  // arrow->setDiffuseColor(1/3.0, 1, 1);
   o->enableOpenMBVVelocity();
 
-//  arrow = new OpenMBV::Arrow;
+//  arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
 //  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
 //  arrow->setType(OpenMBV::Arrow::toDoubleHead);
 //  arrow->setDiffuseColor(0.4, 1, 1);
@@ -84,7 +84,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
-  OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(l,h,d);
   cuboid->setDiffuseColor(160./360.,1,1);
   body->setOpenMBVRigidBody(cuboid);

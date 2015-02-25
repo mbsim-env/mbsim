@@ -44,9 +44,6 @@ namespace MBSim {
        * \param name of contour
        */
       Contour1sAnalytical(const std::string &name="") : Contour1s(name)
-# ifdef HAVE_OPENMBVCPPINTERFACE
-                                                     , openMBVRigidBody(0)
-# endif
                                                      {}
 
       /**
@@ -99,7 +96,7 @@ namespace MBSim {
     protected:
       ContourFunction1s * funcCrPC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::RigidBody *openMBVRigidBody;
+      boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 #endif
   };
 

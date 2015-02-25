@@ -86,20 +86,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(belt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666,1,0.6666); 
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
   double h0 = 50.0e-3;
   double b0_vis = 1.0e-3;
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint( b0_vis*0.5, h0*0.5,1);
+  OpenMBV::PolygonPoint* corner1 = new OpenMBV::PolygonPoint( b0_vis*0.5, h0*0.5,1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint( b0_vis*0.5,-h0*0.5,1);
+  OpenMBV::PolygonPoint* corner2 = new OpenMBV::PolygonPoint( b0_vis*0.5,-h0*0.5,1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0_vis*0.5,-h0*0.5,1);
+  OpenMBV::PolygonPoint* corner3 = new OpenMBV::PolygonPoint(-b0_vis*0.5,-h0*0.5,1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0_vis*0.5, h0*0.5,1);
+  OpenMBV::PolygonPoint* corner4 = new OpenMBV::PolygonPoint(-b0_vis*0.5, h0*0.5,1);
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
@@ -148,7 +148,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Sphere *cylinder=new OpenMBV::Sphere;
+    boost::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     cylinder->setRadius(radiiDisks(i));
     cylinder->setDiffuseColor(0.6666,1,1); 
     disk->setOpenMBVRigidBody(cylinder);

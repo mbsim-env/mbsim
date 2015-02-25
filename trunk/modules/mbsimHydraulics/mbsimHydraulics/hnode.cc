@@ -40,16 +40,12 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0)
-# ifdef HAVE_OPENMBVCPPINTERFACE
-                                     , openMBVGrp(NULL), openMBVSphere(NULL), WrON()
-#endif
-                                     {
-                                     }
+  HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0) {
+  }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void HNode::enableOpenMBV(double size, double pMin, double pMax, const Vec3 &WrON_) {
-    openMBVSphere=new OpenMBV::Sphere;
+    openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     openMBVSphere->setRadius(size);
     openMBVSphere->setMinimalColorValue(pMin);
     openMBVSphere->setMaximalColorValue(pMax);

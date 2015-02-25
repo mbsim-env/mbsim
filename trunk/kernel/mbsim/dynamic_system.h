@@ -102,7 +102,7 @@ namespace MBSim {
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual OpenMBV::Group* getOpenMBVGrp();
+      virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 #endif
 
       virtual void updatewb(double t, int j=0); 
@@ -910,7 +910,7 @@ namespace MBSim {
       std::vector<Contour*> contour;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
 #endif
       boost::shared_ptr<H5::File> hdf5File;
 

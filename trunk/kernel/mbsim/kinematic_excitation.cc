@@ -29,11 +29,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), func(0), body(0) {
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow = 0;
-    MArrow = 0;
-#endif
   }
 
   void KinematicExcitation::calclaSize(int j) {
