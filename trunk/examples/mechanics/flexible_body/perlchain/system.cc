@@ -32,16 +32,14 @@ void Perlchain::initialize() {
   setValuedJoints.clear();
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
     LinkMechanics * i_temp = dynamic_cast<LinkMechanics*>(*i);
-    for (int col = (**i).getlaInd(); col < (**i).getlaInd() + (**i).getlaSize(); col++) {
-      if ((**i).getType() == "Joint") {  // for joint
-        setValuedJoints.push_back(static_cast<Joint*>(i_temp));
-      }
-      else if ((**i).getType() == "Contact") {  // for contour
-        setValuedContacts.push_back(static_cast<Contact*>(i_temp));
-      }
-      else {
-        throw MBSimError("Not implemented!");
-      }
+    if ((**i).getType() == "Joint") {  // for joint
+      setValuedJoints.push_back(static_cast<Joint*>(i_temp));
+    }
+    else if ((**i).getType() == "Contact") {  // for contour
+      setValuedContacts.push_back(static_cast<Contact*>(i_temp));
+    }
+    else {
+      throw MBSimError("Not implemented!");
     }
   }
 }
@@ -153,11 +151,9 @@ void Perlchain::updateG(double t, int j) {
 
     G.resize(yV.rows(), NONINIT);
     for (int i = 0; i < yV.rows(); i++) {
-//      RowVecV temp = yV.row(i); // temp can be kept in the fast memmory part
+      VecV temp = trans(yV.row(i)); // temp can be kept in the fast memmory part
       for (int j = i; j < yV.rows(); j++) {
-        double val = yV.e(i, 0) * yV(j, 0);
-        for (int k = 1; k < yV.cols(); k++)
-          val += yV.e(i, k) * yV.e(j, k);
+        double val = yV.row(j) * temp;
         G(i, j) = val;
         G(j, i) = val;
       }
@@ -266,19 +262,39 @@ cs * Perlchain::compressWToCsparse(int j) {
     }
   }
 
+  if (0) {
+    //OLD VERSION
+    for (std::vector<Contact*>::iterator it = setValuedContacts.begin(); it != setValuedContacts.end(); ++it) {
+      Contact* i_temp = *it;
+      for (int col = i_temp->getlaInd(); col < i_temp->getlaInd() + i_temp->getlaSize(); col++) {
+        const size_t NoContacts = (*i_temp).getContour().size();
+        for (size_t partner = 0; partner < NoContacts; partner++) {
+          int lowerRow = (*i_temp).getContour()[partner]->gethInd(j);
+          int upperRow = (*i_temp).getContour()[partner]->gethInd(j) + (*i_temp).getContour()[partner]->gethSize(j);
 
-  for (std::vector<Contact*>::iterator it = setValuedContacts.begin(); it != setValuedContacts.end(); ++it) {
-    Contact* i_temp = *it;
-    for (int col = i_temp->getlaInd(); col < i_temp->getlaInd() + i_temp->getlaSize(); col++) {
-      const size_t NoContacts = (*i_temp).getContour().size();
-      for (size_t partner = 0; partner < NoContacts; partner++) {
-        int lowerRow = (*i_temp).getContour()[partner]->gethInd(j);
-        int upperRow = (*i_temp).getContour()[partner]->gethInd(j) + (*i_temp).getContour()[partner]->gethSize(j);
+          for (int row = lowerRow; row < upperRow; row++) {
+            double entry = W[j](row, col);
+            if (fabs(entry) > EPSILON)
+              cs_entry(C, row, col, entry);
+          }
+        }
+      }
+    }
+  }
+  else {
+    for (std::vector<Contact*>::iterator it = setValuedContacts.begin(); it != setValuedContacts.end(); ++it) {
+      Contact * cnt = *it;
+      for (int col = cnt->getlaInd(); col < cnt->getlaInd() + cnt->getlaSize(); col++) {
+        const size_t NoContacts = cnt->getContour().size();
+        for (size_t partner = 0; partner < NoContacts; partner++) {
+          int lowerRow = cnt->getContour()[partner]->gethInd(j);
+          int upperRow = cnt->getContour()[partner]->gethInd(j) + cnt->getContour()[partner]->gethSize(j);
 
-        for (int row = lowerRow; row < upperRow; row++) {
-          double entry = W[j](row, col);
-          if (fabs(entry) > EPSILON)
-            cs_entry(C, row, col, entry);
+          for (int row = lowerRow; row < upperRow; row++) {
+            double entry = W[j](row, col);
+            if (fabs(entry) > EPSILON)
+              cs_entry(C, row, col, entry);
+          }
         }
       }
     }
@@ -301,7 +317,7 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
 
   n = LLM[j].cols();
 
-  // check for maximal non-zero-size: right now there are three different ways, when compare the time, the percentage is not reliable for comparing because the ref_time varies a little.
+// check for maximal non-zero-size: right now there are three different ways, when compare the time, the percentage is not reliable for comparing because the ref_time varies a little.
 
   int nzMethod = 3;
 
@@ -337,12 +353,12 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
     // cs_entry will dynamic extend (double) the memory size by realloc(), which will consider whether there are still enough space after the original position.
     nz = 7 * n;
   }
-  // creat matrix
+// creat matrix
   LLM_L_csTriplet = cs_spalloc(n, n, nz, 1, 1); /* allocate memory for the sparse matrix C in Triplet format, the last input value is 1!*/
   if (!LLM_L_csTriplet)
     return (cs_done(LLM_L_csTriplet, 0, 0, 0)); /* out of memory */
 
-  // Run loop over all sub systems
+// Run loop over all sub systems
   for (int i = 0; i < (int) dynamicsystem.size(); i++) {
     int uInd = dynamicsystem[i]->getuInd(j);
     int uSize = dynamicsystem[i]->getuSize(j);
@@ -357,7 +373,7 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
     }
   }
 
-  // Run loop over all objects
+// Run loop over all objects
   for (int i = 0; i < (int) object.size(); i++) {
     int uInd = object[i]->getuInd(j);
     int uSize = object[i]->getuSize(j);
@@ -372,10 +388,10 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
     }
   }
 
-  // compress triplet format into Compress column format
+// compress triplet format into Compress column format
   cs * LLM_L_cs = cs_triplet(LLM_L_csTriplet);
 
-  // free the allocated space
+// free the allocated space
   cs_spfree(LLM_L_csTriplet);
 
   return LLM_L_cs;
@@ -449,7 +465,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
 
   Cp[n] = counter;
 
-  // free the allocated space
+// free the allocated space
   return C;
 
 }
@@ -495,7 +511,7 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
     nzMax = 7 * n;
   }
 
-  // creat matrix
+// creat matrix
   LLM_L_cs = cs_spalloc(n, n, nzMax, 1, 0); /* allocate memory for the sparse matrix C in compressed column format, the last input value is 0 !*/
   if (!LLM_L_cs)
     return (cs_done(LLM_L_cs, 0, 0, 0)); /* out of memory */
@@ -504,9 +520,9 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
   Ci = LLM_L_cs->i;
   Cx = LLM_L_cs->x;
 
-  //create the three arrays
+//create the three arrays
   counter = 0;
-  // Run loop over all sub systems
+// Run loop over all sub systems
   for (int i = 0; i < (int) dynamicsystem.size(); i++) {
     int uInd = dynamicsystem[i]->getuInd(j);
     int uSize = dynamicsystem[i]->getuSize(j);
@@ -525,7 +541,7 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
 
   }
 
-  // Run loop over all objects
+// Run loop over all objects
   for (int i = 0; i < (int) object.size(); i++) {
     int uInd = object[i]->getuInd(j);
     int uSize = object[i]->getuSize(j);
@@ -552,12 +568,12 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
 Perlchain::Perlchain(const string &projectName) :
     DynamicSystemSolver(projectName) {
 
-  // acceleration of gravity
+// acceleration of gravity
   Vec grav(3, INIT, 0.);
   grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  // input flexible ring
+// input flexible ring
   double l0 = 1.; // length ring
   double E = 2.5e9; // E-Modul alu
   double rho = 2.5e3; // density alu
@@ -566,11 +582,11 @@ Perlchain::Perlchain(const string &projectName) :
   double A = b0 * b0; // cross-section area
   double I = 1. / 12. * b0 * b0 * b0 * b0; // moment inertia
 
-  // input infty-norm balls (cuboids)
-  int nBalls = 80; // number of balls
+// input infty-norm balls (cuboids)
+  int nBalls = 20; // number of balls
   double mass = 0.025; // mass of ball
 
-  // flexible ring
+// flexible ring
   rod = new FlexibleBody1s21RCM("Rod", false);
   rod->setLength(l0);
   rod->setEModul(E);
@@ -601,7 +617,7 @@ Perlchain::Perlchain(const string &projectName) :
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
-  // balls
+// balls
   assert(nBalls > 1);
   double d = 7. * l0 / (8. * nBalls); // thickness
   double b = b0 * 1.5; // height / width
@@ -653,7 +669,7 @@ Perlchain::Perlchain(const string &projectName) :
 #endif
   }
 
-  //Set balls to correct position
+//Set balls to correct position
   FlexibleBody1s21RCM * rodInfo = new FlexibleBody1s21RCM("InfoRod", false);
 
   rodInfo->setq0(rod->getq());
@@ -681,7 +697,7 @@ Perlchain::Perlchain(const string &projectName) :
 
   delete rodInfo;
 
-  // inertial ball constraint
+// inertial ball constraint
   this->addFrame(new FixedRelativeFrame("BearingFrame", l0 / (2 * M_PI) * Vec("[0;1;0]"), SqrMat(3, EYE), this->getFrame("I")));
   Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
@@ -689,27 +705,29 @@ Perlchain::Perlchain(const string &projectName) :
   joint->connect(this->getFrame("BearingFrame"), balls[0]->getFrame("C"));
   this->addLink(joint);
 
-  // constraints balls on flexible band
+// constraints balls on flexible band
+  Contact *contact = new Contact("Band_Balls"); // + balls[i]->getName());
+  contact->setNormalForceLaw(new BilateralConstraint);
+  contact->setNormalImpactLaw(new BilateralImpact);
+  contact->enableOpenMBVContactPoints(0.01);
+  this->addLink(contact);
   for (int i = 0; i < nBalls; i++) {
-    Contact *contact = new Contact("Band_" + balls[i]->getName());
-    contact->setNormalForceLaw(new BilateralConstraint);
-    contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"), rod->getContour("Contour1sFlexible"));
-    contact->enableOpenMBVContactPoints(0.01);
-    this->addLink(contact);
   }
 
-  // inner-ball contacts
+// inner-ball contacts
+  stringstream namet, nameb;
+  namet << "ContactTop";
+  nameb << "ContactBot";
+  Contact *ctrt = new Contact(namet.str());
+  Contact *ctrb = new Contact(nameb.str());
+  ctrt->setNormalForceLaw(new UnilateralConstraint);
+  ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  ctrb->setNormalForceLaw(new UnilateralConstraint);
+  ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+  this->addLink(ctrt);
+  this->addLink(ctrb);
   for (int i = 0; i < nBalls; i++) {
-    stringstream namet, nameb;
-    namet << "ContactTop_" << i;
-    nameb << "ContactBot_" << i;
-    Contact *ctrt = new Contact(namet.str());
-    Contact *ctrb = new Contact(nameb.str());
-    ctrt->setNormalForceLaw(new UnilateralConstraint);
-    ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-    ctrb->setNormalForceLaw(new UnilateralConstraint);
-    ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     if (i == nBalls - 1) {
       ctrt->connect(balls[0]->getContour("topPoint"), balls[i]->getContour("Plane"));
       ctrb->connect(balls[0]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
@@ -718,8 +736,6 @@ Perlchain::Perlchain(const string &projectName) :
       ctrt->connect(balls[i + 1]->getContour("topPoint"), balls[i]->getContour("Plane"));
       ctrb->connect(balls[i + 1]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
     }
-    this->addLink(ctrt);
-    this->addLink(ctrb);
   }
 }
 
