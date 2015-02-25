@@ -4,6 +4,8 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/contact.h"
+#include "mbsim/joint.h"
 #include <string>
 
 #include <mbsim/numerics/csparse.h>
@@ -11,6 +13,8 @@
 class Perlchain : public MBSim::DynamicSystemSolver {
   public:
     Perlchain(const std::string &projectName);
+
+    virtual void initialize();
 
     /**
      * \brief compress the W matrix into csparse compressed-column form
@@ -34,6 +38,16 @@ class Perlchain : public MBSim::DynamicSystemSolver {
 
     /** vector of balls */
     std::vector<MBSim::RigidBody*> balls;
+
+    /*!
+     * \brief collection of all setValued Joints
+     */
+    std::vector<MBSim::Joint*> setValuedJoints;
+
+    /*!
+     * \brief collection of all setValued Joints
+     */
+    std::vector<MBSim::Contact*> setValuedContacts;
 };
 
 #endif
