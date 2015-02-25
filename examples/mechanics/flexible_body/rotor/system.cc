@@ -20,6 +20,7 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
+using namespace boost;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
@@ -97,9 +98,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setNumberOfSpinePoints(Elements*4+1); // resolution of visualisation
   cylinder->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cylinder->setScaleFactor(1.); // orthotropic scaling of cross section
-  vector<OpenMBV::PolygonPoint*> *circle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
+  shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > circle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
   for(int i=0;i<20;i++) {
-    OpenMBV::PolygonPoint* corner  = new OpenMBV::PolygonPoint(R_GLS*0.5*cos(i*2*M_PI/20),R_GLS*0.5*sin(i*2*M_PI/20),1);
+    shared_ptr<OpenMBV::PolygonPoint>  corner  = OpenMBV::PolygonPoint::create(R_GLS*0.5*cos(i*2*M_PI/20),R_GLS*0.5*sin(i*2*M_PI/20),1);
     circle->push_back(corner);
   }
   cylinder->setContour(circle);
