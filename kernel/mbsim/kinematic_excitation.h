@@ -67,19 +67,19 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         FArrow=ombv.createOpenMBV(); 
       }
-      void setOpenMBVForce(OpenMBV::Arrow *arrow) { FArrow=arrow; }
+      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { FArrow=arrow; }
 
       /** \brief Visualize a moment arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         MArrow=ombv.createOpenMBV(); 
       }
-      void setOpenMBVMoment(OpenMBV::Arrow *arrow) { MArrow=arrow; }
+      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { MArrow=arrow; }
 #endif
 
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *FArrow, *MArrow;
+      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
 #endif
 
   };

@@ -39,6 +39,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -53,9 +54,6 @@ namespace MBSim {
     K = C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=C;
-    FWeight = 0;
-    FArrow = 0;
-    MArrow = 0;
 #endif
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
@@ -391,7 +389,7 @@ namespace MBSim {
           data.push_back(cardan(1));
           data.push_back(cardan(2));
           data.push_back(0);
-          ((OpenMBV::RigidBody*)openMBVBody)->append(data);
+          static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
         }
       }
 #endif
@@ -553,7 +551,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void RigidBody::setOpenMBVRigidBody(OpenMBV::RigidBody* body) {
+  void RigidBody::setOpenMBVRigidBody(const shared_ptr<OpenMBV::RigidBody> &body) {
     openMBVBody=body;
   }
 #endif
@@ -766,7 +764,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {
-      OpenMBV::RigidBody *rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
+      shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
       setOpenMBVRigidBody(rb);
       rb->initializeUsingXML(e->getFirstElementChild());
     }
@@ -775,28 +773,28 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
       C->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FWeight=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
     if (e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
     if (e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }

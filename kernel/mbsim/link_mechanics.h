@@ -103,8 +103,8 @@ namespace MBSim {
 
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const std::vector<bool>& which);
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const std::vector<bool>& which);
+      void setOpenMBVForceArrow(const boost::shared_ptr<OpenMBV::Arrow> &arrow, const std::vector<bool>& which);
+      void setOpenMBVMomentArrow(const boost::shared_ptr<OpenMBV::Arrow> &arrow, const std::vector<bool>& which);
 #endif
 
       /** 
@@ -128,9 +128,9 @@ namespace MBSim {
       std::vector<Contour*> contour;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group *openMBVForceGrp;
-      std::vector<OpenMBV::Arrow*> openMBVArrowF;
-      std::vector<OpenMBV::Arrow*> openMBVArrowM;
+      boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;
+      std::vector<boost::shared_ptr<OpenMBV::Arrow> > openMBVArrowF;
+      std::vector<boost::shared_ptr<OpenMBV::Arrow> > openMBVArrowM;
 #endif
   };
 }

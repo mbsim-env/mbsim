@@ -148,7 +148,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVForce(ombv.createOpenMBV());
       }
-      void setOpenMBVForce(OpenMBV::Arrow *arrow) {
+      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
         LinkMechanics::setOpenMBVForceArrow(arrow, which);
@@ -159,7 +159,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVMoment(ombv.createOpenMBV());
       }
-      void setOpenMBVMoment(OpenMBV::Arrow *arrow) {
+      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
         LinkMechanics::setOpenMBVMomentArrow(arrow, which);

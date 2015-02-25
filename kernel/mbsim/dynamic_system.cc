@@ -44,14 +44,12 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
+using namespace boost;
 
 namespace MBSim {
 
   DynamicSystem::DynamicSystem(const string &name) :
       Element(name), R(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
-#ifdef HAVE_OPENMBVCPPINTERFACE                      
-          , openMBVGrp(0), corrInd(0)
-#endif
   {
     uSize[0] = 0;
     uSize[1] = 0;
@@ -243,7 +241,7 @@ namespace MBSim {
 //  }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Group* DynamicSystem::getOpenMBVGrp() {
+  shared_ptr<OpenMBV::Group> DynamicSystem::getOpenMBVGrp() {
     return openMBVGrp;
   }
 #endif
@@ -499,7 +497,7 @@ namespace MBSim {
         plotVectorSerie = NULL;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        openMBVGrp = new OpenMBV::Group();
+        openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name);
         //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
         if (parent)

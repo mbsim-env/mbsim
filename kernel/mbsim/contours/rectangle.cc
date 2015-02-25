@@ -26,6 +26,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace boost;
 
 namespace MBSim {
 
@@ -49,7 +50,7 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-          if(openMBVRigidBody) ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(0,yLength,zLength);
+          if(openMBVRigidBody) static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0,yLength,zLength);
         }
 #endif
         Plane::init(stage);

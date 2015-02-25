@@ -26,17 +26,11 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
   KinematicsObserver::KinematicsObserver(const std::string &name) : Observer(name), frame(0) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVPosition=0;
-    openMBVVelocity=0;
-    openMBVAngularVelocity=0;
-    openMBVAcceleration=0;
-    openMBVAngularAcceleration=0;
-#endif
   }
 
   void KinematicsObserver::init(InitStage stage) {
@@ -53,7 +47,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
-            openMBVPosGrp=new OpenMBV::Group();
+            openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVPosGrp->setName("Position_Group");
             openMBVPosGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVPosGrp);
@@ -61,7 +55,7 @@ namespace MBSim {
             openMBVPosGrp->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
-            openMBVVelGrp=new OpenMBV::Group();
+            openMBVVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVVelGrp->setName("Velocity_Group");
             openMBVVelGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVVelGrp);
@@ -69,7 +63,7 @@ namespace MBSim {
             openMBVVelGrp->addObject(openMBVVelocity);
           }
           if(openMBVAngularVelocity) {
-            openMBVAngVelGrp=new OpenMBV::Group();
+            openMBVAngVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVAngVelGrp->setName("Angular_Velocity_Group");
             openMBVAngVelGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVAngVelGrp);
@@ -77,7 +71,7 @@ namespace MBSim {
             openMBVAngVelGrp->addObject(openMBVAngularVelocity);
           }
           if(openMBVAcceleration) {
-            openMBVAccGrp=new OpenMBV::Group();
+            openMBVAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVAccGrp->setName("Acceleration_Group");
             openMBVAccGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVAccGrp);
@@ -85,7 +79,7 @@ namespace MBSim {
             openMBVAccGrp->addObject(openMBVAcceleration);
           }
           if(openMBVAngularAcceleration) {
-            openMBVAngAccGrp=new OpenMBV::Group();
+            openMBVAngAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVAngAccGrp->setName("Angular_Acceleration_Group");
             openMBVAngAccGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVAngAccGrp);
@@ -208,25 +202,6 @@ namespace MBSim {
 
   RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : KinematicsObserver(name) {
     refFrame = 0;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVrTrans=0;
-    openMBVrRel=0;
-    openMBVvTrans=0;
-    openMBVvRot=0;
-    openMBVvRel=0;
-    openMBVvF=0;
-    openMBVaTrans=0;
-    openMBVaRot=0;
-    openMBVaZp=0;
-    openMBVaCor=0;
-    openMBVaRel=0;
-    openMBVaF=0;
-    openMBVomTrans=0;
-    openMBVomRel=0;
-    openMBVpsiTrans=0;
-    openMBVpsiRot=0;
-    openMBVpsiRel=0;
-#endif
   }
 
   void RelativeKinematicsObserver::init(InitStage stage) {
@@ -243,18 +218,18 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
-            openMBVrTrans = new OpenMBV::Arrow(*openMBVPosition);
-            openMBVrRel = new OpenMBV::Arrow(*openMBVPosition);
+            openMBVrTrans = OpenMBV::ObjectFactory::create(openMBVPosition);
+            openMBVrRel = OpenMBV::ObjectFactory::create(openMBVPosition);
             openMBVrTrans->setName("Translational_Position");
             openMBVPosGrp->addObject(openMBVrTrans);
             openMBVrRel->setName("Relative_Position");
             openMBVPosGrp->addObject(openMBVrRel);
           }
           if(openMBVVelocity) {
-            openMBVvTrans = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVvRot = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVvRel = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVvF = new OpenMBV::Arrow(*openMBVVelocity);
+            openMBVvTrans = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVvRot = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVvRel = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVvF = OpenMBV::ObjectFactory::create(openMBVVelocity);
             openMBVvTrans->setName("Translational_Velocity");
             openMBVVelGrp->addObject(openMBVvTrans);
             openMBVvRot->setName("Rotational_Velocity");
@@ -265,20 +240,20 @@ namespace MBSim {
             openMBVVelGrp->addObject(openMBVvF);
           }
           if(openMBVAngularVelocity) {
-            openMBVomTrans = new OpenMBV::Arrow(*openMBVAngularVelocity);
-            openMBVomRel = new OpenMBV::Arrow(*openMBVAngularVelocity);
+            openMBVomTrans = OpenMBV::ObjectFactory::create(openMBVAngularVelocity);
+            openMBVomRel = OpenMBV::ObjectFactory::create(openMBVAngularVelocity);
             openMBVomTrans->setName("Translational_Angular_Velocity");
             openMBVAngVelGrp->addObject(openMBVomTrans);
             openMBVomRel->setName("Relative_Angular_Velocity");
             openMBVAngVelGrp->addObject(openMBVomRel);
           }
           if(openMBVAcceleration) {
-            openMBVaTrans = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVaRot = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVaZp = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVaCor = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVaRel = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVaF = new OpenMBV::Arrow(*openMBVAcceleration);
+            openMBVaTrans = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVaRot = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVaZp = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVaCor = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVaRel = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVaF = OpenMBV::ObjectFactory::create(openMBVAcceleration);
             openMBVaTrans->setName("Translational_Acceleration");
             openMBVAccGrp->addObject(openMBVaTrans);
             openMBVaRot->setName("Rotational_Acceleration");
@@ -293,9 +268,9 @@ namespace MBSim {
             openMBVAccGrp->addObject(openMBVaF);
           }
           if(openMBVAngularAcceleration) {
-            openMBVpsiTrans = new OpenMBV::Arrow(*openMBVAngularAcceleration);
-            openMBVpsiRot = new OpenMBV::Arrow(*openMBVAngularAcceleration);
-            openMBVpsiRel = new OpenMBV::Arrow(*openMBVAngularAcceleration);
+            openMBVpsiTrans = OpenMBV::ObjectFactory::create(openMBVAngularAcceleration);
+            openMBVpsiRot = OpenMBV::ObjectFactory::create(openMBVAngularAcceleration);
+            openMBVpsiRel = OpenMBV::ObjectFactory::create(openMBVAngularAcceleration);
             openMBVpsiTrans->setName("Translational_Angular_Acceleration");
             openMBVAngAccGrp->addObject(openMBVpsiTrans);
             openMBVpsiRot->setName("Rotational_Angular_Acceleration");

@@ -191,7 +191,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* OpenMBV */
 #ifdef HAVE_OPENMBVCPPINTERFACE
   /* axis */
-  OpenMBV::Frustum *obj1 = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> obj1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj1->setBaseRadius(r_axis);
   obj1->setTopRadius(r_axis);
   obj1->setHeight(l_axis);
@@ -201,7 +201,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   axis->setOpenMBVRigidBody(obj1);
 
   /* pole */
-  OpenMBV::Frustum *obj2 = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> obj2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj2->setBaseRadius(r_pole);
   obj2->setTopRadius(r_pole);
   obj2->setHeight(l_pole);
@@ -210,7 +210,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   pole->setOpenMBVRigidBody(obj2);
 
   /* muller */
-  OpenMBV::Frustum *obj3 = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> obj3 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj3->setBaseRadius(r_muller);
   obj3->setTopRadius(r_muller);
   obj3->setHeight(l_muller);
@@ -295,7 +295,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   frustumVRML.close();
 
-  OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> frustumMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   frustumMBV->setIvFileName("frustum.iv");
   frustumMBV->setDiffuseColor(0.3333,0.3333,0.6666);
   frustumMBV->setInitialTranslation(0.,0.,0.);

@@ -73,10 +73,6 @@ namespace MBSim {
 
   DynamicSystemSolver::~DynamicSystemSolver() {
     closePlot();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVGrp)
-      openMBVGrp->destroy();
-#endif
 
     // Now we also delete the DynamicSystem's which exists before "reorganizing hierarchie" takes place.
     // Note all other containers are readded to DynamicSystemSolver and deleted by the dtor of

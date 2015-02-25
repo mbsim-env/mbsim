@@ -41,6 +41,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
   extern double tP;
@@ -50,9 +51,6 @@ namespace MBSim {
 
   Contact::Contact(const string &name) :
       LinkMechanics(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0)
-#ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVGrp(0), openMBVFrame(0), contactArrow(NULL), frictionArrow(NULL)
-#endif
           , saved_ref(0) {
   }
 
@@ -80,7 +78,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Group* Contact::getOpenMBVGrp() {
+  shared_ptr<OpenMBV::Group> Contact::getOpenMBVGrp() {
     return openMBVGrp;
   }
 #endif
@@ -403,11 +401,11 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
           //Set OpenMBV-Properties to single contacts
           if (openMBVFrame)
-            jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:new OpenMBV::Frame(*openMBVFrame));
+            jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:OpenMBV::ObjectFactory::create(openMBVFrame));
           if (contactArrow)
-            jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:new OpenMBV::Arrow(*contactArrow));
+            jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:OpenMBV::ObjectFactory::create(contactArrow));
           if (frictionArrow)
-            jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:new OpenMBV::Arrow(*frictionArrow));
+            jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:OpenMBV::ObjectFactory::create(frictionArrow));
 #endif
           jter->init(stage);
         }
@@ -426,7 +424,7 @@ namespace MBSim {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        openMBVGrp = new OpenMBV::Group();
+        openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name + "_ContactGroup");
         openMBVGrp->setExpand(false);
         parent->getOpenMBVGrp()->addObject(openMBVGrp);

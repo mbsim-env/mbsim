@@ -74,18 +74,18 @@ System::System(const string &projectName) :
   rod->setu0(Vec(q0.size(), INIT, 0.));
   Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4); // resolution of visualisation
   cuboid->setDiffuseColor(1/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
   cuboid->setContour(rectangle);
   rodCont->setOpenMBVSpineExtrusion(cuboid);
@@ -138,7 +138,7 @@ System::System(const string &projectName) :
     balls[i]->addContour(plane);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Cuboid *cube = new OpenMBV::Cuboid;
+    boost::shared_ptr<OpenMBV::Cuboid> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
     cube->setLength(d, b, b);
     cube->setDiffuseColor(0, 1, 1);
     balls[i]->setOpenMBVRigidBody(cube);

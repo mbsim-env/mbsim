@@ -49,13 +49,14 @@ using namespace MBSim;
 using namespace MBSimControl;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSimHydraulics {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   class colorLink : public Link {
     public:
-      colorLink(const std::string &name, OpenMBV::DynamicColoredBody * body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
+      colorLink(const std::string &name, const shared_ptr<OpenMBV::DynamicColoredBody> &body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
       void updateWRef(const fmatvec::Mat&, int){}
       void updateVRef(const fmatvec::Mat&, int){}
       void updatehRef(const fmatvec::Vec&, int){}
@@ -71,7 +72,7 @@ namespace MBSimHydraulics {
       void updategd(double t) {body->setDynamicColor((l->isClosed())?.9:.1); }
       void plot(double t, double dt) {}
     private:
-      OpenMBV::DynamicColoredBody * body;
+      shared_ptr<OpenMBV::DynamicColoredBody> body;
       ClosableRigidLine * l;
   };
 #endif
@@ -150,7 +151,7 @@ namespace MBSimHydraulics {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (openMBVBodies) {
-        OpenMBV::Frustum * ballSeatVisu = new OpenMBV::Frustum();
+        shared_ptr<OpenMBV::Frustum> ballSeatVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
         ballSeatVisu->setInnerBaseRadius(rLine);
         ballSeatVisu->setInnerTopRadius(rLine);
         ballSeatVisu->setBaseRadius(rBall);
@@ -159,7 +160,7 @@ namespace MBSimHydraulics {
         ballSeatVisu->setInitialRotation(0, M_PI/2., 0);
         ballSeat->setOpenMBVRigidBody(ballSeatVisu);
 
-        OpenMBV::Sphere * ballVisu = new OpenMBV::Sphere();
+        shared_ptr<OpenMBV::Sphere> ballVisu = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
         ballVisu->setRadius(rBall);
         ball->setOpenMBVRigidBody(ballVisu);
 

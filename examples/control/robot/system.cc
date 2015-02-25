@@ -222,21 +222,21 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/basis.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialRotation(M_PI,0,0);
   obj->setInitialTranslation(0,0.25,0);
   basis->setOpenMBVRigidBody(obj);
 
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/arm.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialRotation(M_PI,0,0);
   obj->setInitialTranslation(0,0.08,0);
   arm->setOpenMBVRigidBody(obj);
 
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/spitze.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialTranslation(0,-0.3,0);

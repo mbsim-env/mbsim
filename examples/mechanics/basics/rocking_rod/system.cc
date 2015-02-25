@@ -101,8 +101,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // Visualisation with OpenMBV
-  //OpenMBV::IvBody *obj=new OpenMBV::IvBody;
-  OpenMBV::Cuboid *obj=new OpenMBV::Cuboid;
+  //boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
+  boost::shared_ptr<OpenMBV::Cuboid> obj=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   obj->setLength(l,h,l/5.);
   obj->setInitialRotation(0,0,M_PI/2);
   body->setOpenMBVRigidBody(obj);

@@ -88,7 +88,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
-    OpenMBV::IvBody *v_table = new OpenMBV::IvBody;
+    boost::shared_ptr<OpenMBV::IvBody> v_table = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     v_table->setIvFileName("objects/tisch.wrl");
     v_table->setScaleFactor(0.004);
     v_table->setDiffuseColor(Vec3(INIT,1.));

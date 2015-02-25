@@ -12,6 +12,7 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace boost;
 
 namespace MBSimPowertrain {
 
@@ -111,7 +112,7 @@ namespace MBSimPowertrain {
     welle3->addFrame(new FixedRelativeFrame("Q",SrSP,SqrMat(3,EYE)));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Frustum *cylinder = new OpenMBV::Frustum;
+    shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setBaseRadius(data.radiusInputShaft);
     cylinder->setTopRadius(data.radiusInputShaft);
     cylinder->setHeight(data.lengthInputShaft);
@@ -120,7 +121,7 @@ namespace MBSimPowertrain {
     cylinder -> setInitialTranslation(0,0,data.lengthInputShaft/2);
     cylinder -> setInitialRotation(0,0,0);
 
-    cylinder = new OpenMBV::Frustum;
+    cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setBaseRadius(data.radiusIntermediateShaft);
     cylinder->setTopRadius(data.radiusIntermediateShaft);
     cylinder->setHeight(data.lengthIntermediateShaft);
@@ -129,7 +130,7 @@ namespace MBSimPowertrain {
     cylinder -> setInitialTranslation(0,0,data.lengthIntermediateShaft/2);
     cylinder -> setInitialRotation(0,0,0);
 
-    cylinder = new OpenMBV::Frustum;
+    cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setBaseRadius(data.radiusOutputShaft);
     cylinder->setTopRadius(data.radiusOutputShaft);
     cylinder->setHeight(data.lengthOutputShaft);

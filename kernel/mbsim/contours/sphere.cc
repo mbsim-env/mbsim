@@ -29,6 +29,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -41,7 +42,7 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-          if(openMBVRigidBody) ((OpenMBV::Sphere*)openMBVRigidBody)->setRadius(r);
+          if(openMBVRigidBody) static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
         }
 #endif
         RigidContour::init(stage);

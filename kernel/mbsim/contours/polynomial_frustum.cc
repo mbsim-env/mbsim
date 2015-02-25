@@ -24,6 +24,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace boost;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
@@ -55,10 +56,10 @@ namespace MBSim {
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (openMBVRigidBody) {
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setIvFileName((getPath(NULL, ".").substr(1) + ".iv").c_str());
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setBoundaryEdges(true);
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialTranslation(0., 0., 0.);
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialRotation(0., 0., 0.);
+          static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setIvFileName((getPath(NULL, ".").substr(1) + ".iv").c_str());
+          static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setBoundaryEdges(true);
+          static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setInitialTranslation(0., 0., 0.);
+          static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setInitialRotation(0., 0., 0.);
 
           createInventorFile();
         }
@@ -95,7 +96,7 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void PolynomialFrustum::enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints_, int circularPoints_) {
-    openMBVRigidBody = new OpenMBV::IvBody;
+    openMBVRigidBody = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     openMBVRigidBody->setDiffuseColor(dc(0),dc(1),dc(2));
     openMBVRigidBody->setTransparency(tp);
 

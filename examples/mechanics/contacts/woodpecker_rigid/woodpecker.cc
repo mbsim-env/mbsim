@@ -176,13 +176,13 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody* muffeMBV = new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> muffeMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   muffeMBV->setIvFileName("objects/muffe.wrl");
   muffeMBV->setInitialRotation( 0, 0, M_PI/2. );
   muffeMBV->setScaleFactor(R);
   muffe->setOpenMBVRigidBody(muffeMBV); 
 
-  OpenMBV::IvBody* spechtMBV = new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> spechtMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   spechtMBV->setIvFileName("objects/specht.wrl");
   spechtMBV->setInitialTranslation( SrSchabelspitze(0), SrSchabelspitze(1), SrSchabelspitze(2));
   spechtMBV->setInitialRotation(M_PI/2., 0, 0);

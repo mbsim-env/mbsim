@@ -34,18 +34,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name), ref(0) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVPosition=0;
-    openMBVVelocity=0;
-    openMBVAcceleration=0;
-    openMBVAngularVelocity=0;
-    openMBVAngularAcceleration=0;
-    openMBVWeight=0;
-    openMBVMomentum=0;
-    openMBVAngularMomentum=0;
-    openMBVDerivativeOfMomentum=0;
-    openMBVDerivativeOfAngularMomentum=0;
-#endif
   }
 
   void RigidBodyGroupObserver::init(InitStage stage) {

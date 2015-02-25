@@ -81,18 +81,18 @@ System::System(const string &projectName) :
   Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements * 4 + 1);
   cuboid->setDiffuseColor(0.8, 1, 1);
   cuboid->setScaleFactor(1.);
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>;
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
+  OpenMBV::PolygonPoint* corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
   cuboid->setContour(rectangle);
   rodCont->setOpenMBVSpineExtrusion(cuboid);
@@ -137,7 +137,7 @@ System::System(const string &projectName) :
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
+  boost::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(r);
   sphere->setDiffuseColor(1/3.0, 1, 1);
   ball->setOpenMBVRigidBody(sphere);

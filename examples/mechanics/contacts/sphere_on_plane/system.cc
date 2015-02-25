@@ -81,7 +81,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cnf);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::InvisibleBody *obj=new OpenMBV::InvisibleBody;
+  boost::shared_ptr<OpenMBV::InvisibleBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>();
   body->setOpenMBVRigidBody(obj);
   body->getFrame("C")->enableOpenMBV(2*r*1.2,0);
 #endif

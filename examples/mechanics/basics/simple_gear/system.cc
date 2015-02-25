@@ -106,62 +106,62 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   ke->setMomentFunction(new ConstantFunction<VecV(double)>(-4.0/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Frustum *c1=new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> c1=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c1->setTopRadius(r1);
   c1->setBaseRadius(r1);
   c1->setHeight(l);
   c1->setInitialTranslation(0,0,l/2);
   c1->setName("frustum1");
 
-  OpenMBV::Frustum *c2=new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> c2=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c2->setTopRadius(R1);
   c2->setBaseRadius(R1);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,l/2+l/20);
   c2->setName("frustum2");
 
-  OpenMBV::CompoundRigidBody *c = new OpenMBV::CompoundRigidBody;
+  boost::shared_ptr<OpenMBV::CompoundRigidBody> c = OpenMBV::ObjectFactory::create<OpenMBV::CompoundRigidBody>();
   c->addRigidBody(c1);
   c->addRigidBody(c2);
   c->setDiffuseColor(0.3333,1,0.3333);
   shaft1->setOpenMBVRigidBody(c);
 
-  c1=new OpenMBV::Frustum;
+  c1=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c1->setTopRadius(r2);
   c1->setBaseRadius(r2);
   c1->setHeight(l);
   c1->setInitialTranslation(0,0,l/2);
   c1->setName("frustum1");
 
-  c2=new OpenMBV::Frustum;
+  c2=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c2->setTopRadius(R2a);
   c2->setBaseRadius(R2a);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,-l/2+l/20);
   c2->setName("frustum2");
 
-  OpenMBV::Frustum* c3=new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> c3=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c3->setTopRadius(R2b);
   c3->setBaseRadius(R2b);
   c3->setHeight(l/10);
   c3->setInitialTranslation(0,0,l/2+l/20);
   c3->setName("frustum3");
 
-  c = new OpenMBV::CompoundRigidBody;
+  c = OpenMBV::ObjectFactory::create<OpenMBV::CompoundRigidBody>();
   c->addRigidBody(c1);
   c->addRigidBody(c2);
   c->addRigidBody(c3);
   c->setDiffuseColor(0.6666,1,0.6666);
   shaft2->setOpenMBVRigidBody(c);
 
-  c1=new OpenMBV::Frustum;
+  c1=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c1->setTopRadius(r3);
   c1->setBaseRadius(r3);
   c1->setHeight(l);
   c1->setInitialTranslation(0,0,l/2);
   c1->setName("frustum1");
 
-  c2=new OpenMBV::Frustum;
+  c2=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c2->setTopRadius(R3);
   c2->setBaseRadius(R3);
   c2->setHeight(l/10);
@@ -169,7 +169,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c2->setDiffuseColor(0.1111,1,1);
   c2->setName("frustum2");
 
-  c = new OpenMBV::CompoundRigidBody;
+  c = OpenMBV::ObjectFactory::create<OpenMBV::CompoundRigidBody>();
   c->addRigidBody(c1);
   c->addRigidBody(c2);
   c->setDiffuseColor(0.1111,1,1);

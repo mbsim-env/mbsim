@@ -105,7 +105,7 @@ System::System(const string &projectName) :
 
   // visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank, 0.05, 0.05);
   openMBVCrank->setDiffuseColor(0.5, 0, 0);
   openMBVCrank->setTransparency(0.5);

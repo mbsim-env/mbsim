@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
       void setDensity(double rho_) { rho = rho_; }
       void setCurlRadius(double rc1_,double rc2_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
 #endif
       int getNumberElements(){ return Elements; }
       double getLength(){ return L; }

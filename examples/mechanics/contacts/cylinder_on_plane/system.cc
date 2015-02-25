@@ -168,7 +168,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("C")->enableOpenMBV(1.5*d);
-//  OpenMBV::Frustum* dummy = new OpenMBV::Frustum;
+//  boost::shared_ptr<OpenMBV::Frustum> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
 //  dummy->setBaseRadius(d);
 //  dummy->setTopRadius(d);
 //  dummy->setHeight(d); 
@@ -177,10 +177,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy->setMaximalColorValue(1);
 //  dummy->setDiffuseColor(0, 1, 1);
 //  body->setOpenMBVRigidBody(dummy);
-  body->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
+  body->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
-//  OpenMBV::Frustum* dummy2 = new OpenMBV::Frustum;
+//  boost::shared_ptr<OpenMBV::Frustum> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
 //  dummy2->setBaseRadius(d);
 //  dummy2->setTopRadius(d);
 //  dummy2->setHeight(d); 
@@ -189,10 +189,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy2->setMaximalColorValue(1);
 //  dummy2->setDiffuseColor(1/3.0, 1, 1);
 //  body2->setOpenMBVRigidBody(dummy2);
-  body2->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
+  body2->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
-//  OpenMBV::Frustum* dummy3 = new OpenMBV::Frustum;
+//  boost::shared_ptr<OpenMBV::Frustum> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
 //  dummy3->setBaseRadius(3*d);
 //  dummy3->setTopRadius(3*d);
 //  dummy3->setInnerBaseRadius(2.5*d);
@@ -203,7 +203,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy3->setMaximalColorValue(1);
 //  dummy3->setDiffuseColor(0.6, 1, 1);
 //  body3->setOpenMBVRigidBody(dummy3);
-  body3->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
+  body3->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
 #endif
 }

@@ -43,7 +43,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel1.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
@@ -67,7 +67,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
@@ -91,7 +91,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab3->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
@@ -113,7 +113,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab4->setInitialGeneralizedVelocity(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);

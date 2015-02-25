@@ -34,9 +34,6 @@ namespace MBSim {
 
   Contour1s::Contour1s(const std::string &name) :
       ContourContinuum<double>(name), diameter(0.)
-#ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVSpineExtrusion(0)
-#endif
 
   {
   }

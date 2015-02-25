@@ -35,9 +35,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   RigidBodyObserver::RigidBodyObserver(const std::string &name) : Observer(name) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVAxisOfRotation=0;
-#endif
   }
 
   void RigidBodyObserver::init(InitStage stage) {

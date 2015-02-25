@@ -31,13 +31,11 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
   Body::Body(const string &name) : Object(name), R(0),
-#ifdef HAVE_OPENMBVCPPINTERFACE
-                                     openMBVBody(0), openMBVGrp(0), 
-#endif
                                    saved_frameOfReference("") {
                                    } 
 
@@ -117,7 +115,7 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=new OpenMBV::Group();
+          openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGrp->setName(name+"_Group");
           openMBVGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVGrp);

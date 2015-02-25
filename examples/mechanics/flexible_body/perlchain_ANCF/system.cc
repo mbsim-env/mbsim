@@ -53,7 +53,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4); // resolution of visualisation
   cuboid->setDiffuseColor(1/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -122,7 +122,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[i]->addContour(plane);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Cuboid *cube=new OpenMBV::Cuboid;
+    boost::shared_ptr<OpenMBV::Cuboid> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
     cube->setLength(d,b,b);
     cube->setDiffuseColor(0, 1, 1);
     balls[i]->setOpenMBVRigidBody(cube);

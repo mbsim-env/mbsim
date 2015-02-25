@@ -31,6 +31,25 @@ namespace MBSim {
 
   class Frame;
   class Contour;
+  //MFMF
+  template<class T>
+  class Ptr : private boost::noncopyable {
+    public:
+      Ptr() : p(NULL), del(true) {}
+      Ptr(T* p_) : p(p_), del(true) {}
+      ~Ptr() { if(del && p) p->destroy(); }
+      void reset(T *p_=NULL, bool del_=true) { if(del && p) p->destroy(); p=p_; del=del_; }
+      T* operator->() { return p; }
+      const T* operator->() const { return p; }
+      T* get() { return p; }
+      const T* get() const { return p; }
+      void disableDeleter() { del=false; }
+      operator bool() { return p; }
+    protected:
+      T* p;
+      bool del;
+  };
+  //MFMF
 
   /** 
    *  \brief base class for all mechanical bodies with mass and generalised coordinates
@@ -119,8 +138,8 @@ namespace MBSim {
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      OpenMBV::Body* getOpenMBVBody() { return openMBVBody; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
+      boost::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
 #endif
       /*******************************************************/ 
 
@@ -175,8 +194,8 @@ namespace MBSim {
       int nu[2], nq;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Body* openMBVBody;
-      OpenMBV::Group* openMBVGrp;
+      boost::shared_ptr<OpenMBV::Body> openMBVBody;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
 #endif
 
     private:

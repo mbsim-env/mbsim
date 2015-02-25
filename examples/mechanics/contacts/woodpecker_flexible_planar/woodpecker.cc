@@ -215,7 +215,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   int spineDiscretisation = 4;
   cuboid->setNumberOfSpinePoints(Elements*spineDiscretisation+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666,1,0.3333); // color in (minimalColorValue, maximalColorValue)
@@ -224,20 +224,20 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   int circDiscretisation = 36;
   for(int i=0;i<=circDiscretisation;i++) {
     double phi = 2*M_PI/circDiscretisation*i;
-    OpenMBV::PolygonPoint *corner = new OpenMBV::PolygonPoint(r*cos(phi),r*sin(phi),1);
+    OpenMBV::PolygonPoint* corner = new OpenMBV::PolygonPoint(r*cos(phi),r*sin(phi),1);
     rectangle->push_back(corner);
   }
 
   cuboid->setContour(rectangle);
   balken->setOpenMBVSpineExtrusion(cuboid);
 
-  OpenMBV::IvBody* muffeMBV = new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> muffeMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   muffeMBV->setIvFileName("objects/muffe.wrl");
   muffeMBV->setInitialRotation( 0, 0, M_PI/2. );
   muffeMBV->setScaleFactor(R);
   muffe->setOpenMBVRigidBody(muffeMBV); 
 
-  OpenMBV::IvBody* spechtMBV = new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> spechtMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   spechtMBV->setIvFileName("objects/specht.wrl");
   spechtMBV->setInitialTranslation( SrSchabelspitze(0), SrSchabelspitze(1), SrSchabelspitze(2));
   spechtMBV->setInitialRotation(M_PI/2., 0, 0);

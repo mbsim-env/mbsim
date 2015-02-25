@@ -29,6 +29,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace boost;
 
 namespace MBSim {
 
@@ -304,7 +305,7 @@ namespace MBSim {
       RigidContour::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVRigidBody)
-        ((OpenMBV::Cuboid*)openMBVRigidBody)->setLength(lx,ly,lz);
+        static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
 #endif
     }
     else
