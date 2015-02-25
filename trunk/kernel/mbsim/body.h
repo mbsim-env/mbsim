@@ -31,25 +31,6 @@ namespace MBSim {
 
   class Frame;
   class Contour;
-  //MFMF
-  template<class T>
-  class Ptr : private boost::noncopyable {
-    public:
-      Ptr() : p(NULL), del(true) {}
-      Ptr(T* p_) : p(p_), del(true) {}
-      ~Ptr() { if(del && p) p->destroy(); }
-      void reset(T *p_=NULL, bool del_=true) { if(del && p) p->destroy(); p=p_; del=del_; }
-      T* operator->() { return p; }
-      const T* operator->() const { return p; }
-      T* get() { return p; }
-      const T* get() const { return p; }
-      void disableDeleter() { del=false; }
-      operator bool() { return p; }
-    protected:
-      T* p;
-      bool del;
-  };
-  //MFMF
 
   /** 
    *  \brief base class for all mechanical bodies with mass and generalised coordinates
