@@ -22,174 +22,272 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-void Perlchain::updateG(double t, int j) {
+void Perlchain::initialize() {
+  //start
 
-  StopWatch sw;
-  bool compare = false;
-  sw.start();
-  cs *cs_L_LLM, *cs_Wj;
+  DynamicSystemSolver::initialize();
 
-  int n = LLM[j].cols();
-
-  int directCompress = 0;
-  if (directCompress == 1) {
-    cs_L_LLM = compressLLM_LToCsparse_direct(t, j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
-    cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
+  /*Save the non-smooth links to own sets*/
+  setValuedContacts.clear();
+  setValuedJoints.clear();
+  for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
+    LinkMechanics * i_temp = dynamic_cast<LinkMechanics*>(*i);
+    for (int col = (**i).getlaInd(); col < (**i).getlaInd() + (**i).getlaSize(); col++) {
+      if ((**i).getType() == "Joint") {  // for joint
+        setValuedJoints.push_back(static_cast<Joint*>(i_temp));
+      }
+      else if ((**i).getType() == "Contact") {  // for contour
+        setValuedContacts.push_back(static_cast<Contact*>(i_temp));
+      }
+      else {
+        throw MBSimError("Not implemented!");
+      }
+    }
   }
-  else {
+}
+
+void Perlchain::updateG(double t, int j) {
+  if (0) {
+    DynamicSystemSolver::updateG(t, j);
+  }
+  else if (1) {
+    cs *cs_L_LLM, *cs_Wj;
+
+    int n = LLM[j].cols();
+
+//      cs_L_LLM = compressLLM_LToCsparse_direct(t, j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
+//      cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
     cs_L_LLM = compressLLM_LToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
     cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
-  }
 
-  int * xi = (int *) cs_malloc(2 * n, sizeof(int));
-  Mat y(n, W[j].cols(), INIT);
-  double * yele = y.operator ()();
-  int ylda = y.ldim();
+    int * xi = (int *) cs_malloc(2 * n, sizeof(int));
+    MatV yV(W[j].cols(), n, INIT);
+    double * yeleV = yV.operator ()();
+    int yldaV = yV.cols();
+
+    // solve Ly=w
+    for (int k = 0; k < W[j].cols(); k++) {
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yeleV + yldaV * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+    }
+
+    G.resize(yV.rows(), NONINIT);
+//    G = yV*yV.T();
+    for (int i = 0; i < yV.rows(); i++) {
+//      RowVecV temp = yV.row(i); // temp can be kept in the fast memmory part
+      for (int j = i; j < yV.rows(); j++) {
+        double val = yV.e(i, 0) * yV(j, 0);
+        for (int k = 1; k < yV.cols(); k++)
+          val += yV.e(i, k) * yV.e(j, k);
+        G(i, j) = val;
+        G(j, i) = val;
+      }
+    }
+
+    if (checkGSize)
+      ;  // Gs.resize();
+    else if (Gs.cols() != G.size()) {
+      static double facSizeGs = 1;
+      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
+        facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
+      Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
+    }
+    Gs << G;
+  }
+  else {
+    StopWatch sw;
+    sw.start();
+    bool compare = false;
+
+    cs *cs_L_LLM, *cs_Wj;
+
+    int n = LLM[j].cols();
+
+    int directCompress = 0;
+    // Remark: The compression process is not the one that takes time!
+    if (directCompress == 1) {
+      cs_L_LLM = compressLLM_LToCsparse_direct(t, j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
+      cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
+    }
+    else {
+      cs_L_LLM = compressLLM_LToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
+      cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
+    }
+
+    int * xi = (int *) cs_malloc(2 * n, sizeof(int));
+    Mat y(n, W[j].cols(), INIT);
+    double * yele = y.operator ()();
+    int ylda = y.ldim();
 
 // solve Ly=w
-  for (int k = 0; k < W[j].cols(); k++) {
-    cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yele + ylda * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
-  }
+    for (int k = 0; k < W[j].cols(); k++) {
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yele + ylda * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+    }
 
-  // the matlab test shows that with full matrix format is faster than the compressed format, this is because that y is stored in compressed-column format and it is hard to access the the column of y'.
-  // if G is symmetric type, only the elements in the lower triangular is stored in column wise.
-  // if it is accessed in row wise order in the upper triangular part, is will be re-mapped to the lower part,
-  // so ele can be still one by one accessed in the order how they stored in memory.
+    MatV yV(W[j].cols(), n, INIT);
+    double * yeleV = yV.operator ()();
+    int yldaV = yV.cols();
+
+// solve Ly=w
+    for (int k = 0; k < W[j].cols(); k++) {
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yeleV + yldaV * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+    }
+
+    cout << nrm1(Mat(y - yV.T())) << endl;
+
+    // the matlab test shows that with full matrix format is faster than the compressed format, this is because that y is stored in compressed-column format and it is hard to access the the column of y'.
+    // if G is symmetric type, only the elements in the lower triangular is stored in column wise.
+    // if it is accessed in row wise order in the upper triangular part, is will be re-mapped to the lower part,
+    // so ele can be still one by one accessed in the order how they stored in memory.
 
 //  calculate G
-  G.resize(y.cols(), NONINIT);
+    SqrMat GV(y.cols(), NONINIT);
 
-  for (int i = 0; i < y.cols(); i++) {
-    Vec temp = y.col(i); // temp can be kept in the fast memmory part
-    for (int j = i; j < y.cols(); j++) {
-      double val = scalarProduct(temp, y.col(j));
-      G(i, j) = val;
-      G(j, i) = val;
+    for (int i = 0; i < y.cols(); i++) {
+      Vec temp = y.col(i); // temp can be kept in the fast memmory part
+      for (int j = i; j < y.cols(); j++) {
+        double val = scalarProduct(temp, y.col(j));
+        GV(i, j) = val;
+        GV(j, i) = val;
+      }
     }
-  }
 
-  if (compare) {
-    double t_cs = sw.stop(true);
-    sw.start();
-    SqrMat Greference(W[j].T() * slvLLFac(LLM[j], V[j]));
-    double t_ref = sw.stop(true);
-    cout << "t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_ref - t_cs) / t_ref * 100 << " %" << endl;
-
-    if (0) {
-      cout << nrm1(W[j] - cs2Mat(cs_Wj)) << endl;
-      cout << W[j] - cs2Mat(cs_Wj) << endl;
-      cout << nrm1(LLM[j] - cs2Mat(cs_L_LLM)) << endl;
-
-      ofstream Ofile("W_reference.txt");
-      Ofile << W[j];
-      Ofile.close();
-      Ofile.open("W_cs.txt");
-      Ofile << cs2Mat(cs_Wj);
-      Ofile.close();
-      Ofile.open("W_diff.txt");
-      Ofile << W[j] - cs2Mat(cs_Wj);
-      Ofile.close();
-
-      Ofile.open("LLM_reference.txt");
-      Ofile << LLM[j];
-      Ofile.close();
-      Ofile.open("LLM_cs.txt");
-      Ofile << cs2Mat(cs_L_LLM);
-      Ofile.close();
-      Ofile.open("LLM_diff.txt");
-      Ofile << LLM[j] - cs2Mat(cs_L_LLM);
-      Ofile.close();
-
-      ofstream ycsOfile("y_cs.txt");
-      ycsOfile << y;
-      ycsOfile.close();
-
-      ofstream GOfile("G_cs.txt");
-      GOfile << G;
-      GOfile.close();
-      ofstream GOreffile("G_reference.txt");
-      GOreffile << Greference;
-      GOreffile.close();
-      SqrMat Gcmp(G - Greference);
-      ofstream GOcmpfile("G_diff.txt");
-      GOcmpfile << Gcmp;
-      GOcmpfile.close();
-      cout << nrm1(Gcmp) << endl;
+    G.resize(yV.rows(), NONINIT);
+    for (int i = 0; i < yV.rows(); i++) {
+//      RowVecV temp = yV.row(i); // temp can be kept in the fast memmory part
+      for (int j = i; j < yV.rows(); j++) {
+        double val = yV.e(i, 0) * yV(j, 0);
+        for (int k = 1; k < yV.cols(); k++)
+          val += yV.e(i, k) * yV.e(j, k);
+        G(i, j) = val;
+        G(j, i) = val;
+      }
     }
+
+    cout << nrm1(G - GV) << endl;
+
+    if (compare) {
+      double t_cs = sw.stop(true);
+      sw.start();
+      SqrMat Greference(W[j].T() * slvLLFac(LLM[j], V[j]));
+      double t_ref = sw.stop(true);
+      cout << "t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_ref - t_cs) / t_ref * 100 << " %" << endl;
+
+      if (0) {
+        cout << nrm1(W[j] - cs2Mat(cs_Wj)) << endl;
+        cout << W[j] - cs2Mat(cs_Wj) << endl;
+        cout << nrm1(LLM[j] - cs2Mat(cs_L_LLM)) << endl;
+
+        ofstream Ofile("W_reference.txt");
+        Ofile << W[j];
+        Ofile.close();
+        Ofile.open("W_cs.txt");
+        Ofile << cs2Mat(cs_Wj);
+        Ofile.close();
+        Ofile.open("W_diff.txt");
+        Ofile << W[j] - cs2Mat(cs_Wj);
+        Ofile.close();
+
+        Ofile.open("LLM_reference.txt");
+        Ofile << LLM[j];
+        Ofile.close();
+        Ofile.open("LLM_cs.txt");
+        Ofile << cs2Mat(cs_L_LLM);
+        Ofile.close();
+        Ofile.open("LLM_diff.txt");
+        Ofile << LLM[j] - cs2Mat(cs_L_LLM);
+        Ofile.close();
+
+        ofstream ycsOfile("y_cs.txt");
+        ycsOfile << yV;
+        ycsOfile.close();
+
+        ofstream GOfile("G_cs.txt");
+        GOfile << G;
+        GOfile.close();
+        ofstream GOreffile("G_reference.txt");
+        GOreffile << Greference;
+        GOreffile.close();
+        SqrMat Gcmp(G - Greference);
+        ofstream GOcmpfile("G_diff.txt");
+        GOcmpfile << Gcmp;
+        GOcmpfile.close();
+        cout << nrm1(Gcmp) << endl;
+      }
+    }
+
+    //todo: free the allocated memory by the cSparse
+    cs_spfree(cs_Wj);
+    cs_spfree(cs_L_LLM);
+    free(xi);
+
+    // compress G into Gs which uses the fmatvec compressed-row format
+    if (checkGSize)
+      ;  // Gs.resize();
+    else if (Gs.cols() != G.size()) {
+      static double facSizeGs = 1;
+      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
+        facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
+      Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
+    }
+    Gs << G;
   }
 
-  //todo: free the allocated memory by the cSparse
-  cs_spfree(cs_Wj);
-  cs_spfree(cs_L_LLM);
-  free(xi);
-
-  // compress G into Gs which uses the fmatvec compressed-row format
-  if (checkGSize)
-    ;  // Gs.resize();
-  else if (Gs.cols() != G.size()) {
-    static double facSizeGs = 1;
-    if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
-      facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
-    Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
-  }
-  Gs << G;
 }
 
 cs * Perlchain::compressWToCsparse(int j) {
 
-  int m, n, nz; // row, column, nz;//, I1;
+  int m, n, nzMax; // row, column, nz;//, I1;
   cs *C;
   double EPSILON = 1e-17; /*todo: a better epsilion? */
 
   m = W[j].rows();
   n = W[j].cols();
-  nz = 5 * m; // todo: find a method to determine the value of nz
+  nzMax = 5 * m; // todo: find a method to determine the value of nz
 
-  C = cs_spalloc(m, n, nz, 1, 1); /* allocate memory for the sparse matrix C in Triplet formate, the last input value is 1!*/
+  C = cs_spalloc(m, n, nzMax, 1, 1); /* allocate memory for the sparse matrix C in Triplet formate, the last input value is 1!*/
   if (!C)
     return (cs_done(C, 0, 0, 0)); /* out of memory */
 
   // convert the bottom part of W matrix into cs triplet format
-  for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-    LinkMechanics * i_temp = dynamic_cast<LinkMechanics*>(*i);
-    for (int col = (**i).getlaInd(); col < (**i).getlaInd() + (**i).getlaSize(); col++) {
-      if ((**i).getType() == "Joint") {  // for joint
-        const size_t Noframes = (*i_temp).getFrame().size();
-        for (size_t partner = 0; partner < Noframes; partner++) {
-          int lowerRow = (*i_temp).getFrame()[partner]->gethInd(j);
-          int upperRow = (*i_temp).getFrame()[partner]->gethInd(j) + (*i_temp).getFrame()[partner]->gethSize(j);
+  for (std::vector<Joint*>::iterator it = setValuedJoints.begin(); it != setValuedJoints.end(); ++it) {
+    Joint* i_temp = *it;
+    for (int col = i_temp->getlaInd(); col < i_temp->getlaInd() + i_temp->getlaSize(); col++) {
+      const size_t Noframes = (*i_temp).getFrame().size();
+      for (size_t partner = 0; partner < Noframes; partner++) {
+        int lowerRow = (*i_temp).getFrame()[partner]->gethInd(j);
+        int upperRow = (*i_temp).getFrame()[partner]->gethInd(j) + (*i_temp).getFrame()[partner]->gethSize(j);
 
-          for (int row = lowerRow; row < upperRow; row++) {
-            double entry = W[j](row, col);
-            if (fabs(entry) > EPSILON)
-              cs_entry(C, row, col, entry);
-          }
+        for (int row = lowerRow; row < upperRow; row++) {
+          double entry = W[j](row, col);
+          if (fabs(entry) > EPSILON)
+            cs_entry(C, row, col, entry);
         }
-      }
-      else if ((**i).getType() == "Contact") {  // for contour
-        const size_t NoContacts = (*i_temp).getContour().size();
-        for (size_t partner = 0; partner < NoContacts; partner++) {
-          int lowerRow = (*i_temp).getContour()[partner]->gethInd(j);
-          int upperRow = (*i_temp).getContour()[partner]->gethInd(j) + (*i_temp).getContour()[partner]->gethSize(j);
-
-          for (int row = lowerRow; row < upperRow; row++) {
-            double entry = W[j](row, col);
-            if (fabs(entry) > EPSILON)
-              cs_entry(C, row, col, entry);
-          }
-        }
-      }
-
-      else {
-        THROW_MBSIMERROR("Not implemented!");
       }
     }
   }
 
-  // compress triplet format into Compress column format
+
+  for (std::vector<Contact*>::iterator it = setValuedContacts.begin(); it != setValuedContacts.end(); ++it) {
+    Contact* i_temp = *it;
+    for (int col = i_temp->getlaInd(); col < i_temp->getlaInd() + i_temp->getlaSize(); col++) {
+      const size_t NoContacts = (*i_temp).getContour().size();
+      for (size_t partner = 0; partner < NoContacts; partner++) {
+        int lowerRow = (*i_temp).getContour()[partner]->gethInd(j);
+        int upperRow = (*i_temp).getContour()[partner]->gethInd(j) + (*i_temp).getContour()[partner]->gethSize(j);
+
+        for (int row = lowerRow; row < upperRow; row++) {
+          double entry = W[j](row, col);
+          if (fabs(entry) > EPSILON)
+            cs_entry(C, row, col, entry);
+        }
+      }
+    }
+  }
+
+// compress triplet format into Compress column format
   cs * cs_Wj = cs_triplet(C);
 
-  // free the allocated space
+// free the allocated space
   cs_spfree(C);
 
   return cs_Wj;
@@ -358,7 +456,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
 
 cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
 
-  int n, nz, *Cp, *Ci, counter;
+  int n, nzMax, *Cp, *Ci, counter;
   ;
   double *Cx;
   cs *LLM_L_cs;
@@ -373,11 +471,11 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
     // for sparse LLM, it may allocates about 32 times larger memory than needed, and has to calculate the nz at every time
     // Todo: change the size to 1/2 * uSize * uSize ?   only the lower triangular part of LLM is need to be stored.
     for (size_t i = 0; i < dynamicsystem.size(); i++) {
-      nz += dynamicsystem[i]->getuSize(j) * dynamicsystem[i]->getuSize(j);
+      nzMax += dynamicsystem[i]->getuSize(j) * dynamicsystem[i]->getuSize(j);
     }
 
     for (size_t i = 0; i < object.size(); i++) {
-      nz += object[i]->getuSize(j) * object[i]->getuSize(j);
+      nzMax += object[i]->getuSize(j) * object[i]->getuSize(j);
     }
   }
   else if (nzMethod == 2) {
@@ -390,15 +488,15 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
       else if (j == 1)
         nz1 = countElementsLT(LLM[j]) + 50;
     }
-    nz = (j == 0) ? nz0 : nz1;
+    nzMax = (j == 0) ? nz0 : nz1;
   }
   else if (nzMethod == 3) {
     //todo: for the dense LLM, the memory may not enough.
-    nz = 7 * n;
+    nzMax = 7 * n;
   }
 
   // creat matrix
-  LLM_L_cs = cs_spalloc(n, n, nz, 1, 0); /* allocate memory for the sparse matrix C in compressed column format, the last input value is 0 !*/
+  LLM_L_cs = cs_spalloc(n, n, nzMax, 1, 0); /* allocate memory for the sparse matrix C in compressed column format, the last input value is 0 !*/
   if (!LLM_L_cs)
     return (cs_done(LLM_L_cs, 0, 0, 0)); /* out of memory */
 
@@ -417,11 +515,11 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
       Cp[col] = counter;
       for (int row = col; row < uInd + uSize; row++) {
         double entry = LLM[j](row, col);
-        if (fabs(entry) > EPSILON) {
-          Ci[counter] = row;
-          Cx[counter] = entry;
-          counter++;
-        }
+//        if (fabs(entry) > EPSILON) {
+        Ci[counter] = row;
+        Cx[counter] = entry;
+        counter++;
+//        }
       }
     }
 
@@ -436,11 +534,11 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
       Cp[col] = counter;
       for (int row = col; row < uInd + uSize; row++) {
         double entry = LLM[j](row, col);
-        if (fabs(entry) > EPSILON) {
-          Ci[counter] = row;
-          Cx[counter] = entry;
-          counter++;
-        }
+//        if (fabs(entry) > EPSILON) {
+        Ci[counter] = row;
+        Cx[counter] = entry;
+        counter++;
+//        }
       }
     }
 
@@ -460,17 +558,17 @@ Perlchain::Perlchain(const string &projectName) :
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // input flexible ring
-  double l0 = 1.;  // length ring
-  double E = 2.5e9;  // E-Modul alu
-  double rho = 2.5e3;  // density alu
-  int elements = 20;  // number of finite elements
-  double b0 = 0.02;  // width
-  double A = b0 * b0;  // cross-section area
-  double I = 1. / 12. * b0 * b0 * b0 * b0;  // moment inertia
+  double l0 = 1.; // length ring
+  double E = 2.5e9; // E-Modul alu
+  double rho = 2.5e3; // density alu
+  int elements = 20; // number of finite elements
+  double b0 = 0.02; // width
+  double A = b0 * b0; // cross-section area
+  double I = 1. / 12. * b0 * b0 * b0 * b0; // moment inertia
 
   // input infty-norm balls (cuboids)
-  int nBalls = 80;  // number of balls
-  double mass = 0.025;  // mass of ball
+  int nBalls = 80; // number of balls
+  double mass = 0.025; // mass of ball
 
   // flexible ring
   rod = new FlexibleBody1s21RCM("Rod", false);
