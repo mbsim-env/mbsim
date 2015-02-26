@@ -46,6 +46,8 @@ void Perlchain::initialize() {
 }
 
 void Perlchain::updateG(double t, int j) {
+  const int nDofs = LLM[j].cols();
+  const int nLa = W[j].cols();
   if (0) {
     DynamicSystemSolver::updateG(t, j);
   }
@@ -59,38 +61,45 @@ void Perlchain::updateG(double t, int j) {
     cs_L_LLM = compressLLM_LToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
     cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
 
-    int * xi = (int *) cs_malloc(2 * n, sizeof(int));
-    MatV yV(W[j].cols(), n, INIT);
-    double * yeleV = yV.operator ()();
-    int yldaV = yV.cols();
+    int * xi = (int *) cs_malloc(2 * nDofs, sizeof(int));
+    double * yy = (double*) calloc(nLa * nDofs, sizeof(double));
 
     // solve Ly=w
-    for (int k = 0; k < W[j].cols(); k++) {
-      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yeleV + yldaV * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+    for (int k = 0; k < nLa; k++) {
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yy + k * nDofs, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
     }
 
-    G.resize(yV.rows(), NONINIT);
-//    G = yV*yV.T();
-    for (int i = 0; i < yV.rows(); i++) {
-//      RowVecV temp = yV.row(i); // temp can be kept in the fast memmory part
-      for (int j = i; j < yV.rows(); j++) {
-        double val = yV.e(i, 0) * yV(j, 0);
-        for (int k = 1; k < yV.cols(); k++)
-          val += yV.e(i, k) * yV.e(j, k);
-        G(i, j) = val;
-        G(j, i) = val;
+    int nzEles = 0;
+    SymMatV Gsym(nLa, NONINIT);
+    for (int i = 0; i < nLa; i++) {
+      for (int j = i; j < nLa; j++) {
+        double val = yy[i * nDofs + 0] * yy[j * nDofs + 0];
+        for (int k = 1; k < nDofs; k++)
+          val += yy[i * nDofs + k] * yy[j * nDofs + k];
+        Gsym(i, j) = val;
+        if (val > macheps())
+          nzEles++;
+//          G(i, j) = val;
       }
     }
+    nzEles = nzEles * 2 - nLa; //Remark: diagonal is always non-zero!
+
+//todo: free the allocated memory by the cSparse
+    cs_spfree(cs_Wj);
+    cs_spfree(cs_L_LLM);
+    free(xi);
+    free(yy);
 
     if (checkGSize)
       ;  // Gs.resize();
-    else if (Gs.cols() != G.size()) {
+    else if (Gs.cols() != Gsym.size()) {
       static double facSizeGs = 1;
-      if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
-        facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
-      Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
+      if (Gsym.size() > limitGSize && fabs(facSizeGs - 1) < epsroot())
+        facSizeGs = double(nzEles) / double(Gsym.size() * Gsym.size()) * 1.5;
+      Gs.resize(Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
     }
-    Gs << G;
+    Gs << Gsym;
+
   }
   else {
     StopWatch sw;
@@ -98,8 +107,6 @@ void Perlchain::updateG(double t, int j) {
     bool compare = false;
 
     cs *cs_L_LLM, *cs_Wj;
-
-    int n = LLM[j].cols();
 
     int directCompress = 0;
     // Remark: The compression process is not the one that takes time!
@@ -112,27 +119,69 @@ void Perlchain::updateG(double t, int j) {
       cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
     }
 
-    int * xi = (int *) cs_malloc(2 * n, sizeof(int));
-    Mat y(n, W[j].cols(), INIT);
+    int * xi = (int *) cs_malloc(2 * nDofs, sizeof(int));
+    Mat y(nDofs, nLa, INIT);
     double * yele = y.operator ()();
     int ylda = y.ldim();
 
 // solve Ly=w
-    for (int k = 0; k < W[j].cols(); k++) {
-      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yele + ylda * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
-    }
 
-    MatV yV(W[j].cols(), n, INIT);
+    MatV yV(W[j].cols(), nDofs, INIT);
     double * yeleV = yV.operator ()();
     int yldaV = yV.cols();
 
-// solve Ly=w
+    double yy[nDofs * nLa];
+    memset(yy, 0, sizeof(yy));
+
+    // solve Ly=w
     for (int k = 0; k < W[j].cols(); k++) {
-      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yeleV + yldaV * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yele + nDofs * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yeleV + nDofs * k, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+      cs_splsolve(cs_L_LLM, cs_Wj, k, xi, yy + k * nDofs, 0); // yele + ylda * k is the pointer to the kth column of y.ele todo: is it acceptable by accessing the private data of y?
+      for (int j = 0; j < nDofs; j++) {
+        cout << *(yele + k * nDofs + j) << "\t";
+      }
+      cout << endl;
+      for (int j = 0; j < nDofs; j++) {
+        cout << *(yeleV + k * nDofs + j) << "\t";
+      }
+      cout << endl;
+      for (int j = 0; j < nDofs; j++) {
+        cout << *(yy + k * nDofs + j) << "\t";
+      }
+      cout << "------------------------" << endl << endl;
     }
 
     cout << nrm1(Mat(y - yV.T())) << endl;
 
+    SqrMat GV2(nLa, NONINIT);
+
+    for (int i = 0; i < yV.rows(); i++) {
+      VecV temp = trans(yV.row(i)); // temp can be kept in the fast memmory part
+      for (int j = i; j < yV.rows(); j++) {
+        double val = yV.row(j) * temp;
+        GV2(i, j) = val;
+        GV2(j, i) = val;
+      }
+    }
+
+    G.resize(nLa, NONINIT);
+    for (int i = 0; i < nLa; i++) {
+      for (int j = i; j < nLa; j++) {
+        double val = yy[i * nDofs + 0] * yy[j * nDofs + 0];
+        for (int k = 1; k < nDofs; k++)
+          val += yy[i * nDofs + k] * yy[j * nDofs + k];
+        G(i, j) = val;
+        G(j, i) = val;
+      }
+    }
+
+//    for (int i = 0; i < nLa; i++) {
+//      for (int j = 0; j < nDofs; j++) {
+//        cout << yy[i * nDofs + j] - y(j,i) << ",";
+//      }
+//      cout << ";" << endl;
+//    }
     // the matlab test shows that with full matrix format is faster than the compressed format, this is because that y is stored in compressed-column format and it is hard to access the the column of y'.
     // if G is symmetric type, only the elements in the lower triangular is stored in column wise.
     // if it is accessed in row wise order in the upper triangular part, is will be re-mapped to the lower part,
@@ -150,17 +199,7 @@ void Perlchain::updateG(double t, int j) {
       }
     }
 
-    G.resize(yV.rows(), NONINIT);
-    for (int i = 0; i < yV.rows(); i++) {
-      VecV temp = trans(yV.row(i)); // temp can be kept in the fast memmory part
-      for (int j = i; j < yV.rows(); j++) {
-        double val = yV.row(j) * temp;
-        G(i, j) = val;
-        G(j, i) = val;
-      }
-    }
-
-    cout << nrm1(G - GV) << endl;
+    cout << nrm1(G - GV2) << endl;
 
     if (compare) {
       double t_cs = sw.stop(true);
@@ -569,6 +608,8 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
 Perlchain::Perlchain(const string &projectName) :
     DynamicSystemSolver(projectName) {
 
+
+
 // acceleration of gravity
   Vec grav(3, INIT, 0.);
   grav(1) = -9.81;
@@ -584,7 +625,7 @@ Perlchain::Perlchain(const string &projectName) :
   double I = 1. / 12. * b0 * b0 * b0 * b0; // moment inertia
 
 // input infty-norm balls (cuboids)
-  int nBalls = 20; // number of balls
+  int nBalls = 80; // number of balls
   double mass = 0.025; // mass of ball
 
 // flexible ring
@@ -605,13 +646,13 @@ Perlchain::Perlchain(const string &projectName) :
   cuboid->setDiffuseColor(1 / 3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
   shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
-  shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create(b0 * 0.5, b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint> corner1 = OpenMBV::PolygonPoint::create(b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner1);
-  shared_ptr<OpenMBV::PolygonPoint>  corner2 = OpenMBV::PolygonPoint::create(b0 * 0.5, -b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint> corner2 = OpenMBV::PolygonPoint::create(b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner2);
-  shared_ptr<OpenMBV::PolygonPoint>  corner3 = OpenMBV::PolygonPoint::create(-b0 * 0.5, -b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint> corner3 = OpenMBV::PolygonPoint::create(-b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner3);
-  shared_ptr<OpenMBV::PolygonPoint>  corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint> corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
