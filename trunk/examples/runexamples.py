@@ -940,7 +940,7 @@ def runExample(resultQueue, example):
 def prefixSimulation(example, id):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
-    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%s.%%p.xml'%(id)]
+    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%%p.%s.xml'%(id)]
   return args.prefixSimulation
 
 # get additional output files of simulations.
@@ -955,7 +955,11 @@ def getOutFilesAndAdaptRet(example, ret):
     outFiles=[]
     for xmlFile in xmlFiles:
       # check for errors
-      if "<error>" in codecs.open(xmlFile).read().decode('utf-8'):
+      content=codecs.open(xmlFile).read().decode('utf-8')
+      if "</valgrindoutput>" not in content: # incomplete valgrind output -> a skipped trace children
+        os.remove(xmlFile)
+        continue
+      if "<error>" in content and ret[0]!=None:
         ret[0]=1
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
@@ -1066,7 +1070,10 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
 
   # return
-  ret=abs(ret1[0])+abs(ret2[0])
+  if ret1[0]==None or ret2[0]==None:
+    ret=None
+  else:
+    ret=abs(ret1[0])+abs(ret2[0])
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
