@@ -15,7 +15,7 @@ cd $CURDIR
 # build and run all examples
 export CXXFLAGS="-O1 -g"
 export CFLAGS="-O1 -g"
-$(dirname $0)/build-scripts/daily-build/build.py "$@" --rotate 14 -j 2 --forceBuild --sourceDir /home/user/MBSimDailyBuild --prefix /home/user/MBSimDailyBuild/local --docOutDir /var/www/html/mbsim-env/MBSimDailyBuild/doc --reportOutDir /var/www/html/mbsim-env/MBSimDailyBuild/report --url http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report --buildType "Daily Build: " --passToConfigure --enable-debug --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt
+$(dirname $0)/build-scripts/daily-build/build.py "$@" --rotate 14 -j 2 --forceBuild --sourceDir /home/user/MBSimDailyBuild --prefix /home/user/MBSimDailyBuild/local --docOutDir /var/www/html/mbsim-env/MBSimDailyBuild/doc --reportOutDir /var/www/html/mbsim-env/MBSimDailyBuild/report --url http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report --buildType "Daily Build: " --passToConfigure --enable-debug --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --with-swigpath=/home/user/Updates/local/bin
 
 # run examples with valgrind
 cd $(dirname $0)
