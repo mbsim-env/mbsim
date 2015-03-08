@@ -8,7 +8,7 @@ libmbsimfmi_la_SOURCES = \
   fmi_scalar_variable.cc \
   fmi_scalar_variable_container.cc
 libmbsimfmi_la_CPPFLAGS = $(DEPS_CFLAGS)
-libmbsimfmi_la_LDFLAGS = -version-info @LIBMBSIMFMI_VERSION_INFO@ -Wl,-rpath,\$$ORIGIN
+libmbsimfmi_la_LDFLAGS = -version-info @LIBMBSIMFMI_VERSION_INFO@ -Wl,--disable-new-dtags,-rpath,\$$ORIGIN
 libmbsimfmi_la_LIBADD = $(DEPS_LIBS) -lmbsimflatxml -lmbsimControl -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
 
 mbsimfmiincludedir = $(includedir)/mbsimfmi
@@ -31,6 +31,6 @@ bin_PROGRAMS = fmixmlexport
 
 # generate PIC code also for the mbsimflatxml executable: this is required for dlopen with RTLD_DEEPBIND!!!
 fmixmlexport_CPPFLAGS = $(DEPS_CFLAGS) $(MBSIMXML_MINGW)
-fmixmlexport_LDFLAGS = -L. -Wl,-rpath -Wl,\$$ORIGIN/../lib
+fmixmlexport_LDFLAGS = -L. -Wl,-rpath -Wl,--disable-new-dtags,\$$ORIGIN/../lib
 fmixmlexport_LDADD = $(DEPS_LIBS) ./libmbsimfmi.la -lmbsim -lmbsimflatxml
 fmixmlexport_SOURCES = fmixmlexport-main.cc
