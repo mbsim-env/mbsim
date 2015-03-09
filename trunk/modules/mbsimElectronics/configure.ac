@@ -59,10 +59,11 @@ CPPFLAGS="$CPPFLAGS -Wall -Werror"
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
-  AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
+  AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimElectronics/Makefile doc/Makefile mbsimElectronics.pc doc/doxyfile])
 

@@ -1,7 +1,7 @@
 SUBDIRS =  numerics utils integrators analysers contact_kinematics contours functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
-libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@ -Wl,--disable-new-dtags,-rpath,\$$ORIGIN/../lib
+libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = \
 element.cc\
 body.cc\
