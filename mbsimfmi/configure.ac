@@ -25,6 +25,7 @@ fi
 
 CPPFLAGS="$CFLAGS -Wall -Werror -Wno-sign-compare"
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 # FMI platform name
 if test "_$host_os" = "_mingw32" ; then

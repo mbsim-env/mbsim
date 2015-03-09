@@ -1,7 +1,7 @@
 SUBDIRS =  .
   
 lib_LTLIBRARIES = libmbsimInterface.la
-libmbsimInterface_la_LDFLAGS = -version-info @LIBMBSIM_INTERFACE_VERSION_INFO@ -Wl,--disable-new-dtags,-rpath,\$$ORIGIN/../lib
+libmbsimInterface_la_LDFLAGS = -version-info @LIBMBSIM_INTERFACE_VERSION_INFO@
 libmbsimInterface_la_SOURCES = \
   interface_integrator.cc \
   mbsim_tcp_server.cc \

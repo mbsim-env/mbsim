@@ -101,10 +101,11 @@ AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]);
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
-  AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
+  AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimInterface/Makefile doc/doxyfile doc/Makefile mbsimInterface.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile])
 

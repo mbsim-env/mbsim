@@ -10,7 +10,7 @@ LDADD = $(QT_LIBS) $(OPENMBV_LIBS)
 
 mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 
-mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,--disable-new-dtags,-rpath,\$$ORIGIN/../lib
+mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS)
 
 mbsimgui_SOURCES = mainwindow.cc \
 		   options.cc \

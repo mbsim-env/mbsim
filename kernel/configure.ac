@@ -150,7 +150,7 @@ fi
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
-  AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
+  AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
 dnl XML
@@ -160,6 +160,7 @@ AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/analysers/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/numerics/nurbs/Makefile mbsim/functions/Makefile mbsim/observers/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile])
 

@@ -1,7 +1,7 @@
 SUBDIRS = flexible_body contours contact_kinematics utils .
   
 lib_LTLIBRARIES = libmbsimFlexibleBody.la
-libmbsimFlexibleBody_la_LDFLAGS = -version-info @LIBMBSIMFLEXIBLEBODY_VERSION_INFO@ -Wl,--disable-new-dtags,-rpath,\$$ORIGIN/../lib
+libmbsimFlexibleBody_la_LDFLAGS = -version-info @LIBMBSIMFLEXIBLEBODY_VERSION_INFO@
 libmbsimFlexibleBody_la_SOURCES = flexible_body.cc\
                                   node_frame.cc\
 				  fixed_nodal_frame.cc
