@@ -1043,13 +1043,14 @@ def executeFlatXMLExample(executeFD, example):
 # helper function for executeFMIXMLExample and executeFMISrcExample
 def executeFMIExample(executeFD, example, fmiInputFile):
   # run mbsimCreateFMU to export the model as a FMU
+  # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), fmiInputFile]))
+  comm=[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
+  list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret1=[subprocessCall(prefixSimulation(example, 'fmucre')+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
-                       fmiInputFile], executeFD, maxExecutionTime=args.maxExecutionTime/5)]
+  ret1=[subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/5)]
   outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
   # get fmuChecker executable
@@ -1060,11 +1061,15 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   # run fmuChecker
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck), "-l", "5", "mbsim.fmu"]))
+  # adapt end time if MBSIM_SET_MINIMAL_TEND is set
+  endTime=[]
+  if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
+    endTime=['-s', '0.01']
+  comm=[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
+  list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret2=[subprocessCall(prefixSimulation(example, 'fmuchk')+[pj(mbsimBinDir, fmuCheck),
-                       "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)]
+  ret2=[subprocessCall(prefixSimulation(example, 'fmuchk')+comm, executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
