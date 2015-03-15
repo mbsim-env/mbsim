@@ -15,6 +15,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
+AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
 if test "_$debug" = "_yes" ; then
   CFLAGS="$CFLAGS -ggdb"
   CXXFLAGS="$CXXFLAGS -ggdb"
@@ -34,6 +35,11 @@ else
   FMIPLATFORM=linux$(getconf LONG_BIT)
 fi
 AC_SUBST([FMIPLATFORM])
+
+AC_ARG_WITH([boost-data-time],
+  [  --with-boost-date-time-lib=LIBNAME  The library name of boost data_time excluding prefix/suffix (Default: boost_data_time).],
+  [BOOST_DATE_TIME_LIB="$withval"], [BOOST_DATE_TIME_LIB="boost_date_time"])
+AC_SUBST([BOOST_DATE_TIME_LIB])
 
 # user supplied mkoctfile program
 AC_ARG_WITH([mkoctfile],
