@@ -59,6 +59,14 @@
    ...
    fun:_Z11eval_stringRKSsbRii
 }
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   obj:*/liboctave.so.1
+   ...
+   fun:dlopen@@GLIBC_2.1
+}
 
 # FMUCHECKER
 {
