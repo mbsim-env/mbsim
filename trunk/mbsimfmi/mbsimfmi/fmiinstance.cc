@@ -216,16 +216,6 @@ namespace MBSimFMI {
     msg(Debug)<<"Create model input/output variables."<<endl;
     addModelInputOutputs(varSim, dss.get());
 
-    // save the current dir and change to outputDir -> MBSim will create output files in the current dir
-    msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
-    path savedCurDir=current_path();
-    // restore current dir on scope exit
-    BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
-    current_path(predefinedParameterStruct.outputDir);
-    // initialize dss
-    msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
-    dss->initialize();
-
     // Till now (between fmiInstantiateModel and fmiInitialize) we have only used objects of type VariableStore's in var.
     // Now we copy all values from var to varSim (varSim is generated above).
     if(var.size()!=varSim.size())
@@ -265,6 +255,17 @@ namespace MBSimFMI {
     }
     // var is now no longer needed since we use varSim now.
     var=varSim;
+
+    // save the current dir and change to outputDir -> MBSim will create output files in the current dir
+    msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
+    path savedCurDir=current_path();
+    // restore current dir on scope exit
+    BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
+    create_directories(predefinedParameterStruct.outputDir);
+    current_path(predefinedParameterStruct.outputDir);
+    // initialize dss
+    msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
+    dss->initialize();
 
     // initialize state
     z.resize(dss->getzSize());
