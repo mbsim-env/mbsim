@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
       void setmmi(const Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &mmi_) { mmi = mmi_; }
       void setCt(const Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > &Ct_) { Ct = Ct_; }
       void setCr(const Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > &Cr_) { Cr = Cr_; }
-      void setMe(const Taylor<fmatvec::SymMat> &Me_) { Me = Me_; }
+      void setMe(const Taylor<fmatvec::SymMatV> &Me_) { Me = Me_; }
       void setGr(const Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &Gr_) { Gr = Gr_; }
       void setGe(const Taylor<std::vector<fmatvec::SqrMatV> > &Ge_) { Ge = Ge_; }
       void setOe(const Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > &Oe_) { Oe = Oe_; }
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief Read standard input data (SID) from file.
        */
-      void readSIDFromFile(const std::string& file) { THROW_MBSIMERROR("Interface not yet implemented."); }
+      void readSIDFromFile(const std::string& file);
 
       void addFrame(FixedNodalFrame *frame); 
 
@@ -299,7 +299,7 @@ namespace MBSimFlexibleBody {
       Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > mmi;
       Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > Ct;
       Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > Cr;
-      Taylor<fmatvec::SymMat> Me;
+      Taylor<fmatvec::SymMatV> Me;
       Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > Gr;
       Taylor<std::vector<fmatvec::SqrMatV> > Ge;
       Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > Oe;

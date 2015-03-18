@@ -104,6 +104,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::determineSID() {
     C2.resize(ne,NONINIT);
+    if(not(C3.size()))
+      C3.resize(3,vector<SqrMatV>(3));
     C6.resize(ne);
     Gr.getM0().resize(ne);
     Gr.getM1().resize(ne);
@@ -215,6 +217,10 @@ namespace MBSimFlexibleBody {
 
     ksigma.setM0(ke0);
     ksigma.setM1(Ke0);
+  }
+
+  void FlexibleBodyFFR::readSIDFromFile(const string& file) {
+    THROW_MBSIMERROR("Interface not yet implemented.");
   }
 
   void FlexibleBodyFFR::prefillMassMatrix() {
@@ -349,7 +355,8 @@ namespace MBSimFlexibleBody {
     else if(stage==unknownStage) {
       Body::init(stage);
 
-      determineSID();
+      if(Me.getM0().size()==0)
+        determineSID();
       prefillMassMatrix();
 
       K->getJacobianOfTranslation(1) = PJT[1];
