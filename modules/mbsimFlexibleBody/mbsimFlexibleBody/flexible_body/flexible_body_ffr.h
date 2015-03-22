@@ -226,6 +226,11 @@ namespace MBSimFlexibleBody {
       // End of interface
       
       /**
+       * \brief Read basic input data (BID) from file.
+       */
+      void readBIDFromFile(const std::string& file);
+
+      /**
        * \brief Read standard input data (SID) from file.
        */
       void readSIDFromFile(const std::string& file);
