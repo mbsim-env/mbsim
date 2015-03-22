@@ -122,19 +122,7 @@ namespace MBSim {
   class OctaveParser {
     private:
       std::ifstream is;
-
-    public:
-      OctaveParser(const std::string &file) {
-        is.open(file.c_str());
-      }
-
-      ~OctaveParser() {
-        is.close();
-      }
-
-      bool fileOpen() const { return is.is_open(); }
-
-      std::vector<OctaveElement*> parse();
+      std::vector<OctaveElement*> ele;
       std::string readName();
       std::string readType();
       OctaveScalar* readScalar();
@@ -144,9 +132,27 @@ namespace MBSim {
       OctaveCell* readCell();
       OctaveStruct* readStruct();
       OctaveElement* parseElement();
+
+    public:
+      OctaveParser(const std::string &file) {
+        is.open(file.c_str());
+      }
+
+      ~OctaveParser() {
+        for(unsigned int i=0; i<ele.size(); i++)
+          delete ele[i];
+        is.close();
+      }
+
+      bool fileOpen() const { return is.is_open(); }
+
+      void parse();
+
+      const OctaveElement* get(int i) const { return ele[i]; }
+
+      OctaveElement* find(const std::string &name);
   };
 
-  OctaveElement* find(const std::vector<OctaveElement*> &ele, const std::string &name);
 
 }
 

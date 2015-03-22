@@ -83,7 +83,7 @@ namespace MBSim {
     os << endl;
   }
 
-  vector<OctaveElement*> OctaveParser::parse() {
+  void OctaveParser::parse() {
     const int n = 10000;
     char str[n];
     streampos pos;
@@ -92,13 +92,11 @@ namespace MBSim {
       is.getline(str,n);
     } while(string(str).find("name")==string::npos);
     is.seekg(pos);
-    vector<OctaveElement*> ele;
     OctaveElement* el = parseElement();
     while(el) {
       ele.push_back(el);
       el = parseElement();
     }
-    return ele;
   }
 
   string OctaveParser::readName() {
@@ -221,7 +219,7 @@ namespace MBSim {
     return ele;
   }
   
-  OctaveElement* find(const vector<OctaveElement*> &ele, const string &name) {
+  OctaveElement* OctaveParser::find(const string &name) {
     for(unsigned int i=0; i<ele.size(); i++)
       if(ele[i]->getName() == name)
         return ele[i];
