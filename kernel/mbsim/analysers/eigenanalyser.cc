@@ -24,6 +24,7 @@
 #include "fmatvec/linear_algebra_complex.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/octave_utils.h"
 #include <iostream>
 
 using namespace std;
@@ -192,36 +193,10 @@ namespace MBSimAnalyser {
   bool Eigenanalyser::saveEigenanalyis(const string& fileName) {
     ofstream os(fileName.c_str());
     if(os.is_open()) {
-      os << "# name: lambda" << endl;
-      os << "# type: complex matrix" << endl;
-      os << "# rows: " << w.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i < w.size(); ++i)
-        os << setw(26) << w.e(i) << endl;
-      os << endl;
-      os << "# name: V" << endl;
-      os << "# type: complex matrix" << endl;
-      os << "# rows: " << V.rows() << endl;
-      os << "# columns: " << V.cols() << endl;
-      for(int i=0; i < V.rows(); ++i) {
-        for(int j=0; j < V.cols(); ++j) 
-          os << setw(26) << V.e(i,j);
-        os << endl;
-      }
-      os << endl;
-      os << "# name: z" << endl;
-      os << "# type: matrix" << endl;
-      os << "# rows: " << freq.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i < zEq.size(); ++i)
-        os << setw(26) << zEq.e(i) << endl;
-      os << endl;
-      os << "# name: f" << endl;
-      os << "# type: matrix" << endl;
-      os << "# rows: " << freq.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i < freq.size(); ++i)
-        os << setw(26) << freq.e(i) << endl;
+      OctaveComplexMatrix("lambda",w).toStream(os);
+      OctaveComplexMatrix("V",V).toStream(os);
+      OctaveMatrix("z",zEq).toStream(os);
+      OctaveMatrix("f",freq).toStream(os);
       os.close();
       return true;
     }
@@ -229,42 +204,17 @@ namespace MBSimAnalyser {
   }
 
   bool Eigenanalyser::loadEigenanalyis(const string& fileName) {
-    ifstream is(fileName.c_str());
-    if(is.is_open()) {
-      char str[100];
-      string n;
-      is.getline(str,100);
-      is.getline(str,100);
-      is >> n >> n >> n;
-      w.resize(atoi(n.c_str()));
-      V.resize(w.size());
-      zEq.resize(w.size());
-      is >> n;
-      is.getline(str,100);
-      for(int i=0; i<w.size(); i++)
-        is >> w.e(i);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      for(int i=0; i<V.size(); i++)
-        for(int j=0; j<V.size(); j++)
-          is >> V.e(i,j);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      is.getline(str,100);
-      for(int i=0; i<zEq.size(); i++)
-        is >> zEq.e(i);
-      is.close();
+    OctaveParser op(fileName);
+    if(op.fileOpen()) {
+      vector<OctaveElement*> ele = op.parse();
+      w = static_cast<const OctaveComplexMatrix*>(ele[0])->get<Vector<Ref, complex<double> > >();
+      V = static_cast<const OctaveComplexMatrix*>(ele[1])->get<SquareMatrix<Ref, complex<double> > >();
+      zEq = static_cast<const OctaveMatrix*>(ele[2])->get<Vec>();
       computeEigenfrequencies();
       return true;
     }
-    return false;
+    else
+      return false;
   }
 
   void Eigenanalyser::initializeUsingXML(DOMElement *element) {
