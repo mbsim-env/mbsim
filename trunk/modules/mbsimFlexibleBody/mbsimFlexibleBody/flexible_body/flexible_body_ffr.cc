@@ -222,80 +222,80 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::readBIDFromFile(const string& file) {
     OctaveParser op(file);
-    vector<OctaveElement*> ele = op.parse();
+    op.parse();
 
-    const OctaveScalar *octscalar = dynamic_cast<const OctaveScalar*>(find(ele,"mass"));
+    const OctaveScalar *octscalar = dynamic_cast<const OctaveScalar*>(op.find("mass"));
     if(octscalar) 
       m = octscalar->get();
     else
       throw MBSimError("In read BID from file: mass not existing!");
 
-    const OctaveMatrix *octmat = dynamic_cast<const OctaveMatrix*>(find(ele,"c0"));
+    const OctaveMatrix *octmat = dynamic_cast<const OctaveMatrix*>(op.find("c0"));
     if(octmat) 
       c0 = octmat->get<Vec3>();
     else
       throw MBSimError("In read BID from file: c0 not existing!");
 
-    octmat = dynamic_cast<const OctaveMatrix*>(find(ele,"I0"));
+    octmat = dynamic_cast<const OctaveMatrix*>(op.find("I0"));
     if(octmat) 
       I0 = octmat->get<SymMat3>();
     else
       throw MBSimError("In read BID from file: I0 not existing!");
 
-    octmat = dynamic_cast<const OctaveMatrix*>(find(ele,"C1"));
+    octmat = dynamic_cast<const OctaveMatrix*>(op.find("C1"));
     if(octmat) 
       C1 = octmat->get<Mat3xV>();
     else
       throw MBSimError("In read BID from file: C1 not existing!");
 
-    const OctaveCell *octcell = dynamic_cast<const OctaveCell*>(find(ele,"C3"));
+    const OctaveCell *octcell = dynamic_cast<const OctaveCell*>(op.find("C3"));
     if(octcell)
       C3 = octcell->get<SqrMatV>();
     else
       throw MBSimError("In read BID from file: C3 not existing!");
 
-    octcell = dynamic_cast<const OctaveCell*>(find(ele,"C4"));
+    octcell = dynamic_cast<const OctaveCell*>(op.find("C4"));
     if(octcell)
       C4 = octcell->get<SqrMat3>()[0];
     else
       throw MBSimError("In read BID from file: C4 not existing!");
 
-    octmat = dynamic_cast<const OctaveMatrix*>(find(ele,"Ke"));
+    octmat = dynamic_cast<const OctaveMatrix*>(op.find("Ke"));
     if(octmat) 
       Ke = octmat->get<SymMatV>();
     else
       throw MBSimError("In read BID from file: Ke not existing!");
 
-    octmat = dynamic_cast<const OctaveMatrix*>(find(ele,"De"));
+    octmat = dynamic_cast<const OctaveMatrix*>(op.find("De"));
     if(octmat) 
       De = octmat->get<SymMatV>();
 
-    octcell = dynamic_cast<const OctaveCell*>(find(ele,"C7"));
+    octcell = dynamic_cast<const OctaveCell*>(op.find("C7"));
     if(octcell)
       C7 = octcell->get<SqrMatV>()[0];
 
-    octcell = dynamic_cast<const OctaveCell*>(find(ele,"C8"));
+    octcell = dynamic_cast<const OctaveCell*>(op.find("C8"));
     if(octcell)
       C8 = octcell->get<SqrMatV>();
 
-    octcell = dynamic_cast<const OctaveCell*>(find(ele,"K0t"));
+    octcell = dynamic_cast<const OctaveCell*>(op.find("K0t"));
     if(octcell)
       K0t = octcell->get<SqrMatV>()[0];
 
-    octcell = dynamic_cast<const OctaveCell*>(find(ele,"K0r"));
+    octcell = dynamic_cast<const OctaveCell*>(op.find("K0r"));
     if(octcell)
       K0r = octcell->get<SqrMatV>()[0];
 
-    octcell = dynamic_cast<const OctaveCell*>(find(ele,"K0om"));
+    octcell = dynamic_cast<const OctaveCell*>(op.find("K0om"));
     if(octcell)
       K0om = octcell->get<SqrMatV>()[0];
   }
 
   void FlexibleBodyFFR::readSIDFromFile(const string& file) {
     OctaveParser op(file);
-    vector<OctaveElement*> ele = op.parse();
+    op.parse();
 
-    const OctaveScalar *octscalar = dynamic_cast<const OctaveScalar*>(find(ele,"mass"));
+    const OctaveScalar *octscalar = dynamic_cast<const OctaveScalar*>(op.find("mass"));
     if(octscalar) 
       m = octscalar->get();
     else
@@ -303,7 +303,7 @@ namespace MBSimFlexibleBody {
     
     const OctaveMatrix *octmat;
     const OctaveCell *octcell;
-    OctaveStruct *octstruct = dynamic_cast<OctaveStruct*>(find(ele,"mCM"));
+    OctaveStruct *octstruct = dynamic_cast<OctaveStruct*>(op.find("mCM"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -317,7 +317,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: mCM not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"mmi"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("mmi"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -334,7 +334,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: mmi not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Ct"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Ct"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -345,7 +345,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Ct not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Cr"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Cr"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -359,7 +359,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Cr not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Me"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Me"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -370,7 +370,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Me not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Gr"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Gr"));
     if(octstruct) {
       octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M0"));
       if(octcell)
@@ -384,7 +384,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Gr not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Ge"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Ge"));
     if(octstruct) {
       octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M0"));
       if(octcell)
@@ -395,7 +395,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Ge not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Oe"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Oe"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -409,7 +409,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Oe not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"Ke"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("Ke"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)
@@ -420,7 +420,7 @@ namespace MBSimFlexibleBody {
     else
       throw MBSimError("In read SID from file: Ke not existing!");
 
-    octstruct = dynamic_cast<OctaveStruct*>(find(ele,"De"));
+    octstruct = dynamic_cast<OctaveStruct*>(op.find("De"));
     if(octstruct) {
       octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
       if(octmat)

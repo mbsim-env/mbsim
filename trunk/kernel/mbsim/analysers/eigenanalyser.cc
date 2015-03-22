@@ -206,10 +206,10 @@ namespace MBSimAnalyser {
   bool Eigenanalyser::loadEigenanalyis(const string& fileName) {
     OctaveParser op(fileName);
     if(op.fileOpen()) {
-      vector<OctaveElement*> ele = op.parse();
-      w = static_cast<const OctaveComplexMatrix*>(ele[0])->get<Vector<Ref, complex<double> > >();
-      V = static_cast<const OctaveComplexMatrix*>(ele[1])->get<SquareMatrix<Ref, complex<double> > >();
-      zEq = static_cast<const OctaveMatrix*>(ele[2])->get<Vec>();
+      op.parse();
+      w = static_cast<const OctaveComplexMatrix*>(op.get(0))->get<Vector<Ref, complex<double> > >();
+      V = static_cast<const OctaveComplexMatrix*>(op.get(1))->get<SquareMatrix<Ref, complex<double> > >();
+      zEq = static_cast<const OctaveMatrix*>(op.get(2))->get<Vec>();
       computeEigenfrequencies();
       return true;
     }
