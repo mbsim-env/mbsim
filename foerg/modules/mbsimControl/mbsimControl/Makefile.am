@@ -36,3 +36,7 @@ mbsimControlinclude_HEADERS = \
   linear_transfer_system.h\
   massless_spring_damper.h\
   signal_function.h
+
+
+include $(prefix)/share/mbxmlutils/python/deplibs.mk
+install-exec-hook: deplibs.target
