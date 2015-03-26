@@ -51,19 +51,6 @@ if test "$mkoctfile" == "no"; then
 fi
 test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
 
-if test "_$host_os" != "_mingw32" ; then
-  # user supplied patchelf program
-  AC_ARG_WITH([patchelf],
-    [  --with-patchelf=PATHTOMKOCTFILE  The 'patchelf' program.],
-    [patchelf="$withval"],[patchelf="no"])
-  # get patchelf program
-  if test "$patchelf" == "no"; then
-    AC_PATH_PROG([patchelf],[patchelf],[no],[$prefix/bin:$PATH])
-  fi
-  test $patchelf = "no" && AC_MSG_ERROR([patchelf not found])
-fi
-AC_DEFINE_UNQUOTED([MBSIMFMI_PATCHELF], ["$patchelf"], [patch elf program])
-
 PKG_CHECK_MODULES(MBXMLUTILSBASEDEPS, mbxmlutilsbase)
 PKG_CHECK_MODULES(FMUDEPS, mbsim mbsimControl)
 PKG_CHECK_MODULES(FMUXMLDEPS, mbsimflatxml)
