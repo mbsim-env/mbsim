@@ -17,6 +17,7 @@
  * Contact: friedrich.at.gc@googlemail.com
  */
 
+#include "config.h"
 #include "mbsimControl/extern_signal_sink.h"
 
 using namespace MBXMLUtils;
