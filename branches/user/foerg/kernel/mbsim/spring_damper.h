@@ -41,6 +41,7 @@ namespace MBSim {
       double dist;
       fmatvec::Vec3 n;
       Function<double(double,double)> *func;
+      double l0;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
@@ -64,8 +65,8 @@ namespace MBSim {
       /*****************************/
 
       /** \brief Set function for the force calculation.
-       * The first input parameter to that function is the distance g between frame2 and frame1.
-       * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
+       * The first input parameter to that function is the distance relative to the unloaded length.
+       * The second input parameter to that function is the relative velocity.       
        * The return value of that function is used as the force of the SpringDamper.
        */
       void setForceFunction(Function<double(double,double)> *func_) {
@@ -73,6 +74,9 @@ namespace MBSim {
         func->setParent(this);
         func->setName("Force");
       }
+
+      /** \brief Set unloaded length. */
+      void setUnloadedLength(double l0_) { l0 = l0_; }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -103,6 +107,7 @@ namespace MBSim {
     protected:
       double dist;
       Function<double(double,double)> *func;
+      double l0;
       Frame *refFrame;
       fmatvec::Vec3 forceDir, WforceDir, WrP0P1;
       Frame C;
@@ -130,8 +135,8 @@ namespace MBSim {
       /*****************************/
 
       /** \brief Set function for the force calculation.
-       * The first input parameter to that function is the distance g between frame2 and frame1.
-       * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
+       * The first input parameter to that function is the distance relative to the unloaded length.
+       * The second input parameter to that function is the relative velocity.       
        * The return value of that function is used as the force of the SpringDamper.
        */
       void setForceFunction(Function<double(double,double)> *func_) {
@@ -139,6 +144,9 @@ namespace MBSim {
         func->setParent(this);
         func->setName("Force");
       }
+
+      /** \brief Set unloaded length. */
+      void setUnloadedLength(double l0_) { l0 = l0_; }
 
       /**
        * \param local force direction represented in first frame
@@ -168,6 +176,7 @@ namespace MBSim {
   class GeneralizedSpringDamper : public MechanicalLink {
     protected:
       Function<double(double,double)> *func;
+      double l0;
       std::vector<RigidBody*> body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
@@ -192,6 +201,9 @@ namespace MBSim {
         func->setParent(this);
         func->setName("GeneralizedFoce");
       }
+
+      /** \brief Set unloaded generalized length. */
+      void setUnloadedGeneralizedLength(double l0_) { l0 = l0_; }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }

@@ -39,7 +39,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
-  SpringDamper::SpringDamper(const string &name) : MechanicalLink(name), func(NULL)
+  SpringDamper::SpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0)
   {}
 
   SpringDamper::~SpringDamper() {
@@ -58,7 +58,7 @@ namespace MBSim {
     Vec3 Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
     gd(0)=Wvrel.T()*n;
 
-    la(0)=(*func)(g(0),gd(0));
+    la(0)=(*func)(g(0)-l0,gd(0));
 
     if(dist<=epsroot() && abs(la(0))>epsroot())
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
@@ -147,6 +147,8 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
+    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
+    if(e) l0 = Element::getDouble(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1=E(e)->getAttribute("ref1");
     saved_ref2=E(e)->getAttribute("ref2");
@@ -167,7 +169,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
-  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : MechanicalLink(name), func(NULL), refFrame(NULL)
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0), refFrame(NULL)
   {}
 
   DirectionalSpringDamper::~DirectionalSpringDamper() {
@@ -187,7 +189,7 @@ namespace MBSim {
     Vec3 WvP0P1 = frame[1]->getVelocity()-C.getVelocity();
     gd(0)=WvP0P1.T()*WforceDir;
 
-    la(0)=(*func)(g(0),gd(0));
+    la(0)=(*func)(g(0)-l0,gd(0));
     WF[0]=WforceDir*la; // projected force in direction of WforceDir
     WF[1]=-WF[0];
   }
@@ -292,6 +294,8 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
+    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
+    if(e) l0 = Element::getDouble(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1=E(e)->getAttribute("ref1");
     saved_ref2=E(e)->getAttribute("ref2");
@@ -312,7 +316,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
 
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : MechanicalLink(name), func(NULL), body(2)
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0), body(2)
   {
     WF.resize(2);
     WM.resize(2);
@@ -342,7 +346,7 @@ namespace MBSim {
   void GeneralizedSpringDamper::updateStateDependentVariables(double t) {
     g=body[0]?(body[1]->getqRel()-body[0]->getqRel()):body[1]->getqRel();
     gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
-    la(0) = (*func)(g(0),gd(0));
+    la(0) = (*func)(g(0)-l0,gd(0));
     WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
     WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
     if(body[0]) {
@@ -449,6 +453,8 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
+    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedGeneralizedLength");
+    if(e) l0 = Element::getDouble(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
     if(e) saved_body1=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
