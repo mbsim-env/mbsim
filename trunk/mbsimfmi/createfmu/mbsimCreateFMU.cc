@@ -42,22 +42,7 @@ namespace {
   string SHEXT_(".so");
 #endif
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src, path deplibdir=path(),
-                      bool patch=false);
-
-  // Set the RUNPATH (rpath) of ELF binaries to $ORIGIN/../lib:$ORIGIN
-  class PatchELF {
-    public:
-      // Set the RUNPATH of filename. filename is not touched itself but a copy of it
-      PatchELF(const path &filename);
-      // Deletes the generated patched filename
-      ~PatchELF();
-      // get the filename (incuding absoulute path) of the patched file. This file has a lifetime equal to the
-      // lifetime of the corresponding PatchELF object.
-      path getFilename();
-    private:
-      path patchedFilename;
-  };
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src);
 }
 
 int main(int argc, char *argv[]) {
@@ -388,9 +373,7 @@ int main(int argc, char *argv[]) {
         cout<<endl;
 
         cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/"bin"/"casadi_interface.oct", path("resources")/"local"/LIBDIR,
-                       getInstallPath()/"bin"/"casadi_interface.oct", getInstallPath()/"lib");
-        cout<<"."<<flush;
+        // note: casadi_interface.oct is copied automatically with all other octave oct files later
         fmuFile.add(path("resources")/"local"/"bin"/"casadi.m", getInstallPath()/"bin"/"casadi.m");
         for(directory_iterator srcIt=directory_iterator(getInstallPath()/"bin"/"@swig_ref");
           srcIt!=directory_iterator(); ++srcIt) {
@@ -415,13 +398,17 @@ int main(int argc, char *argv[]) {
         path octave_prefix(getInstallPath()); // use octave in install path
         if(!exists(octave_prefix/"share"/"octave")) // if not found use octave in system path
           octave_prefix=OCTAVE_PREFIX;
-        // get octave libdir (without prefix dir)
+        // get octave libdir without octave_prefix
         path octave_libdir(string(OCTAVE_LIBDIR).substr(string(OCTAVE_PREFIX).length()+1));
+        // get octave octfiledir without octave_prefix
+        path octave_octfiledir(string(OCTAVE_OCTFILEDIR).substr(string(OCTAVE_PREFIX).length()+1));
+        // get octave fcnfiledir without octave_prefix
+        path octave_fcnfiledir(string(OCTAVE_FCNFILEDIR).substr(string(OCTAVE_PREFIX).length()+1));
 
         cout<<"Copy octave m-files to FMU."<<endl;
-        path mFileDir=octave_prefix/"share"/"octave"/OCTAVE_VERSION/"m";
-        depth=distance(mFileDir.begin(), mFileDir.end());
-        for(recursive_directory_iterator srcIt=recursive_directory_iterator(mFileDir);
+        path dir=octave_prefix/octave_fcnfiledir;
+        depth=distance(dir.begin(), dir.end());
+        for(recursive_directory_iterator srcIt=recursive_directory_iterator(octave_prefix/octave_fcnfiledir);
             srcIt!=recursive_directory_iterator(); ++srcIt) {
           if(is_directory(*srcIt)) // skip directories
             continue;
@@ -431,24 +418,19 @@ int main(int argc, char *argv[]) {
           for(; dstIt!=srcIt->path().end(); ++dstIt)
             dst/=*dstIt;
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"share"/"octave"/OCTAVE_VERSION/"m"/dst, srcIt->path());
+          fmuFile.add(path("resources")/"local"/octave_fcnfiledir/dst, srcIt->path());
         }
         cout<<endl;
 
         cout<<"Copy octave oct-files to FMU."<<endl;
         // octave oct-files are copied to $FMU/resources/local/$LIBDIR since their are also all dependent libraries
         // installed (and are found their due to Linux rpath or Windows alternate search order flag).
-        // This requires to add this FMU path to the octave search path (this is always done in the OctEval class)
-        for(directory_iterator srcIt=directory_iterator(octave_prefix/octave_libdir/"octave"/OCTAVE_VERSION/
-          "oct"/OCTAVE_CANONICAL_HOST_TYPE);
-          srcIt!=directory_iterator(); ++srcIt) {
+        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR); srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
           if(srcIt->path().extension()==".oct")
             copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/srcIt->path().filename(),
-                           path("resources")/"local"/LIBDIR,
-                           srcIt->path(),
-                           getInstallPath()/LIBDIR, true);
-          else
+                           path("resources")/"local"/LIBDIR, srcIt->path());
+          if(srcIt->path().filename()=="PKG_ADD")
             fmuFile.add(path("resources")/"local"/LIBDIR/srcIt->path().filename(),
                         srcIt->path());
         }
@@ -498,22 +480,13 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src, path deplibdir, bool patch) {
+  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src) {
     // copy src to FMU
     cout<<"."<<flush;
-    if(patch) {
-      PatchELF srcPatch(src);
-      fmuFile.add(dst, srcPatch.getFilename());
-    }
-    else
-      fmuFile.add(dst, src);
+    fmuFile.add(dst, src);
 
     // check if *.deplibs file exits
-    path depFile;
-    if(deplibdir.empty())
-      depFile=src.parent_path()/(src.filename().string()+".deplibs");
-    else
-      depFile=deplibdir/(src.filename().string()+".deplibs");
+    path depFile=src.parent_path()/(src.filename().string()+".deplibs");
     if(!exists(depFile)) {
       cerr<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
       return;
@@ -544,29 +517,6 @@ namespace {
       // not found
       cerr<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
     }
-  }
-
-  PatchELF::PatchELF(const path &filename) {
-    patchedFilename=filename;
-#ifndef _WIN32
-    patchedFilename=".patchelf."+filename.filename().string();
-    copy_file(filename, patchedFilename);
-    path patchelf(MBSIMFMI_PATCHELF);
-    if(!exists(patchelf))
-      patchelf=getInstallPath()/"bin"/"patchelf";
-    if(system((patchelf.string()+" --force-rpath --set-rpath \\$ORIGIN "+patchedFilename.string()).c_str()))
-      throw runtime_error("Cannot set rpath of octave oct-file.");
-#endif
-  }
-
-  PatchELF::~PatchELF() {
-#ifndef _WIN32
-    remove(patchedFilename);
-#endif
-  }
-
-  path PatchELF::getFilename() {
-    return patchedFilename;
   }
 
 }
