@@ -30,6 +30,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -684,7 +685,7 @@ namespace MBSim {
   }
 
   void InverseKineticsJoint::calcbSize() {
-    bSize = body ? body->getuRel().size() : 0;
+    bSize = body ? body->getuRelSize() : 0;
   }
 
   void InverseKineticsJoint::updateb(double t) {

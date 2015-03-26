@@ -21,7 +21,7 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/body.h"
-#include "functions/auxiliary_functions.h"
+#include "mbsim/functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -69,9 +69,6 @@ namespace MBSim {
       virtual void updateqd(double t); 
       virtual void updateT(double t);
       virtual void updateh(double t, int j=0);
-      virtual void updateh0Fromh1(double t);
-      virtual void updateW0FromW1(double t);
-      virtual void updateV0FromV1(double t);
       virtual void updatehInverseKinetics(double t, int j=0);
       virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
@@ -219,7 +216,7 @@ namespace MBSim {
       void setFrameForInertiaTensor(Frame *frame);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
+      void setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &body);
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
@@ -290,11 +287,6 @@ namespace MBSim {
        * \brief boolean to use body fixed Frame for rotation
        */
       bool coordinateTransformation;
-
-      /**
-       * JACOBIAN of translation, rotation and their derivatives in parent system
-       */
-      fmatvec::Mat3xV PJT[2], PJR[2];
 
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
@@ -372,8 +364,6 @@ namespace MBSim {
 
       Constraint *constraint;
 
-      int nu[2], nq;
-
       Frame *frameForJacobianOfRotation;
 
       std::vector<FixedRelativeFrame*> RBF;
@@ -385,13 +375,15 @@ namespace MBSim {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
+      fmatvec::Vec3 WF, WM;
+
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief Frame of reference for drawing openMBVBody
        */
       Frame * openMBVFrame;
-      OpenMBV::Arrow *FWeight, *FArrow, *MArrow;
+      boost::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
 #endif
   };
 

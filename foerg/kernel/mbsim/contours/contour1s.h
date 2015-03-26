@@ -100,10 +100,10 @@ namespace MBSim {
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* spineExtrusion) {
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) {
         openMBVSpineExtrusion = spineExtrusion;
       }
-      OpenMBV::Body* getOpenMBVSpineExtrusion() {
+      boost::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() {
         return openMBVSpineExtrusion;
       }
 #endif
@@ -120,7 +120,7 @@ namespace MBSim {
       /*!
        * \brief body for the spine extrusion for visualisation of the 1s-body
        */
-      OpenMBV::SpineExtrusion* openMBVSpineExtrusion;
+      boost::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
 
 #endif
 

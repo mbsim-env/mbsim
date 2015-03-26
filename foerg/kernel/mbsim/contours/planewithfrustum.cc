@@ -29,6 +29,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -36,20 +37,20 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void PlaneWithFrustum::enableOpenMBV() {
-    openMBVRigidBody=new OpenMBV::Frustum;
+    openMBVRigidBody=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     if (hFrustum<0) {
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerBaseRadius(rFrustumOnPlane);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerTopRadius(rFrustumOnTop);
+      static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
+      static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInnerBaseRadius(rFrustumOnPlane);
+      static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(rFrustumOnTop);
+      static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInnerTopRadius(rFrustumOnTop);
     }
     else {
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
+      static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
+      static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(rFrustumOnTop);
     }
-    ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(hFrustum);
-    ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(0, M_PI/2., 0);
-    ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(hFrustum, 0, 0);
+    static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(hFrustum);
+    static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(0, M_PI/2., 0);
+    static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(hFrustum, 0, 0);
   }
 #endif
 

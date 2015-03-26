@@ -68,7 +68,7 @@ namespace MBSim {
       /**
        * \brief compares the result of given vector with the last result and returns if it got better (for damping)
        */
-      virtual bool isBetter(const fmatvec::Vec & vector) = 0;
+      virtual bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) = 0;
 
     protected:
       /**
@@ -96,7 +96,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual int operator ()(const fmatvec::Vec & vector);
-      virtual bool isBetter(const fmatvec::Vec & vector);
+      virtual bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
       virtual void clear();
       /*END - INHERITED INTERFACE*/
 
@@ -110,7 +110,7 @@ namespace MBSim {
 
     protected:
       /*INHERITED INTERFACE*/
-      virtual double computeResults(const fmatvec::Vec & x) = 0;
+      virtual double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) = 0;
       /********************/
 
       /**
@@ -142,7 +142,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual int operator ()(const fmatvec::Vec & vector);
-      virtual bool isBetter(const fmatvec::Vec & vector);
+      virtual bool isBetter(const fmatvec::Vec & vector, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
       virtual void clear();
       /*END - INHERITED INTERFACE*/
 
@@ -151,7 +151,7 @@ namespace MBSim {
       }
 
     protected:
-      virtual std::vector<double> computeResults(const fmatvec::Vec & x) = 0;
+      virtual std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT)) = 0;
 
       /*
        * \brief saves the tolerance for a specified index sets
@@ -182,7 +182,7 @@ namespace MBSim {
 
     protected:
       /* INHERITED INTERFACE */
-      virtual double computeResults(const fmatvec::Vec & x);
+      virtual double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
       /*END - INHERITED INTERFACE*/
   };
 
@@ -204,7 +204,7 @@ namespace MBSim {
 
     protected:
 
-      virtual std::vector<double> computeResults(const fmatvec::Vec & x);
+      virtual std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
   };
 
   /*!
@@ -228,7 +228,7 @@ namespace MBSim {
 
     protected:
       /* INHERITED INTERFACE */
-      virtual double computeResults(const fmatvec::Vec & x);
+      virtual double computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
       /*END - INHERITED INTERFACE*/
 
       /*!
@@ -259,7 +259,7 @@ namespace MBSim {
       }
 
     protected:
-      virtual std::vector<double> computeResults(const fmatvec::Vec & x);
+      virtual std::vector<double> computeResults(const fmatvec::Vec & x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
 
       /*!
        * \brief save the point of the last step for comparison

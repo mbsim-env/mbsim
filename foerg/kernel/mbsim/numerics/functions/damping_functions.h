@@ -67,7 +67,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      StandardDampingFunction(unsigned int kmax_ = 10);
+      StandardDampingFunction(unsigned int kmax_ = 10, double d_ = 0.5);
 
       /*
        * \brief destructor
@@ -81,11 +81,20 @@ namespace MBSim {
         kmax = k_;
       }
 
+      void setDampingNumber(double d_) {
+        d = d_;
+      }
+
     protected:
       /**
        * \brief maximal damping steps
        */
       unsigned int kmax;
+
+      /*!
+       * \brief damping number
+       */
+      double d;
   };
 }
 #endif //NUMERICS_DAMPINGFUNCITONS_H_

@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace boost;
 
 namespace MBSim {
 
@@ -37,11 +38,11 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(0.,h,0.);
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
-          ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r(0));
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r(1));
+          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
         }
   #endif
         RigidContour::init(stage);

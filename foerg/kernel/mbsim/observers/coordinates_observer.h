@@ -33,9 +33,9 @@ namespace MBSim {
     protected:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group *openMBVPosGrp, *openMBVVelGrp, *openMBVAccGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration;
-      OpenMBV::Frame* openMBVFrame;
+      boost::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAccGrp;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration;
+      boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
 #endif
 
     public:
@@ -74,7 +74,7 @@ namespace MBSim {
       fmatvec::Vec3 ex, ey, ez;
       fmatvec::SqrMat3 A;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVXPosition, *openMBVYPosition, *openMBVZPosition, *openMBVXVelocity, *openMBVYVelocity, *openMBVZVelocity, *openMBVXAcceleration, *openMBVYAcceleration, *openMBVZAcceleration; 
+      boost::shared_ptr<OpenMBV::Arrow> openMBVXPosition, openMBVYPosition, openMBVZPosition, openMBVXVelocity, openMBVYVelocity, openMBVZVelocity, openMBVXAcceleration, openMBVYAcceleration, openMBVZAcceleration; 
 #endif
 
     public:
@@ -88,7 +88,7 @@ namespace MBSim {
     private:
       fmatvec::Vec3 ez;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVRadialPosition, *openMBVZPosition, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
+      boost::shared_ptr<OpenMBV::Arrow> openMBVRadialPosition, openMBVZPosition, openMBVRadialVelocity, openMBVCircularVelocity, openMBVZVelocity, openMBVRadialAcceleration, openMBVCircularAcceleration, openMBVZAcceleration; 
 #endif
 
     public:
@@ -101,7 +101,7 @@ namespace MBSim {
   class NaturalCoordinatesObserver : public CoordinatesObserver {
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVTangentialAcceleration, *openMBVNormalAcceleration;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVTangentialAcceleration, openMBVNormalAcceleration;
 #endif
 
     public:

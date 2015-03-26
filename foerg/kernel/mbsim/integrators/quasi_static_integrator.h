@@ -27,27 +27,65 @@
 namespace MBSimIntegrator {
 
   /*!
-   * \brief function for the h force vector of the quasi-static integrator
+   * \brief calculate h vector according the new q and system boundary conditions
    * \author Zhan Wang
    * \date 2014-11-11 initial commit (Zhan Wang)
    */
-  class hFun : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
+  class hgFun : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /*!
        * \brief constructor
        */
-      hFun(MBSim::DynamicSystemSolver* sys_, double t_, fmatvec::Vec& z_) : sys(sys_), t(t_), z(z_) {}
+      hgFun(MBSim::DynamicSystemSolver* sys_) :
+          sys(sys_), t(0) {
+      }
 
       /*!
        * \brief destructor
        */
-      virtual ~hFun(){
-    	  sys = NULL;
-    	  delete sys;
+      virtual ~hgFun() {
       }
+      ;
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec& q);
+      fmatvec::Vec operator()(const fmatvec::Vec& qla);
+
+      void setT(double t) {
+        this->t = t;
+      }
+
+      /*******************************************************/
+
+    private:
+
+      MBSim::DynamicSystemSolver* sys;
+      double t;
+
+  };
+
+  /*!
+   * \brief function for the dh/dq
+   * \author Zhan Wang
+   * \date 2014-12-01 initial commit (Zhan Wang)
+   */
+  class jacFun : public MBSim::Function<fmatvec::SqrMat(fmatvec::Vec)> {
+    public:
+      /*!
+       * \brief constructor
+       */
+      jacFun(MBSim::DynamicSystemSolver* sys_, double t_, fmatvec::Vec& z_) :
+          sys(sys_), t(t_), z(z_) {
+      }
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~jacFun() {
+      }
+      ;
+
+      /* INHERITED INTERFACE */
+      fmatvec::SqrMat operator()(const fmatvec::Vec& q);
       /*******************************************************/
 
     private:
@@ -58,9 +96,9 @@ namespace MBSimIntegrator {
 
   };
   /** 
-   * brief half-explicit time-stepping integrator of first order
-   * \author Martin Foerg
-   * \date 2009-07-13 some comments (Thorsten Schindler)
+   * brief quasi static time-stepping integrator
+   * \author Zhan Wang
+   * \date 2014-11-11 initial commit (Zhan Wang)
    */
   class QuasiStaticIntegrator : public Integrator {
     public:
@@ -68,11 +106,12 @@ namespace MBSimIntegrator {
        * \brief constructor
        */
       QuasiStaticIntegrator();
-      
+
       /**
        * \brief destructor
        */
-      virtual ~QuasiStaticIntegrator() {}
+      virtual ~QuasiStaticIntegrator() {
+      }
 
       void preIntegrate(MBSim::DynamicSystemSolver& system);
       void subIntegrate(MBSim::DynamicSystemSolver& system, double tStop);
@@ -84,10 +123,26 @@ namespace MBSimIntegrator {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setStepSize(double dt_) { dt = dt_; }
-      void setDriftCompensation(bool dc) { driftCompensation = dc; }
+      void setStepSize(double dt_) {
+        dt = dt_;
+      }
+      void setgTolerance(double tolerance_) {
+        gTol = tolerance_;
+      }
+      void sethTolerance(double tolerance_) {
+        hTol = tolerance_;
+      }
+      void setmaxExtraPolate(int value) {
+        maxExtraPolate = value;
+      }
+      void setextraPolateAfter(int value) {
+        extraPolateAfter = value;
+      }
+      void setupdateJacobianEvery(int value) {
+        updateJacobianEvery = value;
+      }
       /***************************************************/
-    
+
     private:
       /**
        * \brief step size
@@ -99,10 +154,35 @@ namespace MBSimIntegrator {
        */
       double t, tPlot;
 
+      /*!
+       * \brief tolerance for the newton iteration for distances
+       */
+      double gTol;
+
+      /*!
+       * \brief tolerance for newton iteration for forces
+       */
+      double hTol;
+
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int iter,step, integrationSteps, maxIter, sumIter;
+      int iter, step, integrationSteps, maxIter, sumIter;
+
+      /*!
+       * \brief value of how many points in the past should be used to extrapolate for new value
+       */
+      int maxExtraPolate;
+
+      /*!
+       * \brief extrapolate after such and that integration steps
+       */
+      int extraPolateAfter;
+
+      /*!
+       * \brief value of how often the Jacobian should be updated every step
+       */
+      int updateJacobianEvery;
 
       /**
        * \brief computing time counter
@@ -123,11 +203,6 @@ namespace MBSimIntegrator {
        * \brief file stream for integration information
        */
       std::ofstream integPlot;
-
-      /**
-       * \brief flag for drift compensation
-       */
-      bool driftCompensation;
   };
 
 }

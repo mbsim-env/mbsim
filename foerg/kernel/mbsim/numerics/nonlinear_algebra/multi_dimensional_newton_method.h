@@ -76,6 +76,13 @@ namespace MBSim {
       CriteriaFunction * getCriteriaFunction() {
         return criteria;
       }
+      void setLinearAlgebra(int linAlg_) {
+        linAlg = linAlg_;
+      }
+
+      void setJacobianUpdateFreq(int JacobianUpdateFreq_) {
+        jacobianUpdateFreq = JacobianUpdateFreq_;
+      }
       /***************************************************/
 
       /**
@@ -122,6 +129,18 @@ namespace MBSim {
        * \brief information about the result of the method
        */
       int info;
+
+      /*!
+       * \brief flag which linear algebra solution should be taken
+       * 0 = solve with LU-decomposition
+       * 1 = solve with LS (least squares) for underdetermined systems
+       */
+      int linAlg;
+
+      /*!
+       * \brief the frequency of updating Jacobian during iteration
+       */
+      int jacobianUpdateFreq;
 
   };
 }

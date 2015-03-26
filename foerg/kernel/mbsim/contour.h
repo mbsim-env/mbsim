@@ -253,9 +253,6 @@ namespace MBSim {
        * \param name of point
        */
       RigidContour(const std::string &name, Frame *R=0) : Contour(name,R)
-# ifdef HAVE_OPENMBVCPPINTERFACE
-                                              , openMBVRigidBody(0)
-# endif
                                               {}
 
       virtual ~RigidContour();
@@ -279,18 +276,18 @@ namespace MBSim {
       ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::RigidBody * getOpenMBVRigidBody() {
+      boost::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() {
         return openMBVRigidBody;
       }
 
-       void setOpenMBVRigidBody(OpenMBV::RigidBody * ombvBody) {
+       void setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &ombvBody) {
         openMBVRigidBody = ombvBody;
       }
 #endif
 
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::RigidBody *openMBVRigidBody;
+       boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 #endif
 
   };

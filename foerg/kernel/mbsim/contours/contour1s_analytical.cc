@@ -38,6 +38,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -132,14 +133,14 @@ namespace MBSim {
           else
             alpha.push_back(ae);
 
-          vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
+          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           for (unsigned int i=0; i<alpha.size(); i++) {
             const Vec3 CrPC=(*funcCrPC)(alpha[i]);
-            vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
+            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(1), CrPC(2), 0));
           }
-          ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(0);
-          ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
-          ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
+          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
   #endif

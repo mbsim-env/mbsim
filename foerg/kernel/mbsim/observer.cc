@@ -25,13 +25,11 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace boost;
 
 namespace MBSim {
 
   Observer::Observer(const std::string &name) : Element(name) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVGrp = 0;
-#endif
   }
 
   void Observer::init(InitStage stage) {
@@ -41,7 +39,7 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=new OpenMBV::Group();
+          openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGrp->setName(name+"_Group");
           openMBVGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVGrp);

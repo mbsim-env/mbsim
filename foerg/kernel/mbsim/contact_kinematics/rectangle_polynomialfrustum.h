@@ -103,7 +103,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual int operator ()(const fmatvec::Vec &x);
-      virtual bool isBetter(const fmatvec::Vec &x);
+      virtual bool isBetter(const fmatvec::Vec &x, const fmatvec::Vec & fVal = fmatvec::Vec(0,fmatvec::NONINIT));
       virtual void clear(){criteriaResults.clear();}
       /*END - INHERITED INTERFACE*/
 

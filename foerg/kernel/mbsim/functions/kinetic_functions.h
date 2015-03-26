@@ -26,6 +26,9 @@
 
 namespace MBSim {
 
+  class Contour;
+  class ContourPointData;
+
   /**
    * \brief function describing a linear relationship between the input relative distance / velocity and the output for a spring
    * \author Martin Foerg
@@ -302,13 +305,16 @@ namespace MBSim {
   /**
    * \brief function describing the influence between the deformations on a body
    */
-  class InfluenceFunction : public Function<double(fmatvec::Vec2,fmatvec::Vec2)> {
+  class InfluenceFunction : public Function<double(std::pair<Contour*, ContourPointData>, std::pair<Contour*, ContourPointData>)> {
     public:
       InfluenceFunction(){}
+      virtual ~InfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter)=0;
+      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo)=0;
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
+    protected:
+      fmatvec::Vec2 computeLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo);
   };
 
   /*
@@ -323,8 +329,8 @@ namespace MBSim {
       }
       virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter) {
-        if(nrm2(firstContourLagrangeParameter - secondContourLagrangeParameter) < macheps())
+      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
+        if(nrm2(computeLagrangeParameter(firstContourInfo)- computeLagrangeParameter(secondContourInfo)) < macheps())
           return flexibility;
         else
           return 0;
@@ -348,7 +354,7 @@ namespace MBSim {
       }
       virtual ~ConstantInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter) {
+      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
         return couplingValue;
       }
       virtual void initializeUsingXML(xercesc::DOMElement *element);

@@ -34,7 +34,7 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
-  class RigidBody;
+  class Body;
 
   /** 
    * \brief class for connections: constraints on frames
@@ -149,7 +149,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVForce(ombv.createOpenMBV());
       }
-      void setOpenMBVForce(OpenMBV::Arrow *arrow) {
+      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
         MechanicalLink::setOpenMBVForceArrow(arrow, which);
@@ -160,7 +160,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVMoment(ombv.createOpenMBV());
       }
-      void setOpenMBVMoment(OpenMBV::Arrow *arrow) {
+      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
         MechanicalLink::setOpenMBVMomentArrow(arrow, which);
@@ -238,7 +238,7 @@ namespace MBSim {
       InverseKineticsJoint(const std::string &name);
       virtual void updateb(double t);
       void calcbSize();
-      void setBody(RigidBody* body_) {
+      void setBody(Body* body_) {
         body = body_;
       }
       virtual void init(InitStage stage);
@@ -247,7 +247,7 @@ namespace MBSim {
       }
 
     protected:
-      RigidBody* body;
+      Body* body;
   };
 
 }

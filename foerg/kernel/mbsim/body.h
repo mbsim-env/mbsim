@@ -119,8 +119,8 @@ namespace MBSim {
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      OpenMBV::Body* getOpenMBVBody() { return openMBVBody; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
+      boost::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
 #endif
       /*******************************************************/ 
 
@@ -140,6 +140,10 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
+
+      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
+      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
+      int getuRelSize(int i=0) const {return nu[i];}
 
     protected:
       /**
@@ -163,9 +167,16 @@ namespace MBSim {
        */
       Frame *R;
 
+      /**
+       * JACOBIAN of translation, rotation and their derivatives in parent system
+       */
+      fmatvec::Mat3xV PJT[2], PJR[2];
+
+      int nu[2], nq;
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Body* openMBVBody;
-      OpenMBV::Group* openMBVGrp;
+      boost::shared_ptr<OpenMBV::Body> openMBVBody;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
 #endif
 
     private:

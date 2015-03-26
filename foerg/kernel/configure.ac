@@ -51,14 +51,15 @@ AC_ARG_WITH(casadi_lib_prefix,
   [ CASADILDFLAGS="-L$prefix/lib" ])
 CPPFLAGS="$CPPFLAGS $CASADICPPFLAGS"
 casadi="no"
-AC_CHECK_HEADERS([casadi/symbolic/sx/sx.hpp], [casadi="yes"],
-  [AC_MSG_RESULT([Can not find casadi c++ header casadi/symbolic/sx/sx.hpp])])
+AC_CHECK_HEADERS([casadi/symbolic/sx/sx_node.hpp], [casadi="yes"],
+  [AC_MSG_RESULT([Can not find casadi c++ header casadi/symbolic/sx/sx_node.hpp])])
 AC_MSG_CHECKING([for casadi c++ library])
 if test $casadi = "yes" ; then
   LDFLAGS="$LDFLAGS $CASADILDFLAGS"
+  CPPFLAGS="$CPPFLAGS -DWITHOUT_PRE_1_9_X" # do not allow deprecated functions from casadi
   LIBS="$LIBS -lcasadi"
   test "_$host_os" != "_mingw32" && LIBS="$LIBS -ldl"
-  AC_TRY_LINK([#include <casadi/symbolic/sx/sx.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
+  AC_TRY_LINK([#include <casadi/symbolic/sx/sx_node.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
     [casadi="no"; AC_MSG_RESULT([no]); AC_MSG_ERROR([Can not link with casadi c++ library])])
 fi
 
@@ -149,7 +150,7 @@ fi
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
-  AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
+  AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
 dnl XML
@@ -159,6 +160,7 @@ AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/analysers/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/numerics/nurbs/Makefile mbsim/functions/Makefile mbsim/observers/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile])
 

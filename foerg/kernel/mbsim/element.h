@@ -260,7 +260,7 @@ namespace MBSim {
       static fmatvec::SymMat getSymMat(xercesc::DOMElement *e, int size=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}
+      virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return boost::shared_ptr<OpenMBV::Group>();}
 #endif
 
       virtual Element* getParent() {return parent;}

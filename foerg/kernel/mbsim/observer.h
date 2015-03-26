@@ -26,7 +26,7 @@ namespace MBSim {
   class Observer : public Element {
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
 #endif
 
     public:
@@ -36,7 +36,7 @@ namespace MBSim {
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
   };
