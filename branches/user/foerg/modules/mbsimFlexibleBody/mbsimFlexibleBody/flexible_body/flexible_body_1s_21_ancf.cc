@@ -238,7 +238,7 @@ namespace MBSimFlexibleBody {
 		  }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
       FlexibleBodyContinuum<double>::init(stage);
     }
@@ -252,9 +252,9 @@ namespace MBSimFlexibleBody {
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t);
-        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-2);
+        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
 
-        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
           Vec  X(6,NONINIT);
 
           if(Euler) {
@@ -272,7 +272,7 @@ namespace MBSimFlexibleBody {
           data.push_back(0.); // local twist
         }
 
-        ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
+        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
       }
 #endif
     }

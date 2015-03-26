@@ -43,6 +43,7 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {
     contourFrame = new Frame("ContourFrame");
+    contourFrame->setParent(this);
     //addFrame(contourFrame,0);
   }
 

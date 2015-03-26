@@ -42,6 +42,7 @@ namespace MBSimFlexibleBody {
       for (int j = 0; j < 3; j++)
         S_kl_bar[i][j] = SqrMat();
     }
+    FFR->setParent(this);
   }
   
   FlexibleBodyLinearExternalFFR::~FlexibleBodyLinearExternalFFR() {

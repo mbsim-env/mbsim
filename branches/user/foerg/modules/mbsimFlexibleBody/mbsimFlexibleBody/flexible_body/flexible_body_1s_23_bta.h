@@ -81,7 +81,7 @@ namespace MBSimFlexibleBody {
       void setContourRadius(double r) { cylinderFlexible->setRadius(r); }
       void setTorsionalDamping(double d) { dTorsional = d; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
 #endif
       /***************************************************/
 
