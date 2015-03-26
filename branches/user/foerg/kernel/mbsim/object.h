@@ -54,9 +54,6 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t) {};
       virtual void updateh(double t, int j=0) {};
-      virtual void updateh0Fromh1(double t);
-      virtual void updateW0FromW1(double t);
-      virtual void updateV0FromV1(double t);
       virtual void updateM(double t, int i=0) {};
       virtual void updatedhdz(double t);
       virtual void updatedq(double t, double dt) { qd = T * u * dt; }
@@ -134,9 +131,6 @@ namespace MBSim {
        * \param i    index of normal usage and inverse kinetics
        */
       virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
-
-      virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions

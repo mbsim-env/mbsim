@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_NODE_HPP
 #include <mbsim/functions/symbolic_functions.h>
 #include <mbsim/element.h>
 using namespace fmatvec;
@@ -26,7 +26,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_NODE_HPP
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<double(double)>, MBSIM%"SymbolicFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SymbolicFunction<Vec3(double)>, MBSIM%"SymbolicFunction")

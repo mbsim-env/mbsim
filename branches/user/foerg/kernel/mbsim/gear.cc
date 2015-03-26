@@ -28,6 +28,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -38,8 +39,8 @@ namespace MBSim {
     ratio.push_back(-1);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow.push_back(0);
-    MArrow.push_back(0);
+    FArrow.resize(1);
+    MArrow.resize(1);
 #endif
   }
 
@@ -217,7 +218,7 @@ namespace MBSim {
             for(unsigned int i=1; i<body.size(); i++) {
               stringstream s;
               s << i;
-              FArrow.push_back(new OpenMBV::Arrow(*FArrow[0]));
+              FArrow.push_back(OpenMBV::ObjectFactory::create(FArrow[0]));
               FArrow[i]->setName("Force"+s.str());
               openMBVForceGrp->addObject(FArrow[i]);
             }
@@ -228,7 +229,7 @@ namespace MBSim {
             for(unsigned int i=1; i<body.size(); i++) {
               stringstream s;
               s << i;
-              MArrow.push_back(new OpenMBV::Arrow(*MArrow[0]));
+              MArrow.push_back(OpenMBV::ObjectFactory::create(MArrow[0]));
               MArrow[i]->setName("Moment"+s.str());
               openMBVForceGrp->addObject(MArrow[i]);
             }

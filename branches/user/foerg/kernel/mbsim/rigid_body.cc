@@ -39,6 +39,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
@@ -53,9 +54,6 @@ namespace MBSim {
     K = C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=C;
-    FWeight = 0;
-    FArrow = 0;
-    MArrow = 0;
 #endif
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
@@ -79,28 +77,11 @@ namespace MBSim {
   }
 
   void RigidBody::updateh(double t, int j) {
-
-    Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*C->getGyroscopicAccelerationOfTranslation(j);
-    Vec3 WM = crossProduct(WThetaS*C->getAngularVelocity(),C->getAngularVelocity()) - WThetaS*C->getGyroscopicAccelerationOfRotation(j);
-
-    h[j] += C->getJacobianOfTranslation(j).T()*WF + C->getJacobianOfRotation(j).T()*WM;
-  }
-
-  void RigidBody::updateh0Fromh1(double t) {
-    h[0] += C->getJacobianOfTranslation(0).T()*(h[1](0,2) - m*C->getGyroscopicAccelerationOfTranslation()) + C->getJacobianOfRotation(0).T()*(h[1](3,5) - WThetaS*C->getGyroscopicAccelerationOfRotation());
-  }
-
-  void RigidBody::updateW0FromW1(double t) {
-    W[0] += C->getJacobianOfTranslation(0).T()*W[1](i02,Index(0,W[1].cols()-1)) + C->getJacobianOfRotation(0).T()*W[1](Index(3,5),Index(0,W[1].cols()-1));
-  }
-
-  void RigidBody::updateV0FromV1(double t) {
-    V[0] += C->getJacobianOfTranslation(0).T()*V[1](i02,Index(0,V[1].cols()-1)) + C->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
+    h[j] += C->getJacobianOfTranslation(j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(j)) + C->getJacobianOfRotation(j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(j));
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
-    VecV buf = C->getJacobianOfTranslation(j).T()*(m*(C->getJacobianOfTranslation()*udall[0] + C->getGyroscopicAccelerationOfTranslation())) + C->getJacobianOfRotation(j).T()*(WThetaS*(C->getJacobianOfRotation()*udall[0] + C->getGyroscopicAccelerationOfRotation()));
-    h[j] -= buf;
+    h[j] -= C->getJacobianOfTranslation(j).T()*(m*(C->getJacobianOfTranslation()*udall[0] + C->getGyroscopicAccelerationOfTranslation())) + C->getJacobianOfRotation(j).T()*(WThetaS*(C->getJacobianOfRotation()*udall[0] + C->getGyroscopicAccelerationOfRotation()));
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -136,7 +117,6 @@ namespace MBSim {
       Body::init(stage);
 
       int nqT=0, nqR=0, nuT=0, nuR=0;
-      nq=0, nu[0]=0;
       if(fPrPK) {
         nqT = fPrPK->getArg1Size();
         nuT = fPrPK->getArg1Size(); // TODO fTT->getArg1Size()
@@ -409,7 +389,7 @@ namespace MBSim {
           data.push_back(cardan(1));
           data.push_back(cardan(2));
           data.push_back(0);
-          ((OpenMBV::RigidBody*)openMBVBody)->append(data);
+          static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
         }
       }
 #endif
@@ -530,6 +510,9 @@ namespace MBSim {
 
     //compute inertia in world frame
     WThetaS = JTMJ(SThetaS,C->getOrientation().T());
+
+    WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+    WM = crossProduct(WThetaS*C->getAngularVelocity(),C->getAngularVelocity()) ;
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t, int j) {
@@ -568,7 +551,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void RigidBody::setOpenMBVRigidBody(OpenMBV::RigidBody* body) {
+  void RigidBody::setOpenMBVRigidBody(const shared_ptr<OpenMBV::RigidBody> &body) {
     openMBVBody=body;
   }
 #endif
@@ -781,7 +764,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {
-      OpenMBV::RigidBody *rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
+      shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
       setOpenMBVRigidBody(rb);
       rb->initializeUsingXML(e->getFirstElementChild());
     }
@@ -790,28 +773,28 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
       C->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FWeight=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
     if (e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
     if (e) {
-      if(!openMBVBody) setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }

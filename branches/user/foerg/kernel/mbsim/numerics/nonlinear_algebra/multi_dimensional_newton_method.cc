@@ -23,6 +23,9 @@
 
 #include <mbsim/utils/eps.h>
 
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 #include <iostream>
 
 using namespace fmatvec;
@@ -46,11 +49,29 @@ namespace fmatvec {
 /*MultiDimensionalNewtonMethod*/
 namespace MBSim {
 
+  inline Vec fslvLUMDNW(const SqrMat &a, const Vec& b, int & info) {
+    return slvLU(a, b, info); //TODO: unify with nonlinear algebra
+  }
+
+  inline Vec fslvLSMDNW(const SqrMat &a, const Vec& b, int & info) {
+    return slvLS(a, b); //TODO: unify with nonlinear algebra
+  }
+
   MultiDimensionalNewtonMethod::MultiDimensionalNewtonMethod() :
-      function(0), jacobian(0), damping(0), criteria(0), itermax(300), iter(0), info(1) {
+      function(0), jacobian(0), damping(0), criteria(0), itermax(300), iter(0), info(1), linAlg(0), jacobianUpdateFreq(1) {
   }
 
   Vec MultiDimensionalNewtonMethod::solve(const Vec & initialValue) {
+    boost::function<Vec(const SqrMat&, const Vec&, int&)> slv;
+
+    info = 1;
+    iter = 0;
+
+    if (linAlg == 0)
+      slv = boost::bind(fslvLUMDNW, _1, _2, _3);
+    else if (linAlg == 1)
+      slv = boost::bind(fslvLSMDNW, _1, _2, _3);
+
     /*Reset for comparing*/
     criteria->clear();
     criteria->setFunction(function);
@@ -64,9 +85,6 @@ namespace MBSim {
     }
 
     jacobian->setFunction(function);
-
-    info = 1;
-    iter = 0;
     /*End - Reset*/
 
     //current position in function
@@ -79,7 +97,7 @@ namespace MBSim {
     SqrMat J = (*jacobian)(x);
 
     //step to next position
-    Vec dx = slvLU(J, f, info);
+    Vec dx = slv(J, f, info);
 
     //Damp the solution
     if (damping)
@@ -107,10 +125,20 @@ namespace MBSim {
       f = (*function)(x);
 
       //Compute Jacobian
-      J = (*jacobian)(x);
+//      J = (*jacobian)(x);
 
+      if ((iter % jacobianUpdateFreq) == 0) {
+        J = (*jacobian)(x);
+//        cout << "update Jacobian, at iter =" << iter << endl;
+      }
+
+      if (0) {
+        cout << "+++++ iter = " << iter << "++++++++++++\n";
+        cout << "J = " << J << "\n";
+        cout << "f = " << f << "\n";
+      }
       //get step
-      dx = slvLU(J, f, info);
+      dx = slv(J, f, info);
 
       //cout << "dxn[" << iter << "] = " << dx << endl;
 

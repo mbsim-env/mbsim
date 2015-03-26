@@ -928,13 +928,14 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
 
       if (influenceFunctions.count(contourPair)) { //If there is a function, there is a coupling between these contours
         InfluenceFunction *fct = influenceFunctions[contourPair];
-        Vec2 lagrangeParameter = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
+        pair<Contour*, ContourPointData> contInfo(contour, contacts[contactIndex.first][contactIndex.second].getcpData()[i]);
+//        Vec2 lagrangeParameter = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
-        if (DEBUGLEVEL >= 3) {
-          cout << "LagrangeParameter of contour \"" << contour->getPath() << "\" is:" << lagrangeParameter << endl;
-        }
+//        if (DEBUGLEVEL >= 3) {
+//          cout << "LagrangeParameter of contour \"" << contour->getPath() << "\" is:" << lagrangeParameter << endl;
+//        }
 
-        FactorC += (*fct)(lagrangeParameter, lagrangeParameter);
+        FactorC += (*fct)(contInfo, contInfo);
       }
     }
 
@@ -963,15 +964,17 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
 
         if (influenceFunctions.count(Pair)) { //If there is a function, there is a coupling between these contours
           InfluenceFunction *fct = influenceFunctions[Pair];
-          Vec2 firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
-          Vec2 secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
+//          Vec2 firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
+//          Vec2 secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
+          pair<Contour*, ContourPointData> cont1Info(contour1, contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator]);
+          pair<Contour*, ContourPointData> cont2Info(contour2, contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator]);
 
-          if (DEBUGLEVEL >= 3) {
-            cout << "First LagrangeParameter of contour \"" << contour1->getPath() << "\" is:" << firstLagrangeParameter << endl;
-            cout << "Second LagrangeParameter contour \"" << contour2->getPath() << "\" is:" << secondLagrangeParameter << endl;
-          }
+//          if (DEBUGLEVEL >= 3) {
+//            cout << "First LagrangeParameter of contour \"" << contour1->getPath() << "\" is:" << firstLagrangeParameter << endl;
+//            cout << "Second LagrangeParameter contour \"" << contour2->getPath() << "\" is:" << secondLagrangeParameter << endl;
+//          }
 
-          FactorC += (*fct)(firstLagrangeParameter, secondLagrangeParameter);
+          FactorC += (*fct)(cont1Info, cont2Info);
         }
       }
     }

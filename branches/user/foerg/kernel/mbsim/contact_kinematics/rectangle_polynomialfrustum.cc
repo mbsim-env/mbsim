@@ -80,11 +80,14 @@ namespace MBSim {
     return 1;
   }
 
-  bool edgePolyFrustumCriteria::isBetter(const Vec & x) {
+  bool edgePolyFrustumCriteria::isBetter(const Vec & x, const Vec & fVal) {
     if (not inBounds(x(0)))
       return false;
 
-    if (nrmInf((*function)(x)) < criteriaResults.back())
+    Vec fValget(fVal);
+    if(fVal.size() == 0)
+      fValget.resize() = (*function)(x);
+    if (nrmInf(fValget) < criteriaResults.back())
       return true;
 
     return false;

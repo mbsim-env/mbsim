@@ -33,15 +33,13 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
   SpringDamper::SpringDamper(const string &name) : MechanicalLink(name), func(NULL)
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    , coilspringOpenMBV(NULL)
-#endif
   {}
 
   SpringDamper::~SpringDamper() {
@@ -170,9 +168,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
   DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : MechanicalLink(name), func(NULL), refFrame(NULL)
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    , coilspringOpenMBV(NULL)
-#endif
   {}
 
   DirectionalSpringDamper::~DirectionalSpringDamper() {
@@ -318,9 +313,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
 
   GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : MechanicalLink(name), func(NULL), body(2)
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    , coilspringOpenMBV(NULL)
-#endif
   {
     WF.resize(2);
     WM.resize(2);

@@ -81,10 +81,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow = 0;
-    MArrow = 0;
-#endif
   }
 
   void GearConstraint::init(InitStage stage) {
@@ -169,10 +165,6 @@ namespace MBSim {
   }
 
   KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow = 0;
-    MArrow = 0;
-#endif
   }
 
   void KinematicConstraint::init(InitStage stage) {
@@ -382,10 +374,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    FArrow = 0;
-    MArrow = 0;
-#endif
   }
 
   void JointConstraint::connect(Frame* frame1_, Frame* frame2_) {

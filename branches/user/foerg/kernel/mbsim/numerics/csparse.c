@@ -880,7 +880,7 @@ int cs_droptol(cs *A, double tol) {
 }
 
 static int cs_nonzero(int i, int j, double aij, void *other) {
-  return (aij != 0);
+  return (fabs(aij)>1e-14);
 }
 int cs_dropzeros(cs *A) {
   return (cs_fkeep(A, &cs_nonzero, NULL )); /* keep all nonzero entries */
@@ -1054,7 +1054,7 @@ double cs_house(double *x, double *beta, int n) {
     return (-1); /* check inputs */
   for (i = 1; i < n; i++)
     sigma += x[i] * x[i];
-  if (sigma == 0) {
+  if (fabs(sigma)<1e-14) {
     s = fabs(x[0]); /* s = |x(0)| */
     (*beta) = (x[0] <= 0) ? 2 : 0;
     x[0] = 1;
@@ -1565,9 +1565,9 @@ int cs_print(const cs *A, int brief) {
   if (nz < 0) {
     printf("%d-by-%d, nzmax: %d nnz: %d, 1-norm: %g\n", m, n, nzmax, Ap[n], cs_norm(A));
     for (j = 0; j < n; j++) {
-//	    printf ("    col %d : locations %d to %d\n", j, Ap [j], Ap [j+1]-1);
+/*	    printf ("    col %d : locations %d to %d\n", j, Ap [j], Ap [j+1]-1);*/
       for (p = Ap[j]; p < Ap[j + 1]; p++) {
-//        printf("      %d : %g\n", Ai[p], Ax ? Ax[p] : 1);
+/*        printf("      %d : %g\n", Ai[p], Ax ? Ax[p] : 1);*/
         printf("    %d %d  %g\n", Ai[p], j, Ax ? Ax[p] : 1);
         if (brief && p > 20) {
           printf("  ...\n");
@@ -2115,70 +2115,72 @@ cs *cs_triplet(const cs *T) {
   return (cs_done(C, w, NULL, 1)); /* success; free w and return C */
 }
 
-///* compress-column form of a symmetric fmatvec LLM matrix
-// * const double *ele: pointer of the LLM.ele
-// * const int       m: the number of  rows
-// * const int       n: the number of columns
-// * const int      I1: the ending row index of the dense matrix area
-// * const int      2D: 1 for 2D simulation and 0 for 3D simulation
-// */
-//cs *cs_compress_LLM(const double *ele, const int lda, const int m, const int n, const int nz, const int I1, const int TwoD) {
-//  /*todo: check how to chose a good initial nz*/
-//  int j, i, *Cp, *Ci, counter;
-//  double *Cx;
-//  cs *C;
-//  double EPSILON = 1e-17; /*todo: a better epsilion? */
-//
-//  C = cs_spalloc(m, n, nz, 1, 0); /* allocate memory for the sparse matrix C */
-//  if (!C)
-//    return (cs_done(C, NULL, NULL, 0)); /* out of memory */
-//  Cp = C->p;
-//  Ci = C->i;
-//  Cx = C->x;
-//
-//  //create the three arrays
-//  counter = 0;
-//  for (j = 0; j <= I1; j++) {
-//    Cp[j] = counter;
-//    for (i = j; i <= I1; i++) {
-//      double entry = ele[i + j * lda];
-//      if (fabs(entry) > EPSILON) {
-//        Ci[counter] = i;
-//        Cx[counter] = entry;
-//        counter++;
-//      }
-//    }
-//  }
-//
-//  if (TwoD) {
-//    for (j = I1 + 1; j <= n; j++) {
-//      Cp[j] = counter;
-//      double entry = ele[j + j * lda]; /* 2D case : only check the diagonal */
-//      if (fabs(entry) > EPSILON) {
-//        Ci[counter] = j;
-//        Cx[counter] = entry;
-//        counter++;
-//      }
-//    }
-//  }
-//  else {
-//    for (j = 0; j <= I1; j++) {
-//      Cp[j] = counter;
-//      for (i = j; i <= j + 2; i++) { /*todo: check whether 2 is appliable for the 3D case*/
-//        double entry = ele[i + j * lda];
-//        if (fabs(entry) > EPSILON) {
-//          Ci[counter] = i;
-//          Cx[counter] = entry;
-//          counter++;
-//        }
-//      }
-//    }
-//  }
-//
-//  Cp[n] = counter;
-//
-//  return C;
-//}
+#if 0
+/* compress-column form of a symmetric fmatvec LLM matrix
+ * const double *ele: pointer of the LLM.ele
+ * const int       m: the number of  rows
+ * const int       n: the number of columns
+ * const int      I1: the ending row index of the dense matrix area
+ * const int      2D: 1 for 2D simulation and 0 for 3D simulation
+ */
+cs *cs_compress_LLM(const double *ele, const int lda, const int m, const int n, const int nz, const int I1, const int TwoD) {
+  /*todo: check how to chose a good initial nz*/
+  int j, i, *Cp, *Ci, counter;
+  double *Cx;
+  cs *C;
+  double EPSILON = 1e-17; /*todo: a better epsilion? */
+
+  C = cs_spalloc(m, n, nz, 1, 0); /* allocate memory for the sparse matrix C */
+  if (!C)
+    return (cs_done(C, NULL, NULL, 0)); /* out of memory */
+  Cp = C->p;
+  Ci = C->i;
+  Cx = C->x;
+
+  /*create the three arrays*/
+  counter = 0;
+  for (j = 0; j <= I1; j++) {
+    Cp[j] = counter;
+    for (i = j; i <= I1; i++) {
+      double entry = ele[i + j * lda];
+      if (fabs(entry) > EPSILON) {
+        Ci[counter] = i;
+        Cx[counter] = entry;
+        counter++;
+      }
+    }
+  }
+
+  if (TwoD) {
+    for (j = I1 + 1; j <= n; j++) {
+      Cp[j] = counter;
+      double entry = ele[j + j * lda]; /* 2D case : only check the diagonal */
+      if (fabs(entry) > EPSILON) {
+        Ci[counter] = j;
+        Cx[counter] = entry;
+        counter++;
+      }
+    }
+  }
+  else {
+    for (j = 0; j <= I1; j++) {
+      Cp[j] = counter;
+      for (i = j; i <= j + 2; i++) { /*todo: check whether 2 is appliable for the 3D case*/
+        double entry = ele[i + j * lda];
+        if (fabs(entry) > EPSILON) {
+          Ci[counter] = i;
+          Cx[counter] = entry;
+          counter++;
+        }
+      }
+    }
+  }
+
+  Cp[n] = counter;
+
+  return C;
+}
+#endif
 
 /* sparse Cholesky update/downdate, L*L' + sigma*w*w' (sigma = +1 or -1) */
 int cs_updown(cs *L, int sigma, const cs *C, const int *parent) {

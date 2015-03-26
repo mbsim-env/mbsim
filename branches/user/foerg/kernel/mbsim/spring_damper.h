@@ -42,7 +42,7 @@ namespace MBSim {
       fmatvec::Vec3 n;
       Function<double(double,double)> *func;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::CoilSpring *coilspringOpenMBV;
+      boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
       SpringDamper(const std::string &name="");
@@ -107,7 +107,7 @@ namespace MBSim {
       fmatvec::Vec3 forceDir, WforceDir, WrP0P1;
       Frame C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::CoilSpring *coilspringOpenMBV;
+      boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
       DirectionalSpringDamper(const std::string &name="");
@@ -170,7 +170,7 @@ namespace MBSim {
       Function<double(double,double)> *func;
       std::vector<RigidBody*> body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::CoilSpring *coilspringOpenMBV;
+      boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
       GeneralizedSpringDamper(const std::string &name="");

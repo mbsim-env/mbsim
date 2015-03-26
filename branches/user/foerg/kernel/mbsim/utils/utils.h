@@ -20,9 +20,6 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#define PVNS_ "http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-#define PVNS "{" PVNS_ "}"
-
 #include <string>
 #include "fmatvec/fmatvec.h"
 #include <mbsim/numerics/csparse.h>
@@ -94,9 +91,9 @@ namespace MBSim {
 
   template <class T>
     inline xercesc::DOMNode* toXML(const std::vector<T> &x, xercesc::DOMNode* parent) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"xmlVector");
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"xmlVector");
       for(unsigned int i=0; i<x.size(); i++) {
-        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"ele");
+        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"ele");
         xercesc::DOMText *text = new xercesc::DOMText(toStr(x[i]));
         elei->insertBefore(text, NULL);
         ele->insertBefore(elei, NULL);
@@ -106,10 +103,10 @@ namespace MBSim {
 
   template <class Row>
     inline xercesc::DOMNode* toXML(const fmatvec::Vector<Row,double> &x, xercesc::DOMNode* parent) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"xmlVector");
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"xmlVector");
       for(int i=0; i<x.size(); i++) {
         xercesc::DOMDocument *doc=parent->getOwnerDocument();
-        xercesc::DOMElement *elei = MBXMLUtils::D(doc)->createElement(PVNS"ele");
+        xercesc::DOMElement *elei = MBXMLUtils::D(doc)->createElement(MBXMLUtils::PV%"ele");
         xercesc::DOMText *text = doc->createTextNode(MBXMLUtils::X()%toStr(x.e(i)));
         elei->insertBefore(text, NULL);
         ele->insertBefore(elei, NULL);
@@ -119,11 +116,11 @@ namespace MBSim {
 
   template <class Type, class Row, class Col>
     inline xercesc::DOMNode* toXML(const fmatvec::Matrix<Type,Row,Col,double> &A, xercesc::DOMNode* parent) {
-      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"xmlMatrix");
+      xercesc::DOMElement *ele = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"xmlMatrix");
       for(int i=0; i<A.rows(); i++) {
-        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"row");
+        xercesc::DOMElement *elei = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"row");
         for(int j=0; j<A.cols(); j++) {
-          xercesc::DOMElement *elej = MBXMLUtils::D(parent->getOwnerDocument())->createElement(PVNS"ele");
+          xercesc::DOMElement *elej = MBXMLUtils::D(parent->getOwnerDocument())->createElement(MBXMLUtils::PV%"ele");
           xercesc::DOMText *text = new xercesc::DOMText(toStr(A.e(i,j)));
           elej->insertBefore(text, NULL);
           elei->insertBefore(elej, NULL);

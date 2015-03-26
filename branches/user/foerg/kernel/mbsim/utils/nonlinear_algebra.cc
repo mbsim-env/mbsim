@@ -177,7 +177,7 @@ namespace MBSim {
     return slvLS(a,b);
   }
 
-  MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec(Vec)> *fct_, Function<SqrMat(Vec)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), info(1), norms(0), tol(1e-10), linAlg(0) {}
+  MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec(Vec)> *fct_, Function<SqrMat(Vec)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(50), info(1), norms(0), tol(1e-10), linAlg(0) {}
 
   Vec MultiDimNewtonMethod::solve(const Vec &x0) {
     boost::function<Vec(const SqrMat&,const Vec&)> slv;

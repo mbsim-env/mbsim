@@ -142,9 +142,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int i=0);
-      virtual void updateh0Fromh1(double t);
-      virtual void updateW0FromW1(double t);
-      virtual void updateV0FromV1(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
@@ -514,6 +511,9 @@ namespace MBSim {
 
       void setRootID(int ID) {rootID = ID;}
       int getRootID() const {return rootID;}
+      void setq(const fmatvec::Vec& q_){ q = q_;}
+      void setLa(const fmatvec::Vec& la_){ la = la_;}
+
     protected:
       /**
        * \brief mass matrix

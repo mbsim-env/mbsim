@@ -74,10 +74,6 @@ namespace MBSim {
 
   DynamicSystemSolver::~DynamicSystemSolver() {
     closePlot();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVGrp)
-      openMBVGrp->destroy();
-#endif
 
     // Now we also delete the DynamicSystem's which exists before "reorganizing hierarchie" takes place.
     // Note all other containers are readded to DynamicSystemSolver and deleted by the dtor of
@@ -724,21 +720,6 @@ namespace MBSim {
   void DynamicSystemSolver::updateh(double t, int j) {
     h[j].init(0);
     Group::updateh(t, j);
-  }
-
-  void DynamicSystemSolver::updateh0Fromh1(double t) {
-    h[0].init(0);
-    Group::updateh0Fromh1(t);
-  }
-
-  void DynamicSystemSolver::updateW0FromW1(double t) {
-    W[0].init(0);
-    Group::updateW0FromW1(t);
-  }
-
-  void DynamicSystemSolver::updateV0FromV1(double t) {
-    V[0].init(0);
-    Group::updateV0FromV1(t);
   }
 
   Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
@@ -1794,7 +1775,7 @@ namespace MBSim {
     updateJacobians(t, 0);
     updateJacobians(t, 1);
     updateh(t, 1);
-    updateh0Fromh1(t);
+    updateh(t, 0);
     updateM(t, 0);
     facLLM(0);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
@@ -1803,9 +1784,8 @@ namespace MBSim {
 
       updateW(t, 1);
       updateV(t, 1);
-      updateWnVRefObjects();
-      updateW0FromW1(t);
-      updateV0FromV1(t);
+      updateW(t, 0);
+      updateV(t, 0);
       updateG(t);
       updatewb(t);
       computeConstraintForces(t);

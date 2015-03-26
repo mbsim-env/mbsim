@@ -89,8 +89,8 @@ namespace MBSim {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         openMBVFrame=ombv.createOpenMBV(); 
       }
-      void setOpenMBVFrame(OpenMBV::Frame* frame) { openMBVFrame = frame; }
-      OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame; }
+      void setOpenMBVFrame(const boost::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
+      boost::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
 #endif
       /***************************************************/
       
@@ -178,7 +178,7 @@ namespace MBSim {
       fmatvec::Vec3 angles, dotAngles;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Frame* openMBVFrame;
+      boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
 #endif
   };
 

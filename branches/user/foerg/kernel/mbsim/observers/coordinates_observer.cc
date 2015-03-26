@@ -31,16 +31,11 @@ using namespace std;
 using namespace xercesc;
 using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace boost;
 
 namespace MBSim {
 
   CoordinatesObserver::CoordinatesObserver(const std::string &name) : Observer(name), frame(0) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVPosition=0;
-    openMBVVelocity=0;
-    openMBVAcceleration=0;
-    openMBVFrame=0;
-#endif
   }
 
   void CoordinatesObserver::init(InitStage stage) {
@@ -57,7 +52,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
-            openMBVPosGrp=new OpenMBV::Group();
+            openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVPosGrp->setName("Position_Group");
             openMBVPosGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVPosGrp);
@@ -65,7 +60,7 @@ namespace MBSim {
             openMBVPosGrp->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
-            openMBVVelGrp=new OpenMBV::Group();
+            openMBVVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVVelGrp->setName("Velocity_Group");
             openMBVVelGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVVelGrp);
@@ -73,7 +68,7 @@ namespace MBSim {
             openMBVVelGrp->addObject(openMBVVelocity);
           }
           if(openMBVAcceleration) {
-            openMBVAccGrp=new OpenMBV::Group();
+            openMBVAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVAccGrp->setName("Acceleration_Group");
             openMBVAccGrp->setExpand(false);
             getOpenMBVGrp()->addObject(openMBVAccGrp);
@@ -174,17 +169,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CartesianCoordinatesObserver, MBSIM%"CartesianCoordinatesObserver")
 
   CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : CoordinatesObserver(name), A(EYE) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVXPosition=0;
-    openMBVYPosition=0;
-    openMBVZPosition=0;
-    openMBVXVelocity=0;
-    openMBVYVelocity=0;
-    openMBVZVelocity=0;
-    openMBVXAcceleration=0;
-    openMBVYAcceleration=0;
-    openMBVZAcceleration=0;
-#endif
   }
 
   void CartesianCoordinatesObserver::init(InitStage stage) {
@@ -199,9 +183,9 @@ namespace MBSim {
 	ez = A.col(2);
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
-            openMBVXPosition = new OpenMBV::Arrow(*openMBVPosition);
-            openMBVYPosition = new OpenMBV::Arrow(*openMBVPosition);
-            openMBVZPosition = new OpenMBV::Arrow(*openMBVPosition);
+            openMBVXPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
+            openMBVYPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
+            openMBVZPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
             openMBVXPosition->setName("XPosition");
             openMBVPosGrp->addObject(openMBVXPosition);
             openMBVYPosition->setName("YPosition");
@@ -210,9 +194,9 @@ namespace MBSim {
             openMBVPosGrp->addObject(openMBVZPosition);
           }
           if(openMBVVelocity) {
-            openMBVXVelocity = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVYVelocity = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVZVelocity = new OpenMBV::Arrow(*openMBVVelocity);
+            openMBVXVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVYVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVZVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
             openMBVXVelocity->setName("XVelocity");
             openMBVVelGrp->addObject(openMBVXVelocity);
             openMBVYVelocity->setName("YVelocity");
@@ -221,9 +205,9 @@ namespace MBSim {
             openMBVVelGrp->addObject(openMBVZVelocity);
           }
           if(openMBVAcceleration) {
-            openMBVXAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVYAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVZAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
+            openMBVXAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVYAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVZAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
             openMBVXAcceleration->setName("XAcceleration");
             openMBVAccGrp->addObject(openMBVXAcceleration);
             openMBVYAcceleration->setName("YAcceleration");
@@ -382,16 +366,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CylinderCoordinatesObserver, MBSIM%"CylinderCoordinatesObserver")
 
   CylinderCoordinatesObserver::CylinderCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVRadialPosition=0;
-    openMBVZPosition=0;
-    openMBVRadialVelocity=0;
-    openMBVCircularVelocity=0;
-    openMBVZVelocity=0;
-    openMBVRadialAcceleration=0;
-    openMBVCircularAcceleration=0;
-    openMBVZAcceleration=0;
-#endif
     ez(2) = 1;
   }
 
@@ -404,17 +378,17 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
-            openMBVRadialPosition = new OpenMBV::Arrow(*openMBVPosition);
-            openMBVZPosition = new OpenMBV::Arrow(*openMBVPosition);
+            openMBVRadialPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
+            openMBVZPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
             openMBVRadialPosition->setName("RadialPosition");
             openMBVPosGrp->addObject(openMBVRadialPosition);
             openMBVZPosition->setName("ZPosition");
             openMBVPosGrp->addObject(openMBVZPosition);
           }
           if(openMBVVelocity) {
-            openMBVRadialVelocity = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVCircularVelocity = new OpenMBV::Arrow(*openMBVVelocity);
-            openMBVZVelocity = new OpenMBV::Arrow(*openMBVVelocity);
+            openMBVRadialVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVCircularVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
+            openMBVZVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
             openMBVRadialVelocity->setName("RadialVelocity");
             openMBVVelGrp->addObject(openMBVRadialVelocity);
             openMBVCircularVelocity->setName("CircularVelocity");
@@ -423,9 +397,9 @@ namespace MBSim {
             openMBVVelGrp->addObject(openMBVZVelocity);
           }
           if(openMBVAcceleration) {
-            openMBVRadialAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVCircularAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVZAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
+            openMBVRadialAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVCircularAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVZAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
             openMBVRadialAcceleration->setName("RadialAcceleration");
             openMBVAccGrp->addObject(openMBVRadialAcceleration);
             openMBVCircularAcceleration->setName("CircularAcceleration");
@@ -590,10 +564,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NaturalCoordinatesObserver, MBSIM%"NaturalCoordinatesObserver")
 
   NaturalCoordinatesObserver::NaturalCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVTangentialAcceleration=0;
-    openMBVNormalAcceleration=0;
-#endif
   }
 
   void NaturalCoordinatesObserver::init(InitStage stage) {
@@ -605,8 +575,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVAcceleration) {
-            openMBVTangentialAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
-            openMBVNormalAcceleration = new OpenMBV::Arrow(*openMBVAcceleration);
+            openMBVTangentialAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
+            openMBVNormalAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
             openMBVTangentialAcceleration->setName("TangentialAcceleration");
             openMBVAccGrp->addObject(openMBVTangentialAcceleration);
             openMBVNormalAcceleration->setName("NormalAcceleration");

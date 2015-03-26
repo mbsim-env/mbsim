@@ -39,6 +39,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace boost;
 
 namespace MBSim {
   extern double tP;
@@ -49,7 +50,7 @@ namespace MBSim {
   SingleContact::SingleContact(const string &name) :
       MechanicalLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVContactGrp(0), openMBVContactFrame(2), contactArrow(NULL), frictionArrow(NULL)
+          , openMBVContactFrame(2)
 #endif
           , rootID(0), saved_ref1(""), saved_ref2("") {
   }
@@ -574,7 +575,7 @@ namespace MBSim {
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
-          openMBVContactGrp = new OpenMBV::Group();
+          openMBVContactGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVContactGrp->setName(name + "_ContactGroup");
           openMBVContactGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
@@ -1473,7 +1474,7 @@ namespace MBSim {
     if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {
       OpenMBVFrame ombv;
       openMBVContactFrame[0]=ombv.createOpenMBV(e); 
-      openMBVContactFrame[1]=new OpenMBV::Frame(*openMBVContactFrame[0]);
+      openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");

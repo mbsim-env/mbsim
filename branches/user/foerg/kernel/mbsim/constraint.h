@@ -47,7 +47,7 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       bool isSingleValued() const { return true; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}
+      virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return boost::shared_ptr<OpenMBV::Group>();}
 #endif
   };
 
@@ -99,7 +99,7 @@ namespace MBSim {
       std::vector<std::string> saved_IndependentBody;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *FArrow, *MArrow;
+      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
 #endif
   };
 
@@ -135,7 +135,7 @@ namespace MBSim {
       std::string saved_DependentBody;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *FArrow, *MArrow;
+      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
 #endif
   };
 
@@ -337,7 +337,7 @@ namespace MBSim {
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
       std::string saved_IndependentBody, saved_IndependentBody2;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *FArrow, *MArrow;
+      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
 #endif
   };
 

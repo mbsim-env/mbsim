@@ -67,7 +67,7 @@ namespace MBSim {
       /*INHERITED INTERFACE OF ELEMENT*/
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp();
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 #endif
       /********************************/
 
@@ -148,9 +148,9 @@ namespace MBSim {
       virtual void checkRoot();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame;}
-      OpenMBV::Arrow* getOpenMBVNormalForceArrow() {return contactArrow;}
-      OpenMBV::Arrow* getOpenMBVTangentialForceArrow() {return frictionArrow;}
+      boost::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}
+      boost::shared_ptr<OpenMBV::Arrow>& getOpenMBVNormalForceArrow() {return contactArrow;}
+      boost::shared_ptr<OpenMBV::Arrow>& getOpenMBVTangentialForceArrow() {return frictionArrow;}
 #endif
       /***************************************************/
 
@@ -297,17 +297,17 @@ namespace MBSim {
       /*!
        * \brief group for the plotting of the openMBV sub elements
        */
-      OpenMBV::Group * openMBVGrp;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
 
       /**
        * \brief Frame of ContactFrames to draw
        */
-      OpenMBV::Frame * openMBVFrame;
+      boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw
        */
-      OpenMBV::Arrow *contactArrow, *frictionArrow;
+      boost::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
 #endif
 
     private:
