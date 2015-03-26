@@ -15,6 +15,7 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace boost;
 
 namespace MBSimPowertrain {
 
@@ -196,10 +197,10 @@ namespace MBSimPowertrain {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
-    OpenMBV::Frustum *cylinder;
+    shared_ptr<OpenMBV::Frustum> cylinder;
 
-    OpenMBV::CompoundRigidBody *sunOMBV = new OpenMBV::CompoundRigidBody;
-    cylinder=new OpenMBV::Frustum;
+    shared_ptr<OpenMBV::CompoundRigidBody> sunOMBV = OpenMBV::ObjectFactory::create<OpenMBV::CompoundRigidBody>();
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(rS/2);
     cylinder->setBaseRadius(rS/2);
     cylinder->setHeight(lS*5);
@@ -207,7 +208,7 @@ namespace MBSimPowertrain {
     cylinder->setInitialTranslation(0,0,0);
     cylinder->setName("frustum1");
     sunOMBV->addRigidBody(cylinder);
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(rS);
     cylinder->setBaseRadius(rS);
     cylinder->setHeight(lS);
@@ -219,7 +220,7 @@ namespace MBSimPowertrain {
     sun->setOpenMBVRigidBody(sunOMBV);
 
 
-    //  cylinder=new OpenMBV::Frustum;
+    //  cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     //  cylinder->setTopRadius(rS);
     //  cylinder->setBaseRadius(rS);
     //  cylinder->setHeight(lS);
@@ -227,7 +228,7 @@ namespace MBSimPowertrain {
     //  sun->setOpenMBVRigidBody(cylinder);
     //  cylinder->setInitialTranslation(0,0,lS/2);
 
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(rH);
     cylinder->setBaseRadius(rH);
     cylinder->setInnerTopRadius(rH);
@@ -237,7 +238,7 @@ namespace MBSimPowertrain {
     annulus->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,lH/2);
 
-    cylinder=new OpenMBV::Frustum;
+    cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setTopRadius(rT1);
     cylinder->setBaseRadius(rT1);
     cylinder->setHeight(lT);
@@ -247,7 +248,7 @@ namespace MBSimPowertrain {
 
     for(int i=0; i<numP; i++) {
 
-      cylinder=new OpenMBV::Frustum;
+      cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
       cylinder->setTopRadius(rP);
       cylinder->setBaseRadius(rP);
       cylinder->setHeight(lP);

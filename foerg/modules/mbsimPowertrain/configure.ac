@@ -54,7 +54,7 @@ AC_SUBST([LIBMBSIMELECTRONICS_AGE])
 LIBMBSIMELECTRONICS_VERSION_INFO=$LIBMBSIMELECTRONICS_CURRENT:$LIBMBSIMELECTRONICS_REVISION:$LIBMBSIMELECTRONICS_AGE
 AC_SUBST([LIBMBSIMELECTRONICS_VERSION_INFO])
 
-CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS -Wall -Werror"
 
 dnl needed for XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
@@ -65,10 +65,11 @@ AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
-  AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
+  AC_MSG_RESULT([cannott generate documentation. 'doxygen' required.])
 fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimPowertrain/Makefile doc/Makefile mbsimPowertrain.pc schema/Makefile doc/doxyfile xmldoc/Makefile xmldoc/Doxyfile])
 
