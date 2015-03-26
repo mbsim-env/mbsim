@@ -174,7 +174,7 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*)openMBVBody)->setInitialRotation(AIK2Cardan(R->getOrientation()));
+      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
 #endif
       FlexibleBodyContinuum<double>::init(stage);
     }
@@ -188,8 +188,8 @@ namespace MBSimFlexibleBody {
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t);
-        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1);
-        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
+        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1);
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
           double sLocal;
           int currentElement;
           BuildElement(ds*i,sLocal,currentElement);
@@ -201,7 +201,7 @@ namespace MBSimFlexibleBody {
           data.push_back(pos(2)); // global z-position
           data.push_back(X(3)); // local twist
         }
-        ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
+        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
       }
 #endif
     }
@@ -276,7 +276,7 @@ void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
-      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
+      boost::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
       setOpenMBVSpineExtrusion(rb);
       rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);

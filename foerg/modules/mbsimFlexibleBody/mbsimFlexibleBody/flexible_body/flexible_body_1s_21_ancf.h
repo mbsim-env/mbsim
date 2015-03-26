@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
       void setMaterialDamping(double deps_, double dkappa_);
       void setEulerPerspective(bool Euler_, double v0_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
 #endif
       int getNumberElements(){ return Elements; }
       double getLength(){ return L; }

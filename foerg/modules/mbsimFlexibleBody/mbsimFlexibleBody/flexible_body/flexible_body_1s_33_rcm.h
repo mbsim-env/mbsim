@@ -96,7 +96,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double R1_,double R2_);
       void setLehrDamping(double epstL_,double k0L_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
 #endif
       /***************************************************/
 

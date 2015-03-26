@@ -319,7 +319,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #ifdef HAVE_NURBS
         if (getPlotFeature(openMBV) == enabled) {
-          OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
+          boost::shared_ptr<OpenMBV::NurbsDisk> Diskbody = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
 
           drawDegree = 30 / nj;
           Diskbody->setDiffuseColor(0.46667, 1, 1);
@@ -336,7 +336,7 @@ namespace MBSimFlexibleBody {
 
           Diskbody->setInterpolationDegreeRadial(degV);
           Diskbody->setInterpolationDegreeAzimuthal(degU);
-          openMBVBody = Diskbody;
+          openMBVBody=Diskbody;
         }
 #endif
 #endif
