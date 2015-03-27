@@ -36,7 +36,7 @@ else
 fi
 AC_SUBST([FMIPLATFORM])
 
-AC_ARG_WITH([boost-data-time],
+AC_ARG_WITH([boost-date-time-lib],
   [  --with-boost-date-time-lib=LIBNAME  The library name of boost data_time excluding prefix/suffix (Default: boost_data_time).],
   [BOOST_DATE_TIME_LIB="$withval"], [BOOST_DATE_TIME_LIB="boost_date_time"])
 AC_SUBST([BOOST_DATE_TIME_LIB])
