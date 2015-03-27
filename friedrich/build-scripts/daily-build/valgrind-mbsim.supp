@@ -67,6 +67,14 @@
    ...
    fun:dlopen@@GLIBC_2.1
 }
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   obj:*/liboctinterp.so.1
+   ...
+   fun:dlopen@@GLIBC_2.1
+}
 
 # FMUCHECKER
 {

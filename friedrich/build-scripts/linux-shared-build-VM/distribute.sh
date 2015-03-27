@@ -147,7 +147,7 @@ case $0 in
 esac
 export LD_LIBRARY_PATH=\$DIRNAME/../lib:\$LD_LIBRARY_PATH
 export OCTAVE_HOME=\$THISDIR/..
-\$DIRNAME/.wrapper/\$BASENAME
+\$DIRNAME/.wrapper/\$BASENAME "\$@"
 EOF
   chmod +x $DISTDIR/bin/.wrapper/octave_ld_library_path_wrapper.sh
   (cd $DISTDIR/bin; ln -s .wrapper/octave_ld_library_path_wrapper.sh $DISTDIR/bin/octave)
