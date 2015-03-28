@@ -36,7 +36,7 @@
         % just a dummy statement to check for octave m-files
         interp1([1,2,3,4],[4,6,1,2],[1.2,2.3]);
         % just a dummy statement to check for octave oct-files including PKG_ADD files
-        symamd(1);
+        localtime(1);
         ]]>
       </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
