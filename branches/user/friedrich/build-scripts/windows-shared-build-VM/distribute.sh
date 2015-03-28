@@ -200,6 +200,7 @@ cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libboost_system-gcc47-1_48.dll.a
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libboost_filesystem-gcc47-1_48.dll.a $DISTDIR/lib
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libxerces-c.dll.a $DISTDIR/lib
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
+cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libz.dll.a $DISTDIR/lib
 # copy openmbvcppinterface SWIG files
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
