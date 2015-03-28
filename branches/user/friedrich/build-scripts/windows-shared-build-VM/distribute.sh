@@ -300,7 +300,7 @@ cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 #include <mbsimPowertrain/cardan_shaft.h>
 
 int main() {
-  OpenMBV::Cube *cube=new OpenMBV::Cube();
+  boost::shared_ptr<OpenMBV::Cube> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   MBSim::RigidBody *rb=new MBSim::RigidBody("RB");
   MBSimIntegrator::LSODEIntegrator *integ=new MBSimIntegrator::LSODEIntegrator;
   MBSimControl::Actuator *act=new MBSimControl::Actuator("ACT");
