@@ -13,4 +13,5 @@ mbsimElectronicsinclude_HEADERS = simulation_classes.h\
 			     modelling_classes.h
 
 
-
+include $(prefix)/share/mbxmlutils/python/deplibs.mk
+install-exec-hook: deplibs.target

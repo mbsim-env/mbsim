@@ -28,13 +28,12 @@ namespace MBSimElectronics {
       void updateJacobians(double t, int j=0) {};
       void updateInverseKineticsJacobians(double t) {};
       void init(InitStage stage);
-      Object* getObjectDependingOn() const {return precessor;}
       void setPrecessor(Object* obj) {precessor = obj;}
       void addBranch(Branch* branch_) {branch.push_back(branch_);}
       int getNumberOfBranches() {return branch.size();}
       Branch* getBranch(int i) {return branch[i];}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
@@ -76,13 +75,12 @@ namespace MBSimElectronics {
 
       void setFlag(int f) { flag = f; }
       int getFlag() const { return flag; }
-      Object* getObjectDependingOn() const {return precessor;}
       void setPrecessor(Object* obj) {precessor = obj;}
       void updateh0Fromh1(double t); 
       void updateW0FromW1(double t); 
       void updateV0FromV1(double t);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
@@ -98,8 +96,9 @@ namespace MBSimElectronics {
       void calcgSize(int j);
       void calcgdSize(int j);
       void calclaSize(int j);
-      void updateg(double t);
-      void updategd(double t);
+      void updateg(double t) { }
+      void updategd(double t) { }
+      void updateStateDependentVariables(double t);
       void updateW(double t, int j=0);
       void plot(double t, double dt = 1); 
       virtual std::string getName() const {return Link::getName();}
@@ -133,6 +132,7 @@ namespace MBSimElectronics {
       void updateh(double t, int j=0);
       void setResistance(double R_) { R = R_;}
       double computeVoltage();
+      std::string getType() const { return "Resistor"; }
   };
 
   class Capacitor : public ElectronicLink {
@@ -142,6 +142,7 @@ namespace MBSimElectronics {
       Capacitor(const std::string &name);
       void updateh(double t, int j=0);
       void setCapacity(double C_) { C = C_;}
+      std::string getType() const { return "Capacitor"; }
   };
 
   class VoltageSource : public ElectronicLink {
@@ -153,6 +154,8 @@ namespace MBSimElectronics {
       void updateh(double t, int j=0);
       void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
       //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
+      void init(InitStage stage);
+      std::string getType() const { return "VoltageSource"; }
   };
 
   class Diode : public ElectronicLink {
@@ -166,6 +169,7 @@ namespace MBSimElectronics {
       virtual bool isSingleValued() const {return not sv;}
       void checkImpactsForTermination(double dt);
       void solveImpactsGaussSeidel(double dt);
+      std::string getType() const { return "Diode"; }
   };
 
   class Switch : public ElectronicLink {
@@ -185,6 +189,8 @@ namespace MBSimElectronics {
       void solveImpactsGaussSeidel(double dt);
       void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
       //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
+      void init(InitStage stage);
+      std::string getType() const { return "Switch"; }
   };
 
   class ElectronicObject : public MBSim::Object, public ElectronicComponent {
@@ -201,9 +207,8 @@ namespace MBSimElectronics {
       void updateInverseKineticsJacobians(double t) {};
       virtual std::string getName() const {return Object::getName();}
       virtual void setName(std::string name) {Object::setName(name);}
-      Object* getObjectDependingOn() const {return branch;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
