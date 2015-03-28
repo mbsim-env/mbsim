@@ -84,12 +84,9 @@ namespace MBSimElectronics {
       Link::init(stage);
   }
 
-  void ElectronicLink::updateg(double t) {
+  void ElectronicLink::updateStateDependentVariables(double t) {
     Q = branch->getCharge()(0)*vz;
     g(0) = Q;
-  }
-
-  void ElectronicLink::updategd(double t) {
     I = branch->getCurrent()(0)*vz;
     gd(0) = I;
   }
@@ -347,6 +344,15 @@ namespace MBSimElectronics {
     }
   }
 
+  void Switch::init(InitStage stage) {
+    if(stage==preInit) {
+      ElectronicLink::init(stage);
+      addDependency(voltageSignal);
+    }
+    else
+      ElectronicLink::init(stage);
+  }
+
   void Switch::solveImpactsGaussSeidel(double dt) {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
@@ -401,6 +407,15 @@ namespace MBSimElectronics {
   void VoltageSource::updateh(double t, int j) {
     la(0) = voltageSignal->getSignal()(0);
     h[j][0] += branch->getJacobian(j).T()*la(0)*vz;
+  }
+
+  void VoltageSource::init(InitStage stage) {
+    if(stage==preInit) {
+      ElectronicLink::init(stage);
+      addDependency(voltageSignal);
+    }
+    else
+      ElectronicLink::init(stage);
   }
 
 }

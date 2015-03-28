@@ -232,6 +232,7 @@ namespace MBSimElectronics {
 	linkList.push_back(linkcomp);
         // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
         linkcomp->setPath("<created_by_ModellingInterface_"+lexical_cast<string>(linkList.size()-1));
+	linkcomp->addDependency(compList[i]->getBranch());
       }
       else {
 	throw runtime_error("Error 2 in ElectronicComponent::processModellList");
