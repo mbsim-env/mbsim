@@ -116,7 +116,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obs->setFrame(box2->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l1);
@@ -124,7 +124,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setInitialRotation(1.5708,0,0);
   box1->setOpenMBVRigidBody(cylinder);
 
-  cylinder=new OpenMBV::Frustum;
+  cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l2);

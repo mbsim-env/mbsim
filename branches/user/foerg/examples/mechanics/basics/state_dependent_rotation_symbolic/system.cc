@@ -44,20 +44,18 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   double R = 10;
-  vector<SX> sq(1);
-  sq[0] = SX("q1");
+  SX sq=SX::sym("q");
 
-  vector<SX> pos(3);
+  SX pos=SX::zeros(3);
   pos[0] = -cos(sq[0]/R)*R;
   pos[1] = -sin(sq[0]/R)*R;
-  pos[2] = 0; 
+  pos[2] = 0;
 
   SXFunction spos(sq,pos);
   
   body->setTranslation(new SymbolicFunction<Vec3(VecV)>(spos));
 
-  vector<SX> al(1);
-  al[0] = M_PI/2+sq[0]/R;
+  SX al=M_PI/2+sq[0]/R;
 
   SXFunction sangle(sq,al);
   SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(sangle);
@@ -74,12 +72,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
- // OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
+ // boost::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
  // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
  // arrow->setDiffuseColor(1/3.0, 1, 1);
   o->enableOpenMBVVelocity();
 
-//  arrow = new OpenMBV::Arrow;
+//  arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
 //  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
 //  arrow->setType(OpenMBV::Arrow::toDoubleHead);
 //  arrow->setDiffuseColor(0.4, 1, 1);
@@ -87,7 +85,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
-  OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(l,h,d);
   cuboid->setDiffuseColor(160./360.,1,1);
   body->setOpenMBVRigidBody(cuboid);

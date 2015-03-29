@@ -3,6 +3,7 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 
@@ -10,7 +11,7 @@
 #include "mbsim/functions/symbolic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include <casadi/symbolic/fx/sx_function.hpp>
+#include "mbsim/functions/nested_functions.h"
 #include <casadi/symbolic/sx/sx_tools.hpp>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -83,16 +84,18 @@ System::System(const string &projectName) :
   crankToSpring->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
 
-  SX t("t");
+  SX t=SX::sym("t");
   SX fexp2 = log(cosh(t));
   SXFunction foo2(t, fexp2);
-//  SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
-//  crank->setRotation(new TimeDependentRotationAboutFixedAxis(new AngleOverTime(), "[0;0;1]"));
-// crank->setRotation(new TimeDependentRotationAboutFixedAxis(f2, "[0;0;1]"));
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
   crank->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), f2));
-// crank->setTranslationDependentRotation(true);
+  crank->setTranslation(new TranslationAlongAxesXYZ<VecV>());
+  Joint * fix = new Joint("Fix");
+  fix->connect(getFrameI(), kinematicsFrameCrank);
+  fix->setForceDirection(Mat3x3(EYE));   // crank2 has to have six DOFs
+  fix->setForceLaw(new BilateralConstraint);
+  addLink(fix);
 
   crank->setMass(mass_crank);
   SymMat inertia_crank(3, INIT, 0.);
@@ -103,7 +106,7 @@ System::System(const string &projectName) :
 
   // visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank, 0.05, 0.05);
   openMBVCrank->setDiffuseColor(0.5, 0, 0);
   openMBVCrank->setTransparency(0.5);

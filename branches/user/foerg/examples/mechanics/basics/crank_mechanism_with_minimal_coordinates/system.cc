@@ -117,17 +117,17 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   load->connect(body1->getFrame("C"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Frustum* dummy = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy->setBaseRadius(r);
   dummy->setTopRadius(r);
   dummy->setHeight(0.02);
   dummy->setDiffuseColor(90./360.,1,1);
   body1->setOpenMBVRigidBody(dummy);
-  OpenMBV::Cuboid* dummy1 = new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   dummy1->setLength(b,0.02,0.02);
   dummy1->setDiffuseColor(180./360.,1,1);
   body2->setOpenMBVRigidBody(dummy1);
-  OpenMBV::Cuboid* dummy2 = new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   dummy2->setLength(c,c/2,0.02);
   dummy2->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy2);
