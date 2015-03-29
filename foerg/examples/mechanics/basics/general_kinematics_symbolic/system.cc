@@ -39,19 +39,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  vector<SX> sq(2);
-  sq[0] = SX("q1");
-  sq[1] = SX("q2");
+  SX sq=SX::sym("q", 2);
 
-  vector<SX> st(1);
-  st[0] = SX("t");
+  SX st=SX::sym("t");
 
-  vector<SX> pos(3);
-  pos[0] = cos(sq[0]);
-  pos[1] = sin(sq[0]);
+  SX pos=SX::zeros(3);
+  pos[0] = cos(SX(sq[0]));
+  pos[1] = sin(SX(sq[0]));
   pos[2] = sq[1]; 
 
-  vector<vector<SX> > input1(2);
+  vector<SX> input1(2);
   input1[0] = sq;
   input1[1] = st;
 
@@ -73,7 +70,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
-  OpenMBV::Cube *cuboid=new OpenMBV::Cube;
+  boost::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(h1);
   cuboid->setDiffuseColor(240./360.,1,1);
   body1->setOpenMBVRigidBody(cuboid);

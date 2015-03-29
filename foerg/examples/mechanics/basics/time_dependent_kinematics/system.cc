@@ -44,8 +44,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  SX t("t");
-  vector<SX> fexp(3);
+  SX t=SX::sym("t");
+  SX fexp=SX::zeros(3);
   fexp[0] = sin(freq1*t + M_PI/2);
   fexp[1] = v0y*t; 
   fexp[2] = 0; 
@@ -75,7 +75,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
-  OpenMBV::Cube *cuboid=new OpenMBV::Cube;
+  boost::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(h1);
   cuboid->setDiffuseColor(240./360.,1,1);
   body1->setOpenMBVRigidBody(cuboid);

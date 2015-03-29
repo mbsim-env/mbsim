@@ -42,7 +42,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/pendel1.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
@@ -66,7 +66,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);

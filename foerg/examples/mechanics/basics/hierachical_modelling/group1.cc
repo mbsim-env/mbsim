@@ -78,13 +78,15 @@ Group1::Group1(const string &name) : Group(name) {
   // ----------------------- Definition der 1. Feder --------------------  
   SpringDamper *spring1 = new SpringDamper("Feder1");
   addLink(spring1);
-  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1,l01));
+  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1));
+  spring1->setUnloadedLength(l01);
   spring1->connect(box1->getFrame("P1"),getFrame("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
   SpringDamper *spring2=new SpringDamper("Feder2");
   addLink(spring2);
-  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2,l02));
+  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2));
+  spring2->setUnloadedLength(l02);
   spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  
@@ -92,13 +94,13 @@ Group1::Group1(const string &name) : Group(name) {
   box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid* body1=new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   body1->setLength(Vec(3,INIT,1)*h1);
   body1->setDiffuseColor(240./360.,1,1);
   box1->setOpenMBVRigidBody(body1);
   box1->getFrame("P1")->enableOpenMBV(0.5);
 
-  OpenMBV::Cuboid* body2=new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> body2=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   body2->setLength(Vec(3,INIT,1)*h2);
   body2->setDiffuseColor(360./360.,1,1);
   box2->setOpenMBVRigidBody(body2);
