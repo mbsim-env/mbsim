@@ -54,7 +54,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab->setInitialGeneralizedVelocity(v0Stab);
   
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid* cuboid = new OpenMBV::Cuboid;
+  boost::shared_ptr<OpenMBV::Cuboid> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(lStab,hStab,0.1);
   cuboid->setDiffuseColor(0.3333,1,0.3333);
   stab->setOpenMBVRigidBody(cuboid);

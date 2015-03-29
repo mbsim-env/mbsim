@@ -63,7 +63,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  body->addContour(point, Vec3(), SqrMat3(EYE));
 //
 //#ifdef HAVE_OPENMBVCPPINTERFACE
-//  OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
+//  boost::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
 //  body->setOpenMBVRigidBody(sphere);
 //  sphere->setRadius(0.01);
 //#endif
@@ -87,7 +87,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cnf);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cube *obj = new OpenMBV::Cube;
+  boost::shared_ptr<OpenMBV::Cube> obj = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
 #endif

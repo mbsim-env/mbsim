@@ -107,7 +107,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Dice-Visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cube* diceAMV = new OpenMBV::Cube;
+  boost::shared_ptr<OpenMBV::Cube> diceAMV = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   diceAMV->setLength(length);
   diceAMV->setDiffuseColor(1/3.0, 1, 1);
   dice->setOpenMBVRigidBody(diceAMV);
@@ -211,7 +211,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   frustumVRML.close();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> frustumMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   frustumMBV->setIvFileName("frustum.iv");
   frustumMBV->setDiffuseColor(0.6666,1,1);
   frustumMBV->setInitialTranslation(0.,0.,0.);

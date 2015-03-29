@@ -274,7 +274,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("C")->enableOpenMBV(1.5*d);
-  OpenMBV::Frustum* dummy = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy->setBaseRadius(d);
   dummy->setTopRadius(d);
   dummy->setHeight(d); 
@@ -285,7 +285,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setOpenMBVRigidBody(dummy);
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
-  OpenMBV::Frustum* dummy2 = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy2->setBaseRadius(d);
   dummy2->setTopRadius(d);
   dummy2->setInnerBaseRadius(0.9*d);
@@ -298,7 +298,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
-  OpenMBV::Sphere* dummy3 = new OpenMBV::Sphere;
+  boost::shared_ptr<OpenMBV::Sphere> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   dummy3->setRadius(d);
   dummy3->setScaleFactor(1.);
   dummy3->setMinimalColorValue(0);
@@ -306,7 +306,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy3->setDiffuseColor(0.6666,1,1);
   body3->setOpenMBVRigidBody(dummy3);
 
-  OpenMBV::Cube *cuboid=new OpenMBV::Cube;
+  boost::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(d);
   cuboid->setDiffuseColor(0.6666,0.6666,1);
   body4->setOpenMBVRigidBody(cuboid);
