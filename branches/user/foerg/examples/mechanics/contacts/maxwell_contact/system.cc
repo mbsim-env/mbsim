@@ -40,7 +40,9 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     virtual ~CountourCouplingCantileverBeam() {
     }
 
-    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2) {
+    virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
+      Vec2 Arg1 = computeLagrangeParameter(firstContourInfo);
+      Vec2 Arg2 = computeLagrangeParameter(secondContourInfo);
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)
@@ -107,7 +109,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   Beam->addContour(BeamContour);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Cuboid *openMBVBeam=new OpenMBV::Cuboid();
+  boost::shared_ptr<OpenMBV::Cuboid> openMBVBeam=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVBeam->setInitialTranslation(length/2,0,0);
   openMBVBeam->setLength(length,height,depth);
   openMBVBeam->setDrawMethod(OpenMBV::Body::DrawStyle(1));
@@ -161,7 +163,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
     /*Visualization of the balls*/
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Sphere *openMBVSphere=new OpenMBV::Sphere();
+    boost::shared_ptr<OpenMBV::Sphere> openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     openMBVSphere->setRadius(radius);
 
     switch (contactType) {

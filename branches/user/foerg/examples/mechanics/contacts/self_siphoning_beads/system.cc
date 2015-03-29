@@ -88,7 +88,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
-    OpenMBV::IvBody *v_table = new OpenMBV::IvBody;
+    boost::shared_ptr<OpenMBV::IvBody> v_table = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     v_table->setIvFileName("objects/tisch.wrl");
     v_table->setScaleFactor(0.004);
     v_table->setDiffuseColor(Vec3(INIT,1.));
@@ -244,8 +244,8 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
 
   leader->getFrame("C")->enableOpenMBV(0.01);
 
-  SX t("t");
-  vector<SX> fexp(3);
+  SX t=SX::sym("t");
+  SX fexp=SX::zeros(3);
   double v = M_PI / tEnd;
   double x0 = 2e-2;
   fexp[0] = x0 * sin(v * t - (M_PI_2)) + x0;
