@@ -116,7 +116,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contact"; }
+      virtual std::string getType() const { return "SingleContact"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
@@ -167,6 +167,7 @@ namespace MBSim {
       GeneralizedForceLaw * getNormalForceLaw() const {return fcl; }
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_);
+      FrictionForceLaw * getTangentialForceLaw() const {return fdf;}
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
       ContactKinematics* getContactKinematics() const { return contactKinematics; }
