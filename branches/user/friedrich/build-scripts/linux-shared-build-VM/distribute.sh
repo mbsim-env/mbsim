@@ -231,9 +231,6 @@ cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openm
 cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 # modifie all ELF rpath in lib/*.so*
-for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
-  chrpath -r '$ORIGIN/../lib' $F &> /dev/null || chrpath -d $F &> /dev/null || DUMMYVAR=0
-done
 
 # create mbsim-config
 cat << EOF > $DISTDIR/bin/mbsim-config
