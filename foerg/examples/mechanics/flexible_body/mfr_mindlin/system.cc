@@ -72,7 +72,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* ball */ 
   vector<RigidBody*> balls;
   vector<Point*> points;
-  vector<OpenMBV::Sphere*> sphere;
+  vector<boost::shared_ptr<OpenMBV::Sphere> > sphere;
   vector<Contact*> contact;
 
   double r = 1e-2; // radius of ball
@@ -105,7 +105,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[k]->setTranslation(new TranslationAlongAxesXYZ<VecV>); // only translational dof because of point masses
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    sphere.push_back(new OpenMBV::Sphere);
+    sphere.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Sphere>());
     sphere[k]->setRadius(r);
     sphere[k]->setDiffuseColor((double)k/(double)nB,(double)k/(double)nB,(double)k/(double)nB);
     balls[k]->setOpenMBVRigidBody(sphere[k]);

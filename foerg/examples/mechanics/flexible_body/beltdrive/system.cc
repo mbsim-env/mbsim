@@ -15,6 +15,7 @@
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/nested_functions.h"
 
 #include "beltDriveFunctions.h"
 
@@ -30,6 +31,7 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
+using namespace boost;
 
 class Moment : public MBSim::Function<VecV(double)> {
   double M0;
@@ -310,20 +312,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(belt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
   cuboid->setDiffuseColor(2/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
-  vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
+  shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
   double h0 = 50.0e-3;
   double b0_vis = 1.0e-3;
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint( b0_vis*0.5, h0*0.5,1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create( b0_vis*0.5, h0*0.5,1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint( b0_vis*0.5,-h0*0.5,1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner2 = OpenMBV::PolygonPoint::create( b0_vis*0.5,-h0*0.5,1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0_vis*0.5,-h0*0.5,1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner3 = OpenMBV::PolygonPoint::create(-b0_vis*0.5,-h0*0.5,1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0_vis*0.5, h0*0.5,1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner4 = OpenMBV::PolygonPoint::create(-b0_vis*0.5, h0*0.5,1);
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
@@ -409,7 +411,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Sphere *cylinder=new OpenMBV::Sphere;
+    boost::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     cylinder->setRadius(radiiDisks(i));
     cylinder->setDiffuseColor(1/3.0, 1, 1);
     disk->setOpenMBVRigidBody(cylinder);
