@@ -19,6 +19,7 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
+using namespace boost;
 
 PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const string &projectName) :
     DynamicSystemSolver(projectName) {
@@ -53,18 +54,18 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
+  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
-  vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
-  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0 * 0.5, b0 * 0.5, 1);
+  shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
+  shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create(b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner1);
-  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0 * 0.5, -b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner2 = OpenMBV::PolygonPoint::create(b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner2);
-  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0 * 0.5, -b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner3 = OpenMBV::PolygonPoint::create(-b0 * 0.5, -b0 * 0.5, 1);
   rectangle->push_back(corner3);
-  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0 * 0.5, b0 * 0.5, 1);
+  shared_ptr<OpenMBV::PolygonPoint>  corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
 
   cuboid->setContour(rectangle);
@@ -109,7 +110,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::Sphere *sphere = new OpenMBV::Sphere;
+  boost::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(r);
   sphere->setDiffuseColor(1/3.0, 1, 1);
   ball->setOpenMBVRigidBody(sphere);
