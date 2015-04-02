@@ -117,11 +117,10 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
 
-  vector<SX> s1(1), s2(1), y(1);
-  s1[0] = SX("s1");
-  s2[0] = SX("s2");
-  y[0] = s1[0]-s2[0];
-  vector<vector<SX> > input(2);
+  SX s1 = SX::sym("s1",1);
+  SX s2 = SX::sym("s2",1);
+  SX y = s1-s2;
+  vector<SX> input(2);
   input[0] = s1;
   input[1] = s2;
   SXFunction f(input,y);
@@ -234,21 +233,21 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/basis.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialRotation(M_PI,0,0);
   obj->setInitialTranslation(0,0.25,0);
   basis->setOpenMBVRigidBody(obj);
 
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/arm.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialRotation(M_PI,0,0);
   obj->setInitialTranslation(0,0.08,0);
   arm->setOpenMBVRigidBody(obj);
 
-  obj=new OpenMBV::IvBody;
+  obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/spitze.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialTranslation(0,-0.3,0);
