@@ -41,12 +41,13 @@ timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-# pj('xml', 'time_dependent_kinematics')
+# pj('xml', 'time_dependent_kinematics'),
   pj("mechanics", "flexible_body", "beltdrive"),
   pj("mechanics", "contacts", "self_siphoning_beads"),
-  pj("fmi", "simple_test"),
-  pj("fmi", "sphere_on_plane"),
-  pj("fmi", "hierachical_modelling")
+  pj("mechanics", "flexible_body", "spatial_beam_cosserat"),
+  pj("mechanics", "flexible_body", "pearlchain_cosserat_2D_POD"),
+  pj("mechanics", "flexible_body", "block_compression"),
+  pj("fmi", "hierachical_modelling"),
 ])
 
 # MBSim Modules
@@ -838,7 +839,7 @@ def runExample(resultQueue, example):
     else:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
-        match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
+        match=re.search("([0-9]+) deprecated features were called:", line)
         if match!=None:
           nrDeprecated=match.expand("\\1")
           break
@@ -936,29 +937,38 @@ def runExample(resultQueue, example):
 
 # prefix the simultion with this parameter.
 # this is normaly just args.prefixSimulation but may be extended by keywords of args.prefixSimulationKeyword.
-def prefixSimulation(example):
+def prefixSimulation(example, id):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
-    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%p.xml']
+    return args.prefixSimulation+['--xml=yes', '--xml-file=valgrind.%%p.%s.xml'%(id)]
   return args.prefixSimulation
 
 # get additional output files of simulations.
 # these are all dependent on the keyword of args.prefixSimulationKeyword.
 # additional output files must be placed in the args.reportOutDir and here only the basename must be returned.
-def getOutFiles(example):
+def getOutFilesAndAdaptRet(example, ret):
   # handle VALGRIND
   if args.prefixSimulationKeyword=='VALGRIND':
+    # get out files
+    # and adapt the return value if errors in valgrind outputs are detected
     xmlFiles=glob.glob("valgrind.*.xml")
-    ret=[]
+    outFiles=[]
     for xmlFile in xmlFiles:
-      htmlFile=xmlFile[:-4]+".html"
-      ret.append(htmlFile)
+      # check for errors
+      content=codecs.open(xmlFile).read().decode('utf-8')
+      if "</valgrindoutput>" not in content: # incomplete valgrind output -> a skipped trace children
+        os.remove(xmlFile)
+        continue
+      if "<error>" in content and ret[0]!=None:
+        ret[0]=1
       # transform xml file to html file (in reportOutDir)
+      htmlFile=xmlFile[:-4]+".html"
+      outFiles.append(htmlFile)
       global scriptDir
       subprocess.call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
                        pj(scriptDir, 'valgrindXMLToHTML.xsl')])
       os.remove(xmlFile)
-    return ret
+    return outFiles
   return []
 
 
@@ -986,11 +996,12 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(os.curdir, "main"+args.exeExt)], executeFD,
-                     env=mainEnv, maxExecutionTime=args.maxExecutionTime)
+  ret=[subprocessCall(prefixSimulation(example, 'src')+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+                      env=mainEnv, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, getOutFiles(example)
+  outFiles=getOutFilesAndAdaptRet(example, ret)
+  return ret[0], dt, outFiles
 
 
 
@@ -1004,11 +1015,12 @@ def executeXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                     [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret=[subprocessCall(prefixSimulation(example, 'xml')+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+                      [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, getOutFiles(example)
+  outFiles=getOutFilesAndAdaptRet(example, ret)
+  return ret[0], dt, outFiles
 
 
 
@@ -1019,25 +1031,27 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
-                     executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret=[subprocessCall(prefixSimulation(example, 'fxml')+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+                      executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  return ret, dt, getOutFiles(example)
+  outFiles=getOutFilesAndAdaptRet(example, ret)
+  return ret[0], dt, outFiles
 
 
 
 # helper function for executeFMIXMLExample and executeFMISrcExample
 def executeFMIExample(executeFD, example, fmiInputFile):
   # run mbsimCreateFMU to export the model as a FMU
+  # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), fmiInputFile]))
+  comm=[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
+  list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret1=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt),
-                     fmiInputFile], executeFD, maxExecutionTime=args.maxExecutionTime/5)
-  outFiles1=getOutFiles(example)
+  ret1=[subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/5)]
+  outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
   # get fmuChecker executable
   fmuCheck=glob.glob(pj(mbsimBinDir, "fmuCheck.*"))
@@ -1047,17 +1061,24 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   # run fmuChecker
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, fmuCheck), "-l", "5", "mbsim.fmu"]))
+  # adapt end time if MBSIM_SET_MINIMAL_TEND is set
+  endTime=[]
+  if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
+    endTime=['-s', '0.01']
+  comm=[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
+  list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret2=subprocessCall(prefixSimulation(example)+[pj(mbsimBinDir, fmuCheck),
-                      "-l", "5", "mbsim.fmu"], executeFD, maxExecutionTime=args.maxExecutionTime)
+  ret2=[subprocessCall(prefixSimulation(example, 'fmuchk')+comm, executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  outFiles2=getOutFiles(example)
+  outFiles2=getOutFilesAndAdaptRet(example, ret2)
 
   # return
-  ret=abs(ret1)+abs(ret2)
+  if ret1[0]==None or ret2[0]==None:
+    ret=None
+  else:
+    ret=abs(ret1[0])+abs(ret2[0])
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
@@ -1209,6 +1230,33 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   gnuplotProcess.stdin.write(("unset multiplot\n").encode("utf-8"))
   # dataFileName it not removed since gnuplot is running asynchronously
 
+# numpy.isclose(...) is only defined in newer numpy versions.
+# This implementation is taken varbatim from numpy 1.9
+def numpy_isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
+  import numpy
+  def within_tol(x, y, atol, rtol):
+    with numpy.errstate(invalid='ignore'):
+      result = numpy.less_equal(abs(x-y), atol + rtol * abs(y))
+    if numpy.isscalar(a) and numpy.isscalar(b):
+      result = bool(result)
+    return result
+  x = numpy.array(a, copy=False, subok=True, ndmin=1)
+  y = numpy.array(b, copy=False, subok=True, ndmin=1)
+  xfin = numpy.isfinite(x)
+  yfin = numpy.isfinite(y)
+  if all(xfin) and all(yfin):
+    return within_tol(x, y, atol, rtol)
+  else:
+    finite = xfin & yfin
+    cond = numpy.zeros_like(finite, subok=True)
+    x = x * numpy.ones_like(cond)
+    y = y * numpy.ones_like(cond)
+    cond[finite] = within_tol(x[finite], y[finite], atol, rtol)
+    cond[~finite] = (x[~finite] == y[~finite])
+    if equal_nan:
+      both_nan = numpy.isnan(x) & numpy.isnan(y)
+      cond[both_nan] = both_nan[both_nan]
+    return cond
 # return column col from arr as a column Vector if asColumnVector == True or as a row vector
 # arr may be of shape vector or a matrix
 def getColumn(arr, col, asColumnVector=True):
@@ -1276,13 +1324,6 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       if column>=curObjCols:
         printLabel=('&lt;label '+printLabel[0]+' not in cur.&gt;', 'danger')
         nrFailed[0]+=1
-      else:
-        # compare
-        if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-          if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
-            delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
-          else:
-            delta=float("inf") # very large => error
       cell=[]
       cell.append((h5CurFile.filename,""))
       cell.append((datasetName,""))
@@ -1292,16 +1333,11 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;',"danger"))
         nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        #check for NaN/Inf # check for NaN and Inf
-        #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
-        #check for NaN/Inf   cell.append(('cur. contains NaN or +/-Inf',"danger"))
-        #check for NaN/Inf   nrFailed[0]+=1
-        #check for NaN/Inf elif numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
-        #check for NaN/Inf   cell.append(('ref. contains NaN or +/-Inf',"danger"))
-        #check for NaN/Inf   nrFailed[0]+=1
-        #check for NaN/Inf use elif instead of if in next line
         # check for difference
-        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(getColumn(refObj,column)))):
+        refObjCol=getColumn(refObj,column)
+        curObjCol=getColumn(curObj,column)
+        if refObjCol.shape[0]==curObjCol.shape[0] and not numpy.all(numpy_isclose(refObjCol, curObjCol, rtol=args.rtol,
+                         atol=args.atol, equal_nan=True)):
           cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"danger"))
           nrFailed[0]+=1
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
