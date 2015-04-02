@@ -39,11 +39,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->addFrame(new FixedRelativeFrame("P",r,SqrMat(3,EYE)));
   body->setFrameOfReference(getFrame("I"));
 
-  //vector<SX> sq(2);
-  //sq[0] = SX("al");
-  //sq[1] = SX("be");
+  //SX sq=vertcat(SX::sym("al"), SX::sym("be"));
 
-  //vector<SX> pos(3);
+  //SX pos=SX::zeros(3);
   //pos[0] = a*cos(sq[0])*sin(sq[1]);
   //pos[1] = -a*cos(sq[1]);
   //pos[2] = -a*sin(sq[0])*sin(sq[1]); 
@@ -60,7 +58,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setInitialGeneralizedPosition(q0);
   body->setInitialGeneralizedVelocity(u0);
 
-  OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
+  boost::shared_ptr<OpenMBV::Sphere> sphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(0.1);
   sphere->setTransparency(0.3);
   body->setOpenMBVRigidBody(sphere);

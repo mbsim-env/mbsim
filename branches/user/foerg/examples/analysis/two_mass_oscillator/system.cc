@@ -149,13 +149,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualization in OpenMBV --------------------
-  OpenMBV::Cube *cuboid=new OpenMBV::Cube;
+  boost::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(h1);
   cuboid->setDiffuseColor(1,0.5,0);
   cuboid->setTransparency(0.7);
   box1->setOpenMBVRigidBody(cuboid);
 
-  cuboid=new OpenMBV::Cube;
+  cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(h2);
   cuboid->setDiffuseColor(0.5,1,1);
   cuboid->setTransparency(0.7);
