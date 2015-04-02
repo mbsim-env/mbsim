@@ -18,10 +18,12 @@ ifeq ($(PLATFORM),Windows)
   SHEXT=.dll
   EXEEXT=.exe
   PIC=
+  LDFLAGSRPATH=
 else
   SHEXT=.so
   EXEEXT=
   PIC=-fpic
+  LDFLAGSRPATH=-Wl,--disable-new-dtags
 endif
 
 # default target
@@ -36,7 +38,7 @@ main$(EXEEXT): $(OBJECTS)
 
 # FMI export target
 mbsimfmi_model$(SHEXT): $(OBJECTS)
-	$(CXX) -shared -Wl,-rpath,\$$ORIGIN -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
+	$(CXX) -shared $(LDFLAGSRPATH) -Wl,-rpath,\$$ORIGIN -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
 
 rpath: $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))  $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
