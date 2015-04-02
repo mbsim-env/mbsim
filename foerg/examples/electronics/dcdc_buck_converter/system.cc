@@ -18,13 +18,22 @@ double mod(double x, double y) {
 
 class VoltageSensor : public MBSimControl::Sensor {
   protected:
-    MBSimElectronics::ElectronicLink * comp;
+    MBSimElectronics::ElectronicLink *comp;
   public:
     void setComponent(MBSimElectronics::ElectronicLink *comp_) {comp = comp_;}
-    VoltageSensor(const std::string &name) : Sensor(name) {}
+    VoltageSensor(const std::string &name) : Sensor(name) { }
     std::string getType() const { return "VoltageSensor"; }
-    VecV getSignal() {
-      return VecV(1,INIT,comp->computeVoltage());
+    void updateStateDependentVariables(double t) { 
+      s = VecV(1,INIT,comp->computeVoltage()); 
+    }
+    int getSignalSize() { return 1; }
+    void init(InitStage stage) {
+      if(stage==preInit) {
+        MBSimControl::Sensor::init(stage);
+        addDependency(comp);
+      }
+      else
+        MBSimControl::Sensor::init(stage);
     }
 };
 
@@ -42,15 +51,21 @@ class SwitchSignal : public MBSimControl::Signal {
       uref = 11.3;
       K=8.2;
     }
-    void updateg(double t) {
+    void setInputSignal(Signal *input) {inputSignal = input;}
+    void updateStateDependentVariables(double t) {
       double ug = u1+mod(t,T)/T*(uu-u1);
       h = uref+1/K*ug;
-      Signal::updateg(t);
-    }
-    void setInputSignal(Signal *input) {inputSignal = input;}
-    fmatvec::VecV getSignal() {
       double UR = inputSignal->getSignal()(0);
-      return VecV(1, INIT, (-UR <= h ? 0 : 100));
+      s = VecV(1, INIT, (-UR <= h ? 0 : 100));
+    }
+    int getSignalSize() { return 1; }
+    void init(InitStage stage) {
+      if(stage==preInit) {
+        MBSimControl::Signal::init(stage);
+        addDependency(inputSignal);
+      }
+      else
+        MBSimControl::Signal::init(stage);
     }
 };
 
@@ -68,7 +83,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   VoltageSource *voltageSource = new VoltageSource("VoltageSource");
   addModel(voltageSource);
   //voltageSource->setVoltageSignal(new Signal);
-  MBSimControl::FunctionSensor * fs = new MBSimControl::FunctionSensor("BasePositionSoll");
+  MBSimControl::FunctionSensor * fs = new MBSimControl::FunctionSensor("SensorVoltageSource");
   addLink(fs);
   fs->setFunction(new Signal);
   voltageSource->setVoltageSignal(fs);
