@@ -117,8 +117,7 @@ int main(int argc, char* argv[]) {
   cout << "MBSim: Open Interpolation time (once with LU-decomposition) = " << sw.stop() << endl;
 
   sw.start();
-  mbsimcur
-  ve.globalInterp(pointsClosed, uvec[0], uvec[uvec.size()-1], degU, true);
+  mbsimcurve.globalInterp(pointsClosed, uvec[0], uvec[uvec.size()-1], degU, true);
   cout << "MBSim: Open Interpolation time (once with inverse-decomposition) = " << sw.stop() << endl;
 
   sw.start();
