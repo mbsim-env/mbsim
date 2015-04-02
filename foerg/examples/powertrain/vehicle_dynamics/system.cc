@@ -489,13 +489,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   actuator->connect(shaft1->getFrame("C"),karosserie->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setInitialRotation(-M_PI/2,0,0);
   obj->setIvFileName("wrl/car.wrl");
   karosserie->setOpenMBVRigidBody(obj);
   obj->setScaleFactor(1);
 
-  OpenMBV::Frustum* cylinder = new OpenMBV::Frustum;
+  boost::shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
@@ -504,7 +504,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
 
-  cylinder = new OpenMBV::Frustum;
+  cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
@@ -513,7 +513,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
 
-  cylinder = new OpenMBV::Frustum;
+  cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
@@ -522,7 +522,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
 
-  cylinder = new OpenMBV::Frustum;
+  cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
@@ -531,7 +531,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
 
-  cylinder=new OpenMBV::Frustum;
+  cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(r1);
   cylinder->setBaseRadius(r1);
   cylinder->setHeight(l);
