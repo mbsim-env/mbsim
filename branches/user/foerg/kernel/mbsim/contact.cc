@@ -426,10 +426,7 @@ namespace MBSim {
         }
       }
       MechanicalLink::init(stage);
-      for(unsigned int i=0; i<contour.size(); i++)
-        addDependencies(contour[i]->getDependencies());
     }
-
     else if (stage == resize) {
       MechanicalLink::init(stage);
 

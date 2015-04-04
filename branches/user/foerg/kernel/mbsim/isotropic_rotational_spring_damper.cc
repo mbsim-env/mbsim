@@ -85,12 +85,7 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::init(InitStage stage) {
-    if (stage==preInit) {
-      MechanicalLink::init(stage);
-      for(unsigned int i=0; i<frame.size(); i++)
-        addDependencies(frame[i]->getDependencies());
-    }
-    else if (stage == resize) {
+    if (stage == resize) {
       MechanicalLink::init(stage);
       g.resize(momentDir.cols());
       gd.resize(momentDir.cols());

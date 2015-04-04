@@ -157,7 +157,13 @@ namespace MBSim {
   } 
 
   void MechanicalLink::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
+      for(unsigned int i=0; i<frame.size(); i++)
+        addDependencies(frame[i]->getDependencies());
+      for(unsigned int i=0; i<contour.size(); i++)
+        addDependencies(contour[i]->getDependencies());
+    }
+    else if(stage==unknownStage) {
       Link::init(stage);
 
       for(unsigned int i=0; i<frame.size(); i++) {
