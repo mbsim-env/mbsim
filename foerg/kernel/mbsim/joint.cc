@@ -159,11 +159,6 @@ namespace MBSim {
         THROW_MBSIMERROR("no connection given!");
       MechanicalLink::init(stage);
     }
-    else if(stage==preInit) {
-      MechanicalLink::init(stage);
-      for(unsigned int i=0; i<frame.size(); i++)
-        addDependencies(frame[i]->getDependencies());
-    }
     else if (stage == resize) {
       MechanicalLink::init(stage);
 
