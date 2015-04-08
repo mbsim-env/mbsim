@@ -397,11 +397,16 @@ def main():
   print('<thead><tr>', file=mainFD)
   print('<th>Tool</th>', file=mainFD)
   print('<th>SVN Update</th>', file=mainFD)
-  print('<th>Configure</th>', file=mainFD)
-  print('<th>Make</th>', file=mainFD)
-  print('<th>Check</th>', file=mainFD)
-  print('<th>Doxygen Doc.</th>', file=mainFD)
-  print('<th>XML Doc.</th>', file=mainFD)
+  if not args.disableConfigure:
+    print('<th>Configure</th>', file=mainFD)
+  if not args.disableMake:
+    print('<th>Make</th>', file=mainFD)
+  if not args.disableMakeCheck:
+    print('<th>Check</th>', file=mainFD)
+  if not args.disableDoxygen:
+    print('<th>Doxygen Doc.</th>', file=mainFD)
+  if not args.disableXMLDoc:
+    print('<th>XML Doc.</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
 
   # list tools which are not updated and must not be rebuild according dependencies
@@ -409,11 +414,8 @@ def main():
     print('<tr>', file=mainFD)
     print('<td>'+tool+'</td>', file=mainFD)
     print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">up to date, no rebuild required</a></td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
+    for i in range(0, 5-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+      print('<td>-</td>', file=mainFD)
     print('</tr>', file=mainFD)
   mainFD.flush()
 
@@ -650,12 +652,13 @@ def configure(tool, mainFD):
     result="done"
   except RuntimeError as ex:
     result=str(ex)
-  print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'">'+result+'</a>', file=mainFD)
-  if copyConfigLog:
-    shutil.copyfile("config.log", pj(args.reportOutDir, tool, "config.log.txt"))
-    print('  <a href="'+myurllib.pathname2url(pj(tool, "config.log.txt"))+'">config.log</a>', file=mainFD)
-  print('</td>', file=mainFD)
+  if not args.disableConfigure:
+    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'">'+result+'</a>', file=mainFD)
+    if copyConfigLog:
+      shutil.copyfile("config.log", pj(args.reportOutDir, tool, "config.log.txt"))
+      print('  <a href="'+myurllib.pathname2url(pj(tool, "config.log.txt"))+'">config.log</a>', file=mainFD)
+    print('</td>', file=mainFD)
   configureFD.close()
   mainFD.flush()
   os.chdir(savedDir)
@@ -687,9 +690,10 @@ def make(tool, mainFD):
     result="done"
   except RuntimeError as ex:
     result=str(ex)
-  print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'">'+result+'</a>', file=mainFD)
-  print('</td>', file=mainFD)
+  if not args.disableMake:
+    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'">'+result+'</a>', file=mainFD)
+    print('</td>', file=mainFD)
   makeFD.close()
   mainFD.flush()
 
@@ -726,8 +730,6 @@ def check(tool, mainFD):
     if foundTestSuiteLog:
       print('  <a href="'+myurllib.pathname2url(pj(tool, "test-suite.log.txt"))+'">test-suite.log</a>', file=mainFD)
     print('</td>', file=mainFD)
-  else:
-    print('<td>not run</td>', file=mainFD)
   checkFD.close()
   mainFD.flush()
 
@@ -739,7 +741,9 @@ def check(tool, mainFD):
 
 def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   if not os.path.isdir(docDirName):
-    print('<td>not available</td>', file=mainFD)
+    if docDirName=="doc" and not args.disableDoxygen or \
+       docDirName=="xmldoc" and not args.disableXMLDoc:
+      print('<td>not available</td>', file=mainFD)
     mainFD.flush()
     return 0
 
@@ -778,9 +782,11 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
     result=str(ex)
   finally:
     os.chdir(savedDir)
-  print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
-  print('</td>', file=mainFD)
+  if docDirName=="doc" and not args.disableDoxygen or \
+     docDirName=="xmldoc" and not args.disableXMLDoc:
+    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
+    print('</td>', file=mainFD)
   docFD.close()
   mainFD.flush()
 
@@ -792,11 +798,6 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
 
 def runexamples(mainFD):
   if args.disableRunExamples:
-    print('<td>runexamples disabled</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
-    print('<td>-</td>', file=mainFD)
     mainFD.flush()
     return 0
 
@@ -824,10 +825,8 @@ def runexamples(mainFD):
   else:
     print('<td class="danger"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">examples failed</a></td>', file=mainFD)
-  print('<td>-</td>', file=mainFD)
-  print('<td>-</td>', file=mainFD)
-  print('<td>-</td>', file=mainFD)
-  print('<td>-</td>', file=mainFD)
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    print('<td>-</td>', file=mainFD)
 
   mainFD.flush()
 
