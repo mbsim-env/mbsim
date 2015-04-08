@@ -388,7 +388,7 @@ def main():
   # write empty RSS feed
   writeRSSFeed(0) # nrFailed == 0 => write empty RSS feed
 
-  print('<h2>Build</h2>', file=mainFD)
+  print('<h2>Build Status</h2>', file=mainFD)
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
   print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
@@ -515,36 +515,43 @@ def buildTool(tool):
 def repoUpdate(mainFD):
   ret=0
   savedDir=os.getcwd()
-  print('Updating repositories: ', end="")
+  if not args.disableUpdate:
+    print('Updating repositories: ', end="")
 
-  print('<h2>Repository</h2>', file=mainFD)
+  print('<h2>Repository State</h2>', file=mainFD)
   print('<table style="width:auto;" class="table table-striped table-hover table-bordered compact">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th><span class="octicon octicon-repo"></span>&nbsp;Repository</th>', file=mainFD)
   print('<th><span class="octicon octicon-git-branch"></span>&nbsp;Branch</th>', file=mainFD)
+  print('<th><span class="octicon octicon-git-commit"></span>&nbsp;Commit</th>', file=mainFD)
   if not args.disableUpdate:
     print('<th><span class="glyphicon glyphicon-refresh"></span>&nbsp;Update</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
 
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
-    # write repUpd output to report dir
-    repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
-    # update
     os.chdir(pj(args.sourceDir, repo+args.srcSuffix))
-    print('Update repository '+repo, file=repoUpdFD)
-    print('', file=repoUpdFD)
-    repoUpdFD.flush()
-    retlocal=subprocess.check_call(["svn", "update", "--non-interactive"], stdout=repoUpdFD, stderr=repoUpdFD)
-    ret+=abs(retlocal)
-    repoUpdFD.close()
+    # update
+    if not args.disableUpdate:
+      retlocal=0
+      # write repUpd output to report dir
+      repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
+      print('Update repository '+repo, file=repoUpdFD)
+      print('', file=repoUpdFD)
+      repoUpdFD.flush()
+      retlocal=subprocess.check_call(["svn", "update", "--non-interactive"], stdout=repoUpdFD, stderr=repoUpdFD) # MISSING
+      ret+=abs(retlocal)
+      repoUpdFD.close()
     # set branch based on args
     # MISSING
-    # get branch
+    # get branch and commit
+    # MISSING
     branch="unknown"
+    commit="unknown"
     # output
     print('<tr>', file=mainFD)
     print('  <td><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;'+repo+'</span></td>', file=mainFD)
     print('  <td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch+'</span></td>', file=mainFD)
+    print('  <td><code>'+commit[0:10]+'</code></td>', file=mainFD)
     if not args.disableUpdate:
       print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;<a href="repo-update-%s.txt">%s</a></td>'%(
         "success" if retlocal==0 else "danger",
@@ -556,10 +563,11 @@ def repoUpdate(mainFD):
   print('</tbody></table>', file=mainFD)
   mainFD.flush()
 
-  if ret>0:
-    print('failed')
-  else:
-    print('passed')
+  if not args.disableUpdate:
+    if ret>0:
+      print('failed')
+    else:
+      print('passed')
 
   os.chdir(savedDir)
   return ret
@@ -572,7 +580,7 @@ def build(nr, nrAll, tool, mainFD):
   ret=0
   retRunExamples=0
 
-  # print svn update
+  # start row, including tool name
   if toolDependencies[tool][0]==False:
     print('<tr>', file=mainFD)
   else:
