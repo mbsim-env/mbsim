@@ -79,7 +79,8 @@
         <h2>Errors</h2>
         <!-- a table of all errors: 1 column: error type; 2 column error details which is itself a table -->
         <table id="ErrorTable" class="table table-bordered">
-          <thead><tr><th>Error Type</th><th>Error Details</th></tr></thead>
+          <thead><tr><th><span class="glyphicon glyphicon-th-large"></span>&nbsp;Error Type</th>
+                     <th><span class="glyphicon glyphicon-th"></span>&nbsp;Error Details</th></tr></thead>
           <tbody>
             <script type="text/javascript">
               var ErrorTable_data=[
@@ -119,7 +120,8 @@
         <!-- suppression raw text, if existing -->
         <xsl:if test="suppression/rawtext">
           <div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Show suppression <span class="caret"></span></button>
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-search">
+              </span>&nbsp;Show suppression <span class="caret"></span></button>
             <pre class="dropdown-menu" role="menu">
               <xsl:call-template name="replace-string"><!-- convert all newline char to \n (this must be a single line javascript string) -->
                 <xsl:with-param name="text" select="suppression/rawtext/text()"/>
@@ -171,7 +173,9 @@
   <!-- a table for the location stack -->
   <xsl:template match="stack">
     <table class="ErrorStackTable table table-striped table-hover table-bordered table-condensed">
-      <thead><tr><th>File:Line</th><th>Function Name</th><th>Library</th></tr></thead>
+      <thead><tr><th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;File:Line</th>
+                 <th><span class="glyphicon glyphicon-minus"></span>&nbsp;Function Name</th>
+                 <th><span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;Library</th></tr></thead>
       <tbody>
         <!-- each stack entry is a table row -->
         <xsl:apply-templates select="frame"/>
