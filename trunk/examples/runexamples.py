@@ -355,6 +355,7 @@ def main():
   <html lang="en">
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MBSim runexamples Results</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
@@ -857,6 +858,7 @@ def runExample(resultQueue, example):
       print('<html lang="en">', file=htmlOutputFD)
       print('<head>', file=htmlOutputFD)
       print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
+      print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
@@ -1126,6 +1128,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<html lang="en">', file=diffHTMLPlotFD)
   print('<head>', file=diffHTMLPlotFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
+  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
   print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
@@ -1377,6 +1380,7 @@ def compareExample(example, compareFN):
   print('<html lang="en">', file=compareFD)
   print('<head>', file=compareFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
+  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)

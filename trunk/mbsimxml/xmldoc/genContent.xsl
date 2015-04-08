@@ -30,6 +30,7 @@
     <html lang="en">
     <head>
       <title>MBSimXML - XML Documentation</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
       <style type="text/css">
         *._element { font-family:monospace; font-weight:bold; }

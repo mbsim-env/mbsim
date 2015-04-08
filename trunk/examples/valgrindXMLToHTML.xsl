@@ -12,6 +12,7 @@
     <html lang="en">
       <head>
         <title>Valgrind Report: <xsl:value-of select="tool/text()"/></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
