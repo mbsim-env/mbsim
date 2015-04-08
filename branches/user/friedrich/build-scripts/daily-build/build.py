@@ -47,9 +47,9 @@ configOpts.add_argument("--recheck", action="store_true",
 cfgOpts=argparser.add_argument_group('Configuration Options')
 cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
 cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
-  help="Force building a tool including its dependencies. Build all if no second argument is given")
+  help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
 
-cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update using svn")
+cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
 cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
 cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
 cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
@@ -293,13 +293,13 @@ def main():
     print('<body style="margin:1em">', file=docFD)
     print('<h1>MBSim, OpenMBV, ... Documentation</h1>', file=docFD)
     print('<div class="panel panel-success">', file=docFD)
-    print('  <div class="panel-heading">XML Documentation</div>', file=docFD)
+    print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
     print('  <ul class="list-group">', file=docFD)
     print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.html"))+'">MBSimXML</a></li>', file=docFD)
     print('  </ul>', file=docFD)
     print('</div>', file=docFD)
     print('<div class="panel panel-info">', file=docFD)
-    print('  <div class="panel-heading">Doxygen Documentation</div>', file=docFD)
+    print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Doxygen Documentation</div>', file=docFD)
     print('  <ul class="list-group">', file=docFD)
     for d in sorted(list(toolDoxyDocCopyDir)):
       print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("doc", d, "index.html"))+'">'+d+'</a></li>', file=docFD)
@@ -325,33 +325,6 @@ def main():
   # rotate (modifies args.reportOutDir)
   rotateOutput()
 
-  # svn update all tools
-  buildTools=set()
-  updateFailed=set()
-  nr=1
-  for tool in toolDependencies:
-    if update(nr, tool, buildTools)!=0:
-      updateFailed.add(tool)
-    nr+=1
-  updatedTools=buildTools.copy()
-
-  # force build
-  for i, value in enumerate(args.forceBuild): # normalize all given path
-    args.forceBuild[i]=os.path.normpath(value)
-  if len(args.forceBuild)==0:
-    args.forceBuild.extend(list(toolDependencies))
-  buildTools.update(args.forceBuild)
-
-  # a list of all tools to be build
-  allBuildTools(buildTools)
-
-  # a sorted list of all tools te be build (in the correct order according the dependencies)
-  orderedBuildTools=list()
-  sortBuildTools(buildTools, orderedBuildTools)
-
-  # write empty RSS feed
-  writeRSSFeed(0) # nrFailed == 0 => write empty RSS feed
-
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('<!DOCTYPE html>', file=mainFD)
@@ -360,6 +333,7 @@ def main():
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
   print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
+  print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
   print('  <link rel="alternate" type="application/rss+xml" title="MBSim, OpenMBV, ... Build Results" href="../result.rss.xml"/>', file=mainFD)
   print('</head>', file=mainFD)
@@ -380,51 +354,73 @@ def main():
   print('  <dt>Called command</dt><dd><code>', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('  </code></dd>', file=mainFD)
-  print('  <dt>RSS Feed</dt><dd>Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
+  print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><span id="STILLRUNNINGORABORTED" class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
-  print('  <dt>Navigate</dt><dd><a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%(currentID-1), file=mainFD)
-  print('                    <a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%(currentID+1), file=mainFD)
-  print('                    <a class="btn btn-info btn-xs" href="../result_current/index.html"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>', file=mainFD)
+  print('  <dt>Navigate</dt><dd><a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-backward"></span>&nbsp;previous</a>'%(currentID-1), file=mainFD)
+  print('                    <a class="btn btn-info btn-xs" href="../result_%010d/index.html"><span class="glyphicon glyphicon-step-forward"></span>&nbsp;next</a>'%(currentID+1), file=mainFD)
+  print('                    <a class="btn btn-info btn-xs" href="../result_current/index.html"><span class="glyphicon glyphicon-fast-forward"></span>&nbsp;newest</a>', file=mainFD)
   print('                    </dd>', file=mainFD)
   print('</dl>', file=mainFD)
+  print('<hr/>', file=mainFD)
 
-  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
-  print('<span class="glyphicon glyphicon-info-sign"> </span> A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+  ret=0
+  # update all repositories
+  if repoUpdate(mainFD)!=0:
+    ret+=1
+
+  # force build
+  buildTools=set()
+  for i, value in enumerate(args.forceBuild): # normalize all given path
+    args.forceBuild[i]=os.path.normpath(value)
+  if len(args.forceBuild)==0:
+    args.forceBuild.extend(list(toolDependencies))
+  buildTools.update(args.forceBuild)
+
+  # a list of all tools to be build
+  allBuildTools(buildTools)
+
+  # a sorted list of all tools te be build (in the correct order according the dependencies)
+  orderedBuildTools=list()
+  sortBuildTools(buildTools, orderedBuildTools)
+
+  # write empty RSS feed
+  writeRSSFeed(0) # nrFailed == 0 => write empty RSS feed
+
+  print('<h2>Build</h2>', file=mainFD)
+  print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
+  print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
   print('<thead><tr>', file=mainFD)
-  print('<th>Tool</th>', file=mainFD)
-  print('<th>SVN Update</th>', file=mainFD)
+  print('<th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;Tool</th>', file=mainFD)
   if not args.disableConfigure:
-    print('<th>Configure</th>', file=mainFD)
+    print('<th><span class="glyphicon glyphicon-wrench"></span>&nbsp;Configure</th>', file=mainFD)
   if not args.disableMake:
-    print('<th>Make</th>', file=mainFD)
+    print('<th><span class="glyphicon glyphicon-repeat"></span>&nbsp;Make</th>', file=mainFD)
   if not args.disableMakeCheck:
-    print('<th>Check</th>', file=mainFD)
+    print('<th><span class="glyphicon glyphicon-ok-circle"></span>&nbsp;Check</th>', file=mainFD)
   if not args.disableDoxygen:
-    print('<th>Doxygen Doc.</th>', file=mainFD)
+    print('<th><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Doxygen Doc.</th>', file=mainFD)
   if not args.disableXMLDoc:
-    print('<th>XML Doc.</th>', file=mainFD)
+    print('<th><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Doc.</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
 
   # list tools which are not updated and must not be rebuild according dependencies
   for tool in set(toolDependencies)-set(orderedBuildTools):
     print('<tr>', file=mainFD)
-    print('<td>'+tool+'</td>', file=mainFD)
-    print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">up to date, no rebuild required</a></td>', file=mainFD)
-    for i in range(0, 5-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    print('<td>'+tool.replace('/', u'/\u200B')+'</td>', file=mainFD)
+    for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
       print('<td>-</td>', file=mainFD)
     print('</tr>', file=mainFD)
   mainFD.flush()
 
   # build the other tools in order
-  ret=0
   retRunExamples=0
   nr=1
   for tool in orderedBuildTools:
-    r1, r2=build(nr, len(orderedBuildTools), tool, mainFD, updatedTools, updateFailed)
+    r1, r2=build(nr, len(orderedBuildTools), tool, mainFD)
     if toolDependencies[tool][0]==False:
       ret+=r1
       retRunExamples+=r2
@@ -516,45 +512,61 @@ def buildTool(tool):
   t[0]=t[0]+args.binSuffix
   return os.path.sep.join(t)
 
-def update(nr, tool, buildTools):
-  savedDir=os.getcwd()
-  os.chdir(pj(args.sourceDir, srcTool(tool)))
-
-  # write svn output to report dir
-  if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
-  svnFD=codecs.open(pj(args.reportOutDir, tool, "svn.txt"), "w", encoding="utf-8")
-  print("stderr output:", file=svnFD)
-  print("", file=svnFD)
-
+def repoUpdate(mainFD):
   ret=0
-  if not args.disableUpdate:
-    print("Updating "+str(nr)+"/"+str(len(toolDependencies))+": "+tool)
+  savedDir=os.getcwd()
+  print('Updating repositories: ', end="")
 
-    try:
-      output=subprocess.check_output(["svn", "update", "--non-interactive"], stderr=svnFD)
-    except subprocess.CalledProcessError as ex:
-      output=b""
-      ret=1
-    if re.search("\nUpdated to revision [0-9]+.\n", output.decode("utf-8"))!=None:
-      buildTools.add(tool)
-    if re.search("\nSummary of conflicts:\n", output.decode("utf-8"))!=None:
-      ret=1
+  print('<h2>Repository</h2>', file=mainFD)
+  print('<table style="width:auto;" class="table table-striped table-hover table-bordered compact">', file=mainFD)
+  print('<thead><tr>', file=mainFD)
+  print('<th><span class="octicon octicon-repo"></span>&nbsp;Repository</th>', file=mainFD)
+  print('<th><span class="octicon octicon-git-branch"></span>&nbsp;Branch</th>', file=mainFD)
+  if not args.disableUpdate:
+    print('<th><span class="glyphicon glyphicon-refresh"></span>&nbsp;Update</th>', file=mainFD)
+  print('</tr></thead><tbody>', file=mainFD)
+
+  for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
+    # write repUpd output to report dir
+    repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
+    # update
+    os.chdir(pj(args.sourceDir, repo+args.srcSuffix))
+    print('Update repository '+repo, file=repoUpdFD)
+    print('', file=repoUpdFD)
+    repoUpdFD.flush()
+    retlocal=subprocess.check_call(["svn", "update", "--non-interactive"], stdout=repoUpdFD, stderr=repoUpdFD)
+    ret+=abs(retlocal)
+    repoUpdFD.close()
+    # set branch based on args
+    # MISSING
+    # get branch
+    branch="unknown"
+    # output
+    print('<tr>', file=mainFD)
+    print('  <td><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;'+repo+'</span></td>', file=mainFD)
+    print('  <td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch+'</span></td>', file=mainFD)
+    if not args.disableUpdate:
+      print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;<a href="repo-update-%s.txt">%s</a></td>'%(
+        "success" if retlocal==0 else "danger",
+        "ok-sign alert-success" if retlocal==0 else "exclamation-sign alert-danger",
+        repo,
+        "passed" if retlocal==0 else "failed"), file=mainFD)
+    print('</tr>', file=mainFD)
+
+  print('</tbody></table>', file=mainFD)
+  mainFD.flush()
+
+  if ret>0:
+    print('failed')
   else:
-    output=b"Update disabled"
-    
-  print("", file=svnFD)
-  print("", file=svnFD)
-  print("stdout output:", file=svnFD)
-  print("", file=svnFD)
-  print(output.decode("utf-8"), file=svnFD)
-  svnFD.close()
+    print('passed')
 
   os.chdir(savedDir)
   return ret
 
 
 
-def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
+def build(nr, nrAll, tool, mainFD):
   print("Building "+str(nr)+"/"+str(nrAll)+": "+tool+": ", end=""); sys.stdout.flush()
 
   ret=0
@@ -565,15 +577,7 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
     print('<tr>', file=mainFD)
   else:
     print('<tr class="text-muted">', file=mainFD)
-  print('<td>'+tool+'</td>', file=mainFD)
-  if tool in updateFailed:
-    print('<td class="danger"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">failed</a></td>', file=mainFD)
-    ret+=1
-  else:
-    if tool in updatedTools:
-      print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">updated, rebuild required</a></td>', file=mainFD)
-    else:
-      print('<td class="success"><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'">up to date, rebuild required</a></td>', file=mainFD)
+  print('<td>'+tool.replace('/', u'/\u200B')+'</td>', file=mainFD)
   mainFD.flush()
 
   savedDir=os.getcwd()
@@ -616,6 +620,7 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
 
 
 def configure(tool, mainFD):
+  if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
   configureFD=codecs.open(pj(args.reportOutDir, tool, "configure.txt"), "w", encoding="utf-8")
   copyConfigLog=False
   savedDir=os.getcwd()
@@ -653,7 +658,8 @@ def configure(tool, mainFD):
   except RuntimeError as ex:
     result=str(ex)
   if not args.disableConfigure:
-    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'">'+result+'</a>', file=mainFD)
     if copyConfigLog:
       shutil.copyfile("config.log", pj(args.reportOutDir, tool, "config.log.txt"))
@@ -691,7 +697,8 @@ def make(tool, mainFD):
   except RuntimeError as ex:
     result=str(ex)
   if not args.disableMake:
-    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)
   makeFD.close()
@@ -725,7 +732,8 @@ def check(tool, mainFD):
       foundTestSuiteLog=True
   testSuiteLogFD.close()
   if not args.disableMakeCheck:
-    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, "check.txt"))+'">'+result+'</a>', file=mainFD)
     if foundTestSuiteLog:
       print('  <a href="'+myurllib.pathname2url(pj(tool, "test-suite.log.txt"))+'">test-suite.log</a>', file=mainFD)
@@ -784,7 +792,8 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
     os.chdir(savedDir)
   if docDirName=="doc" and not args.disableDoxygen or \
      docDirName=="xmldoc" and not args.disableXMLDoc:
-    print('<td class="%s">'%("success" if result=="done" else "danger"), file=mainFD)
+    print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
+      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-success"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)
   docFD.close()
@@ -820,12 +829,12 @@ def runexamples(mainFD):
   ret=subprocess.call(command, stderr=subprocess.STDOUT)
 
   if ret==0:
-    print('<td class="success"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
+    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">all examples passed</a></td>', file=mainFD)
   else:
-    print('<td class="danger"><a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
+    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">examples failed</a></td>', file=mainFD)
-  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+  for i in range(0, 3-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
 
   mainFD.flush()
