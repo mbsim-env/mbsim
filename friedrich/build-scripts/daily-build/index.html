@@ -4,6 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>MBSim and Co. Central Build System</title>
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
 </head>
 <body style="margin:1em">
 
@@ -20,7 +21,7 @@
 <h2>Daily Linux Debug Build</h2>
 
 <div class="panel panel-success">
-  <div class="panel-heading">OS: Linux; configure options: --enable-debug CXXFLAGS="-O1 -g" CFLAGS="-O1 -g"</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux; configure options: --enable-debug CXXFLAGS="-O1 -g" CFLAGS="-O1 -g"</div>
   <div class="panel-body">
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current">Build report</a></p>
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current">Examples report (debugging e.g. fmatvec size checks enabled; including result compare)</a></p>
@@ -28,7 +29,7 @@
   </div>
 </div>
 <div class="panel panel-info">
-  <div class="panel-heading">Documentation</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Documentation</div>
   <div class="panel-body">
 <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/doc">Doxygen and XML</a>
   </div>
@@ -39,7 +40,7 @@
 <h2>Daily Linux Release Build</h2>
 
 <div class="panel panel-success">
-  <div class="panel-heading">OS: Linux; configure options: &lt;default&gt;</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux; configure options: &lt;default&gt;</div>
   <div class="panel-body">
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report/result_current">Build report</a></p>
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report/result_current/runexamples_report/result_current">Examples report (for performance analysis)</a></p>
@@ -48,7 +49,7 @@
 </div>
 
 <div class="panel panel-warning">
-  <div class="panel-heading">Download</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Download</div>
   <div class="panel-body">
   Linux binary release build:
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/download/mbsim-linux-shared-build-xxx.tar.bz2">MBSim, OpenmBV, HDF5Serie, ...</a>
@@ -60,7 +61,7 @@
 <h2>Daily Windows Release Build</h2>
 
 <div class="panel panel-success">
-  <div class="panel-heading">OS: Windows; configure options: &lt;default&gt;</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Windows; configure options: &lt;default&gt;</div>
   <div class="panel-body">
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows/report/result_current">Build report</a></p>
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows/report/result_current/runexamples_report/result_current">Examples report (only some examples)</a></p>
@@ -69,7 +70,7 @@
 </div>
 
 <div class="panel panel-warning">
-  <div class="panel-heading">Download</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Download</div>
   <div class="panel-body">
   Windows binary release build:
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows/download/mbsim-windows-shared-build-xxx.zip">MBSim, OpenMBV, HDF5Serie, ...</a>
@@ -91,7 +92,7 @@
   </b></p>
 
 <div class="panel panel-danger">
-  <div class="panel-heading">Daily Linux Debug Build</div>
+  <div class="panel-heading"><span class="octicon octicon-rss"></span>&nbsp;Daily Linux Debug Build</div>
   <div class="panel-body">
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result.rss.xml">Build Report RSS</a><br>
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result.rss.xml">Example Report RSS</a><br>
@@ -100,7 +101,7 @@
 </div>
 
 <div class="panel panel-danger">
-  <div class="panel-heading">Daily Linux Release Build</div>
+  <div class="panel-heading"><span class="octicon octicon-rss"></span>&nbsp;Daily Linux Release Build</div>
   <div class="panel-body">
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report/result.rss.xml">Build Report RSS</a><br>
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report/result_current/runexamples_report/result.rss.xml">Example Report RSS</a><br>
@@ -109,7 +110,7 @@
 </div>
 
 <div class="panel panel-danger">
-  <div class="panel-heading">Daily Windows Release Build</div>
+  <div class="panel-heading"><span class="octicon octicon-rss"></span>&nbsp;Daily Windows Release Build</div>
   <div class="panel-body">
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows/report/result.rss.xml">Build Report RSS</a><br>
   <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows/report/result_current/runexamples_report/result.rss.xml">Example Report RSS</a><br>
