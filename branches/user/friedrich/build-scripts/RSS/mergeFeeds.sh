@@ -18,16 +18,12 @@ sed -re "s|<pubDate>(.*)CEST</pubDate>|<pubDate>\1CET</pubDate>|g" < $WEBDIR/bui
 
 # google code feeds
 /home/user/Tools/rsstool-1.0.1rc2-src/src/rsstool -r --rss -o=$WEBDIR/googlecode2.rss.xml \
-http://code.google.com/feeds/p/fmatvec/downloads/basic \
 http://code.google.com/feeds/p/fmatvec/issueupdates/basic \
 http://code.google.com/feeds/p/fmatvec/svnchanges/basic \
-http://code.google.com/feeds/p/hdf5serie/downloads/basic \
 http://code.google.com/feeds/p/hdf5serie/issueupdates/basic \
 http://code.google.com/feeds/p/hdf5serie/svnchanges/basic \
-http://code.google.com/feeds/p/openmbv/downloads/basic \
 http://code.google.com/feeds/p/openmbv/issueupdates/basic \
 http://code.google.com/feeds/p/openmbv/svnchanges/basic \
-http://code.google.com/feeds/p/mbsim-env/downloads/basic \
 http://code.google.com/feeds/p/mbsim-env/issueupdates/basic \
 http://code.google.com/feeds/p/mbsim-env/svnchanges/basic
 # fix CEST to CET (CEST does not work on all clients)
