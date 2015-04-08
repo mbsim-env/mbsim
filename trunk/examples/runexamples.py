@@ -508,13 +508,17 @@ def main():
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th>Example</th>', file=mainFD)
-  print('<th>Compile/Run</th>', file=mainFD)
-  print('<th>Time [s]</th>', file=mainFD)
-  print('<th>Ref. Time [s]</th>', file=mainFD)
-  print('<th><div class="pull-left">Reference</div>'+\
-        '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
-  print('<th>Deprecated</th>', file=mainFD)
-  print('<th>XML output</th>', file=mainFD)
+  if not args.disableRun:
+    print('<th>Compile/Run</th>', file=mainFD)
+    print('<th>Time [s]</th>', file=mainFD)
+    print('<th>Ref. Time [s]</th>', file=mainFD)
+  if not args.disableCompare:
+    print('<th><div class="pull-left">Reference</div>'+\
+          '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
+  if not args.disableRun:
+    print('<th>Deprecated</th>', file=mainFD)
+  if not args.disableValidate:
+    print('<th>XML output</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
   mainFD.flush()
   mainRet=0
@@ -601,7 +605,7 @@ def main():
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
     line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', str(endTime), line)
-    print(line)
+    print(line, end="")
 
   # write RSS feed
   writeRSSFeed(len(failedExamples), len(retAll))
@@ -765,9 +769,7 @@ def runExample(resultQueue, example):
     else:
       resultStr+='<tr class="text-muted">'
     resultStr+='<td>'+example[0]+'</td>'
-    if args.disableRun:
-      resultStr+='<td class="warning">not run</td>'
-    else:
+    if not args.disableRun:
       if executeRet==None or executeRet!=0:
         resultStr+='<td class="danger"><a href="'+myurllib.pathname2url(executeFN)+'">'
       else:
@@ -783,19 +785,18 @@ def runExample(resultQueue, example):
       for outfile in outfiles:
         resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
       resultStr+='</td>'
-    if args.disableRun:
-      resultStr+='<td class="warning">not run</td>'
-    else:
+    if not args.disableRun:
       # if not reference time or time is nearly equal refTime => display time in black color
       if math.isinf(refTime) or abs(dt-refTime)<0.1*refTime:
         resultStr+='<td>%.3f</td>'%dt
       # dt differs more then 10% from refTime => display in yellow color
       else:
         resultStr+='<td class="%s">%.3f</td>'%("success" if dt<refTime else "warning", dt)
-    if not math.isinf(refTime):
-      resultStr+='<td>%.3f</td>'%refTime
-    else:
-      resultStr+='<td class="warning">no reference</td>'
+    if not args.disableRun:
+      if not math.isinf(refTime):
+        resultStr+='<td>%.3f</td>'%refTime
+      else:
+        resultStr+='<td class="warning">no reference</td>'
 
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
@@ -813,30 +814,29 @@ def runExample(resultQueue, example):
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
-    if compareRet==-1:
-      resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
-                 '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
-    elif compareRet==-2:
-      resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
-                 '<div class="pull-right">[<input class="_EXAMPLE'+\
-                 '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
-      nrAll=0
-      nrFailed=0
-    else:
-      if nrFailed==0:
-        resultStr+='<td class="success"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
-                   '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
+    if not args.disableCompare:
+      if compareRet==-1:
+        resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
                    '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
-      else:
-        resultStr+='<td class="danger"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
-                   '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
-                   '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
+      elif compareRet==-2:
+        resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
+                   '<div class="pull-right">[<input class="_EXAMPLE'+\
                    '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
+        nrAll=0
+        nrFailed=0
+      else:
+        if nrFailed==0:
+          resultStr+='<td class="success"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
+                     '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
+                     '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
+        else:
+          resultStr+='<td class="danger"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
+                     '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
+                     '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
+                     '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
-    if args.disableRun:
-      resultStr+='<td class="warning">not run</td>'
-    else:
+    if not args.disableRun:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
         match=re.search("([0-9]+) deprecated features were called:", line)
@@ -914,8 +914,6 @@ def runExample(resultQueue, example):
       print('</html>', file=htmlOutputFD)
 
       htmlOutputFD.close()
-    else:
-      resultStr+='<td class="warning">not run</td>'
 
     resultStr+='</tr>'
 
