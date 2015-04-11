@@ -119,12 +119,6 @@ namespace MBSim {
             }
           }
         }
-        std::vector<Element*> getDependencies() const {
-          std::vector<Element*> dep;
-          for(int i=0; i<function.size(); i++)
-            dep = cat<Element*>(dep,function[i]->getDependencies());
-          return dep;
-        }
       private:
         std::vector<Function<Ret(Arg)> *> function;
         std::vector<double> a;

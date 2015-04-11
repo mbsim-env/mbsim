@@ -66,18 +66,13 @@ namespace MBSim {
   }
 
   void Group::updateJacobians(double t, int k) {
-//    for(int i=0; i<(int)dynamicsystem.size(); i++)
-//      dynamicsystem[i]->updateJacobians(t,j);
-//
-//    for(int i=0; i<(int)object.size(); i++)
-//      object[i]->updateJacobians(t,j);
-//
-//    for(int i=0; i<(int)link.size(); i++)
-//      link[i]->updateJacobians(t,j);
 
     for(unsigned int i=0; i<elementOrdered.size(); i++) 
       for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
         elementOrdered[i][j]->updateJacobians(t,k);
+
+    for(unsigned int i=0; i<linkNoC.size(); i++)
+      linkNoC[i]->updateJacobians(t,k);
   }
 
   void Group::updatedu(double t, double dt) {

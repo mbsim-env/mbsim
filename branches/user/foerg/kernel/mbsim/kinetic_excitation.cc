@@ -90,17 +90,6 @@ namespace MBSim {
     MechanicalLink::connect(frame1);
   }
 
-  void KineticExcitation::updateStateDependentVariables(double t) {
-    if(F) {
-      WF[1]=refFrame->getOrientation()*forceDir * (*F)(t);
-      WF[0] = -WF[1];
-    }
-    if(M) {
-      WM[1]=refFrame->getOrientation()*momentDir * (*M)(t);
-      WM[0] = -WM[1];
-    }
-  }
-
   void KineticExcitation::updateJacobians(double t, int j) {
     Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
     Mat3x3 tWrP0P1 = tilde(WrP0P1);
@@ -115,6 +104,14 @@ namespace MBSim {
   }
 
   void KineticExcitation::updateh(double t, int j) {
+    if(F) {
+      WF[1]=refFrame->getOrientation()*forceDir * (*F)(t);
+      WF[0] = -WF[1];
+    }
+    if(M) {
+      WM[1]=refFrame->getOrientation()*momentDir * (*M)(t);
+      WM[0] = -WM[1];
+    }
     h[j][0]+=C.getJacobianOfTranslation(j).T()*WF[0] + C.getJacobianOfRotation(j).T()*WM[0];
     h[j][1]+=frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
   }

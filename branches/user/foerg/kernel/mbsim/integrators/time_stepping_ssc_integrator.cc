@@ -175,13 +175,9 @@ namespace MBSimIntegrator {
 
     zi.resize(zSize); 	// starting value for ith step
 
-    SetValuedLinkListT1.clear();
-    SetValuedLinkListT2.clear();
-    SetValuedLinkListT3.clear();
-
-    sysT1->buildListOfSetValuedLinks(SetValuedLinkListT1);
-    sysT2->buildListOfSetValuedLinks(SetValuedLinkListT2);
-    sysT3->buildListOfSetValuedLinks(SetValuedLinkListT3);
+    SetValuedLinkListT1 = sysT1->getSetValuedLinks();
+    SetValuedLinkListT2 = sysT2->getSetValuedLinks();
+    SetValuedLinkListT3 = sysT3->getSetValuedLinks();
 
     maxIter = sysT1->getMaxIter();
     iter= 0;

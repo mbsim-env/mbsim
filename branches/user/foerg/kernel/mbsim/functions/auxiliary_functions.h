@@ -53,7 +53,6 @@ namespace MBSim {
           if(stage == Element::preInit)
             n = (*f)(fmatvec::VecV(getArg1Size())).rows();
         }
-        std::vector<Element*> getDependencies() const { return f->getDependencies(); }
     };
 
    template <class Ret>
@@ -84,7 +83,6 @@ namespace MBSim {
           if(stage == Element::preInit)
             n = (*f)(0).rows();
         }
-        std::vector<Element*> getDependencies() const { return f->getDependencies(); }
     };
 
 }

@@ -122,93 +122,41 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::updateStateDependentVariables(double t) {
-    updateKinematics(t);
-    updateNormalForce(t);
-    updateTangentialForce(t);
-    updateCartesianForces(t);
-  }
-
   void SingleContact::updateh(double t, int j) {
-    for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
-      h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
-    }
-  }
+    laN(0) = (*fcl)(g(0), gdN(0));
 
-  void SingleContact::updateKinematics(double t) {
-    if(g.size()) {
-      contactKinematics->updateg(g(0), cpData);
-      if(not(fcl->isSetValued()) and fcl->isActive(g(0), 0)) {
-        updateNormalVelocities(t);
-        if(fdf and not(fdf->isSetValued()))
-          updateTangentialVelocities(t);
-      }
-    }
-  }
-
-  void SingleContact::updateNormalForce(double t) {
-    if(not(fcl->isSetValued()))
-      laN(0) = (*fcl)(g(0), gdN(0));
-  }
-
-  void SingleContact::updateTangentialForce(double t) {
-    if(fdf and not(fdf->isSetValued()))
-      laT = (*fdf)(gdT, fabs(laN(0)));
-  }
-
-  void SingleContact::updateCartesianForces(double t) {
-    if(not(fcl->isSetValued())) {
-      WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
-      if (fdf and not(fdf->isSetValued())) {
-        WF[1] += cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
-        if (getFrictionDirections() > 1)
-          WF[1] += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
-      }
-
-      WF[0] = -WF[1];
-    }
-  }
-
-  void SingleContact::updateNormalVelocities(double t) {
-    for (unsigned int i = 0; i < 2; i++)
-      contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
-
-    Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
-
-    WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
-
-    gdN(0) = Wn.T() * WvD;
-  }
-
-  void SingleContact::updateTangentialVelocities(double t) {
-    if (gdT.size()) {
-      Mat3xV Wt(gdT.size());
-      Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
-      if (gdT.size() > 1)
-        Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
-
-      gdT = Wt.T() * WvD;
-    }
+    applyh(t, j);
   }
 
   void SingleContact::updateg(double t) {
-    throw;
-//    if (g.size())
-//      g(0) = gN;
-//    else {
-//      if(msgAct(Debug))
-//        msg(Debug) << "No contact" << endl;
-//    }
+    if (g.size())
+      contactKinematics->updateg(g(0), cpData);
+    else {
+      if(msgAct(Debug))
+        msg(Debug) << "No contact" << endl;
+    }
   }
 
   void SingleContact::updategd(double t) {
-    if ((fcl->isSetValued() and gdActive[0])) {
-      updateNormalVelocities(t);
-      if (fdf and fdf->isSetValued())
-        updateTangentialVelocities(t);
+    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(g(0), 0))) { // TODO: nicer implementation
+      for (unsigned int i = 0; i < 2; i++)
+        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
+
+      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
+
+      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
+
+      gdN(0) = Wn.T() * WvD;
+
+      if (gdT.size()) {
+        Mat3xV Wt(gdT.size());
+        Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
+        if (gdT.size() > 1)
+          Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
+
+        gdT = Wt.T() * WvD;
+      }
     }
-    else if(not(fcl->isSetValued()) and fcl->isActive(g(0), 0))
-      updateTangentialVelocities(t);
   }
 
   void SingleContact::updateStopVector(double t) {
@@ -1405,6 +1353,23 @@ namespace MBSim {
     if (contactKinematics == 0)
       THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
 
+  }
+
+  void SingleContact::applyh(double t, int j) {
+    WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
+
+    if (fdf)
+      if (not fdf->isSetValued()) {
+        laT = (*fdf)(gdT, fabs(laN(0)));
+        WF[1] += cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
+        if (getFrictionDirections() > 1)
+          WF[1] += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
+      }
+
+    WF[0] = -WF[1];
+    for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
+      h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
+    }
   }
 
   void SingleContact::computeCurvatures(Vec & r) const {

@@ -80,7 +80,6 @@ namespace MBSim {
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
         } 
-        std::vector<Element*> getDependencies() const { return cat<Element*>(fo->getDependencies(),fi->getDependencies()); }
       private:
         Function<Ret(Argo)> *fo;
         Function<Argo(double)> *fi;
@@ -136,7 +135,6 @@ namespace MBSim {
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
         } 
-        std::vector<Element*> getDependencies() const { return cat<Element*>(fo->getDependencies(),fi->getDependencies()); }
       private:
         Function<Ret(Argo)> *fo;
         Function<Argo(Argi)> *fi;
@@ -213,7 +211,6 @@ namespace MBSim {
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
         } 
-        std::vector<Element*> getDependencies() const { return cat<Element*>(fo->getDependencies(),cat<Element*>(fi1->getDependencies(),fi2->getDependencies())); }
       private:
         Function<Ret(Argo,Argo)> *fo;
         Function<Argo(double)> *fi1, *fi2;
@@ -280,7 +277,6 @@ namespace MBSim {
         xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
           return 0;
         } 
-        std::vector<Element*> getDependencies() const { return cat<Element*>(fo->getDependencies(),cat<Element*>(fi1->getDependencies(),fi2->getDependencies())); }
       private:
         Function<Ret(Argo,Argo)> *fo;
         Function<Argo(Argi)> *fi1, *fi2;

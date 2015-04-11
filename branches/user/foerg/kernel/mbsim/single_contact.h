@@ -68,7 +68,6 @@ namespace MBSim {
       virtual void updatewb(double t, int i=0);
       virtual void updateW(double t, int i=0);
       virtual void updateV(double t, int i=0);
-      virtual void updateStateDependentVariables(double t);
       virtual void updateh(double t, int i=0);
       virtual void updateg(double t);
       virtual void updategd(double t);
@@ -214,13 +213,6 @@ namespace MBSim {
 
       void checkRoot();
 
-      void updateKinematics(double t);
-      void updateNormalVelocities(double t);
-      void updateTangentialVelocities(double t);
-      void updateNormalForce(double t);
-      void updateTangentialForce(double t);
-      void updateCartesianForces(double t);
-
     protected:
       /**
        * \brief used contact kinematics
@@ -346,8 +338,6 @@ namespace MBSim {
 
     private:
       std::string saved_ref1, saved_ref2;
-
-      fmatvec::Vec3 WvD;
   };
 
 }

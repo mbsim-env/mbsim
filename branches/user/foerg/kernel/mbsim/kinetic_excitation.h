@@ -51,7 +51,6 @@ namespace MBSim {
       virtual ~KineticExcitation();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateStateDependentVariables(double t);
       virtual void updateJacobians(double t, int j=0);
       virtual void updateh(double t, int i=0);
       virtual void updateg(double) {}

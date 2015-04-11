@@ -48,10 +48,9 @@ namespace MBSim {
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
-      void updateStateDependentVariables(double t);
       void updateh(double, int i=0);
-      void updateg(double) { }
-      void updategd(double) { }
+      void updateg(double);
+      void updategd(double);
 
       /** \brief Connect the SpringDamper to frame1 and frame2 */
       void connect(Frame *frame1, Frame* frame2);
@@ -117,11 +116,10 @@ namespace MBSim {
     public:
       DirectionalSpringDamper(const std::string &name="");
       ~DirectionalSpringDamper();
-      void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
       void updateh(double, int i=0);
-      void updateg(double) { }
-      void updategd(double) { }
+      void updateg(double);
+      void updategd(double);
 
       /** \brief Connect the SpringDamper to frame1 and frame2 */
       void connect(Frame *frame1, Frame* frame2);
@@ -184,10 +182,9 @@ namespace MBSim {
     public:
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
-      void updateStateDependentVariables(double t);
       void updateh(double, int i=0);
-      void updateg(double) { }
-      void updategd(double) { }
+      void updateg(double);
+      void updategd(double);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

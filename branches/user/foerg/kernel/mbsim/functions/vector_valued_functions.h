@@ -75,12 +75,6 @@ namespace MBSim {
           for(std::vector<Function<double(double)> *>::iterator it=component.begin(); it!=component.end(); ++it)
             (*it)->init(stage);
         }
-        std::vector<Element*> getDependencies() const {
-          std::vector<Element*> dep;
-          for(int i=0; i<component.size(); i++)
-            dep = cat<Element*>(dep,component[i]->getDependencies());
-          return dep;
-        }
       private:
         std::vector<Function<double(double)> *> component;
     };
@@ -129,12 +123,6 @@ namespace MBSim {
           Function<Ret(Arg)>::init(stage);
           for(typename std::vector<Function<double(Arg)> *>::iterator it=component.begin(); it!=component.end(); ++it)
             (*it)->init(stage);
-        }
-        std::vector<Element*> getDependencies() const {
-          std::vector<Element*> dep;
-          for(int i=0; i<component.size(); i++)
-            dep = cat<Element*>(dep,component[i]->getDependencies());
-          return dep;
         }
       private:
         std::vector<Function<double(Arg)> *> component;

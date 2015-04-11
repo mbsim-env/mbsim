@@ -48,10 +48,9 @@ namespace MBSim {
       virtual ~IsotropicRotationalSpringDamper();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateStateDependentVariables(double t);
       virtual void updateh(double t, int i = 0);
-      virtual void updateg(double t) { }
-      virtual void updategd(double t) { }
+      virtual void updateg(double t);
+      virtual void updategd(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
