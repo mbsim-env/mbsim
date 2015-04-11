@@ -34,12 +34,72 @@
 #include <openmbvcppinterface/frame.h>
 #endif
 
+#include <hdf5serie/simpledataset.h>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
+
+  void Constraint::updatexRef(const Vec &xParent) {
+    x >> xParent(xInd,xInd+xSize-1);
+  } 
+
+  void Constraint::updatexdRef(const Vec &xdParent) {
+    xd >> xdParent(xInd,xInd+xSize-1);
+  } 
+
+  void Constraint::init(InitStage stage) {
+    if(stage==plotting) {
+      updatePlotFeatures();
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(state)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("x("+numtostr(i)+")");
+        if(getPlotFeature(stateDerivative)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("xd("+numtostr(i)+")");
+
+        Element::init(stage);
+      }
+    }
+    else
+      Element::init(stage);
+  }
+
+  void Constraint::initz() {
+    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
+  }
+
+  void Constraint::writez(H5::GroupBase *group) {
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("x0")(x.size())->write(x);
+  }
+
+  void Constraint::readz0(H5::GroupBase *group) {
+    x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
+  }
+
+  void Constraint::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(state)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(x(i));
+      if(getPlotFeature(stateDerivative)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(xd(i)/dt);
+
+      Element::plot(t,dt);
+    }
+  }
+
+  void Constraint::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
+    }
+  }
 
   JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &dT_, const Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
@@ -75,7 +135,7 @@ namespace MBSim {
     return res;
   } 
 
-  Constraint::Constraint(const std::string &name) : MechanicalLink(name) {
+  Constraint::Constraint(const std::string &name) : Element(name) {
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
@@ -174,7 +234,7 @@ namespace MBSim {
       Constraint::init(stage);
     }
     else if(stage==preInit) {
-      MechanicalLink::init(stage);
+      Constraint::init(stage);
       bd->addDependency(this);
     }
     else
