@@ -168,31 +168,29 @@ namespace MBSim {
         addObserver(obsrvList[i]);
       }
 
-     vector<Element*> depList;
-
-     for (unsigned int i = 0; i < objList.size(); i++) {
+     for (unsigned int i = 0; i < objList.size(); i++)
        eleList.push_back(objList[i]);
-       depList.push_back(objList[i]);
-     }
      for (unsigned int i = 0; i < lnkList.size(); i++) {
-       eleList.push_back(lnkList[i]);
        Constraint *c = dynamic_cast<Constraint*>(lnkList[i]);
-       if(c) depList.push_back(c);
+       if(c) 
+         eleList.push_back(c);
+       else 
+         linkNoC.push_back(lnkList[i]);
      }
 
       /* now objects: these are much more complex since we must build a graph */
 
       /* matrix of body dependencies */
-      SqrMat A(depList.size(), INIT, 0.);
-      for (unsigned int i = 0; i < depList.size(); i++) {
+      SqrMat A(eleList.size(), INIT, 0.);
+      for (unsigned int i = 0; i < eleList.size(); i++) {
 
-        vector<Element*> parentElement = depList[i]->getDependencies();
+        vector<Element*> parentElement = eleList[i]->getDependencies();
 
         for (unsigned int h = 0; h < parentElement.size(); h++) {
           bool foundBody = false;
           unsigned int j;
-          for (j = 0; j < depList.size(); j++) {
-            if (depList[j] == parentElement[h]) {
+          for (j = 0; j < eleList.size(); j++) {
+            if (eleList[j] == parentElement[h]) {
               foundBody = true;
               break;
             }
@@ -211,14 +209,14 @@ namespace MBSim {
         double a = max(A.T().col(i));
         if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+lexical_cast<string>(nt++));
-          addToGraph(graph, A, i, depList);
+          addToGraph(graph, A, i, eleList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot()) { // absolut kinematics
-          Object *obj = dynamic_cast<Object*>(depList[i]);
+          Object *obj = dynamic_cast<Object*>(eleList[i]);
           if(obj) {
-            depList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
+            eleList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
             addObject(obj);
           }
         }
@@ -237,6 +235,17 @@ namespace MBSim {
         elementOrdered[level].push_back(eleList[i]);
       }
 
+      for (unsigned int i = 0; i < linkNoC.size(); i++) {
+        if (link[i]->isSingleValued() or (link[i]->isSetValued() and link[i]->hasSmoothPart())) {
+          int level = linkNoC[i]->computeLevel();
+          for(int j=linkOrdered.size(); j<=level; j++) {
+            vector<Link*> vec;
+            linkOrdered.push_back(vec);
+          }
+          linkOrdered[level].push_back(linkNoC[i]);
+        }
+      }
+
       msg(Info) << "End of special group stage==preInit" << endl;
 
       // after reorganizing a resize is required
@@ -250,7 +259,14 @@ namespace MBSim {
       for(unsigned int i=0; i<elementOrdered.size(); i++) {
         msg(Info) << "  Elements in level "<< i << ":"<< endl;
         for(unsigned int j=0; j<elementOrdered[i].size(); j++)
-          msg(Info) << "    "<< elementOrdered[i][j]->getPath()<<endl;
+          msg(Info) << "    "<< elementOrdered[i][j]->getName() << " " << elementOrdered[i][j]->getPath() << " " << elementOrdered[i][j]->getType()<<endl;
+      }
+
+      msg(Info) << "Content of link graph "<< name << ":" << endl;
+      for(unsigned int i=0; i<linkOrdered.size(); i++) {
+        msg(Info) << "  Elements in level "<< i << ":"<< endl;
+        for(unsigned int j=0; j<linkOrdered[i].size(); j++)
+          msg(Info) << "    "<< linkOrdered[i][j]->getName() << " " << linkOrdered[i][j]->getPath() << " " << linkOrdered[i][j]->getType()<<endl;
       }
     }
     else if (stage == resize) {

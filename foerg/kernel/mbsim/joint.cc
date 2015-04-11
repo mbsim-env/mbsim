@@ -64,40 +64,6 @@ namespace MBSim {
     MechanicalLink::connect(frame1);
   }
 
-  void Joint::updateStateDependentVariables(double t) {
-    Wf = refFrame->getOrientation() * forceDir;
-    Wm = refFrame->getOrientation() * momentDir;
-
-    WrP0P1 = frame[1]->getPosition() - frame[0]->getPosition();
-    C.setOrientation(refFrame->getOrientation());
-    C.setPosition(frame[0]->getPosition() + WrP0P1);
-
-    g(IT) = Wf.T() * WrP0P1;
-    g(IR) = x;
-
-    C.setAngularVelocity(frame[0]->getAngularVelocity());
-    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrP0P1));
-
-    WvP0P1 = frame[1]->getVelocity() - C.getVelocity();
-    WomP0P1 = frame[1]->getAngularVelocity() - C.getAngularVelocity();
-
-    if (ffl and not(ffl->isSetValued())) {
-      gd(IT) = Wf.T() * WvP0P1;
-      for (int i = 0; i < forceDir.cols(); i++)
-        la(i) = (*ffl)(g(i), gd(i));
-      WF[1] = Wf * la(IT);
-      WF[0] = -WF[1];
-    }
-
-    if (fml and not(fml->isSetValued())) {
-      gd(IR) = Wm.T() * WomP0P1;
-      for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
-        la(i) = (*fml)(g(i), gd(i));
-      WM[1] = Wm * la(IR);
-      WM[0] = -WM[1];
-    }
-  }
-
   void Joint::updatewb(double t, int j) {
     Mat3xV WJT = refFrame->getOrientation() * JT;
     VecV sdT = WJT.T() * (WvP0P1);
@@ -117,16 +83,46 @@ namespace MBSim {
   }
 
   void Joint::updateh(double t, int j) {
+    if (ffl and not(ffl->isSetValued())) {
+      gd(IT) = Wf.T() * WvP0P1;
+      for (int i = 0; i < forceDir.cols(); i++)
+        la(i) = (*ffl)(g(i), gd(i));
+      WF[1] = Wf * la(IT);
+      WF[0] = -WF[1];
+    }
+
+    if (fml and not(fml->isSetValued())) {
+      gd(IR) = Wm.T() * WomP0P1;
+      for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
+        la(i) = (*fml)(g(i), gd(i));
+      WM[1] = Wm * la(IR);
+      WM[0] = -WM[1];
+    }
     h[j][0] += C.getJacobianOfTranslation(j).T() * WF[0] + C.getJacobianOfRotation(j).T() * WM[0];
     h[j][1] += frame[1]->getJacobianOfTranslation(j).T() * WF[1] + frame[1]->getJacobianOfRotation(j).T() * WM[1];
   }
 
   void Joint::updateg(double t) {
+    Wf = refFrame->getOrientation() * forceDir;
+    Wm = refFrame->getOrientation() * momentDir;
+
+    WrP0P1 = frame[1]->getPosition() - frame[0]->getPosition();
+    C.setOrientation(refFrame->getOrientation());
+    C.setPosition(frame[0]->getPosition() + WrP0P1);
+
+    g(IT) = Wf.T() * WrP0P1;
+    g(IR) = x;
   }
 
   void Joint::updategd(double t) {
-      gd(IT) = Wf.T() * WvP0P1;
-      gd(IR) = Wm.T() * WomP0P1;
+    C.setAngularVelocity(frame[0]->getAngularVelocity());
+    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrP0P1));
+
+    WvP0P1 = frame[1]->getVelocity() - C.getVelocity();
+    WomP0P1 = frame[1]->getAngularVelocity() - C.getAngularVelocity();
+
+    gd(IT) = Wf.T() * WvP0P1;
+    gd(IR) = Wm.T() * WomP0P1;
   }
 
   void Joint::updateJacobians(double t, int j) {

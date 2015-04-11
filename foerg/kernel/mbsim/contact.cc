@@ -107,27 +107,12 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateStateDependentVariables(double t) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateKinematics(t);
-
-    if(not(fcl->isSetValued()))
-      (*fcl).computeSmoothForces(contacts);
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-//        jter->updateNormalForce(t);
-        jter->updateTangentialForce(t);
-        jter->updateCartesianForces(t);
-      }
-    }
-  }
-
   void Contact::updateh(double t, int j) {
-//   cout << name << " " << j << " t = " << t << endl;
+    (*fcl).computeSmoothForces(contacts);
+
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateh(t, j);
+        jter->applyh(t, j);
     }
   }
 

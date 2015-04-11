@@ -127,7 +127,6 @@ namespace MBSim {
       }
       /***************************************************/
 
-      std::vector<Element*> getDependencies() const { return cat<Element*>(gForceFun->getDependencies(),gdForceFun->getDependencies()); }
     protected:
       /**
        * \brief distance depending force function
@@ -303,7 +302,6 @@ namespace MBSim {
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
 
-      std::vector<Element*> getDependencies() const { return fmu->getDependencies(); }
     protected:
       /**
        * \brief friction coefficient function

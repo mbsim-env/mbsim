@@ -35,7 +35,18 @@ namespace MBSim {
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
   }
 
-  void IsotropicRotationalSpringDamper::updateStateDependentVariables(double t) {
+  void IsotropicRotationalSpringDamper::updateh(double t, int j) {
+    for (int i = 0; i < momentDir.cols(); i++)
+      la(i) = -gd(i) * d - g(i) * c;
+
+    WM[1] = Wm * la(IR);
+    WM[0] = -WM[1];
+
+    h[j][0] += frame[0]->getJacobianOfRotation(j).T() * WM[0];
+    h[j][1] += frame[1]->getJacobianOfRotation(j).T() * WM[1];
+  }
+
+  void IsotropicRotationalSpringDamper::updateg(double t) {
     Wm = frame[0]->getOrientation() * momentDir; // directions of torque
 
     Vec r1 = frame[0]->getOrientation().col(0); // first column (tangent) of first frame
@@ -68,20 +79,11 @@ namespace MBSim {
     //g(IR) = Wm.T() * normal * (alpha - alpha0); // TODO (T.S. : Perhaps you can use alpha for the force law and the normal for the direction independently.)
     g(IR) = Wm.T() * normal * alpha;
 
-    Vec3 relOmega = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
-    gd(IR) = Wm.T() * relOmega;
-
-    for (int i = 0; i < momentDir.cols(); i++)
-      la(i) = -gd(i) * d - g(i) * c;
-
-    WM[1] = Wm * la(IR);
-    WM[0] = -WM[1];
-
   }
 
-  void IsotropicRotationalSpringDamper::updateh(double t, int j) {
-    h[j][0] += frame[0]->getJacobianOfRotation(j).T() * WM[0];
-    h[j][1] += frame[1]->getJacobianOfRotation(j).T() * WM[1];
+  void IsotropicRotationalSpringDamper::updategd(double t) {
+    Vec3 relOmega = frame[1]->getAngularVelocity() - frame[0]->getAngularVelocity();
+    gd(IR) = Wm.T() * relOmega;
   }
 
   void IsotropicRotationalSpringDamper::init(InitStage stage) {

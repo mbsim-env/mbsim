@@ -313,6 +313,7 @@ namespace MBSim {
       const std::vector<DynamicSystem*>& getDynamicSystems() const { return dynamicsystem; }
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
+      const std::vector<Link*>& getSetValuedLinks() const { return linkSetValued; }
 
       /**
        * \brief references to positions of dynamic system parent
@@ -489,11 +490,11 @@ namespace MBSim {
        */
       void buildListOfLinks(std::vector<Link*> &lnk);
 
-      /**
-       * \brief build flat list of all setvalued links
-       * \param list of links
-       */
-      void buildListOfSetValuedLinks(std::vector<Link*> &lnk);
+//      /**
+//       * \brief build flat list of all setvalued links
+//       * \param list of links
+//       */
+//      void buildListOfSetValuedLinks(std::vector<Link*> &lnk);
 
       /**
        * \brief build flat list of frames
@@ -763,6 +764,8 @@ namespace MBSim {
       std::vector<Observer*> observer;
       std::vector<Link*> linkSmoothPart;
       std::vector< std::vector<Element*> > elementOrdered;
+      std::vector< std::vector<Link*> > linkOrdered;
+      std::vector<Link*> linkNoC;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

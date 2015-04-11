@@ -59,7 +59,6 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateStateDependentVariables(double t);
       virtual void updatewb(double t, int i = 0);
       virtual void updateW(double t, int i = 0);
       virtual void updateh(double t, int i = 0);

@@ -89,15 +89,16 @@ namespace MBSim {
       (**i).updateT(t);
   }
 
-  void DynamicSystem::updateh(double t, int j) {
+  void DynamicSystem::updateh(double t, int k) {
     for (int i = 0; i < (int) dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateh(t, j);
+      dynamicsystem[i]->updateh(t, k);
 
     for (int i = 0; i < (int) object.size(); i++)
-      object[i]->updateh(t, j);
+      object[i]->updateh(t, k);
 
-    for(unsigned int i=0; i<linkSmoothPart.size(); i++) 
-      linkSmoothPart[i]->updateh(t, j);
+    for(unsigned int i=0; i<linkOrdered.size(); i++) 
+      for(unsigned int j=0; j<linkOrdered[i].size(); j++) 
+	linkOrdered[i][j]->updateh(t, k);
   }
 
   void DynamicSystem::updatehInverseKinetics(double t, int j) {
@@ -284,14 +285,12 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateg(double t) {
-//
-//    for (int i = 0; i < (int) linkSetValuedActive.size(); i++)
-//      linkSetValuedActive[i]->updateg(t);
+
+    for (int i = 0; i < (int) link.size(); i++)
+      link[i]->updateg(t);
   }
 
   void DynamicSystem::updategInverseKinetics(double t) {
-    for (int i = 0; i < (int) inverseKineticsLink.size(); i++)
-      inverseKineticsLink[i]->updateStateDependentVariables(t);
 
     for (int i = 0; i < (int) inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->updateg(t);
@@ -299,8 +298,8 @@ namespace MBSim {
 
   void DynamicSystem::updategd(double t) {
 
-    for (int i = 0; i < (int) linkSetValuedActive.size(); i++)
-      linkSetValuedActive[i]->updategd(t);
+    for (int i = 0; i < (int) link.size(); i++)
+      link[i]->updategd(t);
   }
 
   void DynamicSystem::updategdInverseKinetics(double t) {
@@ -975,13 +974,13 @@ namespace MBSim {
       dynamicsystem[i]->buildListOfLinks(lnk);
   }
 
-  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk) {
-    for (unsigned int i = 0; i < link.size(); i++)
-      if (link[i]->isSetValued())
-        lnk.push_back(link[i]);
-    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-      dynamicsystem[i]->buildListOfSetValuedLinks(lnk);
-  }
+//  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk) {
+//    for (unsigned int i = 0; i < link.size(); i++)
+//      if (link[i]->isSetValued())
+//        lnk.push_back(link[i]);
+//    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+//      dynamicsystem[i]->buildListOfSetValuedLinks(lnk);
+//  }
 
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm) {
     for (unsigned int i = 0; i < frame.size(); i++) {
@@ -1047,20 +1046,16 @@ namespace MBSim {
     linkSetValued.clear();
     linkSetValuedActive.clear();
     linkSingleValued.clear();
-    linkSmoothPart.clear();
     for (unsigned int i = 0; i < link.size(); i++) {
       bool hasForceLaw = false;
       if (link[i]->isSetValued()) {
         hasForceLaw = true;
         linkSetValued.push_back(link[i]);
         linkSetValuedActive.push_back(link[i]);
-        if(link[i]->hasSmoothPart())
-          linkSmoothPart.push_back(link[i]);
       }
       if (link[i]->isSingleValued()) {
         hasForceLaw = true;
         linkSingleValued.push_back(link[i]);
-        linkSmoothPart.push_back(link[i]);
       }
       if (not hasForceLaw) {
         throw new MBSimError("The Link \"" + link[i]->getPath() + "\" comprises now force law!");
