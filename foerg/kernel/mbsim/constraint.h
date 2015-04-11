@@ -57,6 +57,7 @@ namespace MBSim {
       std::string getType() const { return "Constraint"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
+      virtual void setUpInverseKinetics() {}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return boost::shared_ptr<OpenMBV::Group>();}
 #endif
@@ -141,7 +142,6 @@ namespace MBSim {
       KinematicConstraint(const std::string &name="");
 
       void setDependentBody(RigidBody* body) {bd=body; }
-      virtual void setUpInverseKinetics() = 0;
 
       void init(InitStage stage);
 
