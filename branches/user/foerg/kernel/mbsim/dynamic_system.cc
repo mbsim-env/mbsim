@@ -378,6 +378,8 @@ namespace MBSim {
         object[i]->plot(t, dt);
       for (unsigned i = 0; i < link.size(); i++)
         link[i]->plot(t, dt);
+      for (unsigned i = 0; i < constraint.size(); i++)
+        constraint[i]->plot(t, dt);
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->plot(t, dt);
       for (unsigned i = 0; i < contour.size(); i++)
