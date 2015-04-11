@@ -42,14 +42,7 @@ namespace MBSimControl {
     s=(*function)(0); 
   }
 
-  void FunctionSensor::updateStateDependentVariables(double t) {
-    Sensor::updateStateDependentVariables(t);
-    s=(*function)(t); 
-  }
-
-  void FunctionSensor::updateg(double t) {
-    throw;
-    Sensor::updateg(t);
+  void FunctionSensor::updateh(double t, int j) {
     s=(*function)(t); 
   }
 
@@ -60,12 +53,7 @@ namespace MBSimControl {
   }
 
   void FunctionSensor::init(MBSim::Element::InitStage stage) {
-    if(stage==preInit) {
-      Signal::init(stage);
-      addDependencies(function->getDependencies());
-    }
-    else
-      Sensor::init(stage);
+    Sensor::init(stage);
     function->init(stage);
   }
 

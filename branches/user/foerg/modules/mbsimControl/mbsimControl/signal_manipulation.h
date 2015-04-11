@@ -35,7 +35,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void addInputSignal(Signal * signal) {signals.push_back(signal); }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       int getSignalSize() { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
@@ -53,7 +53,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void setInputSignal(Signal * signal_) { signal=signal_; }
       void setIndices(const fmatvec::VecInt &indices_) { indices = indices_; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       int getSignalSize() { return signal->getSignalSize(); }
     private:
       Signal *signal;
@@ -73,7 +73,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void setInputSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal * s;
@@ -104,7 +104,7 @@ namespace MBSimControl {
       void setInputSignal(Signal *inputSignal_) {s=inputSignal_; }
       void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
 
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       int getSignalSize() { return s->getSignalSize(); }
 
     protected:
@@ -131,7 +131,7 @@ namespace MBSimControl {
         f->setParent(this);
         f->setName("Function");
       };
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       int getSignalSize() { return s->getSignalSize(); }
     private:
       Signal *s;
@@ -155,7 +155,7 @@ namespace MBSimControl {
         f->setParent(this);
         f->setName("Function");
       };
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       int getSignalSize() { return s1->getSignalSize(); }
     private:
       Signal *s1, *s2;

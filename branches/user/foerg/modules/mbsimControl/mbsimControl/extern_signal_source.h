@@ -33,7 +33,7 @@ namespace MBSimControl {
       ExternSignalSource(const std::string &name="") : Signal(name), sourceSize(0) {}
       void setSourceSize(int size) { sourceSize=size; source.resize(sourceSize); }
       std::string getType() const { return "ExternSignalSource"; }
-      void updateStateDependentVariables(double t) { s = source; }
+      void updateh(double t, int j=0) { s = source; }
       void setSignal(const fmatvec::VecV& s) { assert(s.size()==source.size()); source=s; }
       void initializeUsingXML(xercesc::DOMElement *element) {
         Signal::initializeUsingXML(element);

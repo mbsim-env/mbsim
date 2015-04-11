@@ -34,7 +34,7 @@ namespace MBSimControl {
       std::string signalString;
     public:
       ExternSignalSink(const std::string &name="") : Signal(name), signal(NULL) {}
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       void setSignal(Signal *sig) { signal=sig; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);

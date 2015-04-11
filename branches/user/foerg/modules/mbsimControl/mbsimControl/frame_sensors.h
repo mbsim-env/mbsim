@@ -60,7 +60,7 @@ namespace MBSimControl {
     public:
       AbsolutePositionSensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
       std::string getType() const { return "AbsolutePositionSensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
   };
 
   /*!
@@ -71,7 +71,7 @@ namespace MBSimControl {
     public:
       AbsoluteVelocitySensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
       std::string getType() const { return "AbsoluteVelocitySensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
   };
 
   /*!
@@ -82,7 +82,7 @@ namespace MBSimControl {
     public:
       AbsoluteAngularPositionSensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
       std::string getType() const { return "AbsoluteAngularPositionSensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
 
       void calcxSize() {xSize=direction.cols(); }
       void init(InitStage stage) {
@@ -109,7 +109,7 @@ namespace MBSimControl {
     public:
       AbsoluteAngularVelocitySensor(const std::string &name="") : AbsolutCoordinateSensor(name) {}
       std::string getType() const { return "AbsoluteAngularVelocitySensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
   };
   
   
@@ -147,7 +147,7 @@ namespace MBSimControl {
     public:
       RelativePositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
       std::string getType() const { return "RelativePositionSensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
   };
   
   /*!
@@ -158,7 +158,7 @@ namespace MBSimControl {
     public:
       RelativeVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
       std::string getType() const { return "RelativeVelocitySensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
   };
   
   /*!
@@ -169,7 +169,7 @@ namespace MBSimControl {
     public:
       RelativeAngularPositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
       std::string getType() const { return "RelativeAngularPositionSensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       
       void calcxSize() {xSize=direction.cols(); }
       void init(InitStage stage) {
@@ -196,7 +196,7 @@ namespace MBSimControl {
     public:
       RelativeAngularVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
       std::string getType() const { return "RelativeAngularVelocitySensor"; }
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
   };
 
 }

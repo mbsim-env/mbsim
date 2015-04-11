@@ -47,23 +47,19 @@ namespace MBSimControl {
         setFrame(getByPath<Frame>(frameString));
       Sensor::init(stage);
     }
-    else if(stage==preInit) {
-      Link::init(stage);
-      addDependencies(frame->getDependencies());
-    }
     else
       Sensor::init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsolutePositionSensor, MBSIMCONTROL%"AbsolutePositionSensor")
 
-  void AbsolutePositionSensor::updateStateDependentVariables(double t) {
+  void AbsolutePositionSensor::updateh(double t, int j) {
     s = direction.T()*frame->getPosition();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteVelocitySensor, MBSIMCONTROL%"AbsoluteVelocitySensor")
 
-  void AbsoluteVelocitySensor::updateStateDependentVariables(double t) {
+  void AbsoluteVelocitySensor::updateh(double t, int j) {
     s = direction.T()*frame->getVelocity();
   }
 
@@ -73,13 +69,13 @@ namespace MBSimControl {
     gd=direction.T()*frame->getAngularVelocity();
   }
 
-  void AbsoluteAngularPositionSensor::updateStateDependentVariables(double t) {
+  void AbsoluteAngularPositionSensor::updateh(double t, int j) {
     s = g;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteAngularVelocitySensor, MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
 
-  void AbsoluteAngularVelocitySensor::updateStateDependentVariables(double t) {
+  void AbsoluteAngularVelocitySensor::updateh(double t, int j) {
     s = direction.T()*frame->getAngularVelocity();
   }
   
@@ -104,25 +100,20 @@ namespace MBSimControl {
         setRelativeFrame(getByPath<Frame>(relFrameString));
       Sensor::init(stage);
     }
-    else if(stage==preInit) {
-      Link::init(stage);
-      addDependencies(refFrame->getDependencies());
-      addDependencies(relFrame->getDependencies());
-    }
     else
       Sensor::init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativePositionSensor, MBSIMCONTROL%"RelativePositionSensor")
 
-  void RelativePositionSensor::updateStateDependentVariables(double t) {
+  void RelativePositionSensor::updateh(double t, int j) {
     VecV WrRefRel=relFrame->getPosition()-refFrame->getPosition();
     s = (refFrame->getOrientation()*direction).T()*WrRefRel;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeVelocitySensor, MBSIMCONTROL%"RelativeVelocitySensor")
 
-  void RelativeVelocitySensor::updateStateDependentVariables(double t) {
+  void RelativeVelocitySensor::updateh(double t, int j) {
     VecV WvRefRel=relFrame->getVelocity()-refFrame->getVelocity();
     s = (refFrame->getOrientation()*direction).T()*WvRefRel;
   }
@@ -134,13 +125,13 @@ namespace MBSimControl {
     gd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
   }
 
-  void RelativeAngularPositionSensor::updateStateDependentVariables(double t) {
+  void RelativeAngularPositionSensor::updateh(double t, int j) {
     s = g;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeAngularVelocitySensor, MBSIMCONTROL%"RelativeAngularVelocitySensor")
 
-  void RelativeAngularVelocitySensor::updateStateDependentVariables(double t) {
+  void RelativeAngularVelocitySensor::updateh(double t, int j) {
     VecV WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
     s = (refFrame->getOrientation()*direction).T()*WomegaRefRel;
   }
