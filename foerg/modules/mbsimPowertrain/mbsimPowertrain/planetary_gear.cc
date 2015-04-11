@@ -135,7 +135,7 @@ namespace MBSimPowertrain {
 
     if(model==1) {
       GearConstraint* constraint = new GearConstraint("C1");
-      addLink(constraint);
+      addConstraint(constraint);
       constraint->setDependentBody(carrier);
       constraint->addTransmission(Transmission(sun,0.5*rS/rT2));
       constraint->addTransmission(Transmission(annulus,0.5*rH/rT2));
@@ -163,7 +163,7 @@ namespace MBSimPowertrain {
       shaftName << "Planet" << i;
       if(model==1) {
         GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str());
-        addLink(constraint);
+        addConstraint(constraint);
         constraint->setDependentBody(planet[i]);
         constraint->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
         constraint->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
