@@ -488,6 +488,31 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="constraints" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Constraint">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:Embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="observers" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

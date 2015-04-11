@@ -162,6 +162,10 @@ namespace MBSim {
         lnkList[i]->setName("Link_"+lexical_cast<string>(i)); // just a unique local name
         addLink(lnkList[i]);
       }
+      for (unsigned int i = 0; i < crtList.size(); i++) {
+        crtList[i]->setName("Constraint_"+lexical_cast<string>(i)); // just a unique local name
+        addConstraint(crtList[i]);
+      }
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
         iKlnkList[i]->setName("InverseKinematic_"+lexical_cast<string>(i)); // just a unique local name
         addInverseKineticsLink(iKlnkList[i]);

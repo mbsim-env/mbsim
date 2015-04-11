@@ -958,6 +958,7 @@ namespace MBSim {
     frame.clear(); // delete old frame list
     contour.clear(); // delete old contour list
     link.clear(); // delete old link list
+    constraint.clear(); // delete old constraint list
     inverseKineticsLink.clear(); // delete old link list
     observer.clear(); // delete old link list
   }

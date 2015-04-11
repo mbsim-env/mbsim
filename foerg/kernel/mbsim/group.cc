@@ -21,6 +21,7 @@
 #include "mbsim/group.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
+#include "mbsim/constraint.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -177,6 +178,18 @@ namespace MBSim {
       E=E->getNextElementSibling();
     }
     e=e->getNextElementSibling();
+
+    // constraints
+    if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"constraints") {
+      E=e->getFirstElementChild();
+      Constraint *crt;
+      while(E) {
+        crt=ObjectFactory::createAndInit<Constraint>(E);
+        addConstraint(crt);
+        E=E->getNextElementSibling();
+      }
+      e=e->getNextElementSibling();
+    }
 
     // observers
     if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"observers") {
