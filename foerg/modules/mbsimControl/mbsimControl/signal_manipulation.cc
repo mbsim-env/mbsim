@@ -57,7 +57,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalMux::updateStateDependentVariables(double t) {
+  void SignalMux::updateh(double t, int j) {
     VecV y=signals[0]->getSignal();
     for (unsigned int i=1; i<signals.size(); i++) {
       VecV s1=y;
@@ -94,7 +94,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalDemux::updateStateDependentVariables(double t) {
+  void SignalDemux::updateh(double t, int j) {
     VecV y(indices.size(), INIT, 0);
     for (int k=0; k<indices.size(); k++) {
       y(k)=signal->getSignal()(indices(k));
@@ -131,7 +131,7 @@ namespace MBSimControl {
   void SignalTimeDiscretization::updateg(double t) { 
   }
 
-  void SignalTimeDiscretization::updateStateDependentVariables(double t) { 
+  void SignalTimeDiscretization::updateh(double t, int j) {
     if (fabs(tOld-t)>epsroot()) {
       Signal::s=s->getSignal(); 
       tOld=t; 
@@ -191,7 +191,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void PIDController::updateStateDependentVariables(double t) {
+  void PIDController::updateh(double t, int j) {
     (this->*updateSignalMethod)();
   }
 
@@ -244,7 +244,7 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  void UnarySignalOperation::updateStateDependentVariables(double t) { 
+  void UnarySignalOperation::updateh(double t, int j) {
     Signal::s = (*f)(s->getSignal()); 
   }
 
@@ -282,7 +282,7 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  void BinarySignalOperation::updateStateDependentVariables(double t) { 
+  void BinarySignalOperation::updateh(double t, int j) {
     s = (*f)(s1->getSignal(),s2->getSignal()); 
   }
 

@@ -43,7 +43,7 @@ namespace MBSimControl {
       
       void init(InitStage stage);
 
-      void updateStateDependentVariables(double t);
+      void updateh(double t, int j=0);
       void updatedx(double t, double dt);
       void updatexd(double t);
       

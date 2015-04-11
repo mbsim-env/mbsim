@@ -86,7 +86,7 @@ namespace MBSimControl {
       showABCD();
   }
 
-  void LinearTransferSystem::updateStateDependentVariables(double t) {
+  void LinearTransferSystem::updateh(double t, int j) {
     output=(this->*calculateOutputMethod)();
   }
 

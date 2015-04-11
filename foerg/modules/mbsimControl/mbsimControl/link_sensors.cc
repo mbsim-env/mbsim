@@ -53,13 +53,13 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkDistanceSensor, MBSIMCONTROL%"LinkDistanceSensor")
 
-  void LinkDistanceSensor::updateStateDependentVariables(double t) {
+  void LinkDistanceSensor::updateh(double t, int j) {
     s = link->getg();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkVelocitySensor, MBSIMCONTROL%"LinkVelocitySensor")
 
-  void LinkVelocitySensor::updateStateDependentVariables(double d) {
+  void LinkVelocitySensor::updateh(double t, int j) {
     s = link->getgd();
   }
 

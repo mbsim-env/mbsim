@@ -52,7 +52,7 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  void SignalProcessingSystemSensor::updateStateDependentVariables(double t) {
+  void SignalProcessingSystemSensor::updateh(double t, int j) {
     s = sps->getOutput();
   }
     int  SignalProcessingSystemSensor::getSignalSize() { return sps->getSignalSize(); }

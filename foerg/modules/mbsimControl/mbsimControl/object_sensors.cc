@@ -47,24 +47,20 @@ namespace MBSimControl {
       Sensor::init(stage);
       s.resize(1);
     }
-    else if(stage==preInit) {
-      Sensor::init(stage);
-      addDependency(object);
-    }
     else
       Sensor::init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionSensor, MBSIMCONTROL%"GeneralizedPositionSensor")
 
-  void GeneralizedPositionSensor::updateStateDependentVariables(double t) {
+  void GeneralizedPositionSensor::updateh(double t, int j) {
     if (object->getq().size()!=0)
       s = ((object->getq()))(fmatvec::Index(index, index));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocitySensor, MBSIMCONTROL%"GeneralizedVelocitySensor")
 
-  void GeneralizedVelocitySensor::updateStateDependentVariables(double t) {
+  void GeneralizedVelocitySensor::updateh(double t, int j) {
     if (object->getu().size()==0)
       //return object->getu0()(fmatvec::Index(index, index));
       s = fmatvec::VecV(1, fmatvec::INIT, 0);
