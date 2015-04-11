@@ -19,7 +19,7 @@
 #ifndef _CONSTRAINT_H
 #define _CONSTRAINT_H
 
-#include "mbsim/mechanical_link.h"
+#include "mbsim/element.h"
 #include "functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -36,19 +36,51 @@ namespace MBSim {
    * \brief Class for constraints between generalized coordinates of objects
    * \author Martin Foerg
    */
-  class Constraint : public MechanicalLink {
+  class Constraint : public Element {
     private:
 
     public:
       Constraint(const std::string &name);
-      virtual void updateg(double t) {}
-      virtual void updategd(double t) {}
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      bool isSingleValued() const { return true; }
+      virtual void updatedx(double t, double dt) {}
+      virtual void updatexd(double t) {}
+      virtual void calcxSize() { xSize = 0; }
+      virtual const fmatvec::Vec& getx() const { return x; }
+      virtual fmatvec::Vec& getx() { return x; }
+      virtual void setxInd(int xInd_) { xInd = xInd_; };
+      virtual int getxSize() const { return xSize; }
+      virtual void updatexRef(const fmatvec::Vec& ref);
+      virtual void updatexdRef(const fmatvec::Vec& ref);
+      virtual void init(InitStage stage);
+      virtual void initz();
+      virtual void writez(H5::GroupBase *group);
+      virtual void readz0(H5::GroupBase *group);
+      std::string getType() const { return "Constraint"; }
+      virtual void plot(double t, double dt = 1);
+      virtual void closePlot();
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return boost::shared_ptr<OpenMBV::Group>();}
 #endif
+
+    protected:
+      /** 
+       * \brief order one parameters
+       */
+      fmatvec::Vec x;
+
+      /** 
+       * \brief differentiated order one parameters 
+       */
+      fmatvec::Vec xd;
+
+      /**
+       * \brief order one initial value
+       */
+      fmatvec::Vec x0;
+
+      /**
+       * \brief size  and local index of order one parameters
+       */
+      int xSize, xInd;
   };
 
   struct Transmission {

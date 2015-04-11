@@ -128,6 +128,9 @@ namespace MBSim {
       vector<Link*> lnkList;
       buildListOfLinks(lnkList);
 
+      vector<Constraint*> crtList;
+      buildListOfConstraints(crtList);
+
       vector<ModellingInterface*> modellList;
       buildListOfModels(modellList);
       if (modellList.size())
@@ -170,13 +173,8 @@ namespace MBSim {
 
      for (unsigned int i = 0; i < objList.size(); i++)
        eleList.push_back(objList[i]);
-     for (unsigned int i = 0; i < lnkList.size(); i++) {
-       Constraint *c = dynamic_cast<Constraint*>(lnkList[i]);
-       if(c) 
-         eleList.push_back(c);
-       else 
-         linkNoC.push_back(lnkList[i]);
-     }
+     for (unsigned int i = 0; i < crtList.size(); i++)
+       eleList.push_back(crtList[i]);
 
       /* now objects: these are much more complex since we must build a graph */
 
@@ -235,14 +233,14 @@ namespace MBSim {
         elementOrdered[level].push_back(eleList[i]);
       }
 
-      for (unsigned int i = 0; i < linkNoC.size(); i++) {
+      for (unsigned int i = 0; i < link.size(); i++) {
         if (link[i]->isSingleValued() or (link[i]->isSetValued() and link[i]->hasSmoothPart())) {
-          int level = linkNoC[i]->computeLevel();
+          int level = link[i]->computeLevel();
           for(int j=linkOrdered.size(); j<=level; j++) {
             vector<Link*> vec;
             linkOrdered.push_back(vec);
           }
-          linkOrdered[level].push_back(linkNoC[i]);
+          linkOrdered[level].push_back(link[i]);
         }
       }
 

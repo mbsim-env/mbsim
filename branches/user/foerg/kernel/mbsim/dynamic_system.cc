@@ -23,8 +23,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
-#include "mbsim/contact.h"
-#include "mbsim/joint.h"
+#include "mbsim/constraint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observer.h"
 #include "hdf5serie/file.h"
@@ -314,6 +313,9 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatedx(t, dt);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
+      (**i).updatedx(t, dt);
   }
 
   void DynamicSystem::updateqd(double t) {
@@ -329,6 +331,9 @@ namespace MBSim {
       (**i).updatexd(t);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (**i).updatexd(t);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (**i).updatexd(t);
   }
 
@@ -522,6 +527,8 @@ namespace MBSim {
       object[i]->init(stage);
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->init(stage);
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->init(stage);
     for (unsigned i = 0; i < model.size(); i++)
       model[i]->init(stage);
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
@@ -704,6 +711,9 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(xParent);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
+      (**i).updatexRef(xParent);
   }
 
   void DynamicSystem::updatexdRef(const Vec &xdParent) {
@@ -713,6 +723,9 @@ namespace MBSim {
       (**i).updatexdRef(xdParent);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (**i).updatexdRef(xdParent);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (**i).updatexdRef(xdParent);
   }
 
@@ -903,6 +916,8 @@ namespace MBSim {
       object[i]->initz();
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->initz();
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->initz();
   }
 
   void DynamicSystem::writez(H5::GroupBase *parent) {
@@ -974,13 +989,14 @@ namespace MBSim {
       dynamicsystem[i]->buildListOfLinks(lnk);
   }
 
-//  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk) {
-//    for (unsigned int i = 0; i < link.size(); i++)
-//      if (link[i]->isSetValued())
-//        lnk.push_back(link[i]);
-//    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-//      dynamicsystem[i]->buildListOfSetValuedLinks(lnk);
-//  }
+  void DynamicSystem::buildListOfConstraints(vector<Constraint*> &crt) {
+    for (unsigned int i = 0; i < constraint.size(); i++) {
+      crt.push_back(constraint[i]);
+      constraint[i]->setPath(constraint[i]->getPath());
+    }
+    for (unsigned int i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->buildListOfConstraints(crt);
+  }
 
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm) {
     for (unsigned int i = 0; i < frame.size(); i++) {
@@ -1117,6 +1133,11 @@ namespace MBSim {
       (*i)->calcxSize();
       xSize += (*i)->getxSize();
     }
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i) {
+      (*i)->calcxSize();
+      xSize += (*i)->getxSize();
+    }
   }
 
   void DynamicSystem::setxInd(int xInd_) {
@@ -1128,6 +1149,11 @@ namespace MBSim {
     }
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+      (*i)->setxInd(xInd_);
+      xInd_ += (*i)->getxSize();
+    }
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i) {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
@@ -1363,6 +1389,16 @@ namespace MBSim {
     lnk->setParent(this);
   }
 
+  void DynamicSystem::addConstraint(Constraint *crt) {
+    if (getConstraint(crt->getName(), false)) {
+      THROW_MBSIMERROR("DynamicSystem can only comprise one Constraint by the name \"" + crt->getName() + "\"!");
+      assert(getConstraint(crt->getName(),false) == NULL);
+    }
+
+    constraint.push_back(crt);
+    crt->setParent(this);
+  }
+
   void DynamicSystem::addInverseKineticsLink(Link *lnk) {
     //if(getLink(lnk->getName(),false)) {
     //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << this->name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
@@ -1382,6 +1418,20 @@ namespace MBSim {
       if (!(i < link.size()))
         THROW_MBSIMERROR("DynamicSystem comprises no Link \"" + name + "\"!");
       assert(i < link.size());
+    }
+    return NULL;
+  }
+
+  Constraint* DynamicSystem::getConstraint(const string &name, bool check) const {
+    unsigned int i;
+    for (i = 0; i < constraint.size(); i++) {
+      if (constraint[i]->getName() == name)
+        return constraint[i];
+    }
+    if (check) {
+      if (!(i < constraint.size()))
+        THROW_MBSIMERROR("DynamicSystem comprises no Constraint \"" + name + "\"!");
+      assert(i < constraint.size());
     }
     return NULL;
   }

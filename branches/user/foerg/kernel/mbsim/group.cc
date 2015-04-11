@@ -71,8 +71,8 @@ namespace MBSim {
       for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
         elementOrdered[i][j]->updateJacobians(t,k);
 
-    for(unsigned int i=0; i<linkNoC.size(); i++)
-      linkNoC[i]->updateJacobians(t,k);
+    for(unsigned int i=0; i<link.size(); i++)
+      link[i]->updateJacobians(t,k);
   }
 
   void Group::updatedu(double t, double dt) {

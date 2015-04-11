@@ -32,6 +32,7 @@ namespace MBSim {
   class Contour;
   class Object;
   class Link;
+  class Constraint;
   class ModellingInterface;
   class Contact;
   class InverseKineticsJoint;
@@ -490,11 +491,11 @@ namespace MBSim {
        */
       void buildListOfLinks(std::vector<Link*> &lnk);
 
-//      /**
-//       * \brief build flat list of all setvalued links
-//       * \param list of links
-//       */
-//      void buildListOfSetValuedLinks(std::vector<Link*> &lnk);
+      /**
+       * \brief build flat list of all constraints
+       * \param list of constraints
+       */
+      void buildListOfConstraints(std::vector<Constraint*> &crt);
 
       /**
        * \brief build flat list of frames
@@ -697,6 +698,11 @@ namespace MBSim {
       void addLink(Link *link);
 
       /**
+       * \param constraint to add
+       */
+      void addConstraint(Constraint *constraint);
+
+      /**
        * \param add link for inverse kinetics
        */
       void addInverseKineticsLink(Link *link);
@@ -710,6 +716,13 @@ namespace MBSim {
        * \return link
        */
       Link* getLink(const std::string &name,bool check=true) const;
+
+      /**
+       * \param name of the constraint
+       * \param check for existence of constraint
+       * \return constraint
+       */
+      Constraint* getConstraint(const std::string &name,bool check=true) const;
 
       /**
        * \param modell to add
@@ -765,7 +778,7 @@ namespace MBSim {
       std::vector<Link*> linkSmoothPart;
       std::vector< std::vector<Element*> > elementOrdered;
       std::vector< std::vector<Link*> > linkOrdered;
-      std::vector<Link*> linkNoC;
+      std::vector<Constraint*> constraint;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

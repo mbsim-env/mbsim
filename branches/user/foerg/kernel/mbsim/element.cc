@@ -25,6 +25,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/object.h>
 #include <mbsim/link.h>
+#include <mbsim/constraint.h>
 #include <mbsim/observer.h>
 #include <mbsim/functions/function.h>
 #include <mbsim/mbsim_event.h>
@@ -117,6 +118,7 @@ namespace MBSim {
       if(dynamic_cast<const Contour*>     (e)) return "Contour";
       if(dynamic_cast<const Object*>      (e)) return "Object";
       if(dynamic_cast<const Link*>        (e)) return "Link";
+      if(dynamic_cast<const Constraint*>  (e)) return "Constraint";
       if(dynamic_cast<const Group*>       (e)) return "Group";
       if(dynamic_cast<const Observer*>    (e)) return "Observer";
       if(dynamic_cast<const FunctionBase*>(e)) return "Function";
