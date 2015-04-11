@@ -42,7 +42,6 @@ namespace MBSim {
       std::vector<std::string> saved_IndependentBody;
     public:
       Gear(const std::string &name="");
-      void updateStateDependentVariables(double t);
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updateg(double t);

@@ -68,32 +68,30 @@ namespace MBSim {
     }
   } 
 
-  void GeneralizedFriction::updateStateDependentVariables(double t) {
-    gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
-    la = -(*func)(gd, (*laN)(t));
-    WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
-    WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
-    if(body[0]) {
-      WF[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJT()*la;
-      WM[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJR()*la;
-    } else {
-      WF[0] = -WF[1];
-      WM[0] = -WM[1];
-    }
-  }
- 
   void GeneralizedFriction::updateh(double t, int j) {
+    la = -(*func)(gd, (*laN)(t));
     if(j==0) {
       if(body[0]) h[j][0]+=body[0]->getJRel(j).T()*la;
       h[j][1]-=body[1]->getJRel(j).T()*la;
     }
     else {
+      WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
+      WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
       h[j][1]-=body[1]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[1] + body[1]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[1];
-      if(body[0]) 
+      if(body[0]) {
+        WF[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJT()*la;
+        WM[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJR()*la;
         h[j][0]-=body[0]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[0] + body[0]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[0];
-      else
+      } else {
+        WF[0] = -WF[1];
+        WM[0] = -WM[1];
         h[j][0]-=body[1]->getFrameOfReference()->getJacobianOfTranslation(j).T()*WF[0]+body[1]->getFrameOfReference()->getJacobianOfRotation(j).T()*WM[0];
+      }
     }
+  }
+
+  void GeneralizedFriction::updategd(double) {
+    gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
   }
 
   void GeneralizedFriction::init(InitStage stage) {
