@@ -43,6 +43,10 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  Constraint::Constraint(const std::string &name) : Element(name) {
+    setPlotFeature(state, enabled);
+  }
+
   void Constraint::updatexRef(const Vec &xParent) {
     x >> xParent(xInd,xInd+xSize-1);
   } 
@@ -134,9 +138,6 @@ namespace MBSim {
 
     return res;
   } 
-
-  Constraint::Constraint(const std::string &name) : Element(name) {
-  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
 

@@ -101,6 +101,9 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (*i)->updatexd(t);
+
+    for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
+      (*i)->updatexd(t);
   }
 
   void Group::initializeUsingXML(DOMElement *element) {
