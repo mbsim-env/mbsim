@@ -1050,7 +1050,7 @@ namespace MBSim {
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (*i)->setUpInverseKinetics();
 
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (*i)->setUpInverseKinetics();
   }
 

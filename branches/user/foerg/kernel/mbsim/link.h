@@ -414,8 +414,6 @@ namespace MBSim {
       
       int getcorrSize() const { return corrSize; } 
 
-      virtual void setUpInverseKinetics() {}
-
     protected:
       /** 
        * \brief order one parameters
