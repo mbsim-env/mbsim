@@ -38,7 +38,6 @@ namespace MBSim {
       Frame C;
     public:
       KinematicExcitation(const std::string &name);
-      void updateStateDependentVariables(double t);
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updateJacobians(double t, int j=0);
@@ -94,10 +93,9 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updateStateDependentVariables(double t);
       void updatexd(double t) { }
-      void updateg(double t) { }
-      void updategd(double t) { }
+      void updateg(double t);
+      void updategd(double t);
       void updatewb(double t, int i=0);
 
       std::string getType() const { return "GeneralizedPositionExcitation"; }
@@ -118,10 +116,9 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updateStateDependentVariables(double t);
       void updatexd(double t);
-      void updateg(double t) { }
-      void updategd(double t) { }
+      void updateg(double t);
+      void updategd(double t);
       void updatewb(double t, int i=0);
 
       std::string getType() const { return "GeneralizedVelocityExcitation"; }
@@ -148,10 +145,9 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updateStateDependentVariables(double t);
       void updatexd(double t);
-      void updateg(double t) { }
-      void updategd(double t) { }
+      void updateg(double t);
+      void updategd(double t);
       void updatewb(double t, int i=0);
 
       std::string getType() const { return "GeneralizedAccelerationExcitation"; }

@@ -53,38 +53,6 @@ namespace MBSim {
     gdSize = 1;
   }
 
-  void Gearing::updateStateDependentVariables(double t) {
-    //WrP0Z = Z->getPosition()-P0->getPosition();
-    //WrP1Z = Z->getPosition()-P1->getPosition();
-    Vec3 WrP0P1 = P1->getPosition()-P0->getPosition();
-    Vec3 dir =  WrP0P1/nrm2(WrP0P1);
-    WrP0Z = (reverse?-1.:1.)*dir*r0;
-    WrP1Z = -1.*dir*r1;
-    //WrP0Z = WrP0P1/(1.+ratio);
-    //WrP1Z = -WrP0P1*(ratio/(1.+ratio)); 
-    //WrP1Z = WrP0Z - WrP0P1;
-    Z0.setOrientation(P0->getOrientation());
-    Z0.setPosition(P0->getPosition() + WrP0Z);
-    Z1.setOrientation(P1->getOrientation());
-    Z1.setPosition(P1->getPosition() + WrP1Z);
-    g = x;
-
-    Z0.setAngularVelocity(P0->getAngularVelocity());
-    Z0.setVelocity(P0->getVelocity() + crossProduct(P0->getAngularVelocity(),WrP0Z));
-    Z1.setAngularVelocity(P1->getAngularVelocity());
-    Z1.setVelocity(P1->getVelocity() + crossProduct(P1->getAngularVelocity(),WrP1Z));
-
-    RigidBody* bodyP0 = static_cast<RigidBody*>(P0->getParent());
-    Mat3xV a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
-    Wt = crossProduct(WrP0Z,a.col(0));
-    Wt /= -nrm2(Wt);
-
-    if(not(isSetValued())) {
-      gd(0)=Wt.T()*(Z1.getVelocity()-Z0.getVelocity());
-      la(0) = (*func)(g(0),gd(0));
-    }
-  }
-
   void Gearing::updateJacobians(double t, int j) {
     Mat3x3 tWrP0Z = tilde(WrP0Z);
     Mat3x3 tWrP1Z = tilde(WrP1Z);
@@ -100,19 +68,13 @@ namespace MBSim {
     Z1.setGyroscopicAccelerationOfRotation(P1->getGyroscopicAccelerationOfRotation(j),j);
   }
 
-  void Gearing::updateg(double t) {
-  }
-
-  void Gearing::updategd(double t) {
-    gd(0)=Wt.T()*(Z1.getVelocity()-Z0.getVelocity());
-  }
-
   void Gearing::updateW(double t, int j) {
     W[j][0] += Z0.getJacobianOfTranslation(j).T()*Wt;
     W[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt;
   }
 
   void Gearing::updateh(double t, int j) {
+    la(0) = (*func)(g(0),gd(0));
     h[j][0] += Z0.getJacobianOfTranslation(j).T()*Wt*la(0);
     h[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt*la(0);
   }
@@ -137,6 +99,37 @@ namespace MBSim {
 
     h[j][1]>>hParent(I1);
   } 
+
+  void Gearing::updateg(double) {
+    //WrP0Z = Z->getPosition()-P0->getPosition();
+    //WrP1Z = Z->getPosition()-P1->getPosition();
+    Vec3 WrP0P1 = P1->getPosition()-P0->getPosition();
+    Vec3 dir =  WrP0P1/nrm2(WrP0P1);
+    WrP0Z = (reverse?-1.:1.)*dir*r0;
+    WrP1Z = -1.*dir*r1;
+    //WrP0Z = WrP0P1/(1.+ratio);
+    //WrP1Z = -WrP0P1*(ratio/(1.+ratio)); 
+    //WrP1Z = WrP0Z - WrP0P1;
+    Z0.setOrientation(P0->getOrientation());
+    Z0.setPosition(P0->getPosition() + WrP0Z);
+    Z1.setOrientation(P1->getOrientation());
+    Z1.setPosition(P1->getPosition() + WrP1Z);
+    g = x;
+  } 
+
+  void Gearing::updategd(double) {
+    Z0.setAngularVelocity(P0->getAngularVelocity());
+    Z0.setVelocity(P0->getVelocity() + crossProduct(P0->getAngularVelocity(),WrP0Z));
+    Z1.setAngularVelocity(P1->getAngularVelocity());
+    Z1.setVelocity(P1->getVelocity() + crossProduct(P1->getAngularVelocity(),WrP1Z));
+
+    Vec3 WvZ0Z1 = Z1.getVelocity()-Z0.getVelocity();
+    RigidBody* bodyP0 = static_cast<RigidBody*>(P0->getParent());
+    Mat3xV a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
+    Wt = crossProduct(WrP0Z,a.col(0));
+    Wt /= -nrm2(Wt);
+    gd(0)=Wt.T()*WvZ0Z1;
+  }
 
   bool Gearing::isSetValued() const {
     return func?false:true;

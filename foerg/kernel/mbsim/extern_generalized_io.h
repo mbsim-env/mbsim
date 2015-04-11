@@ -42,10 +42,9 @@ namespace MBSim {
 
       ExternGeneralizedIO(const std::string &name="");
 
-      void updateStateDependentVariables(double t);
-      void updateh(double, int i=0);
-      void updateg(double) { }
-      void updategd(double) { }
+      void updateh(double t, int i=0);
+      void updateg(double t);
+      void updategd(double t);
 
       void calcxSize();
       void updatedx(double t, double dt);
