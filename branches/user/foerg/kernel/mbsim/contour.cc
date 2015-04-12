@@ -140,13 +140,6 @@ namespace MBSim {
    return ele0;
   }
 
-  vector<Element*> Contour::getDependencies() const {
-    vector<Element*> dep;
-    if(not(dynamic_cast<DynamicSystem*>(parent)))
-      dep.push_back(parent);
-    return dep;
-  }
-
   /* Rigid Contour */
   RigidContour::~RigidContour() {
   }

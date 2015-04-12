@@ -105,7 +105,7 @@ namespace MBSim {
       Object::init(stage);
       if(!R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();
-      addDependencies(R->getDependencies());
+      addDependency(dynamic_cast<Body*>(R->getParent()));
     }
     else if(stage==plotting) {
       updatePlotFeatures();
