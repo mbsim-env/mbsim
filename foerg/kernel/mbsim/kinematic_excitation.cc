@@ -115,10 +115,6 @@ namespace MBSim {
       C.getJacobianOfTranslation(1).resize(body->getFrameOfReference()->getJacobianOfTranslation(1).cols());
       C.getJacobianOfRotation(1).resize(body->getFrameOfReference()->getJacobianOfRotation(1).cols());
     }
-    else if(stage==preInit) {
-      MechanicalLink::init(stage);
-      addDependency(body);
-    }
     else if(stage==resize) {
       MechanicalLink::init(stage);
       g.resize(gSize);
@@ -196,7 +192,7 @@ namespace MBSim {
   void GeneralizedPositionExcitation::init(InitStage stage) {
     if(stage==preInit) {
       KinematicExcitation::init(stage);
-      addDependencies(f->getDependencies());
+      addDependency(f->getDependency());
     }
     else
       KinematicExcitation::init(stage);
@@ -222,7 +218,7 @@ namespace MBSim {
   void GeneralizedVelocityExcitation::init(InitStage stage) {
     if(stage==preInit) {
       KinematicExcitation::init(stage);
-      addDependencies(f->getDependencies());
+      addDependency(f->getDependency());
     }
     else
       KinematicExcitation::init(stage);
@@ -252,7 +248,7 @@ namespace MBSim {
   void GeneralizedAccelerationExcitation::init(InitStage stage) {
     if(stage==preInit) {
       KinematicExcitation::init(stage);
-      addDependencies(f->getDependencies());
+      addDependency(f->getDependency());
     }
     else
       KinematicExcitation::init(stage);

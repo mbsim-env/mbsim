@@ -47,11 +47,7 @@ namespace MBSimControl {
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      std::vector<MBSim::Element*> getDependencies() const {
-        std::vector<MBSim::Element*> dep;
-        dep.push_back(ret);
-        return dep;
-      }
+      MBSim::Element* getDependency() const { return ret; }
 
     protected:
       std::string retString;
@@ -98,12 +94,7 @@ namespace MBSimControl {
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      std::vector<MBSim::Element*> getDependencies() const {
-        std::vector<MBSim::Element*> dep;
-        dep.push_back(ret);
-        return dep;
-      }
-
+      MBSim::Element* getDependency() const { return ret; }
 
     protected:
       std::string retString;

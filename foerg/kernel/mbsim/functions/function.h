@@ -39,6 +39,7 @@ namespace MBSim {
       //! Function's have no name hence use a unique dummy name for Element ctor.
       //! The function name is normally changed later by the corresponding setter methode which added the Function a another object.
       FunctionBase() : Element(uniqueDummyName(this)) {}
+      virtual Element* getDependency() const { return 0; }
   };
 
   /*! Base Function object for MBSim.

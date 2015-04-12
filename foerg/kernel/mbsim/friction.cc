@@ -108,9 +108,7 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       MechanicalLink::init(stage);
-      for(unsigned int i=0; i<body.size(); i++)
-        if(body[i]) addDependencies(body[i]->getDependencies());
-      if(laN) addDependencies(laN->getDependencies());
+      if(laN) addDependency(laN->getDependency());
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);

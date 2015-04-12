@@ -87,7 +87,7 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       MechanicalLink::init(stage);
-      addDependencies(func->getDependencies());
+      addDependency(func->getDependency());
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);
@@ -224,7 +224,7 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       MechanicalLink::init(stage);
-      addDependencies(func->getDependencies());
+      addDependency(func->getDependency());
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);
@@ -386,7 +386,7 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       MechanicalLink::init(stage);
-      addDependencies(func->getDependencies());
+      addDependency(func->getDependency());
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);
