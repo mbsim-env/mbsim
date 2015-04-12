@@ -107,7 +107,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   constraint->setDependentBodiesSecondSide(bd2);
   constraint->setIndependentBody(body1);
   constraint->connect(body2->getFrame("Q"),body3->getFrame("C"));
-  addLink(constraint);
+  addConstraint(constraint);
   constraint->setForceDirection("[1,0;0,1;0,0]");
 
   KineticExcitation *load = new KineticExcitation("Motor");

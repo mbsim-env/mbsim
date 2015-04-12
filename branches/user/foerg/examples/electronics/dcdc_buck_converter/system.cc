@@ -23,8 +23,8 @@ class VoltageSensor : public MBSimControl::Sensor {
     void setComponent(MBSimElectronics::ElectronicLink *comp_) {comp = comp_;}
     VoltageSensor(const std::string &name) : Sensor(name) { }
     std::string getType() const { return "VoltageSensor"; }
-    void updateStateDependentVariables(double t) { 
-      s = VecV(1,INIT,comp->computeVoltage()); 
+    void updateh(double t, int j=0) { 
+      s = comp->getla(); 
     }
     int getSignalSize() { return 1; }
     void init(InitStage stage) {
@@ -51,13 +51,15 @@ class SwitchSignal : public MBSimControl::Signal {
       uref = 11.3;
       K=8.2;
     }
-    void setInputSignal(Signal *input) {inputSignal = input;}
-    void updateStateDependentVariables(double t) {
+    void updateg(double t) {
       double ug = u1+mod(t,T)/T*(uu-u1);
       h = uref+1/K*ug;
+    }
+    void updateh(double t, int j=0) {
       double UR = inputSignal->getSignal()(0);
       s = VecV(1, INIT, (-UR <= h ? 0 : 100));
     }
+    void setInputSignal(Signal *input) {inputSignal = input;}
     int getSignalSize() { return 1; }
     void init(InitStage stage) {
       if(stage==preInit) {
