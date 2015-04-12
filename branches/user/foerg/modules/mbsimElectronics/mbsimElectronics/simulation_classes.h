@@ -96,9 +96,8 @@ namespace MBSimElectronics {
       void calcgSize(int j);
       void calcgdSize(int j);
       void calclaSize(int j);
-      void updateg(double t) { }
-      void updategd(double t) { }
-      void updateStateDependentVariables(double t);
+      void updateg(double t);
+      void updategd(double t);
       void updateW(double t, int j=0);
       void plot(double t, double dt = 1); 
       virtual std::string getName() const {return Link::getName();}
@@ -109,7 +108,6 @@ namespace MBSimElectronics {
       void init(InitStage stage);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &rParent, int j=0);
-      virtual double computeVoltage() {return 0;}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updater(double t) { THROW_MBSIMERROR("(ElectronicLink::updater): Not implemented!"); }
@@ -131,7 +129,6 @@ namespace MBSimElectronics {
       Resistor(const std::string &name);
       void updateh(double t, int j=0);
       void setResistance(double R_) { R = R_;}
-      double computeVoltage();
       std::string getType() const { return "Resistor"; }
   };
 
