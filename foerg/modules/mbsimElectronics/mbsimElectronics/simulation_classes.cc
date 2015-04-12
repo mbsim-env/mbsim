@@ -84,9 +84,12 @@ namespace MBSimElectronics {
       Link::init(stage);
   }
 
-  void ElectronicLink::updateStateDependentVariables(double t) {
+  void ElectronicLink::updateg(double t) {
     Q = branch->getCharge()(0)*vz;
     g(0) = Q;
+  }
+
+  void ElectronicLink::updategd(double t) {
     I = branch->getCurrent()(0)*vz;
     gd(0) = I;
   }
@@ -305,6 +308,15 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
+  void Switch::init(InitStage stage) {
+    if(stage==preInit) {
+      ElectronicLink::init(stage);
+      addDependency(voltageSignal);
+    }
+    else
+      ElectronicLink::init(stage);
+  }
+
   void Switch::updateW(double t, int j) {
     U0 = voltageSignal->getSignal()(0);
     ElectronicLink::updateW(t,j);
@@ -344,15 +356,6 @@ namespace MBSimElectronics {
     }
   }
 
-  void Switch::init(InitStage stage) {
-    if(stage==preInit) {
-      ElectronicLink::init(stage);
-      addDependency(voltageSignal);
-    }
-    else
-      ElectronicLink::init(stage);
-  }
-
   void Switch::solveImpactsGaussSeidel(double dt) {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
@@ -383,10 +386,6 @@ namespace MBSimElectronics {
     h[j][0] += branch->getJacobian(j).T()*la(0)*vz; 
   }
 
-  double Resistor::computeVoltage() {
-    return -R*I;  
-  }
-
   Capacitor::Capacitor(const string &name) : ElectronicLink(name), C(1) {
     addTerminal("A");
     addTerminal("B");
@@ -404,11 +403,6 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void VoltageSource::updateh(double t, int j) {
-    la(0) = voltageSignal->getSignal()(0);
-    h[j][0] += branch->getJacobian(j).T()*la(0)*vz;
-  }
-
   void VoltageSource::init(InitStage stage) {
     if(stage==preInit) {
       ElectronicLink::init(stage);
@@ -416,6 +410,11 @@ namespace MBSimElectronics {
     }
     else
       ElectronicLink::init(stage);
+  }
+
+  void VoltageSource::updateh(double t, int j) {
+    la(0) = voltageSignal->getSignal()(0);
+    h[j][0] += branch->getJacobian(j).T()*la(0)*vz;
   }
 
 }
