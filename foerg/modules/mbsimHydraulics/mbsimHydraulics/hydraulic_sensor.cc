@@ -33,8 +33,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlowSensor, MBSIMHYDRAULICS%"FlowSensor")
 
-  VecV FlowSensor::getSignal() {
-    return line->getQIn(); 
+  void FlowSensor::updateh(double t, int j) {
+    s = line->getQIn(); 
   }
 
   void FlowSensor::initializeUsingXML(DOMElement * element) {
@@ -56,8 +56,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PressureSensor, MBSIMHYDRAULICS%"PressureSensor")
 
-  VecV PressureSensor::getSignal() {
-    return node->getla(); 
+  void PressureSensor::updateh(double t, int j) {
+    s = node->getla(); 
   }
 
   void PressureSensor::initializeUsingXML(DOMElement * element) {
@@ -73,6 +73,10 @@ namespace MBSimHydraulics {
         setHNode(getByPath<HNode>(nodeString));
       Sensor::init(stage);
     }
+    else if (stage==preInit) {
+      addDependency(node);
+      Sensor::init(stage);
+    }
     else
       Sensor::init(stage);
   }
@@ -81,7 +85,7 @@ namespace MBSimHydraulics {
   
   void TemperatureSensor::init(InitStage stage) {
     if (stage==preInit) {
-      T(0)=HydraulicEnvironment::getInstance()->getTemperature();
+      s(0)=HydraulicEnvironment::getInstance()->getTemperature();
       Sensor::init(stage);
     }
     else
@@ -92,7 +96,7 @@ namespace MBSimHydraulics {
   
   void KinematicViscositySensor::init(InitStage stage) {
     if (stage==preInit) {
-      nu(0)=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      s(0)=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       Sensor::init(stage);
     }
     else

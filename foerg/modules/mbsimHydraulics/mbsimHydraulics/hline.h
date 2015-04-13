@@ -48,7 +48,7 @@ namespace MBSimHydraulics {
       virtual void updateJacobians(double t, int j=0) {};
       virtual void updateInverseKineticsJacobians(double t) {};
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual OpenMBV::Group* getOpenMBVGrp() { return 0; }
+      virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
       /***************************************************/
 
@@ -71,7 +71,9 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
-      
+
+      virtual Element* getDependency() const { return 0; }
+
     protected:
       HNode * nFrom;
       HNode * nTo;

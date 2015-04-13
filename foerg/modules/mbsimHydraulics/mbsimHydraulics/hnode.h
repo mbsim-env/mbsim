@@ -90,7 +90,7 @@ namespace MBSimHydraulics {
       void updateh(double t, int j=0);
       void updatedhdz(double t);
       virtual void updater(double t, int j);
-      virtual void updateg(double t) {};
+      virtual void updateg(double t) {}
       virtual void updategd(double t);
       virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
@@ -108,8 +108,8 @@ namespace MBSimHydraulics {
       double QHyd;
       unsigned int nLines;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group * openMBVGrp;
-      OpenMBV::Sphere * openMBVSphere;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
+      boost::shared_ptr<OpenMBV::Sphere> openMBVSphere;
       fmatvec::Vec3 WrON;
 #endif
   };
@@ -192,6 +192,8 @@ namespace MBSimHydraulics {
 
       bool isSetValued() const {return true; }
       virtual bool isActive() const {return true; }
+
+      void init(InitStage stage);
 
       void calclaSize(int j) {laSize=1; }
       //void calclaSizeForActiveg() {laSize=0; }

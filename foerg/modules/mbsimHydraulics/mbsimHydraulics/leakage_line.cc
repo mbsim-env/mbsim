@@ -67,6 +67,7 @@ namespace MBSimHydraulics {
     }
     else
       RigidHLine::init(stage);
+    lpl->init(stage);
   }
 
   void LeakageLine::initializeUsingXML(DOMElement * element) {

@@ -97,8 +97,16 @@ namespace MBSimHydraulics {
       if (glPath!="")
         setGapLengthSignal(getByPath<Signal>(glPath));
     }
+    if (stage==preInit) {
+      DimensionlessLine::init(stage);
+      addDependency(lpl->getDependency());
+      addDependency(s1vSignal);
+      addDependency(s2vSignal);
+      addDependency(glSignal);
+    }
     else
       DimensionlessLine::init(stage);
+    lpl->init(stage);
   }
 
   void Leakage0DOF::updateStateDependentVariables(double t) {

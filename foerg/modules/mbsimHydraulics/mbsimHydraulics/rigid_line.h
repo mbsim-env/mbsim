@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
 
       void setDiameter(double diameter_) {diameter=diameter_; }
       double getDiameter() const {return diameter; }
-      void setLinePressureLoss(LinePressureLoss * pL_) {pL=pL_; }
+      void setLinePressureLoss(LinePressureLoss * pL_);
 
       void init(InitStage stage);
 
@@ -62,7 +62,7 @@ namespace MBSimHydraulics {
       ~ClosableRigidLine();
       virtual std::string getType() const { return "ClosableRigidLine"; }
 
-      void setClosablePressureLoss(ClosablePressureLoss * cpL_) {cpL=cpL_; }
+      void setClosablePressureLoss(ClosablePressureLoss * cpL_);
       ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
       void setSignal(MBSimControl::Signal * s) {cpLSignal = s; }
       MBSimControl::Signal * getSignal() const {return cpLSignal; }
@@ -75,6 +75,8 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement *element);
+
+      Element* getDependency() const;
     private:
       ClosablePressureLoss * cpL;
       MBSimControl::Signal * cpLSignal;
