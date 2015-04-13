@@ -40,7 +40,7 @@ namespace MBSimControl {
       void setIndex(int index_) {index=index_; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      int getSignalSize() { return 1; }
+      int getSignalSize() const { return 1; }
     protected:
       MBSim::Object * object;
       std::string objectString;

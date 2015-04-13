@@ -39,7 +39,7 @@ namespace MBSimControl {
       
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
       void updateh(double t, int j=0);
-      int getSignalSize();
+      int getSignalSize() const;
 
     private:
       SignalProcessingSystem * sps;

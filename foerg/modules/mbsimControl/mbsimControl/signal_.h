@@ -65,7 +65,7 @@ namespace MBSimControl {
       /***************************************************/
       
       virtual const fmatvec::VecV& getSignal() { return s; }
-      virtual int getSignalSize() { return s.size(); }
+      virtual int getSignalSize() const { return s.size(); }
 
     protected:
       fmatvec::VecV s;

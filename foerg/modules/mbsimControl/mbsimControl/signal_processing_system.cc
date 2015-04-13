@@ -55,6 +55,6 @@ namespace MBSimControl {
       Link::init(stage);
   }
 
-     int SignalProcessingSystem::getSignalSize() {return inputSignal->getSignalSize(); }
+     int SignalProcessingSystem::getSignalSize() const {return inputSignal->getSignalSize(); }
 
 }

@@ -55,7 +55,7 @@ namespace MBSimControl {
   void SignalProcessingSystemSensor::updateh(double t, int j) {
     s = sps->getOutput();
   }
-    int  SignalProcessingSystemSensor::getSignalSize() { return sps->getSignalSize(); }
+    int  SignalProcessingSystemSensor::getSignalSize() const { return sps->getSignalSize(); }
 
 }
 
