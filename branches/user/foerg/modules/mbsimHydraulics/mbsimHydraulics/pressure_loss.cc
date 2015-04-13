@@ -36,6 +36,13 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
+  Element* PressureLoss::getDependency() const {
+    cout << "---------------------------------- dep " << endl;
+    cout << line->getDependency() << endl;
+
+    return line->getDependency();
+  }
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SerialResistanceLinePressureLoss,  MBSIMHYDRAULICS%"SerialResistanceLinePressureLoss")
 
   SerialResistanceLinePressureLoss::~SerialResistanceLinePressureLoss() {
@@ -48,6 +55,12 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<slp.size(); i++)
       pl+=(*slp[i])(Q);
     return pl;
+  }
+
+  void SerialResistanceLinePressureLoss::init(InitStage stage) {
+    LinePressureLoss::init(stage);
+    for(unsigned int i=0; i<slp.size(); i++)
+      slp[i]->init(stage);
   }
 
   void SerialResistanceLinePressureLoss::initializeUsingXML(DOMElement * element) {
@@ -65,6 +78,11 @@ namespace MBSimHydraulics {
 
   double ParallelResistanceLinePressureLoss::operator()(const double& Q) {
     return (*pl)(Q/number);
+  }
+
+  void ParallelResistanceLinePressureLoss::init(InitStage stage) {
+    LinePressureLoss::init(stage);
+    pl->init(stage);
   }
 
   void ParallelResistanceLinePressureLoss::initializeUsingXML(DOMElement * element) {
@@ -200,6 +218,11 @@ namespace MBSimHydraulics {
         lambda=(*lambdaTabular)(Re);
       return lambda*c*fabs(Q)*Q;
     }
+  }
+
+  void TurbulentTubeFlowLinePressureLoss::init(InitStage stage) {
+    LinePressureLoss::init(stage);
+    lambdaTabular->init(stage);
   }
 
   void TurbulentTubeFlowLinePressureLoss::initializeUsingXML(DOMElement * element) {

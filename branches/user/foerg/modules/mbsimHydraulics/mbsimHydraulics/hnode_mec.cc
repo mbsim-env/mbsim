@@ -156,11 +156,11 @@ namespace MBSimHydraulics {
         if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
           if (openMBVArrowSize>0) {
             for (int i=0; i<int(nTrans+nRot); i++) {
-              openMBVArrows.push_back(new OpenMBV::Arrow);
+              openMBVArrows.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Arrow>());
               openMBVArrows.back()->setArrowHead(openMBVArrowSize/4., openMBVArrowSize/4.);
               openMBVArrows.back()->setDiameter(openMBVArrowSize/10.);
             }
-            openMBVGrp = new OpenMBV::Group();
+            openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVGrp->setName(name);
             openMBVGrp->setExpand(false);
             parent->getOpenMBVGrp()->addObject(openMBVGrp);
@@ -458,7 +458,11 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNodeMec, MBSIMHYDRAULICS%"ConstrainedNodeMec")
 
   void ConstrainedNodeMec::init(InitStage stage) {
-    if (stage==unknownStage) {
+    if(stage==preInit) {
+      HNode::init(stage);
+      addDependency(pFun->getDependency());
+    }
+    else if (stage==unknownStage) {
       HNodeMec::init(stage);
       la.init((*pFun)(0));
       x0=Vec(1, INIT, V0);
@@ -564,6 +568,10 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNodeMec, MBSIMHYDRAULICS%"RigidNodeMec")
 
   RigidNodeMec::RigidNodeMec(const string &name) : HNodeMec(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
+    gfl->setParent(this);
+    gfl->setName("gfl");
+    gil->setParent(this);
+    gil->setName("gil");
   }
 
   RigidNodeMec::~RigidNodeMec() {
@@ -615,6 +623,8 @@ namespace MBSimHydraulics {
     }
     else
       HNodeMec::init(stage);
+    if(gfl) gfl->init(stage);
+    if(gil) gil->init(stage);
   }
 
   void RigidNodeMec::updatewbRef(const Vec &wbParent) {

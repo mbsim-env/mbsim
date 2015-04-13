@@ -96,7 +96,7 @@ namespace MBSimHydraulics {
       double V0;
       unsigned int nTrans, nRot;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      std::vector<OpenMBV::Arrow *> openMBVArrows;
+      std::vector<boost::shared_ptr<OpenMBV::Arrow> > openMBVArrows;
       double openMBVArrowSize;
 #endif
 

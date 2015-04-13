@@ -43,6 +43,12 @@ namespace MBSimHydraulics {
     delete pL; 
   }
 
+  void RigidLine::setLinePressureLoss(LinePressureLoss * pL_) {
+    pL=pL_; 
+    pL->setParent(this); 
+    pL->setName("PressureLoss"); 
+  }
+
   void RigidLine::init(InitStage stage) {
     if (stage==modelBuildup) {
       if (pL)
@@ -65,6 +71,7 @@ namespace MBSimHydraulics {
     }
     else
       RigidHLine::init(stage);
+    if(pL) pL->init(stage);
   }
   
   void RigidLine::plot(double t, double dt) {
@@ -87,6 +94,12 @@ namespace MBSimHydraulics {
 
   ClosableRigidLine::~ClosableRigidLine() {
     delete cpL;
+  }
+
+  void ClosableRigidLine::setClosablePressureLoss(ClosablePressureLoss * cpL_) {
+    cpL = cpL_;
+    cpL->setParent(this);
+    cpL->setName("cpL");
   }
 
   bool ClosableRigidLine::isClosed() const {
@@ -113,6 +126,7 @@ namespace MBSimHydraulics {
     }
     else
       RigidLine::init(stage);
+    cpL->init(stage);
   }
 
   void ClosableRigidLine::initializeUsingXML(DOMElement * element) {
@@ -130,6 +144,10 @@ namespace MBSimHydraulics {
       setBilateral(true);
   }
 
+  Element* ClosableRigidLine::getDependency() const { 
+    return cpLSignal;
+  }
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnidirectionalRigidLine,  MBSIMHYDRAULICS%"UnidirectionalRigidLine")
 
   void UnidirectionalRigidLine::init(InitStage stage) {
@@ -142,6 +160,7 @@ namespace MBSimHydraulics {
     }
     else
       RigidLine::init(stage);
+    if(upL) upL->init(stage);
   }
 
   void UnidirectionalRigidLine::initializeUsingXML(DOMElement * element) {

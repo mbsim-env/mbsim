@@ -31,7 +31,8 @@ namespace MBSimHydraulics {
     public:
       FlowSensor(const std::string &name="") : MBSimControl::Sensor(name), line(NULL), lineString("") {}
       std::string getType() const { return "FlowSensor"; }
-      fmatvec::VecV getSignal();
+      int getSignalSize() const { return 1; }
+      void updateh(double t, int j=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setHLine(HLine * line_) {line=line_; }
@@ -44,7 +45,8 @@ namespace MBSimHydraulics {
     public:
       PressureSensor(const std::string &name="") : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
       std::string getType() const { return "PressureSensor"; }
-      fmatvec::VecV getSignal();
+      int getSignalSize() const { return 1; }
+      void updateh(double t, int j=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setHNode(HNode * node_) {node=node_; }
@@ -55,22 +57,18 @@ namespace MBSimHydraulics {
 
   class TemperatureSensor : public MBSimControl::Sensor {
     public:
-      TemperatureSensor(const std::string &name="") : MBSimControl::Sensor(name), T(1) {}
+      TemperatureSensor(const std::string &name="") : MBSimControl::Sensor(name) {}
       std::string getType() const { return "TemperatureSensor"; }
-      fmatvec::VecV getSignal() {return T; }
+      int getSignalSize() const { return 1; }
       void init(InitStage stage);
-    private:
-      fmatvec::VecV T;
   };
 
   class KinematicViscositySensor : public MBSimControl::Sensor {
     public:
-      KinematicViscositySensor(const std::string &name="") : MBSimControl::Sensor(name), nu(1) {}
+      KinematicViscositySensor(const std::string &name="") : MBSimControl::Sensor(name) {}
       std::string getType() const { return "KinematicViscositySensor"; }
-      fmatvec::VecV getSignal() {return nu; }
+      int getSignalSize() const { return 1; }
       void init(InitStage stage);
-    private:
-      fmatvec::VecV nu;
   };
 
 }
