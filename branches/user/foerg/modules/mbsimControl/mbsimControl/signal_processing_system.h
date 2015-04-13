@@ -59,7 +59,7 @@ namespace MBSimControl {
       const fmatvec::VecV& getOutput() const { return output; }
 
       void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
-      int getSignalSize();
+      int getSignalSize() const;
 
     protected:
       Signal * inputSignal;

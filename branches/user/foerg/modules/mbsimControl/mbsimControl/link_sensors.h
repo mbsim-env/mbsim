@@ -53,7 +53,7 @@ namespace MBSimControl {
       LinkDistanceSensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "LinkDistanceSensor"; }
       void updateh(double t, int j=0);
-      int getSignalSize() { return link->getgSize(); }
+      int getSignalSize() const { return link->getgSize(); }
   };
 
   /*!
@@ -65,7 +65,7 @@ namespace MBSimControl {
       LinkVelocitySensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "LinkVelocitySensor"; }
       void updateh(double t, int j=0);
-      int getSignalSize() { return link->getgdSize(); }
+      int getSignalSize() const { return link->getgdSize(); }
   };
 
 }

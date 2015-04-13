@@ -36,7 +36,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void addInputSignal(Signal * signal) {signals.push_back(signal); }
       void updateh(double t, int j=0);
-      int getSignalSize() { return signals[0]->getSignalSize(); }
+      int getSignalSize() const { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
       std::vector<std::string> signalString;
@@ -54,7 +54,7 @@ namespace MBSimControl {
       void setInputSignal(Signal * signal_) { signal=signal_; }
       void setIndices(const fmatvec::VecInt &indices_) { indices = indices_; }
       void updateh(double t, int j=0);
-      int getSignalSize() { return signal->getSignalSize(); }
+      int getSignalSize() const { return signal->getSignalSize(); }
     private:
       Signal *signal;
       fmatvec::VecInt indices;
@@ -74,7 +74,7 @@ namespace MBSimControl {
       void setInputSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
       void updateh(double t, int j=0);
-      int getSignalSize() { return s->getSignalSize(); }
+      int getSignalSize() const { return s->getSignalSize(); }
     private:
       Signal * s;
       double tOld;
@@ -105,7 +105,7 @@ namespace MBSimControl {
       void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
 
       void updateh(double t, int j=0);
-      int getSignalSize() { return s->getSignalSize(); }
+      int getSignalSize() const { return s->getSignalSize(); }
 
     protected:
       double P,I,D;
@@ -132,7 +132,7 @@ namespace MBSimControl {
         f->setName("Function");
       };
       void updateh(double t, int j=0);
-      int getSignalSize() { return s->getSignalSize(); }
+      int getSignalSize() const { return s->getSignalSize(); }
     private:
       Signal *s;
       std::string signalString;
@@ -156,7 +156,7 @@ namespace MBSimControl {
         f->setName("Function");
       };
       void updateh(double t, int j=0);
-      int getSignalSize() { return s1->getSignalSize(); }
+      int getSignalSize() const { return s1->getSignalSize(); }
     private:
       Signal *s1, *s2;
       std::string signal1String, signal2String;
