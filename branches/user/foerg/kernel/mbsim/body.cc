@@ -229,5 +229,10 @@ namespace MBSim {
       THROW_MBSIMERROR("Unknown container '"+container+"'.");
   }
 
+  void Body::resetUpToDate() {
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetUpToDate();
+  }
+
 }
 

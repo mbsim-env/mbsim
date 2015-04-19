@@ -65,25 +65,19 @@ namespace MBSim {
 
       void addDependency(Constraint* constraint_);
 
-      virtual void updatedq(double t, double dt);
-      virtual void updateqd(double t); 
-      virtual void updateT(double t);
-      virtual void updateh(double t, int j=0);
-      virtual void updatehInverseKinetics(double t, int j=0);
-      virtual void updateStateDerivativeDependentVariables(double t);
-      virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
-      virtual void updateStateDependentVariables(double t) { 
-        updateKinematicsForSelectedFrame(t); 
-        updateKinematicsForRemainingFramesAndContours(t); 
-      }
-      virtual void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
-      void updateJacobians0(double t) { 
-        updateJacobiansForSelectedFrame0(t); 
-        updateJacobiansForRemainingFramesAndContours(t,0); 
-      }
-      void updateJacobians1(double t) { 
-        updateJacobiansForRemainingFramesAndContours1(t); 
-      }
+      void updatedq(double t, double dt);
+      void updateqd(double t); 
+      void updateT(double t);
+      void updateh(double t, int j=0);
+      void updatehInverseKinetics(double t, int j=0);
+      void updateStateDerivativeDependentVariables(double t);
+      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      void updatePositions(double t); 
+      void updateVelocities(double t);
+      void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
+      void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
+      void updateJacobians0(double t);
+      void updateJacobians1(double t) { updateJacobiansForSelectedFrame1(t); updateJacobiansForRemainingFramesAndContours1(t); }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -103,23 +97,13 @@ namespace MBSim {
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
-       * \brief updates kinematics of kinematic Frame starting from reference Frame
-       */
-      virtual void updateKinematicsForSelectedFrame(double t);
-      /**
        * \brief updates JACOBIAN for kinematics starting from reference Frame
        */
-      virtual void updateJacobiansForSelectedFrame0(double t); 
-
-      /**
-       * \brief updates kinematics for remaining Frames starting with and from cog Frame
-       */
-      virtual void updateKinematicsForRemainingFramesAndContours(double t);
+      virtual void updateJacobiansForSelectedFrame1(double t) { }
 
       /**
        * \brief updates remaining JACOBIANS for kinematics starting with and from cog Frame
        */
-      virtual void updateJacobiansForRemainingFramesAndContours(double t, int j=0);
       virtual void updateJacobiansForRemainingFramesAndContours1(double t);
 
       /* GETTER / SETTER */

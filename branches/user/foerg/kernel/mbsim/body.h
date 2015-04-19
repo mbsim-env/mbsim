@@ -145,6 +145,8 @@ namespace MBSim {
       fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
       int getuRelSize(int i=0) const {return nu[i];}
 
+      void resetUpToDate();
+
     protected:
       /**
        * \param frame to add

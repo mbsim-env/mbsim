@@ -1755,14 +1755,16 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
+    //cout << "zdot, t = " << t << endl;
+    resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
-    updateStateDependentVariables(t);
+//    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
-    updateJacobians(t);
+//    updateJacobians(t);
     updateh(t);
     updateM(t);
     facLLM();
@@ -1780,17 +1782,19 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
+   // cout << "plot, t = " << t << endl;
+    resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
 
     if (qd() != zdParent())
       updatezdRef(zdParent);
-    updateStateDependentVariables(t);
+//    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
-    updateJacobians(t, 0);
+//    updateJacobians(t, 0);
     updateJacobians(t, 1);
     updateh(t, 1);
     updateh(t, 0);

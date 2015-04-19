@@ -146,7 +146,7 @@ namespace MBSim {
 
   void CompoundContour::updateStateDependentVariables(double t) {
     for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateStateDependentVariables();
+      frame[i]->updateStateDependentVariables(t);
   }
 
   void CompoundContour::updateJacobians(double t, int j) {
