@@ -21,7 +21,7 @@
 #define _JOINT_H_
 
 #include "mbsim/mechanical_link.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -64,7 +64,6 @@ namespace MBSim {
       virtual void updateh(double t, int i = 0);
       virtual void updateg(double t);
       virtual void updategd(double t);
-      virtual void updateJacobians(double t, int j = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -166,6 +165,8 @@ namespace MBSim {
       }
 #endif
 
+    void resetUpToDate() { C.resetUpToDate(); }
+
     protected:
       /**
        * \brief frame of reference the force is defined in
@@ -226,7 +227,7 @@ namespace MBSim {
       /**
        * \brief own frame located in second partner with same orientation as first partner 
        */
-      Frame C;
+      FixedRelativeFrame C;
 
     private:
       std::string saved_ref1, saved_ref2;

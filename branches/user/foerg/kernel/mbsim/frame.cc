@@ -175,33 +175,25 @@ namespace MBSim {
   }
 
   const Vec3& Frame::getPosition(double t) {
-    if(updatePos) {
-      updatePos = false;
-      updatePositions(t); 
-    }
+    if(updatePos) updatePositions(t);
     return getPosition(); 
   }
+
   const SqrMat3& Frame::getOrientation(double t) {
-    if(updatePos) {
-      updatePos = false;
-      updatePositions(t); 
-    }
+    if(updatePos) updatePositions(t); 
     return getOrientation(); 
   }
+
   const Vec3& Frame::getVelocity(double t) {
-    if(updateVel) {
-      updateVel = false;
-      updateVelocities(t); 
-    }
+    if(updateVel) updateVelocities(t); 
     return getVelocity(); 
   }
+
   const Vec3& Frame::getAngularVelocity(double t) {
-    if(updateVel) {
-      updateVel = false;
-      updateVelocities(t); 
-    }
+    if(updateVel) updateVelocities(t); 
     return getAngularVelocity(); 
   }
+
   const Vec3& Frame::getAcceleration(double t) {
     if(updateAcc) {
 //      updateAcc = false;
@@ -210,6 +202,7 @@ namespace MBSim {
     }
     return getAcceleration(); 
   }
+
   const Vec3& Frame::getAngularAcceleration(double t) {
     if(updateAcc) {
 //      updateAcc = false;
@@ -219,103 +212,42 @@ namespace MBSim {
     return getAngularAcceleration(); 
   }
 
-
   const Mat3xV& Frame::getJacobianOfTranslation(double t, int j) {
-//    cout << "getJacobianOfTranslation of " << getPath() << endl;
-    if(updateJac[j]) {
-      updateJac[j] = false;
-      updateJacobians(t,j); 
-    }
+    if(updateJac[j]) updateJacobians(t,j); 
     return getJacobianOfTranslation(j); 
   }
 
   const Mat3xV& Frame::getJacobianOfRotation(double t, int j) {
-    if(updateJac[j]) {
-      updateJac[j] = false;
-      updateJacobians(t,j); 
-    }
+    if(updateJac[j]) updateJacobians(t,j); 
     return getJacobianOfRotation(j); 
   }
 
   const Vec3& Frame::getGyroscopicAccelerationOfTranslation(double t, int j) {
-    if(updateJac[j]) {
-      updateJac[j] = false;
-      updateJacobians(t,j); 
-    }
+    if(updateJac[j]) updateJacobians(t,j); 
     return getGyroscopicAccelerationOfTranslation(j); 
   }
 
   const Vec3& Frame::getGyroscopicAccelerationOfRotation(double t, int j) {
-    if(updateJac[j]) {
-      updateJac[j] = false;
-      updateJacobians(t,j); 
-    }
+    if(updateJac[j]) updateJacobians(t,j); 
     return getGyroscopicAccelerationOfRotation(j); 
   }
 
-  void FixedRelativeFrame::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Frame::init(stage);
-    }
-    else
-      Frame::init(stage);
-  }
-
-  void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
-    Frame::initializeUsingXML(element);
-    DOMElement *ec=element->getFirstElementChild();
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
-    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
-    if(ec) setRelativePosition(getVec3(ec));
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
-    if(ec) setRelativeOrientation(getSqrMat3(ec));
-  }
-
-  DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-//     if(getFrameOfReference()) {
-//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-//        ele1->SetAttribute("ref", str);
-//        ele0->LinkEndChild(ele1);
-//      }
-//     addElementText(ele0,MBSIM%"relativePosition",getRelativePosition());
-//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
-   return ele0;
-  }
-
-  void FixedRelativeFrame::updatePositions(double t) { 
+  void Frame::updatePositions(double t) { 
     if(updateByParent[0])
       parent->updatePositions(t);
-    else {
-      setOrientation(R->getOrientation(t)*ARP);
-      WrRP = R->getOrientation(t)*RrRP; 
-      setPosition(R->getPosition(t) + WrRP); 
-    }
+    updatePos = false;
   }
 
-  void FixedRelativeFrame::updateVelocities(double t) { 
+  void Frame::updateVelocities(double t) { 
     if(updateByParent[0])
       parent->updateVelocities(t);
-    else {
-      setAngularVelocity(R->getAngularVelocity(t));
-      setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(t), WrRP)); 
-    }
+    updateVel = false;
   }
 
-  void FixedRelativeFrame::updateJacobians(double t, int j) {
+  void Frame::updateJacobians(double t, int j) {
     if(updateByParent[j])
       parent->updateJacobians(t,j);
-    else {
-      fmatvec::SqrMat3 tWrRP = tilde(WrRP);
-      setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tWrRP*R->getJacobianOfRotation(t,j),j);
-      setJacobianOfRotation(R->getJacobianOfRotation(t,j),j);
-      setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t,j) - tWrRP*R->getGyroscopicAccelerationOfRotation(t,j) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrRP)),j);
-      setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t,j),j);
-    }
+    updateJac[j] = false;
   }
 
 }

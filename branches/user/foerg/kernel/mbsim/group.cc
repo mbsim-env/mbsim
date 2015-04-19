@@ -22,7 +22,7 @@
 #include "mbsim/object.h"
 #include "mbsim/link.h"
 #include "mbsim/constraint.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"

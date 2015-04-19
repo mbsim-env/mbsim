@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/kinematic_excitation.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/group.h>
 

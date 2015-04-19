@@ -22,7 +22,7 @@
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/constraint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observer.h"
@@ -466,10 +466,8 @@ namespace MBSim {
           I->setOrientation(getFrameI()->getOrientation() * APF);
         }
       }
-      for (unsigned int i = 1; i < frame.size(); i++) { // kinematics of other frames can be updates from frame I
-        ((FixedRelativeFrame*) frame[i])->updatePosition(0);
-        ((FixedRelativeFrame*) frame[i])->updateOrientation(0);
-      }
+      for (unsigned int i = 1; i < frame.size(); i++) // kinematics of other frames can be updates from frame I
+        ((FixedRelativeFrame*) frame[i])->updatePositions(0);
       for (unsigned int k = 0; k < contour.size(); k++) {
         if (!(contour[k]->getFrameOfReference()))
           contour[k]->setFrameOfReference(I);
@@ -1560,6 +1558,8 @@ namespace MBSim {
       constraint[i]->resetUpToDate();
     for (unsigned i = 0; i < observer.size(); i++)
       observer[i]->resetUpToDate();
+    for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->resetUpToDate();
   }
 
 }

@@ -135,6 +135,11 @@ namespace MBSim {
       const fmatvec::Vec3& getAngularVelocity(double t);
       const fmatvec::Vec3& getAcceleration(double t); 
       const fmatvec::Vec3& getAngularAcceleration(double t);
+      void updatePositions(double t);
+      void updateVelocities(double t); 
+      void updateJacobians(double t, int j=0);
+
+      void setUpdateByParent(int j) { updateByParent[j] = true; }
 
     protected:
       ///**
@@ -192,63 +197,6 @@ namespace MBSim {
 #endif
 
       bool updateJac[2], updatePos, updateVel, updateAcc;
-  };
-
-  /**
-   * \brief cartesian frame on rigid bodies 
-   * \author Martin Foerg
-   */
-  class FixedRelativeFrame : public Frame {
-
-    public:
-      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {
-        updateByParent[0] = false;
-        updateByParent[1] = false;
-      }
-
-      std::string getType() const { return "FixedRelativeFrame"; }
-
-      virtual void init(InitStage stage);
-
-      void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
-      void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
-      void setFrameOfReference(Frame *frame) { R = frame; }
-      void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
-
-      const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
-      const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
-      const Frame* getFrameOfReference() const { return R; }
-      const fmatvec::Vec3& getWrRP() const { return WrRP; }
-
-      void updateRelativePosition(double t) { WrRP = R->getOrientation(t)*RrRP; }
-      void updatePosition(double t) { updateRelativePosition(t); setPosition(R->getPosition(t) + WrRP); }
-      void updateOrientation(double t) { setOrientation(R->getOrientation(t)*ARP); }
-      void updateVelocity(double t) { setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(t), WrRP)); } 
-      void updateAngularVelocity(double t) { setAngularVelocity(R->getAngularVelocity(t)); }
-      void updateStateDependentVariables(double t) {
-        updatePosition(t);
-        updateOrientation(t);
-        updateVelocity(t);
-        updateAngularVelocity(t);
-      }
-      void updatePositions(double t);
-      void updateVelocities(double t); 
-      void updateJacobians(double t, int j=0);
-      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
-        setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
-        setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
-      }
-
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-
-      void setUpdateByParent(int j) { updateByParent[j] = true; }
-
-    protected:
-      Frame *R;
-      fmatvec::Vec3 RrRP, WrRP;
-      fmatvec::SqrMat3 ARP;
-      std::string saved_frameOfReference;
       bool updateByParent[2];
   };
 
