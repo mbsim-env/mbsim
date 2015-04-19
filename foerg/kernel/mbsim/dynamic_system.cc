@@ -467,8 +467,8 @@ namespace MBSim {
         }
       }
       for (unsigned int i = 1; i < frame.size(); i++) { // kinematics of other frames can be updates from frame I
-        ((FixedRelativeFrame*) frame[i])->updatePosition();
-        ((FixedRelativeFrame*) frame[i])->updateOrientation();
+        ((FixedRelativeFrame*) frame[i])->updatePosition(0);
+        ((FixedRelativeFrame*) frame[i])->updateOrientation(0);
       }
       for (unsigned int k = 0; k < contour.size(); k++) {
         if (!(contour[k]->getFrameOfReference()))
@@ -1547,6 +1547,19 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->checkRoot();
+  }
+
+  void DynamicSystem::resetUpToDate() {
+    for (unsigned i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->resetUpToDate();
+    for (unsigned i = 0; i < object.size(); i++)
+      object[i]->resetUpToDate();
+    for (unsigned i = 0; i < link.size(); i++)
+      link[i]->resetUpToDate();
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->resetUpToDate();
+    for (unsigned i = 0; i < observer.size(); i++)
+      observer[i]->resetUpToDate();
   }
 
 }

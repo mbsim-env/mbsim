@@ -747,6 +747,8 @@ namespace MBSim {
 
       void checkRoot();
 
+      void resetUpToDate();
+
     protected:
       /**
        * \brief parent frame
