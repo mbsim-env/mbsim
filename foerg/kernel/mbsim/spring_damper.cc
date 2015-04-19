@@ -20,7 +20,7 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>

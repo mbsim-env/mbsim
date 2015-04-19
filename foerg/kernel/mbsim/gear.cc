@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/gear.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constraint.h"
 #include <openmbvcppinterface/group.h>

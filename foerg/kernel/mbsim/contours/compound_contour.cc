@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/compound_contour.h"
+#include "mbsim/fixed_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>

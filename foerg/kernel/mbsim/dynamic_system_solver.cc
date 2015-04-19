@@ -1782,7 +1782,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-   // cout << "plot, t = " << t << endl;
+    //cout << "plot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
@@ -1795,7 +1795,7 @@ namespace MBSim {
     updategd(t);
     updateT(t);
 //    updateJacobians(t, 0);
-    updateJacobians(t, 1);
+//    updateJacobians(t, 1);
     updateh(t, 1);
     updateh(t, 0);
     updateM(t, 0);
@@ -1823,7 +1823,7 @@ namespace MBSim {
 
       updategInverseKinetics(t); // necessary because of update of force direction
       updategdInverseKinetics(t); // necessary because of update of force direction
-      updateJacobiansInverseKinetics(t, 1);
+//      updateJacobiansInverseKinetics(t, 1);
       updateWInverseKinetics(t, 1);
       updatebInverseKinetics(t);
 

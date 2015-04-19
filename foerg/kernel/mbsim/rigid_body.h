@@ -77,7 +77,7 @@ namespace MBSim {
       void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
       void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
       void updateJacobians0(double t);
-      void updateJacobians1(double t) { updateJacobiansForSelectedFrame1(t); updateJacobiansForRemainingFramesAndContours1(t); }
+      void updateJacobians1(double t);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -94,17 +94,6 @@ namespace MBSim {
       virtual std::string getType() const { return "RigidBody"; }
       virtual void plot(double t, double dt=1);
       /*****************************************************/
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief updates JACOBIAN for kinematics starting from reference Frame
-       */
-      virtual void updateJacobiansForSelectedFrame1(double t) { }
-
-      /**
-       * \brief updates remaining JACOBIANS for kinematics starting with and from cog Frame
-       */
-      virtual void updateJacobiansForRemainingFramesAndContours1(double t);
 
       /* GETTER / SETTER */
 

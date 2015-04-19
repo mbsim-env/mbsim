@@ -11,6 +11,7 @@ single_contact.cc\
 contour.cc\
 environment.cc\
 frame.cc\
+fixed_relative_frame.cc\
 functions_contact.cc\
 dynamic_system.cc\
 group.cc\
@@ -62,6 +63,7 @@ dynamic_system_solver.h\
 element.h\
 environment.h\
 frame.h\
+fixed_relative_frame.h\
 functions_contact.h\
 group.h\
 joint.h\
