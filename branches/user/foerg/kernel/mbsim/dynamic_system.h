@@ -149,7 +149,7 @@ namespace MBSim {
       /**
        * \brief compute Cholesky decomposition of mass matrix TODO necessary?
        */
-      virtual void facLLM(int i=0) = 0;
+      virtual void updateLLM(double t, int i=0) = 0;
 
       /**
        * \brief solve contact equations with single step fixed point scheme
@@ -277,6 +277,8 @@ namespace MBSim {
       fmatvec::Vec& getres() { return res; }
       const fmatvec::Vec& getcorr() const { return corr; };
       fmatvec::Vec& getcorr() { return corr; };
+
+      const fmatvec::SymMat& getM(double t, int i=0);
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
@@ -953,6 +955,8 @@ namespace MBSim {
       fmatvec::Vec corr;
 
       std::string saved_frameOfReference;
+
+      bool updM[2];
   };
 }
 

@@ -284,5 +284,18 @@ namespace MBSim {
     return Element::writeXMLFile(parent);
   }
 
+  void Object::resetUpToDate() {
+    //cout << "resetUpToDate of " << name << " ";
+    updM[0] = true;
+    updM[1] = true;
+    //cout << updM[0] << endl;
+  }
+
+  const SymMat& Object::getM(double t, int i) {
+    //cout << "getM of " << name << " " << updM[i] << endl;
+    if(updM[i]) updateM(t,i);
+    return M[i];
+  }
+
 }
 

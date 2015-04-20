@@ -202,13 +202,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void facLLM(int i=0) { LLM[i] = facLL(M[i]); }
-
-      /**
-       * \brief calculates size of right hand side
-       * \param j index of normal usage and inverse kinetics TODO
-       */
-      virtual void calcSize(int j) {}
+      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); }
 
       /**
        * \return kinetic energy 
@@ -258,6 +252,8 @@ namespace MBSim {
       fmatvec::Vec& getqd() { return qd; };
       fmatvec::Vec& getud(int i=0) { return ud[i]; };
 
+      const fmatvec::SymMat& getM(double t, int i=0);
+
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
 
@@ -265,6 +261,8 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+
+      void resetUpToDate();
 
     protected:
       /**
@@ -330,6 +328,8 @@ namespace MBSim {
        * \brief LU-decomposition of mass matrix 
        */
       fmatvec::SymMat LLM[2];
+
+      bool updM[2];
   };
 
 }

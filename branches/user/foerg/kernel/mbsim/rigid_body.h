@@ -71,7 +71,7 @@ namespace MBSim {
       void updateh(double t, int j=0);
       void updatehInverseKinetics(double t, int j=0);
       void updateStateDerivativeDependentVariables(double t);
-      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      void updateM(double t, int i=0) { (this->*updateM_)(t,i); updM[i] = false; }
       void updatePositions(double t); 
       void updateVelocities(double t);
       void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
@@ -86,7 +86,7 @@ namespace MBSim {
       virtual void updateuRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
+      virtual void updateLLM(double t, int i=0) { (this->*updateLLM_)(t,i); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
 
@@ -308,17 +308,17 @@ namespace MBSim {
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (RigidBody::*facLLM_)(int i);
+      void (RigidBody::*updateLLM_)(double t, int i);
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void facLLMConst(int i=0) {};
+      void updateLLMConst(double t, int i=0) { }
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void facLLMNotConst(int i=0) { Object::facLLM(i); }
+      void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
       void (RigidBody::*updateJacobians_[2])(double t); 
 

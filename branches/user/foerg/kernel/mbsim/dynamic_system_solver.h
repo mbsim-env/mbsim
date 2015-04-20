@@ -514,6 +514,8 @@ namespace MBSim {
       void setq(const fmatvec::Vec& q_){ q = q_;}
       void setLa(const fmatvec::Vec& la_){ la = la_;}
 
+      void resetUpToDate();
+
     protected:
       /**
        * \brief mass matrix

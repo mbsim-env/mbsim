@@ -114,7 +114,7 @@ namespace MBSimIntegrator {
 
       // update mass matrix and compute LU factorization
       system.updateM(t);
-      system.facLLM();      
+      system.updateLLM(t);      
 
       // update matrix of generalized constraint directions
       system.updateW(t);
@@ -197,7 +197,7 @@ namespace MBSimIntegrator {
 
         // update mass matrix and compute LU factorization
         system.updateM(t);
-        system.facLLM();
+        system.updateLLM(t);
 
         // update matrix of generalized constraint directions
         system.updateW(t);
@@ -262,7 +262,7 @@ namespace MBSimIntegrator {
 
         // update mass matrix and compute LU factorization
         system.updateM(t);
-        system.facLLM();
+        system.updateLLM(t);
 
         // update matrix of generalized constraint directions
         system.updateW(t);

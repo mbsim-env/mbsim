@@ -213,7 +213,7 @@ namespace MBSim {
       WJRrel.resize(nu[0]);
 
       updateM_ = &RigidBody::updateMNotConst;
-      facLLM_ = &RigidBody::facLLMNotConst;
+      updateLLM_ = &RigidBody::updateLLMNotConst;
     }
     else if(stage==unknownStage) {
       Body::init(stage);
@@ -509,10 +509,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobians1(double t) {
-//    if(K != C) K->updatePositions(t,1);
-
-    if(K != C)
-      K->setGlobalRelativePosition(C->getOrientation(t)*K->getRelativePosition());
+    if(K != C) K->setGlobalRelativePosition(C->getOrientation(t)*K->getRelativePosition());
   }
 
   void RigidBody::updateqRef(const Vec& ref) {
@@ -540,8 +537,9 @@ namespace MBSim {
   }
 
   void RigidBody::updateMNotConst(double t, int i) {
-    //cout << "updateMNotConst " << i << name << endl;
+//    cout << "updateMNotConst " << i << name << endl;
     M[i] += m*JTJ(C->getJacobianOfTranslation(t,i)) + JTMJ(WThetaS,C->getJacobianOfRotation(t,i));
+//    cout << M[i] << endl;
   }
 
   void RigidBody::updatePositionAndOrientationOfFrame(double t, Frame *P) {
