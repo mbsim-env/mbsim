@@ -264,7 +264,7 @@ namespace MBSimIntegrator {
     system.updateJacobians(t);
     system.updateh(t);
     system.updateM(t);
-    if (SetValuedForceLawsExplicit) system.facLLM();
+    if (SetValuedForceLawsExplicit) system.updateLLM(t);
     system.updateW(t); 
     system.updateV(t);
 

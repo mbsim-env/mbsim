@@ -137,8 +137,8 @@ namespace MBSim {
     DynamicSystem::calcuSize(1);
   }
 
-  void Graph::facLLM(int i) {
-    LLM[i] = facLL(M[i]); 
+  void Graph::updateLLM(double t, int i) {
+    LLM[i] = facLL(getM(t,i)); 
   }
 
   void Graph::addObject(int level, Object* object) {

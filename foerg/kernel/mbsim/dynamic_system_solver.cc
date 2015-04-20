@@ -1000,7 +1000,7 @@ namespace MBSim {
       updateT(0);
       updateJacobians(0);
       updateM(0);
-      facLLM();
+      updateLLM(0);
       projectGeneralizedPositions(0, 1, true);
       updateStateDependentVariables(0);
       updateJacobians(0);
@@ -1067,7 +1067,7 @@ namespace MBSim {
     updateJacobians(t);
     updateh(t);
     updateM(t);
-    facLLM();
+    updateLLM(t);
     updateW(t);
     updateV(t);
     updateG(t);
@@ -1144,7 +1144,7 @@ namespace MBSim {
       if(fullUpdate) {
         updateJacobians(t);
         updateM(t);
-        facLLM();
+        updateLLM(t);
         updateW(t);
         Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
       }
@@ -1681,7 +1681,7 @@ namespace MBSim {
         updateJacobians(t);
         updateh(t);  // TODO necessary
         updateM(t);  // TODO necessary
-        facLLM();  // TODO necessary 
+        updateLLM(t);  // TODO necessary 
         updateW(t);  // TODO necessary
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
@@ -1740,7 +1740,7 @@ namespace MBSim {
     updateJacobians(t);
     updateh(t);
     updateM(t);
-    facLLM();
+    updateLLM(t);
     if (laSize) {
       updateW(t);
       updateV(t);
@@ -1755,19 +1755,16 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-    //cout << "zdot, t = " << t << endl;
+//    cout << "zdot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
-//    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
-//    updateJacobians(t);
     updateh(t);
-    updateM(t);
-    facLLM();
+    updateLLM(t);
     if (laSize) {
       updateW(t);
       updateV(t);
@@ -1782,7 +1779,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-    //cout << "plot, t = " << t << endl;
+//    cout << "plot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
@@ -1790,16 +1787,12 @@ namespace MBSim {
 
     if (qd() != zdParent())
       updatezdRef(zdParent);
-//    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
-//    updateJacobians(t, 0);
-//    updateJacobians(t, 1);
     updateh(t, 1);
     updateh(t, 0);
-    updateM(t, 0);
-    facLLM(0);
+    updateLLM(t, 0);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     if (laSize) {
@@ -1823,7 +1816,6 @@ namespace MBSim {
 
       updategInverseKinetics(t); // necessary because of update of force direction
       updategdInverseKinetics(t); // necessary because of update of force direction
-//      updateJacobiansInverseKinetics(t, 1);
       updateWInverseKinetics(t, 1);
       updatebInverseKinetics(t);
 
@@ -1863,7 +1855,7 @@ namespace MBSim {
     updateT(t);
     updateh(t);
     updateM(t);
-    facLLM();
+    updateLLM(t);
     updateW(t);
 
     plot(t, dt);
@@ -1872,6 +1864,11 @@ namespace MBSim {
       flushCount = 0;
       H5::File::flushAllFiles();
     }
+  }
+
+  void DynamicSystemSolver::resetUpToDate() {
+    M[0].init(0);
+    Group::resetUpToDate();
   }
 
 }

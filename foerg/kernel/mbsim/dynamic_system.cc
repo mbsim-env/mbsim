@@ -122,6 +122,7 @@ namespace MBSim {
 
     for (int i = 0; i < (int) object.size(); i++)
       object[i]->updateM(t, j);
+    updM[j] = false;
   }
 
   void DynamicSystem::updatedq(double t, double dt) {
@@ -1548,6 +1549,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::resetUpToDate() {
+    updM[0] = true;
+    updM[1] = true;
     for (unsigned i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->resetUpToDate();
     for (unsigned i = 0; i < object.size(); i++)
@@ -1560,6 +1563,11 @@ namespace MBSim {
       observer[i]->resetUpToDate();
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->resetUpToDate();
+  }
+
+  const SymMat& DynamicSystem::getM(double t, int i) {
+    if(updM[i]) updateM(t,i);
+    return M[i];
   }
 
 }
