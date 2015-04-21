@@ -68,7 +68,10 @@ namespace MBSim {
 
   const Vec3& FixedRelativeFrame::getGlobalRelativePosition(double t) {
     if(updWrRP) {
-      WrRP = R->getOrientation(t)*RrRP; 
+      if(updWrRPbyParent)
+        parent->updatePositions(t);
+      else
+        WrRP = R->getOrientation(t)*RrRP; 
       updWrRP = false;
     }
     return WrRP; 
@@ -79,9 +82,6 @@ namespace MBSim {
       parent->updatePositions(t);
     else {
       setOrientation(R->getOrientation(t)*ARP);
-//      if(updWrRP)
-//      WrRP = R->getOrientation(t)*RrRP; 
-//      updWrRP = false;
       setPosition(R->getPosition(t) + getGlobalRelativePosition(t)); 
     }
     updatePos = false;

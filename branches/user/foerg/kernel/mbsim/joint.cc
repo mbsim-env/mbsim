@@ -37,6 +37,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
   Joint::Joint(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("F") {
+    C.setParent(this);
+    C.setUpdateGlobalRelativePositionByParent();
   }
 
   Joint::~Joint() {
@@ -101,14 +103,15 @@ namespace MBSim {
     h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * WF[1] + frame[1]->getJacobianOfRotation(t,j).T() * WM[1];
   }
 
+  void Joint::updatePositions(double t) {
+    C.setGlobalRelativePosition(frame[1]->getPosition(t) - frame[0]->getPosition(t));
+  }
+
   void Joint::updateg(double t) {
     Wf = refFrame->getOrientation(t) * forceDir;
     Wm = refFrame->getOrientation(t) * momentDir;
 
-    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setGlobalRelativePosition(WrP0P1);
-
-    g(IT) = Wf.T() * WrP0P1;
+    g(IT) = Wf.T() * C.getGlobalRelativePosition(t);
     g(IR) = x;
   }
 

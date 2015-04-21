@@ -95,9 +95,10 @@ namespace MBSim {
     for (int i = 0; i < (int) object.size(); i++)
       object[i]->updateh(t, k);
 
-    for(unsigned int i=0; i<linkOrdered.size(); i++) 
-      for(unsigned int j=0; j<linkOrdered[i].size(); j++) 
+    for(unsigned int i=0; i<linkOrdered.size(); i++)
+      for(unsigned int j=0; j<linkOrdered[i].size(); j++)
 	linkOrdered[i][j]->updateh(t, k);
+
     updh[k] = false;
   }
 
@@ -123,6 +124,7 @@ namespace MBSim {
 
     for (int i = 0; i < (int) object.size(); i++)
       object[i]->updateM(t, j);
+
     updM[j] = false;
   }
 
@@ -1556,6 +1558,8 @@ namespace MBSim {
     updh[1] = true;
     updM[0] = true;
     updM[1] = true;
+    updLLM[0] = true;
+    updLLM[1] = true;
     for (unsigned i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->resetUpToDate();
     for (unsigned i = 0; i < object.size(); i++)
@@ -1578,6 +1582,11 @@ namespace MBSim {
   const SymMat& DynamicSystem::getM(double t, int i) {
     if(updM[i]) updateM(t,i);
     return M[i];
+  }
+
+  const SymMat& DynamicSystem::getLLM(double t, int i) {
+    if(updLLM[i]) updateLLM(t,i);
+    return LLM[i];
   }
 
 }

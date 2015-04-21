@@ -442,12 +442,13 @@ namespace MBSim {
     }
 
     K->setOrientation(R->getOrientation(t)*APK);
-    WrPK = R->getOrientation(t)*PrPK;
-    K->setPosition(WrPK + R->getPosition(t));
+    K->setPosition(R->getPosition(t) + getGlobalRelativePosition(t));
   }
 
   void RigidBody::updateVelocities(double t) {
     if(fPrPK) {
+      qTRel = qRel(iqT);
+      uTRel = uRel(iuT);
       if(!constJT) {
         PJTT = fPrPK->parDer1(qTRel,t);
         PJT[0].set(i02,iuT,PJTT);
@@ -458,6 +459,8 @@ namespace MBSim {
     }
 
     if(fAPK) {
+      qRRel = qRel(iqR);
+      uRRel = uRel(iuR);
       if(!constJR) {
         PJRR = fTR?fAPK->parDer1(qRRel,t)*(*fTR)(qRRel):fAPK->parDer1(qRRel,t);
         PJR[0].set(i02,iuR,PJRR);
@@ -468,7 +471,7 @@ namespace MBSim {
     }
 
     K->setAngularVelocity(R->getAngularVelocity(t) + WomPK);
-    K->setVelocity(R->getVelocity(t) + WvPKrel + crossProduct(R->getAngularVelocity(t),WrPK));
+    K->setVelocity(R->getVelocity(t) + WvPKrel + crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t)));
   }
 
   void RigidBody::updateJacobians0(double t) {
@@ -523,6 +526,14 @@ namespace MBSim {
  //   }
   }
 
+  const Vec3& RigidBody::getGlobalRelativePosition(double t) {
+    if(updWrPK) {
+      WrPK = R->getOrientation(t)*PrPK;
+      updWrPK = false;
+    }
+    return WrPK;
+  }
+
   const SymMat3& RigidBody::getGlobalInertiaTensor(double t) {
     if(updWTS) {
       WThetaS = JTMJ(SThetaS,C->getOrientation(t).T());
@@ -533,6 +544,7 @@ namespace MBSim {
   
   void RigidBody::resetUpToDate() {
     Body::resetUpToDate();
+    updWrPK = true;
     updWTS = true;
   }
 

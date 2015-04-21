@@ -1020,7 +1020,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateG(double t, int j) {
-    G << SqrMat(W[j].T() * slvLLFac(LLM[j], V[j]));
+    G << SqrMat(W[j].T() * slvLLFac(getLLM(t,j), V[j]));
 
     if (checkGSize)
       ; // Gs.resize();
@@ -1410,7 +1410,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], geth(t,0)) + wb)); // slvLS because of undeterminded system of equations
+    la = slvLS(G, -(W[0].T() * slvLLFac(getLLM(t,0), geth(t,0)) + wb)); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1763,8 +1763,6 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-//    updateh(t);
-    updateLLM(t);
     if (laSize) {
       updateW(t);
       updateV(t);
@@ -1790,9 +1788,6 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-//    updateh(t, 1);
-//    updateh(t, 0);
-    updateLLM(t, 0);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     if (laSize) {

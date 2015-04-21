@@ -64,6 +64,7 @@ namespace MBSim {
       virtual void updateh(double t, int i = 0);
       virtual void updateg(double t);
       virtual void updategd(double t);
+      void updatePositions(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */

@@ -301,5 +301,10 @@ namespace MBSim {
     return M[i];
   }
 
+  const SymMat& Object::getLLM(double t, int i) {
+    if(updLLM[i]) updateLLM(t,i);
+    return LLM[i];
+  }
+
 }
 
