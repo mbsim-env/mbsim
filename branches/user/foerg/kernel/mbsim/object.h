@@ -52,14 +52,14 @@ namespace MBSim {
       virtual ~Object();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateT(double t) {};
+      virtual void updateT(double t) { }
       virtual void updateh(double t, int j=0) { }
       virtual void updateM(double t, int i=0) { }
       virtual void updatedhdz(double t);
-      virtual void updatedq(double t, double dt) { qd = T * u * dt; }
+      virtual void updatedq(double t, double dt) { qd = getT(t) * u * dt; }
       virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(getLLM(t,0), geth(t,0) * dt + r[0]); }
       virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + r[i]); }
-      virtual void updateqd(double t) { qd = T * u; }
+      virtual void updateqd(double t) { qd = getT(t) * u; }
       virtual void updatezd(double t) { updateqd(t); updateud(t); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
@@ -252,6 +252,7 @@ namespace MBSim {
       fmatvec::Vec& getqd() { return qd; };
       fmatvec::Vec& getud(int i=0) { return ud[i]; };
 
+      const fmatvec::Mat& getT(double t);
       const fmatvec::Vec& geth(double t, int i=0);
       const fmatvec::SymMat& getM(double t, int i=0);
       const fmatvec::SymMat& getLLM(double t, int i=0);
@@ -331,7 +332,7 @@ namespace MBSim {
        */
       fmatvec::SymMat LLM[2];
 
-      bool updh[2], updM[2], updLLM[2];
+      bool updT, updh[2], updM[2], updLLM[2];
   };
 
 }

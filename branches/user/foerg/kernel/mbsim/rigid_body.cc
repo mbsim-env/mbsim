@@ -48,7 +48,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true) {
 
     C=new FixedRelativeFrame("C");
     C->setUpdateByParent(1);
@@ -406,49 +406,49 @@ namespace MBSim {
 
   void RigidBody::updateqd(double t) {
     if(!constraint) {
-      qd(iqT) = uRel(iuT);
+      if(updGC) updateGeneralizedCoordinates(t);
+      qd(iqT) = uTRel;
       if(fTR)
-        qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR);
+        qd(iqR) = getT(t)*uRRel;
       else
-        qd(iqR) = uRel(iuR);
+        qd(iqR) = uRRel;
     }
   }
 
   void RigidBody::updatedq(double t, double dt) {
     if(!constraint) {
-      qd(iqT) = uRel(iuT)*dt;
+      if(updGC) updateGeneralizedCoordinates(t);
+      qd(iqT) = uTRel*dt;
       if(fTR)
-        qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR)*dt;
+        qd(iqR) = getT(t)*uRRel*dt;
       else
-        qd(iqR) = uRel(iuR)*dt;
+        qd(iqR) = uRRel*dt;
     }
   }
 
   void RigidBody::updateT(double t) {
-    if(fTR) TRel(iqR,iuR) = (*fTR)(qRel(iuR));
+    if(updGC) updateGeneralizedCoordinates(t);
+    if(fTR) TRel(iqR,iuR) = (*fTR)(qRRel);
+    updT = false;
   }
 
   void RigidBody::updatePositions(double t) {
-    if(fPrPK) {
-      qTRel = qRel(iqT);
-      uTRel = uRel(iuT);
-      PrPK = (*fPrPK)(qTRel,t);
-    }
 
-    if(fAPK) {
-      qRRel = qRel(iqR);
-      uRRel = uRel(iuR);
-      APK = (*fAPK)(qRRel,t);
-    }
+    if(updGC) updateGeneralizedCoordinates(t);
+
+    if(fPrPK) PrPK = (*fPrPK)(qTRel,t);
+
+    if(fAPK) APK = (*fAPK)(qRRel,t);
 
     K->setOrientation(R->getOrientation(t)*APK);
     K->setPosition(R->getPosition(t) + getGlobalRelativePosition(t));
   }
 
   void RigidBody::updateVelocities(double t) {
+
+    if(updGC) updateGeneralizedCoordinates(t);
+
     if(fPrPK) {
-      qTRel = qRel(iqT);
-      uTRel = uRel(iuT);
       if(!constJT) {
         PJTT = fPrPK->parDer1(qTRel,t);
         PJT[0].set(i02,iuT,PJTT);
@@ -459,8 +459,6 @@ namespace MBSim {
     }
 
     if(fAPK) {
-      qRRel = qRel(iqR);
-      uRRel = uRel(iuR);
       if(!constJR) {
         PJRR = fTR?fAPK->parDer1(qRRel,t)*(*fTR)(qRRel):fAPK->parDer1(qRRel,t);
         PJR[0].set(i02,iuR,PJRR);
@@ -474,13 +472,21 @@ namespace MBSim {
     K->setVelocity(R->getVelocity(t) + WvPKrel + crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t)));
   }
 
+  void RigidBody::updateGeneralizedCoordinates(double t) {
+    qTRel = qRel(iqT);
+    qRRel = qRel(iqR);
+    uTRel = uRel(iuT);
+    uRRel = uRel(iuR);
+    updGC = false;
+  }
+
   void RigidBody::updateJacobians0(double t) {
 
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
 
-    uTRel = uRel(iuT);
-    uRRel = uRel(iuR);
+    if(updGC) updateGeneralizedCoordinates(t);
+    
     VecV qdTRel = uTRel;
     VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
     if(fPrPK) {
@@ -544,6 +550,7 @@ namespace MBSim {
   
   void RigidBody::resetUpToDate() {
     Body::resetUpToDate();
+    updGC = true;
     updWrPK = true;
     updWTS = true;
   }

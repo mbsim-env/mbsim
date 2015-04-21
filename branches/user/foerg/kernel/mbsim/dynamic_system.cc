@@ -86,6 +86,8 @@ namespace MBSim {
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updateT(t);
+
+    updT = false;
   }
 
   void DynamicSystem::updateh(double t, int k) {
@@ -1554,6 +1556,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::resetUpToDate() {
+    updT = true;
     updh[0] = true;
     updh[1] = true;
     updM[0] = true;
@@ -1572,6 +1575,11 @@ namespace MBSim {
       observer[i]->resetUpToDate();
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->resetUpToDate();
+  }
+
+  const Mat& DynamicSystem::getT(double t) {
+    if(updT) updateT(t);
+    return T;
   }
 
   const Vec& DynamicSystem::geth(double t, int i) {

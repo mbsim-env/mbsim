@@ -285,10 +285,16 @@ namespace MBSim {
   }
 
   void Object::resetUpToDate() {
+    updT = true;
     updh[0] = true;
     updh[1] = true;
     updM[0] = true;
     updM[1] = true;
+  }
+
+  const Mat& Object::getT(double t) {
+    if(updT) updateT(t);
+    return T;
   }
 
   const Vec& Object::geth(double t, int i) {
