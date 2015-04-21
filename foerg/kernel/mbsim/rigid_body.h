@@ -167,6 +167,7 @@ namespace MBSim {
       double getMass() const { return m; }
       FixedRelativeFrame* getFrameForKinematics() { return K; };
       FixedRelativeFrame* getFrameC() { return C; };
+      const fmatvec::Vec3& getGlobalRelativePosition(double t);
       const fmatvec::SymMat3& getGlobalInertiaTensor(double t);
 
       /**
@@ -353,7 +354,7 @@ namespace MBSim {
 
       fmatvec::Vec3 WF, WM;
 
-      bool updWTS;
+      bool updWTS, updWrPK;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -53,12 +53,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t) {};
-      virtual void updateh(double t, int j=0) {};
-      virtual void updateM(double t, int i=0) {};
+      virtual void updateh(double t, int j=0) { }
+      virtual void updateM(double t, int i=0) { }
       virtual void updatedhdz(double t);
       virtual void updatedq(double t, double dt) { qd = T * u * dt; }
-      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(LLM[0], geth(t,0) * dt + r[0]); }
-      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(LLM[i], geth(t,i) + r[i]); }
+      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(getLLM(t,0), geth(t,0) * dt + r[0]); }
+      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + r[i]); }
       virtual void updateqd(double t) { qd = T * u; }
       virtual void updatezd(double t) { updateqd(t); updateud(t); }
       virtual void sethSize(int hSize_, int i=0);
@@ -202,7 +202,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); }
+      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); updLLM[i] = false; }
 
       /**
        * \return kinetic energy 
@@ -254,6 +254,7 @@ namespace MBSim {
 
       const fmatvec::Vec& geth(double t, int i=0);
       const fmatvec::SymMat& getM(double t, int i=0);
+      const fmatvec::SymMat& getLLM(double t, int i=0);
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
@@ -330,7 +331,7 @@ namespace MBSim {
        */
       fmatvec::SymMat LLM[2];
 
-      bool updh[2], updM[2];
+      bool updh[2], updM[2], updLLM[2];
   };
 
 }

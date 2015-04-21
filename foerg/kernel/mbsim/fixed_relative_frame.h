@@ -31,7 +31,7 @@ namespace MBSim {
   class FixedRelativeFrame : public Frame {
 
     public:
-      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {
+      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A), updWrRPbyParent(false) {
         updateByParent[0] = false;
         updateByParent[1] = false;
       }
@@ -63,12 +63,14 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
+      void setUpdateGlobalRelativePositionByParent() { updWrRPbyParent = true; }
+
     protected:
       Frame *R;
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP;
       std::string saved_frameOfReference;
-      bool updWrRP;
+      bool updWrRP, updWrRPbyParent;
   };
 
 }
