@@ -1410,7 +1410,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb)); // slvLS because of undeterminded system of equations
+    la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], geth(t,0)) + wb)); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1755,7 +1755,7 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-//    cout << "zdot, t = " << t << endl;
+    //cout << "zdot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
@@ -1763,7 +1763,7 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-    updateh(t);
+//    updateh(t);
     updateLLM(t);
     if (laSize) {
       updateW(t);
@@ -1779,7 +1779,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-//    cout << "plot, t = " << t << endl;
+    //cout << "plot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
@@ -1790,8 +1790,8 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-    updateh(t, 1);
-    updateh(t, 0);
+//    updateh(t, 1);
+//    updateh(t, 0);
     updateLLM(t, 0);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
@@ -1867,6 +1867,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::resetUpToDate() {
+    h[0].init(0);
+    h[1].init(0);
     M[0].init(0);
     Group::resetUpToDate();
   }

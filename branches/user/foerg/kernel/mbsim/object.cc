@@ -285,14 +285,18 @@ namespace MBSim {
   }
 
   void Object::resetUpToDate() {
-    //cout << "resetUpToDate of " << name << " ";
+    updh[0] = true;
+    updh[1] = true;
     updM[0] = true;
     updM[1] = true;
-    //cout << updM[0] << endl;
+  }
+
+  const Vec& Object::geth(double t, int i) {
+    if(updh[i]) updateh(t,i);
+    return h[i];
   }
 
   const SymMat& Object::getM(double t, int i) {
-    //cout << "getM of " << name << " " << updM[i] << endl;
     if(updM[i]) updateM(t,i);
     return M[i];
   }

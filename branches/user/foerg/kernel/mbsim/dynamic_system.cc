@@ -98,6 +98,7 @@ namespace MBSim {
     for(unsigned int i=0; i<linkOrdered.size(); i++) 
       for(unsigned int j=0; j<linkOrdered[i].size(); j++) 
 	linkOrdered[i][j]->updateh(t, k);
+    updh[k] = false;
   }
 
   void DynamicSystem::updatehInverseKinetics(double t, int j) {
@@ -467,8 +468,10 @@ namespace MBSim {
           I->setOrientation(getFrameI()->getOrientation() * APF);
         }
       }
-      for (unsigned int i = 1; i < frame.size(); i++) // kinematics of other frames can be updates from frame I
-        ((FixedRelativeFrame*) frame[i])->updatePositions(0);
+      for (unsigned int i = 1; i < frame.size(); i++) { // kinematics of other frames can be updates from frame I
+        frame[i]->resetUpToDate();
+        frame[i]->updatePositions(0);
+      }
       for (unsigned int k = 0; k < contour.size(); k++) {
         if (!(contour[k]->getFrameOfReference()))
           contour[k]->setFrameOfReference(I);
@@ -1549,6 +1552,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::resetUpToDate() {
+    updh[0] = true;
+    updh[1] = true;
     updM[0] = true;
     updM[1] = true;
     for (unsigned i = 0; i < dynamicsystem.size(); i++)
@@ -1563,6 +1568,11 @@ namespace MBSim {
       observer[i]->resetUpToDate();
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->resetUpToDate();
+  }
+
+  const Vec& DynamicSystem::geth(double t, int i) {
+    if(updh[i]) updateh(t,i);
+    return h[i];
   }
 
   const SymMat& DynamicSystem::getM(double t, int i) {

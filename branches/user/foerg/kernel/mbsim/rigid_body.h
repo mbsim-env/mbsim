@@ -167,6 +167,7 @@ namespace MBSim {
       double getMass() const { return m; }
       FixedRelativeFrame* getFrameForKinematics() { return K; };
       FixedRelativeFrame* getFrameC() { return C; };
+      const fmatvec::SymMat3& getGlobalInertiaTensor(double t);
 
       /**
        * \param RThetaR  inertia tensor
@@ -237,6 +238,8 @@ namespace MBSim {
       int getuRelSize(int i=0) const {return nu[i];}
 
       bool transformCoordinates() const {return fTR!=NULL;}
+
+      void resetUpToDate();
 
     protected:
       /**
@@ -349,6 +352,8 @@ namespace MBSim {
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
       fmatvec::Vec3 WF, WM;
+
+      bool updWTS;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
