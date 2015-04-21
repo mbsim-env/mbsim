@@ -79,15 +79,15 @@ namespace MBSim {
   }
 
   void RigidBody::updateh(double t, int j) {
-    //compute inertia in world frame
-    WThetaS = JTMJ(SThetaS,C->getOrientation(t).T());
     WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-    WM = crossProduct(WThetaS*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
+    WM = crossProduct(getGlobalInertiaTensor(t)*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
     h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(t,j)) + C->getJacobianOfRotation(t,j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(t,j));
+    updh[j] = false;
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
-    h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(WThetaS*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
+    updateh(t,1);
+    h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -509,7 +509,31 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobians1(double t) {
-    if(K != C) K->setGlobalRelativePosition(C->getOrientation(t)*K->getRelativePosition());
+ //   if(K != C) {
+ //     K->resetUpToDate();
+ //     K->updatePositions(t);
+ //     K->updateVelocities(t);
+ //     K->updateJacobians(t,1);
+ //   }
+ //   for(unsigned int i=0; i<RBF.size(); i++) {
+ //     RBF[i]->resetUpToDate();
+ //     RBF[i]->updatePositions(t);
+ //     RBF[i]->updateVelocities(t);
+ //     RBF[i]->updateJacobians(t,1);
+ //   }
+  }
+
+  const SymMat3& RigidBody::getGlobalInertiaTensor(double t) {
+    if(updWTS) {
+      WThetaS = JTMJ(SThetaS,C->getOrientation(t).T());
+      updWTS = false;
+    }
+    return WThetaS;
+  }
+  
+  void RigidBody::resetUpToDate() {
+    Body::resetUpToDate();
+    updWTS = true;
   }
 
   void RigidBody::updateqRef(const Vec& ref) {
@@ -537,9 +561,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateMNotConst(double t, int i) {
-//    cout << "updateMNotConst " << i << name << endl;
-    M[i] += m*JTJ(C->getJacobianOfTranslation(t,i)) + JTMJ(WThetaS,C->getJacobianOfRotation(t,i));
-//    cout << M[i] << endl;
+    M[i] += m*JTJ(C->getJacobianOfTranslation(t,i)) + JTMJ(getGlobalInertiaTensor(t),C->getJacobianOfRotation(t,i));
   }
 
   void RigidBody::updatePositionAndOrientationOfFrame(double t, Frame *P) {

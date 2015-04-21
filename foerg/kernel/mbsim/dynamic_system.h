@@ -278,6 +278,7 @@ namespace MBSim {
       const fmatvec::Vec& getcorr() const { return corr; };
       fmatvec::Vec& getcorr() { return corr; };
 
+      const fmatvec::Vec& geth(double t, int i=0);
       const fmatvec::SymMat& getM(double t, int i=0);
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
@@ -956,7 +957,7 @@ namespace MBSim {
 
       std::string saved_frameOfReference;
 
-      bool updM[2];
+      bool updh[2], updM[2];
   };
 }
 

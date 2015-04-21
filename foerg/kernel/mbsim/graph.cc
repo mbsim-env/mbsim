@@ -52,17 +52,17 @@ namespace MBSim {
   }
 
   void Graph::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ud[0] = slvLLFac(LLM[0], geth(t,0)*dt+r[0]);
   }
 
   void Graph::updateud(double t, int j) {
-    ud[j] =  slvLLFac(LLM[j], h[j]+r[j]);
+    ud[j] =  slvLLFac(LLM[j], geth(t,j)+r[j]);
   }
 
   void Graph::updatezd(double t) {
     for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i)
       (**i).updateqd(t);
-    ud[0] = slvLLFac(LLM[0], h[0]+r[0]);
+    ud[0] = slvLLFac(LLM[0], geth(t,0)+r[0]);
   }
 
   void Graph::sethSize0(int hSize_) {

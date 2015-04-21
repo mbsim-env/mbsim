@@ -57,8 +57,8 @@ namespace MBSim {
       virtual void updateM(double t, int i=0) {};
       virtual void updatedhdz(double t);
       virtual void updatedq(double t, double dt) { qd = T * u * dt; }
-      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]); }
-      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(LLM[i], h[i] + r[i]); }
+      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(LLM[0], geth(t,0) * dt + r[0]); }
+      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(LLM[i], geth(t,i) + r[i]); }
       virtual void updateqd(double t) { qd = T * u; }
       virtual void updatezd(double t) { updateqd(t); updateud(t); }
       virtual void sethSize(int hSize_, int i=0);
@@ -252,6 +252,7 @@ namespace MBSim {
       fmatvec::Vec& getqd() { return qd; };
       fmatvec::Vec& getud(int i=0) { return ud[i]; };
 
+      const fmatvec::Vec& geth(double t, int i=0);
       const fmatvec::SymMat& getM(double t, int i=0);
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
@@ -329,7 +330,7 @@ namespace MBSim {
        */
       fmatvec::SymMat LLM[2];
 
-      bool updM[2];
+      bool updh[2], updM[2];
   };
 
 }
