@@ -1762,7 +1762,6 @@ namespace MBSim {
     }
     updateg(t);
     updategd(t);
-    updateT(t);
     if (laSize) {
       updateW(t);
       updateV(t);
@@ -1787,7 +1786,6 @@ namespace MBSim {
       updatezdRef(zdParent);
     updateg(t);
     updategd(t);
-    updateT(t);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     if (laSize) {
