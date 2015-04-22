@@ -71,7 +71,7 @@ namespace MBSim {
       void updateh(double t, int j=0);
       void updatehInverseKinetics(double t, int j=0);
       void updateStateDerivativeDependentVariables(double t);
-      void updateM(double t, int i=0) { (this->*updateM_)(t,i); updM[i] = false; }
+      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       void updateGeneralizedCoordinates(double t); 
       void updatePositions(double t); 
       void updateVelocities(double t);

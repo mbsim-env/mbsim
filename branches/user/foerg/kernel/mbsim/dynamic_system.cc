@@ -86,8 +86,6 @@ namespace MBSim {
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updateT(t);
-
-    updT = false;
   }
 
   void DynamicSystem::updateh(double t, int k) {
@@ -100,8 +98,6 @@ namespace MBSim {
     for(unsigned int i=0; i<linkOrdered.size(); i++)
       for(unsigned int j=0; j<linkOrdered[i].size(); j++)
 	linkOrdered[i][j]->updateh(t, k);
-
-    updh[k] = false;
   }
 
   void DynamicSystem::updatehInverseKinetics(double t, int j) {
@@ -126,8 +122,6 @@ namespace MBSim {
 
     for (int i = 0; i < (int) object.size(); i++)
       object[i]->updateM(t, j);
-
-    updM[j] = false;
   }
 
   void DynamicSystem::updatedq(double t, double dt) {
@@ -255,16 +249,12 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updatewb(t, j);
-
-    updwb = false;
   }
 
   void DynamicSystem::updateW(double t, int j) {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updateW(t, j);
-
-    updW[j] = false;
   }
 
   void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
@@ -291,8 +281,6 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updateV(t, j);
-
-    updV[j] = false;
   }
 
   void DynamicSystem::updateg(double t) {
@@ -1562,18 +1550,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::resetUpToDate() {
-    updT = true;
-    updh[0] = true;
-    updh[1] = true;
-    updM[0] = true;
-    updM[1] = true;
-    updLLM[0] = true;
-    updLLM[1] = true;
-    updW[0] = true;
-    updW[1] = true;
-    updV[0] = true;
-    updV[1] = true;
-    updwb = true;
     for (unsigned i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->resetUpToDate();
     for (unsigned i = 0; i < object.size(); i++)
@@ -1589,43 +1565,43 @@ namespace MBSim {
   }
 
   const Mat& DynamicSystem::getT(double t) {
-    if(updT) updateT(t);
+    if(ds->updateT()) ds->updateT(t);
     return T;
   }
 
   const Vec& DynamicSystem::geth(double t, int i) {
-    if(updh[i]) updateh(t,i);
+    if(ds->updateh(i)) ds->updateh(t,i);
     return h[i];
-  }
-
-  const SymMat& DynamicSystem::getM(double t, int i) {
-    if(updM[i]) updateM(t,i);
-    return M[i];
-  }
-
-  const SymMat& DynamicSystem::getLLM(double t, int i) {
-    if(updLLM[i]) updateLLM(t,i);
-    return LLM[i];
-  }
-
-  const Mat& DynamicSystem::getW(double t, int i) {
-    if(updW[i]) updateW(t,i);
-    return W[i];
-  }
-
-  const Mat& DynamicSystem::getV(double t, int i) {
-    if(updV[i]) updateV(t,i);
-    return V[i];
-  }
-
-  const Vec& DynamicSystem::getwb(double t) {
-    if(updwb) updatewb(t);
-    return wb;
   }
 
   const Vec& DynamicSystem::getr(double t, int i) {
     if(ds->updater(i)) ds->updater(t,i);
     return r[i];
+  }
+
+  const SymMat& DynamicSystem::getM(double t, int i) {
+    if(ds->updateM(i)) ds->updateM(t,i);
+    return M[i];
+  }
+
+  const SymMat& DynamicSystem::getLLM(double t, int i) {
+    if(ds->updateLLM(i)) ds->updateLLM(t,i);
+    return LLM[i];
+  }
+
+  const Mat& DynamicSystem::getW(double t, int i) {
+    if(ds->updateW(i)) ds->updateW(t,i);
+    return W[i];
+  }
+
+  const Mat& DynamicSystem::getV(double t, int i) {
+    if(ds->updateV(i)) ds->updateV(t,i);
+    return V[i];
+  }
+
+  const Vec& DynamicSystem::getwb(double t) {
+    if(ds->updatewb()) ds->updatewb(t);
+    return wb;
   }
 
 }

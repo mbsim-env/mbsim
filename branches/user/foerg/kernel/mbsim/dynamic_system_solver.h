@@ -141,8 +141,10 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateT(double t);
       virtual void updateh(double t, int i=0);
       virtual void updateM(double t, int i=0);
+      virtual void updateLLM(double t, int i=0);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
 
@@ -519,7 +521,14 @@ namespace MBSim {
 
       void resetUpToDate();
 
+      bool updateT() { return updT; }
+      bool updateM(int j) { return updM[j]; }
+      bool updateLLM(int j) { return updLLM[j]; }
+      bool updateh(int j) { return updh[j]; }
       bool updater(int j) { return updr[j]; }
+      bool updateW(int j) { return updW[j]; }
+      bool updateV(int j) { return updV[j]; }
+      bool updatewb() { return updwb; }
 
     protected:
       /**
@@ -786,7 +795,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updG, updr[2];
+      bool updT, updh[2], updr[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updG;
 
     private:
       /**

@@ -82,7 +82,6 @@ namespace MBSim {
     WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
     WM = crossProduct(getGlobalInertiaTensor(t)*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
     h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(t,j)) + C->getJacobianOfRotation(t,j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(t,j));
-    updh[j] = false;
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
@@ -429,7 +428,6 @@ namespace MBSim {
   void RigidBody::updateT(double t) {
     if(updGC) updateGeneralizedCoordinates(t);
     if(fTR) TRel(iqR,iuR) = (*fTR)(qRRel);
-    updT = false;
   }
 
   void RigidBody::updatePositions(double t) {
