@@ -79,7 +79,6 @@ namespace MBSim {
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); }
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); }
       virtual void updateStateDerivativeDependentVariables(double t) {}
-      virtual void updatehInverseKinetics(double t, int i=0) {}
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */

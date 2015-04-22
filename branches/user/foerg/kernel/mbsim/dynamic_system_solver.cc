@@ -738,10 +738,7 @@ namespace MBSim {
   void DynamicSystemSolver::updateh(double t, int j) {
 //    cout << t << " " << j << endl;
     h[j].init(0);
-    if(j==1) 
-      Group::updatehInverseKinetics(t, j);
-    else 
-      Group::updateh(t, j);
+    Group::updateh(t, j);
     updh[j] = false;
   }
 
@@ -1804,7 +1801,7 @@ namespace MBSim {
 
     updatezd(t);
     if (true) {
-      updateStateDerivativeDependentVariables(t); // TODO: verbinden mit updatehInverseKinetics
+      updateStateDerivativeDependentVariables(t);
 
       updategInverseKinetics(t); // necessary because of update of force direction
       updategdInverseKinetics(t); // necessary because of update of force direction
