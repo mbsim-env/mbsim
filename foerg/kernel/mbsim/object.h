@@ -202,7 +202,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); updLLM[i] = false; }
+      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); }
 
       /**
        * \return kinetic energy 
@@ -265,8 +265,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-
-      void resetUpToDate();
 
     protected:
       /**
@@ -333,7 +331,6 @@ namespace MBSim {
        */
       fmatvec::SymMat LLM[2];
 
-      bool updT, updh[2], updM[2], updLLM[2];
   };
 
 }

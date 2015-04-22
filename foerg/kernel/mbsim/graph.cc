@@ -139,7 +139,6 @@ namespace MBSim {
 
   void Graph::updateLLM(double t, int i) {
     LLM[i] = facLL(getM(t,i)); 
-    updLLM[i] = false;
   }
 
   void Graph::addObject(int level, Object* object) {

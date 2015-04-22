@@ -742,6 +742,7 @@ namespace MBSim {
       Group::updatehInverseKinetics(t, j);
     else 
       Group::updateh(t, j);
+    updh[j] = false;
   }
 
   Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
@@ -833,9 +834,20 @@ namespace MBSim {
     THROW_MBSIMERROR("Internal error");
   }
 
+  void DynamicSystemSolver::updateT(double t) {
+    Group::updateT(t);
+    updT = false;
+  }
+
   void DynamicSystemSolver::updateM(double t, int i) {
     M[i].init(0);
     Group::updateM(t, i);
+    updM[i] = false;
+  }
+
+  void DynamicSystemSolver::updateLLM(double t, int i) {
+    Group::updateLLM(t, i);
+    updLLM[i] = false;
   }
 
   void DynamicSystemSolver::updateStateDependentVariables(double t) {
@@ -1847,15 +1859,22 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::resetUpToDate() {
-    h[0].init(0);
-    h[1].init(0);
-    M[0].init(0);
-//    W[0].init(0);
-//    W[1].init(0);
-    Group::resetUpToDate();
-    updG = true;
+    updT = true;
+    updh[0] = true;
+    updh[1] = true;
     updr[0] = true;
     updr[1] = true;
+    updM[0] = true;
+    updM[1] = true;
+    updLLM[0] = true;
+    updLLM[1] = true;
+    updW[0] = true;
+    updW[1] = true;
+    updV[0] = true;
+    updV[1] = true;
+    updwb = true;
+    updG = true;
+    Group::resetUpToDate();
   }
 
   const SqrMat& DynamicSystemSolver::getG(double t) {

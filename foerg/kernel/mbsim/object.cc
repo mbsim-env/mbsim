@@ -284,37 +284,29 @@ namespace MBSim {
     return Element::writeXMLFile(parent);
   }
 
-  void Object::resetUpToDate() {
-    updT = true;
-    updh[0] = true;
-    updh[1] = true;
-    updM[0] = true;
-    updM[1] = true;
-  }
-
   const Mat& Object::getT(double t) {
-    if(updT) updateT(t);
+    if(ds->updateT()) ds->updateT(t);
     return T;
   }
 
   const Vec& Object::geth(double t, int i) {
-    if(updh[i]) updateh(t,i);
+    if(ds->updateh(i)) ds->updateh(t,i);
     return h[i];
-  }
-
-  const SymMat& Object::getM(double t, int i) {
-    if(updM[i]) updateM(t,i);
-    return M[i];
-  }
-
-  const SymMat& Object::getLLM(double t, int i) {
-    if(updLLM[i]) updateLLM(t,i);
-    return LLM[i];
   }
 
   const Vec& Object::getr(double t, int i) {
     if(ds->updater(i)) ds->updater(t,i);
     return r[i];
+  }
+
+  const SymMat& Object::getM(double t, int i) {
+    if(ds->updateM(i)) ds->updateM(t,i);
+    return M[i];
+  }
+
+  const SymMat& Object::getLLM(double t, int i) {
+    if(ds->updateLLM(i)) ds->updateLLM(t,i);
+    return LLM[i];
   }
 
 }

@@ -57,8 +57,6 @@ namespace MBSim {
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (*i)->updateLLM(t,j);
-
-    updLLM[j] = false;
   }
 
   void Group::updateStateDependentVariables(double t) {

@@ -962,8 +962,6 @@ namespace MBSim {
       fmatvec::Vec corr;
 
       std::string saved_frameOfReference;
-
-      bool updT, updh[2], updM[2], updLLM[2], updW[2], updV[2], updwb;
   };
 }
 
