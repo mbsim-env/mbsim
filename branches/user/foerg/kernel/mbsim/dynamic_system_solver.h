@@ -218,6 +218,9 @@ namespace MBSim {
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
+      const fmatvec::SqrMat& getG(double t);
+      const fmatvec::SparseMat& getGs(double t);
+
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
       const fmatvec::Vec& getlaParent() const { return laParent; }
@@ -516,6 +519,8 @@ namespace MBSim {
 
       void resetUpToDate();
 
+      bool updater(int j) { return updr[j]; }
+
     protected:
       /**
        * \brief mass matrix
@@ -780,6 +785,8 @@ namespace MBSim {
       int rootID;
 
       double gTol, gdTol, gddTol, laTol, LaTol;
+
+      bool updG, updr[2];
 
     private:
       /**

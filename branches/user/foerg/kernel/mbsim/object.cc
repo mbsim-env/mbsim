@@ -312,5 +312,10 @@ namespace MBSim {
     return LLM[i];
   }
 
+  const Vec& Object::getr(double t, int i) {
+    if(ds->updater(i)) ds->updater(t,i);
+    return r[i];
+  }
+
 }
 
