@@ -100,14 +100,6 @@ namespace MBSim {
 	linkOrdered[i][j]->updateh(t, k);
   }
 
-  void DynamicSystem::updatehInverseKinetics(double t, int j) {
-    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatehInverseKinetics(t, j);
-
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updatehInverseKinetics(t, j);
-  }
-
   void DynamicSystem::updateStateDerivativeDependentVariables(double t) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updateStateDerivativeDependentVariables(t);

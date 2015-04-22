@@ -82,11 +82,7 @@ namespace MBSim {
     WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
     WM = crossProduct(getGlobalInertiaTensor(t)*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
     h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(t,j)) + C->getJacobianOfRotation(t,j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(t,j));
-  }
-
-  void RigidBody::updatehInverseKinetics(double t, int j) {
-    updateh(t,1);
-    h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
+    if(j==1) h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
