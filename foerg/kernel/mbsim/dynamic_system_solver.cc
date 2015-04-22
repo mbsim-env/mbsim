@@ -736,8 +736,12 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateh(double t, int j) {
+//    cout << t << " " << j << endl;
     h[j].init(0);
-    Group::updateh(t, j);
+    if(j==1) 
+      Group::updatehInverseKinetics(t, j);
+    else 
+      Group::updateh(t, j);
   }
 
   Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
@@ -852,7 +856,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updater(double t, int j) {
-    r[j] = V[j] * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    r[j] = getV(t,j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    updr[j] = false;
   }
 
   void DynamicSystemSolver::updatewb(double t, int j) {
@@ -866,7 +871,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateV(double t, int j) {
-    V[j] = W[j];
+    V[j] = getW(t,j);
     Group::updateV(t, j);
   }
 
@@ -1020,7 +1025,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateG(double t, int j) {
-    G << SqrMat(W[j].T() * slvLLFac(getLLM(t,j), V[j]));
+    G << SqrMat(getW(t,j).T() * slvLLFac(getLLM(t,j), getV(t,j)));
 
     if (checkGSize)
       ; // Gs.resize();
@@ -1031,6 +1036,8 @@ namespace MBSim {
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
     Gs << G;
+
+    updG = false;
   }
 
   void DynamicSystemSolver::decreaserFactors() {
@@ -1410,7 +1417,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(W[0].T() * slvLLFac(getLLM(t,0), geth(t,0)) + wb)); // slvLS because of undeterminded system of equations
+    la = slvLS(getG(t), -(getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t))); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1762,14 +1769,7 @@ namespace MBSim {
     }
     updateg(t);
     updategd(t);
-    if (laSize) {
-      updateW(t);
-      updateV(t);
-      updateG(t);
-      updatewb(t);
-      computeConstraintForces(t);
-    }
-    updater(t);
+    if (laSize) computeConstraintForces(t);
     updatezd(t);
 
     return zdParent;
@@ -1788,24 +1788,11 @@ namespace MBSim {
     updategd(t);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    if (laSize) {
+    if (laSize) computeConstraintForces(t);
 
-      updateW(t, 1);
-      updateV(t, 1);
-      updateW(t, 0);
-      updateV(t, 0);
-      updateG(t);
-      updatewb(t);
-      computeConstraintForces(t);
-    }
-
-    updater(t, 0);
-    updater(t, 1);
     updatezd(t);
     if (true) {
       updateStateDerivativeDependentVariables(t); // TODO: verbinden mit updatehInverseKinetics
-
-      updatehInverseKinetics(t, 1); // Accelerations of objects
 
       updategInverseKinetics(t); // necessary because of update of force direction
       updategdInverseKinetics(t); // necessary because of update of force direction
@@ -1819,7 +1806,7 @@ namespace MBSim {
       Vec b(m1 + m2);
       A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
       A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
-      b(0, m1 - 1) = -h[1] - r[1];
+      b(0, m1 - 1) = -geth(t,1) - getr(t,1);
       laInverseKinetics = slvLL(JTJ(A), A.T() * b);
     }
 
@@ -1863,7 +1850,22 @@ namespace MBSim {
     h[0].init(0);
     h[1].init(0);
     M[0].init(0);
+//    W[0].init(0);
+//    W[1].init(0);
     Group::resetUpToDate();
+    updG = true;
+    updr[0] = true;
+    updr[1] = true;
+  }
+
+  const SqrMat& DynamicSystemSolver::getG(double t) {
+    if(updG) updateG(t);
+    return G;
+  }
+
+  const SparseMat& DynamicSystemSolver::getGs(double t) {
+    if(updG) updateG(t);
+    return Gs;
   }
 
 }

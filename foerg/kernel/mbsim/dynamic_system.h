@@ -282,6 +282,10 @@ namespace MBSim {
       const fmatvec::Vec& geth(double t, int i=0);
       const fmatvec::SymMat& getM(double t, int i=0);
       const fmatvec::SymMat& getLLM(double t, int i=0);
+      const fmatvec::Mat& getW(double t, int i=0);
+      const fmatvec::Mat& getV(double t, int i=0);
+      const fmatvec::Vec& getwb(double t);
+      const fmatvec::Vec& getr(double t, int i=0);
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
@@ -959,7 +963,7 @@ namespace MBSim {
 
       std::string saved_frameOfReference;
 
-      bool updT, updh[2], updM[2], updLLM[2];
+      bool updT, updh[2], updM[2], updLLM[2], updW[2], updV[2], updwb;
   };
 }
 

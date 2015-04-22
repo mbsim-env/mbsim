@@ -255,12 +255,16 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updatewb(t, j);
+
+    updwb = false;
   }
 
   void DynamicSystem::updateW(double t, int j) {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updateW(t, j);
+
+    updW[j] = false;
   }
 
   void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
@@ -287,6 +291,8 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updateV(t, j);
+
+    updV[j] = false;
   }
 
   void DynamicSystem::updateg(double t) {
@@ -1563,6 +1569,11 @@ namespace MBSim {
     updM[1] = true;
     updLLM[0] = true;
     updLLM[1] = true;
+    updW[0] = true;
+    updW[1] = true;
+    updV[0] = true;
+    updV[1] = true;
+    updwb = true;
     for (unsigned i = 0; i < dynamicsystem.size(); i++)
       dynamicsystem[i]->resetUpToDate();
     for (unsigned i = 0; i < object.size(); i++)
@@ -1595,6 +1606,26 @@ namespace MBSim {
   const SymMat& DynamicSystem::getLLM(double t, int i) {
     if(updLLM[i]) updateLLM(t,i);
     return LLM[i];
+  }
+
+  const Mat& DynamicSystem::getW(double t, int i) {
+    if(updW[i]) updateW(t,i);
+    return W[i];
+  }
+
+  const Mat& DynamicSystem::getV(double t, int i) {
+    if(updV[i]) updateV(t,i);
+    return V[i];
+  }
+
+  const Vec& DynamicSystem::getwb(double t) {
+    if(updwb) updatewb(t);
+    return wb;
+  }
+
+  const Vec& DynamicSystem::getr(double t, int i) {
+    if(ds->updater(i)) ds->updater(t,i);
+    return r[i];
   }
 
 }
