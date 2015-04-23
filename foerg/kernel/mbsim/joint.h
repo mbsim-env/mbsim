@@ -65,6 +65,8 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateForces(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -166,7 +168,27 @@ namespace MBSim {
       }
 #endif
 
-    void resetUpToDate() { C.resetUpToDate(); }
+    void resetUpToDate();
+
+    const fmatvec::Vec3& getGlobalRelativeVelocity(double t) {
+      if(updVel) updateVelocities(t);
+      return WvP0P1;
+    }
+
+    const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) {
+      if(updVel) updateVelocities(t);
+      return WomP0P1;
+    }
+
+    const fmatvec::Mat3xV& getGlobalForceDirections(double t) {
+      if(updF) updateForces(t);
+      return Wf;
+    }
+
+    const fmatvec::Mat3xV& getGlobalMomentDirections(double t) {
+      if(updF) updateForces(t);
+      return Wm;
+    }
 
     protected:
       /**
@@ -229,6 +251,8 @@ namespace MBSim {
        * \brief own frame located in second partner with same orientation as first partner 
        */
       FixedRelativeFrame C;
+
+      bool updVel, updF;
 
     private:
       std::string saved_ref1, saved_ref2;

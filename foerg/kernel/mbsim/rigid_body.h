@@ -77,7 +77,7 @@ namespace MBSim {
       void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
       void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
       void updateJacobians0(double t);
-      void updateJacobians1(double t);
+      void updateJacobians1(double t) { }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -168,6 +168,9 @@ namespace MBSim {
       FixedRelativeFrame* getFrameForKinematics() { return K; };
       FixedRelativeFrame* getFrameC() { return C; };
       const fmatvec::Vec3& getGlobalRelativePosition(double t);
+      const fmatvec::Vec3& getGlobalRelativeVelocity(double t);
+      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t);
+
       const fmatvec::SymMat3& getGlobalInertiaTensor(double t);
 
       /**
@@ -232,8 +235,6 @@ namespace MBSim {
       fmatvec::Mat& getTRel() {return TRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
-      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
@@ -354,7 +355,7 @@ namespace MBSim {
 
       fmatvec::Vec3 WF, WM;
 
-      bool updGC, updWTS, updWrPK;
+      bool updGC, updWTS;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

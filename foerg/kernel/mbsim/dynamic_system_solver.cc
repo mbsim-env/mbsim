@@ -1776,8 +1776,6 @@ namespace MBSim {
     if (q() != zParent()) {
       updatezRef(zParent);
     }
-    updateg(t);
-    updategd(t);
     if (laSize) computeConstraintForces(t);
     updatezd(t);
 
@@ -1793,8 +1791,6 @@ namespace MBSim {
 
     if (qd() != zdParent())
       updatezdRef(zdParent);
-    updateg(t);
-    updategd(t);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     if (laSize) computeConstraintForces(t);
@@ -1803,14 +1799,9 @@ namespace MBSim {
     if (true) {
       updateStateDerivativeDependentVariables(t);
 
-      updategInverseKinetics(t); // necessary because of update of force direction
-      updategdInverseKinetics(t); // necessary because of update of force direction
-      updateWInverseKinetics(t, 1);
-      updatebInverseKinetics(t);
-
-      int n = WInverseKinetics[1].cols();
+      int n = getWInverseKinetics(t,1).cols();
       int m1 = WInverseKinetics[1].rows();
-      int m2 = bInverseKinetics.rows();
+      int m2 = getbInverseKinetics(t).rows();
       Mat A(m1 + m2, n);
       Vec b(m1 + m2);
       A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
