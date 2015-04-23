@@ -67,15 +67,15 @@ namespace MBSim {
 
   void Joint::updatewb(double t, int j) {
     Mat3xV WJT = refFrame->getOrientation(t) * JT;
-    VecV sdT = WJT.T() * (WvP0P1);
+    VecV sdT = WJT.T() * (getGlobalRelativeVelocity(t));
 
-    wb(0, Wf.cols() - 1) += Wf.T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t,j) - C.getGyroscopicAccelerationOfTranslation(t,j) - crossProduct(C.getAngularVelocity(t), WvP0P1 + WJT * sdT));
-    wb(Wf.cols(), Wm.cols() + Wf.cols() - 1) += Wm.T() * (frame[1]->getGyroscopicAccelerationOfRotation(t,j) - C.getGyroscopicAccelerationOfRotation(t,j) - crossProduct(C.getAngularVelocity(t), WomP0P1));
+    wb(0, Wf.cols() - 1) += getGlobalForceDirections(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t,j) - C.getGyroscopicAccelerationOfTranslation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
+    wb(Wf.cols(), Wm.cols() + Wf.cols() - 1) += getGlobalMomentDirections(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t,j) - C.getGyroscopicAccelerationOfRotation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
   void Joint::updateW(double t, int j) {
-    fF[1].set(Index(0, 2), Index(0, Wf.cols() - 1), Wf);
-    fM[1].set(Index(0, 2), Index(Wf.cols(), Wf.cols() + Wm.cols() - 1), Wm);
+    fF[1].set(Index(0, 2), Index(0, Wf.cols() - 1), getGlobalForceDirections(t));
+    fM[1].set(Index(0, 2), Index(Wf.cols(), Wf.cols() + Wm.cols() - 1), getGlobalMomentDirections(t));
     fF[0] = -fF[1];
     fM[0] = -fM[1];
 
@@ -85,50 +85,63 @@ namespace MBSim {
 
   void Joint::updateh(double t, int j) {
     if (ffl and not(ffl->isSetValued())) {
-      gd(IT) = Wf.T() * WvP0P1;
       for (int i = 0; i < forceDir.cols(); i++)
-        la(i) = (*ffl)(g(i), gd(i));
-      WF[1] = Wf * la(IT);
+        la(i) = (*ffl)(getg(t)(i), getgd(t)(i));
+      WF[1] = getGlobalForceDirections(t) * la(IT);
       WF[0] = -WF[1];
     }
 
     if (fml and not(fml->isSetValued())) {
-      gd(IR) = Wm.T() * WomP0P1;
       for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
-        la(i) = (*fml)(g(i), gd(i));
-      WM[1] = Wm * la(IR);
+        la(i) = (*fml)(getg(t)(i), getgd(t)(i));
+      WM[1] = getGlobalMomentDirections(t) * la(IR);
       WM[0] = -WM[1];
     }
     h[j][0] += C.getJacobianOfTranslation(t,j).T() * WF[0] + C.getJacobianOfRotation(t,j).T() * WM[0];
     h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * WF[1] + frame[1]->getJacobianOfRotation(t,j).T() * WM[1];
   }
 
+  void Joint::resetUpToDate() { 
+    MechanicalLink::resetUpToDate(); 
+    C.resetUpToDate(); 
+    updVel = true; 
+    updF = true; 
+  }
+
   void Joint::updatePositions(double t) {
     C.setGlobalRelativePosition(frame[1]->getPosition(t) - frame[0]->getPosition(t));
   }
 
-  void Joint::updateg(double t) {
+  void Joint::updateVelocities(double t) {
+    WvP0P1 = frame[1]->getVelocity(t) - C.getVelocity(t);
+    WomP0P1 = frame[1]->getAngularVelocity(t) - C.getAngularVelocity(t);
+    updVel = false;
+  }
+
+  void Joint::updateForces(double t) {
     Wf = refFrame->getOrientation(t) * forceDir;
     Wm = refFrame->getOrientation(t) * momentDir;
+    updF = false;
+  }
 
-    g(IT) = Wf.T() * C.getGlobalRelativePosition(t);
+  void Joint::updateg(double t) {
+    g(IT) = getGlobalForceDirections(t).T() * C.getGlobalRelativePosition(t);
     g(IR) = x;
+    updg = false;
   }
 
   void Joint::updategd(double t) {
-    WvP0P1 = frame[1]->getVelocity(t) - C.getVelocity(t);
-    WomP0P1 = frame[1]->getAngularVelocity(t) - C.getAngularVelocity(t);
-
-    gd(IT) = Wf.T() * WvP0P1;
-    gd(IR) = Wm.T() * WomP0P1;
+    gd(IT) = getGlobalForceDirections(t).T() * getGlobalRelativeVelocity(t);
+    gd(IR) = getGlobalMomentDirections(t).T() * getGlobalRelativeAngularVelocity(t);
+    updgd = false;
   }
 
   void Joint::updatexd(double t) {
-    xd = gd(IR);
+    xd = getgd(t)(IR);
   }
 
   void Joint::updatedx(double t, double dt) {
-    xd = gd(IR) * dt;
+    xd = getgd(t)(IR) * dt;
   }
 
   void Joint::calcxSize() {
@@ -593,9 +606,9 @@ namespace MBSim {
       }
       if (getPlotFeature(linkKinematics) == enabled) {
         for (int j = 0; j < g.size(); j++)
-          plotVector.push_back(g(j));
+          plotVector.push_back(getg(t)(j));
         for (int j = 0; j < gd.size(); j++)
-          plotVector.push_back(gd(j));
+          plotVector.push_back(getgd(t)(j));
       }
       MechanicalLink::plot(t, dt);
     }
@@ -671,8 +684,8 @@ namespace MBSim {
 
   void InverseKineticsJoint::updateb(double t) {
     if (bSize) {
-      b(Index(0, bSize - 1), Index(0, 2)) = body->getPJT().T();
-      b(Index(0, bSize - 1), Index(3, 5)) = body->getPJR().T();
+      b(Index(0, bSize - 1), Index(0, 2)) = body->getPJT(t).T();
+      b(Index(0, bSize - 1), Index(3, 5)) = body->getPJR(t).T();
     }
   }
 

@@ -1596,5 +1596,15 @@ namespace MBSim {
     return wb;
   }
 
+  const Mat& DynamicSystem::getWInverseKinetics(double t, int i) {
+    ds->updateWInverseKinetics(t,i);
+    return WInverseKinetics[i];
+  }
+
+  const Mat& DynamicSystem::getbInverseKinetics(double t) {
+    ds->updatebInverseKinetics(t);
+    return bInverseKinetics;
+  }
+
 }
 

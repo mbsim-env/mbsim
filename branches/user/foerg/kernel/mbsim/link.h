@@ -396,6 +396,11 @@ namespace MBSim {
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
+      void resetUpToDate() { updg = true; updgd = true; }
+
+      const fmatvec::Vec& getg(double t) { if(updg) updateg(t); return g; }
+      const fmatvec::Vec& getgd(double t) { if(updgd) updategd(t); return gd; }
+
       /**
        * \brief saves contact force parameters for use as starting value in next time step
        */
@@ -581,6 +586,8 @@ namespace MBSim {
 
       int corrSize, corrInd;
       fmatvec::Vec corr;
+
+      bool updg, updgd;
   };
 }
 
