@@ -48,6 +48,7 @@ namespace MBSim {
   void Frame::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
+        if(updatePos) updatePositions(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
         Vec3 cardan=AIK2Cardan(AWP);
@@ -55,12 +56,14 @@ namespace MBSim {
           plotVector.push_back(cardan(i));
       }
       if(getPlotFeature(globalVelocity)==enabled) {
+        if(updateVel) updateVelocities(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
       if(getPlotFeature(globalAcceleration)==enabled) {
+        if(updateAcc) updateAccelerations(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
         for(int i=0; i<3; i++)
@@ -195,20 +198,12 @@ namespace MBSim {
   }
 
   const Vec3& Frame::getAcceleration(double t) {
-    if(updateAcc) {
-//      updateAcc = false;
-//      updateAcceleration(t); 
-//      updateAngularVelocity(t); 
-    }
+    if(updateAcc) updateAccelerations(t); 
     return getAcceleration(); 
   }
 
   const Vec3& Frame::getAngularAcceleration(double t) {
-    if(updateAcc) {
-//      updateAcc = false;
-//      updateAcceleration(t); 
-//      updateAngularVelocity(t); 
-    }
+    if(updateAcc) updateAccelerations(t); 
     return getAngularAcceleration(); 
   }
 

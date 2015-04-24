@@ -157,7 +157,7 @@ namespace MBSim {
 
   void CompoundContour::updateStateDerivativeDependentVariables(const Vec &ud, double t) {
     for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateStateDerivativeDependentVariables(ud);
+      frame[i]->updateAccelerations(t);
   }
 
 }

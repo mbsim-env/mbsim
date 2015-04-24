@@ -54,11 +54,8 @@ namespace MBSim {
       const fmatvec::Vec3& getGlobalRelativePosition(double t);
       void updatePositions(double t);
       void updateVelocities(double t); 
+      void updateAccelerations(double t); 
       void updateJacobians(double t, int j=0);
-      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
-        setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
-        setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
-      }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

@@ -69,11 +69,11 @@ namespace MBSim {
       void updateqd(double t); 
       void updateT(double t);
       void updateh(double t, int j=0);
-      void updateStateDerivativeDependentVariables(double t);
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       void updateGeneralizedCoordinates(double t); 
       void updatePositions(double t); 
       void updateVelocities(double t);
+      void updateAccelerations(double t);
       void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
       void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
       void updateJacobians0(double t);

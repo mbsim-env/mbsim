@@ -97,6 +97,16 @@ namespace MBSim {
     updateVel = false;
   }
 
+  void FixedRelativeFrame::updateAccelerations(double t) { 
+    if(updateByParent[0])
+      parent->updateAccelerations(t);
+    else {
+      setAngularAcceleration(R->getAngularAcceleration(t));
+      setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
+    }
+    updateAcc = true;
+  }
+
   void FixedRelativeFrame::updateJacobians(double t, int j) {
     if(updateByParent[j])
       parent->updateJacobians(t,j);
