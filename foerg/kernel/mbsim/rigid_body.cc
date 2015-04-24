@@ -85,13 +85,6 @@ namespace MBSim {
     if(j==1) h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
   }
 
-  void RigidBody::updateStateDerivativeDependentVariables(double t) {
-    for(unsigned int i=0; i<frame.size(); i++)
-      ((FixedRelativeFrame*)frame[i])->updateStateDerivativeDependentVariables(udall[0]);
-    for(unsigned int i=0; i<RBC.size(); i++)
-      RBC[i]->updateStateDerivativeDependentVariables(udall[0],t);
-  }
-
   void RigidBody::calcqSize() {
     Body::calcqSize();
     qSize = constraint ? 0 : nq;
@@ -333,7 +326,7 @@ namespace MBSim {
   }
 
   void RigidBody::initz() {
-    Object::initz();
+    Body::initz();
     if(!constraint) { 
       qRel>>q;
       uRel>>u;
@@ -471,6 +464,11 @@ namespace MBSim {
     updVel = false;
   }
 
+  void RigidBody::updateAccelerations(double t) {
+    K->setAcceleration(K->getJacobianOfTranslation(t)*udall[0] + K->getGyroscopicAccelerationOfTranslation(t)); 
+    K->setAngularAcceleration(K->getJacobianOfRotation(t)*udall[0] + K->getGyroscopicAccelerationOfRotation(t));
+  }
+
   void RigidBody::updateGeneralizedCoordinates(double t) {
     qTRel = qRel(iqT);
     qRRel = qRel(iqR);
@@ -546,12 +544,12 @@ namespace MBSim {
   }
 
   void RigidBody::updateqRef(const Vec& ref) {
-    Object::updateqRef(ref);
+    Body::updateqRef(ref);
     if(!constraint) qRel>>q;
   }
 
   void RigidBody::updateuRef(const Vec& ref) {
-    Object::updateuRef(ref);
+    Body::updateuRef(ref);
     if(!constraint) uRel>>u;
   }
 

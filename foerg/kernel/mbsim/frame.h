@@ -142,11 +142,6 @@ namespace MBSim {
       void setUpdateByParent(int j) { updateByParent[j] = true; }
 
     protected:
-      ///**
-      // * \brief parent object for plot invocation
-      // */
-      //ObjectInterface* parent;
-
       /**
        * \brief size and index of right hand side
        */
