@@ -60,6 +60,10 @@ cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build 
 cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
 cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
 cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
+cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
+cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
+cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
+cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -533,22 +537,23 @@ def repoUpdate(mainFD):
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
     os.chdir(pj(args.sourceDir, repo+args.srcSuffix))
     # update
+    repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
+    retlocal=0
     if not args.disableUpdate:
-      retlocal=0
       # write repUpd output to report dir
-      repoUpdFD=codecs.open(pj(args.reportOutDir, "repo-update-"+repo+".txt"), "w", encoding="utf-8")
       print('Update repository '+repo, file=repoUpdFD)
       print('', file=repoUpdFD)
       repoUpdFD.flush()
-      retlocal=subprocess.check_call(["svn", "update", "--non-interactive"], stdout=repoUpdFD, stderr=repoUpdFD) # MISSING
-      ret+=abs(retlocal)
-      repoUpdFD.close()
+      retlocal+=abs(subprocess.check_call(["git", "fetch"], stdout=repoUpdFD, stderr=repoUpdFD))
     # set branch based on args
-    # MISSING
+    if eval('args.'+repo+'Branch')!="":
+      retlocal+=abs(subprocess.check_call(["git", "checkout", eval('args.'+repo+'Branch')], stdout=repoUpdFD, stderr=repoUpdFD))
+      repoUpdFD.flush()
     # get branch and commit
-    # MISSING
-    branch="unknown"
-    commit="unknown"
+    branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
+    commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
+    repoUpdFD.close()
+    ret+=retlocal
     # output
     print('<tr>', file=mainFD)
     print('  <td><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;'+repo+'</span></td>', file=mainFD)

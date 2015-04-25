@@ -1,4 +1,4 @@
-var cgiPath="/cgi-bin/auth2.py";//MFMF
+var cgiPath="/cgi-bin/mbsimBuildServiceServer.py";
 
 // indicate start of server commnication
 function statusCommunicating() {

@@ -71,13 +71,13 @@ try:
         else:
           # check whether this login is permitted to save data on the server (query github collaborators)
           headers={'Authorization': 'token '+access_token}
-          response=requests.get('https://api.github.com/teams/:id_mfmf/memberships/%s'%(login), headers=headers)
+          response=requests.get('https://api.github.com/teams/1451964/memberships/%s'%(login), headers=headers)
           if response.status_code!=200:
             response_data['success']=False
-            response_data['message']="Not allowed to save, since you ("+login+") are not a member of the team mfmf of the organization mfmf. Please login as a user with valid permissions."
+            response_data['message']="Not allowed to save, since you ("+login+") are not a member of the team Developers of the organization mbsim-env. Please login as a user with valid permissions."
           elif response.json()['state']!='active':
             response_data['success']=False
-            response_data['message']="Not allowed to save, since your ("+login+") membership in the team mfmf of the organization mfmf is pending."
+            response_data['message']="Not allowed to save, since your ("+login+") status in the team Developers of the organization mbsim-env is pending."
           else:
             response_data['success']=True
     return data, response_data
