@@ -355,10 +355,8 @@ def main():
   <html lang="en">
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MBSim runexamples Results</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
     <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>
   </head>
@@ -484,7 +482,7 @@ def main():
   print('  <dt>Called command</dt><dd><code>', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('  </code></dd>', file=mainFD)
-  print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
+  print('  <dt>RSS Feed</dt><dd>Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   global timeID
   timeID=datetime.datetime.now()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
@@ -509,18 +507,14 @@ def main():
 
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
-  print('<th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;Example</th>', file=mainFD)
-  if not args.disableRun:
-    print('<th><span class="glyphicon glyphicon-repeat"></span>&nbsp;Run</th>', file=mainFD)
-    print('<th><span class="glyphicon glyphicon-time"></span>&nbsp;Time</th>', file=mainFD)
-    print('<th><span class="glyphicon glyphicon-time"></span>&nbsp;Ref. Time</th>', file=mainFD)
-  if not args.disableCompare:
-    print('<th><div class="pull-left"><span class="glyphicon glyphicon-search"></span>&nbsp;Ref.</div>'+\
-          '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
-  if not args.disableRun:
-    print('<th><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Depr.</th>', file=mainFD)
-  if not args.disableValidate:
-    print('<th><span class="glyphicon glyphicon-ok"></span>&nbsp;XML out.</th>', file=mainFD)
+  print('<th>Example</th>', file=mainFD)
+  print('<th>Compile/Run</th>', file=mainFD)
+  print('<th>Time [s]</th>', file=mainFD)
+  print('<th>Ref. Time [s]</th>', file=mainFD)
+  print('<th><div class="pull-left">Reference</div>'+\
+        '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
+  print('<th>Deprecated</th>', file=mainFD)
+  print('<th>XML output</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
   mainFD.flush()
   mainRet=0
@@ -561,7 +555,7 @@ def main():
 
   if len(failedExamples)>0:
     print('<div class="panel panel-info">', file=mainFD)
-    print('  <div class="panel-heading"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<a data-toggle="collapse" href="#collapseRerunFailedExamples">'+\
+    print('  <div class="panel-heading"><a data-toggle="collapse" href="#collapseRerunFailedExamples">'+\
             'Rerun all failed examples<span class="caret"> </span>'+\
             '</a></div>', file=mainFD)
     print('  <div class="panel-body panel-collapse collapse" id="collapseRerunFailedExamples">', file=mainFD)
@@ -576,7 +570,7 @@ def main():
     print('</div>', file=mainFD)
 
   print('<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">', file=mainFD)
-  print('  <div class="panel-heading"><span class="glyphicon glyphicon-pencil"></span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">'+\
+  print('  <div class="panel-heading"><a data-toggle="collapse" href="#collapseUpdateReferences">'+\
           'Update references<span class="caret"> </span></a></div>', file=mainFD)
   print('  <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">', file=mainFD)
   print('    <p>Update the references of the selected examples before next build</p>', file=mainFD)
@@ -607,7 +601,7 @@ def main():
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
     line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', str(endTime), line)
-    print(line, end="")
+    print(line)
 
   # write RSS feed
   writeRSSFeed(len(failedExamples), len(retAll))
@@ -770,12 +764,14 @@ def runExample(resultQueue, example):
       resultStr+='<tr>'
     else:
       resultStr+='<tr class="text-muted">'
-    resultStr+='<td>'+example[0].replace('/', u'/\u200B')+'</td>'
-    if not args.disableRun:
+    resultStr+='<td>'+example[0]+'</td>'
+    if args.disableRun:
+      resultStr+='<td class="warning">not run</td>'
+    else:
       if executeRet==None or executeRet!=0:
-        resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
+        resultStr+='<td class="danger"><a href="'+myurllib.pathname2url(executeFN)+'">'
       else:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
+        resultStr+='<td class="success"><a href="'+myurllib.pathname2url(executeFN)+'">'
       if executeRet==None:
         resultStr+='timed out'
       elif executeRet!=0:
@@ -787,17 +783,19 @@ def runExample(resultQueue, example):
       for outfile in outfiles:
         resultStr+='; <a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+outfile+'</a>'
       resultStr+='</td>'
-    if not args.disableRun:
+    if args.disableRun:
+      resultStr+='<td class="warning">not run</td>'
+    else:
       # if not reference time or time is nearly equal refTime => display time in black color
       if math.isinf(refTime) or abs(dt-refTime)<0.1*refTime:
         resultStr+='<td>%.3f</td>'%dt
       # dt differs more then 10% from refTime => display in yellow color
       else:
         resultStr+='<td class="%s">%.3f</td>'%("success" if dt<refTime else "warning", dt)
-      if not math.isinf(refTime):
-        resultStr+='<td>%.3f</td>'%refTime
-      else:
-        resultStr+='<td class="warning">no reference</td>'
+    if not math.isinf(refTime):
+      resultStr+='<td>%.3f</td>'%refTime
+    else:
+      resultStr+='<td class="warning">no reference</td>'
 
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
@@ -815,29 +813,30 @@ def runExample(resultQueue, example):
       print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
-    if not args.disableCompare:
-      if compareRet==-1:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;not run</div>'+\
+    if compareRet==-1:
+      resultStr+='<td class="warning"><div class="pull-left">not run</div>'+\
+                 '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
+    elif compareRet==-2:
+      resultStr+='<td class="warning"><div class="pull-left">no reference</div>'+\
+                 '<div class="pull-right">[<input class="_EXAMPLE'+\
+                 '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
+      nrAll=0
+      nrFailed=0
+    else:
+      if nrFailed==0:
+        resultStr+='<td class="success"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
+                   '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
                    '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
-      elif compareRet==-2:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
-                   '<div class="pull-right">[<input class="_EXAMPLE'+\
-                   '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
-        nrAll=0
-        nrFailed=0
       else:
-        if nrFailed==0:
-          resultStr+='<td class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
-                     '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
-                     '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
-        else:
-          resultStr+='<td class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
-                     '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
-                     '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
-                     '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
+        resultStr+='<td class="danger"><div class="pull-left"><a href="'+myurllib.pathname2url(compareFN)+\
+                   '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
+                   '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
+                   '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
-    if not args.disableRun:
+    if args.disableRun:
+      resultStr+='<td class="warning">not run</td>'
+    else:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
         match=re.search("([0-9]+) deprecated features were called:", line)
@@ -845,9 +844,9 @@ def runExample(resultQueue, example):
           nrDeprecated=match.expand("\\1")
           break
       if nrDeprecated==0:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
+        resultStr+='<td class="success">none</td>'
       else:
-        resultStr+='<td class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
+        resultStr+='<td class="warning"><a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
 
     # validate XML
     if not args.disableValidate:
@@ -858,7 +857,6 @@ def runExample(resultQueue, example):
       print('<html lang="en">', file=htmlOutputFD)
       print('<head>', file=htmlOutputFD)
       print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
-      print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
       print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
@@ -893,15 +891,14 @@ def runExample(resultQueue, example):
         (parDirs, navA, navB), file=htmlOutputFD)
       print('</dl>', file=htmlOutputFD)
       print('<hr/><table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=htmlOutputFD)
-      print('<thead><tr><th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;XML File</th>'+
-            '<th><span class="glyphicon glyphicon-search"></span>&nbsp;Result</th></tr></thead><tbody>', file=htmlOutputFD)
+      print('<thead><tr><th>XML File</th><th>Result</th></tr></thead><tbody>', file=htmlOutputFD)
 
       failed, total=validateXML(example, False, htmlOutputFD)
       if failed==0:
-        resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
+        resultStr+='<td class="success"><a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
                    str(total)+'</span></a></td>'
       else:
-        resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
+        resultStr+='<td class="danger"><a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
                    'failed <span class="badge">'+str(failed)+'</span> of <span class="badge">'+str(total)+'</span></a></td>'
         runExampleRet=1
       # write footer
@@ -917,6 +914,8 @@ def runExample(resultQueue, example):
       print('</html>', file=htmlOutputFD)
 
       htmlOutputFD.close()
+    else:
+      resultStr+='<td class="warning">not run</td>'
 
     resultStr+='</tr>'
 
@@ -1128,7 +1127,6 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<html lang="en">', file=diffHTMLPlotFD)
   print('<head>', file=diffHTMLPlotFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
-  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
   print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
@@ -1288,8 +1286,8 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       data.append([
         (h5CurFile.filename,""),
         (datasetName,""),
-        ('in ref. but not in cur.',"d"),
-        ('failed',"d")
+        ('in ref. but not in cur.',"danger"),
+        ('failed',"danger")
       ])
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1299,13 +1297,13 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
     curObjCols=curObj.shape[1] if len(curObj.shape)==2 else 1
     # get labels from reference
     try:
-      refLabels=list(map(lambda x: (x.decode("utf-8"), 's'), refObj.attrs["Column Label"]))
+      refLabels=list(map(lambda x: (x.decode("utf-8"), 'success'), refObj.attrs["Column Label"]))
       # append missing dummy labels
       for x in range(len(refLabels), refObjCols):
-        refLabels.append(('&lt;no label in ref. for col. '+str(x+1)+'&gt;', 'w'))
+        refLabels.append(('&lt;no label in ref. for col. '+str(x+1)+'&gt;', 'warning'))
     except KeyError:
       refLabels=list(map(
-        lambda x: ('&lt;no label for col. '+str(x+1)+'&gt;', 'w'),
+        lambda x: ('&lt;no label for col. '+str(x+1)+'&gt;', 'warning'),
         range(refObjCols)))
     # get labels from current
     try:
@@ -1324,7 +1322,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       nrAll[0]+=1
       # if if curObj[:,column] does not exitst
       if column>=curObjCols:
-        printLabel=('&lt;label '+printLabel[0]+' not in cur.&gt;', 'd')
+        printLabel=('&lt;label '+printLabel[0]+' not in cur.&gt;', 'danger')
         nrFailed[0]+=1
       cell=[]
       cell.append((h5CurFile.filename,""))
@@ -1332,7 +1330,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       if column<curObjCols and refLabels[column][0]==curLabels[column][0]:
         cell.append((printLabel[0],printLabel[1]))
       else:
-        cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;',"d"))
+        cell.append(('&lt;label for col. '+str(column+1)+' differ&gt;',"danger"))
         nrFailed[0]+=1
       if column<curObjCols and curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
         # check for difference
@@ -1340,7 +1338,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         curObjCol=getColumn(curObj,column)
         if refObjCol.shape[0]==curObjCol.shape[0] and not numpy.all(numpy_isclose(refObjCol, curObjCol, rtol=args.rtol,
                          atol=args.atol, equal_nan=True)):
-          cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"d"))
+          cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"danger"))
           nrFailed[0]+=1
           dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
           dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
@@ -1348,17 +1346,17 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
                          column, refLabels[column][0], dataArrayRef, dataArrayCur, gnuplotProcess)
         # everything OK
         else:
-          cell.append(('passed',"s"))
+          cell.append(('passed',"success"))
       else: # not row in curObj or refObj
-        cell.append(('no data row in cur. or ref.',"w"))
+        cell.append(('no data row in cur. or ref.',"warning"))
       data.append(cell)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
       data.append([
         (h5CurFile.filename,""),
         (datasetName,""),
-        ('label '+label+' not in ref.',"d"),
-        ('failed',"d")
+        ('label '+label+' not in ref.',"danger"),
+        ('failed',"danger")
       ])
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1380,7 +1378,6 @@ def compareExample(example, compareFN):
   print('<html lang="en">', file=compareFD)
   print('<head>', file=compareFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
-  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
   print('  <title>Compare Results</title>', file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
@@ -1405,26 +1402,10 @@ def compareExample(example, compareFN):
           { data: 'd3' }
         ],
         "rowCallback": function(row, data) {
-          var alltd=$(row).children("td");
-          for(var c=2; c<4; c++) {
-            var td=alltd.eq(c);
-            var flag=data["c"+c.toString()];
-            if(flag=="w") {
-              td.addClass("warning");
-              td.children("span.glyphicon").remove();
-              td.prepend('<span class="glyphicon glyphicon-warning-sign alert-warning"></span> ');
-            }
-            if(flag=="d") {
-              td.addClass("danger");
-              td.children("span.glyphicon").remove();
-              td.prepend('<span class="glyphicon glyphicon-exclamation-sign alert-danger"></span> ');
-            }
-            if(flag=="s") {
-              td.addClass("success");
-              td.children("span.glyphicon").remove();
-              td.prepend('<span class="glyphicon glyphicon-ok-sign alert-success"></span> ');
-            }
-          }
+          $(row).children("td").eq(0).addClass(data["c0"]);
+          $(row).children("td").eq(1).addClass(data["c1"]);
+          $(row).children("td").eq(2).addClass(data["c2"]);
+          $(row).children("td").eq(3).addClass(data["c3"]);
         }
       });
       $('#SortThisTable').DataTable().columns.adjust().draw();
@@ -1451,10 +1432,7 @@ def compareExample(example, compareFN):
     (parDirs, navA, navB), file=compareFD)
   print('</dl>', file=compareFD)
   print('<hr/><table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=compareFD)
-  print('<thead><tr><th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;H5 File</th>'+
-        '<th><span class="glyphicon glyphicon-folder-close"></span>&nbsp;Dataset</th>'+
-        '<th><span class="glyphicon glyphicon-search"></span>&nbsp;Label</th>'+
-        '<th><span class="glyphicon glyphicon-search"></span>&nbsp;Result</th></tr></thead><tbody>', file=compareFD)
+  print('<thead><tr><th>H5 File</th><th>Dataset</th><th>Label</th><th>Result</th></tr></thead><tbody>', file=compareFD)
 
   nrAll=[0]
   nrFailed=[0]
@@ -1474,9 +1452,9 @@ def compareExample(example, compareFN):
     except IOError:
       data.append([
         (h5RefFile.filename[10:],""),
-        ("no such file in current solution","d"),
-        ("failed","d"),
-        ("failed","d")
+        ("no such file in current solution","danger"),
+        ("failed","danger"),
+        ("failed","danger")
       ])
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1494,8 +1472,8 @@ def compareExample(example, compareFN):
         data.append([
           (h5CurFile.filename,""),
           (datasetName,""),
-          ('not in ref. but in cur.',"d"),
-          ('failed',"d")
+          ('not in ref. but in cur.',"danger"),
+          ('failed',"danger")
         ])
         nrAll[0]+=1
         nrFailed[0]+=1
@@ -1511,9 +1489,9 @@ def compareExample(example, compareFN):
     if pj("reference", curFile) not in refFiles:
       data.append([
         (curFile,""),
-        ('no such file in reference solution',"d"),
-        ('failed',"d"),
-        ('failed',"d")
+        ('no such file in reference solution',"danger"),
+        ('failed',"danger"),
+        ('failed',"danger")
       ])
       nrAll[0]+=1
       nrFailed[0]+=1
@@ -1523,13 +1501,9 @@ def compareExample(example, compareFN):
   print('var SortThisTable_data=[', file=compareFD)
   for row in data:
     print('{', end="", file=compareFD)
-    for i in range(0,4):
-      cont=row[i][0].replace("'", "\\'")
-      if i==0 or i==1:
-        cont=cont.replace('/', u'/\u200B')
-      print("'d%d':'%s',"%(i, cont), end="", file=compareFD) # d<colIndex> == data for column <colIndex>
-    for i in range(2,4):
-      print("'c%d':'%s',"%(i, row[i][1]), end="", file=compareFD) # c<colIndex> == "", "d", "w" or "s" flag for column <colIndex>
+    for i in range(0,len(row)):
+      print("'d%d':'%s',"%(i, row[i][0].replace("'", "\\'")), end="", file=compareFD) # d<colIndex> == data for column <colIndex>
+      print("'c%d':'%s',"%(i, row[i][1]), end="", file=compareFD) # c<colIndex> == class attribute for column <colIndex>
     print('},', file=compareFD)
   print('];', file=compareFD)
   print('</script>', file=compareFD)
@@ -1632,7 +1606,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         outputFN=pj(example[0], filename+".txt")
         outputFD=MultiFile(codecs.open(pj(args.reportOutDir, outputFN), "w", encoding="utf-8"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)
-        print('<td>'+filename.replace('/', u'/\u200B')+'</td>', file=htmlOutputFD)
+        print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
         list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
@@ -1640,9 +1614,9 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         if subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
-          print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
+          print('<td class="danger"><a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
         else:
-          print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
+          print('<td class="success"><a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()

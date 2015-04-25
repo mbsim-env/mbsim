@@ -19,7 +19,7 @@
 #ifndef _SPRINGDAMPER_H_
 #define _SPRINGDAMPER_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include <mbsim/frame.h>
 #include "mbsim/functions/function.h"
 
@@ -36,11 +36,12 @@ namespace MBSim {
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
-  class SpringDamper : public LinkMechanics {
+  class SpringDamper : public MechanicalLink {
     protected:
       double dist;
       fmatvec::Vec3 n;
       Function<double(double,double)> *func;
+      double l0;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
@@ -63,8 +64,8 @@ namespace MBSim {
       /*****************************/
 
       /** \brief Set function for the force calculation.
-       * The first input parameter to that function is the distance g between frame2 and frame1.
-       * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
+       * The first input parameter to that function is the distance relative to the unloaded length.
+       * The second input parameter to that function is the relative velocity.       
        * The return value of that function is used as the force of the SpringDamper.
        */
       void setForceFunction(Function<double(double,double)> *func_) {
@@ -72,6 +73,9 @@ namespace MBSim {
         func->setParent(this);
         func->setName("Force");
       }
+
+      /** \brief Set unloaded length. */
+      void setUnloadedLength(double l0_) { l0 = l0_; }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -87,7 +91,7 @@ namespace MBSim {
      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:
@@ -98,10 +102,11 @@ namespace MBSim {
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
-  class DirectionalSpringDamper : public LinkMechanics {
+  class DirectionalSpringDamper : public MechanicalLink {
     protected:
       double dist;
       Function<double(double,double)> *func;
+      double l0;
       Frame *refFrame;
       fmatvec::Vec3 forceDir, WforceDir, WrP0P1;
       Frame C;
@@ -111,6 +116,7 @@ namespace MBSim {
     public:
       DirectionalSpringDamper(const std::string &name="");
       ~DirectionalSpringDamper();
+      void updateJacobians(double t, int j=0);
       void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);
@@ -127,8 +133,8 @@ namespace MBSim {
       /*****************************/
 
       /** \brief Set function for the force calculation.
-       * The first input parameter to that function is the distance g between frame2 and frame1.
-       * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
+       * The first input parameter to that function is the distance relative to the unloaded length.
+       * The second input parameter to that function is the relative velocity.       
        * The return value of that function is used as the force of the SpringDamper.
        */
       void setForceFunction(Function<double(double,double)> *func_) {
@@ -136,6 +142,9 @@ namespace MBSim {
         func->setParent(this);
         func->setName("Force");
       }
+
+      /** \brief Set unloaded length. */
+      void setUnloadedLength(double l0_) { l0 = l0_; }
 
       /**
        * \param local force direction represented in first frame
@@ -155,16 +164,17 @@ namespace MBSim {
      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:
       std::string saved_ref1, saved_ref2;
   };
 
-  class GeneralizedSpringDamper : public LinkMechanics {
+  class GeneralizedSpringDamper : public MechanicalLink {
     protected:
       Function<double(double,double)> *func;
+      double l0;
       std::vector<RigidBody*> body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
@@ -189,6 +199,9 @@ namespace MBSim {
         func->setName("GeneralizedFoce");
       }
 
+      /** \brief Set unloaded generalized length. */
+      void setUnloadedGeneralizedLength(double l0_) { l0 = l0_; }
+
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
 
@@ -207,14 +220,14 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 
       /** \brief Visualize a torque arrow acting on each of both connected frames */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:

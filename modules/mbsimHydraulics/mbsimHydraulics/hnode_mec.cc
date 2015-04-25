@@ -458,7 +458,11 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNodeMec, MBSIMHYDRAULICS%"ConstrainedNodeMec")
 
   void ConstrainedNodeMec::init(InitStage stage) {
-    if (stage==unknownStage) {
+    if(stage==preInit) {
+      HNode::init(stage);
+      addDependency(pFun->getDependency());
+    }
+    else if (stage==unknownStage) {
       HNodeMec::init(stage);
       la.init((*pFun)(0));
       x0=Vec(1, INIT, V0);
@@ -564,6 +568,10 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNodeMec, MBSIMHYDRAULICS%"RigidNodeMec")
 
   RigidNodeMec::RigidNodeMec(const string &name) : HNodeMec(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
+    gfl->setParent(this);
+    gfl->setName("gfl");
+    gil->setParent(this);
+    gil->setName("gil");
   }
 
   RigidNodeMec::~RigidNodeMec() {
@@ -615,6 +623,8 @@ namespace MBSimHydraulics {
     }
     else
       HNodeMec::init(stage);
+    if(gfl) gfl->init(stage);
+    if(gil) gil->init(stage);
   }
 
   void RigidNodeMec::updatewbRef(const Vec &wbParent) {

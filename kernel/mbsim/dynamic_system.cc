@@ -22,9 +22,8 @@
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
-#include "mbsim/frame.h"
-#include "mbsim/contact.h"
-#include "mbsim/joint.h"
+#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/constraint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observer.h"
 #include "hdf5serie/file.h"
@@ -96,17 +95,9 @@ namespace MBSim {
     for (int i = 0; i < (int) object.size(); i++)
       object[i]->updateh(t, k);
 
-    for(unsigned int i=0; i<linkOrdered.size(); i++) 
-      for(unsigned int j=0; j<linkOrdered[i].size(); j++) 
+    for(unsigned int i=0; i<linkOrdered.size(); i++)
+      for(unsigned int j=0; j<linkOrdered[i].size(); j++)
 	linkOrdered[i][j]->updateh(t, k);
-  }
-
-  void DynamicSystem::updatehInverseKinetics(double t, int j) {
-    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatehInverseKinetics(t, j);
-
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updatehInverseKinetics(t, j);
   }
 
   void DynamicSystem::updateStateDerivativeDependentVariables(double t) {
@@ -314,6 +305,9 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatedx(t, dt);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
+      (**i).updatedx(t, dt);
   }
 
   void DynamicSystem::updateqd(double t) {
@@ -329,6 +323,9 @@ namespace MBSim {
       (**i).updatexd(t);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (**i).updatexd(t);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (**i).updatexd(t);
   }
 
@@ -373,6 +370,8 @@ namespace MBSim {
         object[i]->plot(t, dt);
       for (unsigned i = 0; i < link.size(); i++)
         link[i]->plot(t, dt);
+      for (unsigned i = 0; i < constraint.size(); i++)
+        constraint[i]->plot(t, dt);
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->plot(t, dt);
       for (unsigned i = 0; i < contour.size(); i++)
@@ -460,8 +459,8 @@ namespace MBSim {
         }
       }
       for (unsigned int i = 1; i < frame.size(); i++) { // kinematics of other frames can be updates from frame I
-        ((FixedRelativeFrame*) frame[i])->updatePosition();
-        ((FixedRelativeFrame*) frame[i])->updateOrientation();
+        frame[i]->resetUpToDate();
+        frame[i]->updatePositions(0);
       }
       for (unsigned int k = 0; k < contour.size(); k++) {
         if (!(contour[k]->getFrameOfReference()))
@@ -522,6 +521,8 @@ namespace MBSim {
       object[i]->init(stage);
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->init(stage);
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->init(stage);
     for (unsigned i = 0; i < model.size(); i++)
       model[i]->init(stage);
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
@@ -702,10 +703,10 @@ namespace MBSim {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updatexRef(xParent);
 
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(xParent);
 
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (**i).updatexRef(xParent);
   }
 
@@ -715,10 +716,10 @@ namespace MBSim {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updatexdRef(xdParent);
 
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexdRef(xdParent);
 
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (**i).updatexdRef(xdParent);
   }
 
@@ -909,6 +910,8 @@ namespace MBSim {
       object[i]->initz();
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->initz();
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->initz();
   }
 
   void DynamicSystem::writez(H5::GroupBase *parent) {
@@ -949,6 +952,7 @@ namespace MBSim {
     frame.clear(); // delete old frame list
     contour.clear(); // delete old contour list
     link.clear(); // delete old link list
+    constraint.clear(); // delete old constraint list
     inverseKineticsLink.clear(); // delete old link list
     observer.clear(); // delete old link list
   }
@@ -980,12 +984,13 @@ namespace MBSim {
       dynamicsystem[i]->buildListOfLinks(lnk);
   }
 
-  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk) {
-    for (unsigned int i = 0; i < link.size(); i++)
-      if (link[i]->isSetValued())
-        lnk.push_back(link[i]);
+  void DynamicSystem::buildListOfConstraints(vector<Constraint*> &crt) {
+    for (unsigned int i = 0; i < constraint.size(); i++) {
+      crt.push_back(constraint[i]);
+      constraint[i]->setPath(constraint[i]->getPath());
+    }
     for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-      dynamicsystem[i]->buildListOfSetValuedLinks(lnk);
+      dynamicsystem[i]->buildListOfConstraints(crt);
   }
 
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm) {
@@ -1038,6 +1043,9 @@ namespace MBSim {
       dynamicsystem[i]->setUpInverseKinetics();
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (*i)->setUpInverseKinetics();
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (*i)->setUpInverseKinetics();
   }
 
@@ -1116,12 +1124,12 @@ namespace MBSim {
       xSize += (*i)->getxSize();
     }
 
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->calcxSize();
       xSize += (*i)->getxSize();
     }
 
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i) {
       (*i)->calcxSize();
       xSize += (*i)->getxSize();
     }
@@ -1134,11 +1142,13 @@ namespace MBSim {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i) {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
@@ -1374,6 +1384,16 @@ namespace MBSim {
     lnk->setParent(this);
   }
 
+  void DynamicSystem::addConstraint(Constraint *crt) {
+    if (getConstraint(crt->getName(), false)) {
+      THROW_MBSIMERROR("DynamicSystem can only comprise one Constraint by the name \"" + crt->getName() + "\"!");
+      assert(getConstraint(crt->getName(),false) == NULL);
+    }
+
+    constraint.push_back(crt);
+    crt->setParent(this);
+  }
+
   void DynamicSystem::addInverseKineticsLink(Link *lnk) {
     //if(getLink(lnk->getName(),false)) {
     //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << this->name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
@@ -1393,6 +1413,20 @@ namespace MBSim {
       if (!(i < link.size()))
         THROW_MBSIMERROR("DynamicSystem comprises no Link \"" + name + "\"!");
       assert(i < link.size());
+    }
+    return NULL;
+  }
+
+  Constraint* DynamicSystem::getConstraint(const string &name, bool check) const {
+    unsigned int i;
+    for (i = 0; i < constraint.size(); i++) {
+      if (constraint[i]->getName() == name)
+        return constraint[i];
+    }
+    if (check) {
+      if (!(i < constraint.size()))
+        THROW_MBSIMERROR("DynamicSystem comprises no Constraint \"" + name + "\"!");
+      assert(i < constraint.size());
     }
     return NULL;
   }
@@ -1505,6 +1539,71 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->checkRoot();
+  }
+
+  void DynamicSystem::resetUpToDate() {
+    for (unsigned i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->resetUpToDate();
+    for (unsigned i = 0; i < object.size(); i++)
+      object[i]->resetUpToDate();
+    for (unsigned i = 0; i < link.size(); i++)
+      link[i]->resetUpToDate();
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->resetUpToDate();
+    for (unsigned i = 0; i < observer.size(); i++)
+      observer[i]->resetUpToDate();
+    for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->resetUpToDate();
+  }
+
+  const Mat& DynamicSystem::getT(double t) {
+    if(ds->updateT()) ds->updateT(t);
+    return T;
+  }
+
+  const Vec& DynamicSystem::geth(double t, int i) {
+    if(ds->updateh(i)) ds->updateh(t,i);
+    return h[i];
+  }
+
+  const Vec& DynamicSystem::getr(double t, int i) {
+    if(ds->updater(i)) ds->updater(t,i);
+    return r[i];
+  }
+
+  const SymMat& DynamicSystem::getM(double t, int i) {
+    if(ds->updateM(i)) ds->updateM(t,i);
+    return M[i];
+  }
+
+  const SymMat& DynamicSystem::getLLM(double t, int i) {
+    if(ds->updateLLM(i)) ds->updateLLM(t,i);
+    return LLM[i];
+  }
+
+  const Mat& DynamicSystem::getW(double t, int i) {
+    if(ds->updateW(i)) ds->updateW(t,i);
+    return W[i];
+  }
+
+  const Mat& DynamicSystem::getV(double t, int i) {
+    if(ds->updateV(i)) ds->updateV(t,i);
+    return V[i];
+  }
+
+  const Vec& DynamicSystem::getwb(double t) {
+    if(ds->updatewb()) ds->updatewb(t);
+    return wb;
+  }
+
+  const Mat& DynamicSystem::getWInverseKinetics(double t, int i) {
+    ds->updateWInverseKinetics(t,i);
+    return WInverseKinetics[i];
+  }
+
+  const Mat& DynamicSystem::getbInverseKinetics(double t) {
+    ds->updatebInverseKinetics(t);
+    return bInverseKinetics;
   }
 
 }

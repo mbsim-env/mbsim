@@ -11,6 +11,7 @@ single_contact.cc\
 contour.cc\
 environment.cc\
 frame.cc\
+fixed_relative_frame.cc\
 functions_contact.cc\
 dynamic_system.cc\
 group.cc\
@@ -23,7 +24,7 @@ spring_damper.cc\
 friction.cc\
 extern_generalized_io.cc\
 link.cc\
-link_mechanics.cc\
+mechanical_link.cc\
 kinetic_excitation.cc\
 kinematic_excitation.cc\
 mbsim_event.cc\
@@ -62,6 +63,7 @@ dynamic_system_solver.h\
 element.h\
 environment.h\
 frame.h\
+fixed_relative_frame.h\
 functions_contact.h\
 group.h\
 joint.h\
@@ -72,7 +74,7 @@ spring_damper.h\
 friction.h\
 extern_generalized_io.h\
 link.h\
-link_mechanics.h\
+mechanical_link.h\
 kinetic_excitation.h\
 kinematic_excitation.h\
 mbsim_event.h\

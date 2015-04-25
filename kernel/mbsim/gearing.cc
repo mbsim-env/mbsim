@@ -27,7 +27,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Gearing::Gearing(const string &name) : LinkMechanics(name), r0(1), r1(1), reverse(false), Z0("Z0"), Z1("Z1") {
+  Gearing::Gearing(const string &name) : MechanicalLink(name), r0(1), r1(1), reverse(false), Z0("Z0"), Z1("Z1") {
     Z0.enableOpenMBV();
     Z1.enableOpenMBV();
   }
@@ -216,7 +216,7 @@ namespace MBSim {
 
   void Gearing::init(InitStage stage) {
     if(stage==unknownStage) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
 
       h[0].push_back(Vec(P0->getJacobianOfTranslation().cols()));
       h[1].push_back(Vec(6));
@@ -236,8 +236,12 @@ namespace MBSim {
       Z1.getJacobianOfRotation(0).resize(P1->getJacobianOfRotation(0).cols());
       Z1.getJacobianOfRotation(1).resize(P1->getJacobianOfRotation(1).cols());
     }
+    else if(stage==preInit) {
+      MechanicalLink::init(stage);
+      if(func) addDependency(func->getDependency());
+    }
     else if(stage==resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(1);
       gd.resize(1);
       la.resize(1);
@@ -246,11 +250,11 @@ namespace MBSim {
       updatePlotFeatures();
       plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
       }
     }
     else {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     func->init(stage);
   }
@@ -258,7 +262,7 @@ namespace MBSim {
   void Gearing::plot(double t,double dt) {
     plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 
@@ -271,7 +275,7 @@ namespace MBSim {
   }
 
   void Gearing::calcxSize() {
-    LinkMechanics::calcxSize();
+    MechanicalLink::calcxSize();
     xSize = 1;
   }
 }

@@ -141,8 +141,10 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateT(double t);
       virtual void updateh(double t, int i=0);
       virtual void updateM(double t, int i=0);
+      virtual void updateLLM(double t, int i=0);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
 
@@ -217,6 +219,9 @@ namespace MBSim {
       fmatvec::Vec& getb() { return b; }
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
+
+      const fmatvec::SqrMat& getG(double t);
+      const fmatvec::SparseMat& getGs(double t);
 
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
@@ -514,6 +519,17 @@ namespace MBSim {
       void setq(const fmatvec::Vec& q_){ q = q_;}
       void setLa(const fmatvec::Vec& la_){ la = la_;}
 
+      void resetUpToDate();
+
+      bool updateT() { return updT; }
+      bool updateM(int j) { return updM[j]; }
+      bool updateLLM(int j) { return updLLM[j]; }
+      bool updateh(int j) { return updh[j]; }
+      bool updater(int j) { return updr[j]; }
+      bool updateW(int j) { return updW[j]; }
+      bool updateV(int j) { return updV[j]; }
+      bool updatewb() { return updwb; }
+
     protected:
       /**
        * \brief mass matrix
@@ -779,6 +795,8 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
+      bool updT, updh[2], updr[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updG;
+
     private:
       /**
        * \brief set plot feature default values
@@ -808,11 +826,11 @@ namespace MBSim {
        * \param current entry of matrix of dependencies
        * \param list of objects
        */
-      void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
+      void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Element*> &objList);
 
       bool truncateSimulationFiles;
 
-      // Holds the dynamic systems before the "reorganize hierarchie" takes place.
+      // Holds the dynamic systems before the "reorganize hierarchy" takes place.
       // This is required since all elements of all other containers from DynamicSystem are readded to DynamicSystemSolver,
       // except this container (which is a "pure" container = no calculation is done in DynamicSystem)
       // However, we must hold this container until the dtor of DynamicSystemSolver is called to avoid the deallocation of other

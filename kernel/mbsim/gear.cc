@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/gear.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constraint.h"
 #include <openmbvcppinterface/group.h>
@@ -34,7 +34,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
 
-  Gear::Gear(const string &name) : LinkMechanics(name), func(0) {
+  Gear::Gear(const string &name) : MechanicalLink(name), func(0) {
     body.push_back(0); 
     ratio.push_back(-1);
 
@@ -82,10 +82,10 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        Vec3 WF = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
-        Vec3 WM = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
-        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM;
-        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF + C[i].getJacobianOfRotation(j).T()*WM;
+        WF[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
+        WM[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
+        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[i] + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[i];
+        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF[i] + C[i].getJacobianOfRotation(j).T()*WM[i];
       }
     }
   }
@@ -156,7 +156,7 @@ namespace MBSim {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           body.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       }
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     else if(stage==unknownStage) {
 
@@ -178,8 +178,13 @@ namespace MBSim {
         W[1].push_back(Mat(6,laSize));
       }
     }
+    else if(stage==preInit) {
+      MechanicalLink::init(stage);
+      for(unsigned int i=0; i<body.size(); i++)
+      if(func) addDependency(func->getDependency());
+    }
     else if(stage==resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(1);
       gd.resize(1);
       la.resize(1);
@@ -191,7 +196,7 @@ namespace MBSim {
         plotColumns.push_back("M");
       }
       if(getPlotFeature(plotRecursive)==enabled) {
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(FArrow[0]) {
@@ -221,7 +226,7 @@ namespace MBSim {
       }
     }
     else {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     if(func) func->init(stage);
   }
@@ -268,12 +273,12 @@ namespace MBSim {
         }
       }
 #endif
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 
   void Gear::initializeUsingXML(DOMElement* element) {
-    LinkMechanics::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     if(e) {
       Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());

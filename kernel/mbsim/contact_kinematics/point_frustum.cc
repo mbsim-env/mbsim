@@ -45,7 +45,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointFrustum::updateg(Vec &g, ContourPointData* cpData, int index) {
+  void ContactKinematicsPointFrustum::updateg(double &g, ContourPointData* cpData, int index) {
     double eps = 5.e-2; // tolerance for rough contact description
     Vec3 Wd = point->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Point and Frustum basis point in inertial FR
     Vec3 Wa = frustum->getFrame()->getOrientation().col(1); // (height) axis in inertial FR
@@ -60,7 +60,7 @@ namespace MBSim {
 
 
     if(s<0 || s>h  || d < (r_h-eps) || d > (r_h+eps))
-      g(0) = 1.;
+      g = 1.;
     else {
       double  phi = atan((r(1) - r(0))/h); // half cone angle
       if(outCont) { // contact on outer surface
@@ -69,7 +69,7 @@ namespace MBSim {
         b /= d;
         cpData[ifrustum].getFrameOfReference().getOrientation().set(0,  cos(phi)*b - sin(phi)*Wa);
         cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
-        g(0) = (d-r_h)*cos(phi);
+        g = (d-r_h)*cos(phi);
       }
       else { // contact on inner surface
         double  phi = atan((r(1) - r(0))/h); // half cone angle
@@ -77,7 +77,7 @@ namespace MBSim {
         b /= d;
         cpData[ifrustum].getFrameOfReference().getOrientation().set(0, sin(phi)*Wa - cos(phi)*b);
         cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
-        g(0) = (r_h-d)*cos(phi);
+        g = (r_h-d)*cos(phi);
       }
 
     //Set positions

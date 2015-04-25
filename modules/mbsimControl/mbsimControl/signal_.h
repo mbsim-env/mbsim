@@ -54,8 +54,8 @@ namespace MBSimControl {
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
       virtual void updaterRef(const fmatvec::Vec &ref, int i=0) {}
-      virtual bool isActive() const {return false; }
-      virtual bool gActiveChanged() {return false; }
+      virtual bool isActive() const { return false; }
+      virtual bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
       /***************************************************/
 
@@ -64,8 +64,11 @@ namespace MBSimControl {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
       
-      virtual fmatvec::VecV getSignal() = 0;
+      virtual const fmatvec::VecV& getSignal() { return s; }
+      virtual int getSignalSize() const { return s.size(); }
 
+    protected:
+      fmatvec::VecV s;
   };
 
 }

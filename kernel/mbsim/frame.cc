@@ -48,6 +48,7 @@ namespace MBSim {
   void Frame::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
+        if(updatePos) updatePositions(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
         Vec3 cardan=AIK2Cardan(AWP);
@@ -55,12 +56,14 @@ namespace MBSim {
           plotVector.push_back(cardan(i));
       }
       if(getPlotFeature(globalVelocity)==enabled) {
+        if(updateVel) updateVelocities(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
       if(getPlotFeature(globalAcceleration)==enabled) {
+        if(updateAcc) updateAccelerations(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
         for(int i=0; i<3; i++)
@@ -166,38 +169,80 @@ namespace MBSim {
     return ele0;
   }
 
-  void FixedRelativeFrame::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Frame::init(stage);
-    }
-    else
-      Frame::init(stage);
+  void Frame::resetUpToDate() { 
+    updateJac[0] = true; 
+    updateJac[1] = true; 
+    updatePos = true;
+    updateVel = true;
+    updateAcc = true;
   }
 
-  void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
-    Frame::initializeUsingXML(element);
-    DOMElement *ec=element->getFirstElementChild();
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
-    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
-    if(ec) setRelativePosition(getVec3(ec));
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
-    if(ec) setRelativeOrientation(getSqrMat3(ec));
+  const Vec3& Frame::getPosition(double t) {
+    if(updatePos) updatePositions(t);
+    return getPosition(); 
   }
 
-  DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-//     if(getFrameOfReference()) {
-//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-//        ele1->SetAttribute("ref", str);
-//        ele0->LinkEndChild(ele1);
-//      }
-//     addElementText(ele0,MBSIM%"relativePosition",getRelativePosition());
-//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
-   return ele0;
+  const SqrMat3& Frame::getOrientation(double t) {
+    if(updatePos) updatePositions(t); 
+    return getOrientation(); 
+  }
+
+  const Vec3& Frame::getVelocity(double t) {
+    if(updateVel) updateVelocities(t); 
+    return getVelocity(); 
+  }
+
+  const Vec3& Frame::getAngularVelocity(double t) {
+    if(updateVel) updateVelocities(t); 
+    return getAngularVelocity(); 
+  }
+
+  const Vec3& Frame::getAcceleration(double t) {
+    if(updateAcc) updateAccelerations(t); 
+    return getAcceleration(); 
+  }
+
+  const Vec3& Frame::getAngularAcceleration(double t) {
+    if(updateAcc) updateAccelerations(t); 
+    return getAngularAcceleration(); 
+  }
+
+  const Mat3xV& Frame::getJacobianOfTranslation(double t, int j) {
+    if(updateJac[j]) updateJacobians(t,j); 
+    return getJacobianOfTranslation(j); 
+  }
+
+  const Mat3xV& Frame::getJacobianOfRotation(double t, int j) {
+    if(updateJac[j]) updateJacobians(t,j); 
+    return getJacobianOfRotation(j); 
+  }
+
+  const Vec3& Frame::getGyroscopicAccelerationOfTranslation(double t, int j) {
+    if(updateJac[j]) updateJacobians(t,j); 
+    return getGyroscopicAccelerationOfTranslation(j); 
+  }
+
+  const Vec3& Frame::getGyroscopicAccelerationOfRotation(double t, int j) {
+    if(updateJac[j]) updateJacobians(t,j); 
+    return getGyroscopicAccelerationOfRotation(j); 
+  }
+
+  void Frame::updatePositions(double t) { 
+    if(updateByParent[0])
+      parent->updatePositions(t);
+    updatePos = false;
+  }
+
+  void Frame::updateVelocities(double t) { 
+    if(updateByParent[0])
+      parent->updateVelocities(t);
+    updateVel = false;
+  }
+
+  void Frame::updateJacobians(double t, int j) {
+    if(updateByParent[j])
+      parent->updateJacobians(t,j);
+    updateJac[j] = false;
   }
 
 }

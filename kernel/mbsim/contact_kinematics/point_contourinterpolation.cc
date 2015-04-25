@@ -48,9 +48,9 @@ namespace MBSim {
     func = new FuncPairPointContourInterpolation(point,cinterpol);
   }
 
-  void ContactKinematicsPointContourInterpolation::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
+  void ContactKinematicsPointContourInterpolation::updateg(double &g, ContourPointData *cpData, int index) {}
 
-  //  void ContactKinematicsPointContourInterpolation::stage1(Vec &g, vector<ContourPointData> &cpData) {
+  //  void ContactKinematicsPointContourInterpolation::stage1(double &g, vector<ContourPointData> &cpData) {
 
   //    // MultiDimNewton zur Kontaktpunktsuche
   //    MultiDimNewtonMethod rf(func);
@@ -75,16 +75,16 @@ namespace MBSim {
   //      Vec Wd = cpData[idinterpol].WrOC - cpData[ipoint].WrOC;
   //      cpData[idinterpol].Wn       = cinterpol->computeWn(cpData[idinterpol]);
   //      cpData[ipoint].Wn           = -cpData[idinterpol].Wn;
-  //      g(0) = trans(cpData[idinterpol].Wn)*Wd;
+  //      g = trans(cpData[idinterpol].Wn)*Wd;
   //    } else {
   //      // ausserhalb zulaessigen Bereich
-  //      g(0) = 1.0;
+  //      g = 1.0;
   //    }  
   //  }
 
   //  void ContactKinematicsPointContourInterpolation::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 
-  //    if(g(0)>0.0) return;
+  //    if(g>0.0) return;
   //    // Contour-Interpolation
   //    cpData[idinterpol].WrOC = cinterpol->computeWrOC(cpData[idinterpol].alpha);
   //

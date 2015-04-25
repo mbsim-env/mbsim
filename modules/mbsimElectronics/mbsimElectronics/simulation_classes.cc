@@ -308,6 +308,15 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
+  void Switch::init(InitStage stage) {
+    if(stage==preInit) {
+      ElectronicLink::init(stage);
+      addDependency(voltageSignal);
+    }
+    else
+      ElectronicLink::init(stage);
+  }
+
   void Switch::updateW(double t, int j) {
     U0 = voltageSignal->getSignal()(0);
     ElectronicLink::updateW(t,j);
@@ -377,10 +386,6 @@ namespace MBSimElectronics {
     h[j][0] += branch->getJacobian(j).T()*la(0)*vz; 
   }
 
-  double Resistor::computeVoltage() {
-    return -R*I;  
-  }
-
   Capacitor::Capacitor(const string &name) : ElectronicLink(name), C(1) {
     addTerminal("A");
     addTerminal("B");
@@ -396,6 +401,15 @@ namespace MBSimElectronics {
     addTerminal("A");
     addTerminal("B");
     connectTerminal(terminal[0],terminal[1]);
+  }
+
+  void VoltageSource::init(InitStage stage) {
+    if(stage==preInit) {
+      ElectronicLink::init(stage);
+      addDependency(voltageSignal);
+    }
+    else
+      ElectronicLink::init(stage);
   }
 
   void VoltageSource::updateh(double t, int j) {

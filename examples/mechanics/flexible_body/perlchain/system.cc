@@ -32,7 +32,7 @@ void Perlchain::initialize() {
   setValuedContacts.clear();
   setValuedJoints.clear();
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-    LinkMechanics * i_temp = dynamic_cast<LinkMechanics*>(*i);
+    MechanicalLink * i_temp = dynamic_cast<MechanicalLink*>(*i);
     if ((**i).getType() == "Joint") {  // for joint
       setValuedJoints.push_back(static_cast<Joint*>(i_temp));
     }
@@ -461,7 +461,7 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
 
   counter = 0;
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-    LinkMechanics * i_temp = dynamic_cast<LinkMechanics*>(*i);
+    MechanicalLink * i_temp = dynamic_cast<MechanicalLink*>(*i);
     for (int col = (**i).getlaInd(); col < (**i).getlaInd() + (**i).getlaSize(); col++) {
       Cp[col] = counter;
       if ((**i).getType() == "Joint") {  // for joint

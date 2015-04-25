@@ -63,30 +63,21 @@ namespace MBSim {
        */
       virtual ~RigidBody();
 
-      void addDependency(Constraint* constraint_) {
-        //body.push_back(body_); 
-        constraint = constraint_;
-      }
+      void addDependency(Constraint* constraint_);
 
-      virtual void updatedq(double t, double dt);
-      virtual void updateqd(double t); 
-      virtual void updateT(double t);
-      virtual void updateh(double t, int j=0);
-      virtual void updatehInverseKinetics(double t, int j=0);
-      virtual void updateStateDerivativeDependentVariables(double t);
-      virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
-      virtual void updateStateDependentVariables(double t) { 
-        updateKinematicsForSelectedFrame(t); 
-        updateKinematicsForRemainingFramesAndContours(t); 
-      }
-      virtual void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
-      void updateJacobians0(double t) { 
-        updateJacobiansForSelectedFrame0(t); 
-        updateJacobiansForRemainingFramesAndContours(t,0); 
-      }
-      void updateJacobians1(double t) { 
-        updateJacobiansForRemainingFramesAndContours1(t); 
-      }
+      void updatedq(double t, double dt);
+      void updateqd(double t); 
+      void updateT(double t);
+      void updateh(double t, int j=0);
+      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      void updateGeneralizedCoordinates(double t); 
+      void updatePositions(double t); 
+      void updateVelocities(double t);
+      void updateAccelerations(double t);
+      void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
+      void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
+      void updateJacobians0(double t);
+      void updateJacobians1(double t) { }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -95,7 +86,7 @@ namespace MBSim {
       virtual void updateuRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
+      virtual void updateLLM(double t, int i=0) { (this->*updateLLM_)(t,i); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
 
@@ -103,27 +94,6 @@ namespace MBSim {
       virtual std::string getType() const { return "RigidBody"; }
       virtual void plot(double t, double dt=1);
       /*****************************************************/
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief updates kinematics of kinematic Frame starting from reference Frame
-       */
-      virtual void updateKinematicsForSelectedFrame(double t);
-      /**
-       * \brief updates JACOBIAN for kinematics starting from reference Frame
-       */
-      virtual void updateJacobiansForSelectedFrame0(double t); 
-
-      /**
-       * \brief updates kinematics for remaining Frames starting with and from cog Frame
-       */
-      virtual void updateKinematicsForRemainingFramesAndContours(double t);
-
-      /**
-       * \brief updates remaining JACOBIANS for kinematics starting with and from cog Frame
-       */
-      virtual void updateJacobiansForRemainingFramesAndContours(double t, int j=0);
-      virtual void updateJacobiansForRemainingFramesAndContours1(double t);
 
       /* GETTER / SETTER */
 
@@ -197,6 +167,11 @@ namespace MBSim {
       double getMass() const { return m; }
       FixedRelativeFrame* getFrameForKinematics() { return K; };
       FixedRelativeFrame* getFrameC() { return C; };
+      const fmatvec::Vec3& getGlobalRelativePosition(double t);
+      const fmatvec::Vec3& getGlobalRelativeVelocity(double t);
+      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t);
+
+      const fmatvec::SymMat3& getGlobalInertiaTensor(double t);
 
       /**
        * \param RThetaR  inertia tensor
@@ -260,13 +235,13 @@ namespace MBSim {
       fmatvec::Mat& getTRel() {return TRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
-      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
 
       bool transformCoordinates() const {return fTR!=NULL;}
+
+      void resetUpToDate();
 
     protected:
       /**
@@ -338,17 +313,17 @@ namespace MBSim {
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (RigidBody::*facLLM_)(int i);
+      void (RigidBody::*updateLLM_)(double t, int i);
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void facLLMConst(int i=0) {};
+      void updateLLMConst(double t, int i=0) { }
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void facLLMNotConst(int i=0) { Object::facLLM(i); }
+      void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
       void (RigidBody::*updateJacobians_[2])(double t); 
 
@@ -379,6 +354,8 @@ namespace MBSim {
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
       fmatvec::Vec3 WF, WM;
+
+      bool updGC, updWTS;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

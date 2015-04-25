@@ -43,20 +43,24 @@ namespace MBSimControl {
         setLink(getByPath<Link>(linkString));
       Sensor::init(stage);
     }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependency(link);
+    }
     else
       Sensor::init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkDistanceSensor, MBSIMCONTROL%"LinkDistanceSensor")
 
-  VecV LinkDistanceSensor::getSignal() {
-    return link->getg();
+  void LinkDistanceSensor::updateh(double t, int j) {
+    s = link->getg();
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkVelocitySensor, MBSIMCONTROL%"LinkVelocitySensor")
 
-  VecV LinkVelocitySensor::getSignal() {
-    return link->getgd();
+  void LinkVelocitySensor::updateh(double t, int j) {
+    s = link->getgd();
   }
 
 }

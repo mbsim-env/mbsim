@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
-  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
+  KineticExcitation::KineticExcitation(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {
     delete F;
@@ -53,10 +53,15 @@ namespace MBSim {
         connect(buf);
         frame[0]=ds->getFrame("I");
       }
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
+    }
+    else if(stage==preInit) {
+      MechanicalLink::init(stage);
+      if(F) addDependency(F->getDependency());
+      if(M) addDependency(M->getDependency());
     }
     else if(stage==unknownStage) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       if(F) assert((*F)(0).size()==forceDir.cols());
       if(M) assert((*M)(0).size()==momentDir.cols());
       refFrame=refFrameID?frame[1]:frame[0];
@@ -72,23 +77,22 @@ namespace MBSim {
           for(int j=0; j<forceDir.cols()+momentDir.cols(); ++j) 
             plotColumns.push_back("la("+numtostr(j)+")");
       }
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     else
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     if(F) F->init(stage);
     if(M) M->init(stage);
   }
 
   void KineticExcitation::connect(Frame *frame0, Frame* frame1) {
-    LinkMechanics::connect(frame0);
-    LinkMechanics::connect(frame1);
+    MechanicalLink::connect(frame0);
+    MechanicalLink::connect(frame1);
   }
 
-  void KineticExcitation::updateh(double t, int j) {
+  void KineticExcitation::updateJacobians(double t, int j) {
     Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
     Mat3x3 tWrP0P1 = tilde(WrP0P1);
-
     C.setOrientation(frame[0]->getOrientation());
     C.setPosition(frame[0]->getPosition() + WrP0P1);
     C.setAngularVelocity(frame[0]->getAngularVelocity());
@@ -97,7 +101,9 @@ namespace MBSim {
     C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
     C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
     C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+  }
 
+  void KineticExcitation::updateh(double t, int j) {
     if(F) {
       WF[1]=refFrame->getOrientation()*forceDir * (*F)(t);
       WF[0] = -WF[1];
@@ -111,7 +117,7 @@ namespace MBSim {
   }
 
   void KineticExcitation::calclaSize(int j) {
-    LinkMechanics::calclaSize(j);
+    MechanicalLink::calclaSize(j);
     laSize=forceDir.cols()+momentDir.cols();
   }
 
@@ -127,7 +133,7 @@ namespace MBSim {
           for(int i=0; i<momentDir.cols(); i++) plotVector.push_back(m(i));
         }
       }
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 
@@ -160,7 +166,7 @@ namespace MBSim {
   }
 
   void KineticExcitation::initializeUsingXML(DOMElement *element) {
-    LinkMechanics::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if(e) refFrameID=getInt(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
@@ -184,7 +190,7 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
       which[1]=true;
-      LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
+      MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
@@ -192,13 +198,13 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       std::vector<bool> which; which.resize(2, false);
       which[1]=true;
-      LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
+      MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
     }
 #endif
   }
 
   DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = LinkMechanics::writeXMLFile(parent);
+    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
 //    if(refFrame) {
 //      DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
 //      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path

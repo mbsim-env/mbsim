@@ -488,6 +488,31 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="constraints" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Constraint">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:Embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="observers" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1028,7 +1053,7 @@
     </xs:complexContent>
   </xs:complexType>   
   
-  <xs:element name="Constraint" abstract="true" substitutionGroup="Object" type="ConstraintType">
+  <xs:element name="Constraint" abstract="true" substitutionGroup="Element" type="ConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Kinematische Zwangsbedingungen.
@@ -1037,7 +1062,7 @@
   </xs:element>
   <xs:complexType name="ConstraintType">
     <xs:complexContent>
-      <xs:extension base="ObjectType"/>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>   
 
@@ -1435,25 +1460,25 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LinkMechanics" substitutionGroup="Link" type="LinkMechanicsType">
+  <xs:element name="MechanicalLink" substitutionGroup="Link" type="MechanicalLinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="LinkMechanicsType">
+  <xs:complexType name="MechanicalLinkType">
     <xs:complexContent>
       <xs:extension base="LinkType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="KineticExcitation" substitutionGroup="LinkMechanics" type="KineticExcitationType">
+  <xs:element name="KineticExcitation" substitutionGroup="MechanicalLink" type="KineticExcitationType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine externe, kinetische Anregung auf einen Körper.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="KineticExcitationType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1533,7 +1558,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType">
+  <xs:element name="SpringDamper" substitutionGroup="MechanicalLink" type="SpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
         <p>
@@ -1547,7 +1572,7 @@
   </xs:element>
   <xs:complexType name="SpringDamperType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1559,6 +1584,13 @@
                 <xs:element ref="Function"/>
               </xs:sequence>
             </xs:complexType> 
+          </xs:element>
+          <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Entspannte Federlänge <object class="inlineeqn">l_0</object>.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1591,7 +1623,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="DirectionalSpringDamper" substitutionGroup="LinkMechanics" type="DirectionalSpringDamperType">
+  <xs:element name="DirectionalSpringDamper" substitutionGroup="MechanicalLink" type="DirectionalSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
         <p>
@@ -1605,7 +1637,7 @@
   </xs:element>
   <xs:complexType name="DirectionalSpringDamperType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="forceDirection" type="pv:nounitVector">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1626,6 +1658,13 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Entspannte Federlänge <object class="inlineeqn">l_0</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
@@ -1657,14 +1696,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedSpringDamper" substitutionGroup="LinkMechanics" type="GeneralizedSpringDamperType">
+  <xs:element name="GeneralizedSpringDamper" substitutionGroup="MechanicalLink" type="GeneralizedSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedSpringDamperType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1676,7 +1715,14 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="rigidBodyFirstSide" minOccurs="0">
+          <xs:element name="unloadedGeneralizedLength" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Entspannte Federlänge <object class="inlineeqn">l_0</object>.
+              </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="rigidBodyFirstSide" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
@@ -1721,14 +1767,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedFriction" substitutionGroup="LinkMechanics" type="GeneralizedFrictionType">
+  <xs:element name="GeneralizedFriction" substitutionGroup="MechanicalLink" type="GeneralizedFrictionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedFrictionType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="generalizedFrictionForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1787,7 +1833,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Gear" substitutionGroup="LinkMechanics" type="GearType">
+  <xs:element name="Gear" substitutionGroup="MechanicalLink" type="GearType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1797,7 +1843,7 @@
   </xs:element>
   <xs:complexType name="GearType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1894,7 +1940,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Joint" substitutionGroup="LinkMechanics" type="JointType">
+  <xs:element name="Joint" substitutionGroup="MechanicalLink" type="JointType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Gelenk als Verbindung zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
         Aufgabe von Gelenken ist es, die Relativbewegung zwischen einzelnen Körpern eines Mehrkörpersystems einzuschränken und somit nur bestimmte Bewegungsmöglichkeiten zuzulassen. Die Relativbewegungen, die zwei Körper im ungebundenen Zustand durchführen könnten, werden dabei durch Gelenkkräfte und -momente verhindert.<br/> 
@@ -1905,7 +1951,7 @@
   </xs:element>
   <xs:complexType name="JointType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1976,7 +2022,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SingleContact" substitutionGroup="LinkMechanics" type="SingleContactType">
+  <xs:element name="SingleContact" substitutionGroup="MechanicalLink" type="SingleContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen Kontakt als Interaktion zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
@@ -1989,7 +2035,7 @@
   </xs:element>
   <xs:complexType name="SingleContactType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="normalForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2073,7 +2119,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType">
+  <xs:element name="Contact" substitutionGroup="MechanicalLink" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
@@ -2086,7 +2132,7 @@
   </xs:element>
   <xs:complexType name="ContactType">
     <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="normalForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -3572,87 +3618,32 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PositiveValueFunction" substitutionGroup="Function" type="PositiveValueFunctionType">
+  <xs:element name="BoundedFunction" substitutionGroup="Function" type="BoundedFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
       tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PositiveValueFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="AdditionFunction" substitutionGroup="Function" type="AdditionFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="AdditionFunctionType">
+  <xs:complexType name="BoundedFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="firstSummand">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
+          <xs:element name="lowerBound" minOccurs="0" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Untere Grenze.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
-          <xs:element name="secondSummand">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
+          <xs:element name="upperBound" minOccurs="0" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Obere Grenze.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="MultiplicationFunction" substitutionGroup="Function" type="MultiplicationFunctionType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n \mathbf{y}_i \left(x \right) </object> 
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="MultiplicationFunctionType">
-    <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="firstFactor">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="secondFactor">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
+        </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -3701,6 +3692,46 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="innerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="BinaryNestedFunction" substitutionGroup="Function" type="BinaryNestedFunctionType"/>
+  <xs:complexType name="BinaryNestedFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="outerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="firstInnerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondInnerFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
@@ -3990,7 +4021,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="unloadedLength" type="pv:lengthScalar">
+          <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Entspannte Federlänge <object class="inlineeqn">l_0</object>.

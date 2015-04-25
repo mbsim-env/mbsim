@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
     func= new FuncPairContour2sPoint(point,contour2s);
   }
 
-  void ContactKinematicsPointContour2s::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointContour2s::updateg(double &g, ContourPointData *cpData, int index) {
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
 
@@ -77,7 +77,7 @@ namespace MBSimFlexibleBody {
     // contact in estimated contact area? 
     if(cpData[icontour2s].getLagrangeParameterPosition()(0) < contour2s->getAlphaStart()(0) || cpData[icontour2s].getLagrangeParameterPosition()(0) > contour2s->getAlphaEnd()(0) ||
        cpData[icontour2s].getLagrangeParameterPosition()(1) < contour2s->getAlphaStart()(1) || cpData[icontour2s].getLagrangeParameterPosition()(1) > contour2s->getAlphaEnd()(1))
-     g(0) = 1.;
+     g = 1.;
     else {
       // the normal direction calculate by nurbs is the cross product of the two tangent directions calculate by nurbsurface.deriveAt(), these two tangent direction are along the u and v direction which are
       // are determinate by the given interpolated points. If the surface deformed, these interpolated points got from the surface may not lie in a retangle grid anymore. So u and v direction may not vertical to each other anymore,
@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
 //      cout << "1.Tangente: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(1) << endl;
 //      cout << "2.Tangente: " <<  cpData[icontour2s].getFrameOfReference().getOrientation().col(2) << endl;
 
-      g(0) = cpData[icontour2s].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour2s].getFrameOfReference().getPosition());
+      g = cpData[icontour2s].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour2s].getFrameOfReference().getPosition());
 
     }
   }

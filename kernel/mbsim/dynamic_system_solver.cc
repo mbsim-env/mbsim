@@ -28,6 +28,7 @@
 #include "mbsim/graph.h"
 #include "mbsim/object.h"
 #include "mbsim/observer.h"
+#include "mbsim/constraint.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
 #include <mbsim/environment.h>
@@ -113,6 +114,8 @@ namespace MBSim {
     if (stage == reorganizeHierarchy) {
       msg(Info) << name << " (special group) stage==preInit:" << endl;
 
+      vector<Element*> eleList;
+
       vector<Object*> objList;
       buildListOfObjects(objList);
 
@@ -124,6 +127,9 @@ namespace MBSim {
 
       vector<Link*> lnkList;
       buildListOfLinks(lnkList);
+
+      vector<Constraint*> crtList;
+      buildListOfConstraints(crtList);
 
       vector<ModellingInterface*> modellList;
       buildListOfModels(modellList);
@@ -156,6 +162,10 @@ namespace MBSim {
         lnkList[i]->setName("Link_"+lexical_cast<string>(i)); // just a unique local name
         addLink(lnkList[i]);
       }
+      for (unsigned int i = 0; i < crtList.size(); i++) {
+        crtList[i]->setName("Constraint_"+lexical_cast<string>(i)); // just a unique local name
+        addConstraint(crtList[i]);
+      }
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
         iKlnkList[i]->setName("InverseKinematic_"+lexical_cast<string>(i)); // just a unique local name
         addInverseKineticsLink(iKlnkList[i]);
@@ -165,19 +175,24 @@ namespace MBSim {
         addObserver(obsrvList[i]);
       }
 
+     for (unsigned int i = 0; i < objList.size(); i++)
+       eleList.push_back(objList[i]);
+     for (unsigned int i = 0; i < crtList.size(); i++)
+       eleList.push_back(crtList[i]);
+
       /* now objects: these are much more complex since we must build a graph */
 
       /* matrix of body dependencies */
-      SqrMat A(objList.size(), INIT, 0.);
-      for (unsigned int i = 0; i < objList.size(); i++) {
+      SqrMat A(eleList.size(), INIT, 0.);
+      for (unsigned int i = 0; i < eleList.size(); i++) {
 
-        vector<Element*> parentBody = objList[i]->getElementsDependingOn();
+        vector<Element*> parentElement = eleList[i]->getDependencies();
 
-        for (unsigned int h = 0; h < parentBody.size(); h++) {
+        for (unsigned int h = 0; h < parentElement.size(); h++) {
           bool foundBody = false;
           unsigned int j;
-          for (j = 0; j < objList.size(); j++) {
-            if (objList[j] == parentBody[h]) {
+          for (j = 0; j < eleList.size(); j++) {
+            if (eleList[j] == parentElement[h]) {
               foundBody = true;
               break;
             }
@@ -196,18 +211,30 @@ namespace MBSim {
         double a = max(A.T().col(i));
         if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+lexical_cast<string>(nt++));
-          addToGraph(graph, A, i, objList);
+          addToGraph(graph, A, i, eleList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot()) { // absolut kinematics
-          objList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
-          addObject(objList[i]);
+          Object *obj = dynamic_cast<Object*>(eleList[i]);
+          if(obj) {
+            eleList[i]->setName("Object_absolute_"+lexical_cast<string>(i)); // just a unique local name
+            addObject(obj);
+          }
         }
       }
 
       for (unsigned int i = 0; i < bufGraph.size(); i++) {
         addGroup(bufGraph[i]);
+      }
+
+      for (unsigned int i = 0; i < eleList.size(); i++) {
+        int level = eleList[i]->computeLevel();
+        for(int j=elementOrdered.size(); j<=level; j++) {
+          vector<Element*> vec;
+          elementOrdered.push_back(vec);
+        }
+        elementOrdered[level].push_back(eleList[i]);
       }
 
       for (unsigned int i = 0; i < link.size(); i++) {
@@ -230,10 +257,18 @@ namespace MBSim {
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
 
+      msg(Info) << "Content of element graph "<< name << ":" << endl;
+      for(unsigned int i=0; i<elementOrdered.size(); i++) {
+        msg(Info) << "  Elements in level "<< i << ":"<< endl;
+        for(unsigned int j=0; j<elementOrdered[i].size(); j++)
+          msg(Info) << "    "<< elementOrdered[i][j]->getName() << " " << elementOrdered[i][j]->getPath() << " " << elementOrdered[i][j]->getType()<<endl;
+      }
+
+      msg(Info) << "Content of link graph "<< name << ":" << endl;
       for(unsigned int i=0; i<linkOrdered.size(); i++) {
-        msg(Debug) << "  Links in level "<< i << ":"<< endl;
+        msg(Info) << "  Elements in level "<< i << ":"<< endl;
         for(unsigned int j=0; j<linkOrdered[i].size(); j++)
-          msg(Debug) << "    "<< linkOrdered[i][j]->getPath()<<endl;
+          msg(Info) << "    "<< linkOrdered[i][j]->getName() << " " << linkOrdered[i][j]->getPath() << " " << linkOrdered[i][j]->getType()<<endl;
       }
     }
     else if (stage == resize) {
@@ -701,8 +736,10 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateh(double t, int j) {
+//    cout << t << " " << j << endl;
     h[j].init(0);
     Group::updateh(t, j);
+    updh[j] = false;
   }
 
   Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
@@ -794,9 +831,20 @@ namespace MBSim {
     THROW_MBSIMERROR("Internal error");
   }
 
+  void DynamicSystemSolver::updateT(double t) {
+    Group::updateT(t);
+    updT = false;
+  }
+
   void DynamicSystemSolver::updateM(double t, int i) {
     M[i].init(0);
     Group::updateM(t, i);
+    updM[i] = false;
+  }
+
+  void DynamicSystemSolver::updateLLM(double t, int i) {
+    Group::updateLLM(t, i);
+    updLLM[i] = false;
   }
 
   void DynamicSystemSolver::updateStateDependentVariables(double t) {
@@ -817,7 +865,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updater(double t, int j) {
-    r[j] = V[j] * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    r[j] = getV(t,j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    updr[j] = false;
   }
 
   void DynamicSystemSolver::updatewb(double t, int j) {
@@ -831,7 +880,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateV(double t, int j) {
-    V[j] = W[j];
+    V[j] = getW(t,j);
     Group::updateV(t, j);
   }
 
@@ -965,7 +1014,7 @@ namespace MBSim {
       updateT(0);
       updateJacobians(0);
       updateM(0);
-      facLLM();
+      updateLLM(0);
       projectGeneralizedPositions(0, 1, true);
       updateStateDependentVariables(0);
       updateJacobians(0);
@@ -985,7 +1034,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateG(double t, int j) {
-    G << SqrMat(W[j].T() * slvLLFac(LLM[j], V[j]));
+    G << SqrMat(getW(t,j).T() * slvLLFac(getLLM(t,j), getV(t,j)));
 
     if (checkGSize)
       ; // Gs.resize();
@@ -996,6 +1045,8 @@ namespace MBSim {
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
     Gs << G;
+
+    updG = false;
   }
 
   void DynamicSystemSolver::decreaserFactors() {
@@ -1032,7 +1083,7 @@ namespace MBSim {
     updateJacobians(t);
     updateh(t);
     updateM(t);
-    facLLM();
+    updateLLM(t);
     updateW(t);
     updateV(t);
     updateG(t);
@@ -1109,7 +1160,7 @@ namespace MBSim {
       if(fullUpdate) {
         updateJacobians(t);
         updateM(t);
-        facLLM();
+        updateLLM(t);
         updateW(t);
         Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
       }
@@ -1375,7 +1426,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb)); // slvLS because of undeterminded system of equations
+    la = slvLS(getG(t), -(getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t))); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1535,14 +1586,17 @@ namespace MBSim {
 //    doc.SaveFile((name.length() > 10 && name.substr(name.length() - 10, 10) == ".mbsim.xml") ? name : name + ".mbsim.xml");
   }
 
-  void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
-    objList[i]->setName("Object_graph_"+lexical_cast<string>(i)); // just a unique local name
-    graph->addObject(objList[i]->computeLevel(), objList[i]);
+  void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
+    Object *obj = dynamic_cast<Object*>(eleList[i]);
+    if(obj) {
+      eleList[i]->setName("Object_graph_"+lexical_cast<string>(i)); // just a unique local name
+      graph->addObject(eleList[i]->computeLevel(), obj);
+    }
     A(i, i) = -1;
 
     for (int j = 0; j < A.cols(); j++)
       if (A(i, j) > 0 && fabs(A(j, j) + 1) > epsroot()) // child node of object i
-        addToGraph(graph, A, j, objList);
+        addToGraph(graph, A, j, eleList);
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
@@ -1643,7 +1697,7 @@ namespace MBSim {
         updateJacobians(t);
         updateh(t);  // TODO necessary
         updateM(t);  // TODO necessary
-        facLLM();  // TODO necessary 
+        updateLLM(t);  // TODO necessary 
         updateW(t);  // TODO necessary
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
@@ -1702,7 +1756,7 @@ namespace MBSim {
     updateJacobians(t);
     updateh(t);
     updateM(t);
-    facLLM();
+    updateLLM(t);
     if (laSize) {
       updateW(t);
       updateV(t);
@@ -1717,82 +1771,42 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
+    //cout << "zdot, t = " << t << endl;
+    resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t);
-    updateJacobians(t);
-    updateh(t);
-    updateM(t);
-    facLLM();
-    if (laSize) {
-      updateW(t);
-      updateV(t);
-      updateG(t);
-      updatewb(t);
-      computeConstraintForces(t);
-    }
-    updater(t);
+    if (laSize) computeConstraintForces(t);
     updatezd(t);
 
     return zdParent;
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
+    //cout << "plot, t = " << t << endl;
+    resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
     }
 
     if (qd() != zdParent())
       updatezdRef(zdParent);
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t);
-    updateJacobians(t, 0);
-    updateJacobians(t, 1);
-    updateh(t, 1);
-    updateh(t, 0);
-    updateM(t, 0);
-    facLLM(0);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    if (laSize) {
+    if (laSize) computeConstraintForces(t);
 
-      updateW(t, 1);
-      updateV(t, 1);
-      updateW(t, 0);
-      updateV(t, 0);
-      updateG(t);
-      updatewb(t);
-      computeConstraintForces(t);
-    }
-
-    updater(t, 0);
-    updater(t, 1);
     updatezd(t);
     if (true) {
-      updateStateDerivativeDependentVariables(t); // TODO: verbinden mit updatehInverseKinetics
+      updateStateDerivativeDependentVariables(t);
 
-      updatehInverseKinetics(t, 1); // Accelerations of objects
-
-      updategInverseKinetics(t); // necessary because of update of force direction
-      updategdInverseKinetics(t); // necessary because of update of force direction
-      updateJacobiansInverseKinetics(t, 1);
-      updateWInverseKinetics(t, 1);
-      updatebInverseKinetics(t);
-
-      int n = WInverseKinetics[1].cols();
+      int n = getWInverseKinetics(t,1).cols();
       int m1 = WInverseKinetics[1].rows();
-      int m2 = bInverseKinetics.rows();
+      int m2 = getbInverseKinetics(t).rows();
       Mat A(m1 + m2, n);
       Vec b(m1 + m2);
       A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
       A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
-      b(0, m1 - 1) = -h[1] - r[1];
+      b(0, m1 - 1) = -geth(t,1) - getr(t,1);
       laInverseKinetics = slvLL(JTJ(A), A.T() * b);
     }
 
@@ -1821,7 +1835,7 @@ namespace MBSim {
     updateT(t);
     updateh(t);
     updateM(t);
-    facLLM();
+    updateLLM(t);
     updateW(t);
 
     plot(t, dt);
@@ -1830,6 +1844,35 @@ namespace MBSim {
       flushCount = 0;
       H5::File::flushAllFiles();
     }
+  }
+
+  void DynamicSystemSolver::resetUpToDate() {
+    updT = true;
+    updh[0] = true;
+    updh[1] = true;
+    updr[0] = true;
+    updr[1] = true;
+    updM[0] = true;
+    updM[1] = true;
+    updLLM[0] = true;
+    updLLM[1] = true;
+    updW[0] = true;
+    updW[1] = true;
+    updV[0] = true;
+    updV[1] = true;
+    updwb = true;
+    updG = true;
+    Group::resetUpToDate();
+  }
+
+  const SqrMat& DynamicSystemSolver::getG(double t) {
+    if(updG) updateG(t);
+    return G;
+  }
+
+  const SparseMat& DynamicSystemSolver::getGs(double t) {
+    if(updG) updateG(t);
+    return Gs;
   }
 
 }

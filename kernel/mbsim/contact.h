@@ -20,7 +20,7 @@
 #ifndef _CONTACT_H_
 #define _CONTACT_H_
 
-#include <mbsim/link_mechanics.h>
+#include <mbsim/mechanical_link.h>
 #include <mbsim/single_contact.h>
 #include <map>
 
@@ -51,7 +51,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class Contact : public LinkMechanics {
+  class Contact : public MechanicalLink {
     public:
       /*!
        * \brief constructor
@@ -123,7 +123,7 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double dt);
-      using LinkMechanics::connect;
+      using MechanicalLink::connect;
       virtual void checkActive(int j);
       virtual void setlaTol(double tol);
       virtual void setLaTol(double tol);

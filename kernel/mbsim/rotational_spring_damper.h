@@ -19,7 +19,7 @@
 #ifndef _ROTATIONALSPRINGDAMPER_H_
 #define _ROTATIONALSPRINGDAMPER_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/frame.h"
 #include <mbsim/functions/function.h>
 

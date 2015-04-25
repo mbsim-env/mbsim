@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/compound_contour.h"
+#include "mbsim/fixed_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
@@ -146,7 +147,7 @@ namespace MBSim {
 
   void CompoundContour::updateStateDependentVariables(double t) {
     for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateStateDependentVariables();
+      frame[i]->updateStateDependentVariables(t);
   }
 
   void CompoundContour::updateJacobians(double t, int j) {
@@ -156,7 +157,7 @@ namespace MBSim {
 
   void CompoundContour::updateStateDerivativeDependentVariables(const Vec &ud, double t) {
     for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateStateDerivativeDependentVariables(ud);
+      frame[i]->updateAccelerations(t);
   }
 
 }

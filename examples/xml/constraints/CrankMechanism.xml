@@ -146,15 +146,6 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <GearConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
-      <dependentRigidBody ref="../Object[Crank]"/>
-      <transmissions>
-        <Transmission>
-          <rigidBody ref="../Object[Motor]"/>
-          <ratio>-motor_TransmissionRadius/crank_TransmissionRadius</ratio>
-        </Transmission>
-      </transmissions>
-    </GearConstraint>
     <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="Rocker">
       <frameOfReference ref="../Object[Crank]/Frame[fRocker]"/>
       <frameForKinematics ref="Frame[fCrank]"/>
@@ -251,17 +242,6 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <JointConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Rocker_Piston">
-      <dependentRigidBodiesFirstSide>
-        <dependentRigidBody ref="../Object[Rocker]"/>
-      </dependentRigidBodiesFirstSide>
-      <dependentRigidBodiesSecondSide>
-        <dependentRigidBody ref="../Object[Piston]"/>
-      </dependentRigidBodiesSecondSide>
-      <independentRigidBody ref="../Object[Crank]"/>
-      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
-      <connect ref1="../Object[Rocker]/Frame[fPiston]" ref2="../Object[Piston]/Frame[fRocker]"/>
-    </JointConstraint>
   </objects>
   <links>
     <KineticExcitation xmlns="http://mbsim.berlios.de/MBSim" name="MotorTorque">
@@ -315,4 +295,26 @@
       </enableOpenMBVMoment>
     </Joint>
   </links>
+  <constraints>
+    <GearConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
+      <dependentRigidBody ref="../Object[Crank]"/>
+      <transmissions>
+        <Transmission>
+          <rigidBody ref="../Object[Motor]"/>
+          <ratio>-motor_TransmissionRadius/crank_TransmissionRadius</ratio>
+        </Transmission>
+      </transmissions>
+    </GearConstraint>
+    <JointConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Rocker_Piston">
+      <dependentRigidBodiesFirstSide>
+        <dependentRigidBody ref="../Object[Rocker]"/>
+      </dependentRigidBodiesFirstSide>
+      <dependentRigidBodiesSecondSide>
+        <dependentRigidBody ref="../Object[Piston]"/>
+      </dependentRigidBodiesSecondSide>
+      <independentRigidBody ref="../Object[Crank]"/>
+      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
+      <connect ref1="../Object[Rocker]/Frame[fPiston]" ref2="../Object[Piston]/Frame[fRocker]"/>
+    </JointConstraint>
+  </constraints>
 </Group>

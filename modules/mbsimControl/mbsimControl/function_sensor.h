@@ -31,66 +31,18 @@ namespace MBSimControl {
    */
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const std::string &name="") : Sensor(name), function(NULL), y() {}
+      FunctionSensor(const std::string &name="") : Sensor(name), function(NULL) {}
       FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       ~FunctionSensor() { delete function; }
       std::string getType() const { return "FunctionSensor"; }
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
-      fmatvec::VecV getSignal() {return y; }
-      void updateg(double t);
+      void updateh(double t, int j=0);
+      void updateg(double t) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(MBSim::Element::InitStage stage);
+      int getSignalSize() const { return (*function)(0).size(); }
     private:
       MBSim::Function<fmatvec::VecV(double)> * function;
-      fmatvec::VecV y;
-  };
-
-  /*!
-   * \brief Function_SSEvaluation
-   * \author Markus Schneider
-   */
-  class Function_SSEvaluation : public Signal {
-    public:
-      Function_SSEvaluation(const std::string &name="") : Signal(name), signal(NULL), fun(NULL), signalString("") {}
-      ~Function_SSEvaluation() { delete fun; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setSignal(Signal * s) {signal=s; }
-      void setFunction(MBSim::Function<double(double)>* fun_) {
-        fun=fun_;
-        fun->setParent(this);
-        fun->setName("Function");
-      }
-      fmatvec::VecV getSignal();
-    private:
-      Signal * signal;
-      MBSim::Function<double(double)>* fun;
-      std::string signalString;
-  };
-
-  /*!
-   * \brief Function_SSSEvaluation
-   * \author Markus Schneider
-   */
-  class Function_SSSEvaluation : public Signal {
-    public:
-      Function_SSSEvaluation(const std::string &name="") : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
-      ~Function_SSSEvaluation() { delete fun; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage);
-      void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
-      void setFunction(MBSim::Function<double(double,double)>* fun_) {
-        fun=fun_;
-        fun->setParent(this);
-        fun->setName("Function");
-      }
-      fmatvec::VecV getSignal();
-    private:
-      Signal * signal1;
-      Signal * signal2;
-      MBSim::Function<double(double,double)>* fun;
-      std::string signal1String;
-      std::string signal2String;
   };
 
 }

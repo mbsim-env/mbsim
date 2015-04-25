@@ -15,6 +15,7 @@
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/nested_functions.h"
 
 #include "beltDriveFunctions.h"
 

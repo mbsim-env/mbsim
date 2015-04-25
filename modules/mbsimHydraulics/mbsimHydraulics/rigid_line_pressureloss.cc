@@ -34,7 +34,7 @@ using namespace MBSimControl;
 
 namespace MBSimHydraulics {
 
-  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(true), active0(true), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), gfl(NULL), gil(NULL) {
+  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(true), active0(true), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), unidirectionalPressureLoss(NULL), gfl(NULL), gil(NULL) {
     pressureLoss->setLine(line);
     if (dynamic_cast<LinePressureLoss*>(pressureLoss))
       linePressureLoss = (LinePressureLoss*)(pressureLoss);
@@ -54,7 +54,14 @@ namespace MBSimHydraulics {
       gfl=new BilateralConstraint();
       gil=new BilateralImpact();
     }
-
+    if(gfl) {
+      gfl->setParent(this);
+      gfl->setName("gfl");
+    }
+    if(gil) {
+      gil->setParent(this);
+      gil->setName("gil");
+    }
   }
 
   RigidLinePressureLoss::~RigidLinePressureLoss() {
@@ -79,7 +86,14 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::init(InitStage stage) {
-    if (stage==resize) {
+    if (stage==preInit) {
+      Link::init(stage);
+      if(linePressureLoss) addDependency(linePressureLoss->getDependency());
+      if(closablePressureLoss) addDependency(closablePressureLoss->getDependency());
+      if(leakagePressureLoss) addDependency(leakagePressureLoss->getDependency());
+      if(unidirectionalPressureLoss) addDependency(unidirectionalPressureLoss->getDependency());
+    }
+    else if (stage==resize) {
       Link::init(stage);
       int j=1;
       W[0].push_back(Mat(j, 1));
@@ -116,6 +130,8 @@ namespace MBSimHydraulics {
     }
     else
       Link::init(stage);
+    if(gfl) gfl->init(stage);
+    if(gil) gil->init(stage);
   }
 
   void RigidLinePressureLoss::updatehRef(const Vec& hParent, int i) {

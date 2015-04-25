@@ -52,19 +52,17 @@ namespace MBSim {
   }
 
   void Graph::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ud[0] = slvLLFac(getLLM(t), geth(t)*dt+getr(t));
   }
 
   void Graph::updateud(double t, int j) {
-    ud[j] =  slvLLFac(LLM[j], h[j]+r[j]);
+    ud[j] =  slvLLFac(getLLM(t,j), geth(t,j)+getr(t,j));
   }
 
   void Graph::updatezd(double t) {
-    for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i) {
+    for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i)
       (**i).updateqd(t);
-      (**i).updatexd(t);
-    }
-    ud[0] = slvLLFac(LLM[0], h[0]+r[0]);
+    ud[0] = slvLLFac(getLLM(t), geth(t)+getr(t));
   }
 
   void Graph::sethSize0(int hSize_) {
@@ -139,8 +137,8 @@ namespace MBSim {
     DynamicSystem::calcuSize(1);
   }
 
-  void Graph::facLLM(int i) {
-    LLM[i] = facLL(M[i]); 
+  void Graph::updateLLM(double t, int i) {
+    LLM[i] = facLL(getM(t,i)); 
   }
 
   void Graph::addObject(int level, Object* object) {
@@ -155,11 +153,11 @@ namespace MBSim {
   }
 
   void Graph::printGraph() {
-    msg(Debug) << "Content of graph "<< name << ":" << endl;
+    msg(Info) << "Content of object graph "<< name << ":" << endl;
     for(unsigned int i=0; i<obj.size(); i++) {
-      msg(Debug) << "  Objects in level "<< i << ":"<< endl;
+      msg(Info) << "  Objects in level "<< i << ":"<< endl;
       for(unsigned int j=0; j<obj[i].size(); j++)
-	msg(Debug) << "    "<< obj[i][j]->getPath()<<" (uSize=" <<obj[i][j]->getuSize()<<", hSize="<< obj[i][j]->gethSize()<<
+	msg(Info) << "    "<< obj[i][j]->getPath()<<" (uSize=" <<obj[i][j]->getuSize()<<", hSize="<< obj[i][j]->gethSize()<<
                                            ", uInd=" << obj[i][j]->getuInd()<<", hInd=" << obj[i][j]->gethInd()<< ")"<<endl;
     }
   }

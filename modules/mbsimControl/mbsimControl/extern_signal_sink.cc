@@ -34,9 +34,20 @@ namespace MBSimControl {
   }
 
   void ExternSignalSink::init(InitStage stage) {
-    if(stage==resolveXMLPath)
+    if(stage==resolveXMLPath) {
       setSignal(getByPath<Signal>(signalString));
-    Signal::init(stage);
+      Signal::init(stage);
+    }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependency(signal);
+    }
+    else
+      Link::init(stage);
+  }
+
+  void ExternSignalSink::updateh(double t, int j) {
+    s = signal->getSignal();
   }
 
 }

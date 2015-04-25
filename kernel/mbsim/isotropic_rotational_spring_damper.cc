@@ -29,7 +29,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) :
-      LinkMechanics(name), c(0.), d(0.), alpha0(0.) {
+      MechanicalLink(name), c(0.), d(0.), alpha0(0.) {
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
@@ -88,13 +88,13 @@ namespace MBSim {
 
   void IsotropicRotationalSpringDamper::init(InitStage stage) {
     if (stage == resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(momentDir.cols());
       gd.resize(momentDir.cols());
       la.resize(momentDir.cols());
     }
     else if (stage == unknownStage) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
 
       IR = Index(0, momentDir.cols() - 1);
 
@@ -106,12 +106,12 @@ namespace MBSim {
       }
     }
     else
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
   }
 
   void IsotropicRotationalSpringDamper::connect(Frame* frame0, Frame* frame1) {
-    LinkMechanics::connect(frame0);
-    LinkMechanics::connect(frame1);
+    MechanicalLink::connect(frame0);
+    MechanicalLink::connect(frame1);
   }
 
   void IsotropicRotationalSpringDamper::setMomentDirection(const Mat &md) {

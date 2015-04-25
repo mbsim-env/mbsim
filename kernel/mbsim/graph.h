@@ -65,7 +65,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF SUBSYSTEM */
       virtual void updateJacobians(double t, int j=0);
-      void facLLM(int i=0); 
+      void updateLLM(double t, int i=0); 
 
       void (Graph::*calcuSize_[2])(); 
       void (Graph::*sethSize_[2])(int h); 
@@ -90,6 +90,7 @@ namespace MBSim {
       void addObject(int level, Object* object); 
 
       void printGraph();
+      const std::vector< std::vector<Object*> >& getObjects() const { return obj; }
 
     protected:
       /**

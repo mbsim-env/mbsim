@@ -21,6 +21,7 @@
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/edge.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

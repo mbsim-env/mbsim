@@ -20,13 +20,13 @@
 #ifndef _GEARING_H_
 #define _GEARING_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 
 namespace MBSim {
 
-  class Gearing : public LinkMechanics {
+  class Gearing : public MechanicalLink {
     protected:
       Function<double(double,double)> *func;
       double r0, r1;
@@ -37,11 +37,11 @@ namespace MBSim {
       fmatvec::Vec3 Wt;
     public:
       Gearing(const std::string &name);
-      void updateh(double, int i=0);
-      void updateW(double, int i=0);
+      void updateh(double t, int i=0);
+      void updateW(double t, int i=0);
       void updateJacobians(double t, int j=0);
-      void updateg(double);
-      void updategd(double);
+      void updateg(double t);
+      void updategd(double t);
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);

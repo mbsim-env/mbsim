@@ -40,6 +40,7 @@ namespace MBSimControl {
       void setIndex(int index_) {index=index_; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
+      int getSignalSize() const { return 1; }
     protected:
       MBSim::Object * object;
       std::string objectString;
@@ -54,7 +55,7 @@ namespace MBSimControl {
     public:
       GeneralizedPositionSensor(const std::string &name="") : GeneralizedCoordinateSensor(name) {}
       std::string getType() const { return "GeneralizedPositionSensor"; }
-      fmatvec::VecV getSignal();
+      void updateh(double t, int j=0);
   };
 
   /*!
@@ -65,7 +66,7 @@ namespace MBSimControl {
     public:
       GeneralizedVelocitySensor(const std::string &name="") : GeneralizedCoordinateSensor(name) {}
       std::string getType() const { return "GeneralizedVelocitySensor"; }
-      fmatvec::VecV getSignal(); 
+      void updateh(double t, int j=0);
   };
 
 }

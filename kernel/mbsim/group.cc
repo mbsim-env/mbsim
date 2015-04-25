@@ -21,7 +21,8 @@
 #include "mbsim/group.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
-#include "mbsim/frame.h"
+#include "mbsim/constraint.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
@@ -50,31 +51,29 @@ namespace MBSim {
 
   Group::~Group() {}
 
-  void Group::facLLM(int j) {
+  void Group::updateLLM(double t, int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->facLLM(j);
+      (*i)->updateLLM(t,j);
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->facLLM(j);
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (*i)->updateLLM(t,j);
   }
 
   void Group::updateStateDependentVariables(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateStateDependentVariables(t);
 
-    for(int i=0; i<(int)object.size(); i++)
-      object[i]->updateStateDependentVariables(t);
+    for(unsigned int i=0; i<elementOrdered.size(); i++) 
+      for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
+	elementOrdered[i][j]->updateStateDependentVariables(t);
   }
 
-  void Group::updateJacobians(double t, int j) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateJacobians(t,j);
+  void Group::updateJacobians(double t, int k) {
 
-    for(int i=0; i<(int)object.size(); i++)
-      object[i]->updateJacobians(t,j);
+    for(unsigned int i=0; i<elementOrdered.size(); i++) 
+      for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
+        elementOrdered[i][j]->updateJacobians(t,k);
 
-    for(int i=0; i<(int)link.size(); i++)
-      link[i]->updateJacobians(t,j);
+    for(unsigned int i=0; i<link.size(); i++)
+      link[i]->updateJacobians(t,k);
   }
 
   void Group::updatedu(double t, double dt) {
@@ -101,6 +100,9 @@ namespace MBSim {
       (*i)->updatezd(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (*i)->updatexd(t);
+
+    for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (*i)->updatexd(t);
   }
 
@@ -179,6 +181,18 @@ namespace MBSim {
       E=E->getNextElementSibling();
     }
     e=e->getNextElementSibling();
+
+    // constraints
+    if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"constraints") {
+      E=e->getFirstElementChild();
+      Constraint *crt;
+      while(E) {
+        crt=ObjectFactory::createAndInit<Constraint>(E);
+        addConstraint(crt);
+        E=E->getNextElementSibling();
+      }
+      e=e->getNextElementSibling();
+    }
 
     // observers
     if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"observers") {

@@ -8,6 +8,7 @@ using namespace MBSimIntegrator;
 int main (int argc, char* argv[]) {
 
   DynamicSystemSolver *sys = new CrankMechanism("MBS");
+  sys->setInverseKinetics(true);
   sys->initialize();
   
   LSODEIntegrator integrator;

@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointCircleSolid::updateg(Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointCircleSolid::updateg(double &g, ContourPointData *cpData, int index) {
     const Vec3 WrD = -circlesolid->getFrame()->getPosition() + point->getFrame()->getPosition();
     
     cpData[icirclesolid].getFrameOfReference().getOrientation().set(0, WrD/nrm2(WrD));
@@ -57,10 +57,10 @@ namespace MBSim {
     cpData[icirclesolid].getFrameOfReference().getPosition() = circlesolid->getFrame()->getPosition() + cpData[icirclesolid].getFrameOfReference().getOrientation().col(0)*circlesolid->getRadius();
     cpData[ipoint].getFrameOfReference().getPosition() = point->getFrame()->getPosition();
 
-    g(0) = cpData[icirclesolid].getFrameOfReference().getOrientation().col(0).T()*WrD - circlesolid->getRadius();
+    g = cpData[icirclesolid].getFrameOfReference().getOrientation().col(0).T()*WrD - circlesolid->getRadius();
   }
 
-  void ContactKinematicsPointCircleSolid::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsPointCircleSolid::updatewb(Vec &wb, double g, ContourPointData *cpData) {
 
     const Vec KrPC1 = circlesolid->getFrame()->getOrientation().T()*(cpData[icirclesolid].getFrameOfReference().getPosition() - circlesolid->getFrame()->getPosition());
     const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));

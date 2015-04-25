@@ -202,11 +202,15 @@
       <index>0</index>
     </GeneralizedVelocitySensor>
 
-    <SignalOperation name="VelocitySensorTanh" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <UnarySignalOperation name="VelocitySensorTanh" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Link[VelocitySensor]"/>
-      <tanh/>
-    </SignalOperation>
-    <Function_SSEvaluation name="ExcitationTorque" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <function>
+        <SymbolicFunction arg1="s" xmlns="http://mbsim.berlios.de/MBSim">
+          (exp(s)-exp(-s))/(exp(s)+exp(-s))
+        </SymbolicFunction>
+      </function>
+    </UnarySignalOperation>
+    <UnarySignalOperation name="ExcitationTorque" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Link[AngularSensor]"/>
       <function>
         <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
@@ -221,20 +225,25 @@
           </xy>
         </TabularFunction>
       </function>
-    </Function_SSEvaluation>
-    <SignalMultiplication name="Excitation" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Link[ExcitationTorque]">
-        <exponent>1</exponent>
-      </inputSignal>
-      <inputSignal ref="../Link[VelocitySensorTanh]">
-        <exponent>3</exponent>
-      </inputSignal>
-    </SignalMultiplication>
-    <Actuator name="Actuator" xmlns="http://mbsim.berlios.de/MBSimControl">
+    </UnarySignalOperation>
+    <BinarySignalOperation name="Excitation" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <firstInputSignal ref="../Link[ExcitationTorque]"/>
+      <secondInputSignal ref="../Link[VelocitySensorTanh]"/>
+      <function>
+        <SymbolicFunction arg1="x" arg2="y" xmlns="http://mbsim.berlios.de/MBSim">
+          x*y^3
+        </SymbolicFunction>
+      </function>
+    </BinarySignalOperation>
+    <KineticExcitation name="Actuator" xmlns="http://mbsim.berlios.de/MBSim">
       <momentDirection>[0 0 -1]'</momentDirection>
-      <inputSignal ref="../Link[Excitation]"/>
+      <momentFunction>
+        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+          <returnSignal ref="../../Link[Excitation]"/>
+        </SignalFunction>
+      </momentFunction>
       <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>
-    </Actuator>
+    </KineticExcitation>
   </links>
 </Group>
 

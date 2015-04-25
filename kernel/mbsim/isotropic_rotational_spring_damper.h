@@ -19,7 +19,7 @@
 #ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
 #define _ISOTROPICROTATIONALSPRINGDAMPER_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include "mbsim/frame.h"
 
 namespace MBSim {
@@ -34,7 +34,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
-  class IsotropicRotationalSpringDamper : public LinkMechanics {
+  class IsotropicRotationalSpringDamper : public MechanicalLink {
     public:
       /**
        * \brief constructor

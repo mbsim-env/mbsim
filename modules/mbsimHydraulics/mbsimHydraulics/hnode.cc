@@ -277,7 +277,11 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNode, MBSIMHYDRAULICS%"ConstrainedNode")
 
   void ConstrainedNode::init(InitStage stage) {
-    if (stage==unknownStage) {
+    if(stage==preInit) {
+      HNode::init(stage);
+      addDependency(pFun->getDependency());
+    }
+    else if (stage==unknownStage) {
       HNode::init(stage);
       la.init((*pFun)(0));
     }
@@ -378,6 +382,10 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNode, MBSIMHYDRAULICS%"RigidNode")
 
   RigidNode::RigidNode(const string &name) : HNode(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
+    gfl->setParent(this);
+    gfl->setName("gfl");
+    gil->setParent(this);
+    gil->setName("gil");
   }
 
   RigidNode::~RigidNode() {
@@ -390,6 +398,12 @@ namespace MBSimHydraulics {
       gil=NULL;
     }
   }
+
+  void RigidNode::init(InitStage stage) {
+    HNode::init(stage);
+    if(gfl) gfl->init(stage);
+    if(gil) gil->init(stage);
+ }
 
   void RigidNode::updategd(double t) {
     HNode::updategd(t);
@@ -600,6 +614,8 @@ namespace MBSimHydraulics {
     }
     else
       HNode::init(stage);
+    if(gfl) gfl->init(stage);
+    if(gil) gil->init(stage);
   }
 
   void RigidCavitationNode::plot(double t, double dt) {
@@ -862,6 +878,10 @@ namespace MBSimHydraulics {
       HNode::init(stage);
       if (pSignalString!="")
         setpSignal(getByPath<MBSimControl::Signal>(pSignalString));
+    }
+    else if (stage==preInit) {
+      HNode::init(stage);
+      addDependency(pSignal);
     }
     else
       HNode::init(stage);

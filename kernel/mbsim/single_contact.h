@@ -20,7 +20,7 @@
 #ifndef _SINGLE_CONTACT_H_
 #define _SINGLE_CONTACT_H_
 
-#include <mbsim/link_mechanics.h>
+#include <mbsim/mechanical_link.h>
 #include <map>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -51,7 +51,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class SingleContact: public LinkMechanics {
+  class SingleContact: public MechanicalLink {
     public:
       /*!
        * \brief constructor
@@ -108,7 +108,7 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double dt);
-      using LinkMechanics::connect;
+      using MechanicalLink::connect;
       virtual void checkActive(int j);
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
@@ -116,7 +116,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "SingleContact"; }
+      virtual std::string getType() const { return "Contact"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
@@ -167,7 +167,6 @@ namespace MBSim {
       GeneralizedForceLaw * getNormalForceLaw() const {return fcl; }
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_);
-      FrictionForceLaw * getTangentialForceLaw() const {return fdf;}
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
       ContactKinematics* getContactKinematics() const { return contactKinematics; }
@@ -262,7 +261,6 @@ namespace MBSim {
       /*!
        * \brief relative velocity in normal direction
        *
-       * \todo: only double needed here
        */
       fmatvec::Vec gdN;
 

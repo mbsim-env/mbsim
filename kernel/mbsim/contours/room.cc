@@ -20,6 +20,7 @@
 #include<config.h>
 #include "mbsim/contours/room.h"
 #include <mbsim/contours/rectangle.h>
+#include <mbsim/fixed_relative_frame.h>
 #include <mbsim/utils/rotarymatrices.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/body.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -29,6 +29,7 @@
 #endif
 
 using namespace std;
+using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace boost;
@@ -105,9 +106,7 @@ namespace MBSim {
       Object::init(stage);
       if(!R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();
-      Body* obj = dynamic_cast<Body*>(R->getParent());
-      if(obj)
-        dependency.push_back(obj);
+      addDependency(dynamic_cast<Body*>(R->getParent()));
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -229,6 +228,24 @@ namespace MBSim {
       return getContour(name);
     else
       THROW_MBSIMERROR("Unknown container '"+container+"'.");
+  }
+
+  const Mat3xV& Body::getPJT(double t) {
+    if(updVel) updateVelocities(t);
+    return PJT[0];
+  }
+
+  const Mat3xV& Body::getPJR(double t) {
+    if(updVel) updateVelocities(t);
+    return PJR[0];
+  }
+
+  void Body::resetUpToDate() {
+    Object::resetUpToDate();
+    updPos = true;
+    updVel = true;
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetUpToDate();
   }
 
 }

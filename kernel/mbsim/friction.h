@@ -19,7 +19,7 @@
 #ifndef _FRICTION_H_
 #define _FRICTION_H_
 
-#include "mbsim/link_mechanics.h"
+#include "mbsim/mechanical_link.h"
 #include <mbsim/frame.h>
 #include "mbsim/functions/function.h"
 
@@ -33,7 +33,7 @@ namespace MBSim {
   class RigidBody;
   class FrictionForceLaw;
 
-  class GeneralizedFriction : public LinkMechanics {
+  class GeneralizedFriction : public MechanicalLink {
     protected:
       //Function<double(double,double)> *func;
       FrictionForceLaw *func;
@@ -42,7 +42,7 @@ namespace MBSim {
     public:
       GeneralizedFriction(const std::string &name="");
       ~GeneralizedFriction();
-      void updateh(double, int i=0);
+      void updateh(double t, int i=0);
       void updateg(double) { }
       void updategd(double);
 
@@ -73,14 +73,14 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 
       /** \brief Visualize a torque arrow acting on each of both connected frames */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, true);
-        LinkMechanics::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
       }
 #endif
     private:

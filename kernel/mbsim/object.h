@@ -52,15 +52,15 @@ namespace MBSim {
       virtual ~Object();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateT(double t) {};
-      virtual void updateh(double t, int j=0) {};
-      virtual void updateM(double t, int i=0) {};
+      virtual void updateT(double t) { }
+      virtual void updateh(double t, int j=0) { }
+      virtual void updateM(double t, int i=0) { }
       virtual void updatedhdz(double t);
-      virtual void updatedq(double t, double dt) { qd = T * u * dt; }
-      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]); }
-      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(LLM[i], h[i] + r[i]); }
-      virtual void updateqd(double t) { qd = T * u; }
-      virtual void updatezd(double t) { updateqd(t); updateud(t); updatexd(t); }
+      virtual void updatedq(double t, double dt) { qd = getT(t) * u * dt; }
+      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(getLLM(t), geth(t) * dt + getr(t)); }
+      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + getr(t,i)); }
+      virtual void updateqd(double t) { qd = getT(t) * u; }
+      virtual void updatezd(double t) { updateqd(t); updateud(t); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -69,19 +69,16 @@ namespace MBSim {
       virtual void calcuSize(int j) {};
       //virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
-      //virtual int getuInd(DynamicSystem* sys, int i=0);
+      //virtual int getuInd(DynamicSystem* sys, int i=0)
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       //virtual int gethInd(DynamicSystem* sys,int i=0); 
-      virtual const fmatvec::Vec& getq() const { return q; };
-      virtual const fmatvec::Vec& getu() const { return u; };
+      virtual const fmatvec::Vec& getq() const { return q; }
+      virtual const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
-      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
-      virtual void updateStateDependentVariables(double t) = 0;
-      virtual void updateStateDerivativeDependentVariables(double t) {};
-      virtual void updateJacobians(double t, int j=0) = 0;
-      virtual void updatehInverseKinetics(double t, int i=0) {};
+      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); }
+      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); }
+      virtual void updateStateDerivativeDependentVariables(double t) {}
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -90,16 +87,6 @@ namespace MBSim {
       virtual std::string getType() const { return "Object"; }
       //virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
-
-      virtual void updatedx(double t, double dt) {}
-      virtual void updatexd(double t) {}
-      virtual void calcxSize() { xSize = 0; }
-      virtual const fmatvec::Vec& getx() const { return x; }
-      virtual fmatvec::Vec& getx() { return x; }
-      virtual void setxInd(int xInd_) { xInd = xInd_; };
-      virtual int getxSize() const { return xSize; }
-      virtual void updatexRef(const fmatvec::Vec& ref);
-      virtual void updatexdRef(const fmatvec::Vec& ref);
 
       /**
        * \brief references to positions of dynamic system parent
@@ -214,13 +201,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void facLLM(int i=0) { LLM[i] = facLL(M[i]); }
-
-      /**
-       * \brief calculates size of right hand side
-       * \param j index of normal usage and inverse kinetics TODO
-       */
-      virtual void calcSize(int j) {}
+      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); }
 
       /**
        * \return kinetic energy 
@@ -270,6 +251,12 @@ namespace MBSim {
       fmatvec::Vec& getqd() { return qd; };
       fmatvec::Vec& getud(int i=0) { return ud[i]; };
 
+      const fmatvec::Mat& getT(double t);
+      const fmatvec::Vec& geth(double t, int i=0);
+      const fmatvec::SymMat& getM(double t, int i=0);
+      const fmatvec::SymMat& getLLM(double t, int i=0);
+      const fmatvec::Vec& getr(double t, int i=0);
+
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
 
@@ -299,25 +286,20 @@ namespace MBSim {
        */
       int qInd, uInd[2], hInd[2];
 
-      /**
-       * \brief size  and local index of order one parameters
-       */
-      int xSize, xInd;
-
       /** 
        * \brief positions, velocities
        */
-      fmatvec::Vec q, u, uall, x;
+      fmatvec::Vec q, u, uall;
 
       /**
        * \brief initial position, velocity
        */
-      fmatvec::Vec q0, u0, x0;
+      fmatvec::Vec q0, u0;
 
       /**
        * \brief differentiated positions, velocities
        */
-      fmatvec::Vec qd, ud[2], udall[2], xd;
+      fmatvec::Vec qd, ud[2], udall[2];
 
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
@@ -347,6 +329,7 @@ namespace MBSim {
        * \brief LU-decomposition of mass matrix 
        */
       fmatvec::SymMat LLM[2];
+
   };
 
 }

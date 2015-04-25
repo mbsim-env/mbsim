@@ -47,6 +47,8 @@ namespace MBSimControl {
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
+      MBSim::Element* getDependency() const { return ret; }
+
     protected:
       std::string retString;
       Signal *ret;
@@ -91,6 +93,8 @@ namespace MBSimControl {
       void init(MBSim::Element::InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement *element);
+
+      MBSim::Element* getDependency() const { return ret; }
 
     protected:
       std::string retString;

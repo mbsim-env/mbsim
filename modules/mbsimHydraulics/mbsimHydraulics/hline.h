@@ -71,7 +71,9 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
-      
+
+      virtual Element* getDependency() const { return 0; }
+
     protected:
       HNode * nFrom;
       HNode * nTo;

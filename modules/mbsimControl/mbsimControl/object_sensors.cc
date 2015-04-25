@@ -43,28 +43,29 @@ namespace MBSimControl {
         setObject(getByPath<Object>(objectString));
       Sensor::init(stage);
     }
+    else if(stage==resize) {
+      Sensor::init(stage);
+      s.resize(1);
+    }
     else
       Sensor::init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionSensor, MBSIMCONTROL%"GeneralizedPositionSensor")
 
-  VecV GeneralizedPositionSensor::getSignal() {
-    if (object->getq().size()==0)
-      //return object->getq0()(fmatvec::Index(index, index));
-      return fmatvec::VecV(1, fmatvec::INIT, 0);
-    else
-      return ((object->getq()))(fmatvec::Index(index, index));
+  void GeneralizedPositionSensor::updateh(double t, int j) {
+    if (object->getq().size()!=0)
+      s = ((object->getq()))(fmatvec::Index(index, index));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocitySensor, MBSIMCONTROL%"GeneralizedVelocitySensor")
 
-  VecV GeneralizedVelocitySensor::getSignal() {
+  void GeneralizedVelocitySensor::updateh(double t, int j) {
     if (object->getu().size()==0)
       //return object->getu0()(fmatvec::Index(index, index));
-      return fmatvec::VecV(1, fmatvec::INIT, 0);
+      s = fmatvec::VecV(1, fmatvec::INIT, 0);
     else
-      return ((object->getu()))(fmatvec::Index(index, index));
+      s = ((object->getu()))(fmatvec::Index(index, index));
   }
 
 }

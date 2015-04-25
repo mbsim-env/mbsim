@@ -60,7 +60,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double R2 = differentialGear->getRadiusInputShaft();
 
   GearConstraint *constraint = new GearConstraint("C1");
-  addObject(constraint);
+  addConstraint(constraint);
   constraint->setDependentBody(shaft1);
   constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1));
 

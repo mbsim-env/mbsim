@@ -33,7 +33,7 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsEdgeEdge::updateg(double &g, ContourPointData *cpData, int index) {
     Vec Wd = edge1->getFrame()->getPosition() - edge0->getFrame()->getPosition();
     Vec Wd0 = edge0->getFrame()->getOrientation().col(1);
     Vec Wd1 = edge1->getFrame()->getOrientation().col(1);
@@ -48,7 +48,7 @@ namespace MBSim {
     Vec We1 = -edge1->getFrame()->getOrientation().col(0);
     if(Wn.T()*We0 >= 0 && Wn.T()*We1 <= 0) {
       if(d > max(edge0->getThickness(),edge1->getThickness())) {
-        g(0) = 1;
+        g = 1;
       } else {
         double t0 = trans(Wd0)*(Wd - Wd1*trans(Wd1)*Wd)/(1.0-trans(Wd0)*Wd1*trans(Wd1)*Wd0);
         double t1 = t0*trans(Wd1)*Wd0 - trans(Wd1)*Wd;
@@ -63,15 +63,15 @@ namespace MBSim {
           cpData[iedge0].getFrameOfReference().getOrientation().set(2, crossProduct(Wn,Wd0));
           cpData[iedge1].getFrameOfReference().getOrientation().set(2, cpData[iedge0].getFrameOfReference().getOrientation().col(2));
 
-          g(0) = -d;
+          g = -d;
         }
         else
-          g(0) = 1;
+          g = 1;
       }
     } else if(Wn.T()*We0 < 0 && Wn.T()*We1 > 0)
-      g(0) = d;
+      g = d;
     else
-      g(0) = 1;
+      g = 1;
   }
 
 }

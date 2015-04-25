@@ -1,16 +1,18 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/kinetic_excitation.h"
 #include "mbsim/environment.h"
+#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/symbolic_functions.h"
 
-#include "mbsimControl/actuator.h"
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
+#include "mbsimControl/signal_function.h"
 
-#include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/functions/tabular_functions.h"
 #include "tools/file_to_fmatvecstring.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -21,6 +23,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
+using namespace CasADi;
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
@@ -114,10 +117,19 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
 
-  SignalAddition * basePositionDiff = new SignalAddition("BasePositionDiff");
+  SX s1 = SX::sym("s1",1);
+  SX s2 = SX::sym("s2",1);
+  SX y = s1-s2;
+  vector<SX> input(2);
+  input[0] = s1;
+  input[1] = s2;
+  SXFunction f(input,y);
+
+  BinarySignalOperation * basePositionDiff = new BinarySignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
-  basePositionDiff->addSignal(basePositionSoll, 1);
-  basePositionDiff->addSignal(basePosition, -1);
+  basePositionDiff->setFirstInputSignal(basePositionSoll);
+  basePositionDiff->setSecondInputSignal(basePosition);
+  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
   addLink(basisControl);
@@ -130,13 +142,12 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalTimeDiscretization * bDis = new SignalTimeDiscretization("BaseDis");
   addLink(bDis);
-  bDis->setSignal(basisControlOut);
+  bDis->setInputSignal(basisControlOut);
 
-  Actuator *motorBasis = new Actuator("MotorBasis");
+  KineticExcitation *motorBasis = new KineticExcitation("MotorBasis");
   addLink(motorBasis);
-  // motorBasis->setSignal(basisControlOut);
-  motorBasis->setSignal(bDis);
   motorBasis->setMomentDirection("[0;1;0]");
+  motorBasis->setMomentFunction(new SignalFunction<VecV(double)>(bDis));
   motorBasis->connect(getFrame("I"),basis->getFrame("R"));
 
 //  RelativeAngularPositionSensor * armPosition = new RelativeAngularPositionSensor("ArmPositionIst");
@@ -155,10 +166,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
 
-  SignalAddition * armPositionDiff = new SignalAddition("ArmPositionDiff");
+  BinarySignalOperation * armPositionDiff = new BinarySignalOperation("ArmPositionDiff");
   addLink(armPositionDiff);
-  armPositionDiff->addSignal(armPositionSoll, 1);
-  armPositionDiff->addSignal(armPosition, -1);
+  armPositionDiff->setFirstInputSignal(armPositionSoll);
+  armPositionDiff->setSecondInputSignal(armPosition);
+  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
@@ -171,13 +183,12 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalTimeDiscretization * aDis = new SignalTimeDiscretization("ArmDis");
   addLink(aDis);
-  aDis->setSignal(armControlOut);
+  aDis->setInputSignal(armControlOut);
 
-  Actuator *motorArm = new Actuator("MotorArm");
+  KineticExcitation *motorArm = new KineticExcitation("MotorArm");
   addLink(motorArm);
-  // motorArm->setSignal(armControlOut);
-  motorArm->setSignal(aDis);
   motorArm->setMomentDirection("[0;0;1]");
+  motorArm->setMomentFunction(new SignalFunction<VecV(double)>(aDis));
   motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
 
 //  RelativePositionSensor * spitzePosition = new RelativePositionSensor("SpitzePositionIst");
@@ -196,10 +207,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);
 
-  SignalAddition * spitzePositionDiff = new SignalAddition("SpitzePositionDiff");
+  BinarySignalOperation * spitzePositionDiff = new BinarySignalOperation("SpitzePositionDiff");
   addLink(spitzePositionDiff);
-  spitzePositionDiff->addSignal(spitzePositionSoll, 1);
-  spitzePositionDiff->addSignal(spitzePosition, -1);
+  spitzePositionDiff->setFirstInputSignal(spitzePositionSoll);
+  spitzePositionDiff->setSecondInputSignal(spitzePosition);
+  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);
@@ -212,13 +224,12 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalTimeDiscretization * sDis = new SignalTimeDiscretization("SpitzeDis");
   addLink(sDis);
-  sDis->setSignal(spitzeControlOut);
+  sDis->setInputSignal(spitzeControlOut);
 
-  Actuator *motorSpitze = new Actuator("MotorSpitze");
+  KineticExcitation *motorSpitze = new KineticExcitation("MotorSpitze");
   addLink(motorSpitze);
-  // motorSpitze->setSignal(spitzeControlOut);
-  motorSpitze->setSignal(sDis);
   motorSpitze->setForceDirection("[0;1;0]");
+  motorSpitze->setForceFunction(new SignalFunction<VecV(double)>(sDis));
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -39,21 +39,30 @@ namespace MBSimHydraulics {
 
   class ControlvalveAreaSignal : public Signal {
     public:
-      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
+      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
       }
 
-      VecV getSignal() {
+      void init(InitStage stage) {
+        if(stage==resize) {
+          Signal::init(stage);
+          s.resize(1);
+        }
+        else
+          Signal::init(stage);
+      }
+
+      int getSignalSize() const { return 1; }
+
+      void updateh(double t, int j) {
         double x=factor*position->getSignal()(0)+offset;
         x=(x>1.)?1.:x;
         x=(x<0.)?0.:x;
-        signal(0)=(*relAlphaPA)(x);
-        return signal;        
+        s(0)=(*relAlphaPA)(x);
       }
     private:
       double factor, offset;
       Signal * position;
       boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
-      VecV signal;
   };
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")

@@ -32,6 +32,7 @@ namespace MBSim {
   class Contour;
   class Object;
   class Link;
+  class Constraint;
   class ModellingInterface;
   class Contact;
   class InverseKineticsJoint;
@@ -117,7 +118,6 @@ namespace MBSim {
       virtual void updategInverseKinetics(double t); 
       virtual void updategdInverseKinetics(double t);
       virtual void updateWInverseKinetics(double t, int j=0); 
-      virtual void updatehInverseKinetics(double t, int j=0); 
       virtual void updateJacobiansInverseKinetics(double t, int j=0); 
       virtual void updatebInverseKinetics(double t); 
 
@@ -148,7 +148,7 @@ namespace MBSim {
       /**
        * \brief compute Cholesky decomposition of mass matrix TODO necessary?
        */
-      virtual void facLLM(int i=0) = 0;
+      virtual void updateLLM(double t, int i=0) = 0;
 
       /**
        * \brief solve contact equations with single step fixed point scheme
@@ -277,6 +277,17 @@ namespace MBSim {
       const fmatvec::Vec& getcorr() const { return corr; };
       fmatvec::Vec& getcorr() { return corr; };
 
+      const fmatvec::Mat& getT(double t);
+      const fmatvec::Vec& geth(double t, int i=0);
+      const fmatvec::SymMat& getM(double t, int i=0);
+      const fmatvec::SymMat& getLLM(double t, int i=0);
+      const fmatvec::Mat& getW(double t, int i=0);
+      const fmatvec::Mat& getV(double t, int i=0);
+      const fmatvec::Vec& getwb(double t);
+      const fmatvec::Vec& getr(double t, int i=0);
+      const fmatvec::Mat& getWInverseKinetics(double t, int i=0);
+      const fmatvec::Mat& getbInverseKinetics(double t);
+
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
       void setx0(double x0_) { x0 = fmatvec::Vec(1,fmatvec::INIT,x0_); }
@@ -313,6 +324,7 @@ namespace MBSim {
       const std::vector<DynamicSystem*>& getDynamicSystems() const { return dynamicsystem; }
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
+      const std::vector<Link*>& getSetValuedLinks() const { return linkSetValued; }
 
       /**
        * \brief references to positions of dynamic system parent
@@ -490,10 +502,10 @@ namespace MBSim {
       void buildListOfLinks(std::vector<Link*> &lnk);
 
       /**
-       * \brief build flat list of all setvalued links
-       * \param list of links
+       * \brief build flat list of all constraints
+       * \param list of constraints
        */
-      void buildListOfSetValuedLinks(std::vector<Link*> &lnk);
+      void buildListOfConstraints(std::vector<Constraint*> &crt);
 
       /**
        * \brief build flat list of frames
@@ -696,6 +708,11 @@ namespace MBSim {
       void addLink(Link *link);
 
       /**
+       * \param constraint to add
+       */
+      void addConstraint(Constraint *constraint);
+
+      /**
        * \param add link for inverse kinetics
        */
       void addInverseKineticsLink(Link *link);
@@ -709,6 +726,13 @@ namespace MBSim {
        * \return link
        */
       Link* getLink(const std::string &name,bool check=true) const;
+
+      /**
+       * \param name of the constraint
+       * \param check for existence of constraint
+       * \return constraint
+       */
+      Constraint* getConstraint(const std::string &name,bool check=true) const;
 
       /**
        * \param modell to add
@@ -732,6 +756,8 @@ namespace MBSim {
       void calccorrSize(int j);
 
       void checkRoot();
+
+      void resetUpToDate();
 
     protected:
       /**
@@ -761,7 +787,10 @@ namespace MBSim {
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
       std::vector<Observer*> observer;
+      std::vector<Link*> linkSmoothPart;
+      std::vector< std::vector<Element*> > elementOrdered;
       std::vector< std::vector<Link*> > linkOrdered;
+      std::vector<Constraint*> constraint;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

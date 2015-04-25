@@ -48,14 +48,14 @@ namespace MBSim {
     }
   }
 
-  void ExternGeneralizedIO::updateg(double) {
+  void ExternGeneralizedIO::updateg(double t) {
     if(qInd>=0)
       g(0)=connectedObject->getq()(qInd);
     else
       g(0)=x(0);
   } 
 
-  void ExternGeneralizedIO::updategd(double) {
+  void ExternGeneralizedIO::updategd(double t) {
     gd(0)=connectedObject->getu()(uInd);
   }
 
@@ -85,6 +85,10 @@ namespace MBSim {
             applyForceAlsoTo[i].ref=parent->getByPath<Object>(applyForceAlsoTo[i].saved_ref);
         }
       Link::init(stage);
+    }
+    else if(stage==preInit) {
+      Link::init(stage);
+      addDependency(connectedObject);
     }
     else if(stage==resize) {
       Link::init(stage);

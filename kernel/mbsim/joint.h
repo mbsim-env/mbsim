@@ -20,8 +20,8 @@
 #ifndef _JOINT_H_
 #define _JOINT_H_
 
-#include "mbsim/link_mechanics.h"
-#include "mbsim/frame.h"
+#include "mbsim/mechanical_link.h"
+#include "mbsim/fixed_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -39,13 +39,13 @@ namespace MBSim {
   /** 
    * \brief class for connections: constraints on frames
    * \author Martin Foerg
-   * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
+   * \date 2009-04-06 MechanicalLink added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-08-21 one force direction (Thorsten Schindler)
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    * \todo hSize Frame C
    */
-  class Joint : public LinkMechanics {
+  class Joint : public MechanicalLink {
     public:
       /**
        * \brief constructor
@@ -64,7 +64,9 @@ namespace MBSim {
       virtual void updateh(double t, int i = 0);
       virtual void updateg(double t);
       virtual void updategd(double t);
-      virtual void updateJacobians(double t, int j = 0);
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateForces(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -151,7 +153,7 @@ namespace MBSim {
       void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+        MechanicalLink::setOpenMBVForceArrow(arrow, which);
       }
 
       /** \brief Visualize a moment arrow */
@@ -162,9 +164,31 @@ namespace MBSim {
       void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
         std::vector<bool> which; which.resize(2, false);
         which[1]=true;
-        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+        MechanicalLink::setOpenMBVMomentArrow(arrow, which);
       }
 #endif
+
+    void resetUpToDate();
+
+    const fmatvec::Vec3& getGlobalRelativeVelocity(double t) {
+      if(updVel) updateVelocities(t);
+      return WvP0P1;
+    }
+
+    const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) {
+      if(updVel) updateVelocities(t);
+      return WomP0P1;
+    }
+
+    const fmatvec::Mat3xV& getGlobalForceDirections(double t) {
+      if(updF) updateForces(t);
+      return Wf;
+    }
+
+    const fmatvec::Mat3xV& getGlobalMomentDirections(double t) {
+      if(updF) updateForces(t);
+      return Wm;
+    }
 
     protected:
       /**
@@ -226,7 +250,9 @@ namespace MBSim {
       /**
        * \brief own frame located in second partner with same orientation as first partner 
        */
-      Frame C;
+      FixedRelativeFrame C;
+
+      bool updVel, updF;
 
     private:
       std::string saved_ref1, saved_ref2;

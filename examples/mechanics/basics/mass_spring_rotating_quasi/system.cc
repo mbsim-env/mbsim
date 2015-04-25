@@ -11,6 +11,7 @@
 #include "mbsim/functions/symbolic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/nested_functions.h"
 #include <casadi/symbolic/sx/sx_tools.hpp>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

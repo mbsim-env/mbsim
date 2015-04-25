@@ -34,12 +34,76 @@
 #include <openmbvcppinterface/frame.h>
 #endif
 
+#include <hdf5serie/simpledataset.h>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
+
+  Constraint::Constraint(const std::string &name) : Element(name) {
+    setPlotFeature(state, enabled);
+  }
+
+  void Constraint::updatexRef(const Vec &xParent) {
+    x >> xParent(xInd,xInd+xSize-1);
+  } 
+
+  void Constraint::updatexdRef(const Vec &xdParent) {
+    xd >> xdParent(xInd,xInd+xSize-1);
+  } 
+
+  void Constraint::init(InitStage stage) {
+    if(stage==plotting) {
+      updatePlotFeatures();
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(state)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("x("+numtostr(i)+")");
+        if(getPlotFeature(stateDerivative)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("xd("+numtostr(i)+")");
+
+        Element::init(stage);
+      }
+    }
+    else
+      Element::init(stage);
+  }
+
+  void Constraint::initz() {
+    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
+  }
+
+  void Constraint::writez(H5::GroupBase *group) {
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("x0")(x.size())->write(x);
+  }
+
+  void Constraint::readz0(H5::GroupBase *group) {
+    x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
+  }
+
+  void Constraint::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(state)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(x(i));
+      if(getPlotFeature(stateDerivative)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(xd(i)/dt);
+
+      Element::plot(t,dt);
+    }
+  }
+
+  void Constraint::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
+    }
+  }
 
   JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &dT_, const Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
@@ -75,9 +139,6 @@ namespace MBSim {
     return res;
   } 
 
-  Constraint::Constraint(const std::string &name) : Object(name) {
-  }
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
@@ -87,7 +148,6 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentBody(getByPath<RigidBody>(saved_DependentBody));
-      bd->addDependency(this);
       if (saved_IndependentBody.size()>0) {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
@@ -96,8 +156,9 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       Constraint::init(stage);
+      bd->addDependency(this);
       for(unsigned int i=0; i<bi.size(); i++)
-        dependency.push_back(bi[i]);
+        addDependency(bi[i]);
     }
     else
       Constraint::init(stage);
@@ -171,8 +232,11 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentBody(getByPath<RigidBody>(saved_DependentBody));
-      bd->addDependency(this);
       Constraint::init(stage);
+    }
+    else if(stage==preInit) {
+      Constraint::init(stage);
+      bd->addDependency(this);
     }
     else
       Constraint::init(stage);
@@ -201,10 +265,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
-    if(stage==unknownStage)
-      KinematicConstraint::init(stage);
-    else
-      KinematicConstraint::init(stage);
+    KinematicConstraint::init(stage);
     f->init(stage);
   }
 
@@ -403,15 +464,11 @@ namespace MBSim {
         setIndependentBody(getByPath<RigidBody>(saved_IndependentBody));
       if (saved_IndependentBody2!="")
         setIndependentBody(getByPath<RigidBody>(saved_IndependentBody2));
-      for(unsigned int i=0; i<bd1.size(); i++) 
-        bd1[i]->addDependency(this);
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());
         if1.push_back(frame1);
       }
-      for(unsigned int i=0; i<bd2.size(); i++)
-        bd2[i]->addDependency(this);
       if(bd2.size()) {
         for(unsigned int i=0; i<bd2.size()-1; i++) 
           if2.push_back(bd2[i+1]->getFrameOfReference());
@@ -421,10 +478,14 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       Constraint::init(stage);
+      for(unsigned int i=0; i<bd1.size(); i++) 
+        bd1[i]->addDependency(this);
+      for(unsigned int i=0; i<bd2.size(); i++)
+        bd2[i]->addDependency(this);
       if(bi)
-        dependency.push_back(bi);
+        addDependency(bi);
       if(bi2)
-        dependency.push_back(bi2);
+        addDependency(bi2);
     } 
     else if(stage==unknownStage) {
       refFrame=refFrameID?frame2:frame1;

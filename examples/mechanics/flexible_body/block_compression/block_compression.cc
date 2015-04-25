@@ -8,6 +8,7 @@
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/nested_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>

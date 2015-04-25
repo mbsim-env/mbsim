@@ -38,7 +38,7 @@ namespace MBSim {
    * \brief general link to one or more objects
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
-   * \date 2009-04-06 ExtraDynamicInterface included / LinkMechanics added (Thorsten Schindler)
+   * \date 2009-04-06 ExtraDynamicInterface included / MechanicalLink added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 enhanced structure for implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
@@ -64,10 +64,10 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg(double t) = 0;
       virtual void updategd(double t) = 0;
-      virtual void updatewb(double t, int i=0) {};
-      virtual void updateW(double t, int i=0) {};
-      virtual void updateV(double t, int i=0) {};
-      virtual void updateh(double t, int i=0) {};
+      virtual void updatewb(double t, int i=0) {}
+      virtual void updateW(double t, int i=0) {}
+      virtual void updateV(double t, int i=0) {}
+      virtual void updateh(double t, int i=0) {}
       virtual void updateStopVector(double t) {}
       virtual void updateLinkStatus(double t) {}
       virtual void updateLinkStatusReg(double t) {}
@@ -396,6 +396,11 @@ namespace MBSim {
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
+      void resetUpToDate() { updg = true; updgd = true; }
+
+      const fmatvec::Vec& getg(double t) { if(updg) updateg(t); return g; }
+      const fmatvec::Vec& getgd(double t) { if(updgd) updategd(t); return gd; }
+
       /**
        * \brief saves contact force parameters for use as starting value in next time step
        */
@@ -581,6 +586,8 @@ namespace MBSim {
 
       int corrSize, corrInd;
       fmatvec::Vec corr;
+
+      bool updg, updgd;
   };
 }
 

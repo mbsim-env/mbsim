@@ -36,8 +36,7 @@ namespace MBSimControl {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled) {
-          VecV y=getSignal();
-          for (int i=0; i<y.size(); i++)
+          for (int i=0; i<getSignalSize(); i++)
             plotColumns.push_back("Signal (" + numtostr(i) + ")");
         }
       }

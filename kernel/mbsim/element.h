@@ -271,15 +271,24 @@ namespace MBSim {
        * \brief checks dependency on other elements.
        * \return a vector of elements the calling element depends on.
        */
-      std::vector<Element*> getElementsDependingOn() const { return dependency; }
+      std::vector<Element*> getDependencies() const { return dependency; }
 
-      void addDependency(Element* ele) { dependency.push_back(ele); }
+      void addDependency(Element* ele) { if(ele) dependency.push_back(ele); }
+
       /**
        * \brief computes the length of the pathes in the graph that represents
        * the dependencies between all elements.
        * \return the length of the longest path in the graph.
        */
       int computeLevel();
+
+      virtual void updatePositions(double t) { }
+      virtual void updateVelocities(double t) { }
+      virtual void updateAccelerations(double t) { }
+      virtual void updateStateDependentVariables(double t) { }
+      virtual void updateJacobians(double t, int j=0) { }
+
+      virtual void resetUpToDate() {}
 
     protected:
       Element *parent;

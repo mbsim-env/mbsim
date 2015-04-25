@@ -40,6 +40,7 @@ namespace MBSimHydraulics {
     public:
       PressureLoss() : line(0), initialized(false) {}
       virtual void setLine(const HLine *line_) { line = line_; }
+      Element* getDependency() const;
     protected:
       const HLine *line;
       bool initialized;
@@ -61,6 +62,7 @@ namespace MBSimHydraulics {
       void setLine(const HLine *line_) { line = line_; for(unsigned int i=0; i<slp.size(); i++) slp[i]->setLine(line); }
       void addLinePressureLoss(LinePressureLoss * l) { slp.push_back(l); }
       double operator()(const double& Q);
+      void init(MBSim::Element::InitStage stage);
       void initializeUsingXML(xercesc::DOMElement * element);
     private:
       std::vector<LinePressureLoss*> slp;
@@ -74,6 +76,7 @@ namespace MBSimHydraulics {
       void setLine(const HLine *line_) { line = line_; pl->setLine(line); }
       void setLinePressureLoss(LinePressureLoss * pl_, int number_) {pl=pl_; number=double(number_); }
       double operator()(const double& Q);
+      void init(MBSim::Element::InitStage stage);
       void initializeUsingXML(xercesc::DOMElement * element);
     private:
       LinePressureLoss* pl;
@@ -125,10 +128,11 @@ namespace MBSimHydraulics {
       void setHydraulicDiameter(double dHyd_, double dHydNeg_=0);
       void setSurfaceRoughness(double k_) {k=k_; }
       double operator()(const double& Q);
+      void init(MBSim::Element::InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
     private:
       double c, dRef, dHyd, dHydNeg, k, ReynoldsFactor, ReynoldsFactorNeg;
-      MBSim::TabularFunction<double(double)> * lambdaTabular;
+      MBSim::Function<double(double)> * lambdaTabular;
   };
 
 

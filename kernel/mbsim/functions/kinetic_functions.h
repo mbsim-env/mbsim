@@ -33,14 +33,20 @@ namespace MBSim {
    * \brief function describing a linear relationship between the input relative distance / velocity and the output for a spring
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
-   * \todo put in function_library TODO
    */
   class LinearSpringDamperForce : public Function<double(double,double)> {
     public:
       /** 
        * \brief constructor
        */
-      LinearSpringDamperForce() {}
+      LinearSpringDamperForce() : l0(0) {}
+
+      /** 
+       * \brief constructor
+       * \param stiffness
+       * \param damping
+       */
+      LinearSpringDamperForce(double c_, double d_) : c(c_), d(d_), l0(0) {}
 
       /** 
        * \brief constructor
@@ -48,7 +54,7 @@ namespace MBSim {
        * \param damping
        * \param undeformed length
        */
-      LinearSpringDamperForce(double c_, double d_, double l0_) : c(c_), d(d_), l0(l0_) {}
+      LinearSpringDamperForce(double c_, double d_, double l0_); 
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd) { return c*(g-l0) + d*gd; }
@@ -56,7 +62,8 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setParameters(double c_, double d_, double l0_) { c=c_; d=d_; l0=l0_; }
+      void setStiffnessCoefficient(double c_) { c=c_; }
+      void setDampingCoefficient(double d_) { d=d_; }
       /***************************************************/
 
     protected:
@@ -70,7 +77,6 @@ namespace MBSim {
    * \brief function describing a nonlinear relationship between the input relative distance / velocity and the output for a spring
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
-   * \todo delete function pointers
    */
   class NonlinearSpringDamperForce : public Function<double(double,double)> {
     public:
@@ -78,6 +84,14 @@ namespace MBSim {
        * \brief constructor
        */
       NonlinearSpringDamperForce() {}
+
+      /** 
+       * \brief destructor
+       */
+      ~NonlinearSpringDamperForce() {
+        delete gForceFun;
+        delete gdForceFun;
+      }
 
       /** 
        * \brief constructor

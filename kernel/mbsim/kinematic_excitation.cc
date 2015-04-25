@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/kinematic_excitation.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/group.h>
 
@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), func(0), body(0) {
+  KinematicExcitation::KinematicExcitation(const string &name) : MechanicalLink(name), func(0), body(0) {
   }
 
   void KinematicExcitation::calclaSize(int j) {
@@ -55,8 +55,12 @@ namespace MBSim {
     if(j==0) {
       h[j][0]-=body->getJRel(j).T()*la;
     } else {
-      h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + body->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
-      h[j][1]+=C.getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + C.getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
+      WF[1] = body->getFrameOfReference()->getOrientation()*body->getPJT()*la;
+      WM[1] = body->getFrameOfReference()->getOrientation()*body->getPJR()*la;
+      WF[0] = -WF[1];
+      WM[0] = -WM[1];
+      h[j][0]+=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[0] + body->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[0];
+      h[j][1]+=C.getJacobianOfTranslation(j).T()*WF[1] + C.getJacobianOfRotation(j).T()*WM[1];
     }
   }
 
@@ -96,7 +100,7 @@ namespace MBSim {
 
  void KinematicExcitation::init(InitStage stage) {
     if(stage==unknownStage) {
-      //LinkMechanics::init(stage);
+      //MechanicalLink::init(stage);
 
       h[0].push_back(Vec(body->getFrameForKinematics()->getJacobianOfTranslation(0).cols()));
       h[1].push_back(Vec(6));
@@ -112,7 +116,7 @@ namespace MBSim {
       C.getJacobianOfRotation(1).resize(body->getFrameOfReference()->getJacobianOfRotation(1).cols());
     }
     else if(stage==resize) {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
       g.resize(gSize);
       gd.resize(gdSize);
       la.resize(laSize);
@@ -121,7 +125,7 @@ namespace MBSim {
       updatePlotFeatures();
       //plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
-        LinkMechanics::init(stage);
+        MechanicalLink::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(FArrow) {
@@ -137,7 +141,7 @@ namespace MBSim {
       }
     }
     else {
-      LinkMechanics::init(stage);
+      MechanicalLink::init(stage);
     }
     if(func) func->init(stage);
   }
@@ -177,7 +181,7 @@ namespace MBSim {
         }
       }
 #endif
-      LinkMechanics::plot(t,dt);
+      MechanicalLink::plot(t,dt);
     }
   }
 
@@ -185,8 +189,14 @@ namespace MBSim {
     if(!f) xSize = body->getqRelSize();
   }
 
-  void GeneralizedPositionExcitation::updatexd(double t) {
-    //if(!f && fd) xd = (*fd)(t);
+  void GeneralizedPositionExcitation::init(InitStage stage) {
+    if(stage==preInit) {
+      KinematicExcitation::init(stage);
+      addDependency(f->getDependency());
+    }
+    else
+      KinematicExcitation::init(stage);
+    f->init(stage);
   }
 
   void GeneralizedPositionExcitation::updateg(double t) {
@@ -203,6 +213,16 @@ namespace MBSim {
 
   void GeneralizedVelocityExcitation::calcxSize() {
     xSize = body->getqRelSize();
+  }
+
+  void GeneralizedVelocityExcitation::init(InitStage stage) {
+    if(stage==preInit) {
+      KinematicExcitation::init(stage);
+      addDependency(f->getDependency());
+    }
+    else
+      KinematicExcitation::init(stage);
+    f->init(stage);
   }
 
   void GeneralizedVelocityExcitation::updatexd(double t) {
@@ -225,6 +245,16 @@ namespace MBSim {
     xSize = body->getqRelSize()+body->getuRelSize();
   }
 
+  void GeneralizedAccelerationExcitation::init(InitStage stage) {
+    if(stage==preInit) {
+      KinematicExcitation::init(stage);
+      addDependency(f->getDependency());
+    }
+    else
+      KinematicExcitation::init(stage);
+    f->init(stage);
+  }
+
   void GeneralizedAccelerationExcitation::updatexd(double t) {
     xd(0,body->getqRelSize()-1) = x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
     xd(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1) = (*f)(x,t);
@@ -232,7 +262,7 @@ namespace MBSim {
 
   void GeneralizedAccelerationExcitation::updateg(double t) {
     if(g.size()) g=body->getqRel()-x(0,body->getqRelSize()-1);
-  } 
+  }
 
   void GeneralizedAccelerationExcitation::updategd(double t) {
     if(gd.size()) gd=body->getuRel()-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);

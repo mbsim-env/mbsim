@@ -25,6 +25,8 @@
 
 namespace MBSim {
 
+  class FixedRelativeFrame;
+
   /**
    * \brief contour consisting of primitive contour elements
    * \author Martin Foerg

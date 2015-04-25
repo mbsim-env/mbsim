@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData, int index) {
+  void ContactKinematicsPointPlane::updateg(double &g, ContourPointData* cpData, int index) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation()); // data of possible contact point
     cpData[ipoint].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
     cpData[ipoint].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
@@ -53,13 +53,13 @@ namespace MBSim {
 
     Vec3 Wd =  point->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
-    g(0) = Wn.T()*Wd; // distance
+    g = Wn.T()*Wd; // distance
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // possible contact locations
-    cpData[iplane].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g(0));
+    cpData[iplane].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g);
   }
 
-  void ContactKinematicsPointPlane::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsPointPlane::updatewb(Vec &wb, double g, ContourPointData *cpData) {
     if(wb.size()) { // check whether contact is closed
 
       Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2); // second tangential vector in contact

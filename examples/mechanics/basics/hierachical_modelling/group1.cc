@@ -78,13 +78,15 @@ Group1::Group1(const string &name) : Group(name) {
   // ----------------------- Definition der 1. Feder --------------------  
   SpringDamper *spring1 = new SpringDamper("Feder1");
   addLink(spring1);
-  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1,l01));
+  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1));
+  spring1->setUnloadedLength(l01);
   spring1->connect(box1->getFrame("P1"),getFrame("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
   SpringDamper *spring2=new SpringDamper("Feder2");
   addLink(spring2);
-  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2,l02));
+  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2));
+  spring2->setUnloadedLength(l02);
   spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  

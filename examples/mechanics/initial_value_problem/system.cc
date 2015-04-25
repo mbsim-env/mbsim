@@ -41,7 +41,7 @@ class initLink : public Link {
               rocker->initz();
               rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
               ((ContactKinematicsCircleSolidContour1s*)(contactCamRocker->getContactKinematics()))->setSearchAllCP(true);
-              contactCamRocker->updateg(0);
+              contactCamRocker->updateStateDependentVariables(0);
               return contactCamRocker->getg()(0);
             }
           private:
@@ -55,7 +55,7 @@ class initLink : public Link {
         rocker->setInitialGeneralizedPosition(phi0Rocker);
         rocker->initz();
         rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
-        contactCamRocker->updateg(0);
+        contactCamRocker->updateStateDependentVariables(0);
 
         int nltol=0;
         while (!((contactCamRocker->getg()(0))<0)) {
@@ -63,7 +63,7 @@ class initLink : public Link {
           rocker->setInitialGeneralizedPosition(phi0RockerNew);
           rocker->initz();
           rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
-          contactCamRocker->updateg(0);
+          contactCamRocker->updateStateDependentVariables(0);
           nltol++;
         }
         class CamRockerVelocity : public MBSim::Function<double(double)> {
@@ -73,7 +73,7 @@ class initLink : public Link {
               rocker->setInitialGeneralizedVelocity(omega);
               rocker->initz();
               rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
-              contactCamRocker->updateg(0);
+              contactCamRocker->updateStateDependentVariables(0);
               if (contactCamRocker->isSetValued())
                 contactCamRocker->isActive();
               contactCamRocker->updategd(0);
@@ -92,7 +92,7 @@ class initLink : public Link {
         rocker->setInitialGeneralizedVelocity(omega0Rocker);
         rocker->initz();
         rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
-        contactCamRocker->updateg(0);
+        contactCamRocker->updateStateDependentVariables(0);
         if (contactCamRocker->isSetValued())
           contactCamRocker->isActive();
         contactCamRocker->updategd(0);
