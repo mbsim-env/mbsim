@@ -6,8 +6,6 @@ URL=http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux
 
 
 
-svn update $SRCDIR/build-scripts
-
 rss() {
 DATE1=$(date +%s)
 DATE2=$(date -R)
@@ -48,11 +46,11 @@ rss 0
 
 rm -rf $SRCDIR/local/share/mbxmlutils
 
-$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --with-swigpath=/home/user/Updates/local/bin --passToRunexamples --disableCompare --disableValidate
+$SRCDIR/mbsim/misc/BuildService/scripts/build.py --forceBuild "$@" --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --with-swigpath=/home/user/Updates/local/bin --passToRunexamples --disableCompare --disableValidate
 
 RET=0
 
-$SRCDIR/build-scripts/linux-shared-build-VM/distribute.sh &> $OUTDIR/report_distribute/distribute.out
+$SRCDIR/mbsim/misc/BuildService/scripts/distribute-linux-release.sh &> $OUTDIR/report_distribute/distribute.out
 test $? -ne 0 && RET=1
 
 cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
