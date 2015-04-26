@@ -155,9 +155,4 @@ namespace MBSim {
       frame[i]->updateJacobians(j);
   }
 
-  void CompoundContour::updateStateDerivativeDependentVariables(const Vec &ud, double t) {
-    for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateAccelerations(t);
-  }
-
 }

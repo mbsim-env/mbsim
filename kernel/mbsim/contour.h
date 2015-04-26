@@ -214,7 +214,6 @@ namespace MBSim {
 
       virtual void updateStateDependentVariables(double t) {}
       virtual void updateJacobians(double t, int j=0) {}
-      virtual void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud, double t) {}
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

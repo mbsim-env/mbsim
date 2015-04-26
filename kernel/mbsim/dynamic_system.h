@@ -71,7 +71,6 @@ namespace MBSim {
       virtual void updateT(double t); 
       virtual void updateh(double t, int i=0); 
       virtual void updateStateDependentVariables(double t) = 0;
-      virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 

@@ -1797,8 +1797,6 @@ namespace MBSim {
 
     updatezd(t);
     if (true) {
-      updateStateDerivativeDependentVariables(t);
-
       int n = getWInverseKinetics(t,1).cols();
       int m1 = WInverseKinetics[1].rows();
       int m2 = getbInverseKinetics(t).rows();
