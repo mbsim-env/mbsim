@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"
@@ -75,4 +75,3 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
 }
-
