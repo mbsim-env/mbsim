@@ -38,7 +38,6 @@ namespace MBSim {
    */
   class SpringDamper : public MechanicalLink {
     protected:
-      double dist;
       fmatvec::Vec3 n;
       Function<double(double,double)> *func;
       double l0;
@@ -94,6 +93,10 @@ namespace MBSim {
         MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 #endif
+    const fmatvec::Vec3& getGlobalNormalVector(double t) {
+      if(updg) updateg(t);
+      return n;
+    }
     private:
       std::string saved_ref1, saved_ref2;
   };

@@ -47,28 +47,29 @@ namespace MBSim {
   }
 
   void SpringDamper::updateh(double t, int j) {
-    la(0)=(*func)(g(0)-l0,gd(0));
-    if(dist<=epsroot() && abs(la(0))>epsroot())
+    la(0)=(*func)(getg(t)(0)-l0,getgd(t)(0));
+    if(g(0)<=epsroot() && abs(la(0))>epsroot())
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     WF[0]=n*la;
     WF[1]=-WF[0];
     for(unsigned int i=0; i<2; i++)
-      h[j][i]+=frame[i]->getJacobianOfTranslation(j).T()*WF[i];
+      h[j][i]+=frame[i]->getJacobianOfTranslation(t,j).T()*WF[i];
   }
   
-  void SpringDamper::updateg(double) {
-    Vec3 WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
-    dist=nrm2(WrP0P1);
-    if(dist>epsroot())
-      n=WrP0P1/dist;
+  void SpringDamper::updateg(double t) {
+    Vec3 WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
+    g(0)=nrm2(WrP0P1);
+    if(g(0)>epsroot())
+      n=WrP0P1/g(0);
     else
       n.init(0);
-    g(0)=dist;
+    updg = false;
   }
 
-  void SpringDamper::updategd(double) {
-    Vec3 Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
-    gd(0)=Wvrel.T()*n;
+  void SpringDamper::updategd(double t) {
+    Vec3 Wvrel=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
+    gd(0)=Wvrel.T()*getGlobalNormalVector(t);
+    updgd = false;
   }
 
 
@@ -122,8 +123,8 @@ namespace MBSim {
           Vec3 WrOToPoint;
           Vec3 WrOFromPoint;
 
-          WrOFromPoint = frame[0]->getPosition();
-          WrOToPoint   = frame[1]->getPosition();
+          WrOFromPoint = frame[0]->getPosition(t);
+          WrOToPoint   = frame[1]->getPosition(t);
           vector<double> data;
           data.push_back(t); 
           data.push_back(WrOFromPoint(0));
