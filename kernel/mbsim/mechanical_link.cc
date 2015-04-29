@@ -156,8 +156,30 @@ namespace MBSim {
     }
   } 
 
+  void MechanicalLink::updateSingleValuedForces(double t) { 
+    F = getGlobalForceDirection(t)*getSingleValuedGeneralizedForce(t)(iF);
+    M = getGlobalMomentDirection(t)*getSingleValuedGeneralizedForce(t)(iM);
+    updFSV = false;
+  }
+  void MechanicalLink::updateSetValuedForces(double t) { 
+    F = getGlobalForceDirection(t)*getSetValuedGeneralizedForce(t)(iF); 
+    M = getGlobalMomentDirection(t)*getSetValuedGeneralizedForce(t)(iM);
+    updFMV = false;
+  }
+
+  void MechanicalLink::updateSetValuedForceDirections(double t) { 
+    RF.set(Index(0, 2), Index(iF), getGlobalForceDirection(t));
+    RM.set(Index(0, 2), Index(iM), getGlobalMomentDirection(t));
+    updRMV = false;
+  }
+
   void MechanicalLink::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==resize) {
+      Link::init(stage);
+      RF.resize(laSize);
+      RM.resize(laSize);
+    }
+    else if(stage==unknownStage) {
       Link::init(stage);
 
       for(unsigned int i=0; i<frame.size(); i++) {

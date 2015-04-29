@@ -46,32 +46,37 @@ namespace MBSim {
     delete func;
   }
 
+  void SpringDamper::updateForceDirections(double t) {
+    if(getRelativePosition(t)(0)>epsroot())
+      Wf=getGlobalRelativePosition(t)/rrel(0);
+    else
+      Wf.init(0);
+    updFD = false;
+  }
+
   void SpringDamper::updateh(double t, int j) {
-    la(0)=(*func)(getg(t)(0)-l0,getgd(t)(0));
-    if(g(0)<=epsroot() && abs(la(0))>epsroot())
-      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
-    WF[0]=n*la;
-    WF[1]=-WF[0];
-    for(unsigned int i=0; i<2; i++)
-      h[j][i]+=frame[i]->getJacobianOfTranslation(t,j).T()*WF[i];
+    h[j][0]+=frame[0]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
+    h[j][1]-=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
   }
   
-  void SpringDamper::updateg(double t) {
-    Vec3 WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    g(0)=nrm2(WrP0P1);
-    if(g(0)>epsroot())
-      n=WrP0P1/g(0);
-    else
-      n.init(0);
-    updg = false;
+  void SpringDamper::updatePositions(double t) {
+    WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
+    rrel(0)=nrm2(WrP0P1);
+    updPos = false;
   }
 
-  void SpringDamper::updategd(double t) {
-    Vec3 Wvrel=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
-    gd(0)=Wvrel.T()*getGlobalNormalVector(t);
-    updgd = false;
+  void SpringDamper::updateVelocities(double t) {
+    WvP0P1=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
+    vrel=getGlobalForceDirection(t).T()*WvP0P1;
+    updVel = false;
   }
 
+  void SpringDamper::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0)=(*func)(getRelativePosition(t)(0)-l0,getRelativeVelocity(t)(0));
+    if(rrel(0)<=epsroot() && abs(laSV(0))>epsroot())
+      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
+    updlaSV = false;
+  }
 
   void SpringDamper::connect(Frame *frame0, Frame* frame1) {
     MechanicalLink::connect(frame0);
@@ -92,9 +97,12 @@ namespace MBSim {
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);
-      g.resize(1);
-      gd.resize(1);
-      la.resize(1);
+      rrel.resize(1);
+      vrel.resize(1);
+      laSV.resize(1);
+      Wf.resize(1);
+      iF = Index(0, 0);
+      iM = Index(0, -1);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -133,7 +141,7 @@ namespace MBSim {
           data.push_back(WrOToPoint(0));
           data.push_back(WrOToPoint(1));
           data.push_back(WrOToPoint(2));
-          data.push_back(la(0));
+          data.push_back(laSV(0));
           coilspringOpenMBV->append(data);
         }
       }

@@ -38,7 +38,6 @@ namespace MBSim {
    */
   class SpringDamper : public MechanicalLink {
     protected:
-      fmatvec::Vec3 n;
       Function<double(double,double)> *func;
       double l0;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -47,9 +46,13 @@ namespace MBSim {
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
-      void updateh(double, int i=0);
-      void updateg(double);
-      void updategd(double);
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateForceDirections(double t);
+      void updateGeneralizedSingleValuedForces(double t);
+      void updateh(double t, int i=0);
+      void updateg(double t) { }
+      void updategd(double t) { }
 
       /** \brief Connect the SpringDamper to frame1 and frame2 */
       void connect(Frame *frame1, Frame* frame2);
@@ -93,10 +96,6 @@ namespace MBSim {
         MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
       }
 #endif
-    const fmatvec::Vec3& getGlobalNormalVector(double t) {
-      if(updg) updateg(t);
-      return n;
-    }
     private:
       std::string saved_ref1, saved_ref2;
   };
@@ -120,9 +119,9 @@ namespace MBSim {
       DirectionalSpringDamper(const std::string &name="");
       ~DirectionalSpringDamper();
       void updateJacobians(double t, int j=0);
-      void updateh(double, int i=0);
-      void updateg(double);
-      void updategd(double);
+      void updateh(double t, int i=0);
+      void updateg(double t);
+      void updategd(double t);
 
       /** \brief Connect the SpringDamper to frame1 and frame2 */
       void connect(Frame *frame1, Frame* frame2);

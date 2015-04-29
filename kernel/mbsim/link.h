@@ -396,10 +396,16 @@ namespace MBSim {
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
-      void resetUpToDate() { updg = true; updgd = true; }
+      void resetUpToDate() { updPos = true; updVel = true; updlaSV = true; updlaMV = true; }
 
-      const fmatvec::Vec& getg(double t) { if(updg) updateg(t); return g; }
-      const fmatvec::Vec& getgd(double t) { if(updgd) updategd(t); return gd; }
+      virtual void updateGeneralizedSingleValuedForces(double t) { }
+      virtual void updateGeneralizedSetValuedForces(double t) { }
+
+      const fmatvec::VecV& getRelativePosition(double t) { if(updPos) updatePositions(t); return rrel; }
+      const fmatvec::VecV& getRelativeVelocity(double t) { if(updVel) updateVelocities(t); return vrel; }
+      const fmatvec::VecV& getSingleValuedGeneralizedForce(double t) { if(updlaSV) updateGeneralizedSingleValuedForces(t); return laSV; }
+      const fmatvec::VecV& getSetValuedGeneralizedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
+      const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getSetValuedGeneralizedForce(t):getSingleValuedGeneralizedForce(t); }
 
       /**
        * \brief saves contact force parameters for use as starting value in next time step
@@ -587,7 +593,9 @@ namespace MBSim {
       int corrSize, corrInd;
       fmatvec::Vec corr;
 
-      bool updg, updgd;
+      fmatvec::VecV rrel, vrel, laSV, laMV;
+
+      bool updPos, updVel, updlaSV, updlaMV;
   };
 }
 

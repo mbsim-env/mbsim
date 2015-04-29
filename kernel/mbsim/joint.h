@@ -59,14 +59,16 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t, int i = 0);
-      virtual void updateW(double t, int i = 0);
-      virtual void updateh(double t, int i = 0);
-      virtual void updateg(double t);
-      virtual void updategd(double t);
       void updatePositions(double t);
       void updateVelocities(double t);
-      void updateForces(double t);
+      void updateForceDirections(double t);
+      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedSetValuedForces(double t);
+      void updatewb(double t, int i = 0);
+      void updateW(double t, int i = 0);
+      void updateh(double t, int i = 0);
+      void updateg(double t);
+      void updategd(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -168,27 +170,7 @@ namespace MBSim {
       }
 #endif
 
-    void resetUpToDate();
-
-    const fmatvec::Vec3& getGlobalRelativeVelocity(double t) {
-      if(updVel) updateVelocities(t);
-      return WvP0P1;
-    }
-
-    const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) {
-      if(updVel) updateVelocities(t);
-      return WomP0P1;
-    }
-
-    const fmatvec::Mat3xV& getGlobalForceDirections(double t) {
-      if(updF) updateForces(t);
-      return Wf;
-    }
-
-    const fmatvec::Mat3xV& getGlobalMomentDirections(double t) {
-      if(updF) updateForces(t);
-      return Wm;
-    }
+    void resetUpToDate() { MechanicalLink::resetUpToDate(); C.resetUpToDate(); }
 
     protected:
       /**
@@ -198,29 +180,14 @@ namespace MBSim {
       int refFrameID;
 
       /**
-       * \brief indices of forces and torques
-       */
-      fmatvec::Index IT, IR;
-
-      /**
        * \brief local force and moment direction
        */
       fmatvec::Mat3xV forceDir, momentDir;
 
       /**
-       * \brief global force and moment direction
-       */
-      fmatvec::Mat3xV Wf, Wm;
-
-      /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
        */
       fmatvec::Mat3xV JT;
-
-      /**
-       * \brief difference vector of position, velocity and angular velocity
-       */
-      fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
 
       /**
        * constitutive law on acceleration level for forces and torques (f?-force-law)
@@ -251,8 +218,6 @@ namespace MBSim {
        * \brief own frame located in second partner with same orientation as first partner 
        */
       FixedRelativeFrame C;
-
-      bool updVel, updF;
 
     private:
       std::string saved_ref1, saved_ref2;
