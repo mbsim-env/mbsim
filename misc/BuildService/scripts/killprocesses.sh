@@ -14,17 +14,10 @@ function killStoppedProcesses() {
   done
 }
 
-# Kill all build.sh processes after 5 hours uptime
-COMMANDS="build.sh"
+COMMANDS="build-linux-debug.sh build-linux-release.sh build-windows-release.sh"
 MAXTIME=5 # in hours
 killStoppedProcesses "$COMMANDS" $MAXTIME
 
-# Kill all release.sh processes after 4 hours uptime
-COMMANDS="release.sh"
-MAXTIME=4 # in hours
-killStoppedProcesses "$COMMANDS" $MAXTIME
-
-# Kill all mergeFeeds.sh and googleCode-mirror.sh processes after 1 hours uptime
-COMMANDS="mergeFeeds.sh googleCode-mirror.sh"
+COMMANDS="mergeFeeds.sh builddoc.sh"
 MAXTIME=1 # in hours
 killStoppedProcesses "$COMMANDS" $MAXTIME

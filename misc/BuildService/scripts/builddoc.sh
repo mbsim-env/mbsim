@@ -8,8 +8,6 @@ fi
 cd $1
 CURDIR=$(pwd)
 
-svn update
-
 for MAINFILE in $(find -name main.tex); do
   cd $(dirname $MAINFILE)
 
