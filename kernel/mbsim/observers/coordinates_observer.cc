@@ -91,9 +91,9 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        Vec3 r = frame->getPosition();
-        Vec3 v = frame->getVelocity();
-        Vec3 a = frame->getAcceleration();
+        Vec3 r = frame->getPosition(t);
+        Vec3 v = frame->getVelocity(t);
+        Vec3 a = frame->getAcceleration(t);
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
@@ -227,9 +227,9 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        Vec3 r = frame->getPosition();
-        Vec3 v = frame->getVelocity();
-        Vec3 a = frame->getAcceleration();
+        Vec3 r = frame->getPosition(t);
+        Vec3 v = frame->getVelocity(t);
+        Vec3 a = frame->getAcceleration(t);
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
@@ -419,9 +419,9 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        Vec3 r = frame->getPosition();
-        Vec3 v = frame->getVelocity();
-        Vec3 a = frame->getAcceleration();
+        Vec3 r = frame->getPosition(t);
+        Vec3 v = frame->getVelocity(t);
+        Vec3 a = frame->getAcceleration(t);
         Vec3 ep = crossProduct(ez,r);
         double nrmep = nrm2(ep);
         if(nrmep<epsroot()) {
@@ -594,9 +594,9 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        Vec3 r = frame->getPosition();
-        Vec3 v = frame->getVelocity();
-        Vec3 a = frame->getAcceleration();
+        Vec3 r = frame->getPosition(t);
+        Vec3 v = frame->getVelocity(t);
+        Vec3 a = frame->getAcceleration(t);
         double nrmv = nrm2(v);
         Vec3 et;
         if(nrmv<epsroot())
