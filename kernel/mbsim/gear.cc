@@ -59,36 +59,14 @@ namespace MBSim {
     ratio.push_back(transmission.ratio); 
   }
 
-  void Gear::updateW(double t, int j) {
-    if(j==0) {
-      for(unsigned i=0; i<body.size(); i++)  {
-        W[j][i]-=body[i]->getJRel(j).T()*ratio[i];
-      }
-    } else {
-      for(unsigned i=0; i<body.size(); i++) {
-        Mat3xV WF = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i];
-        Mat3xV WM = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i];
-        W[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM;
-        W[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF + C[i].getJacobianOfRotation(j).T()*WM;
-      }
+  void Gear::updatehRef(const Vec &hParent, int j) {
+    for(unsigned i=0; i<body.size(); i++) {
+      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
+      h[j][i]>>hParent(I);
+      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+      h[j][body.size()+i]>>hParent(I);
     }
-  }
-
-  void Gear::updateh(double t, int j) {
-    la(0) = (*func)(g(0),gd(0));
-    if(j==0) {
-      for(unsigned i=0; i<body.size(); i++)  {
-        h[j][i]-=body[i]->getJRel(j).T()*ratio[i]*la;
-      }
-    } else {
-      for(unsigned i=0; i<body.size(); i++) {
-        WF[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
-        WM[i] = body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
-        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[i] + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[i];
-        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*WF[i] + C[i].getJacobianOfRotation(j).T()*WM[i];
-      }
-    }
-  }
+  } 
 
   void Gear::updateWRef(const Mat &WParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
@@ -101,42 +79,70 @@ namespace MBSim {
     }
   } 
 
-  void Gear::updatehRef(const Vec &hParent, int j) {
+  void Gear::updatePositions(double t) {
+    rrel.init(0);
     for(unsigned i=0; i<body.size(); i++) {
-      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      h[j][i]>>hParent(I);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
-      h[j][body.size()+i]>>hParent(I);
+      WrP0P1 = body[i]->getFrameForKinematics()->getPosition(t)-body[i]->getFrameOfReference()->getPosition(t);
+      C[i].setGlobalRelativePosition(WrP0P1);
+      rrel+=body[i]->getqRel(t)*ratio[i];
     }
-  } 
+    updPos = false;
+  }
 
-  void Gear::updateJacobians(double t, int j) {
+  void Gear::updateVelocities(double t) {
+    vrel.init(0);
     for(unsigned i=0; i<body.size(); i++) {
-      Vec3 WrP0P1 = body[i]->getFrameForKinematics()->getPosition()-body[i]->getFrameOfReference()->getPosition();
-      Mat3x3 tWrP0P1 = tilde(WrP0P1);
+      vrel+=body[i]->getuRel(t)*ratio[i];
+    }
+    updVel = false;
+  }
 
-      C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
-      C[i].setPosition(body[i]->getFrameOfReference()->getPosition() + WrP0P1);
-      C[i].setAngularVelocity(body[i]->getFrameOfReference()->getAngularVelocity());
-      C[i].setVelocity(body[i]->getFrameOfReference()->getVelocity() + crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),WrP0P1));
-      C[i].setJacobianOfTranslation(body[i]->getFrameOfReference()->getJacobianOfTranslation(j) - tWrP0P1*body[i]->getFrameOfReference()->getJacobianOfRotation(j),j);
-      C[i].setJacobianOfRotation(body[i]->getFrameOfReference()->getJacobianOfRotation(j),j);
-      C[i].setGyroscopicAccelerationOfTranslation(body[i]->getFrameOfReference()->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*body[i]->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j) + crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),WrP0P1)),j);
-      C[i].setGyroscopicAccelerationOfRotation(body[i]->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
+  void Gear::updateGeneralizedSetValuedForces(double t) {
+    laMV = la;
+    updlaMV = false;
+  }
+
+  void Gear::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0) = (*func)(getRelativePosition(t)(0),getRelativeVelocity(t)(0));
+    updlaSV = false;
+  }
+
+  void Gear::updateh(double t, int j) {
+    if(j==0) {
+      for(unsigned i=0; i<body.size(); i++)  {
+        h[j][i]-=body[i]->getJRel(t,j).T()*ratio[i]*getSingleValuedForce(t);
+      }
+    } else {
+      for(unsigned i=0; i<body.size(); i++) {
+        Vec3 WF = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJT(t)*ratio[i]*getSingleValuedGeneralizedForce(t);
+        Vec3 WM = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJR(t)*ratio[i]*getSingleValuedGeneralizedForce(t);
+        h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*WM;
+        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(t,j).T()*WF + C[i].getJacobianOfRotation(t,j).T()*WM;
+      }
+    }
+  }
+
+  void Gear::updateW(double t, int j) {
+    if(j==0) {
+      for(unsigned i=0; i<body.size(); i++)  {
+        W[j][i]-=body[i]->getJRel(t,j).T()*ratio[i];
+      }
+    } else {
+      for(unsigned i=0; i<body.size(); i++) {
+        Mat3xV WF = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJT(t)*ratio[i];
+        Mat3xV WM = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJR(t)*ratio[i];
+        W[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*WM;
+        W[j][body.size()+i]+=C[i].getJacobianOfTranslation(t,j).T()*WF + C[i].getJacobianOfRotation(t,j).T()*WM;
+      }
     }
   }
 
   void Gear::updateg(double) {
-    g.init(0);
-    for(unsigned i=0; i<body.size(); i++)
-      g+=body[i]->getqRel()*ratio[i];
-  } 
+    g = rrel;
+  }
 
   void Gear::updategd(double) {
-    gd.init(0);
-    for(unsigned i=0; i<body.size(); i++) {
-      gd+=body[i]->getuRel()*ratio[i];
-    }
+    gd = vrel;
   }
 
   bool Gear::isSetValued() const {
@@ -145,7 +151,7 @@ namespace MBSim {
 
   void Gear::updatewb(double t, int j) {
     for(unsigned i=0; i<body.size(); i++)
-      wb += body[i]->getjRel()*ratio[i];
+      wb += body[i]->getjRel(t)*ratio[i];
   }
 
  void Gear::init(InitStage stage) {
@@ -165,11 +171,9 @@ namespace MBSim {
         h[1].push_back(Vec(6));
         W[0].push_back(Mat(body[i]->getFrameForKinematics()->getJacobianOfTranslation(0).cols(),laSize));
         W[1].push_back(Mat(6,laSize));
-        C.push_back(Frame());
-        C[i].getJacobianOfTranslation(0).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols());
-        C[i].getJacobianOfRotation(0).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(0).cols());
-        C[i].getJacobianOfTranslation(1).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(1).cols());
-        C[i].getJacobianOfRotation(1).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(1).cols());
+        C.push_back(FixedRelativeFrame("F"));
+        C[i].setParent(this);
+        C[i].setUpdateGlobalRelativePositionByParent();
       }
       for(unsigned int i=0; i<body.size(); i++) {
         h[0].push_back(Vec(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols()));
@@ -188,10 +192,17 @@ namespace MBSim {
       g.resize(1);
       gd.resize(1);
       la.resize(1);
+      iF = Index(0, 0);
+      iM = Index(0, -1);
+      rrel.resize(1);
+      vrel.resize(1);
+      if(isSetValued())
+        laMV.resize(1);
+      else
+        laSV.resize(1);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
-      plotColumns.push_back("la(0)");
       for(unsigned int i=0; i<body.size(); i++) {
         plotColumns.push_back("M");
       }
@@ -232,9 +243,8 @@ namespace MBSim {
   }
 
   void Gear::plot(double t,double dt) {
-    plotVector.push_back(la(0));
     for(unsigned int i=0; i<body.size(); i++) {
-      plotVector.push_back(ratio[i]*la(0));
+      plotVector.push_back(ratio[i]*getGeneralizedForce(t)(0));
     }
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -243,8 +253,8 @@ namespace MBSim {
           for(unsigned i=0; i<body.size(); i++) {
             vector<double> data;
             data.push_back(t);
-            Vec3 WF = -body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
-            Vec3 WrOS=body[i]->getFrameC()->getPosition();
+            Vec3 WF = -body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJT(t)*ratio[i]*getGeneralizedForce(t);
+            Vec3 WrOS=body[i]->getFrameC()->getPosition(t);
             data.push_back(WrOS(0));
             data.push_back(WrOS(1));
             data.push_back(WrOS(2));
@@ -259,8 +269,8 @@ namespace MBSim {
           for(unsigned i=0; i<body.size(); i++) {
             vector<double> data;
             data.push_back(t);
-            Vec3 WM = -body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
-            Vec3 WrOS=body[i]->getFrameC()->getPosition();
+            Vec3 WM = -body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJR(t)*ratio[i]*getGeneralizedForce(t);
+            Vec3 WrOS=body[i]->getFrameC()->getPosition(t);
             data.push_back(WrOS(0));
             data.push_back(WrOS(1));
             data.push_back(WrOS(2));

@@ -394,10 +394,9 @@ namespace MBSim {
 
   void RigidBody::updateqd(double t) {
     if(!constraint) {
-      if(updGC) updateGeneralizedCoordinates(t);
-      qd(iqT) = uTRel;
+      qd(iqT) = getuTRel(t);
       if(fTR)
-        qd(iqR) = getT(t)*uRRel;
+        qd(iqR) = (*fTR)(qRRel)*uRRel; // TODO: Prüfen ob schon in updateT berechnet
       else
         qd(iqR) = uRRel;
     }
@@ -405,27 +404,23 @@ namespace MBSim {
 
   void RigidBody::updatedq(double t, double dt) {
     if(!constraint) {
-      if(updGC) updateGeneralizedCoordinates(t);
-      qd(iqT) = uTRel*dt;
+      qd(iqT) = getuTRel(t)*dt;
       if(fTR)
-        qd(iqR) = getT(t)*uRRel*dt;
+        qd(iqR) = (*fTR)(qRRel)*uRRel*dt; // TODO: Prüfen ob schon in updateT berechnet
       else
         qd(iqR) = uRRel*dt;
     }
   }
 
   void RigidBody::updateT(double t) {
-    if(updGC) updateGeneralizedCoordinates(t);
-    if(fTR) TRel(iqR,iuR) = (*fTR)(qRRel);
+    if(fTR) TRel(iqR,iuR) = (*fTR)(getqRRel(t));
   }
 
   void RigidBody::updatePositions(double t) {
 
-    if(updGC) updateGeneralizedCoordinates(t);
+    if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
 
-    if(fPrPK) PrPK = (*fPrPK)(qTRel,t);
-
-    if(fAPK) APK = (*fAPK)(qRRel,t);
+    if(fAPK) APK = (*fAPK)(getqRRel(t),t);
 
     WrPK = R->getOrientation(t)*PrPK;
     K->setOrientation(R->getOrientation(t)*APK);
@@ -436,26 +431,24 @@ namespace MBSim {
 
   void RigidBody::updateVelocities(double t) {
 
-    if(updGC) updateGeneralizedCoordinates(t);
-
     if(fPrPK) {
       if(!constJT) {
-        PJTT = fPrPK->parDer1(qTRel,t);
+        PJTT = fPrPK->parDer1(getqTRel(t),t);
         PJT[0].set(i02,iuT,PJTT);
       }
       if(!constjT)
-        PjhT = fPrPK->parDer2(qTRel,t);
-      WvPKrel = R->getOrientation(t)*(PJTT*uTRel + PjhT);
+        PjhT = fPrPK->parDer2(getqTRel(t),t);
+      WvPKrel = R->getOrientation(t)*(PJTT*getuTRel(t) + PjhT);
     }
 
     if(fAPK) {
       if(!constJR) {
-        PJRR = fTR?fAPK->parDer1(qRRel,t)*(*fTR)(qRRel):fAPK->parDer1(qRRel,t);
+        PJRR = fTR?fAPK->parDer1(getqRRel(t),t)*(*fTR)(getqRRel(t)):fAPK->parDer1(getqRRel(t),t);
         PJR[0].set(i02,iuR,PJRR);
       }
       if(!constjR)
-        PjhR = fAPK->parDer2(qRRel,t);
-      WomPK = frameForJacobianOfRotation->getOrientation(t)*(PJRR*uRRel + PjhR);
+        PjhR = fAPK->parDer2(getqRRel(t),t);
+      WomPK = frameForJacobianOfRotation->getOrientation(t)*(PJRR*getuRRel(t) + PjhR);
     }
 
     K->setAngularVelocity(R->getAngularVelocity(t) + WomPK);
@@ -470,6 +463,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateGeneralizedCoordinates(double t) {
+    if(constraint) constraint->updateGeneralizedCoordinates(t);
     qTRel = qRel(iqT);
     qRRel = qRel(iqR);
     uTRel = uRel(iuT);
@@ -477,14 +471,17 @@ namespace MBSim {
     updGC = false;
   }
 
+  void RigidBody::updateGeneralizedJacobians(double t, int j) {
+    if(constraint) constraint->updateGeneralizedJacobians(t,j);
+    updGJ = false;
+  }
+
   void RigidBody::updateJacobians0(double t) {
 
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
 
-    if(updGC) updateGeneralizedCoordinates(t);
-    
-    VecV qdTRel = uTRel;
+    VecV qdTRel = getuTRel(t);
     VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
     if(fPrPK) {
       if(not(constJT and constjT)) {
@@ -510,7 +507,7 @@ namespace MBSim {
     K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tWrPK*R->getJacobianOfRotation(t));
     K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
 
-    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*PJT[0]*JRel[0]);
+    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*PJT[0]*getJRel(t,0));
     K->getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
   }
 
@@ -540,6 +537,7 @@ namespace MBSim {
   void RigidBody::resetUpToDate() {
     Body::resetUpToDate();
     updGC = true;
+    updGJ = true;
     updWTS = true;
   }
 

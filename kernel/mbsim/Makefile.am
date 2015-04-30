@@ -15,6 +15,7 @@ dynamic_system.cc\
 group.cc\
 dynamic_system_solver.cc\
 joint.cc\
+gear.cc\
 spring_damper.cc\
 extern_generalized_io.cc\
 link.cc\
@@ -58,6 +59,7 @@ fixed_relative_frame.h\
 functions_contact.h\
 group.h\
 joint.h\
+gear.h\
 spring_damper.h\
 extern_generalized_io.h\
 link.h\

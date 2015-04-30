@@ -37,7 +37,7 @@ namespace MBSim {
       Function<double(double,double)> *func;
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
-      std::vector<Frame> C;
+      std::vector<FixedRelativeFrame> C;
       std::string saved_DependentBody;
       std::vector<std::string> saved_IndependentBody;
     public:
@@ -46,7 +46,10 @@ namespace MBSim {
       void updateW(double t, int i=0);
       void updateg(double t);
       void updategd(double t);
-      void updateJacobians(double t, int j=0);
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedSetValuedForces(double t);
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);

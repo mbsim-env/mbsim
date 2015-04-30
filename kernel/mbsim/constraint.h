@@ -41,6 +41,8 @@ namespace MBSim {
 
     public:
       Constraint(const std::string &name);
+      virtual void updateGeneralizedCoordinates(double t) {}
+      virtual void updateGeneralizedJacobians(double t, int j=0) {}
       virtual void updatedx(double t, double dt) {}
       virtual void updatexd(double t) {}
       virtual void calcxSize() { xSize = 0; }
@@ -84,57 +86,57 @@ namespace MBSim {
       int xSize, xInd;
   };
 
-//  struct Transmission {
-//    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
-//    RigidBody *body;
-//    double ratio;
-//  };
-//
-//  class GearConstraint : public Constraint {
-//
-//    public:
-//      GearConstraint(const std::string &name="");
-//
-//      void addTransmission(const Transmission &transmission);
-//
-//      void init(InitStage stage);
-//
-//      void setDependentBody(RigidBody* body_) {bd=body_; }
-//
-//      void updateStateDependentVariables(double t);
-//      void updateJacobians(double t, int j=0);
-//      void setUpInverseKinetics();
-//
-//      void initializeUsingXML(xercesc::DOMElement * element);
-//
-//      virtual std::string getType() const { return "GearConstraint"; }
-//    
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//      /** \brief Visualize a force arrow acting on frame2 */
-//      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-//        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-//        FArrow=ombv.createOpenMBV();
-//      }
-//
-//      /** \brief Visualize a moment arrow */
-//      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-//        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-//        MArrow=ombv.createOpenMBV();
-//      }
-//#endif
-//
-//    private:
-//      std::vector<RigidBody*> bi;
-//      RigidBody *bd;
-//      std::vector<double> ratio;
-//
-//      std::string saved_DependentBody;
-//      std::vector<std::string> saved_IndependentBody;
-//
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
-//#endif
-//  };
+  struct Transmission {
+    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
+    RigidBody *body;
+    double ratio;
+  };
+
+  class GearConstraint : public Constraint {
+
+    public:
+      GearConstraint(const std::string &name="");
+
+      void addTransmission(const Transmission &transmission);
+
+      void init(InitStage stage);
+
+      void setDependentBody(RigidBody* body_) {bd=body_; }
+
+      void updateGeneralizedCoordinates(double t);
+      void updateGeneralizedJacobians(double t, int j=0); 
+      void setUpInverseKinetics();
+
+      void initializeUsingXML(xercesc::DOMElement * element);
+
+      virtual std::string getType() const { return "GearConstraint"; }
+    
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow acting on frame2 */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        FArrow=ombv.createOpenMBV();
+      }
+
+      /** \brief Visualize a moment arrow */
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        MArrow=ombv.createOpenMBV();
+      }
+#endif
+
+    private:
+      std::vector<RigidBody*> bi;
+      RigidBody *bd;
+      std::vector<double> ratio;
+
+      std::string saved_DependentBody;
+      std::vector<std::string> saved_IndependentBody;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
+#endif
+  };
 //
 //  class KinematicConstraint : public Constraint {
 //

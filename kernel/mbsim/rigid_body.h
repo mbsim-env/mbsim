@@ -71,6 +71,7 @@ namespace MBSim {
       void updateh(double t, int j=0);
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       void updateGeneralizedCoordinates(double t); 
+      void updateGeneralizedJacobians(double t, int j=0); 
       void updatePositions(double t); 
       void updateVelocities(double t);
       void updateAccelerations(double t);
@@ -242,6 +243,14 @@ namespace MBSim {
       bool transformCoordinates() const {return fTR!=NULL;}
 
       void resetUpToDate();
+      const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel;}
+      const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel;}
+      const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel;}
+      const fmatvec::VecV& getqRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRRel;}
+      const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel;}
+      const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel;}
+      const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j];}
+      const fmatvec::Vec& getjRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return jRel;}
 
     protected:
       /**
@@ -355,7 +364,7 @@ namespace MBSim {
 
       fmatvec::Vec3 WF, WM;
 
-      bool updGC, updWTS;
+      bool updGC, updGJ, updWTS;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
