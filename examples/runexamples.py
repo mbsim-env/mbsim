@@ -370,116 +370,57 @@ def main():
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
   <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
+  <script type="text/javascript" src="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
       $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
                                      'pageLength': 25, 'aaSorting': [], stateSave: true});
 
-      // get STATUS element (using in all below functions)
-      var status=$("#STATUS");
+      // when the save button is clicked
+      $("#SAVEBUTTON").click(function() {
+        statusCommunicating();
+        // collect all data
+        var checkedExamples=[];
+        $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
+          if($(this).prop("checked")) {
+            checkedExamples.push($(this).attr("name"));
+          }
+        });
+        // save current checked examples
+        var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'], checkedExamples: checkedExamples}
+        $.ajax({url: cgiPath+"/setcheck",
+                dataType: "json", type: "POST", data: JSON.stringify(data)
+              }).done(function(response) {
+          statusMessage(response);
+        });
+      });
 
       // if this is the current example table from the build server and is finished than enable the reference update
       if(($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/" ||
           $(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") &&
           $("#FINISHED").length>0) {
-        // show reference update and enabale password input and set password from localStorage
+        // show reference update and status
         $("#UPDATEREFERENCES").css("display", "block");
-        $("#PASSWORD").prop("disabled", false);
-        $("#PASSWORD").val(localStorage["_PASSWORD_"+$(location).attr('href')]);
-        // set status message
-        status.removeClass("text-success");
-        status.removeClass("text-danger");
-        status.addClass("text-warning");
-        status.text("Communicating with server.");
-        // get examples to "check" from server
-        $.ajax({url: "http://www4.amm.mw.tu-muenchen.de:8080/cgi-bin/runexamples-refupdate-cgi.py",
+        $("#STATUSPANEL").css("display", "block");
+
+        // update checked examples using server data
+        statusCommunicating();
+        $.ajax({url: cgiPath+"/getcheck",
                 dataType: "json", type: "POST",
-                data: JSON.stringify({action: "getcheck"})}).done(function(response) {
-          // "check" and enable these
-          $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
-            $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
-            $(this).prop("disabled", false);
-          });
-          // set status message and enable the submit/cancel button now
-          status.addClass("text-success");
-          status.removeClass("text-danger");
-          status.removeClass("text-warning");
-          status.text("Loaded selection from server.");
-          $("#SUBMIT").prop("disabled", false);
-          $("#CANCEL").prop("disabled", false);
+               }).done(function(response) {
+          if(!response.success)
+            statusMessage(response);
+          else {
+            // "check" and enable these
+            $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
+              $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
+              $(this).prop("disabled", false);
+            });
+            statusMessage(response);
+          }
         });
       }
-
-      // if cancel is clicked than reset the selection to the selection from the server
-      $("#CANCEL").click(function() {
-        // disable submit/cancel button during communication and set status message
-        $("#CANCEL").prop("disabled", true);
-        $("#SUBMIT").prop("disabled", true);
-        status.removeClass("text-success");
-        status.removeClass("text-danger");
-        status.addClass("text-warning");
-        status.text("Communicating with server.");
-        // get examples to "check" from server
-        $.ajax({url: "http://www4.amm.mw.tu-muenchen.de:8080/cgi-bin/runexamples-refupdate-cgi.py",
-                dataType: "json", type: "POST",
-                data: JSON.stringify({action: "getcheck"})}).done(function(response) {
-          // "check" these and "uncheck" all others
-          $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
-            $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
-          });
-          // set status message and reenable the submit/cancel button
-          status.addClass("text-success");
-          status.removeClass("text-danger");
-          status.removeClass("text-warning");
-          status.text("Reset selection to server data.");
-          $("#CANCEL").prop("disabled", false);
-          $("#SUBMIT").prop("disabled", false);
-        });
-      });
-
-      // if submit is clicked than submit current selection to the server
-      $("#SUBMIT").click(function() {
-        // disable submit/cancel button during communication and set status message
-        $("#CANCEL").prop("disabled", true);
-        $("#SUBMIT").prop("disabled", true);
-        status.removeClass("text-success");
-        status.removeClass("text-danger");
-        status.addClass("text-warning");
-        status.text("Communicating with server.");
-        // collect all data to post to server
-        var updateList=[];
-        $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
-          if($(this).prop("checked")) {
-            updateList.push($(this).attr("name"));
-          }
-        });
-        $.ajax({url: "http://www4.amm.mw.tu-muenchen.de:8080/cgi-bin/runexamples-refupdate-cgi.py",
-                dataType: "json", type: "POST",
-                data: JSON.stringify({
-                  action: "setcheck",
-                  password: $("#PASSWORD").val(),
-                  checkedExamples: updateList
-                })}).done(function(response) {
-          // set status message (depdendent on server response) and reenable the submit/cancel button
-          if(response.success) {
-            localStorage["_PASSWORD_"+$(location).attr('href')]=$("#PASSWORD").val(); // on success also save the password to localStorage
-            status.addClass("text-success");
-            status.removeClass("text-danger");
-            status.removeClass("text-warning");
-            status.text("Your selection has been saved on the server.");
-          }
-          else {
-            $("#PASSWORD").val(""); // on failure remove password
-            status.removeClass("text-success");
-            status.addClass("text-danger");
-            status.removeClass("text-warning");
-            status.text("WRONG PASSWORD! Nothing changed on the server but your selection was kept. Please retry.");
-          }
-          $("#CANCEL").prop("disabled", false);
-          $("#SUBMIT").prop("disabled", false);
-        });
-      });
     });
   </script>''', file=mainFD)
 
@@ -579,31 +520,41 @@ def main():
     print('  </div>', file=mainFD)
     print('</div>', file=mainFD)
 
-  print('<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">', file=mainFD)
-  print('  <div class="panel-heading"><span class="glyphicon glyphicon-pencil"></span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">'+\
-          'Update references<span class="caret"> </span></a></div>', file=mainFD)
-  print('  <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">', file=mainFD)
-  print('    <p>Update the references of the selected examples before next build</p>', file=mainFD)
-  print('    <div class="form-group">', file=mainFD)
-  print('      <label for="PASSWORD">Password</label>', file=mainFD)
-  print('      <input type="password" name="PASSWORD" class="form-control" id="PASSWORD" disabled="disabled"/>', file=mainFD)
-  print('    </div>', file=mainFD)
-  print('          <button id="SUBMIT" class="btn btn-default" type="button" disabled="disabled">Submit</button>', file=mainFD)
-  print('          <button id="CANCEL" class="btn btn-default" type="button" disabled="disabled">Cancel</button>', file=mainFD)
-  print('    <p>Status: <span id="STATUS"> </span></p>', file=mainFD)
-  print('  </div>', file=mainFD)
-  print('</div>', file=mainFD)
-
-  print('<hr/>', file=mainFD)
-  print('<p class="text-right small">', file=mainFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
-  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
-  print('  </a>', file=mainFD)
-  print('  Generated on %s by runexamples.py'%(str(timeID)), file=mainFD)
-  print('</p>', file=mainFD)
-  print('<span id="FINISHED" style="display:none"> </span>', file=mainFD)
-  print('</body>', file=mainFD)
-  print('</html>', file=mainFD)
+  print('''<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">
+  <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
+    </span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">
+ 'Update references<span class="caret"> </span></a></div>
+  <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
+    <p>Update the references of the selected examples before next build</p>
+    <p>
+      <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
+      <strong id="LOGINUSER">unknwon</strong>
+      <button id="LOGINBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-in">
+        </span>&nbsp;Login <span class="octicon octicon-logo-github"></span></button>
+      <button id="LOGOUTBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+    </p>
+    <p>
+      <button id="SAVEBUTTON" disabled="disabled" type="button"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
+    </p>
+  </div>
+</div>
+<div id="STATUSPANEL" class="panel panel-info" style="display:none">
+  <div class="panel-heading"><span class="glyphicon glyphicon-info-sign">
+    </span>&nbsp;<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Status message</div>
+  <div class="panel-body">
+    <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
+  </div>
+</div>
+<hr/>
+<p class="text-right small">
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
+  </a>
+  Generated on %s by runexamples.py
+</p>
+<span id="FINISHED" style="display:none"> </span>
+</body>
+</html>'''%(str(timeID)), file=mainFD)
 
   mainFD.close()
   # replace end time in index.html
