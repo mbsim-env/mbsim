@@ -104,57 +104,66 @@ namespace MBSim {
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
+          Vec3 r = frame->getPosition(t);
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(0.5);
           openMBVPosition->append(data);
         }
         if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getVelocity()(0));
-          data.push_back(frame->getVelocity()(1));
-          data.push_back(frame->getVelocity()(2));
+          Vec3 r = frame->getPosition(t);
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          Vec3 v = frame->getVelocity(t);
+          data.push_back(v(0));
+          data.push_back(v(1));
+          data.push_back(v(2));
           data.push_back(0.5);
           openMBVVelocity->append(data);
         }
         if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getAngularVelocity()(0));
-          data.push_back(frame->getAngularVelocity()(1));
-          data.push_back(frame->getAngularVelocity()(2));
+          Vec3 r = frame->getPosition(t);
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          Vec3 om = frame->getAngularVelocity(t);
+          data.push_back(om(0));
+          data.push_back(om(1));
+          data.push_back(om(2));
           data.push_back(0.5);
           openMBVAngularVelocity->append(data);
         }
         if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getAcceleration()(0));
-          data.push_back(frame->getAcceleration()(1));
-          data.push_back(frame->getAcceleration()(2));
+          Vec3 r = frame->getPosition(t);
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          Vec3 a = frame->getAcceleration(t);
+          data.push_back(a(0));
+          data.push_back(a(1));
+          data.push_back(a(2));
           data.push_back(0.5);
           openMBVAcceleration->append(data);
         }
         if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getAngularAcceleration()(0));
-          data.push_back(frame->getAngularAcceleration()(1));
-          data.push_back(frame->getAngularAcceleration()(2));
+          Vec3 r = frame->getPosition(t);
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          Vec3 psi = frame->getAngularAcceleration(t);
+          data.push_back(psi(0));
+          data.push_back(psi(1));
+          data.push_back(psi(2));
           data.push_back(0.5);
           openMBVAngularAcceleration->append(data);
         }
@@ -288,28 +297,28 @@ namespace MBSim {
 
   void RelativeKinematicsObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Vec3 vP = frame->getVelocity();
-      Vec3 vOs = refFrame->getVelocity();
-      Vec3 rOP = frame->getPosition();
-      Vec3 rOOs = refFrame->getPosition();
+      Vec3 vP = frame->getVelocity(t);
+      Vec3 vOs = refFrame->getVelocity(t);
+      Vec3 rOP = frame->getPosition(t);
+      Vec3 rOOs = refFrame->getPosition(t);
       Vec3 rOsP = rOP - rOOs;
-      Vec3 omB = refFrame->getAngularVelocity();
+      Vec3 omB = refFrame->getAngularVelocity(t);
       Vec3 vOsP = vP - vOs;
       Vec3 vRot = crossProduct(omB,rOsP);
       Vec3 vRel = vOsP - vRot;
       Vec3 vF = vOs + vRot;
-      Vec3 aP = frame->getAcceleration();
-      Vec3 aOs = refFrame->getAcceleration();
+      Vec3 aP = frame->getAcceleration(t);
+      Vec3 aOs = refFrame->getAcceleration(t);
       Vec3 aOsP = aP - aOs;
-      Vec3 psiB = refFrame->getAngularAcceleration();
+      Vec3 psiB = refFrame->getAngularAcceleration(t);
       Vec3 aRot = crossProduct(psiB,rOsP);
       Vec3 aZp = crossProduct(omB,crossProduct(omB,rOsP));
       Vec3 aCor = 2.*crossProduct(omB,vRel);
       Vec3 aRel = aOsP - aRot - aZp - aCor;
       Vec3 aF = aOs + aRot + aZp;
-      Vec3 omK = frame->getAngularVelocity();
+      Vec3 omK = frame->getAngularVelocity(t);
       Vec3 omBK = omK - omB;
-      Vec3 psiK = frame->getAngularAcceleration();
+      Vec3 psiK = frame->getAngularAcceleration(t);
       Vec3 psiBK = psiK - psiB;
       Vec3 psiRot = crossProduct(omB, omBK);
       Vec3 psiRel = psiBK - psiRot;
