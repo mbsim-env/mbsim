@@ -35,8 +35,8 @@
  *
  * - for all new features there should exist a test case with reference data in the examples directory for automatic compilation / running / comparison with reference data
  *
- * - before new svn commit: 
- *   - svn update -> solve conflicts in compiling
+ * - before new "git push": 
+ *   - solve conflicts in compiling
  *   - run runexamples.sh (examples) to test functionality
  *   (- if necessary test memory leckage with valgrind)
 */

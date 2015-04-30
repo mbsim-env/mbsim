@@ -37,7 +37,7 @@
  *   in the examples directory for automatic compilation / running / comparison
  *   with reference data
  *
- * - before new svn commit: svn update -> solve conflicts in compiling
+ * - before new "git push": solve conflicts in compiling
  *   -> run test script to also avoid link and conceptional problems
  *   -> check for memory leakage, runtime and thread savity with valgrind
  *   (--tool=memcheck, callgrind, helgrind) 

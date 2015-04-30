@@ -40,7 +40,7 @@ $(document).ready(function() {
   var loginWindow;
   $("#LOGINBUTTON").click(function() {
     statusCommunicating();
-    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=2d12f6576e23c7ba04a4&redirect_uri="+
+    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&redirect_uri="+
       window.location.origin+cgiPath+"/login&scope=read:org");
   })
   // and install a event listener to react on a successfull login on this page

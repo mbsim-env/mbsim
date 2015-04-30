@@ -26,6 +26,8 @@ import hashlib
 import codecs
 import threading
 import time
+import json
+import fcntl
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -79,7 +81,9 @@ mainOpts=argparser.add_argument_group('Main Options')
 mainOpts.add_argument("directories", nargs="*", default=os.curdir,
   help='''A directory to run (recursively). If prefixed with '^' remove the directory form the current list
           If starting with '@' read directories from the file after the '@'. This file must provide
-          one directory per line and each line may itself be prefixed with '^' or '@'.''')
+          the directories as a list of strings under the "checkedExamples" name in JSON format. Each directory
+          in the file may itself be prefixed with ^ or @.
+          Note that the directories in the file (JSON name "checkedExamples") is cleared, hence the file is modified.''')
 mainOpts.add_argument("--action", default="report", type=str,
   help='''The action of this script:
           'report': run examples and report results (default);
@@ -675,12 +679,23 @@ def sortDirectories(directoriesSet, dirs):
 
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
-  # if staring with @ use dirs from file defined by @<filename>: one dir per line
+  # if staring with @ use dirs from file defined by @<filename>: in JSON format
   if baseDir[0]=="@":
-    line=codecs.open(baseDir[1:], "r", encoding="utf-8").readlines()
-    line=list(map(lambda x: x.rstrip(), line)) # newlines must be removed
-    for d in line:
+    # read file
+    fd=open(baseDir[1:], 'r+')
+    fcntl.lockf(fd, fcntl.LOCK_EX)
+    config=json.load(fd)
+    # add examples
+    for d in config['checkedExamples']:
       addExamplesByFilter(d, directoriesSet)
+    # clear checkedExamples
+    config['checkedExamples']=[]
+    # write file
+    fd.seek(0);
+    json.dump(config, fd)
+    fd.truncate();
+    fcntl.lockf(fd, fcntl.LOCK_UN)
+    fd.close()
     return
 
   if baseDir[0]!="^": # add dir

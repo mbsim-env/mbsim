@@ -1,13 +1,12 @@
 #! /bin/sh
 
-## update references of examples
-#CURDIR=$(pwd)
-#SRCDIR=$(dirname $0)
-#export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig
-#cd $SRCDIR/mbsim/examples
-#./runexamples.py --action copyToReference @/home/user/Tools/runexamples-refupdate-cgi.py.conf/updateList # update reference
-#echo -n "" > /home/user/Tools/runexamples-refupdate-cgi.py.conf/updateList # remove all entries from updateList
-#cd $CURDIR
+# update references of examples
+CURDIR=$(pwd)
+SRCDIR=$(dirname $0)/../../../..
+export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig
+cd $SRCDIR/mbsim/examples
+./runexamples.py --action copyToReference @/home/user/BuildServiceConfig/mbsimBuildService.conf # update reference
+cd $CURDIR
 
 # build and run all examples
 export CXXFLAGS="-O1 -g"

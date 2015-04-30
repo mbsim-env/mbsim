@@ -21,7 +21,7 @@ try:
     def __init__(self, rw):
       self.rw=rw
     def __enter__(self):
-      configFilename="/home/user/Tools/runexamples-refupdate-cgi.py.config"
+      configFilename="/home/user/BuildServiceConfig/mbsimBuildService.conf"
       if self.rw:
         self.fd=open(configFilename, 'r+')
         fcntl.lockf(self.fd, fcntl.LOCK_EX)
@@ -133,7 +133,7 @@ try:
       code=query['code']
       with ConfigFile(True) as config:
         # get access token from github (as a json response)
-        data={'client_id': '2d12f6576e23c7ba04a4', 'client_secret': config['client_secret'], 'code': code}
+        data={'client_id': '987997eb60fc086e9707', 'client_secret': config['client_secret'], 'code': code}
         headers={'Accept': 'application/json'}
         response=requests.post('https://github.com/login/oauth/access_token', headers=headers, data=data).json()
         if 'error' in response:
@@ -303,22 +303,24 @@ try:
         response_data['success']=False
         response_data['message']="Invalid signature. Only github is allowed to send hooks."
       else:
-        data=json.loads(rawdata)
-        # get current config
-        curcibranch=config['curcibranch']
-        tobuild=config['tobuild']
-        # get repo and branch from this push
-        repo=data['repository']['name']
-        branch=data['ref'][11:]
-        # update tobuild
-        for c in curcibranch:
-          if c[repo]==branch:
-            toadd=c
-            toadd['timestamp']=int(time.time())
-            tobuild.append(toadd)
-        # create response
         response_data['success']=True
-        response_data['message']="OK"
+        response_data['message']="not implemented yet"
+        #data=json.loads(rawdata)
+        ## get current config
+        #curcibranch=config['curcibranch']
+        #tobuild=config['tobuild']
+        ## get repo and branch from this push
+        #repo=data['repository']['name']
+        #branch=data['ref'][11:]
+        ## update tobuild
+        #for c in curcibranch:
+        #  if c[repo]==branch:
+        #    toadd=c
+        #    toadd['timestamp']=int(time.time())
+        #    tobuild.append(toadd)
+        ## create response
+        #response_data['success']=True
+        #response_data['message']="OK"
 
 
 except:
