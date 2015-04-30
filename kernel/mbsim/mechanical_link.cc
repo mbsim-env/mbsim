@@ -46,35 +46,33 @@ namespace MBSim {
   void MechanicalLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
-        if(openMBVArrowF[i]) {
-          vector<double> data;
-          data.push_back(t); 
-          Vec3 toPoint=frame[i]->getPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          data.push_back(WF[i](0));
-          data.push_back(WF[i](1));
-          data.push_back(WF[i](2));
-          data.push_back(nrm2(WF[i]));
-          openMBVArrowF[i]->append(data);
-        }
+      if(openMBVArrowF) {
+        vector<double> data;
+        data.push_back(t); 
+        Vec3 toPoint=frame[1]->getPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WF = getForce(t);
+        data.push_back(WF(0));
+        data.push_back(WF(1));
+        data.push_back(WF(2));
+        data.push_back(nrm2(WF));
+        openMBVArrowF->append(data);
       }
-      for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
-        if(openMBVArrowM[i]) {
-          vector<double> data;
-          data.push_back(t); 
-          Vec3 toPoint=frame[i]->getPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          data.push_back(WM[i](0));
-          data.push_back(WM[i](1));
-          data.push_back(WM[i](2));
-          data.push_back(nrm2(WM[i]));
-          openMBVArrowM[i]->append(data);
-        }
+      if(openMBVArrowM) {
+        vector<double> data;
+        data.push_back(t); 
+        Vec3 toPoint=frame[1]->getPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WM = getMoment(t);
+        data.push_back(WM(0));
+        data.push_back(WM(1));
+        data.push_back(WM(2));
+        data.push_back(nrm2(WM));
+        openMBVArrowM->append(data);
       }
 #endif
       Link::plot(t,dt);
@@ -191,10 +189,6 @@ namespace MBSim {
         h[1].push_back(Vec(0,NONINIT));
         r[0].push_back(Vec(0,NONINIT));
         r[1].push_back(Vec(0,NONINIT));
-        WF.push_back(Vec3());
-        WM.push_back(Vec3());
-        fF.push_back(Mat3xV(laSize));
-        fM.push_back(Mat3xV(laSize));
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
@@ -210,10 +204,6 @@ namespace MBSim {
         h[1].push_back(Vec(0,NONINIT));
         r[0].push_back(Vec(0,NONINIT));
         r[1].push_back(Vec(0,NONINIT));
-        WF.push_back(Vec3());
-        WM.push_back(Vec3());
-        fF.push_back(Mat3xV(laSize));
-        fM.push_back(Mat3xV(laSize));
       }
     }
     else if(stage==plotting) {
@@ -225,17 +215,13 @@ namespace MBSim {
         openMBVForceGrp->setExpand(false);
         openMBVForceGrp->setName(name+"_ArrowGroup");
         parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
-        for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
-          if(openMBVArrowF[i]) {
-            openMBVArrowF[i]->setName("Force_"+numtostr((int)i));
-            openMBVForceGrp->addObject(openMBVArrowF[i]);
-          }
+        if(openMBVArrowF) {
+          openMBVArrowF->setName("Force");
+          openMBVForceGrp->addObject(openMBVArrowF);
         }
-        for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
-          if(openMBVArrowM[i]) {
-            openMBVArrowM[i]->setName("Moment_"+numtostr((int)i));
-            openMBVForceGrp->addObject(openMBVArrowM[i]);
-          }
+        if(openMBVArrowM) {
+          openMBVArrowM->setName("Moment");
+          openMBVForceGrp->addObject(openMBVArrowM);
         }
 #endif
         Link::init(stage);
@@ -252,40 +238,6 @@ namespace MBSim {
   void MechanicalLink::connect(Contour *contour_) {
     contour.push_back(contour_);
   }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void MechanicalLink::setOpenMBVForceArrow(const shared_ptr<OpenMBV::Arrow> &arrow, const vector<bool>& which) {
-    bool flag = true;
-    for(unsigned int i=0; i<which.size(); i++) {
-      if(which[i]==true) {
-        if(flag) {
-          openMBVArrowF.push_back(arrow);
-          flag = false;
-        }
-        else 
-          openMBVArrowF.push_back(OpenMBV::ObjectFactory::create(arrow));
-      }
-      else
-        openMBVArrowF.push_back(shared_ptr<OpenMBV::Arrow>());
-    }
-  }
-
-  void MechanicalLink::setOpenMBVMomentArrow(const shared_ptr<OpenMBV::Arrow> &arrow, const vector<bool>& which) {
-    bool flag = true;
-    for(unsigned int i=0; i<which.size(); i++) {
-      if(which[i]==true) {
-        if(flag) {
-          openMBVArrowM.push_back(arrow);
-          flag = false;
-        }
-        else
-          openMBVArrowM.push_back(OpenMBV::ObjectFactory::create(arrow));
-      }
-      else
-        openMBVArrowM.push_back(shared_ptr<OpenMBV::Arrow>());
-    }
-  }
-#endif
 
 }
 

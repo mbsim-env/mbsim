@@ -47,16 +47,14 @@ namespace MBSim {
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
       if(getPlotFeature(linkKinematics)==enabled) {
-        updateg(t);
-        updategd(t);
-        for(int i=0; i<g.size(); ++i)
-          plotVector.push_back(g(i));
-        for(int i=0; i<gd.size(); ++i)
-          plotVector.push_back(gd(i));
+        for(int i=0; i<getRelativePosition(t).size(); ++i)
+          plotVector.push_back(rrel(i));
+        for(int i=0; i<getRelativeVelocity(t).size(); ++i)
+          plotVector.push_back(vrel(i));
       }
       if(getPlotFeature(generalizedLinkForce)==enabled) {
-        for(int i=0; i<la.size(); ++i)
-          plotVector.push_back(la(i));
+        for(int i=0; i<getGeneralizedForce(t).size(); ++i)
+          plotVector.push_back(getGeneralizedForce(t)(i));
       }
       if(getPlotFeature(stopVector)==enabled)
         for(int i=0; i<sv.size(); ++i)
@@ -148,13 +146,13 @@ namespace MBSim {
           for(int i=0; i<xSize; ++i)
             plotColumns.push_back("xd("+numtostr(i)+")");
         if(getPlotFeature(linkKinematics)==enabled) {
-          for(int i=0; i<g.size(); ++i)
+          for(int i=0; i<rrel.size(); ++i)
             plotColumns.push_back("g("+numtostr(i)+")");
-          for(int i=0; i<gd.size(); ++i)
+          for(int i=0; i<vrel.size(); ++i)
             plotColumns.push_back("gd("+numtostr(i)+")");
         }
         if(getPlotFeature(generalizedLinkForce)==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
-          for(int i=0; i<la.size(); ++i)
+          for(int i=0; i<(isSetValued()?laMV.size():laSV.size()); ++i)
             plotColumns.push_back("la("+numtostr(i)+")");
         }
         if(getPlotFeature(stopVector)==enabled)

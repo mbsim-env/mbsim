@@ -21,7 +21,7 @@
 #define _KINETICEXCITATION_H_
 
 #include <mbsim/mechanical_link.h>
-#include <mbsim/frame.h>
+#include <mbsim/fixed_relative_frame.h>
 #include <mbsim/functions/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -51,10 +51,10 @@ namespace MBSim {
       virtual ~KineticExcitation();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateJacobians(double t, int j=0);
-      virtual void updateh(double t, int i=0);
-      virtual void updateg(double) {}
-      virtual void updategd(double) {}
+      void updatePositions(double t);
+      void updateForceDirections(double t);
+      void updateGeneralizedSingleValuedForces(double t);
+      void updateh(double t, int i=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -68,10 +68,6 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       /***************************************************/
       
-      /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt = 1);
-      /***************************************************/
-
       /**
        * \param local force direction represented in first frame
        */
@@ -109,16 +105,13 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         std::vector<bool> which; which.resize(2, false);
-        which[1]=true;
-        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        setOpenMBVForce(ombv.createOpenMBV());
       }
 
       /** \brief Visualize a moment arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        std::vector<bool> which; which.resize(2, false);
-        which[1]=true;
-        MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
+        setOpenMBVMoment(ombv.createOpenMBV());
       }
 #endif
 
@@ -147,7 +140,7 @@ namespace MBSim {
       /**
        * \brief own frame located in second partner with same orientation as first partner 
        */
-      Frame C;
+      FixedRelativeFrame C;
 
     private:
       std::string saved_ref, saved_ref1, saved_ref2;

@@ -109,8 +109,8 @@ namespace MBSim {
       const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
-      const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return Wf; }
-      const fmatvec::Mat3xV& getGlobalMomentDirection(double t) { if(updFD) updateForceDirections(t); return Wm; }
+      const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF; }
+      const fmatvec::Mat3xV& getGlobalMomentDirection(double t) { if(updFD) updateForceDirections(t); return DM; }
       const fmatvec::Vec3& getSingleValuedForce(double t) { if(updFSV) updateSingleValuedForces(t); return F; }
       const fmatvec::Vec3& getSingleValuedMoment(double t) { if(updFSV) updateSingleValuedForces(t); return M; }
       const fmatvec::Vec3& getSetValuedForce(double t) { if(updFMV) updateSetValuedForces(t); return F; }
@@ -120,38 +120,27 @@ namespace MBSim {
       const fmatvec::Mat3xV& getSetValuedForceDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RF; }
       const fmatvec::Mat3xV& getSetValuedMomentDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RM; }
 
-    protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVForceArrow(const boost::shared_ptr<OpenMBV::Arrow> &arrow, const std::vector<bool>& which);
-      void setOpenMBVMomentArrow(const boost::shared_ptr<OpenMBV::Arrow> &arrow, const std::vector<bool>& which);
+      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
+      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
 #endif
 
+    protected:
       /**
        * \brief difference vector of position, velocity and angular velocity
        */
       fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
 
-      fmatvec::Mat3xV Wf, Wm;
+      fmatvec::Mat3xV DF, DM;
 
       fmatvec::Vec3 F, M;
 
       fmatvec::Mat3xV RF, RM;
 
-      /** 
-       * \brief force and moment direction for smooth right hand side
-       */
-      std::vector<fmatvec::Vec3> WF, WM;
-
-      /**
-       * \brief cartesian force and moment direction matrix for nonsmooth right hand side
-       */
-      std::vector<fmatvec::Mat3xV> fF, fM;
-
       /**
        * \brief indices of forces and torques
        */
       fmatvec::Index iF, iM;
-
 
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
@@ -165,8 +154,8 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;
-      std::vector<boost::shared_ptr<OpenMBV::Arrow> > openMBVArrowF;
-      std::vector<boost::shared_ptr<OpenMBV::Arrow> > openMBVArrowM;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVArrowF;
+      boost::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 #endif
 
       bool updFD, updFSV, updFMV, updRMV;

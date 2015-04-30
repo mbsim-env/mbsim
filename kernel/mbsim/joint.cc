@@ -69,8 +69,8 @@ namespace MBSim {
     Mat3xV WJT = refFrame->getOrientation(t) * JT;
     VecV sdT = WJT.T() * (getGlobalRelativeVelocity(t));
 
-    wb(0, Wf.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t,j) - C.getGyroscopicAccelerationOfTranslation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
-    wb(Wf.cols(), Wm.cols() + Wf.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t,j) - C.getGyroscopicAccelerationOfRotation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
+    wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t,j) - C.getGyroscopicAccelerationOfTranslation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
+    wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t,j) - C.getGyroscopicAccelerationOfRotation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
   void Joint::updateW(double t, int j) {
@@ -100,12 +100,13 @@ namespace MBSim {
   }
 
   void Joint::updateForceDirections(double t) {
-    Wf = refFrame->getOrientation(t) * forceDir;
-    Wm = refFrame->getOrientation(t) * momentDir;
+    DF = refFrame->getOrientation(t) * forceDir;
+    DM = refFrame->getOrientation(t) * momentDir;
     updFD = false;
   }
 
   void Joint::updateGeneralizedSetValuedForces(double t) {
+    laMV = la;
     updlaMV = false;
   }
 
@@ -162,7 +163,10 @@ namespace MBSim {
       g.resize(forceDir.cols() + momentDir.cols());
       gd.resize(forceDir.cols() + momentDir.cols());
       la.resize(forceDir.cols() + momentDir.cols());
-      laSV.resize(forceDir.cols() + momentDir.cols());
+      if(isSetValued())
+        laMV.resize(forceDir.cols() + momentDir.cols());
+      else
+        laSV.resize(forceDir.cols() + momentDir.cols());
       gdd.resize(gdSize);
       gdn.resize(gdSize);
     }
@@ -179,19 +183,15 @@ namespace MBSim {
       }
 
       if (forceDir.cols())
-        Wf = forceDir;
+        DF = forceDir;
       else {
       }
       if (momentDir.cols())
-        Wm = momentDir;
+        DM = momentDir;
       else {
       }
 
       C.setFrameOfReference(frame[0]);
-      C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
-      C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
-      C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
-      C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
 
       JT.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)
@@ -209,16 +209,6 @@ namespace MBSim {
     else if (stage == plotting) {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
-        if (getPlotFeature(generalizedLinkForce) == enabled) {
-          for (int j = 0; j < la.size(); ++j)
-            plotColumns.push_back("la(" + numtostr(j) + ")");
-        }
-        if (getPlotFeature(linkKinematics) == enabled) {
-          for (int j = 0; j < g.size(); ++j)
-            plotColumns.push_back("g(" + numtostr(j) + ")");
-          for (int j = 0; j < gd.size(); ++j)
-            plotColumns.push_back("gd(" + numtostr(j) + ")");
-        }
         MechanicalLink::init(stage);
       }
     }
@@ -589,27 +579,6 @@ namespace MBSim {
 
   void Joint::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      // WF and WM are needed by OpenMBV plotting in MechanicalLink::plot(...)
-      if (isSetValued()) {
-        WF[0] = fF[0] * la;
-        WF[1] = -WF[0];
-        WM[0] = fM[0] * la;
-        WM[1] = -WM[0];
-      }
-#endif
-      if (getPlotFeature(generalizedLinkForce) == enabled) {
-        for (int j = 0; j < la.size(); j++)
-          plotVector.push_back(la(j) / (isSetValued() ? dt : 1.)); // TODO (TS, 2014-09-17) why is there dt in the denominator? does this contradict the link implementation?
-      }
-      if (getPlotFeature(linkKinematics) == enabled) {
-        updateg(t);
-        updategd(t);
-        for (int j = 0; j < g.size(); j++)
-          plotVector.push_back(g(j));
-        for (int j = 0; j < gd.size(); j++)
-          plotVector.push_back(gd(j));
-      }
       MechanicalLink::plot(t, dt);
     }
   }

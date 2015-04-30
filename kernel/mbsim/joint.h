@@ -152,21 +152,11 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVForce(ombv.createOpenMBV());
       }
-      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
-        std::vector<bool> which; which.resize(2, false);
-        which[1]=true;
-        MechanicalLink::setOpenMBVForceArrow(arrow, which);
-      }
 
       /** \brief Visualize a moment arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVMoment(ombv.createOpenMBV());
-      }
-      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) {
-        std::vector<bool> which; which.resize(2, false);
-        which[1]=true;
-        MechanicalLink::setOpenMBVMomentArrow(arrow, which);
       }
 #endif
 

@@ -33,7 +33,10 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
-  KineticExcitation::KineticExcitation(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL) {}
+  KineticExcitation::KineticExcitation(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL), C("F") {
+    C.setParent(this);
+    C.setUpdateGlobalRelativePositionByParent();
+  }
 
   KineticExcitation::~KineticExcitation() {
     delete F;
@@ -60,23 +63,20 @@ namespace MBSim {
       if(F) addDependency(F->getDependency());
       if(M) addDependency(M->getDependency());
     }
+    else if(stage==resize) {
+      iF = Index(0, forceDir.cols() - 1);
+      iM = Index(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
+      laSV.resize(forceDir.cols() + momentDir.cols());
+    }
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
       if(F) assert((*F)(0).size()==forceDir.cols());
       if(M) assert((*M)(0).size()==momentDir.cols());
       refFrame=refFrameID?frame[1]:frame[0];
-      C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
-      C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
-      C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
-      C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
+      C.setFrameOfReference(frame[0]);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(generalizedLinkForce)==enabled)
-          for(int j=0; j<forceDir.cols()+momentDir.cols(); ++j) 
-            plotColumns.push_back("la("+numtostr(j)+")");
-      }
       MechanicalLink::init(stage);
     }
     else
@@ -90,51 +90,32 @@ namespace MBSim {
     MechanicalLink::connect(frame1);
   }
 
-  void KineticExcitation::updateJacobians(double t, int j) {
-    Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
-    Mat3x3 tWrP0P1 = tilde(WrP0P1);
-    C.setOrientation(frame[0]->getOrientation());
-    C.setPosition(frame[0]->getPosition() + WrP0P1);
-    C.setAngularVelocity(frame[0]->getAngularVelocity());
-    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
-    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
-    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
-    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
-    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+  void KineticExcitation::updatePositions(double t) {
+    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
+    C.setGlobalRelativePosition(WrP0P1);
+    updPos = false;
+  }
+
+  void KineticExcitation::updateForceDirections(double t) {
+    DF = refFrame->getOrientation(t)*forceDir;
+    DM = refFrame->getOrientation(t)*momentDir;
+    updFD = false;
+  }
+
+  void KineticExcitation::updateGeneralizedSingleValuedForces(double t) {
+    if(F) laSV.set(iF,(*F)(t));
+    if(M) laSV.set(iM,(*M)(t));
+    updlaSV = false;
   }
 
   void KineticExcitation::updateh(double t, int j) {
-    if(F) {
-      WF[1]=refFrame->getOrientation()*forceDir * (*F)(t);
-      WF[0] = -WF[1];
-    }
-    if(M) {
-      WM[1]=refFrame->getOrientation()*momentDir * (*M)(t);
-      WM[0] = -WM[1];
-    }
-    h[j][0]+=C.getJacobianOfTranslation(j).T()*WF[0] + C.getJacobianOfRotation(j).T()*WM[0];
-    h[j][1]+=frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
+    h[j][0]-=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + C.getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + frame[1]->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
   }
 
   void KineticExcitation::calclaSize(int j) {
     MechanicalLink::calclaSize(j);
     laSize=forceDir.cols()+momentDir.cols();
-  }
-
-  void KineticExcitation::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(generalizedLinkForce)==enabled) {
-        if(F) {
-          Vec f = (*F)(t);
-          for(int i=0; i<forceDir.cols(); i++) plotVector.push_back(f(i));
-        }
-        if(M) {
-          Vec m = (*M)(t);
-          for(int i=0; i<momentDir.cols(); i++) plotVector.push_back(m(i));
-        }
-      }
-      MechanicalLink::plot(t,dt);
-    }
   }
 
   void KineticExcitation::setForceDirection(const Mat3xV &fd) {
@@ -188,17 +169,13 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      std::vector<bool> which; which.resize(2, false);
-      which[1]=true;
-      MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
+      setOpenMBVForce(ombv.createOpenMBV(e));
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      std::vector<bool> which; which.resize(2, false);
-      which[1]=true;
-      MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
+      setOpenMBVMoment(ombv.createOpenMBV(e));
     }
 #endif
   }
