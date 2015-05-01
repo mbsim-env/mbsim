@@ -16,6 +16,7 @@ set -o pipefail
 
 DISTBASEDIR=/home/user/MBSimLinux/dist_mbsim
 
+SRCDIR=/home/user/MBSimLinux
 PREFIX=/home/user/MBSimLinux/local
 
 BINFILES="
@@ -297,11 +298,13 @@ EOF
 
 # Add some examples
 mkdir -p $DISTDIR/examples
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics/basics/hierachical_modelling mechanics/basics/hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat/hierachical_modelling xmlflat/hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hierachical_modelling xml/hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hydraulics_ballcheckvalve xml/hydraulics_ballcheckvalve)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/fmi fmi)
+(cd $SRCDIR/mbsim/examples; rsync -Rav $(git ls-files \
+mechanics/basics/hierachical_modelling \
+xmlflat/hierachical_modelling \
+xml/hierachical_modelling \
+xml/hydraulics_ballcheckvalve \
+fmi \
+) $DISTDIR/examples)
 mkdir -p $DISTDIR/examples/compile_test_all
 cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 #include <openmbvcppinterface/cube.h>
