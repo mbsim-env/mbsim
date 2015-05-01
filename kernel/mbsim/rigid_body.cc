@@ -79,8 +79,8 @@ namespace MBSim {
   }
 
   void RigidBody::updateh(double t, int j) {
-    WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-    WM = crossProduct(getGlobalInertiaTensor(t)*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
+    Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+    Vec3 WM = crossProduct(getGlobalInertiaTensor(t)*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
     h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(t,j)) + C->getJacobianOfRotation(t,j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(t,j));
     if(j==1) h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
   }
@@ -423,7 +423,7 @@ namespace MBSim {
     if(fAPK) APK = (*fAPK)(getqRRel(t),t);
 
     WrPK = R->getOrientation(t)*PrPK;
-    K->setOrientation(R->getOrientation(t)*APK);
+    K->setOrientation(R->getOrientation()*APK);
     K->setPosition(R->getPosition(t) + WrPK);
 
     updPos = false;
@@ -452,7 +452,7 @@ namespace MBSim {
     }
 
     K->setAngularVelocity(R->getAngularVelocity(t) + WomPK);
-    K->setVelocity(R->getVelocity(t) + WvPKrel + crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t)));
+    K->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t)));
 
     updVel = false;
   }
@@ -463,7 +463,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateGeneralizedCoordinates(double t) {
-    if(constraint) constraint->updateGeneralizedCoordinates(t);
+    if(constraint && constraint->updateGeneralizedCoordinates()) constraint->updateGeneralizedCoordinates(t);
     qTRel = qRel(iqT);
     qRRel = qRel(iqR);
     uTRel = uRel(iuT);
@@ -472,7 +472,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateGeneralizedJacobians(double t, int j) {
-    if(constraint) constraint->updateGeneralizedJacobians(t,j);
+    if(constraint && constraint->updateGeneralizedJacobians()) constraint->updateGeneralizedJacobians(t,j);
     updGJ = false;
   }
 
@@ -500,14 +500,14 @@ namespace MBSim {
       }
     }
 
-    SqrMat3 tWrPK = tilde(WrPK);
-    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrPK*R->getGyroscopicAccelerationOfRotation(t) + R->getOrientation(t)*(PjbT + PJT[0]*jRel) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
+    SqrMat3 tWrPK = tilde(getGlobalRelativePosition(t));
+    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrPK*R->getGyroscopicAccelerationOfRotation(t) + R->getOrientation(t)*(PjbT + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
     K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
 
     K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tWrPK*R->getJacobianOfRotation(t));
     K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
 
-    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*PJT[0]*getJRel(t,0));
+    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*PJT[0]*JRel[0]);
     K->getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
   }
 
@@ -569,129 +569,54 @@ namespace MBSim {
     M[i] += m*JTJ(C->getJacobianOfTranslation(t,i)) + JTMJ(getGlobalInertiaTensor(t),C->getJacobianOfRotation(t,i));
   }
 
-  void RigidBody::updatePositionAndOrientationOfFrame(double t, Frame *P) {
-
-    if(fPrPK) {
-      qTRel = qRel(iqT);
-      uTRel = uRel(iuT);
-      PrPK = (*fPrPK)(qTRel,t);
-    }
-    if(fAPK) {
-      qRRel = qRel(iqR);
-      uRRel = uRel(iuR);
-      APK = (*fAPK)(qRRel,t);
-    }
-
-    K->setOrientation(R->getOrientation()*APK);
-
-    WrPK = R->getOrientation()*PrPK;
-
-    K->setPosition(WrPK + R->getPosition());
-
-    if(K!=C) C->updatePositions(t);
-
-    if(P!=C) ((FixedRelativeFrame*)P)->updatePositions(t);
-  }
-
   void RigidBody::updateRelativeJacobians(double t, Frame *P) {
 
     if(fPrPK) {
       if(!constJT) {
-        PJTT = fPrPK->parDer1(qTRel,t);
+        PJTT = fPrPK->parDer1(getqTRel(t),t);
         PJT[0].set(i02,iuT,PJTT);
       }
       if(!constjT) {
-        PjhT = fPrPK->parDer2(qTRel,t);
+        PjhT = fPrPK->parDer2(getqTRel(t),t);
       }
     }
 
     if(fAPK) {
       //if(fAPK->hasVariableJacobian())
       if(!constJR) {
-        PJRR = fTR?fAPK->parDer1(qRRel,t)*(*fTR)(qRRel):fAPK->parDer1(qRRel,t);
+        PJRR = fTR?fAPK->parDer1(getqRRel(t),t)*(*fTR)(getqRRel(t)):fAPK->parDer1(getqRRel(t),t);
         PJR[0].set(i02,iuR,PJRR);
       }
       if(!constjR) {
-        PjhR = fAPK->parDer2(qRRel,t);
+        PjhR = fAPK->parDer2(getqRRel(t),t);
       }
     }
 
-    WJRrel = frameForJacobianOfRotation->getOrientation()*PJR[0];
-    WJTrel = R->getOrientation()*PJT[0];
+    WJRrel = frameForJacobianOfRotation->getOrientation(t)*PJR[0];
+    WJTrel = R->getOrientation(t)*PJT[0];
 
-    K->setVelocity(R->getOrientation()*PjhT+R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPK));
-    K->setAngularVelocity(frameForJacobianOfRotation->getOrientation()*PjhR + R->getAngularVelocity());
+//    K->setVelocity(R->getOrientation(t)*PjhT+R->getVelocity(t) + crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t)));
+//    K->setAngularVelocity(frameForJacobianOfRotation->getOrientation(t)*PjhR + R->getAngularVelocity(t));
 
     if(K!=C) {
-      C->updateVelocities(t);
+//      C->updateVelocities(t);
       WJTrel -= tilde(C->getGlobalRelativePosition(t))*WJRrel;
     }
 
     if(P!=C) {
-      ((FixedRelativeFrame*)P)->updateVelocities(t);
+//      ((FixedRelativeFrame*)P)->updateVelocities(t);
       WJTrel -= tilde(((FixedRelativeFrame*)P)->getGlobalRelativePosition(t))*WJRrel;
     }
   }
 
-  void RigidBody::updateAccelerations(double t, Frame *P) {
-    K->getJacobianOfTranslation().init(0);
-    K->getJacobianOfRotation().init(0);
-
-    if(fPrPK) {
-      uTRel = uRel(iuT);
-      VecV qdTRel = uTRel;
-      if(not(constJT and constjT)) {
-        PjbT = (fPrPK->parDer1DirDer1(qdTRel,qTRel,t)+fPrPK->parDer1ParDer2(qTRel,t))*uTRel + fPrPK->parDer2DirDer1(qdTRel,qTRel,t) + fPrPK->parDer2ParDer2(qTRel,t);
-      }
-//      Mat3xV JT = fPrPK->parDer1(qTRel,t);
-      WvPKrel = R->getOrientation()*(PJTT*uTRel + PjhT);
-    }
-    if(fAPK) {
-      uRRel = uRel(iuR);
-      VecV qdRRel = uRRel;
-      if(fAPK) {
-        if(not(constJR and constjR)) {
-          if(fTR) {
-            Mat3xV JRd = (fAPK->parDer1DirDer1(qdRRel,qRRel,t)+fAPK->parDer1ParDer2(qRRel,t));
-            MatV TRd = fTR->dirDer(qdRRel,qRRel);
-            PjbR = JRd*qdRRel + fAPK->parDer1(qRRel,t)*TRd*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,t) + fAPK->parDer2ParDer2(qRRel,t);
-          }
-          else
-            PjbR = (fAPK->parDer1DirDer1(qdRRel,qRRel,t)+fAPK->parDer1ParDer2(qRRel,t))*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,t) + fAPK->parDer2ParDer2(qRRel,t);
-        }
-      }
-//      Mat3xV JR = fAPK->parDer1(qRRel,t);
-      WomPK = frameForJacobianOfRotation->getOrientation()*(PJRR*uRRel + PjhR);
-    }
-
-    // TODO prüfen ob Optimierungspotential
-
-    SqrMat3 tWrPK = tilde(WrPK);
-
-    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*PjbT + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
-    K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*PjbR + crossProduct(R->getAngularVelocity(), WomPK));
-
-    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
-    K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
-
-   if(K!=C)
-     C->updateJacobians(t);
-
-   if(P!=C) 
-     ((FixedRelativeFrame*)P)->updateJacobians(t);
-  }
-
   void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3xV &WJTrel0, Mat3xV &WJRrel0) {
 
-    WJTrel0 -= tilde(WrPK)*WJRrel0;
+    WJTrel0 -= tilde(getGlobalRelativePosition(t))*WJRrel0;
 
-    if(K!=C) {
-      WJTrel0 -= tilde(C->getGlobalRelativePosition(t))*WJRrel0;
-    }
+    if(K!=C) WJTrel0 -= tilde(C->getGlobalRelativePosition(t))*WJRrel0;
 
     // TODO: Zusammenfassen
-    if(P!=C)
-      WJTrel0 -= tilde(((FixedRelativeFrame*)P)->getGlobalRelativePosition(t))*WJRrel0;
+    if(P!=C) WJTrel0 -= tilde(((FixedRelativeFrame*)P)->getGlobalRelativePosition(t))*WJRrel0;
   }
 
   void RigidBody::initializeUsingXML(DOMElement *element) {

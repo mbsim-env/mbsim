@@ -451,8 +451,9 @@ namespace MBSim {
     }
     else if (stage == calculateLocalInitialValues) {
       Group::initz();
-      updateStateDependentVariables(0);
-      updateg(0);
+//      resetUpToDate();
+//      updateStateDependentVariables(0);
+//      updateg(0);
       Group::init(stage);
     }
     else
@@ -1771,7 +1772,6 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-    //cout << "zdot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);

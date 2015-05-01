@@ -221,8 +221,6 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual void updatePositionAndOrientationOfFrame(double t, Frame *P);
-      virtual void updateAccelerations(double t, Frame *P);
       virtual void updateRelativeJacobians(double t, Frame *P);
       virtual void updateRelativeJacobians(double t, Frame *P, fmatvec::Mat3xV &WJTrel, fmatvec::Mat3xV &WJRrel);
       const fmatvec::Mat3xV& getWJTrel() const {return WJTrel;}
@@ -234,8 +232,10 @@ namespace MBSim {
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
       fmatvec::Mat& getTRel() {return TRel;}
-      // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
-      // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
+      void setqRel(const fmatvec::Vec &q) { qRel = q; qTRel = qRel(iqT); qRRel = qRel(iqR); updGC = false; }
+      void setuRel(const fmatvec::Vec &u) { uRel = u; uTRel = uRel(iqT); uRRel = uRel(iqR); updGC = false; }
+      void setJRel(const fmatvec::Mat &J) { JRel[0] = J; updGJ = false; }
+      void setjRel(const fmatvec::Vec &j) { jRel = j; updGJ = false; }
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
@@ -243,14 +243,14 @@ namespace MBSim {
       bool transformCoordinates() const {return fTR!=NULL;}
 
       void resetUpToDate();
-      const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel;}
-      const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel;}
-      const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel;}
-      const fmatvec::VecV& getqRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRRel;}
-      const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel;}
-      const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel;}
-      const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j];}
-      const fmatvec::Vec& getjRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return jRel;}
+      const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel; }
+      const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel; }
+      const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel; }
+      const fmatvec::VecV& getqRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRRel; }
+      const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel; }
+      const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
+      const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j]; }
+      const fmatvec::Vec& getjRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return jRel; }
 
     protected:
       /**
@@ -361,8 +361,6 @@ namespace MBSim {
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
-
-      fmatvec::Vec3 WF, WM;
 
       bool updGC, updGJ, updWTS;
 
