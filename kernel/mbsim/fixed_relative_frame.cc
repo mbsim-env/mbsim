@@ -114,10 +114,19 @@ namespace MBSim {
       SqrMat3 tWrRP = tilde(getGlobalRelativePosition(t));
       setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tWrRP*R->getJacobianOfRotation(t,j),j);
       setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+    }
+    updateJac[j] = false;
+  }
+
+  void FixedRelativeFrame::updateGyroscopicAccelerations(double t, int j) {
+    if(updateByParent[j])
+      parent->updateGyroscopicAccelerations(t,j);
+    else {
+      SqrMat3 tWrRP = tilde(getGlobalRelativePosition(t));
       setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t,j) - tWrRP*R->getGyroscopicAccelerationOfRotation(t,j) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)),j);
       setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j),j);
     }
-    updateJac[j] = false;
+    updateGA[j] = false;
   }
 
 }

@@ -580,6 +580,8 @@ namespace MBSim {
       bd2[i]->setqRel(bd2[i]->getqRel());
       bd2[i]->setuRel(Vec(1));
     }
+//    cout << JT << endl;
+//    cout << JR << endl;
     SqrMat A(nu);
     A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
@@ -602,7 +604,13 @@ namespace MBSim {
   void JointConstraint::updateGeneralizedJacobians(double t, int jj) {
     if(jj == 0) {
 
-      for(unsigned int i=0; i<bd1.size(); i++) {
+//      bd1[0]->setJacobianFunction(&RigidBody::updateJacobiansI);
+//      cout << frame1->getJacobianOfTranslation(t) << endl;
+//      bd1[0]->setJacobianFunction(&RigidBody::updateJacobians0);
+//      cout << "end" << endl;
+//      bd1[0]->resetUpToDate();
+//      bd1[0]->setuRel(bd1[0]->getuRel());
+   for(unsigned int i=0; i<bd1.size(); i++) {
         bd1[i]->setJRel(Mat(bd1[i]->getJRel().rows(),bd1[i]->getJRel().cols()));
         bd1[i]->setjRel(Vec(bd1[i]->getjRel().size()));
       }

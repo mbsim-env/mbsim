@@ -172,6 +172,8 @@ namespace MBSim {
   void Frame::resetUpToDate() { 
     updateJac[0] = true; 
     updateJac[1] = true; 
+    updateGA[0] = true; 
+    updateGA[1] = true; 
     updatePos = true;
     updateVel = true;
     updateAcc = true;
@@ -218,12 +220,12 @@ namespace MBSim {
   }
 
   const Vec3& Frame::getGyroscopicAccelerationOfTranslation(double t, int j) {
-    if(updateJac[j]) updateJacobians(t,j); 
+    if(updateGA[j]) updateGyroscopicAccelerations(t,j); 
     return getGyroscopicAccelerationOfTranslation(j); 
   }
 
   const Vec3& Frame::getGyroscopicAccelerationOfRotation(double t, int j) {
-    if(updateJac[j]) updateJacobians(t,j); 
+    if(updateGA[j]) updateGyroscopicAccelerations(t,j); 
     return getGyroscopicAccelerationOfRotation(j); 
   }
 
@@ -243,6 +245,12 @@ namespace MBSim {
     if(updateByParent[j])
       parent->updateJacobians(t,j);
     updateJac[j] = false;
+  }
+
+  void Frame::updateGyroscopicAccelerations(double t, int j) {
+    if(updateByParent[j])
+      parent->updateGyroscopicAccelerations(t,j);
+    updateGA[j] = false;
   }
 
 }

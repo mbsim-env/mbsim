@@ -60,6 +60,8 @@ namespace MBSim {
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
     updateJacobians_[1] = &RigidBody::updateJacobians1;
+    updateGyroscopicAccelerations_[0] = &RigidBody::updateGyroscopicAccelerations0;
+    updateGyroscopicAccelerations_[1] = &RigidBody::updateGyroscopicAccelerations1;
   }
 
   RigidBody::~RigidBody() {
@@ -476,10 +478,28 @@ namespace MBSim {
     updGJ = false;
   }
 
+  void RigidBody::updateJacobiansI(double t) {
+    K->getJacobianOfTranslation().init(0);
+    K->getJacobianOfRotation().init(0);
+    K->getJacobianOfTranslation().set(i02,Index(gethSize(0)-PJT[0].cols(),gethSize(0)-1), R->getOrientation(t)*PJT[0]);
+    K->getJacobianOfRotation().set(i02,Index(gethSize(0)-PJR[0].cols(),gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
+    }
+
   void RigidBody::updateJacobians0(double t) {
 
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
+
+    SqrMat3 tWrPK = tilde(getGlobalRelativePosition(t));
+
+    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tWrPK*R->getJacobianOfRotation(t));
+    K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
+
+    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
+    K->getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
+  }
+
+  void RigidBody::updateGyroscopicAccelerations0(double t) {
 
     VecV qdTRel = getuTRel(t);
     VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
@@ -503,12 +523,6 @@ namespace MBSim {
     SqrMat3 tWrPK = tilde(getGlobalRelativePosition(t));
     K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrPK*R->getGyroscopicAccelerationOfRotation(t) + R->getOrientation(t)*(PjbT + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
     K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
-
-    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tWrPK*R->getJacobianOfRotation(t));
-    K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
-
-    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*PJT[0]*JRel[0]);
-    K->getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
   }
 
   const Vec3& RigidBody::getGlobalRelativePosition(double t) {

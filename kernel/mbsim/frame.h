@@ -138,6 +138,7 @@ namespace MBSim {
       void updatePositions(double t);
       void updateVelocities(double t); 
       void updateJacobians(double t, int j=0);
+      void updateGyroscopicAccelerations(double t, int j=0);
 
       void setUpdateByParent(int j) { updateByParent[j] = true; }
 
@@ -191,7 +192,7 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
 #endif
 
-      bool updateJac[2], updatePos, updateVel, updateAcc;
+      bool updateJac[2], updateGA[2], updatePos, updateVel, updateAcc;
       bool updateByParent[2];
   };
 
