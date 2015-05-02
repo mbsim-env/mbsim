@@ -28,7 +28,7 @@ using namespace MBSimGUI;
 
 int main(int argc, char *argv[]) {
   // environment variables
-  // Disalbe COIN VBO per default (see --help)
+  // Disable COIN VBO per default (see --help)
   char COIN_VBO[strlen("COIN_VBO=0")+1];
   if(getenv("COIN_VBO")==NULL) putenv(strcpy(COIN_VBO, "COIN_VBO=0"));
 

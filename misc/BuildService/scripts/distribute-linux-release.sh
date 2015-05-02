@@ -6,7 +6,7 @@ set -o pipefail
 # Usage:
 # Call this script from everywhere!
 # use argument "noclean" to disable cleaning the dist dir before starting
-# use argument "noarchive" to disalbe the creation of a tar.bz2 archive at end
+# use argument "noarchive" to disable the creation of a tar.bz2 archive at end
 
 
 

@@ -947,7 +947,7 @@ def executeSrcExample(executeFD, example):
   print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if not args.disalbeMakeClean:
+  if not args.disableMakeClean:
     if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
   if subprocessCall(["make"], executeFD)!=0: return 1, 0, []
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
@@ -1073,7 +1073,7 @@ def executeFMISrcExample(executeFD, example):
   print("make -f Makefile_FMI clean && make -f Makefile_FMI", file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if not args.disalbeMakeClean:
+  if not args.disableMakeClean:
     if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
   if subprocessCall(["make", "-f", "Makefile_FMI"], executeFD)!=0: return 1, 0, []
   # create and run FMU

@@ -82,6 +82,16 @@ passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAIN
 # parse command line options
 args=argparser.parse_args() # modified by mypostargparse
 
+htmlEscapeTable={
+  "&": "&amp;",
+  '"': "&quot;",
+  "'": "&apos;",
+  ">": "&gt;",
+  "<": "&lt;",
+}
+def htmlEscape(text):
+  return "".join(htmlEscapeTable.get(c,c) for c in text)
+
 # rotate
 def rotateOutput():
   # create output dir
@@ -449,7 +459,7 @@ def main():
     endTime=datetime.datetime.now()
     endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
     line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
-    print(line)
+    print(line, end="")
 
   # write RSS feed
   writeRSSFeed(ret)
@@ -529,9 +539,9 @@ def repoUpdate(mainFD):
   print('<thead><tr>', file=mainFD)
   print('<th><span class="octicon octicon-repo"></span>&nbsp;Repository</th>', file=mainFD)
   print('<th><span class="octicon octicon-git-branch"></span>&nbsp;Branch</th>', file=mainFD)
-  print('<th><span class="octicon octicon-git-commit"></span>&nbsp;Commit</th>', file=mainFD)
   if not args.disableUpdate:
     print('<th><span class="glyphicon glyphicon-refresh"></span>&nbsp;Update</th>', file=mainFD)
+  print('<th><span class="octicon octicon-git-commit"></span>&nbsp;Commit</th>', file=mainFD)
   print('</tr></thead><tbody>', file=mainFD)
 
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
@@ -544,27 +554,31 @@ def repoUpdate(mainFD):
       print('Update repository '+repo, file=repoUpdFD)
       print('', file=repoUpdFD)
       repoUpdFD.flush()
-      retlocal+=abs(subprocess.check_call(["git", "fetch"], stdout=repoUpdFD, stderr=repoUpdFD))
+      retlocal+=abs(subprocess.check_call(["git", "pull"], stdout=repoUpdFD, stderr=repoUpdFD))
     # set branch based on args
     if eval('args.'+repo+'Branch')!="":
       retlocal+=abs(subprocess.check_call(["git", "checkout", eval('args.'+repo+'Branch')], stdout=repoUpdFD, stderr=repoUpdFD))
       repoUpdFD.flush()
     # get branch and commit
-    branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
-    commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
+    branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitsub=subprocess.check_output(['git', 'log', '-n', '1', '--format=%s', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitshort="<code>"+commitid+"</code>: "+htmlEscape(commitsub)
+    commitlong=subprocess.check_output(['git', 'log', '-n', '1', '--format=Commit: %H%nAuthor: %an%nDate:   %ad%n%s%n%b', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
+    commitlong=htmlEscape(commitlong)
     repoUpdFD.close()
     ret+=retlocal
     # output
     print('<tr>', file=mainFD)
     print('  <td><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;'+repo+'</span></td>', file=mainFD)
     print('  <td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch+'</span></td>', file=mainFD)
-    print('  <td><code>'+commit[0:10]+'</code></td>', file=mainFD)
     if not args.disableUpdate:
       print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;<a href="repo-update-%s.txt">%s</a></td>'%(
         "success" if retlocal==0 else "danger",
         "ok-sign alert-success" if retlocal==0 else "exclamation-sign alert-danger",
         repo,
         "passed" if retlocal==0 else "failed"), file=mainFD)
+    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+'</td>', file=mainFD)
     print('</tr>', file=mainFD)
 
   print('</tbody></table>', file=mainFD)
