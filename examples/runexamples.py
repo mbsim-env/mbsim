@@ -110,6 +110,7 @@ cfgOpts.add_argument("--atol", default=2e-5, type=float,
 cfgOpts.add_argument("--rtol", default=2e-5, type=float,
   help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
+cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable make clean on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
@@ -946,7 +947,8 @@ def executeSrcExample(executeFD, example):
   print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
+  if not args.disalbeMakeClean:
+    if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
   if subprocessCall(["make"], executeFD)!=0: return 1, 0, []
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
@@ -1071,7 +1073,8 @@ def executeFMISrcExample(executeFD, example):
   print("make -f Makefile_FMI clean && make -f Makefile_FMI", file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
+  if not args.disalbeMakeClean:
+    if subprocessCall(["make", "-f", "Makefile_FMI", "clean"], executeFD)!=0: return 1, 0, []
   if subprocessCall(["make", "-f", "Makefile_FMI"], executeFD)!=0: return 1, 0, []
   # create and run FMU
   if args.exeExt==".exe":

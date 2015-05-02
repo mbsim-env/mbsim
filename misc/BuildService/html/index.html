@@ -28,7 +28,7 @@
 <h2>Daily Linux Debug Build</h2>
 
 <div class="panel panel-success">
-  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux; configure options: --enable-debug CXXFLAGS="-O1 -g" CFLAGS="-O1 -g"</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux; configure options: --enable-debug CXXFLAGS="-O0 -g" CFLAGS="-O0 -g"</div>
   <div class="panel-body">
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current">Build report</a></p>
 <p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current">Examples report (debugging e.g. fmatvec size checks enabled; including result compare)</a></p>
@@ -39,6 +39,20 @@
   <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Documentation</div>
   <div class="panel-body">
 <a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/doc">Doxygen and XML</a>
+  </div>
+</div>
+
+
+
+<h2>Continuous Integration (CI) Linux Debug Build</h2>
+
+<div class="panel panel-success">
+  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux; configure options: --enable-debug CXXFLAGS="-O0 -g" CFLAGS="-O0 -g"</div>
+  <div class="panel-body">
+<p><span class="glyphicon glyphicon-pencil">
+    </span>&nbsp;<a href="MBSimBuildServiceCI.html">Configure branches used for CI</a></p>
+<p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimContinuousIntegration/report/result_current">Build report</a></p>
+<p><a href="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimContinuousIntegration/report/result_current/runexamples_report/result_current">Examples report</a></p>
   </div>
 </div>
 

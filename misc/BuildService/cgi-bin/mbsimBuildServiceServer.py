@@ -194,33 +194,19 @@ try:
     with ConfigFile(False) as config: pass
     # not json input via http post required
     # return branches for CI
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
-    if login==None:
-      curcibranch=config['curcibranch']
-      response_data['success']=True
-      response_data['message']="Continuous integration braches loaded."
-      response_data['curcibranch']=curcibranch
-      response_data['fmatvecbranch']=[]
-      response_data['hdf5seriebranch']=[]
-      response_data['openmbvbranch']=[]
-      response_data['mbsimbranch']=[]
-    else:
-      access_token=config['login_access_token'][login]
-      headers={'Authorization': 'token '+access_token}
       # worker function to make github api requests in parallel
-      def getBranch(url, headers, out):
-        out.extend([b['name'] for b in requests.get(url, headers=headers).json()])
+    def getBranch(url, out):
+      out.extend([b['name'] for b in requests.get(url).json()])
       # output data placeholder, request url and thread object placeholder. all per thread (reponame)
       out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
-      url={'fmatvec': 'https://api.github.com/repos/friedrichatgc/casadi/branches',
-           'hdf5serie': 'https://api.github.com/repos/friedrichatgc/casadi/branches',
-           'openmbv': 'https://api.github.com/repos/friedrichatgc/casadi/branches',
-           'mbsim': 'https://api.github.com/repos/friedrichatgc/casadi/branches'}
+      url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
+           'hdf5serie': 'https://api.github.com/repos/mbsim-env/hdf5serie/branches',
+           'openmbv': 'https://api.github.com/repos/mbsim-env/openmbv/branches',
+           'mbsim': 'https://api.github.com/repos/mbsim-env/mbsim/branches'}
       thread={}
       # make all calls in parallel
       for reponame in out:
-        thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], headers, out[reponame]))
+      thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], out[reponame]))
         thread[reponame].start()
       # wait for all calls
       for reponame in out:
@@ -305,22 +291,22 @@ try:
       else:
         response_data['success']=True
         response_data['message']="not implemented yet"
-        #data=json.loads(rawdata)
-        ## get current config
-        #curcibranch=config['curcibranch']
-        #tobuild=config['tobuild']
-        ## get repo and branch from this push
-        #repo=data['repository']['name']
-        #branch=data['ref'][11:]
-        ## update tobuild
-        #for c in curcibranch:
-        #  if c[repo]==branch:
-        #    toadd=c
-        #    toadd['timestamp']=int(time.time())
-        #    tobuild.append(toadd)
-        ## create response
-        #response_data['success']=True
-        #response_data['message']="OK"
+        data=json.loads(rawdata)
+        # get current config
+        curcibranch=config['curcibranch']
+        tobuild=config['tobuild']
+        # get repo and branch from this push
+        repo=data['repository']['name']
+        branch=data['ref'][11:]
+        # update tobuild
+        for c in curcibranch:
+          if c[repo]==branch:
+            toadd=c.copy()
+            toadd['timestamp']=int(time.time())
+            tobuild.append(toadd)
+        # create response
+        response_data['success']=True
+        response_data['message']="OK"
 
 
 except:
