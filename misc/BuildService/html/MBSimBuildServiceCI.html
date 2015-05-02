@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MBSim Build Service - CI</title>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css">
+</head>
+<body style="margin:1em;cursor:progress;">
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+<script type="text/javascript" src="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/mbsimBuildServiceClient.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // when the save button is clicked
+    $("#APPLYADDCIBRANCH").click(function() {
+      statusCommunicating();
+      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
+                addcibranch: {fmatvec: $('#FMATVEC_BRANCH').val(),
+                              hdf5serie: $('#HDF5SERIE_BRANCH').val(),
+                              openmbv: $('#OPENMBV_BRANCH').val(),
+                              mbsim: $('#MBSIM_BRANCH').val(), }}
+      $.ajax({url: cgiPath+"/addcibranch",
+              dataType: "json", type: "POST", data: JSON.stringify(data)
+            }).done(function(response) {
+        if(!response.success)
+          statusMessage(response);
+        else {
+          updateCurCIBranches(false);
+          statusMessage(response);
+        }
+      });
+    });
+
+    // when the delete button is clicked
+    $('#CITABLE').on("click", ".DELCIBRANCH", function() {
+      statusCommunicating();
+      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
+                delcibranch: JSON.parse($(this).attr('value').replace(/'/g, '"'))}
+      $.ajax({url: cgiPath+"/delcibranch",
+              dataType: "json", type: "POST", data: JSON.stringify(data)
+            }).done(function(response) {
+        if(!response.success)
+          statusMessage(response);
+        else {
+          updateCurCIBranches(false);
+          statusMessage(response);
+        }
+      });
+    });
+
+    // set ci branches
+    function updateCurCIBranches(printStatus) {
+      if(printStatus)
+        statusCommunicating();
+      var loginname=localStorage['GITHUB_LOGIN_NAME'];
+      $.ajax({url: cgiPath+"/getcibranches", async: printStatus,
+              dataType: "json", type: "POST"
+            }).done(function(response) {
+        if(!response.success) {
+          if(printStatus)
+            statusMessage(response);
+        }
+        else {
+          // current CI branches
+          var sel=$("#CURCIBRANCH");
+          var nr=1;
+          sel.empty();
+          response.curcibranch.forEach(function(branch) {
+            sel.append('<tr><td>#'+nr.toString()+'</td>'+
+                           '<td><button class="DELCIBRANCH" value="'+JSON.stringify(branch).replace(/"/g, "'")+
+                              '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
+                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></td>'+
+                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.hdf5serie+'</span></td>'+
+                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.openmbv+'</span></td>'+
+                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.mbsim+'</span></td></tr>');
+            nr++;
+          });
+          // add CI branch
+          var sel=$("#FMATVEC_BRANCH");
+          sel.empty();
+          response.fmatvecbranch.forEach(function(branch) {
+            sel.append('<option value="'+branch+'">'+branch+'</option> ');
+          });
+          var sel=$("#HDF5SERIE_BRANCH");
+          sel.empty();
+          response.hdf5seriebranch.forEach(function(branch) {
+            sel.append('<option value="'+branch+'">'+branch+'</option> ');
+          });
+          var sel=$("#OPENMBV_BRANCH");
+          sel.empty();
+          response.openmbvbranch.forEach(function(branch) {
+            sel.append('<option value="'+branch+'">'+branch+'</option> ');
+          });
+          var sel=$("#MBSIM_BRANCH");
+          sel.empty();
+          response.mbsimbranch.forEach(function(branch) {
+            sel.append('<option value="'+branch+'">'+branch+'</option> ');
+          });
+          if(printStatus)
+            statusMessage(response);
+        }
+      })
+    }
+    updateCurCIBranches(true);
+  });
+</script>
+
+<h1>MBSim Build Service - Continuous Integration</h1>
+<p>The MBSim Build Service provides continuous integration (CI) for all combinations of git branches of the
+repositories <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span>,
+             <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span>,
+             <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span> and
+             <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span>.
+However, each branch combination (except <span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;master</span> for all repos,
+where CI is always active) must be activated manually for CI. This can be done on this site.</p>
+
+<h2>Login Using GitHub</h2>
+<p>To change CI branches you must login with your GitHub account and have apropriate rights.</p>
+<p>
+  <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
+  <strong id="LOGINUSER">unknwon</strong>
+  <button id="LOGINBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-in"></span>&nbsp;Login
+    <span class="octicon octicon-logo-github"></span></button>
+  <button id="LOGOUTBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+</p>
+
+<h2>CI Branch Combinations</h2>
+<div class="panel panel-success">
+  <div class="panel-heading"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;Current branch combinations activated for CI</div>
+  <div class="panel-body">
+    <table id="CITABLE" class="table table-striped table-hover table-bordered compact">
+      <thead>
+        <tr>
+          <th style="text-align:center;" colspan="2"><span class="octicon octicon-git-branch"></span>&nbsp;CI branch comb.</th>
+          <th style="text-align:center;" colspan="4"><span class="octicon octicon-repo"></span>&nbsp;Repositories</th>
+        </tr>
+        <tr>
+          <th>Nr.</th>
+          <th>Remove</th>
+          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></th>
+          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></th>
+          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></th>
+          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></th>
+        </tr>
+      </thead>
+      <tbody id="CURCIBRANCH">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel panel-warning">
+  <div class="panel-heading"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Add new branch combination for CI</div>
+  <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></dt>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="FMATVEC_BRANCH"> </select></dd>
+      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></dt>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="HDF5SERIE_BRANCH"> </select></dd>
+      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></dt>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="OPENMBV_BRANCH"> </select></dd>
+      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></dt>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="MBSIM_BRANCH"> </select></dd>
+    </dl>
+    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
+  </div>
+</div>
+
+<div id="STATUSPANEL" class="panel panel-info">
+  <div class="panel-heading"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Status message</div>
+  <div class="panel-body">
+    <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
+  </div>
+</div>
+
+<hr/>
+<p class="text-right small">
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
+  </a>
+</p>
+
+</body>
+</html>
