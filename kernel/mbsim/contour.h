@@ -148,7 +148,7 @@ namespace MBSim {
       /**
        * \param gyroscopic acceleration of translation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP, int j=0) { R->setGyroscopicAccelerationOfTranslation(WjP,j); }
+      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP) { R->setGyroscopicAccelerationOfTranslation(WjP); }
 
       /**
        * \param JACOBIAN of rotation of contour in inertial frame
@@ -158,7 +158,7 @@ namespace MBSim {
       /**
        * \param gyroscopic acceleration of rotation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR, int j=0) { R->setGyroscopicAccelerationOfRotation(WjR,j); }
+      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR) { R->setGyroscopicAccelerationOfRotation(WjR); }
 
       /**
        * \param acceleration of contour in inertial frame

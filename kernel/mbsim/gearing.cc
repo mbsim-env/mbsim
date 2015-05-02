@@ -135,7 +135,7 @@ namespace MBSim {
     return func?false:true;
   }
 
-  void Gearing::updatewb(double t, int j) {
+  void Gearing::updatewb(double t) {
     const Vec3 KrPC1 = P0->getOrientation().T()*(Z0.getPosition() - P0->getPosition());
     const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
     const double sa1=sin(zeta1);

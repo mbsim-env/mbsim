@@ -161,7 +161,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updater(double t, int j=0);
-      virtual void updatewb(double t, int j=0);
+      virtual void updatewb(double t);
       virtual void updateW(double t, int j=0);
       virtual void updateV(double t, int j=0);
       /***************************************************/

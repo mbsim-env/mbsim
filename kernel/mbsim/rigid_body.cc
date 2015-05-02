@@ -60,8 +60,6 @@ namespace MBSim {
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
     updateJacobians_[1] = &RigidBody::updateJacobians1;
-    updateGyroscopicAccelerations_[0] = &RigidBody::updateGyroscopicAccelerations0;
-    updateGyroscopicAccelerations_[1] = &RigidBody::updateGyroscopicAccelerations1;
   }
 
   RigidBody::~RigidBody() {
@@ -83,8 +81,11 @@ namespace MBSim {
   void RigidBody::updateh(double t, int j) {
     Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
     Vec3 WM = crossProduct(getGlobalInertiaTensor(t)*C->getAngularVelocity(t),C->getAngularVelocity(t)) ;
-    h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(t,j)) + C->getJacobianOfRotation(t,j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(t,j));
-    if(j==1) h[j] -= C->getJacobianOfTranslation(t,j).T()*(m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
+    if(j==0) {
+      h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*C->getGyroscopicAccelerationOfTranslation(t)) + C->getJacobianOfRotation(t,j).T()*(WM - WThetaS*C->getGyroscopicAccelerationOfRotation(t));
+    } else {
+      h[j] += C->getJacobianOfTranslation(t,j).T()*(WF - m*(C->getJacobianOfTranslation(t)*udall[0] + C->getGyroscopicAccelerationOfTranslation(t))) + C->getJacobianOfRotation(t,j).T()*(WM - getGlobalInertiaTensor(t)*(C->getJacobianOfRotation(t)*udall[0] + C->getGyroscopicAccelerationOfRotation(t)));
+    }
   }
 
   void RigidBody::calcqSize() {
@@ -499,7 +500,7 @@ namespace MBSim {
     K->getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
   }
 
-  void RigidBody::updateGyroscopicAccelerations0(double t) {
+  void RigidBody::updateGyroscopicAccelerations(double t) {
 
     VecV qdTRel = getuTRel(t);
     VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;

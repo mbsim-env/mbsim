@@ -118,15 +118,15 @@ namespace MBSim {
     updateJac[j] = false;
   }
 
-  void FixedRelativeFrame::updateGyroscopicAccelerations(double t, int j) {
-    if(updateByParent[j])
-      parent->updateGyroscopicAccelerations(t,j);
+  void FixedRelativeFrame::updateGyroscopicAccelerations(double t) {
+    if(updateByParent[0])
+      parent->updateGyroscopicAccelerations(t);
     else {
       SqrMat3 tWrRP = tilde(getGlobalRelativePosition(t));
-      setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t,j) - tWrRP*R->getGyroscopicAccelerationOfRotation(t,j) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)),j);
-      setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j),j);
+      setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrRP*R->getGyroscopicAccelerationOfRotation(t) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)));
+      setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
     }
-    updateGA[j] = false;
+    updateGA = false;
   }
 
 }

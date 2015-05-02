@@ -50,7 +50,7 @@ namespace MBSim {
       void updateVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
       void updateGeneralizedSetValuedForces(double t);
-      void updatewb(double t, int i=0);
+      void updatewb(double t);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body[0] = body_;}

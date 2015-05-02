@@ -870,9 +870,9 @@ namespace MBSim {
     updr[j] = false;
   }
 
-  void DynamicSystemSolver::updatewb(double t, int j) {
+  void DynamicSystemSolver::updatewb(double t) {
     wb.init(0);
-    Group::updatewb(t, j);
+    Group::updatewb(t);
   }
 
   void DynamicSystemSolver::updateW(double t, int j) {

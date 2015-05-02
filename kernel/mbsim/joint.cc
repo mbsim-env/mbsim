@@ -65,12 +65,12 @@ namespace MBSim {
     MechanicalLink::connect(frame1);
   }
 
-  void Joint::updatewb(double t, int j) {
+  void Joint::updatewb(double t) {
     Mat3xV WJT = refFrame->getOrientation(t) * JT;
     VecV sdT = WJT.T() * (getGlobalRelativeVelocity(t));
 
-    wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t,j) - C.getGyroscopicAccelerationOfTranslation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
-    wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t,j) - C.getGyroscopicAccelerationOfRotation(t,j) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
+    wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t) - C.getGyroscopicAccelerationOfTranslation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
+    wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
   void Joint::updateW(double t, int j) {

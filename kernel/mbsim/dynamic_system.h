@@ -105,7 +105,7 @@ namespace MBSim {
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 #endif
 
-      virtual void updatewb(double t, int j=0); 
+      virtual void updatewb(double t); 
       virtual void updateW(double t, int j=0); 
       virtual void updateV(double t, int j=0); 
       virtual void updateg(double t);

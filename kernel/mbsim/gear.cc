@@ -149,7 +149,7 @@ namespace MBSim {
     return func?false:true;
   }
 
-  void Gear::updatewb(double t, int j) {
+  void Gear::updatewb(double t) {
     for(unsigned i=0; i<body.size(); i++)
       wb += body[i]->getjRel(t)*ratio[i];
   }

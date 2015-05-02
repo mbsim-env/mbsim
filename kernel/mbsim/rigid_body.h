@@ -77,12 +77,10 @@ namespace MBSim {
       void updateAccelerations(double t);
       void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
       void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
-      void updateGyroscopicAccelerations(double t, int j=0) { (this->*updateGyroscopicAccelerations_[j])(t); }
+      void updateGyroscopicAccelerations(double t);
       void updateJacobians0(double t);
       void updateJacobians1(double t) { }
       void updateJacobiansI(double t);
-      void updateGyroscopicAccelerations0(double t);
-      void updateGyroscopicAccelerations1(double t) { }
       typedef void (RigidBody::*pFunc)(double t);
       void setJacobianFunction(pFunc func) { updateJacobians_[0] = func; }
       virtual void calcqSize();
@@ -341,7 +339,6 @@ namespace MBSim {
       void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
       void (RigidBody::*updateJacobians_[2])(double t); 
-      void (RigidBody::*updateGyroscopicAccelerations_[2])(double t); 
 
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;

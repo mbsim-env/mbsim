@@ -96,7 +96,7 @@ namespace MBSim {
       void updatexd(double t) { }
       void updateg(double t);
       void updategd(double t);
-      void updatewb(double t, int i=0);
+      void updatewb(double t);
 
       std::string getType() const { return "GeneralizedPositionExcitation"; }
 
@@ -119,7 +119,7 @@ namespace MBSim {
       void updatexd(double t);
       void updateg(double t);
       void updategd(double t);
-      void updatewb(double t, int i=0);
+      void updatewb(double t);
 
       std::string getType() const { return "GeneralizedVelocityExcitation"; }
 
@@ -148,7 +148,7 @@ namespace MBSim {
       void updatexd(double t);
       void updateg(double t);
       void updategd(double t);
-      void updatewb(double t, int i=0);
+      void updatewb(double t);
 
       std::string getType() const { return "GeneralizedAccelerationExcitation"; }
 

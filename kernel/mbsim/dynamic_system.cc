@@ -229,10 +229,10 @@ namespace MBSim {
   }
 #endif
 
-  void DynamicSystem::updatewb(double t, int j) {
+  void DynamicSystem::updatewb(double t) {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).updatewb(t, j);
+      (**i).updatewb(t);
   }
 
   void DynamicSystem::updateW(double t, int j) {

@@ -207,7 +207,7 @@ namespace MBSim {
     if(gd.size()) gd=body->getuRel()-f->parDer(t);
   }
 
-  void GeneralizedPositionExcitation::updatewb(double t, int j) {
+  void GeneralizedPositionExcitation::updatewb(double t) {
     wb += body->getjRel()-f->parDerParDer(t);
   }
 
@@ -237,7 +237,7 @@ namespace MBSim {
     if(gd.size()) gd=body->getuRel()-(*f)(x,t);
   }
 
-  void GeneralizedVelocityExcitation::updatewb(double t, int j) {
+  void GeneralizedVelocityExcitation::updatewb(double t) {
     wb += body->getjRel()-(f->parDer1(x,t)*xd + f->parDer2(x,t));
   }
 
@@ -268,7 +268,7 @@ namespace MBSim {
     if(gd.size()) gd=body->getuRel()-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
   }
 
-  void GeneralizedAccelerationExcitation::updatewb(double t, int j) {
+  void GeneralizedAccelerationExcitation::updatewb(double t) {
     wb += (*f)(x,t);
   }
 
