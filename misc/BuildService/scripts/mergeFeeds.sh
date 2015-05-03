@@ -7,6 +7,8 @@ WEBDIR=/var/www/html/mbsim-env/mergedFeeds
 http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report/result.rss.xml \
+http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimContinuousIntegration/report/result.rss.xml \
+http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimContinuousIntegration/report/result_current/runexamples_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report/result_current/runexamples_report/result.rss.xml \
 http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux/report_distribute/result.rss.xml \

@@ -5,4 +5,4 @@
 /home/user/MBSimWindows/mbsim/misc/BuildService/scripts/build-windows-release.sh &> /var/log/user/MBSimWindows.log
 /home/user/MBSimDailyBuild/mbsim/misc/BuildService/scripts/mergeFeeds.sh &> /var/log/user/feedMerge.log
 
-#/home/user/MBSimDailyBuild/mbsim/misc/BuildService/scripts/builddoc.sh /var/www/html/mbsim-env/doc &> /var/log/user/builddoc.log
+/home/user/MBSimDailyBuild/mbsim/misc/BuildService/scripts/builddoc.sh /var/www/html/mbsim-env/doc &> /var/log/user/builddoc.log
