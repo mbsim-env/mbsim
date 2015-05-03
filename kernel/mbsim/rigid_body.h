@@ -80,7 +80,8 @@ namespace MBSim {
       void updateGyroscopicAccelerations(double t);
       void updateJacobians0(double t);
       void updateJacobians1(double t) { }
-      void updateJacobiansI(double t);
+      void updateJacobians2(double t);
+      void updatePJ(double t);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -175,6 +176,9 @@ namespace MBSim {
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t);
 
       const fmatvec::SymMat3& getGlobalInertiaTensor(double t);
+
+      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updatePJ(t); return PJTT; }
+      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updatePJ(t); return PJRR; }
 
       /**
        * \param RThetaR  inertia tensor

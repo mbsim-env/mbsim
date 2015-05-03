@@ -547,40 +547,32 @@ namespace MBSim {
     if(newton.getInfo()!=0)
       msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
 
-    for(unsigned int i=0; i<bd1.size(); i++) {
-      //bd1[i]->setqRel(bd1[i]->getqRel());
+    for(int i=0; i<bd1.size(); i++) {
+      bd1[i]->setUpdateByParent(false);
+      JT(Index(0,2),Iu1[i]) = frame1->getJacobianOfTranslation(t,2);
+      JR(Index(0,2),Iu1[i]) = frame1->getJacobianOfRotation(t,2);
+      for(int j=i+1; j<bd1.size(); j++)
+        bd1[j]->resetJacobiansUpToDate();
+      bd1[i]->setUpdateByParent(true);
+    }
+    for(int i=0; i<bd2.size(); i++) {
+      bd2[i]->setUpdateByParent(false);
+      JT(Index(0,2),Iu2[i]) = -frame2->getJacobianOfTranslation(t,2);
+      JR(Index(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(t,2);
+      for(int j=i+1; j<bd2.size(); j++)
+        bd2[j]->resetJacobiansUpToDate();
+      bd2[i]->setUpdateByParent(true);
+    }
+    for(int i=0; i<bd1.size(); i++) {
+      bd1[i]->resetJacobiansUpToDate();
+      //bd1[i]->setuRel(bd1[i]->getuRel());
       bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
     }
-    for(unsigned int i=0; i<bd2.size(); i++) {
-      //bd2[i]->setqRel(bd2[i]->getqRel());
+    for(int i=0; i<bd2.size(); i++) {
+      bd2[i]->resetJacobiansUpToDate();
+      //bd2[i]->setuRel(bd2[i]->getuRel());
       bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
     }
-      for(int i=0; i<bd1.size(); i++) {
-        bd1[i]->setUpdateByParent(false);
-        JT(Index(0,2),Iu1[i]) = frame1->getJacobianOfTranslation(t,2);
-        JR(Index(0,2),Iu1[i]) = frame1->getJacobianOfRotation(t,2);
-        for(int j=i+1; j<bd1.size(); j++)
-          bd1[j]->resetJacobiansUpToDate();
-        bd1[i]->setUpdateByParent(true);
-      }
-      for(int i=0; i<bd2.size(); i++) {
-        bd2[i]->setUpdateByParent(false);
-        JT(Index(0,2),Iu2[i]) = -frame2->getJacobianOfTranslation(t,2);
-        JR(Index(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(t,2);
-        for(int j=i+1; j<bd2.size(); j++)
-          bd2[j]->resetJacobiansUpToDate();
-        bd2[i]->setUpdateByParent(true);
-      }
-      for(int i=0; i<bd1.size(); i++) {
-        bd1[i]->resetJacobiansUpToDate();
-        //bd1[i]->setuRel(bd1[i]->getuRel());
-        //bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
-      }
-      for(int i=0; i<bd2.size(); i++) {
-        bd2[i]->resetJacobiansUpToDate();
-        //bd2[i]->setuRel(bd2[i]->getuRel());
-        //bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
-      }
     SqrMat A(nu);
     A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
