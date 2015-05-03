@@ -18,6 +18,10 @@ COMMANDS="build-linux-debug.sh build-linux-release.sh build-windows-release.sh"
 MAXTIME=5 # in hours
 killStoppedProcesses "$COMMANDS" $MAXTIME
 
+COMMANDS="build-linux-ci.py"
+MAXTIME=2 # in hours
+killStoppedProcesses "$COMMANDS" $MAXTIME
+
 COMMANDS="mergeFeeds.sh builddoc.sh"
 MAXTIME=1 # in hours
 killStoppedProcesses "$COMMANDS" $MAXTIME
