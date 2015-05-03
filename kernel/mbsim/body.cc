@@ -231,21 +231,39 @@ namespace MBSim {
   }
 
   const Mat3xV& Body::getPJT(double t) {
-    if(updVel) updateVelocities(t);
+    if(updPJ) updatePJ(t);
     return PJT[0];
   }
 
   const Mat3xV& Body::getPJR(double t) {
-    if(updVel) updateVelocities(t);
+    if(updPJ) updatePJ(t);
     return PJR[0];
   }
 
   void Body::resetUpToDate() {
-    Object::resetUpToDate();
     updPos = true;
     updVel = true;
+    updPJ = true;
     for(unsigned int i=0; i<frame.size(); i++)
       frame[i]->resetUpToDate();
+  }
+  void Body::resetPositionsUpToDate() {
+    updPos = true;
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetPositionsUpToDate();
+  }
+  void Body::resetVelocitiesUpToDate() {
+    updVel = true;
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetVelocitiesUpToDate();
+  }
+  void Body::resetJacobiansUpToDate() {
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetJacobiansUpToDate();
+  }
+  void Body::resetGyroscopicAccelerationsUpToDate() {
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetGyroscopicAccelerationsUpToDate();
   }
 
 }

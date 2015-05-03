@@ -65,6 +65,10 @@ namespace MBSim {
     Frame::resetUpToDate();
     updWrRP = true;
   }
+  void FixedRelativeFrame::resetPositionsUpToDate() {
+    Frame::resetPositionsUpToDate();
+    updWrRP = true;
+  }
 
   const Vec3& FixedRelativeFrame::getGlobalRelativePosition(double t) {
     if(updWrRP) {
@@ -111,8 +115,7 @@ namespace MBSim {
     if(updateByParent[j])
       parent->updateJacobians(t,j);
     else {
-      SqrMat3 tWrRP = tilde(getGlobalRelativePosition(t));
-      setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tWrRP*R->getJacobianOfRotation(t,j),j);
+      setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
       setJacobianOfRotation(R->getJacobianOfRotation(j),j);
     }
     updateJac[j] = false;
@@ -122,8 +125,7 @@ namespace MBSim {
     if(updateByParent[0])
       parent->updateGyroscopicAccelerations(t);
     else {
-      SqrMat3 tWrRP = tilde(getGlobalRelativePosition(t));
-      setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrRP*R->getGyroscopicAccelerationOfRotation(t) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)));
+      setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)));
       setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
     }
     updateGA = false;

@@ -50,6 +50,7 @@ namespace MBSim {
       const Frame* getFrameOfReference() const { return R; }
 
       void resetUpToDate();
+      void resetPositionsUpToDate();
       void setGlobalRelativePosition(const fmatvec::Vec3 &r) { WrRP = r; updWrRP = false; }
       const fmatvec::Vec3& getGlobalRelativePosition(double t);
       void updatePositions(double t);

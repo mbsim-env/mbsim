@@ -125,6 +125,10 @@ namespace MBSim {
       /***************************************************/
 
       void resetUpToDate();
+      virtual void resetPositionsUpToDate();
+      virtual void resetVelocitiesUpToDate();
+      virtual void resetJacobiansUpToDate();
+      virtual void resetGyroscopicAccelerationsUpToDate();
       const fmatvec::Mat3xV& getJacobianOfTranslation(double t, int j=0);
       const fmatvec::Mat3xV& getJacobianOfRotation(double t, int j=0);
       const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(double t);
@@ -171,7 +175,7 @@ namespace MBSim {
       /** 
        * \brief Jacobians of translation and rotation from coordinate system to inertial frame
        */
-      fmatvec::Mat3xV WJP[2], WJR[2];
+      fmatvec::Mat3xV WJP[3], WJR[3];
 
       /**
        * translational and rotational acceleration not linear in the generalised velocity derivatives
@@ -192,8 +196,8 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
 #endif
 
-      bool updateJac[2], updateGA, updatePos, updateVel, updateAcc;
-      bool updateByParent[2];
+      bool updateJac[3], updateGA, updatePos, updateVel, updateAcc;
+      bool updateByParent[3];
   };
 
 }

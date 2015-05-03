@@ -149,6 +149,11 @@ namespace MBSim {
       const fmatvec::Mat3xV& getPJR(double t);
 
       void resetUpToDate();
+      virtual void resetPositionsUpToDate();
+      virtual void resetVelocitiesUpToDate();
+      virtual void resetJacobiansUpToDate();
+      virtual void resetGyroscopicAccelerationsUpToDate();
+      virtual void updatePJ(double t) { }
 
     protected:
       /**
@@ -179,7 +184,7 @@ namespace MBSim {
 
       int nu[2], nq;
 
-      bool updPos, updVel;
+      bool updPos, updVel, updPJ;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Body> openMBVBody;
