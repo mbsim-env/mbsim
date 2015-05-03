@@ -17,30 +17,36 @@ env['INSTALL']='/usr/bin/install -c -p'
 scriptdir=os.path.dirname(__file__)
 configFilename="/home/user/BuildServiceConfig/mbsimBuildService.conf"
 
-# read file config file
-fd=open(configFilename, 'r+')
-fcntl.lockf(fd, fcntl.LOCK_EX)
-config=json.load(fd)
+def checkToBuild(tobuild):
+  # read file config file
+  fd=open(configFilename, 'r+')
+  fcntl.lockf(fd, fcntl.LOCK_EX)
+  config=json.load(fd)
+  
+  # get branch to build
+  if tobuild==None and len(config['tobuild'])>0:
+    tobuild=config['tobuild'][0]
+  newTobuild=[]
+  for b in config['tobuild']:
+    if tobuild['fmatvec']==b['fmatvec'] and \
+       tobuild['hdf5serie']==b['hdf5serie'] and \
+       tobuild['openmbv']==b['openmbv'] and \
+       tobuild['mbsim']==b['mbsim']:
+      tobuild=b
+    else:
+      newTobuild.append(b)
+  config['tobuild']=newTobuild
+  
+  # write file config file
+  fd.seek(0);
+  json.dump(config, fd)
+  fd.truncate();
+  fcntl.lockf(fd, fcntl.LOCK_UN)
+  fd.close()
 
-# get branch to build
-tobuild=None
-newTobuild=[]
-for b in config['tobuild']:
-  if config['tobuild'][0]['fmatvec']==b['fmatvec'] and \
-     config['tobuild'][0]['hdf5serie']==b['hdf5serie'] and \
-     config['tobuild'][0]['openmbv']==b['openmbv'] and \
-     config['tobuild'][0]['mbsim']==b['mbsim']:
-    tobuild=b
-  else:
-    newTobuild.append(b)
-config['tobuild']=newTobuild
+  return tobuild
 
-# write file config file
-fd.seek(0);
-json.dump(config, fd)
-fd.truncate();
-fcntl.lockf(fd, fcntl.LOCK_UN)
-fd.close()
+tobuild=checkToBuild(None)
 
 if tobuild==None:
   # nothing to do, return with code 0
@@ -53,9 +59,13 @@ openmbvBranch=tobuild['openmbv'].encode('utf-8')
 mbsimBranch=tobuild['mbsim'].encode('utf-8')
 
 # wait at least 2 minutes after the timestamp to give the user the chance to update also other repos
-delta=tobuild['timestamp']+2*60 - time.time()
-if delta>0:
-  time.sleep(delta)
+while True:
+  delta=tobuild['timestamp']+2*60 - time.time()
+  if delta>0:
+    time.sleep(delta)
+    tobuild=checkToBuild(tobuild)
+  else:
+    break
 
 subprocess.check_call([scriptdir+"/build.py", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch, "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", "/home/user/MBSimContinuousIntegration", "--prefix", "/home/user/MBSimContinuousIntegration/local", "--reportOutDir", "/var/www/html/mbsim-env/MBSimContinuousIntegration/report", "--url", "http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimContinuousIntegration/report", "--buildType", "Continuous Integration Build:", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-boost-locale-lib=boost_locale-mt", "--with-swigpath=/home/user/Updates/local/bin", "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling", "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)
 # build done, return with code 1 or other code !=0 returned from subprocess.check_call exception
