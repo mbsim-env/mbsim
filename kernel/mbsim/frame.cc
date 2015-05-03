@@ -177,6 +177,19 @@ namespace MBSim {
     updateVel = true;
     updateAcc = true;
   }
+  void Frame::resetPositionsUpToDate() {
+    updatePos = true;
+  }
+  void Frame::resetVelocitiesUpToDate() {
+    updateVel = true;
+  }
+  void Frame::resetJacobiansUpToDate() {
+    updateJac[0] = true; 
+    updateJac[1] = true; 
+  }
+  void Frame::resetGyroscopicAccelerationsUpToDate() {
+    updateGA = true; 
+  }
 
   const Vec3& Frame::getPosition(double t) {
     if(updatePos) updatePositions(t);

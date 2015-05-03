@@ -149,6 +149,10 @@ namespace MBSim {
       const fmatvec::Mat3xV& getPJR(double t);
 
       void resetUpToDate();
+      virtual void resetPositionsUpToDate();
+      virtual void resetVelocitiesUpToDate();
+      virtual void resetJacobiansUpToDate();
+      virtual void resetGyroscopicAccelerationsUpToDate();
 
     protected:
       /**

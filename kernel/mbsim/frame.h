@@ -125,6 +125,10 @@ namespace MBSim {
       /***************************************************/
 
       void resetUpToDate();
+      virtual void resetPositionsUpToDate();
+      virtual void resetVelocitiesUpToDate();
+      virtual void resetJacobiansUpToDate();
+      virtual void resetGyroscopicAccelerationsUpToDate();
       const fmatvec::Mat3xV& getJacobianOfTranslation(double t, int j=0);
       const fmatvec::Mat3xV& getJacobianOfRotation(double t, int j=0);
       const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(double t);

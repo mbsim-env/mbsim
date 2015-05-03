@@ -48,7 +48,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updateByParent(true) {
 
     C=new FixedRelativeFrame("C");
     C->setUpdateByParent(1);
@@ -482,8 +482,14 @@ namespace MBSim {
   void RigidBody::updateJacobiansI(double t) {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
-    K->getJacobianOfTranslation().set(i02,Index(gethSize(0)-PJT[0].cols(),gethSize(0)-1), R->getOrientation(t)*PJT[0]);
-    K->getJacobianOfRotation().set(i02,Index(gethSize(0)-PJR[0].cols(),gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
+    if(updateByParent) {
+      K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
+      K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
+    } else {
+      K->getJacobianOfTranslation().add(i02,Index(gethSize(0)-PJT[0].cols(),gethSize(0)-1), R->getOrientation(t)*getPJT(t));
+      K->getJacobianOfRotation().add(i02,Index(gethSize(0)-PJR[0].cols(),gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
+    }
+    cout << getPath() << endl;
     }
 
   void RigidBody::updateJacobians0(double t) {
@@ -491,9 +497,7 @@ namespace MBSim {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
 
-    SqrMat3 tWrPK = tilde(getGlobalRelativePosition(t));
-
-    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tWrPK*R->getJacobianOfRotation(t));
+    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
     K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
 
     K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
@@ -521,8 +525,7 @@ namespace MBSim {
       }
     }
 
-    SqrMat3 tWrPK = tilde(getGlobalRelativePosition(t));
-    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrPK*R->getGyroscopicAccelerationOfRotation(t) + R->getOrientation(t)*(PjbT + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
+    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*(PjbT + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
     K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
@@ -819,4 +822,24 @@ namespace MBSim {
     constraint = constraint_;
   }
 
+  void RigidBody::setqRel(const fmatvec::Vec &q) { 
+    qRel = q;
+    qTRel = qRel(iqT); 
+    qRRel = qRel(iqR); 
+    updGC = false; 
+  }
+  void RigidBody::setuRel(const fmatvec::Vec &u) { 
+    uRel = u; 
+    uTRel = uRel(iqT); 
+    uRRel = uRel(iqR); 
+    updGC = false; 
+  }
+  void RigidBody::setJRel(const fmatvec::Mat &J) { 
+    JRel[0] = J; 
+    updGJ = false; 
+  }
+  void RigidBody::setjRel(const fmatvec::Vec &j) { 
+    jRel = j; 
+    updGJ = false; 
+  }
 }

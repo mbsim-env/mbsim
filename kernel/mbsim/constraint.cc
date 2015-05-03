@@ -111,23 +111,16 @@ namespace MBSim {
     int nq = 0;
     for(unsigned int i=0; i<body1.size(); i++) {
       int dq = body1[i]->getqRel().size();
-      body1[i]->resetUpToDate();
+      body1[i]->resetPositionsUpToDate();
       body1[i]->setqRel(x(nq,nq+dq-1));
       nq += dq;
     }
     for(unsigned int i=0; i<body2.size(); i++) {
       int dq = body2[i]->getqRel().size();
-      body2[i]->resetUpToDate();
+      body2[i]->resetPositionsUpToDate();
       body2[i]->setqRel(x(nq,nq+dq-1));
       nq += dq;
     }
-
-//    for(unsigned int i=0; i<body1.size(); i++) {
-//      body1[i]->updatePositionAndOrientationOfFrame(t,i1[i]);
-//    }
-//    for(unsigned int i=0; i<body2.size(); i++) {
-//      body2[i]->updatePositionAndOrientationOfFrame(t,i2[i]);
-//    }
 
     int nT = dT.cols();
     int nR = dR.cols();
@@ -569,16 +562,14 @@ namespace MBSim {
     for(unsigned int i=0; i<bd1.size(); i++) {
       JT(Index(0,2),Iu1[i]) = bd1[i]->getWJTrel();
       JR(Index(0,2),Iu1[i]) = bd1[i]->getWJRrel();
-      //bd1[i]->resetUpToDate();
-      bd1[i]->setqRel(bd1[i]->getqRel());
-      bd1[i]->setuRel(Vec(1));
+      //bd1[i]->setqRel(bd1[i]->getqRel());
+      bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
       JT(Index(0,2),Iu2[i]) = -bd2[i]->getWJTrel();
       JR(Index(0,2),Iu2[i]) = -bd2[i]->getWJRrel();
-      //bd2[i]->resetUpToDate();
-      bd2[i]->setqRel(bd2[i]->getqRel());
-      bd2[i]->setuRel(Vec(1));
+      //bd2[i]->setqRel(bd2[i]->getqRel());
+      bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
     }
 //    cout << JT << endl;
 //    cout << JR << endl;
@@ -591,11 +582,11 @@ namespace MBSim {
     b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getAngularVelocity(t)-frame2->getAngularVelocity(t)));
     u = slvLU(A,b); 
     for(unsigned int i=0; i<bd1.size(); i++) {
-      bd1[i]->resetUpToDate();
+      bd1[i]->resetVelocitiesUpToDate();
       bd1[i]->setuRel(bd1[i]->getuRel());
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
-      bd2[i]->resetUpToDate();
+      bd2[i]->resetVelocitiesUpToDate();
       bd2[i]->setuRel(bd2[i]->getuRel());
     }
     updGC = false;
@@ -604,13 +595,32 @@ namespace MBSim {
   void JointConstraint::updateGeneralizedJacobians(double t, int jj) {
     if(jj == 0) {
 
-//      bd1[0]->setJacobianFunction(&RigidBody::updateJacobiansI);
+//      for(int i=0; i<bd1.size(); i++)
+//        bd1[i]->setJacobianFunction(&RigidBody::updateJacobiansI);
+//      for(int i=0; i<bd2.size(); i++) {
+//        bd2[i]->setJacobianFunction(&RigidBody::updateJacobiansI);
+//      }
 //      cout << frame1->getJacobianOfTranslation(t) << endl;
-//      bd1[0]->setJacobianFunction(&RigidBody::updateJacobians0);
-//      cout << "end" << endl;
-//      bd1[0]->resetUpToDate();
-//      bd1[0]->setuRel(bd1[0]->getuRel());
-   for(unsigned int i=0; i<bd1.size(); i++) {
+//      for(int i=0; i<bd2.size(); i++) {
+//        cout << "i = " << i << endl;
+//        bd2[i]->setUpdateByParent(false);
+//        cout << frame2->getJacobianOfTranslation(t) << endl;
+//        for(int j=i+1; j<bd2.size(); j++)
+//          bd2[j]->resetJacobiansUpToDate();
+//        bd2[i]->setUpdateByParent(true);
+//      }
+//      for(int i=0; i<bd1.size(); i++) {
+//        bd1[i]->resetJacobiansUpToDate();
+//        bd1[i]->setuRel(bd1[i]->getuRel());
+//        bd1[i]->setJacobianFunction(&RigidBody::updateJacobians0);
+//    }
+//      for(int i=0; i<bd2.size(); i++) {
+//        bd2[i]->resetJacobiansUpToDate();
+//        bd2[i]->setuRel(bd2[i]->getuRel());
+//        bd2[i]->setJacobianFunction(&RigidBody::updateJacobians0);
+//    }
+//        cout << "end" << endl;
+      for(unsigned int i=0; i<bd1.size(); i++) {
         bd1[i]->setJRel(Mat(bd1[i]->getJRel().rows(),bd1[i]->getJRel().cols()));
         bd1[i]->setjRel(Vec(bd1[i]->getjRel().size()));
       }
@@ -642,12 +652,16 @@ namespace MBSim {
       J = slvLU(A,B); 
       j = slvLU(A,b); 
       for(unsigned int i=0; i<bd1.size(); i++) {
-        bd1[i]->resetUpToDate();
+        bd1[i]->resetJacobiansUpToDate();
+        bd1[i]->resetGyroscopicAccelerationsUpToDate();
         bd1[i]->setJRel(bd1[i]->getJRel());
+        bd1[i]->setjRel(bd1[i]->getjRel());
       }
       for(unsigned int i=0; i<bd2.size(); i++) {
-       bd2[i]->resetUpToDate();
+       bd2[i]->resetJacobiansUpToDate();
+       bd2[i]->resetGyroscopicAccelerationsUpToDate();
        bd2[i]->setJRel(bd2[i]->getJRel());
+       bd2[i]->setjRel(bd2[i]->getjRel());
       }
       updGJ = false;
     }

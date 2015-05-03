@@ -241,11 +241,28 @@ namespace MBSim {
   }
 
   void Body::resetUpToDate() {
-    Object::resetUpToDate();
     updPos = true;
     updVel = true;
     for(unsigned int i=0; i<frame.size(); i++)
       frame[i]->resetUpToDate();
+  }
+  void Body::resetPositionsUpToDate() {
+    updPos = true;
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetPositionsUpToDate();
+  }
+  void Body::resetVelocitiesUpToDate() {
+    updVel = true;
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetVelocitiesUpToDate();
+  }
+  void Body::resetJacobiansUpToDate() {
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetJacobiansUpToDate();
+  }
+  void Body::resetGyroscopicAccelerationsUpToDate() {
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetGyroscopicAccelerationsUpToDate();
   }
 
 }

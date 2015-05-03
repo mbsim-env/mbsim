@@ -236,10 +236,10 @@ namespace MBSim {
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
       fmatvec::Mat& getTRel() {return TRel;}
-      void setqRel(const fmatvec::Vec &q) { qRel = q; qTRel = qRel(iqT); qRRel = qRel(iqR); updGC = false; }
-      void setuRel(const fmatvec::Vec &u) { uRel = u; uTRel = uRel(iqT); uRRel = uRel(iqR); updGC = false; }
-      void setJRel(const fmatvec::Mat &J) { JRel[0] = J; updGJ = false; }
-      void setjRel(const fmatvec::Vec &j) { jRel = j; updGJ = false; }
+      void setqRel(const fmatvec::Vec &q);
+      void setuRel(const fmatvec::Vec &u);
+      void setJRel(const fmatvec::Mat &J);
+      void setjRel(const fmatvec::Vec &j);
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
@@ -255,6 +255,8 @@ namespace MBSim {
       const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
       const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j]; }
       const fmatvec::Vec& getjRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return jRel; }
+
+      void setUpdateByParent(bool updateByParent_) { updateByParent = updateByParent_; }
 
     protected:
       /**
@@ -366,7 +368,7 @@ namespace MBSim {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updGC, updGJ, updWTS;
+      bool updGC, updGJ, updWTS, updateByParent;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
