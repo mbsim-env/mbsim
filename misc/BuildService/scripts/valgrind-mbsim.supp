@@ -1,0 +1,102 @@
+# BOOST
+{
+   boost chrono bug or valgrind bug?
+   Memcheck:Leak
+   ...
+   fun:_ZN5boost6chrono14duration_punctIcE6init_CEv
+}
+
+# OCTAVE
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   fun:octave_main
+}
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   obj:/usr/lib*/octave/*/liboctinterp.so*
+   fun:*
+   fun:_dl_init
+}
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   obj:/usr/lib*/octave/*/liboctave.so*
+   fun:*
+   fun:_dl_init
+}
+{
+   octave deinit bug?
+   Memcheck:Leak
+   ...
+   fun:_Z17clean_up_and_exiti
+}
+{
+   octave deinit bug?
+   Memcheck:Leak
+   ...
+   fun:_Z17clean_up_and_exitib
+}
+{
+   feval bug in octave?
+   Memcheck:Leak
+   ...
+   fun:_Z5fevalP15octave_functionRK17octave_value_listi
+}
+{
+   feval bug in octave?
+   Memcheck:Leak
+   ...
+   fun:_Z5fevalRKSsRK17octave_value_listi
+}
+{
+   eval_string bug in octave?
+   Memcheck:Leak
+   ...
+   fun:_Z11eval_stringRKSsbRii
+}
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   obj:*/liboctave.so.1
+   ...
+   fun:dlopen@@GLIBC_2.1
+}
+{
+   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
+   Memcheck:Leak
+   ...
+   obj:*/liboctinterp.so.1
+   ...
+   fun:dlopen@@GLIBC_2.1
+}
+
+# FMUCHECKER
+{
+   fmuchecker
+   Memcheck:Leak
+   fun:malloc
+   fun:jm_vector_alloc_jm_voidp
+   fun:fmi1_xml_handle_ModelVariables
+   fun:fmi1_parse_element_end
+   fun:doContent
+   fun:prologProcessor
+   fun:XML_ParseBuffer
+   fun:fmi1_xml_parse_model_description
+   fun:fmi1_import_parse_xml
+   fun:fmi1_check
+   fun:main
+}
+
+# XERCES
+{
+   xerces initialization
+   Memcheck:Leak
+   ...
+   fun:_ZN10MBXMLUtils10InitXercesC1Ev
+}
