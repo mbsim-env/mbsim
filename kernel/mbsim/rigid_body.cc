@@ -60,6 +60,7 @@ namespace MBSim {
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
     updateJacobians_[1] = &RigidBody::updateJacobians1;
+    updateJacobians_[2] = &RigidBody::updateJacobiansI;
   }
 
   RigidBody::~RigidBody() {
@@ -172,12 +173,17 @@ namespace MBSim {
         C->setRelativePosition(-(C->getRelativeOrientation()*K->getRelativePosition()));
       }
       K->setUpdateByParent(0);
+      K->setUpdateByParent(2);
     }
     else if(stage==resize) {
       Body::init(stage);
 
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
+      for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
+        (*i)->getJacobianOfTranslation(2).resize(nu[0]);
+        (*i)->getJacobianOfRotation(2).resize(nu[0]);
+      }
 
       PJT[1].resize(nu[1]);
       PJR[1].resize(nu[1]);
@@ -480,16 +486,16 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobiansI(double t) {
-    K->getJacobianOfTranslation().init(0);
-    K->getJacobianOfRotation().init(0);
+//    K->getJacobianOfTranslation(2).init(0);
+//    K->getJacobianOfRotation(2).init(0);
     if(updateByParent) {
-      K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
-      K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
+      K->getJacobianOfTranslation(2).set(i02,Index(0,R->getJacobianOfTranslation(2).cols()-1), R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2));
+      K->getJacobianOfRotation(2).set(i02,Index(0,R->getJacobianOfRotation(2).cols()-1), R->getJacobianOfRotation(t,2));
     } else {
-      K->getJacobianOfTranslation().add(i02,Index(gethSize(0)-PJT[0].cols(),gethSize(0)-1), R->getOrientation(t)*getPJT(t));
-      K->getJacobianOfRotation().add(i02,Index(gethSize(0)-PJR[0].cols(),gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
+      K->getJacobianOfTranslation(2).set(i02,Index(0,K->getJacobianOfTranslation(2).cols()-1), R->getOrientation(t)*getPJT(t));
+      K->getJacobianOfRotation(2).set(i02,Index(0,K->getJacobianOfRotation(2).cols()-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
     }
-    cout << getPath() << endl;
+    //cout << getPath() << endl;
     }
 
   void RigidBody::updateJacobians0(double t) {
@@ -585,56 +591,6 @@ namespace MBSim {
 
   void RigidBody::updateMNotConst(double t, int i) {
     M[i] += m*JTJ(C->getJacobianOfTranslation(t,i)) + JTMJ(getGlobalInertiaTensor(t),C->getJacobianOfRotation(t,i));
-  }
-
-  void RigidBody::updateRelativeJacobians(double t, Frame *P) {
-
-    if(fPrPK) {
-      if(!constJT) {
-        PJTT = fPrPK->parDer1(getqTRel(t),t);
-        PJT[0].set(i02,iuT,PJTT);
-      }
-      if(!constjT) {
-        PjhT = fPrPK->parDer2(getqTRel(t),t);
-      }
-    }
-
-    if(fAPK) {
-      //if(fAPK->hasVariableJacobian())
-      if(!constJR) {
-        PJRR = fTR?fAPK->parDer1(getqRRel(t),t)*(*fTR)(getqRRel(t)):fAPK->parDer1(getqRRel(t),t);
-        PJR[0].set(i02,iuR,PJRR);
-      }
-      if(!constjR) {
-        PjhR = fAPK->parDer2(getqRRel(t),t);
-      }
-    }
-
-    WJRrel = frameForJacobianOfRotation->getOrientation(t)*PJR[0];
-    WJTrel = R->getOrientation(t)*PJT[0];
-
-//    K->setVelocity(R->getOrientation(t)*PjhT+R->getVelocity(t) + crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t)));
-//    K->setAngularVelocity(frameForJacobianOfRotation->getOrientation(t)*PjhR + R->getAngularVelocity(t));
-
-    if(K!=C) {
-//      C->updateVelocities(t);
-      WJTrel -= tilde(C->getGlobalRelativePosition(t))*WJRrel;
-    }
-
-    if(P!=C) {
-//      ((FixedRelativeFrame*)P)->updateVelocities(t);
-      WJTrel -= tilde(((FixedRelativeFrame*)P)->getGlobalRelativePosition(t))*WJRrel;
-    }
-  }
-
-  void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3xV &WJTrel0, Mat3xV &WJRrel0) {
-
-    WJTrel0 -= tilde(getGlobalRelativePosition(t))*WJRrel0;
-
-    if(K!=C) WJTrel0 -= tilde(C->getGlobalRelativePosition(t))*WJRrel0;
-
-    // TODO: Zusammenfassen
-    if(P!=C) WJTrel0 -= tilde(((FixedRelativeFrame*)P)->getGlobalRelativePosition(t))*WJRrel0;
   }
 
   void RigidBody::initializeUsingXML(DOMElement *element) {

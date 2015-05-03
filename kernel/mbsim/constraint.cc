@@ -548,31 +548,39 @@ namespace MBSim {
       msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
 
     for(unsigned int i=0; i<bd1.size(); i++) {
-      bd1[i]->updateRelativeJacobians(t,if1[i]);
-      for(unsigned int j=i+1; j<bd1.size(); j++) 
-        bd1[j]->updateRelativeJacobians(t,if1[j],bd1[i]->getWJTrel(),bd1[i]->getWJRrel());
-    }
-
-    for(unsigned int i=0; i<bd2.size(); i++) {
-      bd2[i]->updateRelativeJacobians(t,if2[i]);
-      for(unsigned int j=i+1; j<bd2.size(); j++) 
-        bd2[j]->updateRelativeJacobians(t,if2[j],bd2[i]->getWJTrel(),bd2[i]->getWJRrel());
-    }
-
-    for(unsigned int i=0; i<bd1.size(); i++) {
-      JT(Index(0,2),Iu1[i]) = bd1[i]->getWJTrel();
-      JR(Index(0,2),Iu1[i]) = bd1[i]->getWJRrel();
       //bd1[i]->setqRel(bd1[i]->getqRel());
       bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
-      JT(Index(0,2),Iu2[i]) = -bd2[i]->getWJTrel();
-      JR(Index(0,2),Iu2[i]) = -bd2[i]->getWJRrel();
       //bd2[i]->setqRel(bd2[i]->getqRel());
       bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
     }
-//    cout << JT << endl;
-//    cout << JR << endl;
+      for(int i=0; i<bd1.size(); i++) {
+        bd1[i]->setUpdateByParent(false);
+        JT(Index(0,2),Iu1[i]) = frame1->getJacobianOfTranslation(t,2);
+        JR(Index(0,2),Iu1[i]) = frame1->getJacobianOfRotation(t,2);
+        for(int j=i+1; j<bd1.size(); j++)
+          bd1[j]->resetJacobiansUpToDate();
+        bd1[i]->setUpdateByParent(true);
+      }
+      for(int i=0; i<bd2.size(); i++) {
+        bd2[i]->setUpdateByParent(false);
+        JT(Index(0,2),Iu2[i]) = -frame2->getJacobianOfTranslation(t,2);
+        JR(Index(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(t,2);
+        for(int j=i+1; j<bd2.size(); j++)
+          bd2[j]->resetJacobiansUpToDate();
+        bd2[i]->setUpdateByParent(true);
+      }
+      for(int i=0; i<bd1.size(); i++) {
+        bd1[i]->resetJacobiansUpToDate();
+        //bd1[i]->setuRel(bd1[i]->getuRel());
+        //bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
+      }
+      for(int i=0; i<bd2.size(); i++) {
+        bd2[i]->resetJacobiansUpToDate();
+        //bd2[i]->setuRel(bd2[i]->getuRel());
+        //bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
+      }
     SqrMat A(nu);
     A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
@@ -595,31 +603,6 @@ namespace MBSim {
   void JointConstraint::updateGeneralizedJacobians(double t, int jj) {
     if(jj == 0) {
 
-//      for(int i=0; i<bd1.size(); i++)
-//        bd1[i]->setJacobianFunction(&RigidBody::updateJacobiansI);
-//      for(int i=0; i<bd2.size(); i++) {
-//        bd2[i]->setJacobianFunction(&RigidBody::updateJacobiansI);
-//      }
-//      cout << frame1->getJacobianOfTranslation(t) << endl;
-//      for(int i=0; i<bd2.size(); i++) {
-//        cout << "i = " << i << endl;
-//        bd2[i]->setUpdateByParent(false);
-//        cout << frame2->getJacobianOfTranslation(t) << endl;
-//        for(int j=i+1; j<bd2.size(); j++)
-//          bd2[j]->resetJacobiansUpToDate();
-//        bd2[i]->setUpdateByParent(true);
-//      }
-//      for(int i=0; i<bd1.size(); i++) {
-//        bd1[i]->resetJacobiansUpToDate();
-//        bd1[i]->setuRel(bd1[i]->getuRel());
-//        bd1[i]->setJacobianFunction(&RigidBody::updateJacobians0);
-//    }
-//      for(int i=0; i<bd2.size(); i++) {
-//        bd2[i]->resetJacobiansUpToDate();
-//        bd2[i]->setuRel(bd2[i]->getuRel());
-//        bd2[i]->setJacobianFunction(&RigidBody::updateJacobians0);
-//    }
-//        cout << "end" << endl;
       for(unsigned int i=0; i<bd1.size(); i++) {
         bd1[i]->setJRel(Mat(bd1[i]->getJRel().rows(),bd1[i]->getJRel().cols()));
         bd1[i]->setjRel(Vec(bd1[i]->getjRel().size()));

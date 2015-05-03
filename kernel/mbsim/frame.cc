@@ -172,6 +172,7 @@ namespace MBSim {
   void Frame::resetUpToDate() { 
     updateJac[0] = true; 
     updateJac[1] = true; 
+    updateJac[2] = true; 
     updateGA = true; 
     updatePos = true;
     updateVel = true;
@@ -186,6 +187,7 @@ namespace MBSim {
   void Frame::resetJacobiansUpToDate() {
     updateJac[0] = true; 
     updateJac[1] = true; 
+    updateJac[2] = true; 
   }
   void Frame::resetGyroscopicAccelerationsUpToDate() {
     updateGA = true; 

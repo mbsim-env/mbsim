@@ -81,8 +81,6 @@ namespace MBSim {
       void updateJacobians0(double t);
       void updateJacobians1(double t) { }
       void updateJacobiansI(double t);
-      typedef void (RigidBody::*pFunc)(double t);
-      void setJacobianFunction(pFunc func) { updateJacobians_[0] = func; }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -225,8 +223,6 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual void updateRelativeJacobians(double t, Frame *P);
-      virtual void updateRelativeJacobians(double t, Frame *P, fmatvec::Mat3xV &WJTrel, fmatvec::Mat3xV &WJRrel);
       const fmatvec::Mat3xV& getWJTrel() const {return WJTrel;}
       const fmatvec::Mat3xV& getWJRrel() const {return WJRrel;}
       fmatvec::Mat3xV& getWJTrel() {return WJTrel;}
@@ -340,7 +336,7 @@ namespace MBSim {
        */
       void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
-      void (RigidBody::*updateJacobians_[2])(double t); 
+      void (RigidBody::*updateJacobians_[3])(double t); 
 
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;
