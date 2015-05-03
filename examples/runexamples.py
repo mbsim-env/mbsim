@@ -462,7 +462,7 @@ def main():
     print('<th><span class="glyphicon glyphicon-time"></span>&nbsp;Ref. Time</th>', file=mainFD)
   if not args.disableCompare:
     print('<th><div class="pull-left"><span class="glyphicon glyphicon-search"></span>&nbsp;Ref.</div>'+\
-        '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
+          '<div class="pull-right" style="padding-right:0.75em;">[update]</div></th>', file=mainFD)
   if not args.disableRun:
     print('<th><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;Depr.</th>', file=mainFD)
   if not args.disableValidate:
@@ -761,10 +761,10 @@ def runExample(resultQueue, example):
       # dt differs more then 10% from refTime => display in yellow color
       else:
         resultStr+='<td class="%s">%.3f</td>'%("success" if dt<refTime else "warning", dt)
-    if not math.isinf(refTime):
-      resultStr+='<td>%.3f</td>'%refTime
-    else:
-      resultStr+='<td class="warning">no reference</td>'
+      if not math.isinf(refTime):
+        resultStr+='<td>%.3f</td>'%refTime
+      else:
+        resultStr+='<td class="warning">no reference</td>'
 
     compareRet=-1
     compareFN=pj(example[0], "compare.html")
@@ -783,25 +783,25 @@ def runExample(resultQueue, example):
       refTimeFD.close()
     # print result to resultStr
     if not args.disableCompare:
-    if compareRet==-1:
+      if compareRet==-1:
         resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;not run</div>'+\
-                 '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
-    elif compareRet==-2:
-        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
-                 '<div class="pull-right">[<input class="_EXAMPLE'+\
-                 '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
-      nrAll=0
-      nrFailed=0
-    else:
-      if nrFailed==0:
-          resultStr+='<td class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
-                   '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
                    '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
-      else:
-          resultStr+='<td class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
-                   '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
-                   '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
+      elif compareRet==-2:
+        resultStr+='<td class="warning"><div class="pull-left"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;no reference</div>'+\
+                   '<div class="pull-right">[<input class="_EXAMPLE'+\
                    '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
+        nrAll=0
+        nrFailed=0
+      else:
+        if nrFailed==0:
+          resultStr+='<td class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+                     '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
+                     '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
+        else:
+          resultStr+='<td class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+                     '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
+                     '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
+                     '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
 
     # check for deprecated features
     if not args.disableRun:
