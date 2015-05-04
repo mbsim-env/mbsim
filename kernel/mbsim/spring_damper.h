@@ -166,6 +166,9 @@ namespace MBSim {
         setOpenMBVForce(ombv.createOpenMBV());
       }
 #endif
+
+      void resetUpToDate() { MechanicalLink::resetUpToDate(); C.resetUpToDate(); }
+
     private:
       std::string saved_ref1, saved_ref2;
   };

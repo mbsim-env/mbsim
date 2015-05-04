@@ -81,6 +81,8 @@ namespace MBSim {
       void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { MArrow=arrow; }
 #endif
 
+      void resetUpToDate() { MechanicalLink::resetUpToDate(); C.resetUpToDate(); }
+
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;

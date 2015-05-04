@@ -120,6 +120,8 @@ namespace MBSim {
 
       virtual std::string getType() const { return "KineticExcitation"; }
 
+      void resetUpToDate() { MechanicalLink::resetUpToDate(); C.resetUpToDate(); }
+
     protected:
       /**
        * \brief frame of reference the force is defined in
