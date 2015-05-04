@@ -171,8 +171,15 @@ namespace MBSim {
         h[1].push_back(Vec(6));
         W[0].push_back(Mat(body[i]->getFrameForKinematics()->getJacobianOfTranslation(0).cols(),laSize));
         W[1].push_back(Mat(6,laSize));
-        C.push_back(FixedRelativeFrame("F"));
+        stringstream s;
+        s << "F" << i;
+        C.push_back(FixedRelativeFrame(s.str()));
+        C[i].getJacobianOfTranslation(0).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols());
+        C[i].getJacobianOfRotation(0).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(0).cols());
+        C[i].getJacobianOfTranslation(1).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(1).cols());
+        C[i].getJacobianOfRotation(1).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(1).cols());
         C[i].setParent(this);
+        C[i].setFrameOfReference(body[i]->getFrameOfReference());
         C[i].setUpdateGlobalRelativePositionByParent();
       }
       for(unsigned int i=0; i<body.size(); i++) {
@@ -304,6 +311,12 @@ namespace MBSim {
       ratio.push_back(getDouble(E(ee)->getFirstElementChildNamed(MBSIM%"ratio")));
       ee=ee->getNextElementSibling();
     }
+  }
+
+  void Gear::resetUpToDate() {
+    MechanicalLink::resetUpToDate();
+    for(unsigned int i=0; i<C.size(); i++)
+      C[i].resetUpToDate();
   }
 
 }

@@ -92,6 +92,8 @@ namespace MBSim {
       void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { MArrow[0]=arrow; }
 #endif
 
+    void resetUpToDate();
+
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<boost::shared_ptr<OpenMBV::Arrow> > FArrow, MArrow;
