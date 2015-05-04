@@ -140,9 +140,9 @@ namespace MBSim {
       element[i]->updateKinematicsForFrame(cp, ff);
   }
 
-  void CompoundContour::updateJacobiansForFrame(ContourPointData &cp) {
+  void CompoundContour::updateJacobiansForFrame(double t, ContourPointData &cp) {
     for (unsigned int i = 0; i < element.size(); i++)
-      element[i]->updateJacobiansForFrame(cp);
+      element[i]->updateJacobiansForFrame(t,cp);
   }
 
   void CompoundContour::updateStateDependentVariables(double t) {

@@ -21,6 +21,7 @@
 #define _GEAR_H_
 
 #include "mbsim/mechanical_link.h"
+#include "mbsim/floating_relative_frame.h"
 #include "mbsim/rigid_body.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -37,7 +38,7 @@ namespace MBSim {
       Function<double(double,double)> *func;
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
-      std::vector<FixedRelativeFrame> C;
+      std::vector<FloatingRelativeFrame> C;
       std::string saved_DependentBody;
       std::vector<std::string> saved_IndependentBody;
     public:

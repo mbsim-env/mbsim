@@ -2,7 +2,7 @@
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"

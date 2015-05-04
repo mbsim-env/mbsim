@@ -154,18 +154,14 @@ namespace MBSim {
     if(ff!=Frame::velocity && ff!=Frame::angularVelocity && ff!=Frame::velocities) THROW_MBSIMERROR("(RigidContour::updateKinematicsForFrame): Frame::Feature not implemented!");
   }
 
-  void RigidContour::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
+  void RigidContour::updateJacobiansForFrame(double t, ContourPointData &cp, int j) {
+    Vec3 WrPC = cp.getFrameOfReference().getPosition(t) - R->getPosition(t);
     SqrMat3 tWrPC = tilde(WrPC);
 
-    cp.getFrameOfReference().setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrPC*R->getJacobianOfRotation(j),j);
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tWrPC*R->getJacobianOfRotation(t,j),j);
     cp.getFrameOfReference().setJacobianOfRotation(R->getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPC*R->getGyroscopicAccelerationOfRotation() + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrPC)));
+    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) - tWrPC*R->getGyroscopicAccelerationOfRotation(t) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrPC)));
     cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
-
-    // adapt dimensions if necessary
-    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R->getJacobianOfTranslation(j).cols());
-    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfRotation(j).resize(R->getJacobianOfRotation(j).cols());
   }
 
   void RigidContour::init(InitStage stage) {

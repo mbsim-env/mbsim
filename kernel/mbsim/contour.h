@@ -79,7 +79,7 @@ namespace MBSim {
        * \param contour parameter
        * \param selection of specific calculations for frames
        */
-      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0) = 0;
+      virtual void updateJacobiansForFrame(double t, ContourPointData &cp, int j=0) = 0;
 
       /**
        * \return normal in world frame
@@ -262,7 +262,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
-      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
+      virtual void updateJacobiansForFrame(double t, ContourPointData &cp, int j=0);
       /***************************************************/
 
       /**

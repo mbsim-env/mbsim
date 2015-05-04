@@ -161,6 +161,8 @@ namespace MBSim {
       virtual void closePlot();
       /***************************************************/
 
+      void resetUpToDate();
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.

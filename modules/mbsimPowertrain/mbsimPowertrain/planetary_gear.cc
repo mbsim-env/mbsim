@@ -6,7 +6,7 @@
 #include "mbsim/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
@@ -184,14 +184,14 @@ namespace MBSimPowertrain {
         //gear->setFrame(housing->getFrame("C"));
 
       } else {
-        Gearing *gear;
-        gear = new Gearing(string("S_")+shaftName.str());
-        addLink(gear);
-        gear->connect(rS,sun->getFrame("C"),rP,planet[i]->getFrame("C"));//,rS,sun->getFrame("C"));
-        gear = new Gearing(string("A_")+shaftName.str());
-        gear->setReverse(true);
-        addLink(gear);
-        gear->connect(rP,planet[i]->getFrame("C"),rH,annulus->getFrame("C"));
+        //Gearing *gear;
+        //gear = new Gearing(string("S_")+shaftName.str());
+        //addLink(gear);
+        //gear->connect(rS,sun->getFrame("C"),rP,planet[i]->getFrame("C"));//,rS,sun->getFrame("C"));
+        //gear = new Gearing(string("A_")+shaftName.str());
+        //gear->setReverse(true);
+        //addLink(gear);
+        //gear->connect(rP,planet[i]->getFrame("C"),rH,annulus->getFrame("C"));
       }
     }
 

@@ -83,7 +83,9 @@ namespace MBSim {
     rrel.init(0);
     for(unsigned i=0; i<body.size(); i++) {
       WrP0P1 = body[i]->getFrameForKinematics()->getPosition(t)-body[i]->getFrameOfReference()->getPosition(t);
-      C[i].setGlobalRelativePosition(WrP0P1);
+      C[i].setPosition(body[i]->getFrameForKinematics()->getPosition(t));
+      C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
+      C[i].setUpdatePositions(false);
       rrel+=body[i]->getqRel(t)*ratio[i];
     }
     updPos = false;
@@ -173,14 +175,13 @@ namespace MBSim {
         W[1].push_back(Mat(6,laSize));
         stringstream s;
         s << "F" << i;
-        C.push_back(FixedRelativeFrame(s.str()));
+        C.push_back(FloatingRelativeFrame(s.str()));
         C[i].getJacobianOfTranslation(0).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols());
         C[i].getJacobianOfRotation(0).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(0).cols());
         C[i].getJacobianOfTranslation(1).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(1).cols());
         C[i].getJacobianOfRotation(1).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(1).cols());
         C[i].setParent(this);
         C[i].setFrameOfReference(body[i]->getFrameOfReference());
-        C[i].setUpdateGlobalRelativePositionByParent();
       }
       for(unsigned int i=0; i<body.size(); i++) {
         h[0].push_back(Vec(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols()));

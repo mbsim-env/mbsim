@@ -38,7 +38,6 @@ namespace MBSim {
 
   Joint::Joint(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("F") {
     C.setParent(this);
-    C.setUpdateGlobalRelativePositionByParent();
   }
 
   Joint::~Joint() {
@@ -85,7 +84,8 @@ namespace MBSim {
 
   void Joint::updatePositions(double t) {
     WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setGlobalRelativePosition(WrP0P1);
+    C.setPosition(frame[1]->getPosition());
+    C.setOrientation(frame[0]->getOrientation());
     rrel.set(iF, getGlobalForceDirection(t).T() * WrP0P1);
     rrel.set(iM, x);
     updPos = false;

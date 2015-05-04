@@ -21,7 +21,7 @@
 #define _JOINT_H_
 
 #include "mbsim/mechanical_link.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/floating_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -207,7 +207,7 @@ namespace MBSim {
       /**
        * \brief own frame located in second partner with same orientation as first partner 
        */
-      FixedRelativeFrame C;
+      FloatingRelativeFrame C;
 
     private:
       std::string saved_ref1, saved_ref2;

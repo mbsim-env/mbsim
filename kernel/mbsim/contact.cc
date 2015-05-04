@@ -83,10 +83,10 @@ namespace MBSim {
   }
 #endif
 
-  void Contact::updatewb(double t, int j) {
+  void Contact::updatewb(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewb(t, j);
+        jter->updatewb(t);
   }
 
   void Contact::updateW(double t, int j) {
@@ -97,22 +97,16 @@ namespace MBSim {
   }
 
   void Contact::updateV(double t, int j) {
-    if (getFrictionDirections()) {
-      if (fdf->isSetValued()) {
-        for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-          for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-            jter->updateV(t, j);
-        }
-      }
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->updateV(t, j);
     }
   }
 
   void Contact::updateh(double t, int j) {
-    (*fcl).computeSmoothForces(contacts);
-
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->applyh(t, j);
+        jter->updateh(t, j);
     }
   }
 
@@ -975,6 +969,13 @@ namespace MBSim {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->checkRoot();
+    }
+  }
+
+  void Contact::resetUpToDate() {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->resetUpToDate();
     }
   }
 }

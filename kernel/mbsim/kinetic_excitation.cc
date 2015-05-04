@@ -35,7 +35,6 @@ namespace MBSim {
 
   KineticExcitation::KineticExcitation(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL), C("F") {
     C.setParent(this);
-    C.setUpdateGlobalRelativePositionByParent();
   }
 
   KineticExcitation::~KineticExcitation() {
@@ -92,7 +91,8 @@ namespace MBSim {
 
   void KineticExcitation::updatePositions(double t) {
     WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setGlobalRelativePosition(WrP0P1);
+    C.setPosition(frame[1]->getPosition());
+    C.setOrientation(frame[0]->getOrientation());
     updPos = false;
   }
 

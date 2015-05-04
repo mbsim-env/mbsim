@@ -76,7 +76,7 @@ namespace MBSim {
       unsigned int getNumberOfElements() { return element.size(); }
 
       void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
-      void updateJacobiansForFrame(ContourPointData &cp);
+      void updateJacobiansForFrame(double t, ContourPointData &cp);
 
       virtual void updateStateDependentVariables(double t);
       virtual void updateJacobians(double t, int j=0);

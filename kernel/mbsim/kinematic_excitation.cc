@@ -30,7 +30,6 @@ namespace MBSim {
 
   KinematicExcitation::KinematicExcitation(const string &name) : MechanicalLink(name), func(0), body(0), C("F") {
     C.setParent(this);
-    C.setUpdateGlobalRelativePositionByParent();
   }
 
   void KinematicExcitation::calclaSize(int j) {
@@ -45,7 +44,8 @@ namespace MBSim {
 
   void KinematicExcitation::updatePositions(double t) {
     WrP0P1 = body->getFrameForKinematics()->getPosition(t)-body->getFrameOfReference()->getPosition(t);
-    C.setGlobalRelativePosition(WrP0P1);
+    C.setPosition(body->getFrameForKinematics()->getPosition(t));
+    C.setOrientation(body->getFrameOfReference()->getOrientation());
   }
 
   void KinematicExcitation::updateg(double) {
@@ -119,7 +119,6 @@ namespace MBSim {
       W[0].push_back(Mat(body->getFrameOfReference()->getJacobianOfTranslation(0).cols(),laSize));
       W[1].push_back(Mat(6,laSize));
       C.setParent(this);
-      C.setUpdateGlobalRelativePositionByParent();
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);

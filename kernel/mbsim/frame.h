@@ -63,27 +63,25 @@ namespace MBSim {
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
-      virtual int gethSize(int i=0) const { return hSize[i]; }
-      virtual int gethInd(int i=0) const { return hInd[i]; }
-      //virtual ObjectInterface* getParent() { return parent; }
-      //virtual void setParent(ObjectInterface* parent_) { parent = parent_; }
-      virtual const fmatvec::Vec3& getPosition() const { return WrOP; }
-      virtual const fmatvec::Vec3& getLocalPosition() const { return LrOP; }
-      virtual const fmatvec::SqrMat3& getOrientation() const { return AWP; }
-      virtual fmatvec::Vec3& getPosition() { return WrOP; }
-      virtual fmatvec::SqrMat3& getOrientation() { return AWP; }
-      virtual void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
-      virtual void setLocalPosition(const fmatvec::Vec3 &v) { LrOP = v; }
-      virtual void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
-      virtual const fmatvec::Vec3& getVelocity() const { return WvP; } 
-      virtual const fmatvec::Vec3& getAngularVelocity() const { return WomegaP; }
-      virtual const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
-      virtual const fmatvec::Mat3xV& getJacobianOfRotation(int j=0) const { return WJR[j]; }
-      virtual const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation() const { return WjP; }
-      virtual const fmatvec::Vec3& getGyroscopicAccelerationOfRotation() const { return WjR; }
-      virtual const fmatvec::Vec3& getAcceleration() const { return WaP; } 
-      virtual const fmatvec::Vec3& getAngularAcceleration() const { return WpsiP; }
-      virtual void init(InitStage stage);
+      int gethSize(int i=0) const { return hSize[i]; }
+      int gethInd(int i=0) const { return hInd[i]; }
+      const fmatvec::Vec3& getPosition() const { return WrOP; }
+      const fmatvec::Vec3& getLocalPosition() const { return LrOP; }
+      const fmatvec::SqrMat3& getOrientation() const { return AWP; }
+      fmatvec::Vec3& getPosition() { return WrOP; }
+      fmatvec::SqrMat3& getOrientation() { return AWP; }
+      void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
+      void setLocalPosition(const fmatvec::Vec3 &v) { LrOP = v; }
+      void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
+      const fmatvec::Vec3& getVelocity() const { return WvP; } 
+      const fmatvec::Vec3& getAngularVelocity() const { return WomegaP; }
+      const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
+      const fmatvec::Mat3xV& getJacobianOfRotation(int j=0) const { return WJR[j]; }
+      const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation() const { return WjP; }
+      const fmatvec::Vec3& getGyroscopicAccelerationOfRotation() const { return WjR; }
+      const fmatvec::Vec3& getAcceleration() const { return WaP; } 
+      const fmatvec::Vec3& getAngularAcceleration() const { return WpsiP; }
+      void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) { 
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);

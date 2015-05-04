@@ -69,6 +69,10 @@ namespace MBSim {
       virtual void updateW(double t, int i=0);
       virtual void updateV(double t, int i=0);
       virtual void updateh(double t, int i=0);
+      virtual void updateGeneralizedSetValuedForces(double t);
+      virtual void updateGeneralizedSingleValuedForces(double t);
+      virtual void updatePositions(double t);
+      virtual void updateVelocities(double t);
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t);
@@ -212,6 +216,8 @@ namespace MBSim {
       void updatecorr(int j);
 
       void checkRoot();
+
+      void resetUpToDate();
 
     protected:
       /**

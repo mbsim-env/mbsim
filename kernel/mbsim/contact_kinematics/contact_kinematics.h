@@ -69,7 +69,7 @@ namespace MBSim {
        * \param cpData contact point parametrisation
        * \param index  index of the contact point that should be updated
        */
-      virtual void updateg(double &g, ContourPointData *cpData, int index = 0) = 0;
+      virtual void updateg(double t, double &g, ContourPointData *cpData, int index = 0) = 0;
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
@@ -77,7 +77,7 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updatewb(fmatvec::Vec &wb, double g, ContourPointData* cpData) = 0;
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, ContourPointData* cpData) = 0;
       
       /*!
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
@@ -85,9 +85,9 @@ namespace MBSim {
        *
        * REMARK: The given vector of Contacts is ordered by the possible contact points (cp. multi-contact preINIT-stage)
        */
-      virtual void updateg(std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(contact[0].getg()(0), contact[0].getcpData());}
+      virtual void updateg(double t, std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(t, contact[0].getg()(0), contact[0].getcpData());}
 
-      virtual void updatewb(std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(contact[0].getwb(), contact[0].getg()(0), contact[0].getcpData());}
+      virtual void updatewb(double t, std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(t, contact[0].getwb(), contact[0].getg()(0), contact[0].getcpData());}
 
       /** 
        * \brief treats ordering of contours

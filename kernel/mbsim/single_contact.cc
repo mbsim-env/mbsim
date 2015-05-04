@@ -47,8 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) :
-      MechanicalLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
+  SingleContact::SingleContact(const string &name) : MechanicalLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
@@ -77,121 +76,170 @@ namespace MBSim {
       delete[] gddActive;
   }
 
-  void SingleContact::updatewb(double t, int j) {
-    if(gdActive[0]) {
-      for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
-        wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
-
-      contactKinematics->updatewb(wb, g(0), cpData);
-    }
+  void SingleContact::updatewb(double t) {
+    throw;
+//    if(gdActive[0]) {
+//      for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
+//        wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
+//
+//      contactKinematics->updatewb(wb, g(0), cpData);
+//    }
   }
 
+//  void SingleContact::updateForceDirections(double t) {
+//    DF = refFrame->getOrientation(t) * forceDir;
+//    DM = refFrame->getOrientation(t) * momentDir;
+//    updFD = false;
+//  }
+
+  void SingleContact::updateGeneralizedSetValuedForces(double t) {
+    laMV = la;
+    updlaMV = false;
+  }
+
+  void SingleContact::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0) = (*fcl)(getGeneralizedRelativePosition(t)(0), getGeneralizedRelativeVelocity(t)(0));
+    if (fdf) laSV.set(Index(1,getFrictionDirections()), (*fdf)(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), fabs(laSV(0))));
+
+    updlaSV = false;
+  }
+
+
   void SingleContact::updateW(double t, int j) {
-    if (gActive) {
-
-      int fFTangCol = 1;
-      if (fcl->isSetValued())
-        fF[1].set(0,cpData[0].getFrameOfReference().getOrientation().col(0));
-      else
-        fFTangCol = 0;
-
-      if (getFrictionDirections()) {
-        if (fdf->isSetValued()) {
-          fF[1].set(fFTangCol, cpData[0].getFrameOfReference().getOrientation().col(1));
-          if (getFrictionDirections() > 1)
-            fF[1].set(fFTangCol+1, cpData[0].getFrameOfReference().getOrientation().col(2));
-        }
-      }
-
-      fF[0] = -fF[1];
-
-      for (unsigned int i = 0; i < 2; i++) //TODO: only two contours are interacting at one time?
-        W[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(0,laSize-1));
-    }
+    throw;
+//    if (gActive) {
+//
+//      int fFTangCol = 1;
+//      if (fcl->isSetValued())
+//        fF[1].set(0,cpData[0].getFrameOfReference().getOrientation().col(0));
+//      else
+//        fFTangCol = 0;
+//
+//      if (getFrictionDirections()) {
+//        if (fdf->isSetValued()) {
+//          fF[1].set(fFTangCol, cpData[0].getFrameOfReference().getOrientation().col(1));
+//          if (getFrictionDirections() > 1)
+//            fF[1].set(fFTangCol+1, cpData[0].getFrameOfReference().getOrientation().col(2));
+//        }
+//      }
+//
+//      fF[0] = -fF[1];
+//
+//      for (unsigned int i = 0; i < 2; i++) //TODO: only two contours are interacting at one time?
+//        W[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(0,laSize-1));
+//    }
   }
 
   void SingleContact::updateV(double t, int j) {
-    if (getFrictionDirections()) {
-      if (fdf->isSetValued()) {
-        if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-          for (unsigned int i = 0; i < 2; i++) { //TODO: only two contours are interacting at one time?
-            V[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(), iT) * fdf->dlaTdlaN(gdT, laN(0));
-          }
-        }
-      }
-    }
+    throw;
+//    if (getFrictionDirections()) {
+//      if (fdf->isSetValued()) {
+//        if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
+//          for (unsigned int i = 0; i < 2; i++) { //TODO: only two contours are interacting at one time?
+//            V[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(), iT) * fdf->dlaTdlaN(gdT, laN(0));
+//          }
+//        }
+//      }
+//    }
   }
 
   void SingleContact::updateh(double t, int j) {
-    laN(0) = (*fcl)(g(0), gdN(0));
-
-    applyh(t, j);
-  }
-
-  void SingleContact::updateg(double t) {
-    if (g.size())
-      contactKinematics->updateg(g(0), cpData);
-    else {
-      if(msgAct(Debug))
-        msg(Debug) << "No contact" << endl;
+    F = cpData[0].getFrameOfReference().getOrientation(t).col(0) * getGeneralizedSingleValuedForce(t)(0);
+    cout << endl;
+    cout << t << endl;
+    cout << contour[0]->getFrameOfReference()->getOrientation(t) << endl;
+    cout << contour[1]->getFrameOfReference()->getOrientation(t) << endl;
+    cout << cpData[0].getFrameOfReference().getOrientation(t) << endl;
+    cout << cpData[1].getFrameOfReference().getOrientation(t) << endl;
+    cout << getGeneralizedRelativePosition(t) << endl;
+    cout << getGeneralizedSingleValuedForce(t) << endl;
+    cout << F << endl;
+    if (fdf) {
+      F += cpData[0].getFrameOfReference().getOrientation(t).col(1) * getGeneralizedSingleValuedForce(t)(1);
+      if (getFrictionDirections() > 1)
+        F += cpData[0].getFrameOfReference().getOrientation(t).col(2) * getGeneralizedSingleValuedForce(t)(2);
     }
+    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
+    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
+    cout << cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j) << endl;
+    cout << cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j) << endl;
+    cout << endl;
   }
 
-  void SingleContact::updategd(double t) {
-    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(g(0), 0))) { // TODO: nicer implementation
+  void SingleContact::updatePositions(double t) {
+    //cout << endl;
+    //cout << t << " " << name << " " << endl << endl;
+    contactKinematics->updateg(t, rrel(0), cpData);
+//    cpData[0].getFrameOfReference().setGlobalRelativePosition(cpData[0].getFrameOfReference().getPosition() - contour[0]->getFrameOfReference()->getPosition());
+//    cpData[1].getFrameOfReference().setGlobalRelativePosition(cpData[1].getFrameOfReference().getPosition() - contour[1]->getFrameOfReference()->getPosition());
+    updPos = false;
+  }
+
+  void SingleContact::updateVelocities(double t) {
+    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(getGeneralizedRelativePosition(t)(0), 0))) { // TODO: nicer implementation
       for (unsigned int i = 0; i < 2; i++)
         contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
-      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
+      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation(t).col(0);
 
-      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
+      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity(t) - cpData[0].getFrameOfReference().getVelocity(t);
 
-      gdN(0) = Wn.T() * WvD;
+      vrel(0) = Wn.T() * WvD;
 
-      if (gdT.size()) {
+      if (getFrictionDirections()) {
         Mat3xV Wt(gdT.size());
         Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
-        if (gdT.size() > 1)
+        if (getFrictionDirections() > 1)
           Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
 
-        gdT = Wt.T() * WvD;
+        vrel.set(Index(1,getFrictionDirections()), Wt.T() * WvD);
       }
     }
+    updVel = false;
+  }
+
+  void SingleContact::updateg(double t) {
+    throw;
+  }
+
+  void SingleContact::updategd(double t) {
+    throw;
   }
 
   void SingleContact::updateStopVector(double t) {
-    if (gActive != gdActive[0])
-      THROW_MBSIMERROR("Internal error");
-    if (gActive) {
-      sv(0) = gddN(0) - gddTol;
-      if (gdActive[1]) {
-        if (getFrictionDirections()) {
-          sv(1) = nrm2(gddT) - gddTol;
-          if (sv(1) > 0) {
-            gddNBuf = gddN;
-            gddTBuf = gddT;
-          }
-        }
-      }
-      else {
-        if (getFrictionDirections() == 1)
-          sv(1) = gdT(0);
-        else if (getFrictionDirections() == 2) {
-          sv(1) = gdT(0) + gdT(1); // TODO: is there a better concept?
-        }
-      }
-    }
-    else {
-      sv(0) = g(0);
-      if (getFrictionDirections())
-        sv(1) = 1;
-    }
+    throw;
+//    if (gActive != gdActive[0])
+//      THROW_MBSIMERROR("Internal error");
+//    if (gActive) {
+//      sv(0) = gddN(0) - gddTol;
+//      if (gdActive[1]) {
+//        if (getFrictionDirections()) {
+//          sv(1) = nrm2(gddT) - gddTol;
+//          if (sv(1) > 0) {
+//            gddNBuf = gddN;
+//            gddTBuf = gddT;
+//          }
+//        }
+//      }
+//      else {
+//        if (getFrictionDirections() == 1)
+//          sv(1) = gdT(0);
+//        else if (getFrictionDirections() == 2) {
+//          sv(1) = gdT(0) + gdT(1); // TODO: is there a better concept?
+//        }
+//      }
+//    }
+//    else {
+//      sv(0) = g(0);
+//      if (getFrictionDirections())
+//        sv(1) = 1;
+//    }
   }
 
   void SingleContact::updateJacobians(double t, int j) {
     if (gActive)
       for (unsigned int i = 0; i < 2; i++)
-        contour[i]->updateJacobiansForFrame(cpData[i], j);
+        contour[i]->updateJacobiansForFrame(t, cpData[i], j);
   }
 
   void SingleContact::updateWRef(const Mat& WParent, int j) {
@@ -461,6 +509,12 @@ namespace MBSim {
       gddT.resize(getFrictionDirections());
       gdnN.resize(1);
       gdnT.resize(getFrictionDirections());
+      rrel.resize(1);
+      vrel.resize(1 + getFrictionDirections());
+      if(isSetValued())
+        laMV.resize(1 + getFrictionDirections());
+      else
+        laSV.resize(1 + getFrictionDirections());
 
       // clear container first, because InitStage resize is called twice (before and after the reorganization)
       if (cpData)
@@ -470,6 +524,13 @@ namespace MBSim {
         gdActive[1] = false;
 
       cpData = new ContourPointData[2];
+
+      cpData[0].getFrameOfReference().setParent(this);
+      cpData[1].getFrameOfReference().setParent(this);
+//      cpData[0].getFrameOfReference().setUpdateGlobalRelativePositionByParent();
+//      cpData[1].getFrameOfReference().setUpdateGlobalRelativePositionByParent();
+      cpData[0].getFrameOfReference().setFrameOfReference(contour[0]->getFrameOfReference());
+      cpData[1].getFrameOfReference().setFrameOfReference(contour[1]->getFrameOfReference());
 
       cpData[0].getFrameOfReference().setName("0");
       cpData[1].getFrameOfReference().setName("1");
@@ -481,7 +542,7 @@ namespace MBSim {
 
       cpData[0].getFrameOfReference().init(stage);
       cpData[1].getFrameOfReference().init(stage);
-    }
+   }
     else if (stage == unknownStage) {
       MechanicalLink::init(stage);
 
@@ -675,31 +736,31 @@ namespace MBSim {
           contactArrow->append(data);
         }
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
-          data.clear();
-          data.push_back(t);
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
-          Vec3 F;
-          if (fdf->isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
-            if (gActive && laT.size()) { // stick friction
-              F = cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0) / dt;
-              if (getFrictionDirections() > 1)
-                F += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1) / dt;
-            }
-            if (gActive && laT.size() == 0) // slip friction
-              F = fF[1](Index(0, 2), iT) * fdf->dlaTdlaN(gdT, laN(0)) * laN(0) / dt;
-          }
-          else {
-            F = cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
-            if (getFrictionDirections() > 1)
-              F += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
-          }
-          data.push_back(F(0));
-          data.push_back(F(1));
-          data.push_back(F(2));
-          data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-          frictionArrow->append(data);
+        //  data.clear();
+        //  data.push_back(t);
+        //  data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
+        //  data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
+        //  data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
+        //  Vec3 F;
+        //  if (fdf->isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
+        //    if (gActive && laT.size()) { // stick friction
+        //      F = cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0) / dt;
+        //      if (getFrictionDirections() > 1)
+        //        F += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1) / dt;
+        //    }
+        //    if (gActive && laT.size() == 0) // slip friction
+        //      F = fF[1](Index(0, 2), iT) * fdf->dlaTdlaN(gdT, laN(0)) * laN(0) / dt;
+        //  }
+        //  else {
+        //    F = cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
+        //    if (getFrictionDirections() > 1)
+        //      F += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
+        //  }
+        //  data.push_back(F(0));
+        //  data.push_back(F(1));
+        //  data.push_back(F(2));
+        //  data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
+        //  frictionArrow->append(data);
         }
       }
 #endif
@@ -1356,20 +1417,6 @@ namespace MBSim {
   }
 
   void SingleContact::applyh(double t, int j) {
-    WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
-
-    if (fdf)
-      if (not fdf->isSetValued()) {
-        laT = (*fdf)(gdT, fabs(laN(0)));
-        WF[1] += cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
-        if (getFrictionDirections() > 1)
-          WF[1] += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
-      }
-
-    WF[0] = -WF[1];
-    for (unsigned int i = 0; i < 2; i++) { //TODO only two contours are interacting at one time?
-      h[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * WF[i];
-    }
   }
 
   void SingleContact::computeCurvatures(Vec & r) const {
@@ -1546,6 +1593,12 @@ namespace MBSim {
       }
     }
     ds->setRootID(max(ds->getRootID(), rootID));
+  }
+
+  void SingleContact::resetUpToDate() {
+    MechanicalLink::resetUpToDate();
+    cpData[0].getFrameOfReference().resetUpToDate();
+    cpData[1].getFrameOfReference().resetUpToDate();
   }
 
 }

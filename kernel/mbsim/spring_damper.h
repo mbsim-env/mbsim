@@ -20,7 +20,7 @@
 #define _SPRINGDAMPER_H_
 
 #include "mbsim/mechanical_link.h"
-#include <mbsim/fixed_relative_frame.h>
+#include <mbsim/floating_relative_frame.h>
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -108,7 +108,7 @@ namespace MBSim {
       double l0;
       Frame *refFrame;
       fmatvec::Vec3 forceDir, WforceDir, WrP0P1;
-      FixedRelativeFrame C;
+      FloatingRelativeFrame C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif

@@ -6,10 +6,13 @@ libmbsim_la_SOURCES = \
 element.cc\
 body.cc\
 constitutive_laws.cc\
+contact.cc\
+single_contact.cc\
 contour.cc\
 environment.cc\
 frame.cc\
 fixed_relative_frame.cc\
+floating_relative_frame.cc\
 functions_contact.cc\
 dynamic_system.cc\
 group.cc\
@@ -47,6 +50,8 @@ libmbsim_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLA
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
 body.h\
+contact.h\
+single_contact.h\
 contour.h\
 contour_pdata.h\
 constitutive_laws.h\
@@ -57,6 +62,7 @@ element.h\
 environment.h\
 frame.h\
 fixed_relative_frame.h\
+floating_relative_frame.h\
 functions_contact.h\
 group.h\
 joint.h\

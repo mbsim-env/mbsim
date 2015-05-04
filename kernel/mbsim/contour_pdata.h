@@ -20,7 +20,7 @@
 #define _CONTOUR_PDATA_H_
 
 #include "fmatvec/fmatvec.h"
-#include "mbsim/frame.h"
+#include "mbsim/floating_relative_frame.h"
 #include <vector>
 
 namespace MBSim {
@@ -94,10 +94,10 @@ namespace MBSim {
       const fmatvec::VecV& getInterpolationWeights() const {
         return iWeights;
       }
-      Frame& getFrameOfReference() {
+      FloatingRelativeFrame& getFrameOfReference() {
         return cosy;
       }
-      const Frame& getFrameOfReference() const {
+      const FloatingRelativeFrame& getFrameOfReference() const {
         return cosy;
       }
       /***************************************************/
@@ -138,7 +138,7 @@ namespace MBSim {
       /**
        * \brief accompanying frame
        */
-      Frame cosy;
+      FloatingRelativeFrame cosy;
   };
 
 }

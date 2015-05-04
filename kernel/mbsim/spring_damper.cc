@@ -178,7 +178,6 @@ namespace MBSim {
 
   DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0), refFrame(NULL), C("F") {
     C.setParent(this);
-    C.setUpdateGlobalRelativePositionByParent();
   }
 
   DirectionalSpringDamper::~DirectionalSpringDamper() {
@@ -192,7 +191,8 @@ namespace MBSim {
 
   void DirectionalSpringDamper::updatePositions(double t) {
     WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setGlobalRelativePosition(WrP0P1);
+    C.setPosition(frame[1]->getPosition());
+    C.setOrientation(frame[0]->getOrientation());
     rrel=getGlobalForceDirection(t).T()*WrP0P1;
     updPos = false;
   }

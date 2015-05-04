@@ -22,7 +22,7 @@
 
 #include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/floating_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -35,7 +35,7 @@ namespace MBSim {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
       RigidBody* body;
-      FixedRelativeFrame C;
+      FloatingRelativeFrame C;
     public:
       KinematicExcitation(const std::string &name);
       void updatePositions(double t);
