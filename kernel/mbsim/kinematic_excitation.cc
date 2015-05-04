@@ -71,7 +71,7 @@ namespace MBSim {
   }
 
   void KinematicExcitation::updateGeneralizedSingleValuedForces(double t) {
-    laSV = (*func)(getRelativePosition(t),getRelativeVelocity(t));
+    laSV = (*func)(getGeneralizedRelativePosition(t),getGeneralizedRelativeVelocity(t));
     updlaSV = false;
   }
 
@@ -79,8 +79,8 @@ namespace MBSim {
     if(j==0) {
       h[j][0]-=body->getJRel(t,j).T()*getSingleValuedForce(t);
     } else {
-      Vec3 WF = body->getFrameOfReference()->getOrientation(t)*body->getPJT(t)*getSingleValuedGeneralizedForce(t);
-      Vec3 WM = body->getFrameOfReference()->getOrientation(t)*body->getPJR(t)*getSingleValuedGeneralizedForce(t);
+      Vec3 WF = body->getFrameOfReference()->getOrientation(t)*body->getPJT(t)*getGeneralizedSingleValuedForce(t);
+      Vec3 WM = body->getFrameOfReference()->getOrientation(t)*body->getPJR(t)*getGeneralizedSingleValuedForce(t);
       h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*WF + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*WM;
       h[j][1]+=C.getJacobianOfTranslation(t,j).T()*WF + C.getJacobianOfRotation(t,j).T()*WM;
     }

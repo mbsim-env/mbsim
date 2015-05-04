@@ -56,7 +56,7 @@ namespace MBSim {
 //        ele1->SetAttribute("ref", str);
 //        ele0->LinkEndChild(ele1);
 //      }
-//     addElementText(ele0,MBSIM%"relativePosition",getRelativePosition());
+//     addElementText(ele0,MBSIM%"relativePosition",getGeneralizedRelativePosition());
 //     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
    return ele0;
   }

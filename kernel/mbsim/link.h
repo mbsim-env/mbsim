@@ -401,11 +401,11 @@ namespace MBSim {
       virtual void updateGeneralizedSingleValuedForces(double t) { }
       virtual void updateGeneralizedSetValuedForces(double t) { }
 
-      const fmatvec::VecV& getRelativePosition(double t) { if(updPos) updatePositions(t); return rrel; }
-      const fmatvec::VecV& getRelativeVelocity(double t) { if(updVel) updateVelocities(t); return vrel; }
-      const fmatvec::VecV& getSingleValuedGeneralizedForce(double t) { if(updlaSV) updateGeneralizedSingleValuedForces(t); return laSV; }
-      const fmatvec::VecV& getSetValuedGeneralizedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
-      const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getSetValuedGeneralizedForce(t):getSingleValuedGeneralizedForce(t); }
+      const fmatvec::VecV& getGeneralizedRelativePosition(double t) { if(updPos) updatePositions(t); return rrel; }
+      const fmatvec::VecV& getGeneralizedRelativeVelocity(double t) { if(updVel) updateVelocities(t); return vrel; }
+      const fmatvec::VecV& getGeneralizedSingleValuedForce(double t) { if(updlaSV) updateGeneralizedSingleValuedForces(t); return laSV; }
+      const fmatvec::VecV& getGeneralizedSetValuedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
+      const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getGeneralizedSetValuedForce(t):getGeneralizedSingleValuedForce(t); }
 
       /**
        * \brief saves contact force parameters for use as starting value in next time step

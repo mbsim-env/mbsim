@@ -103,7 +103,7 @@ namespace MBSim {
   }
 
   void Gear::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0) = (*func)(getRelativePosition(t)(0),getRelativeVelocity(t)(0));
+    laSV(0) = (*func)(getGeneralizedRelativePosition(t)(0),getGeneralizedRelativeVelocity(t)(0));
     updlaSV = false;
   }
 
@@ -114,8 +114,8 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        Vec3 WF = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJT(t)*ratio[i]*getSingleValuedGeneralizedForce(t);
-        Vec3 WM = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJR(t)*ratio[i]*getSingleValuedGeneralizedForce(t);
+        Vec3 WF = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJT(t)*ratio[i]*getGeneralizedSingleValuedForce(t);
+        Vec3 WM = body[i]->getFrameOfReference()->getOrientation(t)*body[i]->getPJR(t)*ratio[i]*getGeneralizedSingleValuedForce(t);
         h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*WF + body[i]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*WM;
         h[j][body.size()+i]+=C[i].getJacobianOfTranslation(t,j).T()*WF + C[i].getJacobianOfRotation(t,j).T()*WM;
       }

@@ -155,13 +155,13 @@ namespace MBSim {
   } 
 
   void MechanicalLink::updateSingleValuedForces(double t) { 
-    F = getGlobalForceDirection(t)*getSingleValuedGeneralizedForce(t)(iF);
-    M = getGlobalMomentDirection(t)*getSingleValuedGeneralizedForce(t)(iM);
+    F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
+    M = getGlobalMomentDirection(t)*getGeneralizedSingleValuedForce(t)(iM);
     updFSV = false;
   }
   void MechanicalLink::updateSetValuedForces(double t) { 
-    F = getGlobalForceDirection(t)*getSetValuedGeneralizedForce(t)(iF); 
-    M = getGlobalMomentDirection(t)*getSetValuedGeneralizedForce(t)(iM);
+    F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
+    M = getGlobalMomentDirection(t)*getGeneralizedSetValuedForce(t)(iM);
     updFMV = false;
   }
 

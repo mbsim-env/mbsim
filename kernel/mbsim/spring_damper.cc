@@ -47,7 +47,7 @@ namespace MBSim {
   }
 
   void SpringDamper::updateForceDirections(double t) {
-    if(getRelativePosition(t)(0)>epsroot())
+    if(getGeneralizedRelativePosition(t)(0)>epsroot())
       DF=getGlobalRelativePosition(t)/rrel(0);
     else
       DF.init(0);
@@ -72,7 +72,7 @@ namespace MBSim {
   }
 
   void SpringDamper::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0)=-(*func)(getRelativePosition(t)(0)-l0,getRelativeVelocity(t)(0));
+    laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     if(rrel(0)<=epsroot() && abs(laSV(0))>epsroot())
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     updlaSV = false;
@@ -209,7 +209,7 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0)=-(*func)(getRelativePosition(t)(0)-l0,getRelativeVelocity(t)(0));
+    laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     updlaSV = false;
   }
 

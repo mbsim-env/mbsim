@@ -47,9 +47,9 @@ namespace MBSim {
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
       if(getPlotFeature(linkKinematics)==enabled) {
-        for(int i=0; i<getRelativePosition(t).size(); ++i)
+        for(int i=0; i<getGeneralizedRelativePosition(t).size(); ++i)
           plotVector.push_back(rrel(i));
-        for(int i=0; i<getRelativeVelocity(t).size(); ++i)
+        for(int i=0; i<getGeneralizedRelativeVelocity(t).size(); ++i)
           plotVector.push_back(vrel(i));
       }
       if(getPlotFeature(generalizedLinkForce)==enabled) {

@@ -113,31 +113,31 @@ namespace MBSim {
   void Joint::updateGeneralizedSingleValuedForces(double t) {
     if (ffl) {
       for (int i = 0; i < forceDir.cols(); i++)
-        laSV(i) = (*ffl)(getRelativePosition(t)(i), getRelativeVelocity(t)(i));
+        laSV(i) = (*ffl)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
     }
     if (fml) {
       for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
-        laSV(i) = (*fml)(getRelativePosition(t)(i), getRelativeVelocity(t)(i));
+        laSV(i) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
     }
     updlaSV = false;
   }
 
   void Joint::updateg(double t) {
-    g(iF) = getRelativePosition(t)(iF);
+    g(iF) = getGeneralizedRelativePosition(t)(iF);
     g(iM) = rrel(iM);;
   }
 
   void Joint::updategd(double t) {
-    gd(iF) = getRelativeVelocity(t)(iF);
+    gd(iF) = getGeneralizedRelativeVelocity(t)(iF);
     gd(iM) = vrel(iM);
   }
 
   void Joint::updatexd(double t) {
-    xd = getRelativeVelocity(t)(iM);
+    xd = getGeneralizedRelativeVelocity(t)(iM);
   }
 
   void Joint::updatedx(double t, double dt) {
-    xd = getRelativeVelocity(t)(iM) * dt;
+    xd = getGeneralizedRelativeVelocity(t)(iM) * dt;
   }
 
   void Joint::calcxSize() {
