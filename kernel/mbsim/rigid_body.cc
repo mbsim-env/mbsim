@@ -48,7 +48,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updateByParent(true) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updateByReference(true) {
 
     C=new FixedRelativeFrame("C");
     C->setUpdateByParent(1);
@@ -484,7 +484,7 @@ namespace MBSim {
   void RigidBody::updateJacobians2(double t) {
 //    K->getJacobianOfTranslation(2).init(0);
 //    K->getJacobianOfRotation(2).init(0);
-    if(updateByParent) {
+    if(updateByReference) {
       K->getJacobianOfTranslation(2).set(i02,Index(0,R->getJacobianOfTranslation(2).cols()-1), R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2));
       K->getJacobianOfRotation(2).set(i02,Index(0,R->getJacobianOfRotation(2).cols()-1), R->getJacobianOfRotation(t,2));
     } else {

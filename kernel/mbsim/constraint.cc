@@ -171,6 +171,7 @@ namespace MBSim {
       bd->getqRel() += bi[i]->getqRel(t)*ratio[i];
       bd->getuRel() += bi[i]->getuRel(t)*ratio[i];
     }
+    updGC = false;
   }
 
   void GearConstraint::updateGeneralizedJacobians(double t, int j) {
@@ -178,6 +179,7 @@ namespace MBSim {
     for(unsigned int i=0; i<bi.size(); i++) {
       bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel(t)*ratio[i];
     }
+    updGJ = false;
   }
 
   void GearConstraint::initializeUsingXML(DOMElement* element) {
@@ -219,199 +221,205 @@ namespace MBSim {
     if(MArrow)
       gear->setOpenMBVMoment(MArrow);
   }
-//
-//  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
-//  }
-//
-//  void KinematicConstraint::init(InitStage stage) {
-//    if(stage==resolveXMLPath) {
-//      if (saved_DependentBody!="")
-//        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
-//      Constraint::init(stage);
-//    }
-//    else if(stage==preInit) {
-//      Constraint::init(stage);
-//      bd->addDependency(this);
-//    }
-//    else
-//      Constraint::init(stage);
-//  }
-//
-//  void KinematicConstraint::initializeUsingXML(DOMElement* element) {
-//    Constraint::initializeUsingXML(element);
-//    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
-//    saved_DependentBody=E(e)->getAttribute("ref");
-//
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-//    if (e) {
-//      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-//      FArrow=ombv.createOpenMBV(e);
-//    }
-//
-//    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-//    if (e) {
-//      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-//      MArrow=ombv.createOpenMBV(e);
-//    }
-//#endif
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
-//
-//  void GeneralizedPositionConstraint::init(InitStage stage) {
-//    KinematicConstraint::init(stage);
-//    f->init(stage);
-//  }
-//
-//  void GeneralizedPositionConstraint::updateStateDependentVariables(double t) {
-//    bd->getqRel() = (*f)(t);
-//    bd->getuRel() = f->parDer(t);
-//  }
-//
-//  void GeneralizedPositionConstraint::updateJacobians(double t, int jj) {
-//    bd->getjRel() = f->parDerParDer(t);
-//  }
-//
-//  void GeneralizedPositionConstraint::initializeUsingXML(DOMElement* element) {
-//    KinematicConstraint::initializeUsingXML(element);
-//    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"constraintFunction");
-//    if(e) {
-//      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
-//      setConstraintFunction(f);
-//    }
-//  }
-//
-//  void GeneralizedPositionConstraint::setUpInverseKinetics() {
-//    GeneralizedPositionExcitation *ke = new GeneralizedPositionExcitation(string("GeneralizedPositionExcitation")+name);
-//    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
-//    ke->setDependentBody(bd);
-//    ke->setExcitationFunction(f);
-//    if(FArrow)
-//      ke->setOpenMBVForce(FArrow);
-//    if(MArrow)
-//      ke->setOpenMBVMoment(MArrow);
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
-//
-//  void GeneralizedVelocityConstraint::init(InitStage stage) {
-//    KinematicConstraint::init(stage);
-//    f->init(stage);
-//  }
-//
-//  void GeneralizedVelocityConstraint::calcxSize() {
-//    xSize = bd->getqRelSize();
-//  }
-//
-//  void GeneralizedVelocityConstraint::updatexd(double t) {
-//    xd = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
-//  }
-//
-//  void GeneralizedVelocityConstraint::updateStateDependentVariables(double t) {
-//    bd->getqRel() = x;
-//    bd->getuRel() = (*f)(x,t);
-//  }
-//
-//  void GeneralizedVelocityConstraint::updateJacobians(double t, int jj) {
-//    MatV J = f->parDer1(x,t);
-//    if(J.cols())
-//      bd->getjRel() = J*xd + f->parDer2(x,t);
-//    else
-//      bd->getjRel() = f->parDer2(x,t);
-//  }
-//
-//  void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement* element) {
-//    KinematicConstraint::initializeUsingXML(element);
-//    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
-//    if (e)
-//      x0 = getVec(e);
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
-//    if(e) {
-//      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
-//      setGeneralConstraintFunction(f);
-//    }
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
-//    if(e) {
-//      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
-//      setTimeDependentConstraintFunction(f);
-//    }
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
-//    if(e) {
-//      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
-//      setStateDependentConstraintFunction(f);
-//    }
-//  }
-//
-//  void GeneralizedVelocityConstraint::setUpInverseKinetics() {
-//    GeneralizedVelocityExcitation *ke = new GeneralizedVelocityExcitation(string("GeneralizedVelocityExcitation")+name);
-//    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
-//    ke->setDependentBody(bd);
-//    ke->setExcitationFunction(f);
-//    if(FArrow)
-//      ke->setOpenMBVForce(FArrow);
-//    if(MArrow)
-//      ke->setOpenMBVMoment(MArrow);
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
-//
-//  void GeneralizedAccelerationConstraint::init(InitStage stage) {
-//    KinematicConstraint::init(stage);
-//    f->init(stage);
-//  }
-//  
-//  void GeneralizedAccelerationConstraint::calcxSize() {
-//    xSize = bd->getqRelSize()+bd->getuRelSize();
-//  }
-//
-//  void GeneralizedAccelerationConstraint::updatexd(double t) {
-//    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
-//    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel();
-//  }
-//
-//  void GeneralizedAccelerationConstraint::updateStateDependentVariables(double t) {
-//    bd->getqRel() = x(0,bd->getqRelSize()-1);
-//    bd->getuRel() = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
-//  }
-//
-//  void GeneralizedAccelerationConstraint::updateJacobians(double t, int jj) {
-//    bd->getjRel() = (*f)(x,t);
-//  }
-//
-//  void GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement* element) {
-//    KinematicConstraint::initializeUsingXML(element);
-//    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
-//    if(e)
-//      x0 = getVec(e);
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
-//    if(e) {
-//      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
-//      setGeneralConstraintFunction(f);
-//    }
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
-//    if(e) {
-//      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
-//      setTimeDependentConstraintFunction(f);
-//    }
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
-//    if(e) {
-//      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
-//      setStateDependentConstraintFunction(f);
-//    }
-//  }
-//
-//  void GeneralizedAccelerationConstraint::setUpInverseKinetics() {
-//    GeneralizedAccelerationExcitation *ke = new GeneralizedAccelerationExcitation(string("GeneralizedAccelerationExcitation")+name);
-//    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
-//    ke->setDependentBody(bd);
-//    ke->setExcitationFunction(f);
-//    if(FArrow)
-//      ke->setOpenMBVForce(FArrow);
-//    if(MArrow)
-//      ke->setOpenMBVMoment(MArrow);
-//  }
-//
+
+  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
+  }
+
+  void KinematicConstraint::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if (saved_DependentBody!="")
+        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+      Constraint::init(stage);
+    }
+    else if(stage==preInit) {
+      Constraint::init(stage);
+      bd->addDependency(this);
+    }
+    else
+      Constraint::init(stage);
+  }
+
+  void KinematicConstraint::initializeUsingXML(DOMElement* element) {
+    Constraint::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
+    saved_DependentBody=E(e)->getAttribute("ref");
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      FArrow=ombv.createOpenMBV(e);
+    }
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      MArrow=ombv.createOpenMBV(e);
+    }
+#endif
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
+
+  void GeneralizedPositionConstraint::init(InitStage stage) {
+    KinematicConstraint::init(stage);
+    f->init(stage);
+  }
+
+  void GeneralizedPositionConstraint::updateGeneralizedCoordinates(double t) {
+    bd->getqRel() = (*f)(t);
+    bd->getuRel() = f->parDer(t);
+    updGC = false;
+  }
+
+  void GeneralizedPositionConstraint::updateGeneralizedJacobians(double t, int jj) {
+    bd->getjRel() = f->parDerParDer(t);
+    updGJ = false;
+  }
+
+  void GeneralizedPositionConstraint::initializeUsingXML(DOMElement* element) {
+    KinematicConstraint::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"constraintFunction");
+    if(e) {
+      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      setConstraintFunction(f);
+    }
+  }
+
+  void GeneralizedPositionConstraint::setUpInverseKinetics() {
+    GeneralizedPositionExcitation *ke = new GeneralizedPositionExcitation(string("GeneralizedPositionExcitation")+name);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
+    ke->setDependentBody(bd);
+    ke->setExcitationFunction(f);
+    if(FArrow)
+      ke->setOpenMBVForce(FArrow);
+    if(MArrow)
+      ke->setOpenMBVMoment(MArrow);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
+
+  void GeneralizedVelocityConstraint::init(InitStage stage) {
+    KinematicConstraint::init(stage);
+    f->init(stage);
+  }
+
+  void GeneralizedVelocityConstraint::calcxSize() {
+    xSize = bd->getqRelSize();
+  }
+
+  void GeneralizedVelocityConstraint::updatexd(double t) {
+    xd = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
+  }
+
+  void GeneralizedVelocityConstraint::updateGeneralizedCoordinates(double t) {
+    bd->getqRel() = x;
+    bd->getuRel() = (*f)(x,t);
+    updGC = false;
+  }
+
+  void GeneralizedVelocityConstraint::updateGeneralizedJacobians(double t, int jj) {
+    MatV J = f->parDer1(x,t);
+    if(J.cols())
+      bd->getjRel() = J*xd + f->parDer2(x,t);
+    else
+      bd->getjRel() = f->parDer2(x,t);
+    updGJ = false;
+  }
+
+  void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement* element) {
+    KinematicConstraint::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
+    if (e)
+      x0 = getVec(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
+    if(e) {
+      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
+      setGeneralConstraintFunction(f);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
+    if(e) {
+      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      setTimeDependentConstraintFunction(f);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
+    if(e) {
+      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
+      setStateDependentConstraintFunction(f);
+    }
+  }
+
+  void GeneralizedVelocityConstraint::setUpInverseKinetics() {
+    GeneralizedVelocityExcitation *ke = new GeneralizedVelocityExcitation(string("GeneralizedVelocityExcitation")+name);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
+    ke->setDependentBody(bd);
+    ke->setExcitationFunction(f);
+    if(FArrow)
+      ke->setOpenMBVForce(FArrow);
+    if(MArrow)
+      ke->setOpenMBVMoment(MArrow);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")
+
+  void GeneralizedAccelerationConstraint::init(InitStage stage) {
+    KinematicConstraint::init(stage);
+    f->init(stage);
+  }
+
+  void GeneralizedAccelerationConstraint::calcxSize() {
+    xSize = bd->getqRelSize()+bd->getuRelSize();
+  }
+
+  void GeneralizedAccelerationConstraint::updatexd(double t) {
+    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel();
+  }
+
+  void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates(double t) {
+    bd->getqRel() = x(0,bd->getqRelSize()-1);
+    bd->getuRel() = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
+    updGC = false;
+  }
+
+  void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(double t, int jj) {
+    bd->getjRel() = (*f)(x,t);
+    updGJ = false;
+  }
+
+  void GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement* element) {
+    KinematicConstraint::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
+    if(e)
+      x0 = getVec(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
+    if(e) {
+      Function<VecV(VecV,double)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());
+      setGeneralConstraintFunction(f);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentConstraintFunction");
+    if(e) {
+      Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());
+      setTimeDependentConstraintFunction(f);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentConstraintFunction");
+    if(e) {
+      Function<VecV(VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV)> >(e->getFirstElementChild());
+      setStateDependentConstraintFunction(f);
+    }
+  }
+
+  void GeneralizedAccelerationConstraint::setUpInverseKinetics() {
+    GeneralizedAccelerationExcitation *ke = new GeneralizedAccelerationExcitation(string("GeneralizedAccelerationExcitation")+name);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
+    ke->setDependentBody(bd);
+    ke->setExcitationFunction(f);
+    if(FArrow)
+      ke->setOpenMBVForce(FArrow);
+    if(MArrow)
+      ke->setOpenMBVMoment(MArrow);
+  }
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
@@ -516,23 +524,8 @@ namespace MBSim {
     }
 
     q.resize(nq);
-    u.resize(nu);
-    J.resize(nu,nh);
-    j.resize(nu);
     JT.resize(3,nu);
     JR.resize(3,nu);
-    for(unsigned int i=0; i<bd1.size(); i++) {
-      bd1[i]->getqRel() >> q(Iq1[i]);
-      bd1[i]->getuRel() >> u(Iu1[i]);
-      bd1[i]->getJRel() >> J(Iu1[i],Ih1[i]);
-      bd1[i]->getjRel() >> j(Iu1[i]); 
-    }
-    for(unsigned int i=0; i<bd2.size(); i++) {
-      bd2[i]->getqRel() >> q(Iq2[i]);
-      bd2[i]->getuRel() >> u(Iu2[i]);
-      bd2[i]->getJRel() >> J(Iu2[i],Ih2[i]);
-      bd2[i]->getjRel() >> j(Iu2[i]); 
-    }   
     if(q0.size())
       q = q0;
   }
@@ -546,31 +539,33 @@ namespace MBSim {
     q = newton.solve(q);
     if(newton.getInfo()!=0)
       msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
+    for(unsigned int i=0; i<bd1.size(); i++)
+      bd1[i]->setqRel(q(Iq1[i]));
+    for(unsigned int i=0; i<bd2.size(); i++)
+      bd2[i]->setqRel(q(Iq2[i]));
 
     for(int i=0; i<bd1.size(); i++) {
-      bd1[i]->setUpdateByParent(false);
+      bd1[i]->setUpdateByReference(false);
       JT(Index(0,2),Iu1[i]) = frame1->getJacobianOfTranslation(t,2);
       JR(Index(0,2),Iu1[i]) = frame1->getJacobianOfRotation(t,2);
       for(int j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
-      bd1[i]->setUpdateByParent(true);
+      bd1[i]->setUpdateByReference(true);
     }
     for(int i=0; i<bd2.size(); i++) {
-      bd2[i]->setUpdateByParent(false);
+      bd2[i]->setUpdateByReference(false);
       JT(Index(0,2),Iu2[i]) = -frame2->getJacobianOfTranslation(t,2);
       JR(Index(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(t,2);
       for(int j=i+1; j<bd2.size(); j++)
         bd2[j]->resetJacobiansUpToDate();
-      bd2[i]->setUpdateByParent(true);
+      bd2[i]->setUpdateByReference(true);
     }
     for(int i=0; i<bd1.size(); i++) {
       bd1[i]->resetJacobiansUpToDate();
-      //bd1[i]->setuRel(bd1[i]->getuRel());
       bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
     }
     for(int i=0; i<bd2.size(); i++) {
       bd2[i]->resetJacobiansUpToDate();
-      //bd2[i]->setuRel(bd2[i]->getuRel());
       bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
     }
     SqrMat A(nu);
@@ -580,14 +575,14 @@ namespace MBSim {
 
     b(0,dT.cols()-1) = -(dT.T()*(frame1->getVelocity(t)-frame2->getVelocity(t)));
     b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getAngularVelocity(t)-frame2->getAngularVelocity(t)));
-    u = slvLU(A,b); 
+    Vec u = slvLU(A,b);
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->resetVelocitiesUpToDate();
-      bd1[i]->setuRel(bd1[i]->getuRel());
+      bd1[i]->setuRel(u(Iu1[i]));
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
       bd2[i]->resetVelocitiesUpToDate();
-      bd2[i]->setuRel(bd2[i]->getuRel());
+      bd2[i]->setuRel(u(Iu2[i]));
     }
     updGC = false;
   }
@@ -624,19 +619,19 @@ namespace MBSim {
       b(0,dT.cols()-1) = -(dT.T()*(frame1->getGyroscopicAccelerationOfTranslation(t)-frame2->getGyroscopicAccelerationOfTranslation(t)));
       b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getGyroscopicAccelerationOfRotation(t)-frame2->getGyroscopicAccelerationOfRotation(t)));
 
-      J = slvLU(A,B); 
-      j = slvLU(A,b); 
+      Mat J = slvLU(A,B);
+      Vec j = slvLU(A,b);
       for(unsigned int i=0; i<bd1.size(); i++) {
         bd1[i]->resetJacobiansUpToDate();
         bd1[i]->resetGyroscopicAccelerationsUpToDate();
-        bd1[i]->setJRel(bd1[i]->getJRel());
-        bd1[i]->setjRel(bd1[i]->getjRel());
+        bd1[i]->setJRel(J(Iu1[i],Ih1[i]));
+        bd1[i]->setjRel(j(Iu1[i]));
       }
       for(unsigned int i=0; i<bd2.size(); i++) {
        bd2[i]->resetJacobiansUpToDate();
        bd2[i]->resetGyroscopicAccelerationsUpToDate();
-       bd2[i]->setJRel(bd2[i]->getJRel());
-       bd2[i]->setjRel(bd2[i]->getjRel());
+       bd2[i]->setJRel(J(Iu2[i],Ih2[i]));
+       bd2[i]->setjRel(j(Iu2[i]));
       }
       updGJ = false;
     }

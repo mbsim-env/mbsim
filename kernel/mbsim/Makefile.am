@@ -21,6 +21,7 @@ extern_generalized_io.cc\
 link.cc\
 mechanical_link.cc\
 kinetic_excitation.cc\
+kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
@@ -65,6 +66,7 @@ extern_generalized_io.h\
 link.h\
 mechanical_link.h\
 kinetic_excitation.h\
+kinematic_excitation.h\
 mbsim_event.h\
 modelling_interface.h\
 object.h\

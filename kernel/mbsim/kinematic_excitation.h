@@ -22,7 +22,7 @@
 
 #include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -35,12 +35,16 @@ namespace MBSim {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
       RigidBody* body;
-      Frame C;
+      FixedRelativeFrame C;
     public:
       KinematicExcitation(const std::string &name);
+      void updatePositions(double t);
+      void updateg(double t);
+      void updategd(double t);
+      void updateGeneralizedSetValuedForces(double t);
+      void updateGeneralizedSingleValuedForces(double t);
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
-      void updateJacobians(double t, int j=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body = body_;}
@@ -93,9 +97,9 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
+      void updatePositions(double t);
+      void updateVelocities(double t);
       void updatexd(double t) { }
-      void updateg(double t);
-      void updategd(double t);
       void updatewb(double t);
 
       std::string getType() const { return "GeneralizedPositionExcitation"; }
@@ -116,9 +120,9 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
+      void updatePositions(double t);
+      void updateVelocities(double t);
       void updatexd(double t);
-      void updateg(double t);
-      void updategd(double t);
       void updatewb(double t);
 
       std::string getType() const { return "GeneralizedVelocityExcitation"; }
@@ -145,9 +149,9 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
+      void updatePositions(double t);
+      void updateVelocities(double t);
       void updatexd(double t);
-      void updateg(double t);
-      void updategd(double t);
       void updatewb(double t);
 
       std::string getType() const { return "GeneralizedAccelerationExcitation"; }

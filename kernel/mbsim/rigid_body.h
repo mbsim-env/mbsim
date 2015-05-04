@@ -256,7 +256,7 @@ namespace MBSim {
       const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j]; }
       const fmatvec::Vec& getjRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return jRel; }
 
-      void setUpdateByParent(bool updateByParent_) { updateByParent = updateByParent_; }
+      void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 
     protected:
       /**
@@ -368,7 +368,7 @@ namespace MBSim {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updGC, updGJ, updWTS, updateByParent;
+      bool updGC, updGJ, updWTS, updateByReference;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

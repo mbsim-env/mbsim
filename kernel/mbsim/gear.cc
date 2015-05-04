@@ -189,15 +189,16 @@ namespace MBSim {
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);
-      g.resize(1);
-      gd.resize(1);
-      la.resize(1);
       iF = Index(0, 0);
       iM = Index(0, -1);
       rrel.resize(1);
       vrel.resize(1);
-      if(isSetValued())
+      if(isSetValued()) {
+        g.resize(1);
+        gd.resize(1);
+        la.resize(1);
         laMV.resize(1);
+      }
       else
         laSV.resize(1);
     }
