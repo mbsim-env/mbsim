@@ -191,9 +191,6 @@ namespace MBSim {
     else if(stage==resize) {
       Body::init(stage);
 
-      Z.sethSize(hSize[0],0);
-      Z.sethSize(hSize[1],1);
-
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
       for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
@@ -365,7 +362,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3xV(3,EYE));
     joint->setMomentDirection(Mat3xV(3,EYE));
-    joint->connect(R,K);
+    joint->connect(R,&Z);
     joint->setBody(this);
     if(FArrow)
       joint->setOpenMBVForce(FArrow);
@@ -387,7 +384,7 @@ namespace MBSim {
         if(FWeight) {
           vector<double> data;
           data.push_back(t);
-          Vec3 WrOS=C->getPosition();
+          Vec3 WrOS=C->getPosition(t);
           Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
           data.push_back(WrOS(0));
           data.push_back(WrOS(1));
@@ -401,8 +398,8 @@ namespace MBSim {
         if(openMBVBody) {
           vector<double> data;
           data.push_back(t);
-          Vec3 WrOS=openMBVFrame->getPosition();
-          Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());
+          Vec3 WrOS=openMBVFrame->getPosition(t);
+          Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation(t));
           data.push_back(WrOS(0));
           data.push_back(WrOS(1));
           data.push_back(WrOS(2));
@@ -499,8 +496,6 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobians2(double t) {
-//    K->getJacobianOfTranslation(2).init(0);
-//    K->getJacobianOfRotation(2).init(0);
     if(updateByReference) {
       Z.getJacobianOfTranslation(2).set(i02,Index(0,R->getJacobianOfTranslation(2).cols()-1), R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2));
       Z.getJacobianOfRotation(2).set(i02,Index(0,R->getJacobianOfRotation(2).cols()-1), R->getJacobianOfRotation(t,2));
@@ -508,7 +503,6 @@ namespace MBSim {
       Z.getJacobianOfTranslation(2).set(i02,Index(0,K->getJacobianOfTranslation(2).cols()-1), R->getOrientation(t)*getPJT(t));
       Z.getJacobianOfRotation(2).set(i02,Index(0,K->getJacobianOfRotation(2).cols()-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
     }
-    //cout << getPath() << endl;
   }
 
    void RigidBody::updatePJ(double t) {
@@ -821,4 +815,15 @@ namespace MBSim {
     jRel = j; 
     updGJ = false; 
   }
+
+  void RigidBody::sethSize(int hSize_, int j) {
+    Body::sethSize(hSize_, j);
+    Z.sethSize(hSize_, j);
+  }
+
+  void RigidBody::sethInd(int hInd_, int j) {
+    Body::sethInd(hInd_, j);
+    Z.sethInd(hInd_, j);
+  }
+
 }

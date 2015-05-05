@@ -85,6 +85,8 @@ namespace MBSim {
       void updatePJ(double t);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
+      void sethSize(int hSize_, int i=0);
+      void sethInd(int hInd_, int i=0);
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
