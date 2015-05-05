@@ -244,26 +244,27 @@ namespace MBSim {
   }
 
   void Frame::updatePositions(double t) { 
-    if(updateByParent[0])
-      parent->updatePositions(t);
+    parent->updatePositions(t);
     updatePos = false;
   }
 
   void Frame::updateVelocities(double t) { 
-    if(updateByParent[0])
-      parent->updateVelocities(t);
+    parent->updateVelocities(t);
     updateVel = false;
   }
 
+  void Frame::updateAccelerations(double t) { 
+    parent->updateAccelerations(t);
+    updateAcc = false;
+  }
+
   void Frame::updateJacobians(double t, int j) {
-    if(updateByParent[j])
-      parent->updateJacobians(t,j);
+    parent->updateJacobians(t,j);
     updateJac[j] = false;
   }
 
   void Frame::updateGyroscopicAccelerations(double t) {
-    if(updateByParent[0])
-      parent->updateGyroscopicAccelerations(t);
+    parent->updateGyroscopicAccelerations(t);
     updateGA = false;
   }
 

@@ -79,52 +79,32 @@ namespace MBSim {
   }
 
   void FixedRelativeFrame::updatePositions(double t) { 
-    if(updateByParent[0])
-      parent->updatePositions(t);
-    else {
-      setOrientation(R->getOrientation(t)*ARP);
-      setPosition(R->getPosition(t) + getGlobalRelativePosition(t)); 
-    }
+    setOrientation(R->getOrientation(t)*ARP);
+    setPosition(R->getPosition(t) + getGlobalRelativePosition(t)); 
     updatePos = false;
   }
 
   void FixedRelativeFrame::updateVelocities(double t) { 
-    if(updateByParent[0])
-      parent->updateVelocities(t);
-    else {
-      setAngularVelocity(R->getAngularVelocity(t));
-      setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
-    }
+    setAngularVelocity(R->getAngularVelocity(t));
+    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
     updateVel = false;
   }
 
   void FixedRelativeFrame::updateAccelerations(double t) { 
-    if(updateByParent[0])
-      parent->updateAccelerations(t);
-    else {
-      setAngularAcceleration(R->getAngularAcceleration(t));
-      setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
-    }
+    setAngularAcceleration(R->getAngularAcceleration(t));
+    setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
     updateAcc = true;
   }
 
   void FixedRelativeFrame::updateJacobians(double t, int j) {
-    if(updateByParent[j])
-      parent->updateJacobians(t,j);
-    else {
-      setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
-      setJacobianOfRotation(R->getJacobianOfRotation(j),j);
-    }
+    setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j),j);
     updateJac[j] = false;
   }
 
   void FixedRelativeFrame::updateGyroscopicAccelerations(double t) {
-    if(updateByParent[0])
-      parent->updateGyroscopicAccelerations(t);
-    else {
-      setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)));
-      setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
-    }
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)));
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
     updateGA = false;
   }
 

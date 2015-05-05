@@ -139,6 +139,7 @@ namespace MBSim {
       const fmatvec::Vec3& getAngularAcceleration(double t);
       void updatePositions(double t);
       void updateVelocities(double t); 
+      void updateAccelerations(double t);
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
 

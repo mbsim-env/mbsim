@@ -21,6 +21,7 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/body.h"
+#include "mbsim/frame.h"
 #include "mbsim/functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -359,9 +360,6 @@ namespace MBSim {
 
       Frame *frameForJacobianOfRotation;
 
-      std::vector<FixedRelativeFrame*> RBF;
-      std::vector<CompoundContour*> RBC;
-
       Frame *frameForInertiaTensor;
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
@@ -369,6 +367,8 @@ namespace MBSim {
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
       bool updGC, updGJ, updWTS, updateByReference;
+
+      Frame Z;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
