@@ -172,7 +172,7 @@ namespace MBSim {
 
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
-      FixedRelativeFrame* getFrameForKinematics() { return K; };
+      Frame* getFrameForKinematics() { return &Z; };
       FixedRelativeFrame* getFrameC() { return C; };
       const fmatvec::Vec3& getGlobalRelativePosition(double t);
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t);

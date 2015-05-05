@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FIXED_RELATIVE_FRAME_H__
-#define _FIXED_RELATIVE_FRAME_H__
+#ifndef _FLOATING_RELATIVE_FRAME_H__
+#define _FLOATING_RELATIVE_FRAME_H__
 
 #include "mbsim/frame.h"
 
@@ -28,13 +28,13 @@ namespace MBSim {
    * \brief cartesian frame on rigid bodies 
    * \author Martin Foerg
    */
-  class FixedRelativeFrame : public Frame {
+  class FloatingRelativeFrame : public Frame {
 
     public:
-      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {
+      FloatingRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {
       }
 
-      std::string getType() const { return "FixedRelativeFrame"; }
+      std::string getType() const { return "FloatingRelativeFrame"; }
 
       virtual void init(InitStage stage);
 
@@ -55,6 +55,7 @@ namespace MBSim {
       void updateAccelerations(double t); 
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
+      void setUpdatePositions(bool updatePos_) { updatePos = updatePos_; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -64,6 +65,7 @@ namespace MBSim {
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP;
       std::string saved_frameOfReference;
+      bool updWrRP;
   };
 
 }
