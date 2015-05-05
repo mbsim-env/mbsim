@@ -61,15 +61,6 @@ namespace MBSim {
    return ele0;
   }
 
-  void FloatingRelativeFrame::resetUpToDate() {
-    Frame::resetUpToDate();
-    updWrRP = true;
-  }
-  void FloatingRelativeFrame::resetPositionsUpToDate() {
-    Frame::resetPositionsUpToDate();
-    updWrRP = true;
-  }
-
   const Vec3& FloatingRelativeFrame::getGlobalRelativePosition(double t) {
     if(updatePos) updatePositions(t);
     return WrRP; 

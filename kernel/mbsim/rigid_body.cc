@@ -174,7 +174,7 @@ namespace MBSim {
         K->setRelativePosition(Vec3());
         K->setFrameOfReference(&Z);
       }
-      C->setFrameOfReference(&Z);
+      C->setFrameOfReference(K);
       for(unsigned int k=1; k<frame.size(); k++) {
         FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
         if(K!=P) {
@@ -187,6 +187,7 @@ namespace MBSim {
         P->setFrameOfReference(&Z);
         }
       }
+      C->setFrameOfReference(&Z);
     }
     else if(stage==resize) {
       Body::init(stage);

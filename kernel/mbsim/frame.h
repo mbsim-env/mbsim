@@ -143,8 +143,6 @@ namespace MBSim {
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
 
-      void setUpdateByParent(int j) { updateByParent[j] = true; }
-
     protected:
       /**
        * \brief size and index of right hand side
@@ -196,7 +194,6 @@ namespace MBSim {
 #endif
 
       bool updateJac[3], updateGA, updatePos, updateVel, updateAcc;
-      bool updateByParent[3];
   };
 
 }
