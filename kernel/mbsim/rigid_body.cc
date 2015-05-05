@@ -194,9 +194,13 @@ namespace MBSim {
 
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
-      for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
-        (*i)->getJacobianOfTranslation(2).resize(nu[0]);
-        (*i)->getJacobianOfRotation(2).resize(nu[0]);
+      if(constraint) {
+        for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
+          (*i)->getJacobianOfTranslation(2).resize(nu[0]);
+          (*i)->getJacobianOfRotation(2).resize(nu[0]);
+        }
+        Z.getJacobianOfTranslation(2).resize(nu[0]);
+        Z.getJacobianOfRotation(2).resize(nu[0]);
       }
 
       PJT[1].resize(nu[1]);
@@ -575,6 +579,22 @@ namespace MBSim {
     return WThetaS;
   }
   
+  void RigidBody::resetPositionsUpToDate() {
+    Body::resetPositionsUpToDate();
+    Z.resetPositionsUpToDate();
+  }
+  void RigidBody::resetVelocitiesUpToDate() {
+    Body::resetVelocitiesUpToDate();
+    Z.resetVelocitiesUpToDate();
+  }
+  void RigidBody::resetJacobiansUpToDate() {
+    Body::resetJacobiansUpToDate();
+    Z.resetJacobiansUpToDate();
+  }
+  void RigidBody::resetGyroscopicAccelerationsUpToDate() {
+    Body::resetGyroscopicAccelerationsUpToDate();
+    Z.resetGyroscopicAccelerationsUpToDate();
+  }
   void RigidBody::resetUpToDate() {
     Body::resetUpToDate();
     Z.resetUpToDate();

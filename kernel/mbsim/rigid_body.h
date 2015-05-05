@@ -250,6 +250,10 @@ namespace MBSim {
       bool transformCoordinates() const {return fTR!=NULL;}
 
       void resetUpToDate();
+      void resetPositionsUpToDate();
+      void resetVelocitiesUpToDate();
+      void resetJacobiansUpToDate();
+      void resetGyroscopicAccelerationsUpToDate();
       const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel; }
       const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel; }
       const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel; }
