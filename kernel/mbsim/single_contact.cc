@@ -145,15 +145,6 @@ namespace MBSim {
 
   void SingleContact::updateh(double t, int j) {
     F = cpData[0].getFrameOfReference().getOrientation(t).col(0) * getGeneralizedSingleValuedForce(t)(0);
-    cout << endl;
-    cout << t << endl;
-    cout << contour[0]->getFrameOfReference()->getOrientation(t) << endl;
-    cout << contour[1]->getFrameOfReference()->getOrientation(t) << endl;
-    cout << cpData[0].getFrameOfReference().getOrientation(t) << endl;
-    cout << cpData[1].getFrameOfReference().getOrientation(t) << endl;
-    cout << getGeneralizedRelativePosition(t) << endl;
-    cout << getGeneralizedSingleValuedForce(t) << endl;
-    cout << F << endl;
     if (fdf) {
       F += cpData[0].getFrameOfReference().getOrientation(t).col(1) * getGeneralizedSingleValuedForce(t)(1);
       if (getFrictionDirections() > 1)
@@ -161,9 +152,6 @@ namespace MBSim {
     }
     h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
     h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
-    cout << cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j) << endl;
-    cout << cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j) << endl;
-    cout << endl;
   }
 
   void SingleContact::updatePositions(double t) {
@@ -195,6 +183,8 @@ namespace MBSim {
         vrel.set(Index(1,getFrictionDirections()), Wt.T() * WvD);
       }
     }
+    else
+      vrel.init(0);
     updVel = false;
   }
 
@@ -764,46 +754,46 @@ namespace MBSim {
         }
       }
 #endif
-      if (getPlotFeature(linkKinematics) == enabled) {
-        bool flag = fcl->isSetValued();
-        plotVector.push_back(g(0)); //gN
-        if ((flag && gActive) || (!flag && fcl->isActive(g(0), 0))) {
-          plotVector.push_back(gdN(0)); //gd-Normal
-          for (int j = 0; j < getFrictionDirections(); j++)
-            plotVector.push_back(gdT(j)); //gd-Tangential
-        }
-        else {
-          for (int j = 0; j < 1 + getFrictionDirections(); j++)
-            plotVector.push_back(numeric_limits<double>::quiet_NaN()); //gd
-        }
-      }
-      if (getPlotFeature(generalizedLinkForce) == enabled) {
-        if (gActive && gdActive[0]) {
-          plotVector.push_back(laN(0) / (fcl->isSetValued() ? dt : 1.));
-          if (gdActive[1]) {
-            for (int j = 0; j < getFrictionDirections(); j++)
-              plotVector.push_back(laT(j) / (fdf->isSetValued() ? dt : 1.));
-          }
-          else {
-            if (fdf) {
-              Vec buf = fdf->dlaTdlaN(gdT, laN(0)) * laN(0);
-              for (int j = 0; j < getFrictionDirections(); j++)
-                plotVector.push_back(buf(j) / (fdf->isSetValued() ? dt : 1.));
-            }
-          }
-        }
-        else {
-          for (int j = 0; j < 1 + getFrictionDirections(); j++)
-            plotVector.push_back(0);
-        }
-      }
-      PlotFeatureStatus pfKinematics = getPlotFeature(linkKinematics);
-      PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
-      setPlotFeature(linkKinematics, disabled);
-      setPlotFeature(generalizedLinkForce, disabled);
+      //if (getPlotFeature(linkKinematics) == enabled) {
+      //  bool flag = fcl->isSetValued();
+      //  plotVector.push_back(g(0)); //gN
+      //  if ((flag && gActive) || (!flag && fcl->isActive(g(0), 0))) {
+      //    plotVector.push_back(gdN(0)); //gd-Normal
+      //    for (int j = 0; j < getFrictionDirections(); j++)
+      //      plotVector.push_back(gdT(j)); //gd-Tangential
+      //  }
+      //  else {
+      //    for (int j = 0; j < 1 + getFrictionDirections(); j++)
+      //      plotVector.push_back(numeric_limits<double>::quiet_NaN()); //gd
+      //  }
+      //}
+      //if (getPlotFeature(generalizedLinkForce) == enabled) {
+      //  if (gActive && gdActive[0]) {
+      //    plotVector.push_back(laN(0) / (fcl->isSetValued() ? dt : 1.));
+      //    if (gdActive[1]) {
+      //      for (int j = 0; j < getFrictionDirections(); j++)
+      //        plotVector.push_back(laT(j) / (fdf->isSetValued() ? dt : 1.));
+      //    }
+      //    else {
+      //      if (fdf) {
+      //        Vec buf = fdf->dlaTdlaN(gdT, laN(0)) * laN(0);
+      //        for (int j = 0; j < getFrictionDirections(); j++)
+      //          plotVector.push_back(buf(j) / (fdf->isSetValued() ? dt : 1.));
+      //      }
+      //    }
+      //  }
+      //  else {
+      //    for (int j = 0; j < 1 + getFrictionDirections(); j++)
+      //      plotVector.push_back(0);
+      //  }
+      //}
+//      PlotFeatureStatus pfKinematics = getPlotFeature(linkKinematics);
+//      PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
+//      setPlotFeature(linkKinematics, disabled);
+//      setPlotFeature(generalizedLinkForce, disabled);
       MechanicalLink::plot(t, dt);
-      setPlotFeature(linkKinematics, pfKinematics);
-      setPlotFeature(generalizedLinkForce, pfKinetics);
+//      setPlotFeature(linkKinematics, pfKinematics);
+//      setPlotFeature(generalizedLinkForce, pfKinetics);
     }
   }
 
