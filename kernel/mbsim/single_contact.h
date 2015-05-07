@@ -76,7 +76,6 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t);
-      virtual void updateJacobians(double t, int j=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -101,17 +100,17 @@ namespace MBSim {
       virtual bool isActive() const;
       virtual bool gActiveChanged();
       virtual bool detectImpact();
-      virtual void solveImpactsFixpointSingle(double dt);
-      virtual void solveConstraintsFixpointSingle();
-      virtual void solveImpactsGaussSeidel(double dt);
-      virtual void solveConstraintsGaussSeidel();
-      virtual void solveImpactsRootFinding(double dt);
-      virtual void solveConstraintsRootFinding();
-      virtual void jacobianConstraints();
-      virtual void jacobianImpacts();
-      virtual void updaterFactors();
-      virtual void checkConstraintsForTermination();
-      virtual void checkImpactsForTermination(double dt);
+      virtual void solveImpactsFixpointSingle(double t, double dt);
+      virtual void solveConstraintsFixpointSingle(double t);
+      virtual void solveImpactsGaussSeidel(double t, double dt);
+      virtual void solveConstraintsGaussSeidel(double t);
+      virtual void solveImpactsRootFinding(double t, double dt);
+      virtual void solveConstraintsRootFinding(double t);
+      virtual void jacobianConstraints(double t);
+      virtual void jacobianImpacts(double t);
+      virtual void updaterFactors(double t);
+      virtual void checkConstraintsForTermination(double t);
+      virtual void checkImpactsForTermination(double t, double dt);
       using MechanicalLink::connect;
       virtual void checkActive(int j);
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);

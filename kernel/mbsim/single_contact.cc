@@ -93,7 +93,8 @@ namespace MBSim {
 //  }
 
   void SingleContact::updateGeneralizedSetValuedForces(double t) {
-    laMV = la;
+    laMV.init(0);
+    laMV.set(Index(0,laSize-1), la);
     updlaMV = false;
   }
 
@@ -106,41 +107,38 @@ namespace MBSim {
 
 
   void SingleContact::updateW(double t, int j) {
-    throw;
 //    if (gActive) {
-//
-//      int fFTangCol = 1;
-//      if (fcl->isSetValued())
-//        fF[1].set(0,cpData[0].getFrameOfReference().getOrientation().col(0));
-//      else
-//        fFTangCol = 0;
-//
-//      if (getFrictionDirections()) {
-//        if (fdf->isSetValued()) {
-//          fF[1].set(fFTangCol, cpData[0].getFrameOfReference().getOrientation().col(1));
-//          if (getFrictionDirections() > 1)
-//            fF[1].set(fFTangCol+1, cpData[0].getFrameOfReference().getOrientation().col(2));
-//        }
-//      }
-//
-//      fF[0] = -fF[1];
-//
-//      for (unsigned int i = 0; i < 2; i++) //TODO: only two contours are interacting at one time?
-//        W[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(0,laSize-1));
+
+    RF.resize(laSize,NONINIT);
+      int fFTangCol = 1;
+      if (fcl->isSetValued())
+        RF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
+      else
+        fFTangCol = 0;
+
+      if (getFrictionDirections()) {
+        if (fdf->isSetValued()) {
+          RF.set(fFTangCol, cpData[0].getFrameOfReference().getOrientation().col(1));
+          if (getFrictionDirections() > 1)
+            RF.set(fFTangCol+1, cpData[0].getFrameOfReference().getOrientation().col(2));
+        }
+      }
+
+      W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
+      W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
 //    }
   }
 
   void SingleContact::updateV(double t, int j) {
-    throw;
-//    if (getFrictionDirections()) {
-//      if (fdf->isSetValued()) {
-//        if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-//          for (unsigned int i = 0; i < 2; i++) { //TODO: only two contours are interacting at one time?
-//            V[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(j).T() * fF[i](Range<Fixed<0>,Fixed<2> >(), iT) * fdf->dlaTdlaN(gdT, laN(0));
-//          }
-//        }
-//      }
-//    }
+    if (getFrictionDirections()) {
+      if (fdf->isSetValued()) {
+        if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
+          for (unsigned int i = 0; i < 2; i++) { //TODO: only two contours are interacting at one time?
+            V[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(1,getFrictionDirections()), laN(0));
+          }
+        }
+      }
+    }
   }
 
   void SingleContact::updateh(double t, int j) {
@@ -165,8 +163,8 @@ namespace MBSim {
 
   void SingleContact::updateVelocities(double t) {
     if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(getGeneralizedRelativePosition(t)(0), 0))) { // TODO: nicer implementation
-      for (unsigned int i = 0; i < 2; i++)
-        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
+//      for (unsigned int i = 0; i < 2; i++)
+//        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
       Vec3 Wn = cpData[0].getFrameOfReference().getOrientation(t).col(0);
 
@@ -189,11 +187,11 @@ namespace MBSim {
   }
 
   void SingleContact::updateg(double t) {
-    throw;
+    g = getGeneralizedRelativePosition(t)(Index(0,gSize-1));
   }
 
   void SingleContact::updategd(double t) {
-    throw;
+    gd = getGeneralizedRelativeVelocity(t)(Index(0,gdSize-1));
   }
 
   void SingleContact::updateStopVector(double t) {
@@ -224,12 +222,6 @@ namespace MBSim {
 //      if (getFrictionDirections())
 //        sv(1) = 1;
 //    }
-  }
-
-  void SingleContact::updateJacobians(double t, int j) {
-    if (gActive)
-      for (unsigned int i = 0; i < 2; i++)
-        contour[i]->updateJacobiansForFrame(t, cpData[i], j);
   }
 
   void SingleContact::updateWRef(const Mat& WParent, int j) {
@@ -827,9 +819,9 @@ namespace MBSim {
       ftil->setParent(this);
   }
 
-  void SingleContact::solveImpactsFixpointSingle(double dt) {
+  void SingleContact::solveImpactsFixpointSingle(double t, double dt) {
     if (gActive) {
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -860,10 +852,10 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsFixpointSingle() {
+  void SingleContact::solveConstraintsFixpointSingle(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -891,11 +883,11 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveImpactsGaussSeidel(double dt) {
+  void SingleContact::solveImpactsGaussSeidel(double t, double dt) {
     assert(getFrictionDirections() <= 1);
     if (gActive) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -925,12 +917,12 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsGaussSeidel() {
+  void SingleContact::solveConstraintsGaussSeidel(double t) {
     assert(getFrictionDirections() <= 1);
 
     if (gdActive[0]) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -960,10 +952,10 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveImpactsRootFinding(double dt) {
+  void SingleContact::solveImpactsRootFinding(double t, double dt) {
     if (gActive) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -993,10 +985,10 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsRootFinding() {
+  void SingleContact::solveConstraintsRootFinding(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -1026,7 +1018,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::jacobianConstraints() {
+  void SingleContact::jacobianConstraints(double t) {
     if (gdActive[0]) {
 
       const SqrMat Jprox = ds->getJprox();
@@ -1077,7 +1069,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::jacobianImpacts() {
+  void SingleContact::jacobianImpacts(double t) {
     if (gActive) {
 
       const SqrMat Jprox = ds->getJprox();
@@ -1127,10 +1119,10 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::updaterFactors() {
+  void SingleContact::updaterFactors(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
 
       int addIndexnormal = 0;
@@ -1190,10 +1182,10 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::checkConstraintsForTermination() {
+  void SingleContact::checkConstraintsForTermination(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -1229,10 +1221,10 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::checkImpactsForTermination(double dt) {
+  void SingleContact::checkImpactsForTermination(double t, double dt) {
     if (gActive) {
 
-      const double *a = ds->getGs()();
+      const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();

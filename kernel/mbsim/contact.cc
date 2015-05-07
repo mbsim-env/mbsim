@@ -633,80 +633,80 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsFixpointSingle(double dt) {
+  void Contact::solveImpactsFixpointSingle(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsFixpointSingle(dt);
+        jter->solveImpactsFixpointSingle(t,dt);
     }
   }
 
-  void Contact::solveConstraintsFixpointSingle() {
+  void Contact::solveConstraintsFixpointSingle(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsFixpointSingle();
+        jter->solveConstraintsFixpointSingle(t);
     }
   }
 
-  void Contact::solveImpactsGaussSeidel(double dt) {
+  void Contact::solveImpactsGaussSeidel(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsGaussSeidel(dt);
+        jter->solveImpactsGaussSeidel(t,dt);
     }
   }
 
-  void Contact::solveConstraintsGaussSeidel() {
+  void Contact::solveConstraintsGaussSeidel(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsGaussSeidel();
+        jter->solveConstraintsGaussSeidel(t);
     }
   }
 
-  void Contact::solveImpactsRootFinding(double dt) {
+  void Contact::solveImpactsRootFinding(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsRootFinding(dt);
+        jter->solveImpactsRootFinding(t,dt);
     }
   }
 
-  void Contact::solveConstraintsRootFinding() {
+  void Contact::solveConstraintsRootFinding(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveConstraintsRootFinding();
+        jter->solveConstraintsRootFinding(t);
     }
   }
 
-  void Contact::jacobianConstraints() {
+  void Contact::jacobianConstraints(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianConstraints();
+        jter->jacobianConstraints(t);
     }
   }
 
-  void Contact::jacobianImpacts() {
+  void Contact::jacobianImpacts(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianImpacts();
+        jter->jacobianImpacts(t);
     }
   }
 
-  void Contact::updaterFactors() {
+  void Contact::updaterFactors(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updaterFactors();
+        jter->updaterFactors(t);
     }
   }
 
-  void Contact::checkConstraintsForTermination() {
+  void Contact::checkConstraintsForTermination(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkConstraintsForTermination();
+        jter->checkConstraintsForTermination(t);
     }
   }
 
-  void Contact::checkImpactsForTermination(double dt) {
+  void Contact::checkImpactsForTermination(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkImpactsForTermination(dt);
+        jter->checkImpactsForTermination(t,dt);
     }
   }
 

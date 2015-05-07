@@ -141,7 +141,7 @@ namespace MBSimIntegrator {
       system.getGs() << system.getG();
       system.getb() << system.getgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
 
-      iter = system.solveImpacts(dt);
+      iter = system.solveImpacts(t,dt);
       if (iter > maxIter)
         maxIter = iter;
       sumIter += iter;

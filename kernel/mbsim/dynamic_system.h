@@ -153,65 +153,65 @@ namespace MBSim {
        * \brief solve contact equations with single step fixed point scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsFixpointSingle();
+      virtual int solveConstraintsFixpointSingle(double t);
 
       /**
        * \brief solve impact equations with single step fixed point scheme on velocity level 
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpactsFixpointSingle(double dt);
+      virtual int solveImpactsFixpointSingle(double t, double dt);
 
       /**
        * \brief solve contact equations with Gauss-Seidel scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsGaussSeidel();
+      virtual int solveConstraintsGaussSeidel(double t);
 
       /**
        * \brief solve impact equations with Gauss-Seidel scheme on velocity level 
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpactsGaussSeidel(double dt);
+      virtual int solveImpactsGaussSeidel(double t, double dt);
 
       /**
        * \brief solve contact equations with Newton scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsRootFinding();
+      virtual int solveConstraintsRootFinding(double t);
 
       /**
        * \brief solve impact equations with Newton scheme on velocity level 
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpactsRootFinding(double dt);
+      virtual int solveImpactsRootFinding(double t, double dt);
 
       /**
        * \brief compute JACOBIAN of contact equations
        */
-      virtual int jacobianConstraints();
+      virtual int jacobianConstraints(double t);
 
       /**
        * \brief compute JACOBIAN of contact equations on velocity level
        */
-      virtual int jacobianImpacts();
+      virtual int jacobianImpacts(double t);
 
       /**
        * \brief validate force laws concerning given tolerances
        */
-      virtual void checkConstraintsForTermination();
+      virtual void checkConstraintsForTermination(double t);
 
       /**
        * \brief validate force laws concerning given tolerances on velocity level
        */
-      virtual void checkImpactsForTermination(double dt);
+      virtual void checkImpactsForTermination(double t, double dt);
 
       /**
        * \brief update relaxation factors for contact equations
        */
-      virtual void updaterFactors();
+      virtual void updaterFactors(double t);
 
       /**
        * \param name of the frame
@@ -284,6 +284,8 @@ namespace MBSim {
       const fmatvec::Mat& getV(double t, int i=0);
       const fmatvec::Vec& getwb(double t);
       const fmatvec::Vec& getr(double t, int i=0);
+      const fmatvec::Vec& getg(double t);
+      const fmatvec::Vec& getgd(double t);
       const fmatvec::Mat& getWInverseKinetics(double t, int i=0);
       const fmatvec::Mat& getbInverseKinetics(double t);
 

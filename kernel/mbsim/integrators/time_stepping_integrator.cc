@@ -79,6 +79,7 @@ namespace MBSimIntegrator {
 
   void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
     while(t<tStop) { // time loop
+      system.resetUpToDate();
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
@@ -93,13 +94,18 @@ namespace MBSimIntegrator {
       }
 
       q += system.deltaq(z,t,dt);
+      system.resetUpToDate();
 
       t += dt;
 
-      system.update(z,t); 
+      system.updateg(t);
+      system.checkActive(1);
+    if (system.gActiveChanged())
+      system.resize_(t);
+//      system.update(z,t); 
 
-      system.getb() << system.getgd() + system.getW().T()*slvLLFac(system.getLLM(),system.geth())*dt;
-      iter = system.solveImpacts(dt);
+      system.getb() << system.getgd(t) + system.getW(t).T()*slvLLFac(system.getLLM(t),system.geth(t))*dt;
+      iter = system.solveImpacts(t,dt);
 
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;

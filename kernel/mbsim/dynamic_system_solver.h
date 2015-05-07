@@ -130,14 +130,14 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual int solveConstraintsFixpointSingle();
-      virtual int solveImpactsFixpointSingle(double dt = 0);
-      virtual int solveConstraintsGaussSeidel();
-      virtual int solveImpactsGaussSeidel(double dt = 0);
-      virtual int solveConstraintsRootFinding();
-      virtual int solveImpactsRootFinding(double dt = 0);
-      virtual void checkConstraintsForTermination();
-      virtual void checkImpactsForTermination(double dt = 0);
+      virtual int solveConstraintsFixpointSingle(double t);
+      virtual int solveImpactsFixpointSingle(double t, double dt = 0);
+      virtual int solveConstraintsGaussSeidel(double t);
+      virtual int solveImpactsGaussSeidel(double t, double dt = 0);
+      virtual int solveConstraintsRootFinding(double t);
+      virtual int solveImpactsRootFinding(double t, double dt = 0);
+      virtual void checkConstraintsForTermination(double t);
+      virtual void checkImpactsForTermination(double t, double dt = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -162,6 +162,8 @@ namespace MBSim {
        */
       virtual void updater(double t, int j=0);
       virtual void updatewb(double t);
+      virtual void updateg(double t);
+      virtual void updategd(double t);
       virtual void updateW(double t, int j=0);
       virtual void updateV(double t, int j=0);
       /***************************************************/
@@ -180,14 +182,14 @@ namespace MBSim {
        * \brief solves prox-functions for contact forces using sparsity structure
        * \return iterations of solver
        */
-      virtual int solveConstraints();
+      virtual int solveConstraints(double t);
 
       /**
        * \brief solves prox-functions for impacts on velocity level using sparsity structure
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpacts(double dt = 0);
+      virtual int solveImpacts(double t, double dt = 0);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -273,21 +275,21 @@ namespace MBSim {
        * \function pointer for election of prox-solver for contact equations
        * \return iterations of solver
        */
-      int (DynamicSystemSolver::*solveConstraints_)();
+      int (DynamicSystemSolver::*solveConstraints_)(double t);
 
       /**
        * \brief function pointer for election of prox-solver for impact equations on velocity level
        * \param time step
        * \return iterations of solver
        */
-      int (DynamicSystemSolver::*solveImpacts_)(double dt);
+      int (DynamicSystemSolver::*solveImpacts_)(double t, double dt);
 
       /**
        * \brief solution of contact equations with Cholesky decomposition
        * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
-      int solveConstraintsLinearEquations();
+      int solveConstraintsLinearEquations(double t);
 
       /**
        * \brief solution of contact equations with Cholesky decomposition on velocity level
@@ -295,7 +297,7 @@ namespace MBSim {
        * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
-      int solveImpactsLinearEquations(double dt = 0);
+      int solveImpactsLinearEquations(double t, double dt = 0);
 
       /**
        * \brief updates mass action matrix
@@ -529,6 +531,10 @@ namespace MBSim {
       bool updateW(int j) { return updW[j]; }
       bool updateV(int j) { return updV[j]; }
       bool updatewb() { return updwb; }
+      bool updateg() { return updg; }
+      bool updategd() { return updgd; }
+
+      void resize_(double t);
 
     protected:
       /**
@@ -766,7 +772,7 @@ namespace MBSim {
        * \brief update relaxation factors for contact equations
        * \todo global not available because of unsymmetric mass action matrix TODO
        */
-      virtual void updaterFactors();
+      virtual void updaterFactors(double t);
 
       /**
        * \brief compute inverse kinetics constraint forces
@@ -795,7 +801,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updG;
+      bool updT, updh[2], updr[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG;
 
     private:
       /**

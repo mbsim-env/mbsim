@@ -347,7 +347,7 @@ namespace MBSimIntegrator {
               qT1 += sysT1->deltaq(zT1,t,dt);
               sysT1->update(zT1,t+dt,1);
               sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dt;
-              iterA  = sysT1->solveImpacts(dt);
+              iterA  = sysT1->solveImpacts(t,dt);
               getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
               la1d/=dt;
               uT1 += sysT1->deltau(zT1,t+dt,dt);
@@ -369,7 +369,7 @@ namespace MBSimIntegrator {
                 qT1 += sysT1->deltaq(zT1,t,dtHalf);
                 sysT1->update(zT1,t+dtHalf,1);
                 sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
-                iterB1  = sysT1->solveImpacts(dtHalf);
+                iterB1  = sysT1->solveImpacts(t,dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
                 la2b/=dtHalf;
                 uT1 += sysT1->deltau(zT1,t+dtHalf,dtHalf);
@@ -387,7 +387,7 @@ namespace MBSimIntegrator {
                 qT1 += sysT1->deltaq(zT1,t,dtThird);
                 sysT1->update(zT1,t+dtThird,1);
                 sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
-                sysT1->solveImpacts(dtThird);
+                sysT1->solveImpacts(t,dtThird);
                 uT1 += sysT1->deltau(zT1,t+dtThird,dtThird);
                 xT1 += sysT1->deltax(zT1,t+dtThird,dtThird); 
                 singleStepsT1++;
@@ -403,7 +403,7 @@ namespace MBSimIntegrator {
                 qT2 += sysT2->deltaq(zT2,t,dtHalf);
                 sysT2->update(zT2,t+dtHalf,1);
                 sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
-                iterB1  = sysT2->solveImpacts(dtHalf);
+                iterB1  = sysT2->solveImpacts(t,dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
                 la2b/=dtHalf;
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtHalf);

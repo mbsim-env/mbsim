@@ -92,17 +92,17 @@ namespace MBSim {
       virtual bool gActiveChanged() {
         return false;
       }
-      virtual void solveImpactsFixpointSingle(double dt);
-      virtual void solveConstraintsFixpointSingle();
-      virtual void solveImpactsGaussSeidel(double dt);
-      virtual void solveConstraintsGaussSeidel();
-      virtual void solveImpactsRootFinding(double dt);
-      virtual void solveConstraintsRootFinding();
-      virtual void jacobianConstraints();
-      virtual void jacobianImpacts();
-      virtual void updaterFactors();
-      virtual void checkImpactsForTermination(double dt);
-      virtual void checkConstraintsForTermination();
+      virtual void solveImpactsFixpointSingle(double t, double dt);
+      virtual void solveConstraintsFixpointSingle(double t);
+      virtual void solveImpactsGaussSeidel(double t, double dt);
+      virtual void solveConstraintsGaussSeidel(double t);
+      virtual void solveImpactsRootFinding(double t, double dt);
+      virtual void solveConstraintsRootFinding(double t);
+      virtual void jacobianConstraints(double t);
+      virtual void jacobianImpacts(double t);
+      virtual void updaterFactors(double t);
+      virtual void checkImpactsForTermination(double t, double dt);
+      virtual void checkConstraintsForTermination(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
