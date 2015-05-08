@@ -257,6 +257,8 @@ namespace MBSim {
 
       const fmatvec::Vec& getla() const { return la; }
       fmatvec::Vec& getla() { return la; }
+      const fmatvec::Vec& getLa() const { return La; }
+      fmatvec::Vec& getLa() { return La; }
       const fmatvec::Vec& getg() const { return g; }
       fmatvec::Vec& getg() { return g; }
       const fmatvec::Vec& getgd() const { return gd; }
@@ -411,10 +413,16 @@ namespace MBSim {
       void updategdRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to contact force parameters of dynamic system parent
+       * \brief references to contact forces of dynamic system parent
        * \param vector to be referenced
        */
       void updatelaRef(const fmatvec::Vec &ref);
+
+      /**
+       * \brief references to contact impulses of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updateLaRef(const fmatvec::Vec &ref);
 
       void updatelaInverseKineticsRef(const fmatvec::Vec &ref);
       void updatebInverseKineticsRef(const fmatvec::Mat &ref);
@@ -836,7 +844,7 @@ namespace MBSim {
       /**
        * \brief contact force parameters
        */
-      fmatvec::Vec la;
+      fmatvec::Vec la, La;
 
       /** 
        * \brief relative distances and velocities

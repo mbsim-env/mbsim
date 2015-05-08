@@ -178,6 +178,14 @@ namespace MBSim {
     }
   }
 
+  void Contact::updateLaRef(const Vec& LaParent) {
+    MechanicalLink::updateLaRef(LaParent);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->updateLaRef(LaParent);
+    }
+  }
+
   void Contact::updategRef(const Vec& gParent) {
     MechanicalLink::updategRef(gParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {

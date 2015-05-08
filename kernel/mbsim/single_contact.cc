@@ -264,6 +264,20 @@ namespace MBSim {
     }
   }
 
+  void SingleContact::updateLaRef(const Vec& LaParent) {
+    MechanicalLink::updateLaRef(LaParent);
+    if (laSize) {
+      int laIndSizeNormal = 0;
+      if (fcl->isSetValued()) {
+        LaN >> La(0, 0);
+        laIndSizeNormal++;
+      }
+
+      if (fdf and fdf->isSetValued())
+        LaT >> La(laIndSizeNormal, laSize - 1);
+    }
+  }
+
   void SingleContact::updategdRef(const Vec& gdParent) {
     MechanicalLink::updategdRef(gdParent);
     if (gdSize) {
@@ -824,7 +838,7 @@ namespace MBSim {
       const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &LaMBS = ds->getLa();
       const Vec &b = ds->getb();
 
       int addIndexNormal = 0;
@@ -834,20 +848,20 @@ namespace MBSim {
         addIndexNormal++;
         gdnN(0) = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN(0) += a[j] * LaMBS(ja[j]);
 
-        laN(0) = fnil->project(laN(0), gdnN(0), gdN(0), rFactor(0));
+        LaN(0) = fnil->project(LaN(0), gdnN(0), gdN(0), rFactor(0));
       }
 
       if (ftil) {
         for (int i = 0; i < getFrictionDirections(); i++) {
           gdnT(i) = b(laInd + addIndexNormal + i);
           for (int j = ia[laInd + i + addIndexNormal]; j < ia[laInd + 1 + i + addIndexNormal]; j++)
-            gdnT(i) += a[j] * laMBS(ja[j]);
+            gdnT(i) += a[j] * LaMBS(ja[j]);
         }
 
         //            if (ftil) //There must be a ftil coming with a setValued fdf
-        laT = ftil->project(laT, gdnT, gdT, laN(0) * scaleFactorN, rFactor(addIndexNormal));
+        LaT = ftil->project(LaT, gdnT, gdT, LaN(0) * scaleFactorN, rFactor(addIndexNormal));
       }
     }
   }
@@ -890,7 +904,7 @@ namespace MBSim {
       const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &LaMBS = ds->getLa();
       const Vec &b = ds->getb();
 
       //TODO: check indices (in other solution algorithms too!)
@@ -900,19 +914,19 @@ namespace MBSim {
         addIndexnormal++;
         gdnN(0) = b(laInd);
         for (int j = ia[laInd] + 1; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN(0) += a[j] * LaMBS(ja[j]);
 
         const double buf = fnil->solve(a[ia[laInd]], gdnN(0), gdN(0));
-        laN(0) += om * (buf - laN(0));
+        LaN(0) += om * (buf - LaN(0));
       }
 
       if (ftil) {
         gdnT(0) = b(laInd + addIndexnormal);
         for (int j = ia[laInd + addIndexnormal] + 1; j < ia[laInd + addIndexnormal + 1]; j++)
-          gdnT(0) += a[j] * laMBS(ja[j]);
+          gdnT(0) += a[j] * LaMBS(ja[j]);
 
-        Vec buf = ftil->solve(ds->getG()(Index(laInd + addIndexnormal, laInd + getFrictionDirections())), gdnT, gdT, laN(0));
-        laT += om * (buf - laT);
+        Vec buf = ftil->solve(ds->getG()(Index(laInd + addIndexnormal, laInd + getFrictionDirections())), gdnT, gdT, LaN(0));
+        LaT += om * (buf - LaT);
       }
     }
   }
@@ -958,7 +972,7 @@ namespace MBSim {
       const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &LaMBS = ds->getLa();
       const Vec &b = ds->getb();
 
       //compute residuum for normal direction
@@ -967,9 +981,9 @@ namespace MBSim {
         addIndexnormal++;
         gdnN(0) = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gdnN(0) += a[j] * LaMBS(ja[j]);
 
-        res(0) = laN(0) - fnil->project(laN(0), gdnN(0), gdN(0), rFactor(0));
+        res(0) = LaN(0) - fnil->project(LaN(0), gdnN(0), gdN(0), rFactor(0));
       }
 
       //compute residuum for tangential directions
@@ -977,10 +991,10 @@ namespace MBSim {
         for (int i = 0; i < getFrictionDirections(); i++) {
           gdnT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
-            gdnT(i) += a[j] * laMBS(ja[j]);
+            gdnT(i) += a[j] * LaMBS(ja[j]);
         }
         //            if (ftil) There must be a frictional impact law if fdf is set valued!
-        res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = laT - ftil->project(laT, gdnT, gdT, laN(0), rFactor(addIndexnormal));
+        res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = LaT - ftil->project(LaT, gdnT, gdT, LaN(0), rFactor(addIndexnormal));
       }
     }
   }
@@ -1083,7 +1097,7 @@ namespace MBSim {
       if (fcl->isSetValued()) {
     	  addIndexNormal++;
 
-    	  Vec diff = fnil->diff(laN(0), gdnN(0), gdN(0), rFactor(0));
+    	  Vec diff = fnil->diff(LaN(0), gdnN(0), gdN(0), rFactor(0));
 
     	  jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
     	  for (int i = 0; i < G.size(); i++)
@@ -1091,7 +1105,7 @@ namespace MBSim {
       }
 
       if (getFrictionDirections() == 1) {
-        Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(addIndexNormal));
+        Mat diff = ftil->diff(LaT, gdnT, gdT, LaN(0), rFactor(addIndexNormal));
         RowVec jp2 = Jprox.row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + addIndexNormal) = 1;
@@ -1105,7 +1119,7 @@ namespace MBSim {
 
       }
       else if (getFrictionDirections() == 2) {
-        Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(addIndexNormal));
+        Mat diff = ftil->diff(LaT, gdnT, gdT, LaN(0), rFactor(addIndexNormal));
         Mat jp2 = Jprox(Index(laInd + addIndexNormal, laInd + addIndexNormal + 1), Index(0, Jprox.cols() - 1));
         Mat e2(2, jp2.cols());
         e2(0, laInd + addIndexNormal) = 1;
@@ -1227,7 +1241,7 @@ namespace MBSim {
       const double *a = ds->getGs(t)();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &LaMBS = ds->getLa();
       const Vec &b = ds->getb();
 
       int addIndexnormal = 0;
@@ -1237,8 +1251,8 @@ namespace MBSim {
         addIndexnormal++;
         gdnN(0) = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
-        if (!fnil->isFulfilled(laN(0), gdnN(0), gdN(0), LaTol, gdTol)) {
+          gdnN(0) += a[j] * LaMBS(ja[j]);
+        if (!fnil->isFulfilled(LaN(0), gdnN(0), gdN(0), LaTol, gdTol)) {
           ds->setTermination(false);
           return;
         }
@@ -1248,9 +1262,9 @@ namespace MBSim {
         for (int i = 0; i < getFrictionDirections(); i++) {
           gdnT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
-            gdnT(i) += a[j] * laMBS(ja[j]);
+            gdnT(i) += a[j] * LaMBS(ja[j]);
         }
-        if (!ftil->isFulfilled(laT, gdnT, gdT, laN(0) * scaleFactorN, LaTol, gdTol)) {
+        if (!ftil->isFulfilled(LaT, gdnT, gdT, LaN(0) * scaleFactorN, LaTol, gdTol)) {
           ds->setTermination(false);
           return;
         }

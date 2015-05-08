@@ -57,7 +57,7 @@ namespace MBSim {
       virtual void updateM(double t, int i=0) { }
       virtual void updatedhdz(double t);
       virtual void updatedq(double t, double dt) { qd = getT(t) * u * dt; }
-      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(getLLM(t), geth(t) * dt + getr(t)); }
+      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(getLLM(t), (geth(t) + getr(t)) * dt ); }
       virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + getr(t,i)); }
       virtual void updateqd(double t) { qd = getT(t) * u; }
       virtual void updatezd(double t) { updateqd(t); updateud(t); }

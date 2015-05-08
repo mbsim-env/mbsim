@@ -796,6 +796,13 @@ namespace MBSim {
       (**i).updatelaRef(laParent);
   }
 
+  void DynamicSystem::updateLaRef(const Vec &LaParent) {
+    La >> LaParent(laInd, laInd + laSize - 1);
+
+    for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      (**i).updateLaRef(LaParent);
+  }
+
   void DynamicSystem::updatelaInverseKineticsRef(const Vec &laParent) {
     laInverseKinetics >> laParent(0, laInverseKineticsSize - 1);
 

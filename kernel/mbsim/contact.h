@@ -88,6 +88,7 @@ namespace MBSim {
       virtual void updatehRef(const fmatvec::Vec &hRef, int j = 0);
       virtual void updatewbRef(const fmatvec::Vec &ref);
       virtual void updatelaRef(const fmatvec::Vec& ref);
+      virtual void updateLaRef(const fmatvec::Vec& ref);
       virtual void updategRef(const fmatvec::Vec& ref);
       virtual void updategdRef(const fmatvec::Vec& ref);
       virtual void updateresRef(const fmatvec::Vec& ref);

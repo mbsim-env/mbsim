@@ -52,7 +52,7 @@ namespace MBSim {
   }
 
   void Graph::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(getLLM(t), geth(t)*dt+getr(t));
+    ud[0] = slvLLFac(getLLM(t), (geth(t)+getr(t))*dt);
   }
 
   void Graph::updateud(double t, int j) {

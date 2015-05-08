@@ -89,6 +89,10 @@ namespace MBSim {
     la >> laParent(laInd,laInd+laSize-1);
   }
 
+  void Link::updateLaRef(const Vec& LaParent) {
+    La >> LaParent(laInd,laInd+laSize-1);
+  }
+
   void Link::deletelaRef() {
     la.resize(la.size(), NONINIT);
   }
@@ -181,15 +185,27 @@ namespace MBSim {
   }
 
   void Link::savela(double dt) {
-    la0 >> la/dt;
+    la0 >> la;
   }
 
   void Link::initla(double dt) {
     if(la0.size() == la.size()) // TODO check if initialising to 0 is better if contact was inactive before
-      la = la0*dt;
+      la = la0;
     else
       la.init(0);
   }
+
+  void Link::saveLa(double dt) {
+    La0 >> La;
+  }
+
+  void Link::initLa(double dt) {
+    if(La0.size() == La.size()) // TODO check if initialising to 0 is better if contact was inactive before
+      La = La0;
+    else
+      La.init(0);
+  }
+
 
   void Link::decreaserFactors() {
     for(int i=0; i<rFactor.size(); i++)

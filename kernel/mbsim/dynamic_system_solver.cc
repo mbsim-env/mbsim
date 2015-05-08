@@ -330,6 +330,7 @@ namespace MBSim {
       VParent[1].resize(getuSize(1), getlaSize());
       wbParent.resize(getlaSize());
       laParent.resize(getlaSize());
+      LaParent.resize(getlaSize());
       rFactorParent.resize(getlaSize());
       sParent.resize(getlaSize());
       if (impactSolver == RootFinding)
@@ -369,6 +370,7 @@ namespace MBSim {
       updateudRef(udParent1, 1);
       updateudallRef(udParent1, 1);
       updatelaRef(laParent);
+      updateLaRef(LaParent);
       updategRef(gParent);
       updategdRef(gdParent);
       updatehRef(hParent[0], 0);
@@ -656,24 +658,24 @@ namespace MBSim {
     if (term)
       return 0;
 
-    DiagMat I(la.size(), INIT, 1);
+    DiagMat I(La.size(), INIT, 1);
     for (iter = 1; iter < maxIter; iter++) {
 
-      if (Jprox.size() != la.size())
-        Jprox.resize(la.size(), NONINIT);
+      if (Jprox.size() != La.size())
+        Jprox.resize(La.size(), NONINIT);
 
       if (numJac) {
-        for (int j = 0; j < la.size(); j++) {
-          const double xj = la(j);
+        for (int j = 0; j < La.size(); j++) {
+          const double xj = La(j);
           double dx = .5 * epsroot();
           
           do
             dx += dx;
-          while (fabs(xj + dx - la(j)) < epsroot());
+          while (fabs(xj + dx - La(j)) < epsroot());
           
-          la(j) += dx;
+          La(j) += dx;
           Group::solveImpactsRootFinding(t,dt);
-          la(j) = xj;
+          La(j) = xj;
           Jprox.col(j) = (res - res0) / dx;
         }
       }
@@ -691,11 +693,11 @@ namespace MBSim {
       else
         THROW_MBSIMERROR("Internal error");
 
-      Vec La_old = la.copy();
+      Vec La_old = La.copy();
       double alpha = 1.;
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
-        la = La_old - alpha * dx;
+        La = La_old - alpha * dx;
         Group::solveImpactsRootFinding(t,dt);
         nrmf = nrm2(res);
         if (nrmf < nrmf0)
@@ -936,20 +938,20 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpacts(double t, double dt) {
-    if (la.size() == 0)
+    if (La.size() == 0)
       return 0;
     double H = 1;
     if (dt > 0)
       H = dt;
 
     if (useOldla)
-      initla(H);
+      initLa(H);
     else
-      la.init(0);
+      La.init(0);
     
     int iter;
-    Vec laOld;
-    laOld << la;
+    Vec LaOld;
+    LaOld << La;
     iter = (this->*solveImpacts_)(t,dt); // solver election
     if (iter >= maxIter) {
       msg(Warn) << "\n";
@@ -967,7 +969,9 @@ namespace MBSim {
       msg(Warn) << "high number of iterations: " << iter << endl;
 
     if (useOldla)
-      savela(H);
+      saveLa(H);
+
+    la = La/dt;
 
     return iter;
   }
@@ -1039,7 +1043,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations(double t, double dt) {
-    la = slvLS(G, -(gd + W[0].T() * slvLLFac(LLM[0], h[0]) * dt));
+    La = slvLS(G, -(gd + W[0].T() * slvLLFac(LLM[0], h[0]) * dt));
     return 1;
   }
 
@@ -1073,6 +1077,7 @@ namespace MBSim {
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
+      updateLaRef(LaParent(0, laSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
       if (impactSolver == RootFinding)
         updateresRef(resParent(0, laSize - 1));
@@ -1095,6 +1100,7 @@ namespace MBSim {
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
+      updateLaRef(LaParent(0, laSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
       if (impactSolver == RootFinding)
         updateresRef(resParent(0, laSize - 1));
@@ -1244,6 +1250,16 @@ namespace MBSim {
   void DynamicSystemSolver::initla(double dt) {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).initla(dt);
+  }
+
+  void DynamicSystemSolver::saveLa(double dt) {
+    for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      (**i).saveLa(dt);
+  }
+
+  void DynamicSystemSolver::initLa(double dt) {
+    for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      (**i).initLa(dt);
   }
 
   double DynamicSystemSolver::computePotentialEnergy() {
@@ -1642,6 +1658,7 @@ namespace MBSim {
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
+      updateLaRef(LaParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
       updateStateDependentVariables(t); // TODO necessary?

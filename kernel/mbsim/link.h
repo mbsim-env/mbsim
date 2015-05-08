@@ -132,6 +132,11 @@ namespace MBSim {
       virtual void updatelaRef(const fmatvec::Vec& ref);
 
       /**
+       * \brief references to contact force parameter of dynamic system parent
+       */
+      virtual void updateLaRef(const fmatvec::Vec& ref);
+
+      /**
        * \brief delete reference to contact force parameter of dynamic system parent
        */
       virtual void deletelaRef();
@@ -376,6 +381,8 @@ namespace MBSim {
 
       const fmatvec::Vec& getla() const { return la; }
       fmatvec::Vec& getla() { return la; }
+      const fmatvec::Vec& getLa() const { return La; }
+      fmatvec::Vec& getLa() { return La; }
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
       int getbSize() const { return bSize; }
@@ -408,14 +415,24 @@ namespace MBSim {
       const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getGeneralizedSetValuedForce(t):getGeneralizedSingleValuedForce(t); }
 
       /**
-       * \brief saves contact force parameters for use as starting value in next time step
+       * \brief saves contact forces for use as starting value in next time step
        */
       void savela(double dt=1.0);
 
       /**
-       * \brief load contact force parameters for use as starting value
+       * \brief saves contact impulses for use as starting value in next time step
+       */
+      void saveLa(double dt=1.0);
+
+      /**
+       * \brief load contact forces for use as starting value
        */
       void initla(double dt=1.0);
+
+      /**
+       * \brief load contact impulses for use as starting value
+       */
+      void initLa(double dt=1.0);
 
       /**
        * \brief decrease rfactor if mass action matrix is not diagonal dominant (cf. Foerg: Dissertation, page 80 et seq.) 
@@ -486,7 +503,7 @@ namespace MBSim {
       /**
        * \brief relative distance, relative velocity, contact force parameters
        */
-      fmatvec::Vec g, gd, la;
+      fmatvec::Vec g, gd, la, La;
       
       /*!
        * \brief contact forces of smooth contact laws
@@ -526,7 +543,7 @@ namespace MBSim {
       /**
        * \brief attribute to save contact force parameter of previous time step
        */
-      fmatvec::Vec la0;
+      fmatvec::Vec la0, La0;
 
       /**
        * \brief vector of rfactors for relaxation of contact equations

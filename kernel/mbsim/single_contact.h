@@ -83,6 +83,7 @@ namespace MBSim {
       virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
       virtual void updatehRef(const fmatvec::Vec &hRef, int j=0);
       virtual void updatelaRef(const fmatvec::Vec& ref);
+      virtual void updateLaRef(const fmatvec::Vec& ref);
       virtual void updategdRef(const fmatvec::Vec& ref);
       virtual void calcxSize();
       virtual void calclaSize(int j);
@@ -179,6 +180,10 @@ namespace MBSim {
       fmatvec::Vec getlaN() const { return laN; }
       fmatvec::Vec & getlaT() { return laT; }
       fmatvec::Vec getlaT() const { return laT; }
+      fmatvec::Vec & getLaN() { return LaN; }
+      fmatvec::Vec getLaN() const { return LaN; }
+      fmatvec::Vec & getLaT() { return LaT; }
+      fmatvec::Vec getLaT() const { return LaT; }
       fmatvec::Vec & getgdN() { return gdN; }
       fmatvec::Vec getgdN() const { return gdN; }
       fmatvec::Vec & getgdT() { return gdT; }
@@ -254,14 +259,14 @@ namespace MBSim {
        *
        * \todo: only double needed here
        */
-      fmatvec::Vec laN;
+      fmatvec::Vec laN, LaN;
 
       /*!
        * \brief force in tangential direction
        *
        * \todo: use fixed size?
        */
-      fmatvec::Vec laT;
+      fmatvec::Vec laT, LaT;
 
       /*!
        * \brief relative velocity in normal direction

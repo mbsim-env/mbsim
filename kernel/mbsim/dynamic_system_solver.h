@@ -375,16 +375,28 @@ namespace MBSim {
       void projectGeneralizedVelocities(double t, int mode);
 
       /**
-       * \brief save contact force parameter for use as starting value in next time step
+       * \brief save contact forces for use as starting value in next time step
        * \todo put in dynamic system TODO
        */
       void savela(double dt=1.0);
 
       /**
-       * \brief load contact force parameter for use as starting value
+       * \brief load contact forces for use as starting value
        * \todo put in dynamic system TODO
        */
       void initla(double dt=1.0);
+
+      /**
+       * \brief save contact impulses for use as starting value in next time step
+       * \todo put in dynamic system TODO
+       */
+      void saveLa(double dt=1.0);
+
+      /**
+       * \brief load contact impulses for use as starting value
+       * \todo put in dynamic system TODO
+       */
+      void initLa(double dt=1.0);
 
       /**
        * \brief compute kinetic energy of entire dynamic system
@@ -519,7 +531,7 @@ namespace MBSim {
       void setRootID(int ID) {rootID = ID;}
       int getRootID() const {return rootID;}
       void setq(const fmatvec::Vec& q_){ q = q_;}
-      void setLa(const fmatvec::Vec& la_){ la = la_;}
+      void setLa(const fmatvec::Vec& La_){ La = La_;}
 
       void resetUpToDate();
 
@@ -570,7 +582,7 @@ namespace MBSim {
       /**
        * \brief contact force parameters
        */
-      fmatvec::Vec laParent;
+      fmatvec::Vec laParent, LaParent;
 
       /**
        * \brief relaxation parameters for contact equations
