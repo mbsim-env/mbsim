@@ -286,6 +286,7 @@ namespace MBSim {
       const fmatvec::Mat& getV(double t, int i=0);
       const fmatvec::Vec& getwb(double t);
       const fmatvec::Vec& getr(double t, int i=0);
+      const fmatvec::Vec& getrdt(double t, int i=0);
       const fmatvec::Vec& getg(double t);
       const fmatvec::Vec& getgd(double t);
       const fmatvec::Mat& getWInverseKinetics(double t, int i=0);
@@ -379,6 +380,12 @@ namespace MBSim {
        * \param vector to be referenced
        */
       void updaterRef(const fmatvec::Vec &ref, int j=0);
+
+      /**
+       * \brief references to nonsmooth right hand side of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updaterdtRef(const fmatvec::Vec &ref, int j=0);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
@@ -834,7 +841,7 @@ namespace MBSim {
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
        */
-      fmatvec::Vec h[2], r[2], f;
+      fmatvec::Vec h[2], r[2], rdt[2], f;
 
       /**
        * \brief 

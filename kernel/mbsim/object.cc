@@ -205,6 +205,10 @@ namespace MBSim {
     r[i] >> rParent(uInd[i], uInd[i] + uSize[i] - 1);
   }
 
+  void Object::updaterdtRef(const Vec& rdtParent, int i) {
+    rdt[i] >> rdtParent(uInd[i], uInd[i] + uSize[i] - 1);
+  }
+
   void Object::updateTRef(const Mat &TParent) {
     T >> TParent(Index(qInd, qInd + qSize - 1), Index(uInd[0], uInd[0] + uSize[0] - 1));
   }
@@ -299,6 +303,11 @@ namespace MBSim {
     return r[i];
   }
 
+  const Vec& Object::getrdt(double t, int i) {
+    if(ds->updaterdt(i)) ds->updaterdt(t,i);
+    return rdt[i];
+  }
+
   const SymMat& Object::getM(double t, int i) {
     if(ds->updateM(i)) ds->updateM(t,i);
     return M[i];
@@ -309,5 +318,20 @@ namespace MBSim {
     return LLM[i];
   }
 
+  void Object::updatedq(double t, double dt) {
+    qd = getT(t) * u * dt;
+  }
+
+  void Object::updatedu(double t, double dt) {
+    ud[0] = slvLLFac(getLLM(t), geth(t) * dt + getrdt(t));
+  }
+
+  void Object::updateud(double t, int i) {
+    ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + getr(t,i));
+  }
+
+  void Object::updateqd(double t) {
+    qd = getT(t) * u;
+  }
 }
 

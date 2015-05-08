@@ -161,6 +161,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updater(double t, int j=0);
+      virtual void updaterdt(double t, int j=0);
       virtual void updatewb(double t);
       virtual void updateg(double t);
       virtual void updategd(double t);
@@ -540,6 +541,7 @@ namespace MBSim {
       bool updateLLM(int j) { return updLLM[j]; }
       bool updateh(int j) { return updh[j]; }
       bool updater(int j) { return updr[j]; }
+      bool updaterdt(int j) { return updrdt[j]; }
       bool updateW(int j) { return updW[j]; }
       bool updateV(int j) { return updV[j]; }
       bool updatewb() { return updwb; }
@@ -624,7 +626,7 @@ namespace MBSim {
       /**
        * \brief nonsmooth right hand side
        */
-      fmatvec::Vec rParent[2];
+      fmatvec::Vec rParent[2], rdtParent[2];
 
       /**
        * \brief right hand side of order one parameters
@@ -813,7 +815,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG;
+      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG;
 
     private:
       /**

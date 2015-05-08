@@ -740,9 +740,16 @@ namespace MBSim {
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updaterRef(rParent, j);
+  }
 
-    for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).updaterRef(rParent, j);
+  void DynamicSystem::updaterdtRef(const Vec &rdtParent, int j) {
+    rdt[j] >> rdtParent(hInd[j], hInd[j] + hSize[j] - 1);
+
+    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updaterdtRef(rdtParent, j);
+
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (**i).updaterdtRef(rdtParent, j);
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {

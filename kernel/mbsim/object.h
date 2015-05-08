@@ -56,10 +56,10 @@ namespace MBSim {
       virtual void updateh(double t, int j=0) { }
       virtual void updateM(double t, int i=0) { }
       virtual void updatedhdz(double t);
-      virtual void updatedq(double t, double dt) { qd = getT(t) * u * dt; }
-      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(getLLM(t), (geth(t) + getr(t)) * dt ); }
-      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + getr(t,i)); }
-      virtual void updateqd(double t) { qd = getT(t) * u; }
+      virtual void updatedq(double t, double dt); 
+      virtual void updatedu(double t, double dt);
+      virtual void updateud(double t, int i=0);
+      virtual void updateqd(double t);
       virtual void updatezd(double t) { updateqd(t); updateud(t); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
@@ -156,6 +156,12 @@ namespace MBSim {
        * \param vector to be referenced
        */
       virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
+
+      /**
+       * \brief references to nonsmooth force vector of dynamic system parent
+       * \param vector to be referenced
+       */
+      virtual void updaterdtRef(const fmatvec::Vec& ref, int i=0);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
@@ -255,6 +261,7 @@ namespace MBSim {
       const fmatvec::SymMat& getM(double t, int i=0);
       const fmatvec::SymMat& getLLM(double t, int i=0);
       const fmatvec::Vec& getr(double t, int i=0);
+      const fmatvec::Vec& getrdt(double t, int i=0);
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
@@ -303,7 +310,7 @@ namespace MBSim {
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
        */
-      fmatvec::Vec h[2], r[2];
+      fmatvec::Vec h[2], r[2], rdt[2];
 
       fmatvec::Mat W[2], V[2];
 

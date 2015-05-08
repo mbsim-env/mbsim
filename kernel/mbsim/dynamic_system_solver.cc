@@ -343,6 +343,8 @@ namespace MBSim {
       hParent[1].resize(getuSize(1));
       rParent[0].resize(getuSize(0));
       rParent[1].resize(getuSize(1));
+      rdtParent[0].resize(getuSize(0));
+      rdtParent[1].resize(getuSize(1));
       fParent.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
@@ -375,8 +377,10 @@ namespace MBSim {
       updategdRef(gdParent);
       updatehRef(hParent[0], 0);
       updaterRef(rParent[0], 0);
+      updaterdtRef(rdtParent[0], 0);
       updatehRef(hParent[1], 1);
       updaterRef(rParent[1], 1);
+      updaterdtRef(rdtParent[1], 1);
       updateWRef(WParent[0], 0);
       updateWRef(WParent[1], 1);
       updateVRef(VParent[0], 0);
@@ -387,8 +391,9 @@ namespace MBSim {
       updateWInverseKineticsRef(WInverseKineticsParent[0], 0);
       updateWInverseKineticsRef(WInverseKineticsParent[1], 1);
       updatebInverseKineticsRef(bInverseKineticsParent);
-      updatehRef(hParent[1], 1);
+      updatehRef(hParent[1], 1); // TODO: warum zweifacher Auruf?
       updaterRef(rParent[1], 1);
+      updaterdtRef(rdtParent[1], 1);
       updateWRef(WParent[1], 1);
       updateVRef(VParent[1], 1);
 
@@ -870,6 +875,11 @@ namespace MBSim {
   void DynamicSystemSolver::updater(double t, int j) {
     r[j] = getV(t,j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updr[j] = false;
+  }
+
+  void DynamicSystemSolver::updaterdt(double t, int j) {
+    rdt[j] = getV(t,j) * La; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    updrdt[j] = false;
   }
 
   void DynamicSystemSolver::updatewb(double t) {
@@ -1879,6 +1889,8 @@ namespace MBSim {
     updh[1] = true;
     updr[0] = true;
     updr[1] = true;
+    updrdt[0] = true;
+    updrdt[1] = true;
     updM[0] = true;
     updM[1] = true;
     updLLM[0] = true;
