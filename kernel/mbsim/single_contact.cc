@@ -77,20 +77,13 @@ namespace MBSim {
   }
 
   void SingleContact::updatewb(double t) {
-    throw;
 //    if(gdActive[0]) {
 //      for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
-//        wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
+//        wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(t,j);
 //
-//      contactKinematics->updatewb(wb, g(0), cpData);
+//      contactKinematics->updatewb(wb, getGeneralizedRelativePosition(t)(0), cpData);
 //    }
   }
-
-//  void SingleContact::updateForceDirections(double t) {
-//    DF = refFrame->getOrientation(t) * forceDir;
-//    DM = refFrame->getOrientation(t) * momentDir;
-//    updFD = false;
-//  }
 
   void SingleContact::updateGeneralizedSetValuedForces(double t) {
     laMV.init(0);
@@ -105,28 +98,21 @@ namespace MBSim {
     updlaSV = false;
   }
 
+  void SingleContact::updateForceDirections(double t) {
+    iF = Index(0,1+getFrictionDirections()-1);
+    DF.resize(1+getFrictionDirections(),NONINIT);
+    DF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
+    if (getFrictionDirections()) {
+      DF.set(1, cpData[0].getFrameOfReference().getOrientation().col(1));
+      if (getFrictionDirections() > 1)
+        DF.set(2, cpData[0].getFrameOfReference().getOrientation().col(2));
+    }
+    updFD = false;
+  }
 
   void SingleContact::updateW(double t, int j) {
-//    if (gActive) {
-
-    RF.resize(laSize,NONINIT);
-      int fFTangCol = 1;
-      if (fcl->isSetValued())
-        RF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
-      else
-        fFTangCol = 0;
-
-      if (getFrictionDirections()) {
-        if (fdf->isSetValued()) {
-          RF.set(fFTangCol, cpData[0].getFrameOfReference().getOrientation().col(1));
-          if (getFrictionDirections() > 1)
-            RF.set(fFTangCol+1, cpData[0].getFrameOfReference().getOrientation().col(2));
-        }
-      }
-
-      W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
-      W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
-//    }
+    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
+    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
   }
 
   void SingleContact::updateV(double t, int j) {
@@ -142,30 +128,17 @@ namespace MBSim {
   }
 
   void SingleContact::updateh(double t, int j) {
-    F = cpData[0].getFrameOfReference().getOrientation(t).col(0) * getGeneralizedSingleValuedForce(t)(0);
-    if (fdf) {
-      F += cpData[0].getFrameOfReference().getOrientation(t).col(1) * getGeneralizedSingleValuedForce(t)(1);
-      if (getFrictionDirections() > 1)
-        F += cpData[0].getFrameOfReference().getOrientation(t).col(2) * getGeneralizedSingleValuedForce(t)(2);
-    }
-    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
-    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
+    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
+    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
   }
 
   void SingleContact::updatePositions(double t) {
-    //cout << endl;
-    //cout << t << " " << name << " " << endl << endl;
     contactKinematics->updateg(t, rrel(0), cpData);
-//    cpData[0].getFrameOfReference().setGlobalRelativePosition(cpData[0].getFrameOfReference().getPosition() - contour[0]->getFrameOfReference()->getPosition());
-//    cpData[1].getFrameOfReference().setGlobalRelativePosition(cpData[1].getFrameOfReference().getPosition() - contour[1]->getFrameOfReference()->getPosition());
     updPos = false;
   }
 
   void SingleContact::updateVelocities(double t) {
     if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(getGeneralizedRelativePosition(t)(0), 0))) { // TODO: nicer implementation
-//      for (unsigned int i = 0; i < 2; i++)
-//        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
-
       Vec3 Wn = cpData[0].getFrameOfReference().getOrientation(t).col(0);
 
       Vec3 WvD = cpData[1].getFrameOfReference().getVelocity(t) - cpData[0].getFrameOfReference().getVelocity(t);
@@ -195,33 +168,32 @@ namespace MBSim {
   }
 
   void SingleContact::updateStopVector(double t) {
-    throw;
-//    if (gActive != gdActive[0])
-//      THROW_MBSIMERROR("Internal error");
-//    if (gActive) {
-//      sv(0) = gddN(0) - gddTol;
-//      if (gdActive[1]) {
-//        if (getFrictionDirections()) {
-//          sv(1) = nrm2(gddT) - gddTol;
-//          if (sv(1) > 0) {
-//            gddNBuf = gddN;
-//            gddTBuf = gddT;
-//          }
-//        }
-//      }
-//      else {
-//        if (getFrictionDirections() == 1)
-//          sv(1) = gdT(0);
-//        else if (getFrictionDirections() == 2) {
-//          sv(1) = gdT(0) + gdT(1); // TODO: is there a better concept?
-//        }
-//      }
-//    }
-//    else {
-//      sv(0) = g(0);
-//      if (getFrictionDirections())
-//        sv(1) = 1;
-//    }
+    if (gActive != gdActive[0])
+      THROW_MBSIMERROR("Internal error");
+    if (gActive) {
+      sv(0) = gddN(0) - gddTol;
+      if (gdActive[1]) {
+        if (getFrictionDirections()) {
+          sv(1) = nrm2(gddT) - gddTol;
+          if (sv(1) > 0) {
+            gddNBuf = gddN;
+            gddTBuf = gddT;
+          }
+        }
+      }
+      else {
+        if (getFrictionDirections() == 1)
+          sv(1) = gdT(0);
+        else if (getFrictionDirections() == 2) {
+          sv(1) = gdT(0) + gdT(1); // TODO: is there a better concept?
+        }
+      }
+    }
+    else {
+      sv(0) = g(0);
+      if (getFrictionDirections())
+        sv(1) = 1;
+    }
   }
 
   void SingleContact::updateWRef(const Mat& WParent, int j) {
@@ -1036,7 +1008,7 @@ namespace MBSim {
     if (gdActive[0]) {
 
       const SqrMat Jprox = ds->getJprox();
-      const SqrMat G = ds->getG();
+      const SqrMat G = ds->getG(t);
 
       //TODO: separate normal and tangential
 
@@ -1087,7 +1059,7 @@ namespace MBSim {
     if (gActive) {
 
       const SqrMat Jprox = ds->getJprox();
-      const SqrMat G = ds->getG();
+      const SqrMat G = ds->getG(t);
 
       RowVec jp1 = Jprox.row(laInd);
       RowVec e1(jp1.size());
