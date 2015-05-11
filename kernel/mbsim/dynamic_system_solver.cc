@@ -987,12 +987,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeInitialCondition() {
-    updateStateDependentVariables(0);
+    resetUpToDate();
     updateg(0);
     checkActive(1);
     updategd(0);
     checkActive(2);
-    updateJacobians(0);
     calclaSize(3);
     calcrFactorSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)), 0);
@@ -1047,7 +1046,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations(double t) {
-    la = slvLS(G, -b);
+    la = slvLS(getG(t), -b);
     //la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
     return 1;
   }
@@ -1178,37 +1177,29 @@ namespace MBSim {
     calccorrSize(corrID);
     updatecorrRef(corrParent(0, corrSize - 1));
     updategRef(gParent(0, gSize - 1));
-    updateg(t);
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-    updateW(t);
-    SqrMat Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
+    SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
     int iter = 0;
-    while (nrmInf(g - corr) >= tolProj) {
+    while (nrmInf(getg(t) - corr) >= tolProj) {
       if (++iter > 500) {
         msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed!" << endl;
         break;
       }
-      Vec mu = slvLS(Gv, -g + W[0].T() * nu + corr);
-      Vec dnu = slvLLFac(LLM[0], W[0] * mu) - nu;
+      Vec mu = slvLS(Gv, -getg(t) + getW().T() * nu + corr);
+      Vec dnu = slvLLFac(getLLM(), getW() * mu) - nu;
       nu += dnu;
-      q += T * dnu;
-      updateStateDependentVariables(t);
-      updateg(t);
-      if(fullUpdate) {
-        updateJacobians(t);
-        updateM(t);
-        updateLLM(t);
-        updateW(t);
-        Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
-      }
+      q += getT(t) * dnu;
+      resetUpToDate();
+      if(fullUpdate) Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
    }
     calclaSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
     calcgSize(0);
     updategRef(gParent(0, gSize - 1));
+    updateg(t);
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
@@ -1233,22 +1224,22 @@ namespace MBSim {
       calcgdSize(gdID); // IH
       updatecorrRef(corrParent(0, corrSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
-      updategd(t);
       updatecorr(corrID);
 
       calclaSize(gdID);
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateW(t);
 
       if (laSize) {
-        SqrMat Gv = SqrMat(W[0].T() * slvLLFac(LLM[0], W[0]));
-        Vec mu = slvLS(Gv, -gd + corr);
-        u += slvLLFac(LLM[0], W[0] * mu);
+        SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
+        Vec mu = slvLS(Gv, -getgd(t) + corr);
+        u += slvLLFac(getLLM(t), getW(t) * mu);
+        resetUpToDate();
       }
       calclaSize(3);
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       calcgdSize(1);
       updategdRef(gdParent(0, gdSize - 1));
+      updategd(t);
     }
   }
 
@@ -1650,6 +1641,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
+    cout << endl;
+    cout << "shift at t = " << t << endl;
+    cout << q << endl;
+    cout << u << endl;
+    cout << sv << endl;
     if (q() != zParent()) {
       updatezRef(zParent);
     }
@@ -1671,32 +1667,21 @@ namespace MBSim {
       updateLaRef(LaParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-      updateStateDependentVariables(t); // TODO necessary?
-      updateg(t); // TODO necessary?
-      updategd(t); // important because of updategdRef
-      updateJacobians(t);
-      //updateh(t); // not relevant for impact
-      updateM(t);
-      updateW(t); // important because of updateWRef
-      V[0] = W[0]; //updateV(t) not allowed here
-      updateG(t);
-      //updatewb(t); // not relevant for impact
+      resetUpToDate();
+      V[0] = getW(t); //updateV(t) not allowed here
+      updV[0] = false;
 
-      b << gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+      b << getgd(t); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       solveImpacts(t);
       u += deltau(zParent, t, 0);
-
+      resetUpToDate();
       checkActive(3); // neuer Zustand nach Stoss
       // Projektion:
       // - es müssen immer alle Größen projiziert werden
       // - neuer Zustand ab hier bekannt
       // - Auswertung vor Setzen von gActive und gdActive
-      updateStateDependentVariables(t); // neues u berücksichtigen
-      updateJacobians(t); // für Berechnung von W
       projectGeneralizedPositions(t, 3);
       // Projektion der Geschwindikgeiten erst am Schluss
-      //updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
-      //updateJacobians(t);
       //projectGeneralizedVelocities(t,3);
 
       if (laSize) {
@@ -1709,23 +1694,12 @@ namespace MBSim {
         updatewbRef(wbParent(0, laSize - 1));
         updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-        //updateStateDependentVariables(t); // necessary because of velocity change 
-        updategd(t); // necessary because of velocity change 
-        updateJacobians(t);
-        updateh(t);
-        updateW(t);
-        updateV(t);
-        updateG(t);
-        updatewb(t);
-        b << W[0].T() * slvLLFac(LLM[0], h[0]) + wb;
+        b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
         solveConstraints(t);
 
         checkActive(4);
         projectGeneralizedPositions(t, 2);
-        updateStateDependentVariables(t); // necessary because of velocity change 
-        updateJacobians(t);
         projectGeneralizedVelocities(t, 2);
-        
       }
     }
     else if (maxj == 2) { // transition from slip to stick (acceleration jump)
@@ -1741,26 +1715,13 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
       if (laSize) {
-        updateStateDependentVariables(t); // TODO necessary
-        updateg(t); // TODO necessary
-        updategd(t); // TODO necessary
-        updateT(t);  // TODO necessary
-        updateJacobians(t);
-        updateh(t);  // TODO necessary
-        updateM(t);  // TODO necessary
-        updateLLM(t);  // TODO necessary 
-        updateW(t);  // TODO necessary
-        updateV(t);  // TODO necessary
-        updateG(t);  // TODO necessary 
-        updatewb(t);  // TODO necessary 
-        b << W[0].T() * slvLLFac(LLM[0], h[0]) + wb;
+        resetUpToDate();
+        b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
         solveConstraints(t);
 
         checkActive(4);
 
         projectGeneralizedPositions(t, 2);
-        updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
-        updateJacobians(t);
         projectGeneralizedVelocities(t, 2);
 
       }
@@ -1768,9 +1729,8 @@ namespace MBSim {
     else if (maxj == 1) { // contact opens or transition from stick to slip
       checkActive(8);
 
+        resetUpToDate();
       projectGeneralizedPositions(t, 1);
-      updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
-      updateJacobians(t);
       projectGeneralizedVelocities(t, 1);
     }
     checkActive(5); // final update von gActive, ...
@@ -1782,14 +1742,13 @@ namespace MBSim {
     updatewbRef(wbParent(0, laSize - 1));
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-    updateStateDependentVariables(t);
-    updateJacobians(t);
-    updateg(t);
-    updategd(t);
+    //updateg(t);
+    //updategd(t);
     setRootID(0);
   }
 
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) {
+    resetUpToDate();
     if (sv() != svExt()) {
       updatesvRef(svExt);
     }
@@ -1800,24 +1759,13 @@ namespace MBSim {
     if (qd() != zdParent())
       updatezdRef(zdParent);
 
-    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
-    updateT(t);
-    updateJacobians(t);
-    updateh(t);
-    updateM(t);
-    updateLLM(t);
     if (laSize) {
-      updateW(t);
-      updateV(t);
-      updateG(t);
-      updatewb(t);
-      b << W[0].T() * slvLLFac(LLM[0], h[0]) + wb;
+      b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
       solveConstraints(t);
     }
     updateStopVector(t);
-    //sv(sv.size()-1) = driftCount*1e-0-t; 
     sv(sv.size() - 1) = 1;
   }
 

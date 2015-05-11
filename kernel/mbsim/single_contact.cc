@@ -77,12 +77,12 @@ namespace MBSim {
   }
 
   void SingleContact::updatewb(double t) {
-//    if(gdActive[0]) {
-//      for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
-//        wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(t,j);
-//
-//      contactKinematics->updatewb(wb, getGeneralizedRelativePosition(t)(0), cpData);
-//    }
+    if(gdActive[0]) {
+      wb -= getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cpData[0].getFrameOfReference().getGyroscopicAccelerationOfTranslation(t);
+      wb += getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cpData[1].getFrameOfReference().getGyroscopicAccelerationOfTranslation(t);
+
+      contactKinematics->updatewb(t, wb, getGeneralizedRelativePosition(t)(0), cpData);
+    }
   }
 
   void SingleContact::updateGeneralizedSetValuedForces(double t) {
@@ -119,9 +119,8 @@ namespace MBSim {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
         if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-          for (unsigned int i = 0; i < 2; i++) { //TODO: only two contours are interacting at one time?
-            V[j][i] += cpData[i].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(1,getFrictionDirections()), laN(0));
-          }
+          V[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),iT) * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0));
+          V[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),iT) * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0));
         }
       }
     }
