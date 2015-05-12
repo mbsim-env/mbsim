@@ -92,7 +92,7 @@ namespace MBSim {
   }
 
   void FixedRelativeFrame::updateGyroscopicAccelerations(double t) {
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),WrRP)));
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
     setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
     updateGA = false;
   }
