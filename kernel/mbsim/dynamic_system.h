@@ -70,9 +70,7 @@ namespace MBSim {
       /* INTERFACE FOR DERIVED CLASSES */
       virtual void updateT(double t); 
       virtual void updateh(double t, int i=0); 
-      virtual void updateStateDependentVariables(double t) = 0;
       virtual void updateM(double t, int i=0);
-      virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 
       virtual void updateud(double t, int i=0) { THROW_MBSIMERROR("(DynamicSystem::updateud): Not implemented!"); }
       virtual void updatezd(double t) = 0;

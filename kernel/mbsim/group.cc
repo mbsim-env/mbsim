@@ -66,16 +66,6 @@ namespace MBSim {
 	elementOrdered[i][j]->updateStateDependentVariables(t);
   }
 
-  void Group::updateJacobians(double t, int k) {
-
-    for(unsigned int i=0; i<elementOrdered.size(); i++) 
-      for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
-        elementOrdered[i][j]->updateJacobians(t,k);
-
-    for(unsigned int i=0; i<link.size(); i++)
-      link[i]->updateJacobians(t,k);
-  }
-
   void Group::updatedu(double t, double dt) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatedu(t,dt);

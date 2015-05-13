@@ -423,16 +423,6 @@ namespace MBSim {
         if (!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
           ((FixedRelativeFrame*) frame[k])->setFrameOfReference(I);
       }
-      for (unsigned int k = 1; k < frame.size(); k++) {
-        FixedRelativeFrame *P = (FixedRelativeFrame*) frame[k];
-        const FixedRelativeFrame *R = P;
-        do {
-          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
-          P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation() * P->getRelativePosition());
-          P->setRelativeOrientation(R->getRelativeOrientation() * P->getRelativeOrientation());
-        } while (R != I);
-        P->setFrameOfReference(I);
-      }
     }
     else if (stage == worldFrameContourLocation) {
       if (R) {
@@ -450,10 +440,8 @@ namespace MBSim {
           I->setOrientation(getFrameI()->getOrientation() * APF);
         }
       }
-      for (unsigned int i = 1; i < frame.size(); i++) { // kinematics of other frames can be updates from frame I
-        frame[i]->resetUpToDate();
+      for (unsigned int i = 1; i < frame.size(); i++) // kinematics of other frames can be updates from frame I
         frame[i]->updatePositions(0);
-      }
       for (unsigned int k = 0; k < contour.size(); k++) {
         if (!(contour[k]->getFrameOfReference()))
           contour[k]->setFrameOfReference(I);

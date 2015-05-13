@@ -158,8 +158,9 @@ namespace MBSim {
     else if(stage==relativeFrameContourLocation) {
 
       for(unsigned int k=1; k<frame.size(); k++) {
-        if(!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
-          ((FixedRelativeFrame*) frame[k])->setFrameOfReference(C);
+        FixedRelativeFrame *P = static_cast<FixedRelativeFrame*>(frame[k]);
+        if(not(P->getFrameOfReference()))
+          P->setFrameOfReference(C);
       }
       if(K!=C) {
         const FixedRelativeFrame *R = K;
@@ -170,24 +171,11 @@ namespace MBSim {
         } while(R!=C);
         C->setRelativeOrientation(K->getRelativeOrientation().T());
         C->setRelativePosition(-(C->getRelativeOrientation()*K->getRelativePosition()));
+        C->setFrameOfReference(K);
         K->setRelativeOrientation(SqrMat3(EYE));
         K->setRelativePosition(Vec3());
-        K->setFrameOfReference(&Z);
       }
-      C->setFrameOfReference(K);
-      for(unsigned int k=1; k<frame.size(); k++) {
-        FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
-        if(K!=P) {
-        const FixedRelativeFrame *R = P;
-        do {
-          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
-          P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
-          P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
-        } while(R!=K);
-        P->setFrameOfReference(&Z);
-        }
-      }
-      C->setFrameOfReference(&Z);
+      K->setFrameOfReference(&Z);
     }
     else if(stage==resize) {
       Body::init(stage);

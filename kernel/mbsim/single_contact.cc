@@ -87,8 +87,21 @@ namespace MBSim {
 
   void SingleContact::updateGeneralizedSetValuedForces(double t) {
     laMV.init(0);
-    laMV.set(Index(0,laSize-1), la);
-    updlaMV = false;
+  if (gActive && gdActive[0]) {
+          laMV(0) = laN(0);
+          if (gdActive[1]) {
+            for (int j = 0; j < getFrictionDirections(); j++)
+              laMV(1+j) = laT(j);
+          }
+          else {
+            if (fdf) {
+              Vec buf = fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0)) * laN(0);
+              for (int j = 0; j < getFrictionDirections(); j++)
+                laMV(1+j) = buf(j);
+            }
+          }
+   }
+   updlaMV = false;
   }
 
   void SingleContact::updateGeneralizedSingleValuedForces(double t) {
@@ -182,14 +195,14 @@ namespace MBSim {
       }
       else {
         if (getFrictionDirections() == 1)
-          sv(1) = gdT(0);
+          sv(1) = getGeneralizedRelativeVelocity(t)(1);
         else if (getFrictionDirections() == 2) {
-          sv(1) = gdT(0) + gdT(1); // TODO: is there a better concept?
+          sv(1) = getGeneralizedRelativeVelocity(t)(1) + getGeneralizedRelativeVelocity(t)(2); // TODO: is there a better concept?
         }
       }
     }
     else {
-      sv(0) = g(0);
+      sv(0) = getGeneralizedRelativePosition(t)(0);
       if (getFrictionDirections())
         sv(1) = 1;
     }

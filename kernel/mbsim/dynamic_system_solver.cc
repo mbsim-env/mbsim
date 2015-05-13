@@ -68,7 +68,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
   DynamicSystemSolver::DynamicSystemSolver(const string &name) :
-      Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
+      Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(false), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
@@ -885,6 +885,7 @@ namespace MBSim {
   void DynamicSystemSolver::updatewb(double t) {
     wb.init(0);
     Group::updatewb(t);
+    updwb = false;
   }
 
   void DynamicSystemSolver::updateg(double t) {
@@ -900,11 +901,13 @@ namespace MBSim {
   void DynamicSystemSolver::updateW(double t, int j) {
     W[j].init(0);
     Group::updateW(t, j);
+    updW[j] = false;
   }
 
   void DynamicSystemSolver::updateV(double t, int j) {
     V[j] = getW(t,j);
     Group::updateV(t, j);
+    updV[j] = false;
   }
 
   void DynamicSystemSolver::closePlot() {
@@ -1180,8 +1183,13 @@ namespace MBSim {
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
-    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    if(W[0].cols() != getlaSize()) {
+      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateW(t);
+    }
     SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
+    Mat T = getT(t);
+    updateg(t);
     int iter = 0;
     while (nrmInf(getg(t) - corr) >= tolProj) {
       if (++iter > 500) {
@@ -1191,12 +1199,15 @@ namespace MBSim {
       Vec mu = slvLS(Gv, -getg(t) + getW().T() * nu + corr);
       Vec dnu = slvLLFac(getLLM(), getW() * mu) - nu;
       nu += dnu;
-      q += getT(t) * dnu;
+      q += T * dnu;
       resetUpToDate();
       if(fullUpdate) Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
    }
     calclaSize(3);
-    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    if(W[0].cols() != getlaSize()) {
+      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateW(t);
+    }
     calcgSize(0);
     updategRef(gParent(0, gSize - 1));
     updateg(t);
@@ -1227,16 +1238,23 @@ namespace MBSim {
       updatecorr(corrID);
 
       calclaSize(gdID);
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      if(W[0].cols() != getlaSize()) {
+        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+        updateW(t);
+      }
 
       if (laSize) {
+        updategd(t);
         SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
         Vec mu = slvLS(Gv, -getgd(t) + corr);
         u += slvLLFac(getLLM(t), getW(t) * mu);
         resetUpToDate();
       }
       calclaSize(3);
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      if(W[0].cols() != getlaSize()) {
+        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+        updateW(t);
+      }
       calcgdSize(1);
       updategdRef(gdParent(0, gdSize - 1));
       updategd(t);
@@ -1641,11 +1659,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
-    cout << endl;
-    cout << "shift at t = " << t << endl;
-    cout << q << endl;
-    cout << u << endl;
-    cout << sv << endl;
     if (q() != zParent()) {
       updatezRef(zParent);
     }
@@ -1688,11 +1701,16 @@ namespace MBSim {
 
         calclaSize(3); // IH
         calcrFactorSize(3); // IH
-        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-        updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-        updatelaRef(laParent(0, laSize - 1));
-        updatewbRef(wbParent(0, laSize - 1));
-        updaterFactorRef(rFactorParent(0, rFactorSize - 1));
+        if(W[0].cols() != getlaSize()) {
+          updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+          updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+          updatelaRef(laParent(0, laSize - 1));
+          updatewbRef(wbParent(0, laSize - 1));
+          updaterFactorRef(rFactorParent(0, rFactorSize - 1));
+          updateW(t);
+          updateV(t);
+          updatewb(t);
+        }
 
         b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
         solveConstraints(t);
@@ -1759,8 +1777,6 @@ namespace MBSim {
     if (qd() != zdParent())
       updatezdRef(zdParent);
 
-    updateg(t);
-    updategd(t);
     if (laSize) {
       b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
       solveConstraints(t);
