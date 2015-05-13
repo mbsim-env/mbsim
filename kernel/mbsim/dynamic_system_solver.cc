@@ -1183,13 +1183,9 @@ namespace MBSim {
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
-    if(W[0].cols() != getlaSize()) {
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateW(t);
-    }
+    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
     SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
     Mat T = getT(t);
-    updateg(t);
     int iter = 0;
     while (nrmInf(getg(t) - corr) >= tolProj) {
       if (++iter > 500) {
@@ -1204,13 +1200,9 @@ namespace MBSim {
       if(fullUpdate) Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
    }
     calclaSize(3);
-    if(W[0].cols() != getlaSize()) {
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateW(t);
-    }
+    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
     calcgSize(0);
     updategRef(gParent(0, gSize - 1));
-    updateg(t);
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
@@ -1238,26 +1230,18 @@ namespace MBSim {
       updatecorr(corrID);
 
       calclaSize(gdID);
-      if(W[0].cols() != getlaSize()) {
-        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-        updateW(t);
-      }
+      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
 
       if (laSize) {
-        updategd(t);
         SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
         Vec mu = slvLS(Gv, -getgd(t) + corr);
         u += slvLLFac(getLLM(t), getW(t) * mu);
         resetUpToDate();
       }
       calclaSize(3);
-      if(W[0].cols() != getlaSize()) {
-        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-        updateW(t);
-      }
+      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
       calcgdSize(1);
       updategdRef(gdParent(0, gdSize - 1));
-      updategd(t);
     }
   }
 
@@ -1702,16 +1686,11 @@ namespace MBSim {
 
         calclaSize(3); // IH
         calcrFactorSize(3); // IH
-        if(W[0].cols() != getlaSize()) {
-          updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-          updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-          updatelaRef(laParent(0, laSize - 1));
-          updatewbRef(wbParent(0, laSize - 1));
-          updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-          updateW(t);
-          updateV(t);
-          updatewb(t);
-        }
+        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+        updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+        updatelaRef(laParent(0, laSize - 1));
+        updatewbRef(wbParent(0, laSize - 1));
+        updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
         b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
         solveConstraints(t);
@@ -1761,8 +1740,6 @@ namespace MBSim {
     updatewbRef(wbParent(0, laSize - 1));
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-    //updateg(t);
-    //updategd(t);
     setRootID(0);
     useOldla = true;
   }

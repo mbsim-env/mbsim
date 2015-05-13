@@ -409,13 +409,13 @@ namespace MBSim {
        * \brief references to relative distances of dynamic system parent
        * \param vector to be referenced
        */
-      void updategRef(const fmatvec::Vec &ref);
+      virtual void updategRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to relative velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updategdRef(const fmatvec::Vec &ref);
+      virtual void updategdRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to contact forces of dynamic system parent
@@ -436,14 +436,14 @@ namespace MBSim {
        * \brief references to TODO of dynamic system parent
        * \param vector to be referenced
        */      
-      void updatewbRef(const fmatvec::Vec &ref);
+      virtual void updatewbRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWRef(const fmatvec::Mat &ref, int i=0);
+      virtual void updateWRef(const fmatvec::Mat &ref, int i=0);
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
@@ -457,7 +457,7 @@ namespace MBSim {
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateVRef(const fmatvec::Mat &ref, int i=0);
+      virtual void updateVRef(const fmatvec::Mat &ref, int i=0);
 
       /**
        * \brief references to stopvector (rootfunction for event driven integrator) of dynamic system parent

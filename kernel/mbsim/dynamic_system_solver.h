@@ -550,6 +550,38 @@ namespace MBSim {
 
       void resize_(double t);
 
+      /**
+       * \brief references to relative distances of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updategRef(const fmatvec::Vec &ref) { Group::updategRef(ref); updg = true; }
+
+      /**
+       * \brief references to relative velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updategdRef(const fmatvec::Vec &ref) { Group::updategdRef(ref); updgd = true; }
+
+      /**
+       * \brief references to TODO of dynamic system parent
+       * \param vector to be referenced
+       */      
+      void updatewbRef(const fmatvec::Vec &ref) { Group::updatewbRef(ref); updwb = true; }
+
+      /**
+       * \brief references to contact force direction matrix of dynamic system parent
+       * \param matrix to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      void updateWRef(const fmatvec::Mat &ref, int i=0) { Group::updateWRef(ref,i); updW[i] = true; }
+
+      /**
+       * \brief references to condensed contact force direction matrix of dynamic system parent
+       * \param matrix to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      void updateVRef(const fmatvec::Mat &ref, int i=0) { Group::updateVRef(ref,i); updV[i] = true; }
+
     protected:
       /**
        * \brief mass matrix
