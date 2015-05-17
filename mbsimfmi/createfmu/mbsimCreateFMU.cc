@@ -373,12 +373,11 @@ int main(int argc, char *argv[]) {
         cout<<endl;
 
         cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
-        // note: casadi_interface.oct is copied automatically with all other octave oct files later
-        fmuFile.add(path("resources")/"local"/"bin"/"casadi.m", getInstallPath()/"bin"/"casadi.m");
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"bin"/"@swig_ref");
+        // note: casadi.oct is copied automatically with all other octave oct files later
+        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR/"@swig_ref");
           srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"bin"/"@swig_ref"/srcIt->path().filename(), srcIt->path());
+          fmuFile.add(path("resources")/"local"/LIBDIR/"@swig_ref"/srcIt->path().filename(), srcIt->path());
         }
         cout<<endl;
 
