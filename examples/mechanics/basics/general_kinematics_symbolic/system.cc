@@ -11,7 +11,7 @@
 #endif
 
 using namespace MBSim;
-using namespace CasADi;
+using namespace casadi;
 using namespace fmatvec;
 using namespace std;
 

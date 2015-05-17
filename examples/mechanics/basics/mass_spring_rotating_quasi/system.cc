@@ -11,7 +11,6 @@
 #include "mbsim/functions/symbolic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include <casadi/symbolic/sx/sx_tools.hpp>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/coilspring.h"
@@ -21,7 +20,7 @@
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace CasADi;
+using namespace casadi;
 
 //double omg = 10.;
 //double tend = 5.;
