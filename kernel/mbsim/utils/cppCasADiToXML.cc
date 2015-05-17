@@ -1,10 +1,9 @@
 #include <config.h>
-#include <casadi/symbolic/sx/sx_tools.hpp>
 #include <mbxmlutilshelper/casadiXML.h>
 
 using namespace std;
 using namespace boost;
-using namespace CasADi;
+using namespace casadi;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
@@ -13,11 +12,11 @@ int main() {
 //  vector<SX> input;
 //  SX t=SX::sym("t"); // a scalar input
 //  input.push_back(t);
-//  SX q=CasADi::ssym("q", 2, 1); // a column vector input
+//  SX q=casadi::ssym("q", 2, 1); // a column vector input
 //  input.push_back(q);
-//  SX qd=CasADi::ssym("qd", 1, 2); // a row vector input
+//  SX qd=casadi::ssym("qd", 1, 2); // a row vector input
 //  input.push_back(qd);
-//  SX J=CasADi::ssym("J", 2, 2); // a matrix input
+//  SX J=casadi::ssym("J", 2, 2); // a matrix input
 //  input.push_back(J);
 //  SX r=q.elem(0)*q.elem(1)+sin(5*t)+t*t; // a scalar output
 //  SXFunction f(input, r); // the function
@@ -50,7 +49,7 @@ int main() {
   DOMParser::serialize(xmlFile.get(), "out.xml");
 
   cout<<endl<<"Reread XML and print original and reread as CasADi stream"<<endl<<endl;
-  CasADi::SXFunction fReread=createCasADiSXFunctionFromXML(xmlFile->getDocumentElement());
+  casadi::SXFunction fReread=createCasADiSXFunctionFromXML(xmlFile->getDocumentElement());
   fReread.init();
   fReread.evaluate();
   for(int i=0; i<f.inputExpr().size(); i++) {

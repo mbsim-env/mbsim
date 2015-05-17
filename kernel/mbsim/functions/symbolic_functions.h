@@ -21,7 +21,6 @@
 #define SYMBOLIC_FUNCTION_H_
 
 #include <mbsim/functions/function.h>
-#include <casadi/symbolic/matrix/matrix_tools.hpp>
 #include <mbxmlutilshelper/casadiXML.h>
 #include "mbsim/mbsim_event.h"
 #include <boost/static_assert.hpp>
@@ -54,7 +53,7 @@ namespace MBSim {
   template <class Ret>
   class FromCasadi {
     public:
-      static Ret cast(const CasADi::Matrix<double> &x) {
+      static Ret cast(const casadi::Matrix<double> &x) {
         throw MBSimError("FromCasadi::cast not implemented for current type.");
         return Ret();
       }
@@ -63,7 +62,7 @@ namespace MBSim {
   template <class Col>
   class FromCasadi<fmatvec::Vector<Col,double> > {
     public:
-      static fmatvec::Vector<Col,double> cast(const CasADi::Matrix<double> &x) {
+      static fmatvec::Vector<Col,double> cast(const casadi::Matrix<double> &x) {
         fmatvec::Vector<Col,double> y(x.size1(),fmatvec::NONINIT);
         for(int i=0; i<x.size1(); i++)
           y.e(i) = x(i,0).toScalar();
@@ -74,7 +73,7 @@ namespace MBSim {
   template <class Col>
   class FromCasadi<fmatvec::RowVector<Col,double> > {
     public:
-      static fmatvec::RowVector<Col,double> cast(const CasADi::Matrix<double> &x) {
+      static fmatvec::RowVector<Col,double> cast(const casadi::Matrix<double> &x) {
         fmatvec::RowVector<Col,double> y(x.size2(),fmatvec::NONINIT);
         for(int i=0; i<x.size2(); i++)
           y.e(i) = x(0,i).toScalar();
@@ -85,7 +84,7 @@ namespace MBSim {
   template <class Row>
   class FromCasadi<fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> > {
     public:
-      static fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> cast(const CasADi::Matrix<double> &A) {
+      static fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> cast(const casadi::Matrix<double> &A) {
         fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> B(A.size1(),A.size2(),fmatvec::NONINIT);
         for(int i=0; i<A.size1(); i++)
           for(int j=0; j<A.size2(); j++)
@@ -97,7 +96,7 @@ namespace MBSim {
   template <>
   class FromCasadi<double> {
     public:
-      static double cast(const CasADi::Matrix<double> &x) {
+      static double cast(const casadi::Matrix<double> &x) {
         return x.toScalar();
       }
   };
@@ -107,10 +106,10 @@ class SymbolicFunction;
 
 template<typename Ret, typename Arg>
   class SymbolicFunction<Ret(Arg)> : public Function<Ret(Arg)> {
-    CasADi::SXFunction f, pd, dd, pddd, pdpd;
+    casadi::SXFunction f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
+    SymbolicFunction(const casadi::SXFunction &f_) : f(f_) { }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg)>::init(stage);
@@ -132,28 +131,28 @@ template<typename Ret, typename Arg>
         if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
           THROW_MBSIMERROR("The output dimension does not match.");
 
-        pd = CasADi::SXFunction(f.inputExpr(),f.jac());
+        pd = casadi::SXFunction(f.inputExpr(),f.jac());
         pd.init();
         int nq = getArgSize();
-        CasADi::SX sqd=CasADi::SX::sym("qd", nq);
-        std::vector<CasADi::SX> input2(3);
+        casadi::SX sqd=casadi::SX::sym("qd", nq);
+        std::vector<casadi::SX> input2(3);
         input2[0] = sqd;
         input2[1] = f.inputExpr(0);
-        dd = CasADi::SXFunction(input2,f.jac().mul(sqd));
+        dd = casadi::SXFunction(input2,f.jac().zz_mtimes(sqd));
         dd.init();
         int n = f.outputExpr(0).size();
-        CasADi::SX Jd=CasADi::SX::zeros(n,nq);
+        casadi::SX Jd=casadi::SX::zeros(n,nq);
         for(int j=0; j<nq; j++) {
-          Jd(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd.jac(0)(CasADi::Slice(j*n,(j+1)*n),CasADi::Slice(0,nq)).mul(sqd);
+          Jd(casadi::Slice(0,n),casadi::Slice(j,j+1)) = pd.jac(0)(casadi::Slice(j*n,(j+1)*n),casadi::Slice(0,nq)).zz_mtimes(sqd);
         }
-        pddd = CasADi::SXFunction(input2,Jd);
+        pddd = casadi::SXFunction(input2,Jd);
         pddd.init();
-        pdpd = CasADi::SXFunction(f.inputExpr(),pd.jac());
+        pdpd = casadi::SXFunction(f.inputExpr(),pd.jac());
         pdpd.init();
       }
     }
 
-    CasADi::SXFunction& getSXFunction() {return f;} 
+    casadi::SXFunction& getSXFunction() {return f;} 
 
     typename fmatvec::Size<Arg>::type getArgSize() const {
       return f.inputExpr(0).size();
@@ -192,17 +191,17 @@ template<typename Ret, typename Arg>
     }
 
     void initializeUsingXML(xercesc::DOMElement *element) {
-      f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
+      f=casadi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
     }
   };
 
 // TODO mit double vorbelegen
 template<typename Ret, typename Arg1, typename Arg2>
   class SymbolicFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
-    CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
+    casadi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
+    SymbolicFunction(const casadi::SXFunction &f_) : f(f_) { }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg1, Arg2)>::init(stage);
@@ -228,38 +227,38 @@ template<typename Ret, typename Arg1, typename Arg2>
         if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
           THROW_MBSIMERROR("The output dimension does not match.");
 
-        pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
+        pd1 = casadi::SXFunction(f.inputExpr(),f.jac(0));
         pd1.init();
-        pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
+        pd2 = casadi::SXFunction(f.inputExpr(),f.jac(1));
         pd2.init();
         int nq = getArg1Size();
-        CasADi::SX sqd=CasADi::SX::sym("qd", nq);
-        std::vector<CasADi::SX> input2(3);
+        casadi::SX sqd=casadi::SX::sym("qd", nq);
+        std::vector<casadi::SX> input2(3);
         input2[0] = sqd;
         input2[1] = f.inputExpr(0);
         input2[2] = f.inputExpr(1);
         int n = f.outputExpr(0).size1();
-        CasADi::SX Jd1=CasADi::SX::zeros(n,nq);
-        CasADi::SX Jd2=CasADi::SX::zeros(n,nq);
+        casadi::SX Jd1=casadi::SX::zeros(n,nq);
+        casadi::SX Jd2=casadi::SX::zeros(n,nq);
         for(int j=0; j<nq; j++) {
-          Jd1(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(0)(CasADi::Slice(j*n,(j+1)*n),CasADi::Slice(0,nq)).mul(sqd);
-          Jd2(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd1.jac(1)(CasADi::Slice(j*n,(j+1)*n),CasADi::Slice(0,1));
+          Jd1(casadi::Slice(0,n),casadi::Slice(j,j+1)) = pd1.jac(0)(casadi::Slice(j*n,(j+1)*n),casadi::Slice(0,nq)).zz_mtimes(sqd);
+          Jd2(casadi::Slice(0,n),casadi::Slice(j,j+1)) = pd1.jac(1)(casadi::Slice(j*n,(j+1)*n),casadi::Slice(0,1));
         }
-        pd1dd1 = CasADi::SXFunction(input2,Jd1);
+        pd1dd1 = casadi::SXFunction(input2,Jd1);
         pd1dd1.init();
-        pd1pd2 = CasADi::SXFunction(f.inputExpr(),Jd2);
+        pd1pd2 = casadi::SXFunction(f.inputExpr(),Jd2);
         pd1pd2.init();
 
-        CasADi::SX djT1 = pd2.jac(0).mul(sqd);
-        CasADi::SX djT2 = pd2.jac(1);
-        pd2dd1 = CasADi::SXFunction(input2,djT1);
+        casadi::SX djT1 = pd2.jac(0).zz_mtimes(sqd);
+        casadi::SX djT2 = pd2.jac(1);
+        pd2dd1 = casadi::SXFunction(input2,djT1);
         pd2dd1.init();
-        pd2pd2 = CasADi::SXFunction(f.inputExpr(),djT2);
+        pd2pd2 = casadi::SXFunction(f.inputExpr(),djT2);
         pd2pd2.init();
       }
     }
 
-    CasADi::SXFunction& getSXFunction() {return f;} 
+    casadi::SXFunction& getSXFunction() {return f;} 
 
     typename fmatvec::Size<Arg1>::type getArg1Size() const {
       return f.inputExpr(0).size();
@@ -321,15 +320,15 @@ template<typename Ret, typename Arg1, typename Arg2>
     }
 
     void initializeUsingXML(xercesc::DOMElement *element) {
-      f=CasADi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
+      f=casadi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
     }
   };
 
   template <class Ret, class Arg1, class Arg2, class Arg3>
   class SymbolicFunction<Ret(Arg1, Arg2, Arg3)> : public Function<Ret(Arg1, Arg2, Arg3)> {
-    CasADi::SXFunction f;
+    casadi::SXFunction f;
     public:
-    SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) { }
+    SymbolicFunction(const casadi::SXFunction &f_) : f(f_) { }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg1, Arg2, Arg3)>::init(stage);
@@ -338,7 +337,7 @@ template<typename Ret, typename Arg1, typename Arg2>
       }
     }
 
-    CasADi::SXFunction& getSXFunction() {return f;} 
+    casadi::SXFunction& getSXFunction() {return f;} 
 
     Ret operator()(const Arg1& x1, const Arg2& x2, const Arg3& x3, const void * =NULL) {
       f.setInput(ToCasadi<Arg1>::cast(x1),0);
@@ -355,10 +354,10 @@ template<typename Ret, typename Arg1, typename Arg2>
 //  template <class Ret>
 //  class SymbolicFunctionDerivatives1 : public Function1<Ret,double> {
 //    private:
-//      CasADi::SXFunction f;
-//      CasADi::FX fder1, fder2;
+//      casadi::SXFunction f;
+//      casadi::FX fder1, fder2;
 //    public:
-//    SymbolicFunctionDerivatives1(const CasADi::SXFunction &f_) : f(f_) {
+//    SymbolicFunctionDerivatives1(const casadi::SXFunction &f_) : f(f_) {
 //      f.init();
 //      fder1 = f.jacobian();
 //      fder1.init();
@@ -367,7 +366,7 @@ template<typename Ret, typename Arg1, typename Arg2>
 //    }
 //    std::string getType() const { return "CasadiDiffFunction"; }
 //
-//    CasADi::FX& getFXFunction() {return fder2;} 
+//    casadi::FX& getFXFunction() {return fder2;} 
 //
 //    Ret operator()(const double& x_, const void * =NULL) {
 //      fder2.setInput(x_);
@@ -379,10 +378,10 @@ template<typename Ret, typename Arg1, typename Arg2>
 //  template <class Ret>
 //  class SymbolicFXFunction : public Function1<Ret,double> {
 //    private:
-//    CasADi::FX &f;
+//    casadi::FX &f;
 //    int index;
 //    public:
-//    SymbolicFXFunction(CasADi::FX &f_, int index_=0) : f(f_), index(index_) {}
+//    SymbolicFXFunction(casadi::FX &f_, int index_=0) : f(f_), index(index_) {}
 //
 //    Ret operator()(const double& x_, const void * =NULL) {
 //      return FromCasadi<Ret>::cast(f.output(2-index));
