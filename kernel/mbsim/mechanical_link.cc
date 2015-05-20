@@ -190,10 +190,6 @@ namespace MBSim {
         r[0].push_back(Vec(0,NONINIT));
         r[1].push_back(Vec(0,NONINIT));
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
-      assert(openMBVArrowM.size()==0 || openMBVArrowM.size()==frame.size());
-#endif
 
       for(unsigned int i=0; i<contour.size(); i++) {
         W[0].push_back(Mat(0,0,NONINIT));
