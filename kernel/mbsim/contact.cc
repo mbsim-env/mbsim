@@ -718,10 +718,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkActive(int j) {
+  void Contact::checkActive(double t, int j) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkActive(j);
+        jter->checkActive(t,j);
     }
   }
 

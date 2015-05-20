@@ -324,7 +324,7 @@ namespace MBSim {
        *
        * see SingleContact for the implementation and DynamicSystem for explanation
        */
-      virtual void checkActive(int j) {}
+      virtual void checkActive(double t, int j) {}
 
       /**
        * \brief compute potential energy

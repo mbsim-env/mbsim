@@ -125,7 +125,7 @@ namespace MBSim {
       virtual void checkConstraintsForTermination(double t);
       virtual void checkImpactsForTermination(double t, double dt);
       using MechanicalLink::connect;
-      virtual void checkActive(int j);
+      virtual void checkActive(double t, int j);
       virtual void setlaTol(double tol);
       virtual void setLaTol(double tol);
       virtual void setgTol(double tol);

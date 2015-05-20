@@ -45,9 +45,7 @@ namespace MBSimIntegrator {
     if (system.getq()() != z())
       system.updatezRef(z);
 
-    system.updateStateDependentVariables(t);
-    system.updateg(t);
-    system.checkActive(1);
+    system.checkActive(t,1);
     system.setUpActiveLinks();
     if (system.gActiveChanged()) {
       // system.checkAllgd(); // TODO necessary?

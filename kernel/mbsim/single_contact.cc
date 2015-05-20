@@ -1256,15 +1256,15 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::checkActive(int j) {
+  void SingleContact::checkActive(double t, int j) {
     if (j == 1) { // formerly checkActiveg()
-      gActive = fcl->isActive(g(0), gTol) ? 1 : 0;
+      gActive = fcl->isActive(getGeneralizedRelativePosition(t)(0), gTol) ? 1 : 0;
       gdActive[0] = gActive;
       gdActive[1] = gdActive[0];
     }
     else if (j == 2) { // formerly checkActivegd()
-      gdActive[0] = gActive ? (fcl->remainsActive(gdN(0), gdTol) ? 1 : 0) : 0;
-      gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(gdT, gdTol) ? 1 : 0) : 0;
+      gdActive[0] = gActive ? (fcl->remainsActive(getGeneralizedRelativeVelocity(t)(0), gdTol) ? 1 : 0) : 0;
+      gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), gdTol) ? 1 : 0) : 0;
       gddActive[0] = gdActive[0];
       gddActive[1] = gdActive[1];
     }

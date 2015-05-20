@@ -1261,15 +1261,15 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::checkActive(int j) {
+  void DynamicSystem::checkActive(double t, int j) {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkActive(j);
+      (*i)->checkActive(t,j);
     setUpActiveLinks();
   }
 
-  void DynamicSystem::checkActiveReg(int j) {
+  void DynamicSystem::checkActiveReg(double t, int j) {
     for (vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (*i)->checkActive(j);
+      (*i)->checkActive(t,j);
   }
 
   void DynamicSystem::setgTol(double tol) {

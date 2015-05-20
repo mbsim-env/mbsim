@@ -98,8 +98,7 @@ namespace MBSimIntegrator {
 
       t += dt;
 
-      system.updateg(t);
-      system.checkActive(1);
+      system.checkActive(t,1);
     if (system.gActiveChanged())
       system.resize_(t);
 //      system.update(z,t); 

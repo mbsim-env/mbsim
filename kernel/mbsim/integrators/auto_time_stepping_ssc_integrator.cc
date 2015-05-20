@@ -237,10 +237,8 @@ namespace MBSimIntegrator {
     if (nrSys_==2) LS_Reg_tmp_before=&LS_Reg_T2;
     if (nrSys_==3) LS_Reg_tmp_before=&LS_Reg_T3;   
 
-    system.updateStateDependentVariables(t);
-    system.updateg(t);
-    system.checkActive(1);
-    system.checkActiveReg(1);
+    system.checkActive(t,1);
+    system.checkActiveReg(t,1);
     //system.setUpActiveLinks(); // in DynamicSystemSolver::update auskommentiert
 
     if(system.gActiveChanged()) {
@@ -2350,8 +2348,7 @@ namespace MBSimIntegrator {
     if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
     sysT1->updateStateDependentVariables(t+dte);
     for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
-      SetValuedLinkListT1[i]->updateg(t+dte);
-      SetValuedLinkListT1[i]->checkActive(1);
+      SetValuedLinkListT1[i]->checkActive(t+dte,1);
       SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);
     }
     gInActive.resize(nInActive,NONINIT);

@@ -342,12 +342,7 @@ namespace MBSimIntegrator {
     if (system.getq()() != z())
       system.updatezRef(z);
 
-    // update variables which depend on the state, e.g. Cartesian descriptions
-    system.updateStateDependentVariables(t);
-
-    // update gaps and observe their activity
-    system.updateg(t);
-    system.checkActive(1);
+    system.checkActive(t,1);
 
     bool impact = system.detectImpact();
 
