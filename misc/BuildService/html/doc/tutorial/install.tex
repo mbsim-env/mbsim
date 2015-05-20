@@ -3,7 +3,7 @@ This section summarizes the necessary steps to install \MBSim{}.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Where To Find the Source Code}
-The source code of \MBSim{} together with some examples, the necessary \FMatVec{} library, a \HDF{} wrapper for output and the visualisation program \OpenMBV{} can be found at \url{http://code.google.com} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} from \url{http://www.hdfgroup.org}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL}\footnote{see file~\texttt{COPYING} in the root directory of the specific source code}.\par
+The source code of \MBSim{} together with some examples, the necessary \FMatVec{} library, a \HDF{} wrapper for output and the visualisation program \OpenMBV{} can be found at \url{https://github.com} using git\footnote{GIT CHEAT SHEET: \url{https://training.github.com/kit/downloads/github-git-cheat-sheet.pdf}}. Further, one needs \HDF{} from \url{http://www.hdfgroup.org}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL}\footnote{see file~\texttt{COPYING} in the root directory of the specific source code}.\par
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Installation Procedures}
@@ -38,7 +38,7 @@ The procedure \textsc{reinstall}
 \begin{verbatim}
  make uninstall 
  make clean
- svn update // only for update
+ git pull // only for update
  ./config.status --recheck
  make install
 \end{verbatim}
@@ -46,7 +46,7 @@ newly installs a project with the same configure options used at the previous in
 
 The procedure \textsc{update} is similar to the reinstallation with the additional 
 \begin{verbatim} 
- svn update 
+git pull
 \end{verbatim}
 before the recheck option.\par
 
@@ -84,7 +84,7 @@ All projects depend on PKG package administration. That is why the file \texttt{
 For the installation the following instructions have to be completed:
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://fmatvec.googlecode.com/svn/trunk/ fmatvec
+ git clone https://github.com/mbsim-env/fmatvec.git
  cd $HOME/MBSim/fmatvec
 \end{verbatim}
 Continue with the procedure \textsc{automake}.\par
@@ -132,7 +132,7 @@ The code can be compiled and installed with a Doxygen HTML class documentation b
 
 \subsubsection{\HDF}
 \HDF{} is a hierarchical data format enabling the effective administration of plot and visualisation data. It can be downloaded as \textbf{source code} ("ALL Platforms") 
-from \url{http://www.hdfgroup.org/HDF5/}, e.g. with the current version 1.8.13.\par
+from \url{http://www.hdfgroup.org/HDF5/}, e.g. with version 1.8.13.\par
 Extract the source archive to \texttt{\$HOME/MBSim/hdf5}.\par
 Change to \texttt{\$HOME/MBSim/hdf5}.\par
 Use the procedure \textsc{configure} for dynamic compilation with the prefix
@@ -147,7 +147,7 @@ Compilation is done with the procedure \textsc{install}.\par
 A \HDF{} wrapper makes it possible to use \HDF{} very easily. It is available by
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://hdf5serie.googlecode.com/svn/trunk/ hdf5serie
+ git clone https://github.com/mbsim-env/hdf5serie.git
 \end{verbatim}
 For having \MBSim{} creating \HDF{} files invoke
 \begin{verbatim}
@@ -169,7 +169,7 @@ to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpseri
 \OpenMBV{} visualises \MBSim{} simulations using XML and \HDF{} in a coinciding hierarchical structure. The installation for the simulation framework consists of two steps: first the XML utils have to be installed, then \MBSim{} needs \textsf{OpenMBV-C++Interface} to create standard data for \OpenMBV{} using C++ programs. The source code is available by
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://openmbv.googlecode.com/svn/trunk/ openmbv
+ git clone https://github.com/mbsim-env/openmbv.git
 \end{verbatim}
 
 \paragraph{XML Utils}
@@ -217,7 +217,7 @@ and the procedures \textsc{automake, configure} for dynamic compilation with the
 \end{verbatim}
 Sometimes trouble with linking \emph{swig} occurs; in this case just set
 \begin{verbatim}
---with-swigpath
+--with-swigpath=/nope
 \end{verbatim}
 to some value such that \emph{swig} is not found on your system.
 \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. 
@@ -233,7 +233,7 @@ and Casadi.\par
 For installation of \MBSim{} one types
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://mbsim-env.googlecode.com/svn/trunk/ mbsim
+ git clone https://github.com/mbsim-env/mbsim.git
 \end{verbatim}
 If you like, you can install the NURBS thirdparty package first, which is necessary for some examples: Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
 \begin{verbatim}
