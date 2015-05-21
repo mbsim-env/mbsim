@@ -72,7 +72,7 @@ namespace MBSim {
 
       PiecewisePolynomFunction() : f(this), fd(this), fdd(this) { }
 
-      typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+      typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
 
       Ret operator()(const Arg &x) { return f(x); }
       typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return fd(x); }
