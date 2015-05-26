@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "checkvalve.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/line.h"
