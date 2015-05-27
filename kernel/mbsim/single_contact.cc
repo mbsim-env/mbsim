@@ -682,10 +682,10 @@ namespace MBSim {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
             data.push_back(t);
-            data.push_back(cpData[i].getFrameOfReference().getPosition()(0));
+            data.push_back(cpData[i].getFrameOfReference().getPosition(t)(0));
             data.push_back(cpData[i].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i].getFrameOfReference().getPosition()(2));
-            Vec3 cardan = AIK2Cardan(cpData[i].getFrameOfReference().getOrientation());
+            Vec3 cardan = AIK2Cardan(cpData[i].getFrameOfReference().getOrientation(t));
             data.push_back(cardan(0));
             data.push_back(cardan(1));
             data.push_back(cardan(2));
@@ -698,17 +698,10 @@ namespace MBSim {
         vector<double> data;
         if (contactArrow) {
           data.push_back(t);
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
+          data.push_back(cpData[1].getFrameOfReference().getPosition(t)(0));
           data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
           data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
-          Vec3 F;
-          if (fcl->isSetValued()) {
-            if (gActive)
-//              F = fF[1].col(0) * laN / dt;
-              F = cpData[0].getFrameOfReference().getOrientation().col(0) * laN / dt;
-          }
-          else
-            F = cpData[0].getFrameOfReference().getOrientation().col(0) * laN;
+          Vec3 F = getGlobalForceDirection(t)(Index(0,2),Index(0,0))*getGeneralizedForce(t)(Index(0,0));
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));
@@ -716,31 +709,17 @@ namespace MBSim {
           contactArrow->append(data);
         }
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
-        //  data.clear();
-        //  data.push_back(t);
-        //  data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
-        //  data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
-        //  data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
-        //  Vec3 F;
-        //  if (fdf->isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
-        //    if (gActive && laT.size()) { // stick friction
-        //      F = cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0) / dt;
-        //      if (getFrictionDirections() > 1)
-        //        F += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1) / dt;
-        //    }
-        //    if (gActive && laT.size() == 0) // slip friction
-        //      F = fF[1](Index(0, 2), iT) * fdf->dlaTdlaN(gdT, laN(0)) * laN(0) / dt;
-        //  }
-        //  else {
-        //    F = cpData[0].getFrameOfReference().getOrientation().col(1) * laT(0);
-        //    if (getFrictionDirections() > 1)
-        //      F += cpData[0].getFrameOfReference().getOrientation().col(2) * laT(1);
-        //  }
-        //  data.push_back(F(0));
-        //  data.push_back(F(1));
-        //  data.push_back(F(2));
-        //  data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-        //  frictionArrow->append(data);
+          data.clear();
+          data.push_back(t);
+          data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
+          data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
+          data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
+          Vec3 F = getGlobalForceDirection(t)(Index(0,2),iT)*getGeneralizedForce(t)(iT);
+          data.push_back(F(0));
+          data.push_back(F(1));
+          data.push_back(F(2));
+          data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
+          frictionArrow->append(data);
         }
       }
 #endif

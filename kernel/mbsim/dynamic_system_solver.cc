@@ -1075,6 +1075,10 @@ namespace MBSim {
     updG = false;
   }
 
+  void DynamicSystemSolver::updateb(double t) {
+    updb = false;
+  }
+
   void DynamicSystemSolver::decreaserFactors() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
@@ -1846,6 +1850,7 @@ namespace MBSim {
     updg = true;
     updgd = true;
     updG = true;
+    updb = true;
     Group::resetUpToDate();
   }
 
@@ -1857,6 +1862,11 @@ namespace MBSim {
   const SparseMat& DynamicSystemSolver::getGs(double t) {
     if(updG) updateG(t);
     return Gs;
+  }
+
+  const Vec& DynamicSystemSolver::getb(double t) {
+    if(updb) updateb(t);
+    return b;
   }
 
 }

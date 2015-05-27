@@ -167,6 +167,7 @@ namespace MBSim {
       virtual void updategd(double t);
       virtual void updateW(double t, int j=0);
       virtual void updateV(double t, int j=0);
+      virtual void updateb(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -225,6 +226,7 @@ namespace MBSim {
 
       const fmatvec::SqrMat& getG(double t);
       const fmatvec::SparseMat& getGs(double t);
+      const fmatvec::Vec& getb(double t);
 
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
@@ -847,7 +849,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG;
+      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updb;
 
     private:
       /**

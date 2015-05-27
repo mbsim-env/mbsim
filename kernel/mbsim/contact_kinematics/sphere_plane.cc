@@ -41,15 +41,15 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlane::updateg(double &g, ContourPointData *cpData, int index) {
-    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
+  void ContactKinematicsSpherePlane::updateg(double t, double &g, ContourPointData *cpData, int index) {
+    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t));
     cpData[isphere].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
     cpData[isphere].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
     cpData[isphere].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
 
-    Vec3 Wd = sphere->getFrame()->getPosition() - plane->getFrame()->getPosition();
+    Vec3 Wd = sphere->getFrame()->getPosition(t) - plane->getFrame()->getPosition(t);
 
     g = Wn.T()*Wd - sphere->getRadius();
 
@@ -58,17 +58,17 @@ namespace MBSim {
     cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition() - Wn*g);
   }
 
-  void ContactKinematicsSpherePlane::updatewb(Vec &wb, double g, ContourPointData *cpData) {
-    Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2);
+  void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
+    Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation(t).col(2);
     Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0);
-    Vec3 n2 = cpData[isphere].getFrameOfReference().getOrientation().col(0);
+    Vec3 n2 = cpData[isphere].getFrameOfReference().getOrientation(t).col(0);
     Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1);
-    Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity();
-    Vec3 vC2 = cpData[isphere].getFrameOfReference().getVelocity();
-    Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity();
-    Vec3 Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity();
+    Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity(t);
+    Vec3 vC2 = cpData[isphere].getFrameOfReference().getVelocity(t);
+    Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity(t);
+    Vec3 Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity(t);
 
-    Vec3 KrPC2 = sphere->getFrame()->getOrientation().T()*(cpData[isphere].getFrameOfReference().getPosition() - sphere->getFrame()->getPosition());
+    Vec3 KrPC2 = sphere->getFrame()->getOrientation(t).T()*(cpData[isphere].getFrameOfReference().getPosition(t) - sphere->getFrame()->getPosition(t));
     Vec2 zeta2 = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
     double a2 = zeta2(0);
     double b2 = zeta2(1);

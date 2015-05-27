@@ -45,7 +45,7 @@
 //#include <mbsim/contact_kinematics/point_planewithfrustum.h>
 //#include <mbsim/contact_kinematics/point_line_segment.h>
 //#include <mbsim/contact_kinematics/sphere_frustum.h>
-//#include <mbsim/contact_kinematics/sphere_plane.h>
+#include <mbsim/contact_kinematics/sphere_plane.h>
 //#include <mbsim/contact_kinematics/sphere_rectangle.h>
 //#include <mbsim/contact_kinematics/sphere_polynomialfrustum.h>
 //#include <mbsim/contact_kinematics/sphere_sphere.h>
@@ -154,8 +154,8 @@ namespace MBSim {
 //    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Frustum")==0 )
 //      return new ContactKinematicsSphereFrustum;
 //
-//    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Plane")==0 )
-//      return new ContactKinematicsSpherePlane;
+    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Plane")==0 )
+      return new ContactKinematicsSpherePlane;
 //
 //    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Rectangle")==0 )
 //      return new ContactKinematicsSphereRectangle;
