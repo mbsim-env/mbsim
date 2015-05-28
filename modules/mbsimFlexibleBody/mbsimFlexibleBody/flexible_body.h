@@ -21,17 +21,18 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#include <mbsimFlexibleBody/node_frame.h>
-
 #include "mbsim/body.h"
 #include "mbsim/frame.h"
 
 namespace MBSim {
   class DiscretizationInterface;
   class ContourPointData;
+  class FixedRelativeFrame;
 }
 
 namespace MBSimFlexibleBody {
+
+  class NodeFrame;
 
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://mbsim.berlios.de/MBSimFlexibleBody");
 

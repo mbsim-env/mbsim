@@ -20,8 +20,9 @@
 
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
+#include <mbsimFlexibleBody/node_frame.h>
 #include <mbsim/dynamic_system.h>
-#include <mbsim/frame.h>
+#include <mbsim/fixed_relative_frame.h>
 #include <mbsim/contour.h>
 #include <fmatvec/function.h>
 #include <mbsim/mbsim_event.h>
@@ -90,19 +91,19 @@ namespace MBSimFlexibleBody {
 
     // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
     //        The idea is to use a contour frame that has all necessary position information
-    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-      updateKinematicsForFrame(S_Frame[i], Frame::all, frame[i]);
-    }
-
-    for (size_t i  = 0; i < fixedRelativeFrames.size(); i++)
-      fixedRelativeFrames[i]->updateStateDependentVariables();
-
-    for (size_t i  = 0; i < nodeFrames.size(); i++)
-      updateKinematicsAtNode(nodeFrames[i], MBSim::Frame::all);
-
-    for (size_t i = 0; i < contour.size(); i++) {
-      contour[i]->updateStateDependentVariables(t);
-    }
+//    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
+//      updateKinematicsForFrame(S_Frame[i], Frame::all, frame[i]);
+//    }
+//
+//    for (size_t i  = 0; i < fixedRelativeFrames.size(); i++)
+//      fixedRelativeFrames[i]->updateStateDependentVariables();
+//
+//    for (size_t i  = 0; i < nodeFrames.size(); i++)
+//      updateKinematicsAtNode(nodeFrames[i], MBSim::Frame::all);
+//
+//    for (size_t i = 0; i < contour.size(); i++) {
+//      contour[i]->updateStateDependentVariables(t);
+//    }
   }
 
   void FlexibleBody::updateJacobians(double t, int k) {
