@@ -275,10 +275,7 @@ namespace MBSimFMI {
 
     // initialize stop vector
     sv.resize(dss->getsvSize());
-    svLast.resize(dss->getsvSize());
     jsv.resize(dss->getsvSize(), fmatvec::INIT, 0); // init with 0 = no shift in all indices
-    // initialize last stop vector with initial stop vector state (see eventUpdate for details)
-    dss->getsv(z, svLast, time);
 
     // plot initial state
     dss->plot(z, time);
@@ -363,11 +360,7 @@ namespace MBSimFMI {
 
   // MBSim shift
   // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.
-  // Since MBSim requires this information we have to generate it here. For this we:
-  // * store the stop vector (sv) of the initial state (see initialize(...)) or the
-  //   last event (shift point) in the variable svLast.
-  // * compare the current sv with the sv of the last event (or initial state) svLast
-  // * set all entries in jsv to 1 if the corresponding entries in sv and svLast have a sign change.
+  // Since MBSim requires this information we have to generate it here.
   void FMIInstance::eventUpdate(fmiBoolean intermediateResults, fmiEventInfo* eventInfo) {
     // initialize eventInfo fields (except next time event)
     eventInfo->iterationConverged=true;
@@ -377,21 +370,20 @@ namespace MBSimFMI {
 
     // state event = root = stop vector event
 
-    // MISSING: event handling must be conform to FMI and modellica!!!???
     // get current stop vector
     if(updateEventIndicatorsRequired) {
       dss->getsv(z, sv, time);
       updateEventIndicatorsRequired=false;
     }
-    // compare last (svLast) and current (sv) stop vector: build jsv and set shiftRequired
+    // check if sv in near zero: if so set jsv to 1 and set shiftRequired
     bool shiftRequired=false;
-    for(int i=0; i<sv.size(); ++i) {
-      jsv(i)=(svLast(i)*sv(i)<0); // on sign change in svLast and sv set jsv to 1 (shift this index i)
-      if(jsv(i))
+    for(int i=0; i<sv.size(); ++i)
+      if(fabs(sv(i))<1e-12) {
+        jsv(i)=1;
         shiftRequired=true; // set shiftRequired: a MBSim shift call is required (at least 1 entry in jsv is 1)
-                            // (the environment may call eventUpdate of this system due to an event (shift) of another
-                            // system (FMU, ...). Hence not all eventUpdate must generate a shift of this system)
-    }
+      }
+      else
+        jsv(i)=0;
     if(shiftRequired) {
       // shift MBSim system
       dss->shift(z, jsv, time);
