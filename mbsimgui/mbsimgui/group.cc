@@ -43,6 +43,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
     Frame *I = new Frame("I",this);
@@ -278,7 +280,7 @@ namespace MBSimGUI {
   }
 
   Group* Group::readXMLFile(const string &filename, Element *parent) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
 //    Group *group=ObjectFactory::getInstance()->createGroup(e, parent);
     Group *group=Embed<Group>::createAndInit(e,parent);

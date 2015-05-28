@@ -492,7 +492,7 @@ namespace {
     }
 
     // read *.deplibs file
-    static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
+    boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
     boost::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
     for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=NULL; e=e->getNextElementSibling()) {
       string file=X()%E(e)->getFirstTextChild()->getData();

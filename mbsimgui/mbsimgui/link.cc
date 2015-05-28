@@ -30,6 +30,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   Link::Link(const string &str, Element *parent) : Element(str, parent) {
   }
 
@@ -37,7 +39,7 @@ namespace MBSimGUI {
   }
 
   Link* Link::readXMLFile(const string &filename, Element *parent) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
 //    Link *link=ObjectFactory::getInstance()->createLink(e, parent);
     Link *link=Embed<Link>::createAndInit(e,parent);

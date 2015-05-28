@@ -32,11 +32,13 @@ using namespace boost;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
   }
 
   Observer* Observer::readXMLFile(const string &filename, Element *parent) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
 //    Observer *observer=ObjectFactory::getInstance()->createObserver(e, parent);
     Observer *observer=Embed<Observer>::createAndInit(e,parent);
