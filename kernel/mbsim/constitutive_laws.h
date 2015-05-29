@@ -744,173 +744,173 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
-  /*!
-   * \brief A force law that computes the normal force of many contact kinematics based on the Maxwell-Force-Law
-   * \author Kilian Grundl
-   * \date 30-07-2012 start of development
-   */
-  class MaxwellUnilateralConstraint : public GeneralizedForceLaw {
-    public:
-      /*!
-       * \brief constructor
-       */
-      MaxwellUnilateralConstraint(const double & damping = 0, const double & gapLimit = 0);
-
-      /*!
-       * \brief destructor
-       */
-      virtual ~MaxwellUnilateralConstraint();
-
-      /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
-      virtual bool remainsActive(double s, double sTol) {return true; }
-      virtual bool isSetValued() const { return false; }
-      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
-      /***************************************************/
-
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-
-      /*!
-       * \brief initialize all saved contour couplings in the map
-       *
-       * \todo: pointer to parent class is probably not optimal (friend class maybe?)
-       */
-      virtual void initializeContourCouplings(Contact* parent);
-
-      /*GETTER - SETTER*/
-      void setDebuglevel(int debuglevel) {
-        DEBUGLEVEL = debuglevel;
-      }
-      void setLCPSolvingStrategy(LinearComplementarityProblem::LCPSolvingStrategy strategy) {
-        LCP.setStrategy(strategy);
-      }
-      void setLCPJacobianType(LinearComplementarityProblem::JacobianType type) {
-        LCP.setJacobianType(type);
-      }
-      /*****************/
-
-      /**
-       * \brief add a function that represents the coupling between two contours
-       * \param name of first contour
-       * \param name of second contour
-       * \param Function to describe coupling between contours
-       *
-       * \General Remark: The parameters (LagrangeParameterPositions) of the function have to be in the same order as it was given the add(...)-method
-       */
-      void addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct);
-
-    protected:
-      /**
-       * \brief saves all possible contacts in a vector
-       */
-      virtual void updatePossibleContactPoints(const std::vector<std::vector<SingleContact> > & contacts);
-
-      /**
-       * \brief updates the influence matrix C
-       * \param contours vector of contours that are part of the contact
-       * \param cpData   vector of ContourPointDatas
-       */
-      virtual void updateInfluenceMatrix(std::vector<std::vector<SingleContact> > & contacts);
-
-      /**
-       * \brief update the rigid body distances (gaps) for the single contacts
-       */
-      void updateRigidBodyGap(const std::vector<std::vector<SingleContact> > & contacts);
-
-      /**
-       * \brief computes the coupling factor for the influence matrix on one contact point (two contours)
-       * \param contours     vector of contours that are part of the contact
-       * \param cpData       vector of ContourPointDatas
-       * \param contactIndex index pair of contact point
-       */
-      virtual double computeInfluenceCoefficient(std::vector<std::vector<SingleContact> > & contacts, const std::pair<int, int> & contactIndex);
-
-      /**
-       * \brief computes the coupling factor for the influence matrix between two contact points (four contours)
-       * \param contours            vector of contours that are part of the contact
-       * \param cpData              vector of ContourPointDatas
-       * \param contactIndex        index pair of contact point
-       * \param coupledContactIndex index pair of coupling contact point
-       */
-      virtual double computeInfluenceCoefficient(std::vector<std::vector<SingleContact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
-
-      /*
-       * \brief computes the "material constant" to have a good guess for the lambda-vector
-       */
-      virtual void computeMaterialConstant();
-
-      /**
-       * \brief saves the indices of all active contacts in pairs
-       *
-       * pair.first: number of contact kinematics
-       * pair.second: number of subcontact point of contact kinematics
-       */
-      std::vector<std::pair<int, int> > possibleContactPoints;
-
-      /*!
-       * \brief variable for the LCP
-       */
-      LinearComplementarityProblem LCP;
-
-      /**
-       * \brief Influence matrix between contact points
-       */
-      fmatvec::SymMat C;
-
-      /*
-       * \brief vector of rigid body distances(gaps) for the active contacts
-       */
-      fmatvec::Vec rigidBodyGap;
-
-      /**
-       * \brief saves the influence functions for a pair of contours. The key is the pair of contour names
-       */
-      std::map<std::pair<Contour*, Contour*>, InfluenceFunction*> influenceFunctions;
-
-      /**
-       * \brief Solution of the last time, where contact has to be solved (can be used as starting guess for the next algorithm)
-       */
-      fmatvec::Vec solution0;
-
-      /*!
-       * \brief coefficient for possible contact damping
-       */
-      double dampingCoefficient;
-
-      /*!
-       * \brief relative contact point distance limit under which damping is active
-       */
-      double gLim;
-
-      /**
-       * \brief parameter for guessing starting values of contact force (average eigenvalue of influence-matrix)
-       */
-      double matConst;
-
-      /**
-       * \brief parameter to save if matConst has been computed already
-       */
-      bool matConstSetted;
-
-      /**
-       * \brief print INFO output?
-       *
-       * 0 = no DEBUGOutput
-       * 1 = most important information
-       * 2 = ...
-       * 5 = Matrices and Vectors
-       * \todo wouldn't a logger for MBSim be nice
-       */
-      int DEBUGLEVEL;
-
-      struct xmlInfo {
-          InfluenceFunction * function;
-          std::string name1;
-          std::string name2;
-      };
-      std::vector<xmlInfo> referenceXML;
-
-  };
+//  /*!
+//   * \brief A force law that computes the normal force of many contact kinematics based on the Maxwell-Force-Law
+//   * \author Kilian Grundl
+//   * \date 30-07-2012 start of development
+//   */
+//  class MaxwellUnilateralConstraint : public GeneralizedForceLaw {
+//    public:
+//      /*!
+//       * \brief constructor
+//       */
+//      MaxwellUnilateralConstraint(const double & damping = 0, const double & gapLimit = 0);
+//
+//      /*!
+//       * \brief destructor
+//       */
+//      virtual ~MaxwellUnilateralConstraint();
+//
+//      /* INHERITED INTERFACE */
+//      virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
+//      virtual bool remainsActive(double s, double sTol) {return true; }
+//      virtual bool isSetValued() const { return false; }
+//      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
+//      /***************************************************/
+//
+//      virtual void initializeUsingXML(xercesc::DOMElement *element);
+//
+//      /*!
+//       * \brief initialize all saved contour couplings in the map
+//       *
+//       * \todo: pointer to parent class is probably not optimal (friend class maybe?)
+//       */
+//      virtual void initializeContourCouplings(Contact* parent);
+//
+//      /*GETTER - SETTER*/
+//      void setDebuglevel(int debuglevel) {
+//        DEBUGLEVEL = debuglevel;
+//      }
+//      void setLCPSolvingStrategy(LinearComplementarityProblem::LCPSolvingStrategy strategy) {
+//        LCP.setStrategy(strategy);
+//      }
+//      void setLCPJacobianType(LinearComplementarityProblem::JacobianType type) {
+//        LCP.setJacobianType(type);
+//      }
+//      /*****************/
+//
+//      /**
+//       * \brief add a function that represents the coupling between two contours
+//       * \param name of first contour
+//       * \param name of second contour
+//       * \param Function to describe coupling between contours
+//       *
+//       * \General Remark: The parameters (LagrangeParameterPositions) of the function have to be in the same order as it was given the add(...)-method
+//       */
+//      void addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct);
+//
+//    protected:
+//      /**
+//       * \brief saves all possible contacts in a vector
+//       */
+//      virtual void updatePossibleContactPoints(const std::vector<std::vector<SingleContact> > & contacts);
+//
+//      /**
+//       * \brief updates the influence matrix C
+//       * \param contours vector of contours that are part of the contact
+//       * \param cpData   vector of ContourPointDatas
+//       */
+//      virtual void updateInfluenceMatrix(std::vector<std::vector<SingleContact> > & contacts);
+//
+//      /**
+//       * \brief update the rigid body distances (gaps) for the single contacts
+//       */
+//      void updateRigidBodyGap(const std::vector<std::vector<SingleContact> > & contacts);
+//
+//      /**
+//       * \brief computes the coupling factor for the influence matrix on one contact point (two contours)
+//       * \param contours     vector of contours that are part of the contact
+//       * \param cpData       vector of ContourPointDatas
+//       * \param contactIndex index pair of contact point
+//       */
+//      virtual double computeInfluenceCoefficient(std::vector<std::vector<SingleContact> > & contacts, const std::pair<int, int> & contactIndex);
+//
+//      /**
+//       * \brief computes the coupling factor for the influence matrix between two contact points (four contours)
+//       * \param contours            vector of contours that are part of the contact
+//       * \param cpData              vector of ContourPointDatas
+//       * \param contactIndex        index pair of contact point
+//       * \param coupledContactIndex index pair of coupling contact point
+//       */
+//      virtual double computeInfluenceCoefficient(std::vector<std::vector<SingleContact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
+//
+//      /*
+//       * \brief computes the "material constant" to have a good guess for the lambda-vector
+//       */
+//      virtual void computeMaterialConstant();
+//
+//      /**
+//       * \brief saves the indices of all active contacts in pairs
+//       *
+//       * pair.first: number of contact kinematics
+//       * pair.second: number of subcontact point of contact kinematics
+//       */
+//      std::vector<std::pair<int, int> > possibleContactPoints;
+//
+//      /*!
+//       * \brief variable for the LCP
+//       */
+//      LinearComplementarityProblem LCP;
+//
+//      /**
+//       * \brief Influence matrix between contact points
+//       */
+//      fmatvec::SymMat C;
+//
+//      /*
+//       * \brief vector of rigid body distances(gaps) for the active contacts
+//       */
+//      fmatvec::Vec rigidBodyGap;
+//
+//      /**
+//       * \brief saves the influence functions for a pair of contours. The key is the pair of contour names
+//       */
+//      std::map<std::pair<Contour*, Contour*>, InfluenceFunction*> influenceFunctions;
+//
+//      /**
+//       * \brief Solution of the last time, where contact has to be solved (can be used as starting guess for the next algorithm)
+//       */
+//      fmatvec::Vec solution0;
+//
+//      /*!
+//       * \brief coefficient for possible contact damping
+//       */
+//      double dampingCoefficient;
+//
+//      /*!
+//       * \brief relative contact point distance limit under which damping is active
+//       */
+//      double gLim;
+//
+//      /**
+//       * \brief parameter for guessing starting values of contact force (average eigenvalue of influence-matrix)
+//       */
+//      double matConst;
+//
+//      /**
+//       * \brief parameter to save if matConst has been computed already
+//       */
+//      bool matConstSetted;
+//
+//      /**
+//       * \brief print INFO output?
+//       *
+//       * 0 = no DEBUGOutput
+//       * 1 = most important information
+//       * 2 = ...
+//       * 5 = Matrices and Vectors
+//       * \todo wouldn't a logger for MBSim be nice
+//       */
+//      int DEBUGLEVEL;
+//
+//      struct xmlInfo {
+//          InfluenceFunction * function;
+//          std::string name1;
+//          std::string name2;
+//      };
+//      std::vector<xmlInfo> referenceXML;
+//
+//  };
 
   /**
    * \brief basic regularized bilateral force law on acceleration level for constraint description

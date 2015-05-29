@@ -52,9 +52,14 @@ namespace MBSim {
    */
   template <typename Ret, typename Arg>
   class DistanceFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    protected:
+      double t;
     public:
       virtual ~DistanceFunction() {
       }
+
+      void setTime(double t_) { t = t_; }
+
       /* INTERFACE FOR DERIVED CLASSES */
       /*!
        * \param contour parameter
@@ -66,7 +71,7 @@ namespace MBSim {
        * \param contour parameter
        * \return possible contact-distance at contour parameter
        */
-        virtual double operator[](const Arg& x) { return nrm2(computeWrD(x)); }
+      virtual double operator[](const Arg& x) { return nrm2(computeWrD(x)); }
 
       /*!
        * \param contour parameter
@@ -577,17 +582,14 @@ namespace MBSim {
       double operator()(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
         fmatvec::Vec3 Wd = computeWrD(alpha);
-        fmatvec::Vec3 Wt = contour->computeTangent(cp);
+        fmatvec::Vec3 Wt = contour->computeTangent(t,cp);
         return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
-        contour->computeRootFunctionPosition(cp);
-        contour->computeRootFunctionFirstTangent(cp);
-        contour->computeRootFunctionNormal(cp);
-        WrOC[0] = circle->getFrame()->getPosition() - circle->getRadius() * cp.getFrameOfReference().getOrientation().col(0);
-        WrOC[1] = cp.getFrameOfReference().getPosition();
+        WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * cp.getFrameOfReference().getOrientation(t).col(0);
+        WrOC[1] = cp.getFrameOfReference().getPosition(t);
         return WrOC[1] - WrOC[0];
       }
       /***************************************************/

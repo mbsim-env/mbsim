@@ -55,18 +55,16 @@ namespace MBSim {
        * \return tangent in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeTangent(ContourPointData &cp) {
-        updateKinematicsForFrame(cp, Frame::firstTangent);
-        return cp.getFrameOfReference().getOrientation().col(1);
+      virtual fmatvec::Vec3 computeTangent(double t, ContourPointData &cp) {
+        return cp.getFrameOfReference().getOrientation(t).col(1);
       }
 
       /**
        * \return binormal in world frame
        * \param Lagrangian position
        */
-      virtual fmatvec::Vec3 computeBinormal(ContourPointData &cp) {
-        updateKinematicsForFrame(cp, Frame::secondTangent);
-        return cp.getFrameOfReference().getOrientation().col(2);
+      virtual fmatvec::Vec3 computeBinormal(double t, ContourPointData &cp) {
+        return cp.getFrameOfReference().getOrientation(t).col(2);
       }
       /***************************************************/
 
@@ -74,7 +72,7 @@ namespace MBSim {
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) {
+      virtual double computeCurvature(double t, ContourPointData &cp) {
         THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented.");
         return 0;
       }

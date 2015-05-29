@@ -339,10 +339,10 @@ namespace MBSim {
       if(not(contour.size()))
         THROW_MBSIMERROR("no connection given!");
 
-      //initialize all contour couplings if generalized force law is of maxwell-type
-      if (dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
-        static_cast<MaxwellUnilateralConstraint*>(fcl)->initializeContourCouplings(this);
-      }
+//      //initialize all contour couplings if generalized force law is of maxwell-type
+//      if (dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
+//        static_cast<MaxwellUnilateralConstraint*>(fcl)->initializeContourCouplings(this);
+//      }
 
       MechanicalLink::init(stage);
     }

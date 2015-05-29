@@ -65,7 +65,8 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsCircleSolidContour1s::updateg(double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidContour1s::updateg(double t, double &g, ContourPointData *cpData, int index) {
+    func->setTime(t);
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes());
 
@@ -101,7 +102,7 @@ namespace MBSim {
     g = -cpData[icontour1s].getFrameOfReference().getOrientation().col(0).T()*WrD;
   }
 
-  void ContactKinematicsCircleSolidContour1s::updatewb(Vec &wb, double g, ContourPointData* cpData) {
+  void ContactKinematicsCircleSolidContour1s::updatewb(double t, Vec &wb, double g, ContourPointData* cpData) {
     
     const Vec3 n1=cpData[icircle].getFrameOfReference().getOrientation().col(0);
     const Vec3 u1=-cpData[icircle].getFrameOfReference().getOrientation().col(1);

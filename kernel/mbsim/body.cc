@@ -246,6 +246,8 @@ namespace MBSim {
     updPJ = true;
     for(unsigned int i=0; i<frame.size(); i++)
       frame[i]->resetUpToDate();
+    for(unsigned int i=0; i<contour.size(); i++)
+      contour[i]->resetUpToDate();
   }
   void Body::resetPositionsUpToDate() {
     updPos = true;

@@ -1382,28 +1382,28 @@ namespace MBSim {
     contactKinematics->computeCurvatures(r, cpData);
   }
 
-  void SingleContact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
-    if (gActive) {
-      gAct_(*IndActive_) = g(0);
-      (*IndActive_)++;
-    }
-    else {
-      for (unsigned int i = 0; i < 2; i++)
-        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities);
-      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
-      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
-      gdInActive_(*IndInActive_) = Wn.T() * WvD;
-      gInActive_(*IndInActive_) = g(0);
-      (*IndInActive_)++;
-    }
-  }
-
-  void SingleContact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
-    if (gActive)
-      (*sizeActive_)++;
-    else
-      (*sizeInActive_)++;
-  }
+//  void SingleContact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
+//    if (gActive) {
+//      gAct_(*IndActive_) = g(0);
+//      (*IndActive_)++;
+//    }
+//    else {
+//      for (unsigned int i = 0; i < 2; i++)
+//        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities);
+//      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
+//      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
+//      gdInActive_(*IndInActive_) = Wn.T() * WvD;
+//      gInActive_(*IndInActive_) = g(0);
+//      (*IndInActive_)++;
+//    }
+//  }
+//
+//  void SingleContact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
+//    if (gActive)
+//      (*sizeActive_)++;
+//    else
+//      (*sizeInActive_)++;
+//  }
 
   void SingleContact::initializeUsingXML(DOMElement *element) {
     MechanicalLink::initializeUsingXML(element);

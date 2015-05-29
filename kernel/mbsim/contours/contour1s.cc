@@ -82,8 +82,7 @@ namespace MBSim {
 //        ds = (uMax - uMin) / (openMBVBody->getNumberOfSpinePoints() - 2);
       for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints() - 1; i++) {
         ContourPointData cp(s);
-        updateKinematicsForFrame(cp, Frame::position);
-        Vec3 pos = cp.getFrameOfReference().getPosition();
+        Vec3 pos = cp.getFrameOfReference().getPosition(t);
         data.push_back(pos(0)); // global x-position
         data.push_back(pos(1)); // global y-position
         data.push_back(pos(2)); // global z-position
@@ -93,8 +92,7 @@ namespace MBSim {
       }
       // Avoid s-parameters to be longer than ae!
       ContourPointData cp(ae);
-      updateKinematicsForFrame(cp, Frame::position);
-      Vec3 pos = cp.getFrameOfReference().getPosition();
+      Vec3 pos = cp.getFrameOfReference().getPosition(t);
       data.push_back(pos(0)); // global x-position
       data.push_back(pos(1)); // global y-position
       data.push_back(pos(2)); // global z-position

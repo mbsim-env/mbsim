@@ -314,67 +314,67 @@ namespace MBSim {
       double gdLim;
   };
 
-  /**
-   * \brief function describing the influence between the deformations on a body
-   */
-  class InfluenceFunction : public Function<double(std::pair<Contour*, ContourPointData>, std::pair<Contour*, ContourPointData>)> {
-    public:
-      InfluenceFunction(){}
-      virtual ~InfluenceFunction() {}
-      /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo)=0;
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      /***************************************************/
-    protected:
-      fmatvec::Vec2 computeLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo);
-  };
-
-  /*
-   * \brief Influence function for flexibility of contour with no influence to other contours (or contour points)
-   */
-  class FlexibilityInfluenceFunction : public InfluenceFunction {
-    public:
-      FlexibilityInfluenceFunction() : flexibility(0) {
-      }
-      FlexibilityInfluenceFunction(const std::string& ContourName_, const double & flexibility_) :
-          flexibility(flexibility_) {
-      }
-      virtual ~FlexibilityInfluenceFunction() {}
-      /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
-        if(nrm2(computeLagrangeParameter(firstContourInfo)- computeLagrangeParameter(secondContourInfo)) < macheps())
-          return flexibility;
-        else
-          return 0;
-      }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      /***************************************************/
-
-    protected:
-      double flexibility;
-  };
-
-  /*
-   * \brief a class for Influence-Functions with constant coupling
-   */
-  class ConstantInfluenceFunction : public InfluenceFunction {
-    public:
-      ConstantInfluenceFunction() : couplingValue(0) {
-    }
-      ConstantInfluenceFunction(const double & couplingValue_) :
-          couplingValue(couplingValue_) {
-      }
-      virtual ~ConstantInfluenceFunction() {}
-      /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
-        return couplingValue;
-      }
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      /***************************************************/
-
-    protected:
-      double couplingValue;
-  };
+//  /**
+//   * \brief function describing the influence between the deformations on a body
+//   */
+//  class InfluenceFunction : public Function<double(std::pair<Contour*, ContourPointData>, std::pair<Contour*, ContourPointData>)> {
+//    public:
+//      InfluenceFunction(){}
+//      virtual ~InfluenceFunction() {}
+//      /* INHERITED INTERFACE OF FUNCTION2 */
+//      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo)=0;
+//      virtual void initializeUsingXML(xercesc::DOMElement *element);
+//      /***************************************************/
+//    protected:
+//      fmatvec::Vec2 computeLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo);
+//  };
+//
+//  /*
+//   * \brief Influence function for flexibility of contour with no influence to other contours (or contour points)
+//   */
+//  class FlexibilityInfluenceFunction : public InfluenceFunction {
+//    public:
+//      FlexibilityInfluenceFunction() : flexibility(0) {
+//      }
+//      FlexibilityInfluenceFunction(const std::string& ContourName_, const double & flexibility_) :
+//          flexibility(flexibility_) {
+//      }
+//      virtual ~FlexibilityInfluenceFunction() {}
+//      /* INHERITED INTERFACE OF FUNCTION2 */
+//      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
+//        if(nrm2(computeLagrangeParameter(firstContourInfo)- computeLagrangeParameter(secondContourInfo)) < macheps())
+//          return flexibility;
+//        else
+//          return 0;
+//      }
+//      virtual void initializeUsingXML(xercesc::DOMElement *element);
+//      /***************************************************/
+//
+//    protected:
+//      double flexibility;
+//  };
+//
+//  /*
+//   * \brief a class for Influence-Functions with constant coupling
+//   */
+//  class ConstantInfluenceFunction : public InfluenceFunction {
+//    public:
+//      ConstantInfluenceFunction() : couplingValue(0) {
+//    }
+//      ConstantInfluenceFunction(const double & couplingValue_) :
+//          couplingValue(couplingValue_) {
+//      }
+//      virtual ~ConstantInfluenceFunction() {}
+//      /* INHERITED INTERFACE OF FUNCTION2 */
+//      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
+//        return couplingValue;
+//      }
+//      virtual void initializeUsingXML(xercesc::DOMElement *element);
+//      /***************************************************/
+//
+//    protected:
+//      double couplingValue;
+//  };
 
 }
 

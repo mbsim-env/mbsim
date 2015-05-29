@@ -72,44 +72,44 @@ namespace MBSim {
        * \param contour parameter
        * \param selection of specific calculations for frames
        */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) = 0;
+//      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) = 0;
 
       /**
        * \brief JACOBIAN for contour (normal, tangent, binormal) is set by implementation class
        * \param contour parameter
        * \param selection of specific calculations for frames
        */
-      virtual void updateJacobiansForFrame(double t, ContourPointData &cp, int j=0) = 0;
+ //     virtual void updateJacobiansForFrame(double t, ContourPointData &cp, int j=0) = 0;
 
       /**
        * \return normal in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::normal); return cp.getFrameOfReference().getOrientation().col(0); }
+      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp) { return cp.getFrameOfReference().getOrientation(t).col(0); }
 
       /**
        * \return position in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computePosition(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::position); return cp.getFrameOfReference().getPosition(); }
+      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp) { return cp.getFrameOfReference().getPosition(t); }
 
       /**
        * \return velocity in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::velocity); return cp.getFrameOfReference().getVelocity(); }
+      virtual fmatvec::Vec3 computeVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getVelocity(t); }
 
       /**
        * \return angular in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); }
+      virtual fmatvec::Vec3 computeAngularVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getAngularVelocity(t); }
 
       /**
        * \return curvature of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented."); return 0; }
+      virtual double computeCurvature(double t, ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented."); return 0; }
 
       /**
        * \brief projects the point on the contour to compute the Lagrange parameter
@@ -118,7 +118,7 @@ namespace MBSim {
        *
        * \remark: a vector length of 2 is necessary (Vec(2,INIT,0.))
        */
-      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {THROW_MBSIMERROR("computeLagrangeParameter(const fmatvec::Vec3 &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
+      virtual fmatvec::Vec2 computeLagrangeParameter(double t, const fmatvec::Vec3 &WrPoint) {THROW_MBSIMERROR("computeLagrangeParameter(const fmatvec::Vec3 &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
 
       /**
        * \param position of contour in inertial frame

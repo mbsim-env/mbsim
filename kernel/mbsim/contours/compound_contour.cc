@@ -155,4 +155,9 @@ namespace MBSim {
       frame[i]->updateJacobians(j);
   }
 
+  void CompoundContour::resetUpToDate() {
+    for (unsigned int i = 0; i < frame.size(); i++)
+      frame[i]->resetUpToDate();
+  }
+
 }

@@ -81,6 +81,8 @@ namespace MBSim {
       virtual void updateStateDependentVariables(double t);
       virtual void updateJacobians(double t, int j=0);
 
+      void resetUpToDate();
+
     protected:
       /*!
        * \brief list of all subelements
