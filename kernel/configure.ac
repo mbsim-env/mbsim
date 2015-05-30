@@ -39,6 +39,7 @@ else
   FCFLAGS="$FCFLAGS -g -O2"
   FFLAGS="$FFLAGS -g -O2"
 fi
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
 
 dnl Check for casadi 
 PKG_CHECK_MODULES(CASADI, casadi, [casadi=yes; requires="$requires casadi"; CPPFLAGS="$CPPFLAGS -DHAVE_CASADI"; DEFINES="$DEFINES -DHAVE_CASADI"], [casadi=no])

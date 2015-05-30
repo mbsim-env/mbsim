@@ -52,11 +52,11 @@ int main() {
   casadi::SXFunction fReread=createCasADiSXFunctionFromXML(xmlFile->getDocumentElement());
   fReread.init();
   fReread.evaluate();
-  for(int i=0; i<f.inputExpr().size(); i++) {
+  for(size_t i=0; i<f.inputExpr().size(); i++) {
     cout<<"original input  "<<i<<": "<<f.inputExpr(i)<<endl;
     cout<<"reread   input  "<<i<<": "<<fReread.inputExpr(i)<<endl;
   }
-  for(int i=0; i<f.outputExpr().size(); i++) {
+  for(size_t i=0; i<f.outputExpr().size(); i++) {
     cout<<"original output "<<i<<": "<<f.outputExpr(i)<<endl;
     cout<<"reread   output "<<i<<": "<<fReread.outputExpr(i)<<endl;
   }
