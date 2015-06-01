@@ -176,6 +176,7 @@ namespace MBSimIntegrator {
 
 //      x += system.deltax(z, t, dt);  // todo: framework is not ready for x.
     }
+    delete jac;
   }
 
   void QuasiStaticIntegrator::postIntegrate(DynamicSystemSolver& system) {
