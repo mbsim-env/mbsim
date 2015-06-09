@@ -113,6 +113,8 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
       return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
+    if(i==11)
+      return new PiecewisePolynomFunctionWidget(3);
     return NULL;
   }
 
@@ -129,6 +131,7 @@ namespace MBSimGUI {
     name.push_back("Linear translation");
     name.push_back("Symbolic function");
     name.push_back("Nested function");
+    name.push_back("Piecewise polynom function");
     return name;
   }
 
@@ -225,6 +228,8 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(var,1,3);
     if(i==1)
       return new TwoDimensionalTabularFunctionWidget(1);
+    if(i==2)
+      return new PiecewisePolynomFunctionWidget(3);
     return NULL;
   }
 
@@ -232,6 +237,7 @@ namespace MBSimGUI {
     vector<QString> name;
     name.push_back("Symbolic function");
     name.push_back("Two dimensional tabular function");
+    name.push_back("Piecewise polynom function");
     return name;
   }
   QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
