@@ -13,6 +13,11 @@ export CXXFLAGS="-O0 -g"
 export CFLAGS="-O0 -g"
 $(dirname $0)/build.py "$@" --rotate 14 -j 2 --sourceDir /home/user/MBSimDailyBuild --prefix /home/user/MBSimDailyBuild/local --docOutDir /var/www/html/mbsim-env/MBSimDailyBuild/doc --reportOutDir /var/www/html/mbsim-env/MBSimDailyBuild/report --url http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report --buildType "Daily Build: " --passToConfigure --enable-debug --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --with-swigpath=/home/user/Updates/local/bin
 
+# update references for download
+cd $SRCDIR/mbsim/examples
+./runexamples.py --action pushReference=/var/www/html/mbsim-env/MBSimDailyBuild/references
+cd $CURDIR
+
 # run examples with valgrind
 cd $(dirname $0)/../../../..
 SRCDIR=$(pwd)
