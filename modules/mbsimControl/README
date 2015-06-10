@@ -1,36 +1,26 @@
-MBSimControl - Control for MBSim, Lehrstuhl für Angewandte Mechanik
-==============================
+Installation
+====================
 
-Benötigt:
-=========
-	- mbsim
+This project provides a simulation environment for mechanical systems. It needs kernel. After the installation proceed with the following steps.
 
-Installation:
-=============
-	1. aclocal, autoconf, libtoolize und automake ausführen
-		
-		aclocal
-		autoheader
-		autoconf
-		libtoolize
-		automake -a
-			                
-	2. configure Skript ausführen.
 
-		./configure
+1. Checkout from git
+--------------------
 
-	   Hier sind folgende Optionen wichtig:
+If not already done, checkout the git tree
+# git clone https://github.com/mbsim-env/mbsim.git
 
-  		--prefix=PREFIX (Dorthin werden die Bibliotheken installiert)
-          	­-help (Weitere Optionen)
-    
-  	3. make ausfuehren, um shared libraries zu erzeugen.
-                  
-                  make
+2. Run AutoTools
+----------------
 
-	4. make install ausfuehren, um libmbsimControl.so zu installieren.
+# aclocal
+# autoheader
+# libtoolize -c --force
+# autoconf
+# automake -a -c --force
 
-                  make install 
-				  
-Anmerkungen:
-============
+
+3. Proceed with configure
+-------------------------
+
+See file INSTALL.
