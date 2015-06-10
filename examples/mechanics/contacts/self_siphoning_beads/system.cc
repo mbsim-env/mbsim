@@ -28,7 +28,7 @@
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
-using namespace CasADi;
+using namespace casadi;
 
 double createAngle(double i) {
   return M_PI / 200 * sin(i);

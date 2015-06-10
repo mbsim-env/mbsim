@@ -39,29 +39,11 @@ else
   FCFLAGS="$FCFLAGS -g -O2"
   FFLAGS="$FFLAGS -g -O2"
 fi
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
 
 dnl Check for casadi 
-AC_ARG_WITH(casadi_inc_prefix,
-  [  --with-casadi-inc-prefix=PFX  Prefix where casadi includes are installed],
-  [CASADICPPFLAGS="-I$withval"],
-  [CASADICPPFLAGS="-I$prefix/include"])
-AC_ARG_WITH(casadi_lib_prefix,
-  [  --with-casadi-lib-prefix=PFX  Prefix where casadi lib is installed],
-  [ CASADILDFLAGS="-L$withval" ],
-  [ CASADILDFLAGS="-L$prefix/lib" ])
-CPPFLAGS="$CPPFLAGS $CASADICPPFLAGS"
-casadi="no"
-AC_CHECK_HEADERS([casadi/symbolic/sx/sx_node.hpp], [casadi="yes"],
-  [AC_MSG_RESULT([Can not find casadi c++ header casadi/symbolic/sx/sx_node.hpp])])
-AC_MSG_CHECKING([for casadi c++ library])
-if test $casadi = "yes" ; then
-  LDFLAGS="$LDFLAGS $CASADILDFLAGS"
-  CPPFLAGS="$CPPFLAGS -DWITHOUT_PRE_1_9_X" # do not allow deprecated functions from casadi
-  LIBS="$LIBS -lcasadi"
-  test "_$host_os" != "_mingw32" && LIBS="$LIBS -ldl"
-  AC_TRY_LINK([#include <casadi/symbolic/sx/sx_node.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
-    [casadi="no"; AC_MSG_RESULT([no]); AC_MSG_ERROR([Can not link with casadi c++ library])])
-fi
+PKG_CHECK_MODULES(CASADI, casadi, [casadi=yes; requires="$requires casadi"; CPPFLAGS="$CPPFLAGS -DHAVE_CASADI"; DEFINES="$DEFINES -DHAVE_CASADI"], [casadi=no])
+AM_CONDITIONAL([COND_CASADI], [test $casadi = yes])
 
 dnl check for numerics library
 dnl PKG_CHECK_MODULES(MBSIMNUMERICS, numerics ,[requires="$requires numerics"; numerics_compilerflag="-DHAVE_MBSIMNUMERICS";AC_DEFINE([HAVE_MBSIMNUMERICS],[1],[linking with MBSimNumerics-library])], [echo No numerics package is used. Consider to install it...])
@@ -122,23 +104,6 @@ AC_SUBST([LIBMBSIM_REVISION])
 AC_SUBST([LIBMBSIM_AGE])
 LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
-
-AM_CONDITIONAL([COND_CASADI], [test _$casadi = _yes])
-if test $casadi = "yes" ; then
-  CASADILIB="-lcasadi"
-  test "_$host_os" != "_mingw32" && CASADILIB="$CASADILIB -ldl"
-  AC_SUBST([CASADILIB])
-  AC_SUBST([CASADICPPFLAGS])
-  AC_SUBST([CASADILDFLAGS])
-  CPPFLAGS="$CPPFLAGS -Wall -Wno-unknown-pragmas -Wno-long-long -Wno-sign-compare"
-else
-  CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
-fi
-AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
-CPPFLAGS_OLD=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
-AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
-
 
 dnl Check for MinGW
 AC_CANONICAL_HOST

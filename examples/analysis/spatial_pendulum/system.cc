@@ -15,7 +15,6 @@
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-//using namespace CasADi;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 

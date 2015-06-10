@@ -61,7 +61,7 @@ namespace MBSimGUI {
   }
 
   void Element::writeXMLFile(const string &name) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
     writeXMLFile(doc.get());
     QFileInfo info(QString::fromStdString(name));
     QDir dir;
@@ -71,7 +71,7 @@ namespace MBSimGUI {
   }
 
   void Element::writeXMLFileEmbed(const string &name) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
     Embed<Element>::writeXML(this,doc.get());
     QFileInfo info(QString::fromStdString(name));
     QDir dir;

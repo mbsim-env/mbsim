@@ -43,7 +43,7 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
   static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
-  static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
+  boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
 
   set<boost::filesystem::path> pluginLibFile;
 

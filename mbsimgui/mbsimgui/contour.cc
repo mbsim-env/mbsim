@@ -33,6 +33,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   Contour::Contour(const string &str, Element *parent) : Element(str,parent), refFrame(0,false) {
     refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
@@ -50,7 +52,7 @@ namespace MBSimGUI {
   }
 
   Contour* Contour::readXMLFile(const string &filename, Element *parent) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
 //    Contour *contour=ObjectFactory::getInstance()->createContour(e, parent);
     Contour *contour=Embed<Contour>::createAndInit(e,parent);
