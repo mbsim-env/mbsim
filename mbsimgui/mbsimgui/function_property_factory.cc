@@ -124,6 +124,8 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,"VV",vector<string>(1,"q"),3);
     if(i==10)
       return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"VV",vector<string>(1,"q")));
+    if(i==11)
+      return new PiecewisePolynomFunction("NoName",parent);
     return NULL;
   }
 
@@ -140,6 +142,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"LinearTranslation");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
     return name;
   }
 
@@ -236,6 +239,8 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,ext,var,1);
     if(i==1)
       return new TwoDimensionalTabularFunction("NoName",parent);
+    if(i==2)
+      return new PiecewisePolynomFunction("NoName",parent);
     return NULL;
   }
 
@@ -243,6 +248,7 @@ namespace MBSimGUI {
     vector<FQN> name;
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TwoDimensionalTabularFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
     return name;
   }
 

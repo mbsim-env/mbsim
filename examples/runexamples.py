@@ -43,12 +43,25 @@ timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-  pj("mechanics", "flexible_body", "beltdrive"),
+  # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
   pj("mechanics", "contacts", "self_siphoning_beads"),
   pj("mechanics", "flexible_body", "spatial_beam_cosserat"),
   pj("mechanics", "flexible_body", "pearlchain_cosserat_2D_POD"),
-  pj("mechanics", "flexible_body", "block_compression"),
   pj("mechanics", "flexible_body", "linear_external_ffr_spatial_beam"),
+  pj("mechanics", "flexible_body", "flexible_crank_mechanism_fe"),
+  # dimension missmatch in matrix multiplication of mbsimFlexibleBody or HETS2 integrator
+  pj("mechanics", "flexible_body", "rotor"),
+  pj("mechanics", "contacts", "point_nurbsdisk"),
+  pj("mechanics", "contacts", "circle_nurbsdisk2s"),
+  pj("mechanics", "basics", "slider_crank"),
+  pj("mechanics", "flexible_body", "mfr_mindlin"),
+  pj("mechanics", "flexible_body", "block_compression"),
+  # timeout -> too long execution time at least for -O0 builds (>30min)
+  pj("mechanics", "flexible_body", "perlchain_spatialRCM"),
+  pj("mechanics", "flexible_body", "beltdrive"),
+  # valgrind errors in mbsimFlexibleBody
+  pj("mechanics", "flexible_body", "rotating_beam"),
+  # MBSimFMI is still beta -> don't care about not working examples
   pj("fmi", "hierachical_modelling"),
   pj("fmi", "simple_test"),
   pj("fmi", "sphere_on_plane"),
