@@ -1,78 +1,42 @@
-# LaTeX Makefile for dvi, ps, and pdf file creation.
-# By Jeffrey Humpherys
-# Written April 05, 2004
-# Revised January 13, 2005
-# Thanks Bjorn and Boris
-#
-# Usage:
-# make          # make dvi, ps, and pdf
-# make dvi      # make dvi
-# make ps       # make ps (and dvi)
-# make pdf      # make pdf
-#
-
 # Compiler
-LATEX		= latex
-BIBTEX		= bibtex
+LATEX	= pdflatex --shell-escape
+BIBTEX 	= bibtex
+
 # Sourcen
 MAIN            = main
-DVI		= $(MAIN).dvi
-PS		= $(MAIN).ps
-PDF		= $(MAIN).pdf
+DVI				= $(MAIN).dvi
+PS				= $(MAIN).ps
+PDF				= $(MAIN).pdf
 SOURCES         = $(wildcard ./*.tex)
-FIGUREDIR	= Figures
-CODEDIR         = C++
-EPSFIGURES      = $(wildcard ./$(FIGUREDIR)/*.eps)
-OCTAVECODE      = $(wildcard ./$(CODEDIR)/*.c* ./$(CODEDIR)/*.h)
+EPSFIGURES      = $(wildcard ./*.eps)
 
-all: dvi ps pdf
+all: dvi
 
 dvi: ${MAIN}.dvi
 pdf: ${MAIN}.pdf
 ps: ${MAIN}.ps
 
-${MAIN}.dvi : ${SOURCES} ${EPSFIGURES} ${OCTAVECODE}
+${MAIN}.dvi : ${SOURCES} ${EPSFIGURES}
 	@echo "--- $(LATEX):"
-	$(LATEX)  ${MAIN}
-
-	@echo " "
-	@echo "--- $(BIBTEX):"
+	$(LATEX) ${MAIN}
 	$(BIBTEX) ${MAIN}
-
-	@echo " "
-	@(while( grep -i "Rerun to get" ${MAIN}.log > /dev/null ) do \
-		echo "--- Re-running $(ReRuns) $(LATEX):"; \
-		$(LATEX) ${MAIN}  > /dev/null; \
-	done)
-	@echo " " \
-# pipe to get him quite
-
-	@echo " "
-	@echo "--- $(LATEX): Most important warnings from $(MAIN).log:"
-	@grep -i 'Warning\|Error\|multipl' $(MAIN).log
-	@(test -f $(@:.dvi=.blg) \
-	  && echo " " \
-	  && echo "--- $(BIBTEX): Most important warnings from $(<@.dvi=.blg):" \
-	  && grep -i 'Warning\|Error' $(@:.dvi=.blg)\
-	  && echo " ")
+	$(LATEX) ${MAIN}
+	$(BIBTEX) ${MAIN}
+	$(LATEX) ${MAIN}
 
 ${PS}  : ${DVI}
-# running dvips
-	dvips -ta4 ${DVI} -o $@
+	dvips -G0 -ta4 ${DVI} -o $@
 
 ${PDF} : ${PS}
-# running ps2pdf
-	ps2pdf ${PS} $@ 
-
-cleanall: clean
-	rm -f $(DVI) ${PS} ${PDF}
+	ps2pdf -dPDFSETTINGS=/prepress -dCompatibilityLevel=1.4 -dMAxSubsetPct=100 -dSubsetFonts=true -dEmbedAllFonts=true -sPAPERSIZE=a4 ${PS} $@ 
 
 clean:
 	rm -f ./*.aux
-	rm -f ./$(MAIN).toc
-	rm -f ./$(MAIN).log
-	rm -f ./$(MAIN).blg
-	rm -f ./$(MAIN).dvi
-	rm -f ./$(MAIN).pdf
-	rm -f ./$(MAIN).ps
+	rm -f ./*.log
 	rm -f ./*.tex~
+	rm -f ./$(MAIN).toc
+	rm -f ./$(MAIN).lof
+	rm -f ./$(MAIN).blg
+	rm -f ./$(MAIN).out
+	rm -f ./$(MAIN).bbl
+	rm -f $(DVI) ${PS} ${PDF}
