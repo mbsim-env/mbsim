@@ -17,11 +17,9 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
   static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
-  static boost::shared_ptr<DOMParser> parser;
-  if(!parser) {
-    parser=DOMParser::create(true);
-    parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___mbsim_berlios_de_MBSimPlugin"/"plugin.xsd");
-  }
+  boost::shared_ptr<DOMParser> parser;
+  parser=DOMParser::create(true);
+  parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___mbsim_berlios_de_MBSimPlugin"/"plugin.xsd");
 
   // read plugin schemas
   string ns, loc;

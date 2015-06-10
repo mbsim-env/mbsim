@@ -31,6 +31,7 @@ using namespace boost;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
   extern QDir mbsDir;
   extern bool absolutePath;
 
@@ -173,7 +174,7 @@ namespace MBSimGUI {
 
   Parameters Parameters::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     Parameters param;
     param.initializeUsingXML(e);
@@ -200,7 +201,7 @@ namespace MBSimGUI {
   }
 
   void Parameters::writeXMLFile(const string &name) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
     writeXMLFile(doc.get());
     QFileInfo info(QString::fromStdString(name));
     QDir dir;

@@ -26,7 +26,7 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace CasADi;
+using namespace casadi;
 
 class Rod : public FlexibleBody1s21RCM {
   public:

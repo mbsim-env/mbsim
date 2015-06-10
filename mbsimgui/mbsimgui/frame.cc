@@ -32,6 +32,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
 
     // properties->addTab("Plotting");
@@ -49,7 +51,7 @@ namespace MBSimGUI {
   }
 
   Frame* Frame::readXMLFile(const string &filename, Element *parent) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     //Frame *frame=ObjectFactory::getInstance()->createFrame(e, parent);
     Frame *frame=Embed<Frame>::createAndInit(e,parent);

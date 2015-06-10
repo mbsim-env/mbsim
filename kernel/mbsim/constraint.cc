@@ -544,27 +544,27 @@ namespace MBSim {
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->setqRel(q(Iq2[i]));
 
-    for(int i=0; i<bd1.size(); i++) {
+    for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
       JT(Index(0,2),Iu1[i]) = frame1->getJacobianOfTranslation(t,2);
       JR(Index(0,2),Iu1[i]) = frame1->getJacobianOfRotation(t,2);
-      for(int j=i+1; j<bd1.size(); j++)
+      for(size_t j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
       bd1[i]->setUpdateByReference(true);
     }
-    for(int i=0; i<bd2.size(); i++) {
+    for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->setUpdateByReference(false);
       JT(Index(0,2),Iu2[i]) = -frame2->getJacobianOfTranslation(t,2);
       JR(Index(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(t,2);
-      for(int j=i+1; j<bd2.size(); j++)
+      for(size_t j=i+1; j<bd2.size(); j++)
         bd2[j]->resetJacobiansUpToDate();
       bd2[i]->setUpdateByReference(true);
     }
-    for(int i=0; i<bd1.size(); i++) {
+    for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->resetJacobiansUpToDate();
       bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
     }
-    for(int i=0; i<bd2.size(); i++) {
+    for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->resetJacobiansUpToDate();
       bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
     }

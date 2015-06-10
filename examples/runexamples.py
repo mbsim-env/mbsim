@@ -43,13 +43,28 @@ timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-# pj('xml', 'time_dependent_kinematics'),
-  pj("mechanics", "flexible_body", "beltdrive"),
+  # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
   pj("mechanics", "contacts", "self_siphoning_beads"),
   pj("mechanics", "flexible_body", "spatial_beam_cosserat"),
   pj("mechanics", "flexible_body", "pearlchain_cosserat_2D_POD"),
+  pj("mechanics", "flexible_body", "linear_external_ffr_spatial_beam"),
+  pj("mechanics", "flexible_body", "flexible_crank_mechanism_fe"),
+  # dimension missmatch in matrix multiplication of mbsimFlexibleBody or HETS2 integrator
+  pj("mechanics", "flexible_body", "rotor"),
+  pj("mechanics", "contacts", "point_nurbsdisk"),
+  pj("mechanics", "contacts", "circle_nurbsdisk2s"),
+  pj("mechanics", "basics", "slider_crank"),
+  pj("mechanics", "flexible_body", "mfr_mindlin"),
   pj("mechanics", "flexible_body", "block_compression"),
+  # timeout -> too long execution time at least for -O0 builds (>30min)
+  pj("mechanics", "flexible_body", "perlchain_spatialRCM"),
+  pj("mechanics", "flexible_body", "beltdrive"),
+  # valgrind errors in mbsimFlexibleBody
+  pj("mechanics", "flexible_body", "rotating_beam"),
+  # MBSimFMI is still beta -> don't care about not working examples
   pj("fmi", "hierachical_modelling"),
+  pj("fmi", "simple_test"),
+  pj("fmi", "sphere_on_plane"),
 ])
 
 # MBSim Modules
@@ -268,8 +283,8 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references" # default value
-  args.pushDIR=None # no default value (use /media/mbsim-env/MBSimDailyBuild/references for the build system)
+  args.updateURL="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/references" # default value
+  args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
       args.updateURL="file://"+myurllib.pathname2url(os.path.abspath(args.action[16:]))
@@ -1548,9 +1563,6 @@ def copyAndSHA1AndAppendIndex(src, dst):
   index=codecs.open(pj(os.path.dirname(dst), "index.txt"), "a", encoding="utf-8")
   index.write(os.path.basename(dst)+":")
 def pushReference():
-  print("WARNING! pushReference is a internal action!")
-  print("This action should only be used on the official MBSim build system!")
-  print("It will fail on all other hosts!")
   loopOverReferenceFiles("Pushing reference to download dir", "reference", args.pushDIR, copyAndSHA1AndAppendIndex)
 
 def downloadFileIfDifferent(src):
