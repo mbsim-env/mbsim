@@ -106,7 +106,7 @@ namespace MBSim {
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
+      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->getJacobianOfTranslation(j).cols()-1);
       V[j][i]>>VParent(I,J);
     }
   } 
@@ -117,7 +117,7 @@ namespace MBSim {
       h[j][i]>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
+      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->getJacobianOfTranslation(j).cols()-1);
       h[j][i]>>hParent(I);
     }
   } 
@@ -136,7 +136,7 @@ namespace MBSim {
       dhdt[i]>>dhdtParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
+      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->getJacobianOfTranslation(j).cols()-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
@@ -149,7 +149,7 @@ namespace MBSim {
     }
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->gethInd(j);
-      Index I = Index(hInd,hInd+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
+      Index I = Index(hInd,hInd+contour[i]->getFrame()->getJacobianOfTranslation(j).cols()-1);
       r[j][i]>>rParent(I);
     }
   } 

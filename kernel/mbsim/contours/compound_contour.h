@@ -55,17 +55,6 @@ namespace MBSim {
 #endif
       /***************************************************/
 
-      /* INHERITED INTERFACE OF CONTOUR */
-//      void setReferencePosition(const fmatvec::Vec3 &WrOP);
-//      void setReferenceOrientation(const fmatvec::SqrMat3 &AWC);
-//      void setReferenceVelocity(const fmatvec::Vec3 &WvP);
-//      void setReferenceAngularVelocity(const fmatvec::Vec3 &WomegaC);
-//      void setReferenceJacobianOfTranslation(const fmatvec::Mat3V &WJP);
-//      void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP);
-//      void setReferenceJacobianOfRotation(const fmatvec::Mat3V &WJR);
-//      void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR);
-      /***************************************************/
-
       void init(InitStage stage);
       Contour* getContourElement(int i) {
         return element[i];
@@ -74,12 +63,6 @@ namespace MBSim {
       void addContour(RigidContour* ce);
       void addFrame(FixedRelativeFrame* f);
       unsigned int getNumberOfElements() { return element.size(); }
-
-      void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
-      void updateJacobiansForFrame(double t, ContourPointData &cp);
-
-      virtual void updateStateDependentVariables(double t);
-      virtual void updateJacobians(double t, int j=0);
 
       void resetUpToDate();
 

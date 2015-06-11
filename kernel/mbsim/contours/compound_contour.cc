@@ -59,50 +59,6 @@ namespace MBSim {
     f->setParent(this);
   }
 
-//  void CompoundContour::setReferenceVelocity(const Vec3 &WvP) {
-//    Contour::setReferenceVelocity(WvP);
-//    for (unsigned int i = 0; i < element.size(); i++)
-//      element[i]->setReferenceVelocity(R.getVelocity() + crossProduct(R.getAngularVelocity(), Wr[i]));
-//  }
-//
-//  void CompoundContour::setReferenceAngularVelocity(const Vec3 &WomegaC) {
-//    Contour::setReferenceAngularVelocity(WomegaC);
-//    for (unsigned int i = 0; i < element.size(); i++)
-//      element[i]->setReferenceAngularVelocity(R.getAngularVelocity());
-//  }
-//
-//  void CompoundContour::setReferenceOrientation(const SqrMat3 &AWC) {
-//    Contour::setReferenceOrientation(AWC);
-//    for (unsigned int i = 0; i < element.size(); i++) {
-//      element[i]->setReferenceOrientation(R.getOrientation() * AIK[i]);
-//      Wr[i] = R.getOrientation() * Kr[i];
-//    }
-//  }
-//
-//  void CompoundContour::setReferenceJacobianOfTranslation(const Mat3V &WJP) {
-//    Contour::setReferenceJacobianOfTranslation(WJP);
-//    for (unsigned int i = 0; i < element.size(); i++)
-//      element[i]->setReferenceJacobianOfTranslation(R.getJacobianOfTranslation() - tilde(Wr[i]) * R.getJacobianOfRotation());
-//  }
-//
-//  void CompoundContour::setReferenceGyroscopicAccelerationOfTranslation(const Vec3 &WjP) {
-//    Contour::setReferenceGyroscopicAccelerationOfTranslation(WjP);
-//    for (unsigned int i = 0; i < element.size(); i++)
-//      element[i]->setReferenceGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tilde(Wr[i]) * R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(), crossProduct(R.getAngularVelocity(), Wr[i])));
-//  }
-//
-//  void CompoundContour::setReferenceJacobianOfRotation(const Mat3V &WJR) {
-//    Contour::setReferenceJacobianOfRotation(WJR);
-//    for (unsigned int i = 0; i < element.size(); i++)
-//      element[i]->setReferenceJacobianOfRotation(R.getJacobianOfRotation());
-//  }
-//
-//  void CompoundContour::setReferenceGyroscopicAccelerationOfRotation(const Vec3 &WjR) {
-//    Contour::setReferenceGyroscopicAccelerationOfRotation(WjR);
-//    for (unsigned int i = 0; i < element.size(); i++)
-//      element[i]->setReferenceGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
-//  }
-//
   void CompoundContour::init(InitStage stage) {
     if (stage == unknownStage) {
       Contour::init(stage);
@@ -133,26 +89,6 @@ namespace MBSim {
       //element[i]->setParent(parent); // PARENT
       element[i]->init(stage);
     }
-  }
-
-  void CompoundContour::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
-    for (unsigned int i = 0; i < element.size(); i++)
-      element[i]->updateKinematicsForFrame(cp, ff);
-  }
-
-  void CompoundContour::updateJacobiansForFrame(double t, ContourPointData &cp) {
-    for (unsigned int i = 0; i < element.size(); i++)
-      element[i]->updateJacobiansForFrame(t,cp);
-  }
-
-  void CompoundContour::updateStateDependentVariables(double t) {
-    for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateStateDependentVariables(t);
-  }
-
-  void CompoundContour::updateJacobians(double t, int j) {
-    for (unsigned int i = 0; i < frame.size(); i++)
-      frame[i]->updateJacobians(j);
   }
 
   void CompoundContour::resetUpToDate() {

@@ -285,7 +285,6 @@ namespace MBSim {
       virtual void updatePositions(double t) { }
       virtual void updateVelocities(double t) { }
       virtual void updateAccelerations(double t) { }
-      virtual void updateStateDependentVariables(double t) { }
       virtual void updateJacobians(double t, int j=0) { }
       virtual void updateGyroscopicAccelerations(double t) { }
 

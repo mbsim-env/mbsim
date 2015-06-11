@@ -59,13 +59,6 @@ namespace MBSim {
       (*i)->updateLLM(t,j);
   }
 
-  void Group::updateStateDependentVariables(double t) {
-
-    for(unsigned int i=0; i<elementOrdered.size(); i++) 
-      for(unsigned int j=0; j<elementOrdered[i].size(); j++) 
-	elementOrdered[i][j]->updateStateDependentVariables(t);
-  }
-
   void Group::updatedu(double t, double dt) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatedu(t,dt);

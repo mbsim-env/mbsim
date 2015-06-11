@@ -39,13 +39,6 @@ namespace MBSim {
   class Frame : public Element {
     public:
       /**
-       * \brief different interest features for frames
-       */
-      enum Feature {
-        position, localPosition, firstTangent, normal, secondTangent, cosy, position_cosy, velocity, angularVelocity, velocity_cosy, velocities, velocities_cosy, angle, dotAngle, all
-      };
-
-      /**
        * \brief constructor
        * \param name of coordinate system
        */
@@ -57,22 +50,22 @@ namespace MBSim {
       virtual ~Frame() {}
 
       /* INHERITED INTERFACE ELEMENT */
+      void init(InitStage stage);
       std::string getType() const { return "Frame"; }
       virtual void plot(double t, double dt = 1); 
       virtual void closePlot(); 
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
+      /***************************************************/
+
+      /* GETTER / SETTER */
       int gethSize(int i=0) const { return hSize[i]; }
       int gethInd(int i=0) const { return hInd[i]; }
+      void sethSize(int size, int i=0) { hSize[i] = size; }
+      void sethInd(int ind, int i=0) { hInd[i] = ind; }
       const fmatvec::Vec3& getPosition() const { return WrOP; }
-      const fmatvec::Vec3& getLocalPosition() const { return LrOP; }
       const fmatvec::SqrMat3& getOrientation() const { return AWP; }
-      fmatvec::Vec3& getPosition() { return WrOP; }
-      fmatvec::SqrMat3& getOrientation() { return AWP; }
-      void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
-      void setLocalPosition(const fmatvec::Vec3 &v) { LrOP = v; }
-      void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
       const fmatvec::Vec3& getVelocity() const { return WvP; } 
       const fmatvec::Vec3& getAngularVelocity() const { return WomegaP; }
       const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
@@ -81,46 +74,38 @@ namespace MBSim {
       const fmatvec::Vec3& getGyroscopicAccelerationOfRotation() const { return WjR; }
       const fmatvec::Vec3& getAcceleration() const { return WaP; } 
       const fmatvec::Vec3& getAngularAcceleration() const { return WpsiP; }
-      void init(InitStage stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) { 
-        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
-        openMBVFrame=ombv.createOpenMBV(); 
-      }
-      void setOpenMBVFrame(const boost::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
-      boost::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
-#endif
-      /***************************************************/
-      
-      /* GETTER / SETTER */
-      void sethSize(int size, int i=0) { hSize[i] = size; }
-      void sethInd(int ind, int i=0) { hInd[i] = ind; }
-
+      fmatvec::Vec3& getPosition() { return WrOP; }
+      fmatvec::SqrMat3& getOrientation() { return AWP; }
       fmatvec::Vec3& getVelocity() { return WvP; } 
       fmatvec::Vec3& getAngularVelocity() { return WomegaP; }
-      void setVelocity(const fmatvec::Vec3 &v) { WvP = v; } 
-      void setAngularVelocity(const fmatvec::Vec3 &omega) { WomegaP = omega; }
-
-      void setJacobianOfTranslation(const fmatvec::Mat3xV &WJP_, int j=0) { WJP[j]=WJP_; }
-      void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP_) { WjP=WjP_; }
-      void setJacobianOfRotation(const fmatvec::Mat3xV &WJR_, int j=0) { WJR[j]=WJR_; }
-      void setGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR_) { WjR=WjR_; }
       fmatvec::Mat3xV& getJacobianOfTranslation(int j=0) { return WJP[j]; }
       fmatvec::Mat3xV& getJacobianOfRotation(int j=0) { return WJR[j]; }
       fmatvec::Vec3& getGyroscopicAccelerationOfTranslation() { return WjP; }
       fmatvec::Vec3& getGyroscopicAccelerationOfRotation() { return WjR; }
       fmatvec::Vec3& getAcceleration() { return WaP; } 
       fmatvec::Vec3& getAngularAcceleration() { return WpsiP; }
+      void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
+      void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
+      void setVelocity(const fmatvec::Vec3 &v) { WvP = v; }
+      void setAngularVelocity(const fmatvec::Vec3 &omega) { WomegaP = omega; }
+      void setJacobianOfTranslation(const fmatvec::Mat3xV &WJP_, int j=0) { WJP[j]=WJP_; }
+      void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP_) { WjP=WjP_; }
+      void setJacobianOfRotation(const fmatvec::Mat3xV &WJR_, int j=0) { WJR[j]=WJR_; }
+      void setGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR_) { WjR=WjR_; }
       void setAcceleration(const fmatvec::Vec3 &a) { WaP = a; } 
       void setAngularAcceleration(const fmatvec::Vec3 &psi) { WpsiP = psi; }
-      void setAnglesOfOrientation(const fmatvec::Vec3 &angles_) { angles = angles_; }
-      const fmatvec::Vec3& getAnglesOfOrientation() const { return angles; }
-      void setDotAnglesOfOrientation(const fmatvec::Vec3 &dotAngles_ ) { dotAngles = dotAngles_; }
-      const fmatvec::Vec3& getDotAnglesOfOrientation() const { return dotAngles; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      /***************************************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
+        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
+        openMBVFrame=ombv.createOpenMBV();
+      }
+      void setOpenMBVFrame(const boost::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
+      boost::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
+#endif
 
       void resetUpToDate();
       virtual void resetPositionsUpToDate();
@@ -155,11 +140,6 @@ namespace MBSim {
       fmatvec::Vec3 WrOP;
 
       /**
-       * \brief position of coordinate system in object local frame of reference
-       */
-      fmatvec::Vec3 LrOP;
-
-      /**
        * \brief transformation matrix in inertial frame of reference
        */
       fmatvec::SqrMat3 AWP;
@@ -183,11 +163,6 @@ namespace MBSim {
        * \brief acceleration and angular acceleration of coordinate system in inertial frame of reference
        */
       fmatvec::Vec3 WaP, WpsiP;
-
-      /**
-       * \brief orientation angles and the time derivative of angles of the contour point
-       */
-      fmatvec::Vec3 angles, dotAngles;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Frame> openMBVFrame;

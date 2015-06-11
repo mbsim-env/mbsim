@@ -62,7 +62,8 @@ namespace MBSim {
       double ui = u(i); // save correct position
 
       u(i) += epsroot(); // update with disturbed positions assuming same active links
-      updateStateDependentVariables(t);
+      throw;
+      //updateStateDependentVariables(t);
       updateh(t);
 
       //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
@@ -76,7 +77,8 @@ namespace MBSim {
       double qi = q(i); // save correct position
 
       q(i) += epsroot(); // update with disturbed positions assuming same active links
-      updateStateDependentVariables(t);
+      throw;
+      //updateStateDependentVariables(t);
       updateT(t);
       updateJacobians(t);
       updateh(t);
@@ -97,7 +99,7 @@ namespace MBSim {
     // dhdt = (hObject-hObjectEnd)/epsroot();
     // t = t0;
     /******************* back to initial state **********************/
-    updateStateDependentVariables(t);
+    //updateStateDependentVariables(t);
     updateT(t);
     updateJacobians(t);
     h[0] = hEnd;

@@ -66,109 +66,45 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
 
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief cartesian kinematic for contour (normal, tangent, binormal) is set by implementation class
-       * \param contour parameter
-       * \param selection of specific calculations for frames
-       */
-//      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) = 0;
-
-      /**
-       * \brief JACOBIAN for contour (normal, tangent, binormal) is set by implementation class
-       * \param contour parameter
-       * \param selection of specific calculations for frames
-       */
- //     virtual void updateJacobiansForFrame(double t, ContourPointData &cp, int j=0) = 0;
-
-      /**
-       * \return normal in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp) { return cp.getFrameOfReference().getOrientation(t).col(0); }
-
-      /**
-       * \return position in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp) { return cp.getFrameOfReference().getPosition(t); }
-
-      /**
-       * \return velocity in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 computeVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getVelocity(t); }
-
-      /**
-       * \return angular in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 computeAngularVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getAngularVelocity(t); }
-
-      /**
-       * \return curvature of contour in contour point
-       * \param contour position
-       */
-      virtual double computeCurvature(double t, ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented."); return 0; }
-
-      /**
-       * \brief projects the point on the contour to compute the Lagrange parameter
-       * \param WrPoint point in world coordinates
-       * \return Vec of lagrange parameters
-       *
-       * \remark: a vector length of 2 is necessary (Vec(2,INIT,0.))
-       */
-      virtual fmatvec::Vec2 computeLagrangeParameter(double t, const fmatvec::Vec3 &WrPoint) {THROW_MBSIMERROR("computeLagrangeParameter(const fmatvec::Vec3 &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
-
-      /**
-       * \param position of contour in inertial frame
-       */
-      virtual void setReferencePosition(const fmatvec::Vec3 &WrOP) { R->setPosition(WrOP); }
-
-      /**
-       * \param orientation of contour to inertial frame
-       */
-      virtual void setReferenceOrientation(const fmatvec::SqrMat3 &AWC) { R->setOrientation(AWC); }
-
-      /**
-       * \param velocity of contour in inertial frame
-       */
-      virtual void setReferenceVelocity(const fmatvec::Vec3 &WvP) { R->setVelocity(WvP); }
-
-      /**
-       * \param angular velocity of contour in inertial frame
-       */
-      virtual void setReferenceAngularVelocity(const fmatvec::Vec3 &WomegaC) { R->setAngularVelocity(WomegaC); }
-
-      /**
-       * \param JACOBIAN of translation of contour in inertial frame
-       */
-      virtual void setReferenceJacobianOfTranslation(const fmatvec::Mat3xV &WJP, int j=0) { R->setJacobianOfTranslation(WJP,j); }
-
-      /**
-       * \param gyroscopic acceleration of translation of contour in inertial frame
-       */
-      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP) { R->setGyroscopicAccelerationOfTranslation(WjP); }
-
-      /**
-       * \param JACOBIAN of rotation of contour in inertial frame
-       */
-      virtual void setReferenceJacobianOfRotation(const fmatvec::Mat3xV &WJR, int j=0) { R->setJacobianOfRotation(WJR,j); }
-
-      /**
-       * \param gyroscopic acceleration of rotation of contour in inertial frame
-       */
-      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR) { R->setGyroscopicAccelerationOfRotation(WjR); }
-
-      /**
-       * \param acceleration of contour in inertial frame
-       */
-      virtual void setReferenceAcceleration(const fmatvec::Vec3 &WaP) { R->setAcceleration(WaP); }
-
-      /**
-       * \param angular acceleration of contour in inertial frame
-       */
-      virtual void setReferenceAngularAcceleration(const fmatvec::Vec3 &WpsiC) { R->setAngularAcceleration(WpsiC); }
+//      /**
+//       * \return normal in world frame
+//       * \param contour position
+//       */
+//      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp) { return cp.getFrameOfReference().getOrientation(t).col(0); }
+//
+//      /**
+//       * \return position in world frame
+//       * \param contour position
+//       */
+//      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp) { return cp.getFrameOfReference().getPosition(t); }
+//
+//      /**
+//       * \return velocity in world frame
+//       * \param contour position
+//       */
+//      virtual fmatvec::Vec3 computeVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getVelocity(t); }
+//
+//      /**
+//       * \return angular in world frame
+//       * \param contour position
+//       */
+//      virtual fmatvec::Vec3 computeAngularVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getAngularVelocity(t); }
+//
+//      /**
+//       * \return curvature of contour in contour point
+//       * \param contour position
+//       */
+//      virtual double computeCurvature(double t, ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented."); return 0; }
+//
+//      /**
+//       * \brief projects the point on the contour to compute the Lagrange parameter
+//       * \param WrPoint point in world coordinates
+//       * \return Vec of lagrange parameters
+//       *
+//       * \remark: a vector length of 2 is necessary (Vec(2,INIT,0.))
+//       */
+//      virtual fmatvec::Vec2 computeLagrangeParameter(double t, const fmatvec::Vec3 &WrPoint) {THROW_MBSIMERROR("computeLagrangeParameter(const fmatvec::Vec3 &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
+//
 
       /**
        * \brief TODO
@@ -186,44 +122,19 @@ namespace MBSim {
       /* GETTER / SETTER */
       Frame* getFrame() { return R; }
       Frame* getFrameOfReference() { return R; }
-      const fmatvec::Vec3& getReferencePosition() const { return R->getPosition(); }
-      const fmatvec::SqrMat3& getReferenceOrientation() const { return R->getOrientation(); }
-      const fmatvec::Vec3& getReferenceVelocity() const { return R->getVelocity(); }
-      const fmatvec::Vec3& getReferenceAngularVelocity() const { return R->getAngularVelocity(); }
-      const fmatvec::Mat3xV& getReferenceJacobianOfTranslation(int j=0) const { return R->getJacobianOfTranslation(j); }
-      const fmatvec::Mat3xV& getReferenceJacobianOfRotation(int j=0) const { return R->getJacobianOfRotation(j); }
-      fmatvec::Mat3xV& getReferenceJacobianOfTranslation(int j=0) { return R->getJacobianOfTranslation(j); }
-      fmatvec::Mat3xV& getReferenceJacobianOfRotation(int j=0) { return R->getJacobianOfRotation(j); }
-      const fmatvec::Vec3& getReferenceGyroscopicAccelerationOfTranslation() const { return R->getGyroscopicAccelerationOfTranslation(); }
-      const fmatvec::Vec3& getReferenceGyroscopicAccelerationOfRotation() const { return R->getGyroscopicAccelerationOfRotation(); }
-      fmatvec::Vec3& getReferenceGyroscopicAccelerationOfTranslation() { return R->getGyroscopicAccelerationOfTranslation(); }
-      fmatvec::Vec3& getReferenceGyroscopicAccelerationOfRotation() { return R->getGyroscopicAccelerationOfRotation(); }
 
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }
       virtual void sethSize(int size, int i=0) { hSize[i] = size; }
       virtual void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
-      //virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { Element::setPlotFeature(pf,value); R->setPlotFeature(pf,value);}
-//      ObjectInterface* getParent() { return parent; }
-//      void setParent(ObjectInterface* parent_) { parent = parent_; }
-      /***************************************************/
-
       void setFrameOfReference(Frame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
-
-      virtual void updateStateDependentVariables(double t) {}
-      virtual void updateJacobians(double t, int j=0) {}
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
-//      /**
-//       * \brief object the contour belongs to
-//       */
-//      ObjectInterface* parent;
-
       /**
        * \brief size and index of right hand side for frame JACOBIAN settings
        */
@@ -249,8 +160,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      RigidContour(const std::string &name, Frame *R=0) : Contour(name,R)
-                                              {}
+      RigidContour(const std::string &name, Frame *R=0) : Contour(name,R) {}
 
       virtual ~RigidContour();
 
@@ -258,11 +168,6 @@ namespace MBSim {
       std::string getType() const { return "RigidContour"; }
       virtual void plot(double t, double dt = 1);
       virtual void init(InitStage stage);
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
-      virtual void updateJacobiansForFrame(double t, ContourPointData &cp, int j=0);
       /***************************************************/
 
       /**

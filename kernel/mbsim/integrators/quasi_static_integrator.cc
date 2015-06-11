@@ -226,7 +226,8 @@ namespace MBSimIntegrator {
     sys->setq(qla(0, qSize - 1));
     sys->setLa(qla(qSize, qlaSize - 1));
 
-    sys->updateStateDependentVariables(t);
+    throw;
+//    sys->updateStateDependentVariables(t);
     sys->updateg(t); // for joint, gap distance need also be updated.
 //    sys->checkActive(1);   // todo: flag = 1, gap distance level
 //    sys->updategd(t);  //todo:  ??? gd is needed for updating h

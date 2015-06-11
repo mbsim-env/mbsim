@@ -76,7 +76,6 @@ namespace MBSim {
       void updatePositions(double t); 
       void updateVelocities(double t);
       void updateAccelerations(double t);
-      void updateStateDependentVariables(double t) { updatePositions(t); updateVelocities(t); }
       void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
       void updateGyroscopicAccelerations(double t);
       void updateJacobians0(double t);

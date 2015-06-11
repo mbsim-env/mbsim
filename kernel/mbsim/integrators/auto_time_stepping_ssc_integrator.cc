@@ -2346,7 +2346,8 @@ namespace MBSimIntegrator {
     int nActive=0;
     zT1<<ze;
     if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
-    sysT1->updateStateDependentVariables(t+dte);
+    throw;
+//    sysT1->updateStateDependentVariables(t+dte);
     for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
       SetValuedLinkListT1[i]->checkActive(t+dte,1);
       SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);

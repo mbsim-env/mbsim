@@ -39,12 +39,6 @@ namespace MBSim {
 
   Graph::~Graph() {}
 
-  void Graph::updateStateDependentVariables(double t) {
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++) 
-	obj[i][j]->updateStateDependentVariables(t);
-  }
-
   void Graph::updatedu(double t, double dt) {
     ud[0] = slvLLFac(getLLM(t), (geth(t)+getr(t))*dt);
   }

@@ -145,7 +145,6 @@ namespace MBSim {
       virtual void updateh(double t, int i=0);
       virtual void updateM(double t, int i=0);
       virtual void updateLLM(double t, int i=0);
-      virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */

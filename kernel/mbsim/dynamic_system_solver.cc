@@ -761,7 +761,8 @@ namespace MBSim {
     }
     double delta = epsroot();
     Mat J(hSize[0], qSize, INIT, 0.0);
-    updateStateDependentVariables(t);
+    throw;
+//    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
@@ -771,7 +772,7 @@ namespace MBSim {
     for (int i = lb; i < ub; i++) {
       double qtmp = q(i);
       q(i) += delta;
-      updateStateDependentVariables(t);
+      //updateStateDependentVariables(t);
       updateg(t);
       updategd(t);
       updateT(t);
@@ -782,7 +783,7 @@ namespace MBSim {
     }
     h[0] = hOld;
 
-    updateStateDependentVariables(t);
+    //updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
@@ -803,7 +804,8 @@ namespace MBSim {
     }
     double delta = epsroot();
     Mat J(hSize[0], uSize[0], INIT, 0.0);
-    updateStateDependentVariables(t);
+    throw;
+    //updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t);
@@ -814,7 +816,7 @@ namespace MBSim {
       //msg(Info) << "bin bei i=" << i << endl;
       double utmp = u(i);
       u(i) += delta;
-      updateStateDependentVariables(t);
+      //updateStateDependentVariables(t);
       //updateg(t);
       updategd(t);
       //updateT(t); 
@@ -824,7 +826,7 @@ namespace MBSim {
       u(i) = utmp;
     }
     h[0] = hOld;
-    updateStateDependentVariables(t);
+    //updateStateDependentVariables(t);
     updategd(t);
     updateh(t);
 
@@ -855,22 +857,22 @@ namespace MBSim {
     updLLM[i] = false;
   }
 
-  void DynamicSystemSolver::updateStateDependentVariables(double t) {
-    Group::updateStateDependentVariables(t);
-
-    if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
-      msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
-      exit(1);
-    }
-
-    if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
-      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
-      H5::File::flushAllFiles(); // flush files
-      integratorExitRequest = true;
-    }
-
-    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
-  }
+//  void DynamicSystemSolver::updateStateDependentVariables(double t) {
+//    Group::updateStateDependentVariables(t);
+//
+//    if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
+//      msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
+//      exit(1);
+//    }
+//
+//    if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
+//      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
+//      H5::File::flushAllFiles(); // flush files
+//      integratorExitRequest = true;
+//    }
+//
+//    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
+//  }
 
   void DynamicSystemSolver::updater(double t, int j) {
     r[j] = getV(t,j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
@@ -1036,14 +1038,14 @@ namespace MBSim {
 
     // Perform a projection of generalized positions and velocities at time t=0
     if(initialProjection) { 
-      updateStateDependentVariables(0); 
-      updateT(0);
-      updateJacobians(0);
-      updateM(0);
-      updateLLM(0);
+      //updateStateDependentVariables(0); 
+      //updateT(0);
+      //updateJacobians(0);
+      //updateM(0);
+      //updateLLM(0);
       projectGeneralizedPositions(0, 1, true);
-      updateStateDependentVariables(0);
-      updateJacobians(0);
+      //updateStateDependentVariables(0);
+      //updateJacobians(0);
       projectGeneralizedVelocities(0, 1);
     }
   }
@@ -1101,38 +1103,39 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::update(const Vec &zParent, double t, int options) {
-    //msg(Info) << "update at t = " << t << endl;
-    if (q() != zParent())
-      updatezRef(zParent);
-
-    updateStateDependentVariables(t);
-    updateg(t);
-    checkActive(t,1);
-    if (gActiveChanged() || options == 1) {
-      calcgdSize(2); // contacts which stay closed
-      calclaSize(2); // contacts which stay closed
-      calcrFactorSize(2); // contacts which stay closed
-
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updatelaRef(laParent(0, laSize - 1));
-      updateLaRef(LaParent(0, laSize - 1));
-      updategdRef(gdParent(0, gdSize - 1));
-      if (impactSolver == RootFinding)
-        updateresRef(resParent(0, laSize - 1));
-      updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-
-    }
-    updategd(t);
-
-    updateT(t);
-    updateJacobians(t);
-    updateh(t);
-    updateM(t);
-    updateLLM(t);
-    updateW(t);
-    updateV(t);
-    updateG(t);
+    throw;
+//    //msg(Info) << "update at t = " << t << endl;
+//    if (q() != zParent())
+//      updatezRef(zParent);
+//
+//    updateStateDependentVariables(t);
+//    updateg(t);
+//    checkActive(t,1);
+//    if (gActiveChanged() || options == 1) {
+//      calcgdSize(2); // contacts which stay closed
+//      calclaSize(2); // contacts which stay closed
+//      calcrFactorSize(2); // contacts which stay closed
+//
+//      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+//      updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+//      updatelaRef(laParent(0, laSize - 1));
+//      updateLaRef(LaParent(0, laSize - 1));
+//      updategdRef(gdParent(0, gdSize - 1));
+//      if (impactSolver == RootFinding)
+//        updateresRef(resParent(0, laSize - 1));
+//      updaterFactorRef(rFactorParent(0, rFactorSize - 1));
+//
+//    }
+//    updategd(t);
+//
+//    updateT(t);
+//    updateJacobians(t);
+//    updateh(t);
+//    updateM(t);
+//    updateLLM(t);
+//    updateW(t);
+//    updateV(t);
+//    updateG(t);
   }
 
   void DynamicSystemSolver::zdot(const Vec &zParent, Vec &zdParent, double t) {

@@ -195,7 +195,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
         fmatvec::Vec3 Wd = computeWrD(alpha);
-        return circle->getReferenceOrientation().col(2).T() * Wd;
+        return circle->getFrame()->getOrientation().col(2).T() * Wd;
       }
 
       fmatvec::Vec3 computeWrD(const double &alpha) {
