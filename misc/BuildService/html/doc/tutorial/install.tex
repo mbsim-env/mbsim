@@ -89,7 +89,10 @@ It is assumed that boost is installed. For the installation the following instru
  git clone https://github.com/mbsim-env/fmatvec.git
  cd $HOME/MBSim/fmatvec
 \end{verbatim}
-Continue with the procedure \textsc{automake}.\par
+Continue with the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
 The procedure \textsc{configure} for dynamic compilation is used with
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
@@ -123,7 +126,11 @@ For having \MBSim{} creating \HDF{} files invoke
 \begin{verbatim}
  cd $HOME/MBSim/HDF5Serie/hdf5serie
 \end{verbatim}
-as well as the procedures \textsc{automake, configure} for dynamic compilation with
+as well as the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -166,7 +173,11 @@ It is assumed that \FMatVec{}, Octave, swig, Xerces, Xalan and Casadi are instal
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
 \end{verbatim} 
-and use the procedures \textsc{automake}, \textsc{configure} for dynamic compilation with
+and use the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -177,7 +188,11 @@ It is assumed that \HDFSerie{} and XMLUtils are installed. Invoke
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/openmbvcppinterface
 \end{verbatim} 
-and the procedures \textsc{automake, configure} for dynamic compilation with
+and the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -197,14 +212,22 @@ Necessary for the installation of \MBSim{} is OpenMBV-C++-Interface. For install
 \end{verbatim}
 %
 \paragraph{NURBS thirdparty package}
-If you like, you can install the NURBS thirdparty package first, which is necessary for some examples. Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+If you like, you can install the NURBS thirdparty package first, which is necessary for some examples. Invoke the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with the prefix
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
 in \texttt{\$HOME/MBSim/mbsim/thirdparty/nurbs++}.
 %
 \paragraph{MBSim kernel}
-Then proceed and invoke the procedures \textsc{automake, configure} for dynamic compilation with
+Then proceed and invoke the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -233,7 +256,11 @@ The installation proceeds as follows:
 \begin{verbatim}
   cd $HOME/MBSim/mbsim/modules/mbsimControl
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} for dynamic compilation with
+Invoke the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -251,7 +278,11 @@ MBSimXML offers the possibility to define mechanical systems with XML.
 \begin{verbatim}
   cd $HOME/MBSim/mbsim/mbsimxml
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} for dynamic compilation with
+Invoke the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
   --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -267,7 +298,11 @@ MBSimFMI gives an interface for model export. Proceed as follows:
 \begin{verbatim}
   cd $HOME/MBSim/mbsim/mbsimfmi
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} for dynamic compilation with
+Invoke the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
   --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -278,7 +313,11 @@ MBSimGUI offers a GUI for \MBSim{}. If we have installed \OpenMBV{}, we can inst
 \begin{verbatim}
   cd $HOME/MBSim/mbsim/mbsimgui
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} for dynamic compilation with
+Invoke the procedure \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for dynamic compilation with
 \begin{verbatim}
   --prefix=$HOME/MBSim/Install
 \end{verbatim}
@@ -302,7 +341,11 @@ Install \HDF{} and the \HDFSerie{} as described in Sec.~\ref{sec:install:simulat
 \begin{verbatim}
   cd $HOME/OpenMBV/HDF5Serie/h5plotserie
 \end{verbatim}
-as well as the procedures \textsc{automake, configure} for static compilation, \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. \texttt{.bashrc} can be extended with
+as well as the procedures \textsc{automake}.
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for static compilation, \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. \texttt{.bashrc} can be extended with
 \begin{verbatim}
   alias h5plotserie="$HOME/OpenMBV/Install/bin/h5plotserie"
 \end{verbatim}
@@ -316,11 +359,15 @@ Install XML Utils as described in Sec.~\ref{sec:install:simulation} but in the d
 Install OpenMBV-C++Interface as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation.
 
 \paragraph{\OpenMBV{}}
-For the installation of a static visualisation using always the newest source files it is assumed that Coin3d, MBXMLUtils, \HDFSerie, SoQt, Qwt with version 5 are installed. With
+For the installation of a static visualisation using always the newest source files it is assumed that Coin3d, MBXMLUtils, \HDFSerie, SoQt, Qwt with version 5 are installed. Use
 \begin{verbatim}
   cd $HOME/OpenMBV/OpenMBV/openmbv
 \end{verbatim} 
-and the procedures \textsc{automake, configure} for static compilation. \texttt{make doc} and \textsc{install} complete the installation of the viewer with an Doxygen HTML class documentation. \texttt{.bashrc} can be extended with
+and the procedure \textsc{automake}
+\begin{verbatim}
+  mkdir build, cd build
+\end{verbatim}
+Continue with \textsc{configure} for static compilation. \texttt{make doc} and \textsc{install} complete the installation of the viewer with an Doxygen HTML class documentation. \texttt{.bashrc} can be extended with
 \begin{verbatim}
   alias openmbv="$HOME/OpenMBV/Install/bin/openmbv"
 \end{verbatim}
