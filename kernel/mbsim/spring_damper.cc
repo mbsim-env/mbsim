@@ -319,163 +319,172 @@ namespace MBSim {
 #endif
   }
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
-//
-//  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0), body(2) {
-//    body[0] = 0;
-//    body[1] = 0;
-//  }
-//
-//  GeneralizedSpringDamper::~GeneralizedSpringDamper() {
-//    delete func;
-//  }
-//
-//  void GeneralizedSpringDamper::updatehRef(const Vec &hParent, int j) {
-//    Index I = Index(body[1]->gethInd(j),body[1]->gethInd(j)+body[1]->gethSize(j)-1);
-//    h[j][1]>>hParent(I);
-//    if(body[0]) {
-//      Index I = Index(body[0]->gethInd(j),body[0]->gethInd(j)+body[0]->gethSize(j)-1);
-//      h[j][0]>>hParent(I);
-//    }
-//    else {
-//      Index I = Index(body[1]->getFrameOfReference()->gethInd(j),body[1]->getFrameOfReference()->gethInd(j)+body[1]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
-//      h[j][0]>>hParent(I);
-//    }
-//  } 
-//
-//  void GeneralizedSpringDamper::updateh(double t, int j) {
-//    la(0) = (*func)(g(0)-l0,gd(0));
-//    if(j==0) {
-//      if(body[0]) h[j][0]+=body[0]->getJRel(j).T()*la;
-//      h[j][1]-=body[1]->getJRel(j).T()*la;
-//    }
-//    else {
-//      WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
-//      WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
-//      h[j][1]-=body[1]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[1] + body[1]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[1];
-//      if(body[0]) {
-//        WF[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJT()*la;
-//        WM[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJR()*la;
-//        h[j][0]-=body[0]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[0] + body[0]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[0];
-//      } else {
-//        WF[0] = -WF[1];
-//        WM[0] = -WM[1];
-//        h[j][0]-=body[1]->getFrameOfReference()->getJacobianOfTranslation(j).T()*WF[0]+body[1]->getFrameOfReference()->getJacobianOfRotation(j).T()*WM[0];
-//      }
-//    }
-//  }
-//
-//  void GeneralizedSpringDamper::updateg(double) {
-//    g=body[0]?(body[1]->getqRel()-body[0]->getqRel()):body[1]->getqRel();
-//  } 
-//
-//  void GeneralizedSpringDamper::updategd(double) {
-//    gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
-//  }
-//
-//  void GeneralizedSpringDamper::init(InitStage stage) {
-//    if(stage==resolveXMLPath) {
-//      if(saved_body1!="")
-//        setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
-//      if(saved_body2!="")
-//        setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
-//      if(body[1]==NULL)
-//        THROW_MBSIMERROR("rigid body on second side must be given!");
-//      if(body[0]) MechanicalLink::connect(body[0]->getFrameForKinematics());
-//      MechanicalLink::connect(body[1]->getFrameForKinematics());
-//      MechanicalLink::init(stage);
-//    }
-//    else if(stage==preInit) {
-//      MechanicalLink::init(stage);
-//      addDependency(func->getDependency());
-//    }
-//    else if(stage==resize) {
-//      MechanicalLink::init(stage);
-//      g.resize(1);
-//      gd.resize(1);
-//      la.resize(1);
-//    }
-//    else if(stage==plotting) {
-//      updatePlotFeatures();
-//      plotColumns.push_back("la(0)");
-//      if(getPlotFeature(plotRecursive)==enabled) {
-//  #ifdef HAVE_OPENMBVCPPINTERFACE
-//        if(coilspringOpenMBV) {
-//          coilspringOpenMBV->setName(name);
-//          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
-//        }
-//  #endif
-//        MechanicalLink::init(stage);
-//      }
-//    }
-//    else if(stage==unknownStage) {
-//      if(body[0] and body[0]->getuRelSize()!=1)
-//        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
-//      if(body[1]->getuRelSize()!=1)
-//        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
-//      MechanicalLink::init(stage);
-//    }
-//    else
-//      MechanicalLink::init(stage);
-//    func->init(stage);
-//  }
-//
-//  void GeneralizedSpringDamper::plot(double t,double dt) {
-//    plotVector.push_back(la(0));
-//    if(getPlotFeature(plotRecursive)==enabled) {
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//      if (coilspringOpenMBV) {
-//        Vec WrOToPoint;
-//        Vec WrOFromPoint;
-//
-//        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->getPosition():body[1]->getFrameOfReference()->getPosition();
-//        WrOToPoint   = body[1]->getFrameForKinematics()->getPosition();
-//        vector<double> data;
-//        data.push_back(t); 
-//        data.push_back(WrOFromPoint(0));
-//        data.push_back(WrOFromPoint(1));
-//        data.push_back(WrOFromPoint(2));
-//        data.push_back(WrOToPoint(0));
-//        data.push_back(WrOToPoint(1));
-//        data.push_back(WrOToPoint(2));
-//        data.push_back(la(0));
-//        coilspringOpenMBV->append(data);
-//      }
-//#endif
-//      MechanicalLink::plot(t,dt);
-//    }
-//  }
-//
-//  void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
-//    MechanicalLink::initializeUsingXML(element);
-//    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-//    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
-//    setGeneralizedForceFunction(f);
-//    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedGeneralizedLength");
-//    if(e) l0 = Element::getDouble(e);
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
-//    if(e) saved_body1=E(e)->getAttribute("ref");
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
-//    saved_body2=E(e)->getAttribute("ref");
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
-//    if(e) {
-//      OpenMBVCoilSpring ombv;
-//      coilspringOpenMBV=ombv.createOpenMBV(e);
-//    }
-//    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-//    if (e) {
-//      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-//      std::vector<bool> which; which.resize(2, true);
-//      MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
-//    }
-//    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-//    if (e) {
-//      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-//      std::vector<bool> which; which.resize(2, true);
-//      MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
-//    }
-//#endif
-//  }
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
+
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0), body(2) {
+    h[0].resize(2);
+    h[1].resize(2);
+    body[0] = 0;
+    body[1] = 0;
+  }
+
+  GeneralizedSpringDamper::~GeneralizedSpringDamper() {
+    delete func;
+  }
+
+  void GeneralizedSpringDamper::updatehRef(const Vec &hParent, int j) {
+    Index I = Index(body[1]->gethInd(j),body[1]->gethInd(j)+body[1]->gethSize(j)-1);
+    h[j][1]>>hParent(I);
+    if(body[0]) {
+      Index I = Index(body[0]->gethInd(j),body[0]->gethInd(j)+body[0]->gethSize(j)-1);
+      h[j][0]>>hParent(I);
+    }
+    else {
+      Index I = Index(body[1]->getFrameOfReference()->gethInd(j),body[1]->getFrameOfReference()->gethInd(j)+body[1]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+      h[j][0]>>hParent(I);
+    }
+  }
+
+  void GeneralizedSpringDamper::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0) = -(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
+    updlaSV = false;
+  }
+
+  void GeneralizedSpringDamper::updateForceDirections(double t) {
+    DF = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT(t);
+    DM = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR(t);
+    updFD = false;
+  }
+
+  void GeneralizedSpringDamper::updateh(double t, int j) {
+    if(j==0) {
+      if(body[0]) h[j][0] -= body[0]->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t);
+      h[j][1] += body[1]->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t);
+    }
+    else {
+      h[j][1] += body[1]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[1]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      if(body[0]) {
+        h[j][0] -= body[0]->getFrameOfReference()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[0]->getFrameOfReference()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      } else {
+        h[j][0] -= body[1]->getFrameOfReference()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[1]->getFrameOfReference()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      }
+    }
+  }
+
+  void GeneralizedSpringDamper::updatePositions(double t) {
+    rrel=body[0]?(body[1]->getqRel(t)-body[0]->getqRel(t)):body[1]->getqRel(t);
+    updPos = false;
+  }
+
+  void GeneralizedSpringDamper::updateVelocities(double t) {
+    vrel=body[0]?(body[1]->getuRel(t)-body[0]->getuRel(t)):body[1]->getuRel(t);
+    updVel = false;
+  }
+
+  void GeneralizedSpringDamper::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(saved_body1!="")
+        setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
+      if(saved_body2!="")
+        setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
+      if(body[1]==NULL)
+        THROW_MBSIMERROR("rigid body on second side must be given!");
+      if(body[0]) MechanicalLink::connect(body[0]->getFrameForKinematics());
+      MechanicalLink::connect(body[1]->getFrameForKinematics());
+      MechanicalLink::init(stage);
+    }
+    else if(stage==preInit) {
+      MechanicalLink::init(stage);
+      addDependency(func->getDependency());
+    }
+    else if(stage==resize) {
+      MechanicalLink::init(stage);
+      g.resize(1);
+      gd.resize(1);
+      la.resize(1);
+      iF = Index(0, 0);
+      iM = Index(0, 0);
+      rrel.resize(1);
+      vrel.resize(1);
+      laSV.resize(1);
+    }
+    else if(stage==plotting) {
+      updatePlotFeatures();
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(coilspringOpenMBV) {
+          coilspringOpenMBV->setName(name);
+          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+        }
+  #endif
+        MechanicalLink::init(stage);
+      }
+    }
+    else if(stage==unknownStage) {
+      if(body[0] and body[0]->getuRelSize()!=1)
+        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
+      if(body[1]->getuRelSize()!=1)
+        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
+      MechanicalLink::init(stage);
+    }
+    else
+      MechanicalLink::init(stage);
+    func->init(stage);
+  }
+
+  void GeneralizedSpringDamper::plot(double t,double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if (coilspringOpenMBV) {
+        Vec WrOToPoint;
+        Vec WrOFromPoint;
+
+        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->getPosition():body[1]->getFrameOfReference()->getPosition();
+        WrOToPoint   = body[1]->getFrameForKinematics()->getPosition();
+        vector<double> data;
+        data.push_back(t);
+        data.push_back(WrOFromPoint(0));
+        data.push_back(WrOFromPoint(1));
+        data.push_back(WrOFromPoint(2));
+        data.push_back(WrOToPoint(0));
+        data.push_back(WrOToPoint(1));
+        data.push_back(WrOToPoint(2));
+        data.push_back(la(0));
+        coilspringOpenMBV->append(data);
+      }
+#endif
+      MechanicalLink::plot(t,dt);
+    }
+  }
+
+  void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
+    MechanicalLink::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    setGeneralizedForceFunction(f);
+    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedGeneralizedLength");
+    if(e) l0 = Element::getDouble(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
+    if(e) saved_body1=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
+    saved_body2=E(e)->getAttribute("ref");
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
+    if(e) {
+      OpenMBVCoilSpring ombv;
+      coilspringOpenMBV=ombv.createOpenMBV(e);
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      MechanicalLink::setOpenMBVForce(ombv.createOpenMBV(e));
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      MechanicalLink::setOpenMBVMoment(ombv.createOpenMBV(e));
+    }
+#endif
+  }
 
 }
